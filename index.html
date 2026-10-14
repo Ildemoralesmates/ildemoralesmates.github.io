@@ -3,36 +3,171 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Recursos de matemàtiques</title>
+<title>Recursos de matemàtiques i ciència</title>
+<meta name="description" content="Activitats interactives de matemàtiques, física i curiositats per a l'alumnat.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;800&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-:root { --bg:#f7f8fa; --surface:#fff; --ink:#16202a; --muted:#5d6b78; --line:#d6dde4; --accent:#1d4ed8; }
+:root {
+  --bg: #f4f6fa; --surface: #ffffff; --ink: #14202e; --muted: #56677a; --line: #d5dde8;
+  --grid: rgba(37, 99, 235, 0.07);
+  --c-mates: #2563eb; --c-fisica: #d9480f; --c-misc: #7c3aed; --c-curio: #0f8a5f;
+  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-misc: #efe6ff; --t-curio: #dcf5ea;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --bg:#12171d; --surface:#1a222b; --ink:#e8edf2; --muted:#93a1af; --line:#2c3844; --accent:#7aa2ff; }
+  :root {
+    --bg: #0e141c; --surface: #172130; --ink: #e8eef6; --muted: #93a4b8; --line: #2a384b;
+    --grid: rgba(122, 162, 255, 0.07);
+    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-misc: #b799ff; --c-curio: #4fd3a0;
+    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-misc: #2f2450; --t-curio: #15392e;
+  }
 }
 * { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:2rem 1rem 3rem; }
-main { max-width: 42rem; margin: 0 auto; }
-h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height:1.1; margin:0 0 .4rem; }
-.lede { color:var(--muted); margin:0 0 2rem; }
-ul { list-style:none; margin:0; padding:0; display:grid; gap:.9rem; }
-a.card { display:block; text-decoration:none; color:inherit; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1rem 1.2rem; }
-a.card:hover, a.card:focus-visible { border-color:var(--accent); }
-a.card strong { display:block; font-size:1.15rem; color:var(--accent); }
-a.card span { color:var(--muted); font-size:.95rem; }
-footer { margin-top:2.5rem; color:var(--muted); font-size:.85rem; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: var(--ink); font: 17px/1.5 var(--f-body);
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  padding-inline: 16px;
+}
+.wrap { max-width: 68rem; margin-inline: auto; }
+
+/* Capçalera */
+.hero { padding: 3.5rem 0 1.5rem; position: relative; }
+.hero .deco {
+  position: absolute; right: 0; top: 1.5rem; font-family: var(--f-display); font-weight: 800;
+  font-size: clamp(5rem, 18vw, 11rem); line-height: 1; color: var(--c-mates); opacity: 0.09;
+  letter-spacing: -0.04em; pointer-events: none; user-select: none; white-space: nowrap;
+}
+.kicker { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-mates); margin: 0 0 0.75rem; }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.2rem, 7vw, 4.2rem); line-height: 1; letter-spacing: -0.02em; margin: 0 0 1rem; max-width: 14ch; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--c-mates); }
+.lede { color: var(--muted); font-size: 1.1rem; max-width: 38rem; margin: 0; }
+
+/* Filtres */
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.75rem 0 2.25rem; }
+.chip {
+  font: inherit; font-weight: 700; font-size: 0.92rem; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 999px; padding: 0.45rem 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.chip .dot { width: 0.65rem; height: 0.65rem; border-radius: 50%; background: var(--c, var(--ink)); }
+.chip .n { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.chip[aria-pressed="true"] .n { color: inherit; opacity: 0.75; }
+:focus-visible { outline: 3px solid var(--c-mates); outline-offset: 3px; }
+
+/* Seccions */
+.sec { margin-bottom: 2.75rem; }
+.sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.25rem 0.9rem; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--c); }
+.sec h2 { font-family: var(--f-display); font-weight: 800; font-size: 1.7rem; margin: 0; line-height: 1.1; color: var(--c); }
+.sec .sub { color: var(--muted); font-size: 0.95rem; margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1rem; }
+
+.card {
+  display: grid; grid-template-columns: 4.2rem 1fr; gap: 0.2rem 1rem; align-items: start;
+  text-decoration: none; color: inherit; background: var(--surface);
+  border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 14px;
+  padding: 1.1rem 1.2rem 1.1rem 1rem;
+}
+.glyph {
+  grid-row: span 3; width: 4.2rem; height: 4.2rem; border-radius: 12px; background: var(--t);
+  color: var(--c); display: grid; place-items: center;
+  font-family: var(--f-display); font-weight: 800; font-size: 2.4rem; line-height: 1;
+}
+.card h3 { font-family: var(--f-display); font-weight: 800; font-size: 1.2rem; line-height: 1.15; margin: 0.1rem 0 0; }
+.card p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.4; }
+.card .tag { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c); margin-top: 0.55rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+.card .go { white-space: nowrap; }
+.card:hover, .card:focus-visible { border-color: var(--c); }
+.card:hover h3, .card:focus-visible h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.soon {
+  border: 2px dashed var(--line); border-radius: 14px; padding: 1.4rem; color: var(--muted);
+  display: flex; align-items: center; gap: 1rem; background: transparent;
+}
+.soon b { font-family: var(--f-display); font-size: 1.6rem; color: var(--c); opacity: 0.6; }
+@media (prefers-reduced-motion: no-preference) {
+  .card { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -14px rgba(20, 32, 46, 0.45); }
+}
+footer { border-top: 1px solid var(--line); padding: 1.5rem 0 3rem; color: var(--muted); font-size: 0.85rem; }
+footer p { margin: 0 0 0.4rem; max-width: 46rem; }
+@media (max-width: 520px) {
+  .hero { padding-top: 2.2rem; }
+  .card { grid-template-columns: 3.4rem 1fr; }
+  .glyph { width: 3.4rem; height: 3.4rem; font-size: 1.9rem; }
+}
 </style>
 </head>
 <body>
-<main>
-  <h1>Recursos de matemàtiques</h1>
-  <p class="lede">Activitats interactives per a l'alumnat. Cada recurs és una pàgina independent.</p>
-  <ul>
-    <li><a class="card" href="/RECURSOS-MATEM-TIQUES/fites-matematiques/"><strong>Vint fites matemàtiques</strong><span>Línia del temps interactiva amb un problema detonant per a cada fita, des de l'os d'Ishango fins als algorismes.</span></a></li>
-    <li><a class="card" href="/RECURSOS-MATEM-TIQUES/eratostenes/"><strong>Criba d'Eratòstenes</strong><span>Tacha els múltiplos dels primers primers i descobreix els primos menors que 500.</span></a></li>
-    <li><a class="card" href="/RECURSOS-MATEM-TIQUES/filtre-matrius/"><strong>Filtre de convolució sobre una foto</strong><span>Dissenya un filtre de 3×3 i veges com canvia una imatge de veritat.</span></a></li>
-    <li><a class="card" href="/RECURSOS-MATEM-TIQUES/atles-art-rupestre/"><strong>Atles de l'art rupestre</strong><span>Mapa amb 56 jaciments d'art rupestre del món, amb fotos, línia del temps i joc.</span></a></li>
-  </ul>
-  <footer>Les imatges de «Vint fites» i de l'Atles provenen de Wikimedia Commons; cada foto indica autoria i llicència.</footer>
-</main>
+<div class="wrap">
+  <header class="hero">
+    <div class="deco" aria-hidden="true">π∑∫</div>
+    <p class="kicker">Ilde · Matemàtiques i ciència</p>
+    <h1>Aprendre <em>jugant</em> amb les mates</h1>
+    <p class="lede">Activitats interactives per a l'alumnat. Tria una categoria o entra directament en un recurs: cada pàgina funciona sola, al mòbil i a l'ordinador.</p>
+  </header>
+
+  <nav class="chips" id="chips" aria-label="Categories"></nav>
+  <main id="app"></main>
+
+  <footer>
+    <p>Les fotografies de «Vint fites» i de l'Atles provenen de Wikimedia Commons; cada imatge indica autoria i llicència.</p>
+    <p>Material per a ús educatiu.</p>
+  </footer>
+</div>
+
+<script>
+const BASE = '/RECURSOS-MATEM-TIQUES/';
+const CATS = [
+  { id: 'mates',  n: 'Matemàtiques', d: 'Per a l\'aula de matemàtiques de l\'ESO i el Batxillerat.' },
+  { id: 'fisica', n: 'Física',       d: 'Simuladors i activitats per entendre el món.' },
+  { id: 'misc',   n: 'Miscel·lània', d: 'Eines i jocs que no caben en una sola caixa.' },
+  { id: 'curio',  n: 'Curiositats',  d: 'Per a qui vol saber un poc més.' },
+];
+const RES = [
+  { cat: 'mates', href: 'fites-matematiques/', glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
+  { cat: 'mates', href: 'eratostenes/', glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
+  { cat: 'mates', href: 'filtre-matrius/', glyph: '▦', t: 'Filtre de convolució', d: 'Dissenya un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
+  { cat: 'curio', href: 'atles-art-rupestre/', glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
+];
+const $ = (s) => document.querySelector(s);
+let current = 'tot';
+const count = (id) => RES.filter((r) => r.cat === id).length;
+
+function renderChips() {
+  const all = `<button class="chip" data-id="tot" aria-pressed="${current === 'tot'}">Tot <span class="n">${RES.length}</span></button>`;
+  $('#chips').innerHTML = all + CATS.map((c) =>
+    `<button class="chip" style="--c:var(--c-${c.id})" data-id="${c.id}" aria-pressed="${current === c.id}"><span class="dot"></span>${c.n} <span class="n">${count(c.id)}</span></button>`).join('');
+}
+function card(r) {
+  return `<a class="card" href="${BASE}${r.href}" style="--c:var(--c-${r.cat});--t:var(--t-${r.cat})">
+    <div class="glyph" aria-hidden="true">${r.glyph}</div>
+    <h3>${r.t}</h3><p>${r.d}</p>
+    <div class="tag"><span>${r.tag}</span><span class="go">Obri →</span></div></a>`;
+}
+function renderSections() {
+  const list = CATS.filter((c) => current === 'tot' || current === c.id);
+  $('#app').innerHTML = list.map((c) => {
+    const items = RES.filter((r) => r.cat === c.id);
+    const body = items.length
+      ? items.map(card).join('')
+      : `<div class="soon" style="--c:var(--c-${c.id})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
+    return `<section class="sec" style="--c:var(--c-${c.id})" aria-labelledby="h-${c.id}">
+      <div class="sec-head"><h2 id="h-${c.id}">${c.n}</h2><p class="sub">${c.d}</p></div>
+      <div class="grid">${body}</div></section>`;
+  }).join('');
+}
+$('#chips').addEventListener('click', (e) => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  current = b.dataset.id; renderChips(); renderSections();
+});
+renderChips(); renderSections();
+</script>
 </body>
 </html>
