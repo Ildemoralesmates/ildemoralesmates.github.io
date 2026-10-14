@@ -86,6 +86,10 @@ h1 em { font-style: normal; color: var(--c-mates); }
 .card .go { white-space: nowrap; }
 .card:hover, .card:focus-visible { border-color: var(--c); }
 .card:hover h3, .card:focus-visible h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.subh { font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0.7rem; font-weight: 500; }
+.subh:first-of-type { margin-top: 0.4rem; }
+.subh span { color: var(--c); margin-left: 0.4rem; }
+.glyph.long { font-size: 1.5rem; letter-spacing: -0.03em; }
 .soon {
   border: 2px dashed var(--line); border-radius: 14px; padding: 1.4rem; color: var(--muted);
   display: flex; align-items: center; gap: 1rem; background: transparent;
@@ -125,15 +129,32 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
 <script>
 const BASE = '/RECURSOS-MATEM-TIQUES/';
 const CATS = [
-  { id: 'mates',  n: 'Matemàtiques', d: 'Per a l\'aula de matemàtiques de l\'ESO i el Batxillerat.' },
+  { id: 'mates',  n: 'Matemàtiques', d: 'Activitats per a l\'aula de matemàtiques de l\'ESO i el Batxillerat.' },
   { id: 'fisica', n: 'Física',       d: 'Simuladors i activitats per entendre el món.' },
   { id: 'misc',   n: 'Miscel·lània', d: 'Eines i jocs que no caben en una sola caixa.' },
   { id: 'curio',  n: 'Curiositats',  d: 'Per a qui vol saber un poc més.' },
 ];
 const RES = [
-  { cat: 'mates', href: 'fites-matematiques/', glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
-  { cat: 'mates', href: 'eratostenes/', glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
-  { cat: 'mates', href: 'filtre-matrius/', glyph: '▦', t: 'Filtre de convolució', d: 'Dissenya un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
+  // Matemàtiques · Història i nombres
+  { cat: 'mates', sub: 'Història i nombres', href: 'fites-matematiques/', glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
+  { cat: 'mates', sub: 'Història i nombres', href: 'eratostenes/', glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
+  // Matemàtiques · Geometria i àlgebra
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'laboratori-mates/', glyph: '△', t: 'Laboratori de Matemàtiques', d: 'Cinc simulacions per projectar a classe: Pitàgores, equacions com a balança, fraccions, Thales i proporció.', tag: '2n ESO' },
+  // Matemàtiques · Matrius
+  { cat: 'mates', sub: 'Matrius', href: 'matrius-activitats/', glyph: '✎', t: 'Les matrius no viuen només al llibre', d: 'Full de treball amb tres activitats basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.', tag: 'Full de treball' },
+  { cat: 'mates', sub: 'Matrius', href: 'graus-separacio/', glyph: '⬡', t: 'Graus de separació', d: 'Setze alumnes i les seues amistats: les potències de la matriu compten els camins entre dues persones.', tag: 'Potències de matrius' },
+  { cat: 'mates', sub: 'Matrius', href: 'matriu-rotacio/', glyph: '↻', t: 'La matriu de rotació en acció', d: 'Gira una figura multiplicant cada punt per la mateixa matriu i observa què passa amb els números.', tag: 'Rotacions' },
+  { cat: 'mates', sub: 'Matrius', href: 'autovectors/', glyph: 'λ', t: 'Com deforma l\'espai una matriu', d: 'La quadrícula es transforma punt a punt. Descobreix els autovectors: les direccions que no giren.', tag: 'Transformacions lineals' },
+  { cat: 'mates', sub: 'Matrius', href: 'detector-vores/', glyph: '◧', t: 'Detector de vores', d: 'Un kernel llisca per una imatge xicoteta de 5×5 i, pas a pas, apareixen els contorns.', tag: 'Convolució' },
+  { cat: 'mates', sub: 'Matrius', href: 'convolucio-12x12/', glyph: '⊛', t: 'Convolució en acció', d: 'Una imatge de 12×12, un kernel i tres filtres: vores, difuminat i enfocar. El resultat es forma píxel a píxel.', tag: 'Convolució' },
+  { cat: 'mates', sub: 'Matrius', href: 'filtre-matrius/', glyph: '▦', t: 'El filtre que tu dissenyes', d: 'Inventa un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
+  { cat: 'mates', sub: 'Matrius', href: 'cifra-hill/', glyph: '🔐', t: 'Xifrat amb matrius', d: 'La cifra de Hill: xifra amb una matriu 2×2 i desxifra amb la seua inversa.', tag: 'Criptografia · Batxillerat' },
+  // Física
+  { cat: 'fisica', href: 'tir-parabolic/', glyph: '↗', t: 'Tir parabòlic', d: 'Canvia velocitat, angle i gravetat (Terra, Lluna, Mart, Júpiter) i compara dues trajectòries.', tag: 'Cinemàtica' },
+  { cat: 'fisica', href: 'escala-univers/', glyph: '10ⁿ', t: 'Escala de l\'univers', d: 'De l\'àtom a la galàxia, multiplicant per 10 cada vegada. Potències i notació científica en acció.', tag: 'Ordres de magnitud · 3r ESO' },
+  // Miscel·lània
+  { cat: 'misc', href: 'maquina-temps/', glyph: '⚙', t: 'La Màquina del Temps', d: 'Una aventura interactiva: tria el camí, recull engranatges i torna a casa sa i estalvi.', tag: 'Aventura interactiva' },
+  // Curiositats
   { cat: 'curio', href: 'atles-art-rupestre/', glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
 ];
 const $ = (s) => document.querySelector(s);
@@ -147,7 +168,7 @@ function renderChips() {
 }
 function card(r) {
   return `<a class="card" href="${BASE}${r.href}" style="--c:var(--c-${r.cat});--t:var(--t-${r.cat})">
-    <div class="glyph" aria-hidden="true">${r.glyph}</div>
+    <div class="glyph${r.glyph.length > 2 ? ' long' : ''}" aria-hidden="true">${r.glyph}</div>
     <h3>${r.t}</h3><p>${r.d}</p>
     <div class="tag"><span>${r.tag}</span><span class="go">Obri →</span></div></a>`;
 }
@@ -155,12 +176,20 @@ function renderSections() {
   const list = CATS.filter((c) => current === 'tot' || current === c.id);
   $('#app').innerHTML = list.map((c) => {
     const items = RES.filter((r) => r.cat === c.id);
-    const body = items.length
-      ? items.map(card).join('')
-      : `<div class="soon" style="--c:var(--c-${c.id})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
+    let body;
+    if (!items.length) {
+      body = `<div class="soon" style="--c:var(--c-${c.id})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
+    } else {
+      const subs = [...new Set(items.map((r) => r.sub || ''))];
+      body = subs.map((sb) => {
+        const g = items.filter((r) => (r.sub || '') === sb);
+        const head = subs.length > 1 && sb ? `<h3 class="subh">${sb} <span>${g.length}</span></h3>` : '';
+        return `${head}<div class="grid">${g.map(card).join('')}</div>`;
+      }).join('');
+    }
     return `<section class="sec" style="--c:var(--c-${c.id})" aria-labelledby="h-${c.id}">
       <div class="sec-head"><h2 id="h-${c.id}">${c.n}</h2><p class="sub">${c.d}</p></div>
-      <div class="grid">${body}</div></section>`;
+      ${body}</section>`;
   }).join('');
 }
 $('#chips').addEventListener('click', (e) => {
