@@ -1,7 +1,7 @@
-# ildemoralesmates.github.io
+# Recursos de matemàtiques i ciència · Ilde
 
-Portada de https://ildemoralesmates.github.io/ — índex de recursos interactius de matemàtiques i ciència.
+Portada: https://ildemoralesmates.github.io/
 
-Els recursos viuen al repositori [RECURSOS-MATEM-TIQUES](https://github.com/Ildemoralesmates/RECURSOS-MATEM-TIQUES). Aquest repositori només conté la portada, la imatge de previsualització (`og-image.png`), `sitemap.xml` i `robots.txt`.
+Cada recurs és una pàgina independent dins la seua carpeta (`eratostenes/`, `fites-matematiques/`, …). La portada (`index.html`) els enllaça per categories.
 
-Llicència: CC BY-SA 4.0 (vegeu `LICENSE`).
+Llicència: CC BY-SA 4.0. Les imatges i materials de tercers conserven la seua pròpia llicència.

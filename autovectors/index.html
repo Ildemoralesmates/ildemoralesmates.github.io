@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Transformacions lineals i autovectors</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#ffffff; --fg:#1a1a1a; --muted:#6b7280; --panel:#f6f7f9; --border:#d5d9e0;
+    --accent:#2563eb; --accent-soft:#dbe6fd; --grid-line:#e3e6ea; --axis:#9aa1ab;
+    --grid-warp:#2563eb; --eig1:#dc2626; --eig2:#16a34a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+      --accent:#5b8cff; --accent-soft:#223357; --grid-line:#262a31; --axis:#565c66;
+      --grid-warp:#5b8cff; --eig1:#ff6b6b; --eig2:#4ade80;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+    --accent:#5b8cff; --accent-soft:#223357; --grid-line:#262a31; --axis:#565c66;
+    --grid-warp:#5b8cff; --eig1:#ff6b6b; --eig2:#4ade80;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  body { padding:24px 16px 60px; max-width:1080px; margin:0 auto; }
+  h1 { font-size:clamp(20px,4vw,28px); margin:0 0 6px; text-align:center; }
+  .subtitle { text-align:center; color:var(--muted); font-size:clamp(13px,2.4vw,15px); margin:0 0 20px; line-height:1.5; }
+
+  .preset-row { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:20px; }
+  .preset-btn {
+    font:inherit; font-weight:600; font-size:12.5px; padding:9px 14px; border-radius:999px;
+    border:1.5px solid var(--border); background:var(--panel); color:var(--fg); cursor:pointer;
+  }
+  .preset-btn:hover { border-color:var(--accent); }
+
+  .stage { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:26px; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px 18px 20px; }
+  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:0 0 12px; text-align:center; font-weight:600; }
+  svg { display:block; max-width:100%; height:auto; }
+
+  .side { display:flex; flex-direction:column; gap:14px; min-width:min(260px,100%); max-width:300px; }
+
+  .mtx-inputs { display:grid; grid-template-columns:1fr; gap:8px 14px; justify-content:center; margin: 0 auto; width: fit-content; max-width:100%;}
+  .mtx-inputs .cell { display:flex; align-items:center; gap:6px; }
+  .mtx-inputs label { font-size:12px; color:var(--muted); width:16px; }
+  .mtx-inputs input[type="range"] { width: 110px; }
+  .mtx-inputs .val { width:38px; text-align:right; font-variant-numeric:tabular-nums; font-size:13px; }
+
+  .stat-line { font-size:13px; text-align:center; margin: 4px 0; }
+  .stat-line b { font-variant-numeric: tabular-nums; }
+
+  .eig-box { border-radius:10px; padding:8px 10px; font-size:13px; text-align:center; margin-top:6px; }
+  .eig-real { background:var(--accent-soft); }
+  .eig-complex { background:var(--panel); border:1px dashed var(--border); color:var(--muted); }
+
+  .legend { display:flex; justify-content:center; gap:14px; font-size:12px; color:var(--muted); margin-top:8px; flex-wrap:wrap;}
+  .legend span { display:inline-flex; align-items:center; gap:5px; }
+  .swatch { width:14px; height:3px; display:inline-block; border-radius:2px; }
+
+  @media (max-width:640px) { .stage { gap:14px; } }
+</style>
+<meta name="description" content="Visualitza com una matriu deforma l&#x27;espai i descobreix els autovectors i autovalors.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/autovectors/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Transformacions lineals i autovectors">
+<meta property="og:description" content="Visualitza com una matriu deforma l&#x27;espai i descobreix els autovectors i autovalors.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/autovectors/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <h1>Com deforma l'espai una matriu</h1>
+  <p class="subtitle">Tota la quadrícula es transforma amb la mateixa matriu, punt a punt.<br>
+  Els autovectors (si existeixen) són les úniques direccions que <b>no giren</b>, només s'estiren.</p>
+
+  <div class="preset-row" id="presetRow"></div>
+
+  <div class="stage">
+    <div class="panel">
+      <h2>Transformació de la quadrícula</h2>
+      <svg id="svg" width="420" height="420" viewBox="0 0 420 420"></svg>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--grid-warp)"></span> quadrícula transformada</span>
+        <span><span class="swatch" style="background:var(--eig1)"></span> autovector 1</span>
+        <span><span class="swatch" style="background:var(--eig2)"></span> autovector 2</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2>Matriu M</h2>
+        <div class="mtx-inputs" id="mtxInputs"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Propietats</h2>
+        <p class="stat-line">det(M) = <b id="detVal">1.00</b></p>
+        <p class="stat-line">traça(M) = <b id="traceVal">2.00</b></p>
+        <div class="eig-box eig-real" id="eigBox">λ₁ = 1.00, λ₂ = 1.00</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const CX = 210, CY = 210, SCALE = 26;
+  const svg = document.getElementById("svg");
+  const presetRow = document.getElementById("presetRow");
+  const mtxInputs = document.getElementById("mtxInputs");
+  const detVal = document.getElementById("detVal");
+  const traceVal = document.getElementById("traceVal");
+  const eigBox = document.getElementById("eigBox");
+
+  const PRESETS = {
+    identitat: { label: "Identitat", m: [1,0,0,1] },
+    escalat:   { label: "Escalat", m: [2,0,0,0.5] },
+    rotacio:   { label: "Rotació 45°", m: [Math.SQRT1_2, -Math.SQRT1_2, Math.SQRT1_2, Math.SQRT1_2] },
+    cisalla:   { label: "Cisalla", m: [1,1,0,1] },
+    reflexio:  { label: "Reflexió (eix X)", m: [1,0,0,-1] },
+    singular:  { label: "Singular (col·lapsa)", m: [1,2,0.5,1] },
+  };
+
+  let M = [1, 0, 0, 1]; // a b c d  -> [[a,b],[c,d]]
+
+  function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+  function toScreen(x, y) { return [CX + x * SCALE, CY - y * SCALE]; }
+  function apply(x, y) { return [M[0] * x + M[1] * y, M[2] * x + M[3] * y]; }
+
+  // static background grid + axes (undeformed reference, very light)
+  const refGroup = ns("g");
+  svg.appendChild(refGroup);
+  for (let i = -7; i <= 7; i++) {
+    const l1 = ns("line");
+    const [x1, y1] = toScreen(i, -7), [x2, y2] = toScreen(i, 7);
+    l1.setAttribute("x1", x1); l1.setAttribute("y1", y1); l1.setAttribute("x2", x2); l1.setAttribute("y2", y2);
+    l1.setAttribute("stroke", "var(--grid-line)"); l1.setAttribute("stroke-width", "1");
+    refGroup.appendChild(l1);
+    const l2 = ns("line");
+    const [x3, y3] = toScreen(-7, i), [x4, y4] = toScreen(7, i);
+    l2.setAttribute("x1", x3); l2.setAttribute("y1", y3); l2.setAttribute("x2", x4); l2.setAttribute("y2", y4);
+    l2.setAttribute("stroke", "var(--grid-line)"); l2.setAttribute("stroke-width", "1");
+    refGroup.appendChild(l2);
+  }
+
+  const warpGroup = ns("g");
+  svg.appendChild(warpGroup);
+  const eigGroup = ns("g");
+  svg.appendChild(eigGroup);
+
+  // build input controls: a,b / c,d
+  const labels = ["a", "b", "c", "d"];
+  const sliders = [];
+  labels.forEach((lab, i) => {
+    const row = document.createElement("div");
+    row.className = "cell";
+    const l = document.createElement("label"); l.textContent = lab + " =";
+    const s = document.createElement("input");
+    s.type = "range"; s.min = "-3"; s.max = "3"; s.step = "0.1"; s.value = M[i];
+    const v = document.createElement("span"); v.className = "val"; v.textContent = M[i].toFixed(1);
+    row.appendChild(l); row.appendChild(s); row.appendChild(v);
+    mtxInputs.appendChild(row);
+    sliders.push({ s, v });
+    s.addEventListener("input", () => {
+      M[i] = Number(s.value);
+      v.textContent = M[i].toFixed(1);
+      draw();
+    });
+  });
+
+  Object.keys(PRESETS).forEach((key) => {
+    const b = document.createElement("button");
+    b.className = "preset-btn";
+    b.textContent = PRESETS[key].label;
+    b.addEventListener("click", () => {
+      M = PRESETS[key].m.slice();
+      sliders.forEach((sl, i) => { sl.s.value = M[i]; sl.v.textContent = M[i].toFixed(1); });
+      draw();
+    });
+    presetRow.appendChild(b);
+  });
+
+  function drawWarpedGrid() {
+    warpGroup.innerHTML = "";
+    const N = 7;
+    for (let i = -N; i <= N; i++) {
+      let pts = [];
+      for (let t = -N; t <= N; t += 0.25) {
+        const [x, y] = apply(i, t);
+        pts.push(toScreen(x, y));
+      }
+      const poly = ns("polyline");
+      poly.setAttribute("points", pts.map((p) => p.join(",")).join(" "));
+      poly.setAttribute("fill", "none");
+      poly.setAttribute("stroke", "var(--grid-warp)");
+      poly.setAttribute("stroke-width", i === 0 ? 2.4 : 1);
+      poly.setAttribute("opacity", i === 0 ? 0.9 : 0.45);
+      warpGroup.appendChild(poly);
+
+      let pts2 = [];
+      for (let t = -N; t <= N; t += 0.25) {
+        const [x, y] = apply(t, i);
+        pts2.push(toScreen(x, y));
+      }
+      const poly2 = ns("polyline");
+      poly2.setAttribute("points", pts2.map((p) => p.join(",")).join(" "));
+      poly2.setAttribute("fill", "none");
+      poly2.setAttribute("stroke", "var(--grid-warp)");
+      poly2.setAttribute("stroke-width", i === 0 ? 2.4 : 1);
+      poly2.setAttribute("opacity", i === 0 ? 0.9 : 0.45);
+      warpGroup.appendChild(poly2);
+    }
+  }
+
+  function fmt(v) {
+    const r = Math.round(v * 100) / 100;
+    return (Object.is(r, -0) ? 0 : r).toFixed(2);
+  }
+
+  function drawEigenLines(colorPairs) {
+    eigGroup.innerHTML = "";
+    colorPairs.forEach(([vx, vy], idx) => {
+      const color = idx === 0 ? "var(--eig1)" : "var(--eig2)";
+      const norm = Math.hypot(vx, vy) || 1;
+      const ux = vx / norm, uy = vy / norm;
+      const far = 9;
+      const [x1, y1] = toScreen(-ux * far, -uy * far);
+      const [x2, y2] = toScreen(ux * far, uy * far);
+      const line = ns("line");
+      line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+      line.setAttribute("stroke", color);
+      line.setAttribute("stroke-width", 2.6);
+      line.setAttribute("stroke-dasharray", "8 6");
+      eigGroup.appendChild(line);
+    });
+  }
+
+  function draw() {
+    const [a, b, c, d] = M;
+    const det = a * d - b * c;
+    const trace = a + d;
+    detVal.textContent = fmt(det);
+    traceVal.textContent = fmt(trace);
+
+    drawWarpedGrid();
+
+    const disc = trace * trace - 4 * det;
+    if (disc >= -1e-9) {
+      const sq = Math.sqrt(Math.max(0, disc));
+      const l1 = (trace + sq) / 2, l2 = (trace - sq) / 2;
+      const vec = (lam) => {
+        if (Math.abs(b) > 1e-9) return [b, lam - a];
+        if (Math.abs(c) > 1e-9) return [lam - d, c];
+        return Math.abs(lam - a) < 1e-6 ? [1, 0] : [0, 1];
+      };
+      const v1 = vec(l1), v2 = vec(l2);
+      drawEigenLines([v1, v2]);
+      eigBox.className = "eig-box eig-real";
+      if (Math.abs(disc) < 1e-6) {
+        eigBox.textContent = `λ = ${fmt(l1)} (autovalor doble)`;
+      } else {
+        eigBox.textContent = `λ₁ = ${fmt(l1)},  λ₂ = ${fmt(l2)}`;
+      }
+    } else {
+      eigGroup.innerHTML = "";
+      const re = fmt(trace / 2);
+      const im = fmt(Math.sqrt(-disc) / 2);
+      eigBox.className = "eig-box eig-complex";
+      eigBox.textContent = `Autovalors complexos: ${re} ± ${im}i  →  rotació pura, sense direccions invariants`;
+    }
+  }
+
+  draw();
+})();
+</script>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

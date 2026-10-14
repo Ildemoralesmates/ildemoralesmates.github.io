@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrius al món real — 3 activitats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FBF8F1;
+    --paper-line: #C9D6E8;
+    --margin-red: #C0453A;
+    --ink: #22324A;
+    --ink-soft: #4B5A72;
+    --accent: #1E6E5C;
+    --accent-soft: #E4EFE9;
+    --card-bg: #FFFFFF;
+    --card-border: #DDE3EC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1B2130;
+      --paper-line: #2C3A52;
+      --margin-red: #E07A6E;
+      --ink: #EDEFF4;
+      --ink-soft: #B7C0D1;
+      --accent: #5FBFA0;
+      --accent-soft: #223327;
+      --card-bg: #232B3D;
+      --card-border: #333F58;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1B2130;
+    --paper-line: #2C3A52;
+    --margin-red: #E07A6E;
+    --ink: #EDEFF4;
+    --ink-soft: #B7C0D1;
+    --accent: #5FBFA0;
+    --accent-soft: #223327;
+    --card-bg: #232B3D;
+    --card-border: #333F58;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(var(--paper) 0px, var(--paper) 31px, var(--paper-line) 32px),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+  }
+
+  .sheet {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 36px 80px 64px;
+    position: relative;
+    border-left: 2px solid var(--margin-red);
+    margin-left: 24px;
+  }
+  @media (max-width: 640px) {
+    .sheet { padding: 32px 18px 60px 34px; margin-left: 4px; }
+  }
+
+  header.title-block {
+    margin-bottom: 44px;
+  }
+  header.title-block .kicker {
+    font-family: 'Patrick Hand', cursive;
+    color: var(--margin-red);
+    font-size: 1.15rem;
+    margin: 0 0 4px 0;
+  }
+  header.title-block h1 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0 0 10px 0;
+    color: var(--ink);
+  }
+  header.title-block p {
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0;
+  }
+
+  .activity {
+    margin-bottom: 56px;
+    padding-bottom: 40px;
+    border-bottom: 1px dashed var(--card-border);
+  }
+  .activity:last-of-type { border-bottom: none; }
+
+  .activity .label {
+    font-family: 'Patrick Hand', cursive;
+    color: var(--accent);
+    font-size: 1.05rem;
+    margin: 0 0 2px 0;
+  }
+  .activity h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.5rem;
+    margin: 0 0 6px 0;
+  }
+  .activity .meta {
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 0 0 18px 0;
+  }
+  .activity .meta strong { color: var(--ink); }
+
+  .box {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin: 18px 0;
+  }
+  .box h3 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .box p:last-child { margin-bottom: 0; }
+
+  ol.tasks {
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  ol.tasks li { margin-bottom: 10px; }
+  ol.tasks li:last-child { margin-bottom: 0; }
+
+  table.matrix {
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-family: 'Source Serif 4', serif;
+  }
+  table.matrix td, table.matrix th {
+    padding: 6px 14px;
+    text-align: center;
+    font-size: 1.05rem;
+  }
+  table.matrix th {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+  table.matrix.bracket td {
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+  table.matrix.bracket tr:first-child td { border-top: 2px solid var(--ink); }
+  table.matrix.bracket tr:last-child td { border-bottom: 2px solid var(--ink); }
+  table.matrix.bracket td:first-child { border-left: 2px solid var(--ink); }
+  table.matrix.bracket td:last-child { border-right: 2px solid var(--ink); }
+
+  .matrix-row { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; margin: 10px 0; }
+  .matrix-row figure { margin: 0; text-align: center; }
+  .matrix-row figcaption {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  .grid-canvas {
+    display: inline-block;
+  }
+  .grid-canvas td {
+    width: 30px; height: 30px;
+    border: 1px solid var(--card-border);
+    text-align: center; vertical-align: middle;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  details.answers {
+    margin-top: 20px;
+    background: var(--accent-soft);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 4px 18px;
+  }
+  details.answers summary {
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 12px 0;
+    list-style: none;
+  }
+  details.answers summary::-webkit-details-marker { display: none; }
+  details.answers summary::before {
+    content: "🔍 ";
+  }
+  details.answers[open] summary { border-bottom: 1px dashed var(--card-border); }
+  details.answers .answer-body { padding: 14px 0 16px 0; }
+
+  .footnote {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    font-style: italic;
+    margin-top: 10px;
+  }
+
+  code, .val { font-family: 'Source Serif 4', serif; font-weight: 600; }
+</style>
+<meta name="description" content="Full de treball amb tres activitats de matrius basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/matrius-activitats/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Matrius al món real — 3 activitats">
+<meta property="og:description" content="Full de treball amb tres activitats de matrius basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/matrius-activitats/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<div class="sheet">
+
+  <header class="title-block">
+    <p class="kicker">Full de treball — Matrius</p>
+    <h1>Les matrius no viuen només al llibre</h1>
+    <p>Tres activitats curtes, cadascuna basada en una aplicació real, per treballar operacions bàsiques amb matrius abans d'entrar en la teoria formal. Es poden fer totes en una sessió o repartir-les en diferents dies.</p>
+  </header>
+
+  <!-- ACTIVITAT 1 -->
+  <section class="activity">
+    <p class="label">Activitat 1</p>
+    <h2>Qui coneix a qui: la matriu d'una xarxa social</h2>
+    <p class="meta"><strong>Objectiu:</strong> multiplicació de matrius · <strong>Temps:</strong> 20 min · <strong>Material:</strong> paper i llapis</p>
+
+    <div class="box">
+      <h3>Context</h3>
+      <p>En una xarxa social xicoteta hi ha quatre usuaris: <strong>Ana (A)</strong>, <strong>Bruno (B)</strong>, <strong>Carla (C)</strong> i <strong>David (D)</strong>. La matriu <span class="val">M</span> indica qui segueix a qui: un 1 vol dir que hi ha connexió directa, un 0 que no.</p>
+      <div class="matrix-row">
+        <figure>
+          <table class="matrix bracket">
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+            <tr><th>A</th><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+            <tr><th>B</th><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+            <tr><th>C</th><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+            <tr><th>D</th><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          </table>
+          <figcaption>Matriu M (connexions directes)</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Tasques</h3>
+      <ol class="tasks">
+        <li>Calcula <span class="val">M² = M × M</span> a mà, element a element.</li>
+        <li>Observa el valor de la posició (A, D) en <span class="val">M²</span>. Ana i David no es segueixen directament (M té un 0 en eixa posició) — què representa aleshores el número que has obtingut en M²?</li>
+        <li>Compara el valor de la diagonal, per exemple (A, A). A què correspon aquest número en termes de "quantes connexions té Ana"?</li>
+        <li><em>Per acabar de rematar-ho:</em> si M² indica camins de longitud 2 (amics d'amics), què creus que indicaria M³?</li>
+      </ol>
+    </div>
+
+    <details class="answers">
+      <summary>Mostra la solució</summary>
+      <div class="answer-body">
+        <div class="matrix-row">
+          <figure>
+            <table class="matrix bracket">
+              <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+              <tr><th>A</th><td>2</td><td>0</td><td>0</td><td>2</td></tr>
+              <tr><th>B</th><td>0</td><td>2</td><td>2</td><td>0</td></tr>
+              <tr><th>C</th><td>0</td><td>2</td><td>2</td><td>0</td></tr>
+              <tr><th>D</th><td>2</td><td>0</td><td>0</td><td>2</td></tr>
+            </table>
+            <figcaption>Matriu M²</figcaption>
+          </figure>
+        </div>
+        <p>El (A, D) = 2 vol dir que, encara que Ana i David no es segueixen mútuament, tenen <strong>2 amics en comú</strong> (Bruno i Carla) — exactament el que Instagram et mostraria com a "gent que potser coneixes". La diagonal (A, A) = 2 indica el nombre de connexions directes d'Ana. I sí: M³ indicaria camins de longitud 3, és a dir, "amics d'amics d'amics".</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ACTIVITAT 2 -->
+  <section class="activity">
+    <p class="label">Activitat 2</p>
+    <h2>Editar una foto sense obrir Photoshop</h2>
+    <p class="meta"><strong>Objectiu:</strong> operacions element a element (suma, producte per escalar) · <strong>Temps:</strong> 15 min</p>
+
+    <div class="box">
+      <h3>Context</h3>
+      <p>Una imatge en escala de grisos és una matriu: cada element és un valor entre 0 (negre) i 255 (blanc). Aquesta és una imatgeta 4×4 <span class="val">I</span>:</p>
+      <div class="matrix-row">
+        <figure>
+          <table class="matrix bracket">
+            <tr><td>20</td><td>20</td><td>200</td><td>200</td></tr>
+            <tr><td>20</td><td>20</td><td>200</td><td>200</td></tr>
+            <tr><td>20</td><td>20</td><td>100</td><td>100</td></tr>
+            <tr><td>20</td><td>20</td><td>100</td><td>100</td></tr>
+          </table>
+          <figcaption>Matriu I (imatge original)</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Tasques</h3>
+      <ol class="tasks">
+        <li><strong>Brillantor:</strong> calcula <span class="val">I + 40</span> (sumar a totes les caselles).</li>
+        <li><strong>Negatiu:</strong> calcula <span class="val">255 − I</span> (a cada element).</li>
+        <li><strong>Contrast:</strong> calcula <span class="val">1,5 · I</span>. Alguna casella et dona un valor superior a 255 — què hauríem de fer amb eixe valor perquè tinga sentit com a color? (Pensa en domini i recorregut d'una funció.)</li>
+        <li>Pinta les quatre matrius (original i les tres transformacions) fent servir una escala de grisos aproximada, per comprovar visualment l'efecte.</li>
+      </ol>
+    </div>
+
+    <details class="answers">
+      <summary>Mostra la solució</summary>
+      <div class="answer-body">
+        <p><strong>I + 40:</strong> 60,60,240,240 / 60,60,240,240 / 60,60,140,140 / 60,60,140,140</p>
+        <p><strong>255 − I:</strong> 235,235,55,55 / 235,235,55,55 / 235,235,155,155 / 235,235,155,155</p>
+        <p><strong>1,5 · I:</strong> 30,30,<em>255*</em>,<em>255*</em> / 30,30,255*,255* / 30,30,150,150 / 30,30,150,150 &nbsp; (*el valor teòric és 300, però es <strong>retalla (clipping)</strong> a 255 perquè eixe és el màxim possible; qualsevol programa d'edició fa exactament això)</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ACTIVITAT 3 -->
+  <section class="activity">
+    <p class="label">Activitat 3</p>
+    <h2>Girar una figura amb una matriu de rotació</h2>
+    <p class="meta"><strong>Objectiu:</strong> producte matriu × vector · <strong>Temps:</strong> 20 min · <strong>Material:</strong> paper quadriculat</p>
+
+    <div class="box">
+      <h3>Context</h3>
+      <p>Un triangle té els vèrtexs <span class="val">(2, 0)</span>, <span class="val">(4, 0)</span> i <span class="val">(4, 3)</span>. Per rotar-lo 90° al voltant de l'origen, multipliquem cada vèrtex per la matriu de rotació:</p>
+      <div class="matrix-row">
+        <figure>
+          <table class="matrix bracket">
+            <tr><td>0</td><td>−1</td></tr>
+            <tr><td>1</td><td>0</td></tr>
+          </table>
+          <figcaption>Matriu de rotació de 90°</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Tasques</h3>
+      <ol class="tasks">
+        <li>Dibuixa el triangle original en paper quadriculat.</li>
+        <li>Calcula, per a cada vèrtex, el producte de la matriu de rotació pel vector columna corresponent (fes-ho vèrtex a vèrtex).</li>
+        <li>Dibuixa el triangle rotat sobre el mateix eixos. Comprova visualment que efectivament ha girat 90°.</li>
+        <li><em>Repte opcional:</em> la matriu de rotació de 45° té els valors cos45° = sin45° ≈ 0,71 a les posicions corresponents. Calcula on acaba el vèrtex (4, 3) després d'aquesta rotació.</li>
+      </ol>
+    </div>
+
+    <details class="answers">
+      <summary>Mostra la solució</summary>
+      <div class="answer-body">
+        <p><strong>Rotació de 90°:</strong> (2,0) → (0,2) &nbsp;·&nbsp; (4,0) → (0,4) &nbsp;·&nbsp; (4,3) → (−3,4)</p>
+        <p><strong>Repte 45°:</strong> amb (x',y') = (0,71x − 0,71y, 0,71x + 0,71y), el vèrtex (4,3) va a parar aproximadament a (0,71, 4,95).</p>
+      </div>
+    </details>
+  </section>
+
+  <p class="footnote">Full elaborat per treballar la introducció al tema de matrius amb exemples aplicats abans d'entrar en la teoria formal (operacions, tipus de matrius, propietats).</p>
+
+</div>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

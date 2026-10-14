@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Xifrat amb matrius — Cifra de Hill</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#ffffff; --fg:#1a1a1a; --muted:#6b7280; --panel:#f6f7f9; --border:#d5d9e0;
+    --accent:#2563eb; --accent-soft:#dbe6fd; --danger:#dc2626; --danger-soft:#fde2e2; --good:#16a34a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+      --accent:#5b8cff; --accent-soft:#223357; --danger:#ff6b6b; --danger-soft:#3a2020; --good:#4ade80;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+    --accent:#5b8cff; --accent-soft:#223357; --danger:#ff6b6b; --danger-soft:#3a2020; --good:#4ade80;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  body { padding:24px 16px 60px; max-width:920px; margin:0 auto; }
+  h1 { font-size:clamp(20px,4vw,28px); margin:0 0 6px; text-align:center; }
+  .subtitle { text-align:center; color:var(--muted); font-size:clamp(13px,2.4vw,15px); margin:0 0 24px; line-height:1.5; }
+
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:18px; }
+  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:0 0 12px; font-weight:600; }
+
+  .key-row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:20px; }
+  .mtx-inputs { display:grid; grid-template-columns:repeat(2, 54px); gap:8px; }
+  .mtx-inputs input {
+    width:54px; height:44px; text-align:center; font-size:15px; font-weight:700;
+    border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--fg);
+  }
+  .preset-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .preset-btn {
+    font:inherit; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:999px;
+    border:1.5px solid var(--border); background:var(--bg); color:var(--fg); cursor:pointer;
+  }
+  .preset-btn:hover { border-color:var(--accent); }
+
+  .key-status { text-align:center; margin-top:12px; font-size:13px; padding:8px 12px; border-radius:10px; }
+  .key-ok { background:var(--accent-soft); }
+  .key-bad { background:var(--danger-soft); color:var(--danger); font-weight:600; }
+
+  textarea, input[type="text"] {
+    width:100%; font:inherit; font-size:15px; padding:10px 12px; border-radius:10px;
+    border:1px solid var(--border); background:var(--bg); color:var(--fg); resize:vertical;
+  }
+  label.field-label { font-size:12.5px; color:var(--muted); display:block; margin-bottom:6px; }
+
+  .btn-row { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  button {
+    font:inherit; font-weight:700; font-size:14px; padding:11px 20px; border-radius:999px;
+    border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer;
+  }
+  button.secondary { background:var(--panel); color:var(--fg); border-color:var(--border); }
+
+  .result-box {
+    margin-top:14px; padding:12px 14px; border-radius:10px; background:var(--bg);
+    border:1px solid var(--border); font-family:"SFMono-Regular",Consolas,Menlo,monospace;
+    font-size:16px; letter-spacing:.06em; word-break:break-all; min-height:24px;
+  }
+
+  .steps {
+    font-family:"SFMono-Regular",Consolas,Menlo,monospace; font-size:12.5px; line-height:1.8;
+    background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-top:10px;
+    white-space: pre-wrap;
+  }
+</style>
+<meta name="description" content="Xifra i desxifra missatges amb la cifra de Hill: una matriu 2×2 com a clau i la seua inversa mòdul 26.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/cifra-hill/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Xifrat amb matrius — Cifra de Hill">
+<meta property="og:description" content="Xifra i desxifra missatges amb la cifra de Hill: una matriu 2×2 com a clau i la seua inversa mòdul 26.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/cifra-hill/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <h1>Xifrat amb matrius — Cifra de Hill</h1>
+  <p class="subtitle">La clau és una matriu 2×2. Xifrar és multiplicar; desxifrar és multiplicar per la <b>inversa</b>.<br>
+  Sense la matriu inversa correcta, el missatge queda il·legible per sempre.</p>
+
+  <div class="panel">
+    <h2>Matriu clau K (mòdul 26)</h2>
+    <div class="key-row">
+      <div class="mtx-inputs" id="mtxInputs"></div>
+      <div class="preset-row" id="presetRow"></div>
+    </div>
+    <div class="key-status" id="keyStatus"></div>
+  </div>
+
+  <div class="panel">
+    <label class="field-label" for="plainInput">Missatge original (només lletres A–Z, sense accents)</label>
+    <textarea id="plainInput" rows="2">HOLA MON</textarea>
+    <div class="btn-row">
+      <button id="btnEncrypt">🔒 Xifrar</button>
+    </div>
+    <div class="result-box" id="cipherResult"></div>
+  </div>
+
+  <div class="panel">
+    <label class="field-label" for="cipherInput">Missatge xifrat (per desxifrar)</label>
+    <input type="text" id="cipherInput" value="">
+    <div class="btn-row">
+      <button class="secondary" id="btnDecrypt">🔓 Desxifrar</button>
+    </div>
+    <div class="result-box" id="plainResult"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Exemple pas a pas (primer parell de lletres)</h2>
+    <div class="steps" id="stepsBox">Escriu un missatge i prem «Xifrar» per veure el càlcul.</div>
+  </div>
+
+<script>
+(function () {
+  const PRESETS = {
+    "K1 (3,3,2,5)": [3, 3, 2, 5],
+    "K2 (2,3,1,4)": [2, 3, 1, 4],
+    "K3 (5,8,3,5)": [5, 8, 3, 5],
+  };
+
+  const mtxInputs = document.getElementById("mtxInputs");
+  const presetRow = document.getElementById("presetRow");
+  const keyStatus = document.getElementById("keyStatus");
+  const plainInput = document.getElementById("plainInput");
+  const cipherInput = document.getElementById("cipherInput");
+  const cipherResult = document.getElementById("cipherResult");
+  const plainResult = document.getElementById("plainResult");
+  const stepsBox = document.getElementById("stepsBox");
+  const btnEncrypt = document.getElementById("btnEncrypt");
+  const btnDecrypt = document.getElementById("btnDecrypt");
+
+  let K = [3, 3, 2, 5];
+
+  const inputs = [];
+  for (let i = 0; i < 4; i++) {
+    const inp = document.createElement("input");
+    inp.type = "number";
+    inp.value = K[i];
+    inp.addEventListener("change", () => {
+      K[i] = ((Number(inp.value) % 26) + 26) % 26;
+      inp.value = K[i];
+      checkKey();
+    });
+    mtxInputs.appendChild(inp);
+    inputs.push(inp);
+  }
+  // reorder visually as [a b; c d] -> grid is 2 cols so natural order a,b,c,d works already
+
+  Object.keys(PRESETS).forEach((label) => {
+    const b = document.createElement("button");
+    b.className = "preset-btn";
+    b.textContent = label;
+    b.addEventListener("click", () => {
+      K = PRESETS[label].slice();
+      inputs.forEach((inp, i) => (inp.value = K[i]));
+      checkKey();
+    });
+    presetRow.appendChild(b);
+  });
+
+  function mod(n, m) { return ((n % m) + m) % m; }
+
+  function modInverse(a, m) {
+    a = mod(a, m);
+    for (let x = 1; x < m; x++) {
+      if (mod(a * x, m) === 1) return x;
+    }
+    return null;
+  }
+
+  function det2(m) { return mod(m[0] * m[3] - m[1] * m[2], 26); }
+
+  function inverseKey(m) {
+    const d = det2(m);
+    const dInv = modInverse(d, 26);
+    if (dInv === null) return null;
+    // adjugate [[d,-b],[-c,a]] * dInv mod 26
+    return [
+      mod(m[3] * dInv, 26),
+      mod(-m[1] * dInv, 26),
+      mod(-m[2] * dInv, 26),
+      mod(m[0] * dInv, 26),
+    ];
+  }
+
+  function checkKey() {
+    const d = det2(K);
+    const dInv = modInverse(d, 26);
+    if (dInv === null) {
+      keyStatus.className = "key-status key-bad";
+      keyStatus.textContent = `det(K) mod 26 = ${d} → no té invers (mcd(${d},26) ≠ 1). Aquesta clau NO es pot fer servir per desxifrar.`;
+      return false;
+    } else {
+      keyStatus.className = "key-status key-ok";
+      keyStatus.textContent = `det(K) mod 26 = ${d}, invers = ${dInv} → clau vàlida ✓`;
+      return true;
+    }
+  }
+
+  function cleanText(s) {
+    return s.toUpperCase().replace(/[^A-Z]/g, "");
+  }
+
+  function letterToNum(ch) { return ch.charCodeAt(0) - 65; }
+  function numToLetter(n) { return String.fromCharCode(mod(n, 26) + 65); }
+
+  function transformText(text, matrix, describeFirst) {
+    let clean = cleanText(text);
+    if (clean.length === 0) return { out: "", steps: "Escriu almenys una lletra." };
+    if (clean.length % 2 !== 0) clean += "X";
+    let out = "";
+    let steps = "";
+    for (let i = 0; i < clean.length; i += 2) {
+      const p1 = letterToNum(clean[i]);
+      const p2 = letterToNum(clean[i + 1]);
+      const c1 = mod(matrix[0] * p1 + matrix[1] * p2, 26);
+      const c2 = mod(matrix[2] * p1 + matrix[3] * p2, 26);
+      out += numToLetter(c1) + numToLetter(c2);
+      if (i === 0 && describeFirst) {
+        steps =
+          `Parell «${clean[i]}${clean[i+1]}» \u2192 (${p1}, ${p2})\n\n` +
+          `[ ${matrix[0]}  ${matrix[1]} ]   [ ${p1} ]     [ ${mod(matrix[0]*p1+matrix[1]*p2,26)} ]\n` +
+          `[ ${matrix[2]}  ${matrix[3]} ] · [ ${p2} ] mod 26 = [ ${mod(matrix[2]*p1+matrix[3]*p2,26)} ]\n\n` +
+          `\u2192 (${c1}, ${c2}) \u2192 «${numToLetter(c1)}${numToLetter(c2)}»`;
+      }
+    }
+    return { out, steps };
+  }
+
+  btnEncrypt.addEventListener("click", () => {
+    if (!checkKey()) { cipherResult.textContent = ""; stepsBox.textContent = "Aquesta clau no és invertible: tria'n una altra abans de xifrar."; return; }
+    const { out, steps } = transformText(plainInput.value, K, true);
+    cipherResult.textContent = out || "—";
+    cipherInput.value = out;
+    stepsBox.textContent = steps || "—";
+  });
+
+  btnDecrypt.addEventListener("click", () => {
+    const inv = inverseKey(K);
+    if (!inv) { plainResult.textContent = ""; stepsBox.textContent = "Aquesta clau no és invertible: no es pot desxifrar."; return; }
+    const { out, steps } = transformText(cipherInput.value, inv, true);
+    plainResult.textContent = out || "—";
+    stepsBox.textContent = "Desxifrant amb K\u207b\u00b9:\n\n" + (steps || "—");
+  });
+
+  checkKey();
+})();
+</script>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

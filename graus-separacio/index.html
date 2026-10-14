@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Graus de separació — potències de la matriu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#ffffff; --fg:#1a1a1a; --muted:#6b7280; --panel:#f6f7f9; --border:#d5d9e0;
+    --accent:#2563eb; --accent-soft:#dbe6fd; --node-bg:#e5e7eb; --edge:#c7cbd1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+      --accent:#5b8cff; --accent-soft:#223357; --node-bg:#2c303a; --edge:#3a3f49;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+    --accent:#5b8cff; --accent-soft:#223357; --node-bg:#2c303a; --edge:#3a3f49;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  body { padding:24px 16px 60px; max-width:1060px; margin:0 auto; }
+  h1 { font-size:clamp(20px,4vw,28px); margin:0 0 6px; text-align:center; }
+  .subtitle { text-align:center; color:var(--muted); font-size:clamp(13px,2.4vw,15px); margin:0 0 20px; line-height:1.5; }
+
+  .stage { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:26px; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px 18px 20px; }
+  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:0 0 12px; text-align:center; font-weight:600; }
+  svg { display:block; }
+  .node-label { font-size:10px; fill:var(--fg); pointer-events:none; font-weight:600;}
+  .node-circle { cursor:pointer; stroke:var(--bg); stroke-width:2; }
+
+  .side { display:flex; flex-direction:column; gap:14px; min-width:250px; max-width:290px; }
+
+  .step-row { display:flex; justify-content:center; gap:8px; margin-bottom: 4px;}
+  .step-btn {
+    font:inherit; font-weight:700; font-size:15px; width:44px; height:44px; border-radius:12px;
+    border:1.5px solid var(--border); background:var(--bg); color:var(--fg); cursor:pointer;
+  }
+  .step-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .status-line { text-align:center; font-size:13.5px; margin:10px 0 0; line-height:1.5; }
+  .status-line b { color:var(--accent); }
+
+  .heatmap-grid { display:grid; grid-template-columns:repeat(16, var(--hcell, 16px)); gap:1px; }
+  .heatmap-grid div { width:var(--hcell, 16px); height:var(--hcell, 16px); }
+
+  .caption { text-align:center; font-size:11.5px; color:var(--muted); margin-top:8px; }
+
+  .instructions { text-align:center; font-size:13px; color:var(--muted); margin-bottom: 14px; }
+</style>
+<meta name="description" content="Potències d&#x27;una matriu d&#x27;adjacència: quants camins hi ha entre dues persones d&#x27;una xarxa d&#x27;amistats.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/graus-separacio/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Graus de separació — potències de la matriu">
+<meta property="og:description" content="Potències d&#x27;una matriu d&#x27;adjacència: quants camins hi ha entre dues persones d&#x27;una xarxa d&#x27;amistats.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/graus-separacio/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <h1>Quanta gent arribes a conèixer en N passes?</h1>
+  <p class="subtitle">16 alumnes, algunes amistats directes. M<sup>n</sup> compta els camins de longitud n entre dues persones.</p>
+  <p class="instructions">👉 Clica un node per triar l'origen, i tria n amb els botons.</p>
+
+  <div class="stage">
+    <div class="panel">
+      <h2>La xarxa</h2>
+      <svg id="svg" width="420" height="420" viewBox="0 0 420 420"></svg>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2>Graus de separació (n)</h2>
+        <div class="step-row" id="stepRow"></div>
+        <p class="status-line" id="statusLine"></p>
+      </div>
+
+      <div class="panel">
+        <h2>M<sup id="expSup">n</sup> sencera (mapa de calor)</h2>
+        <div class="heatmap-grid" id="heatmap"></div>
+        <p class="caption">Cada casella (i,j): quants camins de longitud n hi ha entre i i j. Més fosc = més camins.</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const NAMES = ["Marc","Laia","Pau","Judit","Aleix","Núria","Biel","Carla","Iker","Martina","Oriol","Paula","Dídac","Alba","Roger","Clara"];
+  const N = NAMES.length;
+  const EDGES = [
+    [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],[15,0],
+    [0,5],[2,9],[4,11],[6,13],[8,15],[10,1],[12,3],[14,7],
+    [0,8],[4,12],
+  ];
+
+  const CX = 210, CY = 210, R = 170;
+  const svg = document.getElementById("svg");
+  const stepRow = document.getElementById("stepRow");
+  const statusLine = document.getElementById("statusLine");
+  const heatmap = document.getElementById("heatmap");
+  const expSup = document.getElementById("expSup");
+
+  function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+
+  const positions = [];
+  for (let i = 0; i < N; i++) {
+    const ang = (i / N) * 2 * Math.PI - Math.PI / 2;
+    positions.push([CX + R * Math.cos(ang), CY + R * Math.sin(ang)]);
+  }
+
+  // build adjacency matrix
+  function zeros() { return Array.from({ length: N }, () => new Array(N).fill(0)); }
+  const M1 = zeros();
+  EDGES.forEach(([a, b]) => { M1[a][b] = 1; M1[b][a] = 1; });
+
+  function matMul(A, B) {
+    const C = zeros();
+    for (let i = 0; i < N; i++) {
+      for (let k = 0; k < N; k++) {
+        if (A[i][k] === 0) continue;
+        for (let j = 0; j < N; j++) C[i][j] += A[i][k] * B[k][j];
+      }
+    }
+    return C;
+  }
+
+  const POWERS = [null, M1];
+  for (let p = 2; p <= 4; p++) POWERS.push(matMul(POWERS[p - 1], M1));
+
+  // draw static edges
+  const edgeGroup = ns("g");
+  svg.appendChild(edgeGroup);
+  EDGES.forEach(([a, b]) => {
+    const l = ns("line");
+    l.setAttribute("x1", positions[a][0]); l.setAttribute("y1", positions[a][1]);
+    l.setAttribute("x2", positions[b][0]); l.setAttribute("y2", positions[b][1]);
+    l.setAttribute("stroke", "var(--edge)"); l.setAttribute("stroke-width", "1.5");
+    edgeGroup.appendChild(l);
+  });
+
+  // nodes
+  const nodeCircles = [];
+  const nodeGroup = ns("g");
+  svg.appendChild(nodeGroup);
+  positions.forEach(([x, y], i) => {
+    const c = ns("circle");
+    c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 14);
+    c.setAttribute("class", "node-circle");
+    c.setAttribute("fill", "var(--node-bg)");
+    c.addEventListener("click", () => { origin = i; render(); });
+    nodeGroup.appendChild(c);
+    nodeCircles.push(c);
+
+    const label = ns("text");
+    const lx = CX + (R + 22) * Math.cos((i / N) * 2 * Math.PI - Math.PI / 2);
+    const ly = CY + (R + 22) * Math.sin((i / N) * 2 * Math.PI - Math.PI / 2);
+    label.setAttribute("x", lx); label.setAttribute("y", ly + 3);
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("class", "node-label");
+    label.textContent = NAMES[i];
+    nodeGroup.appendChild(label);
+  });
+
+  let origin = 0;
+  let n = 1;
+
+  for (let p = 1; p <= 4; p++) {
+    const b = document.createElement("button");
+    b.className = "step-btn" + (p === 1 ? " active" : "");
+    b.textContent = p;
+    b.addEventListener("click", () => {
+      n = p;
+      [...stepRow.children].forEach((el) => el.classList.remove("active"));
+      b.classList.add("active");
+      render();
+    });
+    stepRow.appendChild(b);
+  }
+
+  // heatmap cells
+  const hcells = [];
+  for (let i = 0; i < N * N; i++) {
+    const d = document.createElement("div");
+    heatmap.appendChild(d);
+    hcells.push(d);
+  }
+
+  function accentRgb() {
+    const dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const root = document.documentElement.getAttribute("data-theme");
+    const isDark = root === "dark" || (root !== "light" && dark);
+    return isDark ? [91, 140, 255] : [37, 99, 235];
+  }
+
+  function shade(value, max) {
+    if (value <= 0) return "var(--node-bg)";
+    const t = Math.min(1, value / max);
+    const [r, g, b] = accentRgb();
+    const bgIsDark = getComputedStyle(document.body).getPropertyValue("--bg").trim() !== "#ffffff";
+    // blend towards accent color proportionally to t
+    const base = bgIsDark ? [31, 34, 40] : [255, 255, 255];
+    const mix = (c1, c2) => Math.round(c1 + (c2 - c1) * (0.15 + 0.85 * t));
+    return `rgb(${mix(base[0], r)}, ${mix(base[1], g)}, ${mix(base[2], b)})`;
+  }
+
+  function render() {
+    expSup.textContent = n;
+    const Mn = POWERS[n];
+    const row = Mn[origin];
+    const maxVal = Math.max(1, ...row.filter((_, j) => j !== origin));
+    let reachable = 0;
+
+    nodeCircles.forEach((c, i) => {
+      if (i === origin) {
+        c.setAttribute("fill", "var(--accent)");
+        c.setAttribute("r", 16);
+      } else {
+        const v = row[i];
+        if (v > 0) reachable++;
+        c.setAttribute("fill", shade(v, maxVal));
+        c.setAttribute("r", 14);
+      }
+    });
+
+    statusLine.innerHTML =
+      `Origen: <b>${NAMES[origin]}</b><br>` +
+      `Amb <b>${n}</b> passa${n > 1 ? "des" : ""}, arriba a <b>${reachable}</b> de ${N - 1} companys.`;
+
+    // heatmap of full Mn
+    let globalMax = 1;
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) if (i !== j) globalMax = Math.max(globalMax, Mn[i][j]);
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < N; j++) {
+        const idx = i * N + j;
+        const v = Mn[i][j];
+        hcells[idx].style.background = i === j ? "var(--edge)" : shade(v, globalMax);
+      }
+    }
+  }
+
+  function setSizes() {
+    const w = window.innerWidth;
+    const hcell = w < 480 ? 14 : 18;
+    document.documentElement.style.setProperty("--hcell", hcell + "px");
+  }
+  setSizes();
+  window.addEventListener("resize", setSizes);
+
+  render();
+})();
+</script>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

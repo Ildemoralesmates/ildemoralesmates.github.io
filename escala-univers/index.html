@@ -1,0 +1,716 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="description" content="De l&#x27;àtom a la galàxia, multiplicant per 10 cada vegada: potències de 10 i notació científica.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/escala-univers/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Escala de l&#x27;univers">
+<meta property="og:description" content="De l&#x27;àtom a la galàxia, multiplicant per 10 cada vegada: potències de 10 i notació científica.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/escala-univers/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head><body>
+<title>Escala de l'univers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#05070d; --panel:#0c1120; --panel2:#111831; --line:#1f2944;
+  --ink:#e9edf6; --muted:#8d97b0; --accent:#f5b841; --cyan:#7fd6e6;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:18px 40px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,40px);letter-spacing:-.01em;margin:0;line-height:1.05;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.stage{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.stage canvas{display:block;width:100%;height:clamp(340px,60vh,660px);touch-action:none;cursor:ns-resize}
+.stage:fullscreen canvas{height:100vh}
+.hud{position:absolute;left:14px;top:12px;pointer-events:none;display:flex;flex-direction:column;gap:2px}
+.hud .lab{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hud .val{font-family:var(--mono);font-size:clamp(20px,3.2vw,32px);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hud .val sup{font-size:.6em}
+.hud .alt{font-family:var(--mono);font-size:13px;color:var(--cyan)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover,select:hover{border-color:#34436b}
+button:focus-visible,select:focus-visible,input:focus-visible,.ruler:focus-visible,tr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:#1a1204;border-color:var(--accent);font-weight:600;min-width:128px}
+.chk{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
+.chk input{accent-color:var(--accent)}
+.spacer{flex:1}
+.rulerbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px 6px}
+.rulerbox .lab{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ruler{position:relative;height:62px;cursor:pointer;touch-action:none;margin-top:4px}
+.ruler .axis{position:absolute;left:0;right:0;top:30px;height:1px;background:#3a4668}
+.ruler .tick{position:absolute;top:26px;width:1px;height:9px;background:#3a4668}
+.ruler .tick.maj{height:14px;top:23px;background:#5a6891}
+.ruler .tl{position:absolute;top:40px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.ruler .dot{position:absolute;top:14px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--cyan);opacity:.55}
+.ruler .dot.on{background:var(--accent);opacity:1;box-shadow:0 0 0 3px rgba(245,184,65,.25)}
+.ruler .cur{position:absolute;top:4px;bottom:18px;width:2px;margin-left:-1px;background:var(--accent)}
+.grid2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.card h2{font-family:var(--display);font-weight:800;font-size:26px;margin:0 0 10px;line-height:1.1}
+.big{font-family:var(--mono);font-size:24px;color:var(--accent);margin:0}
+.big sup,.mono sup{font-size:.62em}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:14px 0 0;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);word-break:break-all}
+.fact{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);color:#cfd5e4;max-width:60ch}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:0 8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid #161e36;white-space:nowrap}
+td.mono{font-family:var(--mono)}
+td.k{font-family:var(--mono);color:var(--cyan);text-align:right}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#121a33}
+tbody tr.on{background:rgba(245,184,65,.12)}
+tbody tr.on td:first-child{color:var(--accent)}
+.foot{color:var(--muted);font-size:13px;margin:0;max-width:90ch}
+kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-radius:4px;padding:0 4px;background:var(--panel2)}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>De l'àtom a la galàxia, <span>×10</span> cada vegada</h1>
+    <p class="sub">Escala de l'univers · Potències i notació científica · 3r ESO</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="Animació de zoom en potències de deu, del protó a la galàxia d'Andròmeda"></canvas>
+    <div class="hud">
+      <div class="lab">Amplada de la pantalla</div>
+      <div class="val" id="hudVal">—</div>
+      <div class="alt" id="hudAlt">—</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="bStart" type="button">⏮ Inici</button>
+    <button id="bPrev" type="button">◀ Anterior</button>
+    <button id="bPlay" type="button" class="primary">▶ Reprodueix</button>
+    <button id="bNext" type="button">Següent ▶</button>
+    <select id="sDir" aria-label="Direcció">
+      <option value="1">Cap a la galàxia (zoom out)</option>
+      <option value="-1">Cap a l'àtom (zoom in)</option>
+    </select>
+    <select id="sSpeed" aria-label="Velocitat">
+      <option value="0.3">Lent</option>
+      <option value="0.6" selected>Normal</option>
+      <option value="1.2">Ràpid</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="cStop" checked> Para a cada objecte</label>
+    <span class="spacer"></span>
+    <button id="bFull" type="button">Pantalla completa</button>
+  </div>
+
+  <div class="rulerbox">
+    <div class="lab"><span>Escala logarítmica (metres) · cada marca és ×10</span><span>● mida real de cada objecte · <span style="color:var(--accent)">│</span> amplada de la pantalla</span></div>
+    <div class="ruler" id="ruler" tabindex="0" aria-label="Regle logarítmic: fes clic o arrossega per a canviar d'escala"></div>
+  </div>
+
+  <div class="grid2">
+    <section class="card" aria-live="polite">
+      <p class="eyebrow" id="fEye">Objecte</p>
+      <h2 id="fName">—</h2>
+      <p class="big" id="fSci">—</p>
+      <dl class="kv">
+        <dt id="fWhat">Mesura</dt><dd id="fAlt">—</dd>
+        <dt>En decimal</dt><dd id="fDec">—</dd>
+        <dt>Ordre de magnitud</dt><dd id="fK">—</dd>
+        <dt>Respecte a l'anterior</dt><dd id="fRatio" style="word-break:normal">—</dd>
+      </dl>
+      <p class="fact" id="fFact">—</p>
+    </section>
+    <section class="card">
+      <p class="eyebrow">Les dades de l'escala · fes clic en una fila per a anar-hi</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>#</th><th>Objecte</th><th>Mesura</th><th>Notació científica</th><th style="text-align:right">Ordre</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <p class="foot">Tecles: <kbd>espai</kbd> reprodueix/pausa · <kbd>←</kbd> <kbd>→</kbd> objecte anterior/següent · roda del ratolí o arrossegar verticalment sobre l'animació per a fer zoom a mà. Mides aproximades; les posicions relatives de l'escala humana són il·lustratives.</p>
+</div>
+
+<script>
+(() => {
+"use strict";
+const SUP = {"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+const toSup = n => String(n).split("").map(c => SUP[c] || c).join("");
+const fmt = (v, d=0) => v.toLocaleString("ca-ES", {maximumFractionDigits:d, minimumFractionDigits:0});
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const smooth = (a,b,x) => { const t = clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
+
+const SUNX = -1.496e11;               // Sol real respecte a la Terra (origen)
+const MWC = [-2.5e20, 0];             // centre de la Via Làctia
+const ANG = -25*Math.PI/180;
+const AND = [MWC[0] + 2.4e22*Math.cos(ANG), MWC[1] + 2.4e22*Math.sin(ANG)];
+
+// ---------- dades ----------
+const O = [
+ {n:"Protó", m:"1,7", k:-15, what:"Diàmetre", alt:"1,7 fm (femtòmetres)", c:[0,0], draw:dProton,
+  fact:"Està format per tres quarks. El nucli de l'àtom, fet de protons i neutrons, s'endú el 99,9 % de la massa de l'àtom."},
+ {n:"Àtom d'hidrogen", m:"1,06", k:-10, what:"Diàmetre", alt:"0,1 nm ≈ 1 ångström", c:[0,0], draw:dAtom,
+  fact:"El seu nucli és un sol protó. Si el protó fóra un gra d'arròs de 5 mm, l'àtom faria uns 300 m: un àtom és quasi tot buit."},
+ {n:"Doble hèlix d'ADN", m:"2", k:-9, what:"Amplada", alt:"2 nm", c:[0,0], draw:dDNA,
+  fact:"Fa només 2 nm d'ample, però l'ADN d'una sola cèl·lula humana, estirat, mesura uns 2 metres."},
+ {n:"Virus (SARS-CoV-2)", m:"1", k:-7, what:"Diàmetre", alt:"100 nm", c:[0,0], draw:dVirus,
+  fact:"És massa menut per a un microscopi òptic, que no distingeix res per davall d'uns 200 nm. Cal un microscopi electrònic."},
+ {n:"Bacteri (E. coli)", m:"2", k:-6, what:"Longitud", alt:"2 µm (micres)", c:[-1.05e-6,0], draw:dBact,
+  fact:"En condicions ideals es divideix cada 20 minuts: 1, 2, 4, 8… En 10 hores serien 2³⁰, més de mil milions."},
+ {n:"Glòbul roig", m:"7,5", k:-6, what:"Diàmetre", alt:"7,5 µm", c:[-6.3e-6,1.5e-6], draw:dRBC,
+  fact:"Tens uns 25 bilions al cos: 2,5 · 10¹³. Deu glòbuls rojos en fila fan més o menys el gruix d'un cabell."},
+ {n:"Cabell humà", m:"7", k:-5, what:"Gruix", alt:"70 µm", c:[-6.3e-6,0], draw:dHair,
+  fact:"El gruix d'un cabell varia entre 20 i 180 µm segons la persona. És de les coses més menudes que encara veiem a ull nu."},
+ {n:"Formiga", m:"5", k:-3, what:"Longitud", alt:"5 mm", c:[1.2e-3,1.0e-3], draw:dAnt,
+  fact:"Una estimació de 2022 calcula que hi ha unes 2 · 10¹⁶ formigues a la Terra: uns 2,5 milions per persona."},
+ {n:"Persona", m:"1,7", k:0, what:"Altura", alt:"1,7 m", c:[-0.3,2e-3-0.85], draw:dPerson,
+  fact:"Un cos humà conté uns 7 · 10²⁷ àtoms. Sí, 7 seguit de 27 zeros."},
+ {n:"Camp de futbol", m:"1,05", k:2, what:"Longitud", alt:"105 m", c:[20,-10], draw:dField,
+  fact:"De porteria a porteria hi caben unes 60 persones estirades en fila."},
+ {n:"Mont Everest", m:"8,849", k:3, what:"Altura", alt:"8.849 m", c:[3e3,-4.4245e3], draw:dEverest,
+  fact:"Els avions comercials volen només una mica més amunt, entre 10 i 12 km d'altura."},
+ {n:"Terra", m:"1,274", k:7, what:"Diàmetre", alt:"12.742 km", c:[0,6.371e6], draw:dEarth,
+  fact:"La llum podria fer-li la volta uns 7,5 cops en un sol segon."},
+ {n:"Júpiter", m:"1,43", k:8, what:"Diàmetre", alt:"143.000 km", c:[-1.05e8,0], draw:dJupiter,
+  fact:"Si fóra buit, s'hi podrien encabir unes 1.300 Terres."},
+ {n:"Sol", m:"1,39", k:9, what:"Diàmetre", alt:"1,39 milions de km", c:[-9.5e8,0], draw:dSun,
+  fact:"Hi cabrien 1,3 milions de Terres. Tot i així, és una estrella de grandària mitjana."},
+ {n:"Òrbita de la Terra", m:"3,0", k:11, what:"Diàmetre", alt:"2 UA (1 UA = 1,5 · 10¹¹ m)", c:[SUNX,0], draw:dOrbit,
+  fact:"La llum del Sol tarda uns 8 minuts i 20 segons a arribar-nos: 1,5 · 10¹¹ m ÷ 3 · 10⁸ m/s = 500 s."},
+ {n:"Sistema solar (òrbita de Neptú)", m:"9,0", k:12, what:"Diàmetre", alt:"60 UA", c:[SUNX,0], draw:dSolar,
+  fact:"La Voyager 1, llançada el 1977, ja ha eixit d'aquesta zona i és l'objecte humà més llunyà."},
+ {n:"Un any-llum", m:"9,46", k:15, what:"Distància", alt:"1 any-llum", c:[SUNX+4.73e15,0], draw:dLY,
+  fact:"És la distància que recorre la llum en un any: 3 · 10⁸ m/s × 3,15 · 10⁷ s ≈ 9,46 · 10¹⁵ m."},
+ {n:"Pròxima Centauri", m:"4,0", k:16, what:"Distància", alt:"4,2 anys-llum", c:[SUNX+2e16,0], draw:dProxima,
+  fact:"És l'estrella més propera després del Sol. La seua llum tarda 4,2 anys a arribar-nos."},
+ {n:"Via Làctia", m:"9,5", k:20, what:"Diàmetre", alt:"≈ 100.000 anys-llum", c:MWC, draw:dMW,
+  fact:"La nostra galàxia té entre 100.000 i 400.000 milions d'estreles, entre 10¹¹ i 4 · 10¹¹."},
+ {n:"Distància a Andròmeda", m:"2,4", k:22, what:"Distància", alt:"2,5 milions d'anys-llum", c:[(MWC[0]+AND[0])/2,(MWC[1]+AND[1])/2], draw:dAndromeda,
+  fact:"La veiem com era fa 2,5 milions d'anys. S'acosta a nosaltres a uns 110 km/s."},
+];
+O.forEach((o,i) => {
+  o.i = i;
+  o.d = parseFloat(o.m.replace(",", ".")) * Math.pow(10, o.k);
+  o.ideal = Math.log10(o.d / 0.35);
+  o.sci = `${o.m} · 10${toSup(o.k)} m`;
+  o.sciH = `${o.m} · 10<sup>${o.k}</sup> m`;
+});
+
+const EMIN = O[0].ideal - 0.35, EMAX = O[O.length-1].ideal + 0.35;
+const RMIN = -15, RMAX = 23;
+
+function decStr(m, k){
+  const dg = m.replace(",", "");
+  const grpInt = s => s.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const grpFrac = s => s.replace(/(\d{3})(?=\d)/g, "$1 ");
+  if (k >= 0){
+    if (dg.length <= k+1) return grpInt(dg.padEnd(k+1, "0"));
+    return grpInt(dg.slice(0,k+1)) + "," + grpFrac(dg.slice(k+1));
+  }
+  return "0," + grpFrac("0".repeat(-k-1) + dg);
+}
+
+// ---------- canvas ----------
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let W = 800, H = 500, DPR = 1;
+function resize(){
+  const r = cv.getBoundingClientRect();
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(200, r.width); H = Math.max(200, r.height);
+  cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+}
+new ResizeObserver(resize).observe(cv);
+resize();
+
+// estreles de fons i punts de galàxia (llavor fixa)
+let seed = 7;
+const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
+const STARS = Array.from({length:380}, () => ({x:rnd(), y:rnd(), r:rnd()*1.3+0.3, a:rnd()*0.7+0.2, p:rnd()*6.28}));
+const GAL = [];
+for (let i=0;i<2600;i++){
+  if (i < 520){
+    const r = Math.abs((rnd()+rnd()+rnd()-1.5))*0.16, t = rnd()*6.283;
+    GAL.push({x:r*Math.cos(t), y:r*Math.sin(t)*0.85, a:0.5+rnd()*0.5, w:1});
+  } else {
+    const arm = i % 4, r = 0.08 + Math.pow(rnd(), 0.7)*0.92;
+    const t = arm*Math.PI/2 + 2.6*Math.log(r*6) + (rnd()-0.5)*0.55;
+    const j = (rnd()-0.5)*0.05;
+    GAL.push({x:r*Math.cos(t)+j, y:r*Math.sin(t)+j, a:0.25+rnd()*0.6, w:0});
+  }
+}
+
+let e = EMIN, playing = false, dir = 1, speed = 0.6, stops = true, hold = 0, goTo = null;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function alphaFor(o, sw){
+  const q = o.d / sw;
+  return smooth(0.008, 0.03, q) * (1 - smooth(1.0, 3.2, q));
+}
+
+function frame(t){
+  const sw = Math.pow(10, e);           // metres que caben en l'amplada
+  const s = W / sw;                      // píxels per metre
+  const S = (x,y) => [W/2 + x*s, H/2 + y*s];
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#05070d"; ctx.fillRect(0,0,W,H);
+  const g = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.7);
+  const cosmic = smooth(8, 13, e);
+  g.addColorStop(0, `rgba(${Math.round(30-15*cosmic)},${Math.round(62-40*cosmic)},${Math.round(84-30*cosmic)},0.35)`);
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+  // estreles
+  const sa = smooth(9.5, 14, e);
+  if (sa > 0){
+    ctx.fillStyle = "#dfe7ff";
+    for (const st of STARS){
+      ctx.globalAlpha = sa * st.a * (0.75 + 0.25*Math.sin(t/900 + st.p));
+      ctx.beginPath(); ctx.arc(st.x*W, st.y*H, st.r, 0, 6.283); ctx.fill();
+    }
+  }
+  // quadrícula de potències de deu
+  const ga = 1 - smooth(9, 12.5, e);
+  if (ga > 0){
+    const fl = Math.floor(e);
+    ctx.lineWidth = 1; ctx.strokeStyle = "#7fd6e6";
+    for (let L = fl-2; L <= fl; L++){
+      const sp = W * Math.pow(10, L - e);
+      const a = 0.13 * clamp(Math.log10(sp/6)/2, 0, 1) * ga;
+      if (a <= 0.003) continue;
+      ctx.globalAlpha = a; ctx.beginPath();
+      const ox = W/2 % sp, oy = H/2 % sp;
+      for (let x = ox; x < W; x += sp){ ctx.moveTo(Math.round(x)+.5,0); ctx.lineTo(Math.round(x)+.5,H); }
+      for (let y = oy; y < H; y += sp){ ctx.moveTo(0,Math.round(y)+.5); ctx.lineTo(W,Math.round(y)+.5); }
+      ctx.stroke();
+    }
+  }
+
+  // objectes (grans primer)
+  const vis = [];
+  for (let i = O.length-1; i >= 0; i--){
+    const o = O[i]; const a = alphaFor(o, sw);
+    o.a = a;
+    if (a < 0.01) continue;
+    ctx.globalAlpha = a;
+    const [X,Y] = S(o.c[0], o.c[1]);
+    const R = o.d/2*s;
+    ctx.save();
+    const lab = o.draw(o, X, Y, R, s, S, t, a);
+    ctx.restore();
+    vis.push([o, a, lab || [X + R*0.72 + 8, Y - R*0.72 - 6], R]);
+  }
+  // etiquetes
+  ctx.textBaseline = "alphabetic";
+  for (const [o,a,[lx,ly],R] of vis){
+    if (a < 0.3 || R < 1.5) continue;
+    const x = clamp(lx, 10, W-190), y = clamp(ly, 34, H-46);
+    ctx.globalAlpha = a;
+    ctx.font = "600 13px 'IBM Plex Sans', system-ui, sans-serif";
+    ctx.fillStyle = "#e9edf6"; ctx.fillText(o.n, x, y);
+    ctx.font = "12px 'IBM Plex Mono', monospace";
+    ctx.fillStyle = "#f5b841"; ctx.fillText(o.sci, x, y+15);
+  }
+  if (!vis.some(v => v[1] > 0.3)){
+    ctx.globalAlpha = 0.8; ctx.fillStyle = "#8d97b0";
+    ctx.font = "italic 14px 'IBM Plex Sans', system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Res a aquesta escala… seguim multiplicant per 10", W/2, H/2);
+    ctx.textAlign = "left";
+  }
+
+  // barra d'escala
+  const kb = Math.floor(e - 0.523);
+  const bl = W * Math.pow(10, kb - e);
+  ctx.globalAlpha = 1;
+  const bx = 16, by = H - 22;
+  ctx.strokeStyle = "#e9edf6"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(bx, by-5); ctx.lineTo(bx, by); ctx.lineTo(bx+bl, by); ctx.lineTo(bx+bl, by-5); ctx.stroke();
+  ctx.font = "13px 'IBM Plex Mono', monospace"; ctx.fillStyle = "#e9edf6";
+  ctx.fillText(`10${toSup(kb)} m`, bx + bl + 10, by + 1);
+}
+
+// ---------- dibuixos ----------
+function circle(X,Y,R){ ctx.beginPath(); ctx.arc(X,Y,Math.max(R,0.6),0,6.283); }
+function dProton(o,X,Y,R){
+  const g = ctx.createRadialGradient(X-R*.3,Y-R*.3,R*.1,X,Y,R);
+  g.addColorStop(0,"#ffcf8a"); g.addColorStop(1,"#c9562e");
+  circle(X,Y,R); ctx.fillStyle = g; ctx.fill();
+  const cols = ["#ff5d5d","#5de08a","#5d9bff"];
+  for (let i=0;i<3;i++){
+    const t = i*2.094 - 1.57;
+    circle(X+Math.cos(t)*R*.45, Y+Math.sin(t)*R*.45, R*.17); ctx.fillStyle = cols[i]; ctx.fill();
+  }
+}
+function dAtom(o,X,Y,R){
+  const g = ctx.createRadialGradient(X,Y,0,X,Y,R);
+  g.addColorStop(0,"rgba(127,214,230,0.55)"); g.addColorStop(.6,"rgba(127,214,230,0.18)"); g.addColorStop(1,"rgba(127,214,230,0)");
+  circle(X,Y,R); ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = "rgba(127,214,230,.35)"; ctx.setLineDash([3,4]); ctx.lineWidth=1; circle(X,Y,R); ctx.stroke(); ctx.setLineDash([]);
+  circle(X,Y,1.3); ctx.fillStyle = "#ffcf8a"; ctx.fill();
+}
+function dDNA(o,X,Y,R){
+  const half = 30*o.d/2*(R/(o.d/2)) ; // 30 amplades a cada costat
+  const x0 = Math.max(0, X-half), x1 = Math.min(W, X+half);
+  const p = 3.4*R; // pas de rosca 3,4 nm
+  ctx.lineWidth = Math.max(1, R*0.12);
+  for (const [ph,col] of [[0,"#7fd6e6"],[Math.PI*0.8,"#f5b841"]]){
+    ctx.strokeStyle = col; ctx.beginPath();
+    for (let x=x0; x<=x1; x+=2){ const y = Y + R*Math.sin((x-X)/p*6.283 + ph); x===x0?ctx.moveTo(x,y):ctx.lineTo(x,y); }
+    ctx.stroke();
+  }
+  ctx.strokeStyle = "rgba(233,237,246,.35)"; ctx.lineWidth = Math.max(1,R*0.05); ctx.beginPath();
+  const step = p/10;
+  for (let x = X - Math.floor((X-x0)/step)*step; x<=x1; x+=step){
+    ctx.moveTo(x, Y + R*Math.sin((x-X)/p*6.283)); ctx.lineTo(x, Y + R*Math.sin((x-X)/p*6.283 + Math.PI*0.8));
+  }
+  ctx.stroke();
+  return [X + Math.min(half, W*0.3)*0.4, Y - R - 16];
+}
+function dVirus(o,X,Y,R){
+  ctx.strokeStyle = "#e38a6a"; ctx.lineWidth = Math.max(1,R*0.06);
+  for (let i=0;i<24;i++){
+    const t = i/24*6.283;
+    ctx.beginPath(); ctx.moveTo(X+Math.cos(t)*R*.78, Y+Math.sin(t)*R*.78); ctx.lineTo(X+Math.cos(t)*R, Y+Math.sin(t)*R); ctx.stroke();
+    circle(X+Math.cos(t)*R, Y+Math.sin(t)*R, R*.06); ctx.fillStyle="#e38a6a"; ctx.fill();
+  }
+  const g = ctx.createRadialGradient(X-R*.2,Y-R*.2,0,X,Y,R*.8);
+  g.addColorStop(0,"#d9c4d8"); g.addColorStop(1,"#8c6b94");
+  circle(X,Y,R*.78); ctx.fillStyle = g; ctx.fill();
+}
+function dBact(o,X,Y,R){
+  const h = R*0.42;
+  ctx.strokeStyle = "rgba(143,214,150,.6)"; ctx.lineWidth = Math.max(1,R*0.03);
+  ctx.beginPath();
+  for (let i=0;i<=40;i++){ const x = X - R - i*R*0.05; const y = Y + Math.sin(i*0.5)*h*0.4; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+  ctx.stroke();
+  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(X-R, Y-h, 2*R, 2*h, h) : ctx.rect(X-R,Y-h,2*R,2*h);
+  const g = ctx.createLinearGradient(X, Y-h, X, Y+h); g.addColorStop(0,"#9fe0a4"); g.addColorStop(1,"#4c9a5c");
+  ctx.fillStyle = g; ctx.fill();
+  return [X - R*0.4, Y - h - 30];
+}
+function dRBC(o,X,Y,R){
+  const g = ctx.createRadialGradient(X,Y,R*.2,X,Y,R);
+  g.addColorStop(0,"#8f1f2a"); g.addColorStop(.55,"#d8434d"); g.addColorStop(1,"#b52a36");
+  circle(X,Y,R); ctx.fillStyle = g; ctx.fill();
+}
+function dHair(o,X,Y,R,s){
+  const L = 1.5e-2*s;
+  const g = ctx.createLinearGradient(X-R,0,X+R,0);
+  g.addColorStop(0,"#4a2f1c"); g.addColorStop(.35,"#a9764a"); g.addColorStop(1,"#5a3a22");
+  ctx.fillStyle = g; ctx.fillRect(X-R, Math.max(-10,Y-L), 2*R, Math.min(H+20, 2*L));
+  ctx.strokeStyle = "rgba(0,0,0,.25)"; ctx.lineWidth = 1; ctx.beginPath();
+  const sp = R*0.9;
+  if (sp > 4) for (let y = Y - Math.floor(Y/sp)*sp; y < H; y += sp){ ctx.moveTo(X-R, y); ctx.quadraticCurveTo(X, y-sp*0.35, X+R, y+sp*0.1); }
+  ctx.stroke();
+  return [X + R + 12, H*0.3];
+}
+function dAnt(o,X,Y,R){
+  const L = 2*R; ctx.fillStyle = "#c0673a"; ctx.strokeStyle = "#c0673a"; ctx.lineWidth = Math.max(1, L*0.018);
+  const leg = (x0, dx) => { ctx.beginPath(); ctx.moveTo(x0, Y); ctx.lineTo(x0+dx*.5, Y-L*.12); ctx.lineTo(x0+dx, Y+L*.14); ctx.stroke();
+                            ctx.beginPath(); ctx.moveTo(x0, Y); ctx.lineTo(x0+dx*.5, Y+L*.02); ctx.lineTo(x0+dx*0.9, Y+L*.15); ctx.stroke(); };
+  leg(X, -L*.12); leg(X+L*.03, L*.03); leg(X+L*.06, L*.16);
+  ctx.beginPath(); ctx.ellipse(X-L*.28, Y, L*.22, L*.14, 0, 0, 6.283); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(X+L*.03, Y-L*.01, L*.15, L*.065, 0, 0, 6.283); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(X+L*.3, Y-L*.03, L*.11, L*.09, 0, 0, 6.283); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(X+L*.36, Y-L*.1); ctx.lineTo(X+L*.45, Y-L*.25); ctx.lineTo(X+L*.52, Y-L*.2); ctx.stroke();
+}
+function dPerson(o,X,Y,R){
+  const Hh = 2*R, top = Y - R;
+  ctx.fillStyle = "#c9d2e6";
+  circle(X, top + Hh*.065, Hh*.065); ctx.fill();
+  const rr = (x,y,w,h,r) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,y,w,h,r) : ctx.rect(x,y,w,h); ctx.fill(); };
+  rr(X-Hh*.12, top+Hh*.15, Hh*.24, Hh*.36, Hh*.05);
+  rr(X-Hh*.11, top+Hh*.48, Hh*.095, Hh*.52, Hh*.03);
+  rr(X+Hh*.015, top+Hh*.48, Hh*.095, Hh*.52, Hh*.03);
+  rr(X-Hh*.18, top+Hh*.16, Hh*.055, Hh*.34, Hh*.025);
+  rr(X+Hh*.125, top+Hh*.16, Hh*.055, Hh*.34, Hh*.025);
+  ctx.strokeStyle = "rgba(233,237,246,.25)"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(X-Hh*.8, Y+R); ctx.lineTo(X+Hh*.8, Y+R); ctx.stroke();
+}
+function dField(o,X,Y,R,s){
+  const w = 2*R, h = w*68/105, x0 = X-R, y0 = Y-h/2;
+  for (let i=0;i<10;i++){ ctx.fillStyle = i%2 ? "#2c7543" : "#2f7f49"; ctx.fillRect(x0 + i*w/10, y0, w/10+0.5, h); }
+  ctx.strokeStyle = "rgba(255,255,255,.85)"; ctx.lineWidth = Math.max(1, 0.12*s);
+  ctx.strokeRect(x0, y0, w, h);
+  ctx.beginPath(); ctx.moveTo(X, y0); ctx.lineTo(X, y0+h); ctx.stroke();
+  ctx.beginPath(); ctx.arc(X, Y, 9.15*s, 0, 6.283); ctx.stroke();
+  const pw = 16.5*s, ph = 40.3*s;
+  ctx.strokeRect(x0, Y-ph/2, pw, ph); ctx.strokeRect(x0+w-pw, Y-ph/2, pw, ph);
+  return [X + R*0.3, y0 - 30];
+}
+function dEverest(o,X,Y,R){
+  const b = Y+R, pk = Y-R;
+  const P = [[-1.7,1],[-1.2,.55],[-.95,.62],[-.55,.1],[-.35,.2],[0,-1],[.3,-.45],[.5,-.5],[.85,.2],[1.1,.1],[1.7,1]];
+  ctx.beginPath(); P.forEach(([u,v],i)=>{ const x=X+u*R, y=Y+v*R; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.closePath();
+  const g = ctx.createLinearGradient(0,pk,0,b); g.addColorStop(0,"#8391ad"); g.addColorStop(1,"#3a4560");
+  ctx.fillStyle = g; ctx.fill();
+  ctx.beginPath(); [[-.42,-.18],[-.25,-.05],[0,-1],[.3,-.45],[.42,-.47],[.25,-.25],[.05,-.35],[-.15,-.1]].forEach(([u,v],i)=>{ const x=X+u*R,y=Y+v*R; i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+  ctx.closePath(); ctx.fillStyle = "#e8eef7"; ctx.fill();
+  return [X + R*0.35, pk - 10];
+}
+function dEarth(o,X,Y,R){
+  ctx.strokeStyle = "rgba(127,214,230,.35)"; ctx.lineWidth = Math.max(1,R*0.05); circle(X,Y,R*1.03); ctx.stroke();
+  const g = ctx.createRadialGradient(X-R*.35,Y-R*.35,R*.1,X,Y,R);
+  g.addColorStop(0,"#4f8fe6"); g.addColorStop(1,"#12346f");
+  circle(X,Y,R); ctx.fillStyle = g; ctx.fill();
+  ctx.save(); circle(X,Y,R); ctx.clip();
+  ctx.fillStyle = "#5f8f4e";
+  [[-.35,-.3,.32,.22,.4],[.1,-.05,.2,.38,-.3],[.45,-.35,.3,.18,.2],[-.2,.45,.22,.12,0],[.5,.35,.15,.2,.5]].forEach(([u,v,a,b,r])=>{ ctx.beginPath(); ctx.ellipse(X+u*R,Y+v*R,a*R,b*R,r,0,6.283); ctx.fill(); });
+  ctx.fillStyle = "rgba(255,255,255,.28)";
+  [[-.1,-.55,.4,.05],[.3,.15,.35,.04],[-.5,.2,.3,.04]].forEach(([u,v,a,b])=>{ ctx.beginPath(); ctx.ellipse(X+u*R,Y+v*R,a*R,b*R,0,0,6.283); ctx.fill(); });
+  ctx.restore();
+}
+function dJupiter(o,X,Y,R){
+  ctx.save(); circle(X,Y,R); ctx.clip();
+  const cols = ["#e6d2b0","#b98a5e","#ead9bd","#a8744a","#dcc39c","#c49a6c","#efe0c6","#9c6a44","#e1c9a4"];
+  for (let i=0;i<cols.length;i++){ ctx.fillStyle = cols[i]; ctx.fillRect(X-R, Y-R + i*2*R/cols.length, 2*R, 2*R/cols.length+1); }
+  ctx.fillStyle = "#c2553a"; ctx.beginPath(); ctx.ellipse(X+R*.3, Y+R*.3, R*.18, R*.1, 0, 0, 6.283); ctx.fill();
+  const g = ctx.createRadialGradient(X-R*.3,Y-R*.3,R*.2,X,Y,R*1.05); g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(1,"rgba(0,0,0,.55)");
+  ctx.fillStyle = g; ctx.fillRect(X-R,Y-R,2*R,2*R);
+  ctx.restore();
+}
+function dSun(o,X,Y,R){
+  const gl = ctx.createRadialGradient(X,Y,R*.9,X,Y,R*1.8); gl.addColorStop(0,"rgba(245,184,65,.45)"); gl.addColorStop(1,"rgba(245,184,65,0)");
+  circle(X,Y,R*1.8); ctx.fillStyle = gl; ctx.fill();
+  const g = ctx.createRadialGradient(X,Y,0,X,Y,R); g.addColorStop(0,"#fff6cf"); g.addColorStop(.7,"#f7bf4a"); g.addColorStop(1,"#e07b22");
+  circle(X,Y,R); ctx.fillStyle = g; ctx.fill();
+}
+function sunDot(X,Y,a){ ctx.globalAlpha = a; circle(X,Y,4); ctx.fillStyle = "#f7bf4a"; ctx.fill(); }
+function dOrbit(o,X,Y,R,s,S,t,a){
+  ctx.strokeStyle = "rgba(127,214,230,.7)"; ctx.lineWidth = 1.2; circle(X,Y,R); ctx.stroke();
+  sunDot(X, Y, a*(1-(O[13].a||0)));
+  ctx.globalAlpha = a; const [ex,ey] = S(0,0); circle(ex,ey,3.5); ctx.fillStyle = "#4f8fe6"; ctx.fill();
+  ctx.font = "12px 'IBM Plex Sans', sans-serif"; ctx.fillStyle = "#8d97b0"; ctx.fillText("Terra", ex+8, ey+16);
+  return [X - R*0.2, Y - R - 12];
+}
+const PL = [[5.79e10,2.1],[1.08e11,4.0],[1.496e11,0],[2.28e11,2.6],[7.78e11,5.2],[1.43e12,1.2],[2.87e12,3.4],[4.5e12,4.6]];
+function dSolar(o,X,Y,R,s,S,t,a){
+  ctx.strokeStyle = "rgba(127,214,230,.45)"; ctx.lineWidth = 1;
+  for (const [r,ang] of PL){
+    circle(X,Y,r*s); ctx.stroke();
+    circle(X+Math.cos(ang)*r*s, Y+Math.sin(ang)*r*s, 2.5); ctx.fillStyle = r===1.496e11 ? "#4f8fe6" : "#c9d2e6"; ctx.fill();
+  }
+  sunDot(X,Y,a);
+  return [X + R*0.72 + 8, Y - R*0.72 - 6];
+}
+function dLY(o,X,Y,R,s,S,t,a){
+  const x0 = X-R, x1 = X+R;
+  circle(x0, Y, Math.max(1.5, 4.5e12*s)); ctx.strokeStyle = "rgba(127,214,230,.6)"; ctx.stroke();
+  ctx.strokeStyle = "#f5b841"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x0,Y); ctx.lineTo(x1,Y); ctx.moveTo(x0,Y-8); ctx.lineTo(x0,Y+8); ctx.moveTo(x1,Y-8); ctx.lineTo(x1,Y+8); ctx.stroke();
+  sunDot(x0,Y,a);
+  return [X - 40, Y - 26];
+}
+function dProxima(o,X,Y,R,s,S,t,a){
+  const x0 = X-R, x1 = X+R;
+  ctx.strokeStyle = "rgba(233,237,246,.4)"; ctx.setLineDash([5,5]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0,Y); ctx.lineTo(x1,Y); ctx.stroke(); ctx.setLineDash([]);
+  sunDot(x0,Y,a); ctx.globalAlpha = a;
+  const g = ctx.createRadialGradient(x1,Y,0,x1,Y,12); g.addColorStop(0,"rgba(255,122,89,1)"); g.addColorStop(1,"rgba(255,122,89,0)");
+  circle(x1,Y,12); ctx.fillStyle = g; ctx.fill();
+  return [x1 - 60, Y - 30];
+}
+function galaxy(X,Y,R,rot,sq,tint,a){
+  const c = Math.cos(rot), sn = Math.sin(rot), sz = clamp(R/180, 0.9, 2.2);
+  for (const p of GAL){
+    const x = p.x, y = p.y*sq;
+    ctx.globalAlpha = a*p.a*(p.w?1:0.8);
+    ctx.fillStyle = p.w ? "#ffd89a" : tint;
+    ctx.fillRect(X + (x*c - y*sn)*R, Y + (x*sn + y*c)*R, sz, sz);
+  }
+  ctx.globalAlpha = a;
+}
+function dMW(o,X,Y,R,s,S,t,a){
+  const g = ctx.createRadialGradient(X,Y,0,X,Y,R*.35); g.addColorStop(0,"rgba(255,216,154,.35)"); g.addColorStop(1,"rgba(255,216,154,0)");
+  circle(X,Y,R*.35); ctx.fillStyle = g; ctx.fill();
+  galaxy(X,Y,R,0.3,1,"#bcd3ff",a);
+  const [sx,sy] = S(0,0);
+  ctx.strokeStyle = "#f5b841"; ctx.lineWidth = 1.5; circle(sx,sy,6); ctx.stroke();
+  ctx.font = "12px 'IBM Plex Sans', sans-serif"; ctx.fillStyle = "#f5b841"; ctx.fillText("Sol (som ací)", sx+10, sy+16);
+}
+function dAndromeda(o,X,Y,R,s,S,t,a){
+  const [mx,my] = S(MWC[0],MWC[1]), [ax,ay] = S(AND[0],AND[1]);
+  ctx.strokeStyle = "rgba(233,237,246,.35)"; ctx.setLineDash([6,6]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(ax,ay); ctx.stroke(); ctx.setLineDash([]);
+  const Ra = Math.max(4, 1.1e21*s);
+  const g = ctx.createRadialGradient(ax,ay,0,ax,ay,Ra); g.addColorStop(0,"rgba(220,230,255,.55)"); g.addColorStop(1,"rgba(220,230,255,0)");
+  ctx.save(); ctx.translate(ax,ay); ctx.rotate(-0.6); ctx.scale(1,0.38); circle(0,0,Ra); ctx.fillStyle = g; ctx.fill(); ctx.restore();
+  galaxy(ax,ay,Ra,-0.6,0.38,"#d8e2ff",a);
+  return [ax + 14, ay - Ra*0.4 - 12];
+}
+
+// ---------- interfície ----------
+const $ = id => document.getElementById(id);
+const hudVal = $("hudVal"), hudAlt = $("hudAlt"), bPlay = $("bPlay");
+function sciOf(x){
+  let k = Math.floor(x), m = Math.pow(10, x-k);
+  if (m >= 9.95){ m = 1; k++; }
+  return [m.toFixed(1).replace(".", ","), k];
+}
+function friendly(x){
+  const v = Math.pow(10, x);
+  if (x >= 15.3) return `≈ ${fmt(v/9.4607e15, v/9.4607e15 < 10 ? 1 : 0)} anys-llum`;
+  if (x >= 10.5) return `≈ ${fmt(v/1.496e11, v/1.496e11 < 10 ? 1 : 0)} UA`;
+  if (x >= 3)    return `≈ ${fmt(v/1e3, v/1e3 < 10 ? 1 : 0)} km`;
+  const P = [[-15,"fm"],[-12,"pm"],[-9,"nm"],[-6,"µm"],[-3,"mm"],[0,"m"]];
+  let p = P[0]; for (const q of P) if (x >= q[0]) p = q;
+  const val = v / Math.pow(10, p[0]);
+  return `≈ ${fmt(val, val < 10 ? 1 : 0)} ${p[1]}`;
+}
+
+const tbody = $("tbody");
+O.forEach(o => {
+  const tr = document.createElement("tr");
+  tr.tabIndex = 0;
+  tr.innerHTML = `<td>${o.i+1}</td><td>${o.n}</td><td>${o.what}</td><td class="mono">${o.sciH}</td><td class="k">${o.k}</td>`;
+  tr.addEventListener("click", () => jump(o.ideal));
+  tr.addEventListener("keydown", ev => { if (ev.key === "Enter"){ ev.preventDefault(); jump(o.ideal); } });
+  o.tr = tr; tbody.appendChild(tr);
+});
+
+const ruler = $("ruler");
+const pct = x => (x - RMIN)/(RMAX - RMIN)*100;
+(function buildRuler(){
+  let h = `<div class="axis"></div>`;
+  for (let k = RMIN; k <= RMAX; k++){
+    const maj = k % 3 === 0;
+    h += `<div class="tick${maj?" maj":""}" style="left:${pct(k)}%"></div>`;
+    if (maj && k < RMAX) h += `<div class="tl" style="left:${pct(k)}%">10${toSup(k)}</div>`;
+  }
+  O.forEach(o => h += `<div class="dot" id="dot${o.i}" style="left:${pct(Math.log10(o.d))}%" title="${o.n}: ${o.sci}"></div>`);
+  h += `<div class="cur" id="cur"></div>`;
+  ruler.innerHTML = h;
+})();
+const cur = $("cur");
+function eFromRuler(ev){
+  const r = ruler.getBoundingClientRect();
+  return clamp(RMIN + (ev.clientX - r.left)/r.width*(RMAX-RMIN), EMIN, EMAX);
+}
+let dragR = false;
+ruler.addEventListener("pointerdown", ev => { dragR = true; ruler.setPointerCapture(ev.pointerId); setPlaying(false); goTo = null; e = eFromRuler(ev); });
+ruler.addEventListener("pointermove", ev => { if (dragR){ e = eFromRuler(ev); } });
+ruler.addEventListener("pointerup", () => dragR = false);
+ruler.addEventListener("keydown", ev => {
+  if (ev.key === "ArrowRight" || ev.key === "ArrowLeft"){ ev.preventDefault(); ev.stopPropagation(); setPlaying(false); goTo = null; e = clamp(e + (ev.key==="ArrowRight"?0.25:-0.25), EMIN, EMAX); }
+});
+
+// zoom manual sobre el canvas
+cv.addEventListener("wheel", ev => { ev.preventDefault(); setPlaying(false); goTo = null; e = clamp(e + ev.deltaY*0.0025, EMIN, EMAX); }, {passive:false});
+let dragY = null;
+cv.addEventListener("pointerdown", ev => { dragY = ev.clientY; cv.setPointerCapture(ev.pointerId); setPlaying(false); goTo = null; });
+cv.addEventListener("pointermove", ev => { if (dragY !== null){ e = clamp(e + (ev.clientY - dragY)*0.01, EMIN, EMAX); dragY = ev.clientY; } });
+cv.addEventListener("pointerup", () => dragY = null);
+
+function setPlaying(p){
+  playing = p;
+  bPlay.textContent = p ? "⏸ Pausa" : "▶ Reprodueix";
+  if (p){ hold = 0; if ((dir>0 && e >= EMAX-0.01) || (dir<0 && e <= EMIN+0.01)) e = dir>0 ? EMIN : EMAX; }
+}
+function jump(target){ setPlaying(false); goTo = clamp(target, EMIN, EMAX); if (reduce){ e = goTo; goTo = null; } }
+function nextObj(sign){
+  const list = O.map(o => o.ideal);
+  const cand = sign > 0 ? list.filter(v => v > e + 0.02) : list.filter(v => v < e - 0.02);
+  if (!cand.length) return;
+  jump(sign > 0 ? Math.min(...cand) : Math.max(...cand));
+}
+bPlay.addEventListener("click", () => { goTo = null; setPlaying(!playing); });
+$("bStart").addEventListener("click", () => jump(dir > 0 ? EMIN : EMAX));
+$("bNext").addEventListener("click", () => nextObj(1));
+$("bPrev").addEventListener("click", () => nextObj(-1));
+$("sDir").addEventListener("change", ev => dir = +ev.target.value);
+$("sSpeed").addEventListener("change", ev => speed = +ev.target.value);
+$("cStop").addEventListener("change", ev => stops = ev.target.checked);
+$("bFull").addEventListener("click", () => {
+  const st = $("stage");
+  try {
+    if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+    else if (st.requestFullscreen) st.requestFullscreen().catch(()=>{});
+  } catch(_) {}
+});
+document.addEventListener("keydown", ev => {
+  const tag = (ev.target.tagName || "").toLowerCase();
+  if (tag === "select" || tag === "input") return;
+  if (ev.key === " " && tag !== "button"){ ev.preventDefault(); goTo = null; setPlaying(!playing); }
+  else if (ev.key === "ArrowRight" && tag !== "button"){ nextObj(1); }
+  else if (ev.key === "ArrowLeft" && tag !== "button"){ nextObj(-1); }
+});
+
+let curObj = -1;
+function updateUI(){
+  const [m,k] = sciOf(e);
+  hudVal.innerHTML = `${m} · 10<sup>${k}</sup> m`;
+  hudAlt.textContent = friendly(e);
+  cur.style.left = pct(e) + "%";
+  let best = 0, bd = Infinity;
+  O.forEach(o => { const d = Math.abs(o.ideal - e); if (d < bd){ bd = d; best = o.i; } });
+  if (best !== curObj){
+    if (curObj >= 0){ O[curObj].tr.classList.remove("on"); $("dot"+curObj).classList.remove("on"); }
+    curObj = best;
+    const o = O[best];
+    o.tr.classList.add("on"); $("dot"+best).classList.add("on");
+    $("fEye").textContent = `Objecte ${best+1} de ${O.length}`;
+    $("fName").textContent = o.n;
+    $("fSci").innerHTML = o.sciH;
+    $("fWhat").textContent = o.what;
+    $("fAlt").textContent = o.alt;
+    $("fDec").textContent = decStr(o.m, o.k) + " m";
+    $("fK").textContent = `10${toSup(o.k)} m`;
+    if (best > 0){
+      const p = O[best-1], r = o.d/p.d, x = Math.log10(r);
+      $("fRatio").textContent = `≈ ${fmt(Number(r.toPrecision(2)))} vegades més gran que «${p.n}» (≈ 10^${fmt(x,1)})`;
+    } else $("fRatio").textContent = "És el punt de partida.";
+    $("fFact").textContent = o.fact;
+  }
+}
+
+let last = performance.now();
+function loop(now){
+  const dt = Math.min(0.05, (now - last)/1000); last = now;
+  if (goTo !== null){
+    e += (goTo - e) * Math.min(1, dt*3.2);
+    if (Math.abs(goTo - e) < 0.002){ e = goTo; goTo = null; }
+  } else if (playing){
+    if (hold > 0) hold -= dt;
+    else {
+      let ne = e + dir*speed*dt;
+      if (stops){
+        const hit = O.map(o => o.ideal).filter(v => dir > 0 ? (v > e && v <= ne) : (v < e && v >= ne));
+        if (hit.length){ ne = dir > 0 ? Math.min(...hit) : Math.max(...hit); hold = 2.2; }
+      }
+      e = ne;
+      if (e >= EMAX){ e = EMAX; setPlaying(false); }
+      if (e <= EMIN){ e = EMIN; setPlaying(false); }
+    }
+  }
+  frame(now);
+  updateUI();
+  requestAnimationFrame(loop);
+}
+updateUI();
+requestAnimationFrame(loop);
+if (!reduce) setTimeout(() => { if (!playing && goTo === null && e === EMIN) setPlaying(true); }, 900);
+})();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>

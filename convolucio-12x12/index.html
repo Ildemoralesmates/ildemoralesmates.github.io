@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Convolució en acció: filtres sobre una imatge 12×12</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --panel: #f6f7f9;
+    --border: #d5d9e0;
+    --accent: #2563eb;
+    --accent-soft: #dbe6fd;
+    --danger: #dc2626;
+    --good: #16a34a;
+    --cell-border: #9aa1ab;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a;
+      --fg: #eceef1;
+      --muted: #9aa3af;
+      --panel: #1f2228;
+      --border: #33373f;
+      --accent: #5b8cff;
+      --accent-soft: #223357;
+      --danger: #ff6b6b;
+      --good: #4ade80;
+      --cell-border: #565c66;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a;
+    --fg: #eceef1;
+    --muted: #9aa3af;
+    --panel: #1f2228;
+    --border: #33373f;
+    --accent: #5b8cff;
+    --accent-soft: #223357;
+    --danger: #ff6b6b;
+    --good: #4ade80;
+    --cell-border: #565c66;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    padding: 24px 16px 60px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: clamp(20px, 4vw, 28px);
+    margin: 0 0 6px;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: clamp(13px, 2.4vw, 15px);
+    margin: 0 0 20px;
+    line-height: 1.5;
+  }
+
+  .kernel-picker {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .kernel-btn {
+    font: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: var(--panel);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  .kernel-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .stage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 26px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px 20px;
+  }
+  .panel h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+    margin: 0 0 12px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .img-wrap { position: relative; display: inline-block; }
+  .grid {
+    display: grid;
+    gap: 2px;
+    background: var(--cell-border);
+    border: 3px solid var(--cell-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .img-grid { grid-template-columns: repeat(12, var(--cell, 34px)); }
+  .kernel-grid { grid-template-columns: repeat(3, var(--cellk, 52px)); }
+  .output-grid { grid-template-columns: repeat(10, var(--cello, 34px)); }
+
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+  }
+  .img-grid .cell { width: var(--cell, 34px); height: var(--cell, 34px); font-size: 9px; }
+  .kernel-grid .cell { width: var(--cellk, 52px); height: var(--cellk, 52px); font-size: clamp(12px,2.4vw,15px); background:#fff; color:#111; }
+  .output-grid .cell { width: var(--cello, 34px); height: var(--cello, 34px); font-size: 8px; }
+
+  .output-cell {
+    background: var(--panel);
+    color: var(--muted);
+    border: 1px dashed var(--cell-border);
+  }
+  .output-cell.done { border-style: solid; color: transparent; }
+  .output-cell.current { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  .highlight {
+    position: absolute;
+    border: 3px solid var(--danger);
+    border-radius: 3px;
+    pointer-events: none;
+    box-shadow: 0 0 0 2px rgba(0,0,0,.15);
+  }
+
+  .op {
+    align-self: center;
+    font-size: clamp(22px, 4.5vw, 30px);
+    font-weight: 700;
+    color: var(--muted);
+    padding-top: 100px;
+  }
+
+  .calc-panel { min-width: 220px; max-width: 260px; }
+  .calc-line {
+    font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre;
+    text-align: left;
+  }
+  .calc-result {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    text-align: center;
+    font-weight: 700;
+    font-size: clamp(15px, 3vw, 19px);
+  }
+  .verdict { margin-top: 10px; text-align: center; font-size: 13px; font-weight: 600; }
+  .verdict.edge { color: var(--danger); }
+  .verdict.flat { color: var(--good); }
+  .kernel-desc {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .4; cursor: default; }
+
+  .speed-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .speed-wrap input[type="range"] { width: 110px; }
+
+  .status { text-align: center; margin: 14px 0 4px; font-size: 14px; color: var(--muted); }
+  .status b { color: var(--fg); }
+
+  .caption { text-align: center; font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  .done-banner {
+    margin-top: 20px;
+    text-align: center;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    font-size: 14px;
+    display: none;
+  }
+  .done-banner.show { display: block; }
+
+  @media (max-width: 640px) {
+    .stage { gap: 14px; }
+    .op { padding-top: 70px; }
+  }
+</style>
+<meta name="description" content="Convolució en acció: vores, difuminat i enfocar sobre una imatge de 12×12, píxel a píxel.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/convolucio-12x12/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Convolució en acció: filtres sobre una imatge 12×12">
+<meta property="og:description" content="Convolució en acció: vores, difuminat i enfocar sobre una imatge de 12×12, píxel a píxel.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/convolucio-12x12/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <h1>Convolució en acció</h1>
+  <p class="subtitle">Una imatge 12×12, un kernel que llisca per damunt, i el resultat es forma píxel a píxel.<br>
+  Prova els tres filtres i mira com canvia el resultat.</p>
+
+  <div class="kernel-picker" id="kernelPicker"></div>
+
+  <div class="stage">
+    <div class="panel">
+      <h2>Imatge I (12×12)</h2>
+      <div class="img-wrap" id="imgWrap">
+        <div class="grid img-grid" id="imgGrid"></div>
+        <div class="highlight" id="highlight"></div>
+      </div>
+    </div>
+
+    <div class="op">×</div>
+
+    <div class="panel">
+      <h2 id="kernelTitle">Kernel</h2>
+      <div class="grid kernel-grid" id="kernelGrid"></div>
+      <p class="kernel-desc" id="kernelDesc"></p>
+    </div>
+
+    <div class="op">=</div>
+
+    <div class="panel calc-panel">
+      <h2>Càlcul</h2>
+      <div class="calc-line" id="calcLine"></div>
+      <div class="calc-result" id="calcResult"></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+
+  <div class="stage" style="margin-top:-4px;">
+    <div class="panel">
+      <h2>Resultat (10×10)</h2>
+      <div class="grid output-grid" id="outputGrid"></div>
+      <p class="caption">100 posicions — usa «Reproduir» o «Saltar al final»</p>
+    </div>
+  </div>
+
+  <p class="status" id="status">Posició <b>1</b> de <b>100</b></p>
+
+  <div class="controls">
+    <button id="btnReset">↺ Reiniciar</button>
+    <button id="btnPrev">← Anterior</button>
+    <button id="btnPlay" class="primary">▶ Reproduir</button>
+    <button id="btnNext">Següent →</button>
+    <button id="btnSkip">⏭ Saltar al final</button>
+    <span class="speed-wrap">
+      Velocitat:
+      <input type="range" id="speed" min="40" max="700" value="180" step="20">
+    </span>
+  </div>
+
+  <div class="done-banner" id="doneBanner">
+    <b>Mapa complet.</b> Compara com el mateix cercle es transforma segons el filtre: la vora del cercle amb
+    «Detecció de vores», una versió suau amb «Difuminat», i els contorns reforçats amb «Enfocar».
+  </div>
+
+<script>
+(function () {
+  const N = 12;
+  const OUT_N = N - 2;
+
+  // 12x12 circle image
+  const I = [];
+  (function buildCircle() {
+    const c = (N - 1) / 2, r = 4.6;
+    for (let i = 0; i < N; i++) {
+      const row = [];
+      for (let j = 0; j < N; j++) {
+        const d = Math.hypot(i - c, j - c);
+        row.push(d <= r ? 200 : 10);
+      }
+      I.push(row);
+    }
+  })();
+
+  const KERNELS = {
+    edge: {
+      label: "Detecció de vores",
+      matrix: [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]],
+      display: (v) => String(v),
+      desc: "Ressalta els contorns: zones planes donen ~0, els canvis bruscs donen valors grans.",
+    },
+    blur: {
+      label: "Difuminat",
+      matrix: [[1/9, 1/9, 1/9], [1/9, 1/9, 1/9], [1/9, 1/9, 1/9]],
+      display: () => "1/9",
+      desc: "Fa la mitjana dels 9 veïns: suavitza la imatge i difumina les vores.",
+    },
+    sharpen: {
+      label: "Enfocar",
+      matrix: [[0, -1, 0], [-1, 5, -1], [0, -1, 0]],
+      display: (v) => String(v),
+      desc: "Reforça el propi píxel i resta els veïns: accentua els contorns sense aplanar la resta.",
+    },
+  };
+  let currentKernel = "edge";
+
+  const positions = [];
+  for (let r = 0; r < OUT_N; r++) for (let c = 0; c < OUT_N; c++) positions.push([r, c]);
+  const TOTAL = positions.length;
+
+  const imgGrid = document.getElementById("imgGrid");
+  const kernelGrid = document.getElementById("kernelGrid");
+  const kernelTitle = document.getElementById("kernelTitle");
+  const kernelDesc = document.getElementById("kernelDesc");
+  const outputGrid = document.getElementById("outputGrid");
+  const highlight = document.getElementById("highlight");
+  const imgWrap = document.getElementById("imgWrap");
+  const calcLine = document.getElementById("calcLine");
+  const calcResult = document.getElementById("calcResult");
+  const verdict = document.getElementById("verdict");
+  const statusEl = document.getElementById("status");
+  const doneBanner = document.getElementById("doneBanner");
+  const kernelPicker = document.getElementById("kernelPicker");
+  const speedInput = document.getElementById("speed");
+
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnPlay = document.getElementById("btnPlay");
+  const btnReset = document.getElementById("btnReset");
+  const btnSkip = document.getElementById("btnSkip");
+
+  function gray(v) {
+    v = Math.max(0, Math.min(255, Math.round(v)));
+    return `rgb(${v},${v},${v})`;
+  }
+  function textColor(v) { return v < 130 ? "#fff" : "#111"; }
+
+  // build kernel picker buttons
+  Object.keys(KERNELS).forEach((key) => {
+    const b = document.createElement("button");
+    b.className = "kernel-btn" + (key === currentKernel ? " active" : "");
+    b.textContent = KERNELS[key].label;
+    b.dataset.key = key;
+    b.addEventListener("click", () => {
+      stopPlaying();
+      currentKernel = key;
+      [...kernelPicker.children].forEach((el) => el.classList.toggle("active", el.dataset.key === key));
+      rebuildKernelGrid();
+      resetProgress();
+    });
+    kernelPicker.appendChild(b);
+  });
+
+  // build image grid cells (static image)
+  const imgCells = [];
+  I.forEach((row) => {
+    row.forEach((v) => {
+      const d = document.createElement("div");
+      d.className = "cell";
+      d.style.background = gray(v);
+      d.style.color = textColor(v);
+      imgGrid.appendChild(d);
+      imgCells.push(d);
+    });
+  });
+
+  function rebuildKernelGrid() {
+    kernelGrid.innerHTML = "";
+    const K = KERNELS[currentKernel];
+    kernelTitle.textContent = "Kernel — " + K.label;
+    kernelDesc.textContent = K.desc;
+    K.matrix.forEach((row) => {
+      row.forEach((v) => {
+        const d = document.createElement("div");
+        d.className = "cell";
+        d.textContent = K.display(v);
+        kernelGrid.appendChild(d);
+      });
+    });
+  }
+  rebuildKernelGrid();
+
+  // output grid cells
+  const outCells = [];
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement("div");
+    d.className = "cell output-cell";
+    outputGrid.appendChild(d);
+    outCells.push(d);
+  }
+
+  function computeAt(r0, c0) {
+    const K = KERNELS[currentKernel].matrix;
+    let sum = 0;
+    const terms = [];
+    for (let i = 0; i < 3; i++) {
+      const rowTerms = [];
+      for (let j = 0; j < 3; j++) {
+        const iv = I[r0 + i][c0 + j];
+        const kv = K[i][j];
+        sum += iv * kv;
+        rowTerms.push(`(${KERNELS[currentKernel].display(kv)}\u00d7${iv})`);
+      }
+      terms.push(rowTerms.join(" + "));
+    }
+    return { sum, terms };
+  }
+
+  function positionHighlight(r0, c0) {
+    const topLeftIdx = r0 * N + c0;
+    const bottomRightIdx = (r0 + 2) * N + (c0 + 2);
+    const a = imgCells[topLeftIdx].getBoundingClientRect();
+    const b = imgCells[bottomRightIdx].getBoundingClientRect();
+    const wrapRect = imgWrap.getBoundingClientRect();
+    highlight.style.left = (a.left - wrapRect.left - 3) + "px";
+    highlight.style.top = (a.top - wrapRect.top - 3) + "px";
+    highlight.style.width = (b.right - a.left + 3) + "px";
+    highlight.style.height = (b.bottom - a.top + 3) + "px";
+  }
+
+  let step = 0;
+  let visited = new Array(TOTAL).fill(null);
+  let playing = false;
+  let playTimer = null;
+
+  function render() {
+    const [r0, c0] = positions[step];
+    positionHighlight(r0, c0);
+
+    const { sum, terms } = computeAt(r0, c0);
+    calcLine.textContent = terms.join("\n+ ");
+    calcResult.textContent = "= " + Math.round(sum * 10) / 10;
+
+    if (currentKernel === "edge") {
+      if (Math.abs(sum) < 100) {
+        verdict.textContent = "Zona uniforme \u2192 gairebé 0";
+        verdict.className = "verdict flat";
+      } else {
+        verdict.textContent = "Vora detectada";
+        verdict.className = "verdict edge";
+      }
+    } else {
+      verdict.textContent = "";
+      verdict.className = "verdict";
+    }
+
+    outCells.forEach((cell, i) => {
+      if (i < step) {
+        const [pr, pc] = positions[i];
+        const v = visited[i] !== null ? visited[i] : computeAt(pr, pc).sum;
+        visited[i] = v;
+        const clamped = Math.max(0, Math.min(255, v));
+        cell.style.background = gray(clamped);
+        cell.style.color = textColor(clamped);
+        cell.classList.add("done");
+        cell.classList.remove("current");
+      } else if (i === step) {
+        cell.style.background = "";
+        cell.style.color = "";
+        cell.classList.remove("done");
+        cell.classList.add("current");
+      } else {
+        cell.style.background = "";
+        cell.style.color = "";
+        cell.classList.remove("done", "current");
+      }
+    });
+
+    statusEl.innerHTML = `Posició <b>${step + 1}</b> de <b>${TOTAL}</b>`;
+    btnPrev.disabled = step === 0;
+    const allDone = step === TOTAL - 1 && visited[TOTAL - 1] !== null;
+    doneBanner.classList.toggle("show", allDone);
+  }
+
+  function commitCurrentAndAdvance() {
+    const [r0, c0] = positions[step];
+    visited[step] = computeAt(r0, c0).sum;
+    if (step < TOTAL - 1) {
+      step++;
+    } else {
+      stopPlaying();
+    }
+    render();
+  }
+
+  function goPrev() { if (step > 0) { step--; render(); } }
+  function goNext() {
+    if (step < TOTAL - 1) commitCurrentAndAdvance();
+    else if (visited[TOTAL - 1] === null) { visited[TOTAL - 1] = computeAt(...positions[TOTAL - 1]).sum; render(); }
+  }
+  function skipToEnd() {
+    stopPlaying();
+    for (let i = 0; i < TOTAL; i++) {
+      if (visited[i] === null) visited[i] = computeAt(...positions[i]).sum;
+    }
+    step = TOTAL - 1;
+    render();
+  }
+  function resetProgress() {
+    stopPlaying();
+    step = 0;
+    visited = new Array(TOTAL).fill(null);
+    render();
+  }
+  function stopPlaying() {
+    playing = false;
+    btnPlay.textContent = "\u25b6 Reproduir";
+    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+  }
+  function startPlaying() {
+    playing = true;
+    btnPlay.textContent = "\u23f8 Pausa";
+    const ms = Number(speedInput.value);
+    highlight.style.transition = `left ${Math.min(ms * 0.7, 250)}ms linear, top ${Math.min(ms * 0.7, 250)}ms linear, width .2s, height .2s`;
+    playTimer = setInterval(() => {
+      if (step === TOTAL - 1 && visited[TOTAL - 1] !== null) { stopPlaying(); return; }
+      goNext();
+    }, ms);
+  }
+
+  btnPrev.addEventListener("click", () => { stopPlaying(); highlight.style.transition = "left .3s ease, top .3s ease"; goPrev(); });
+  btnNext.addEventListener("click", () => { stopPlaying(); highlight.style.transition = "left .3s ease, top .3s ease"; goNext(); });
+  btnReset.addEventListener("click", resetProgress);
+  btnSkip.addEventListener("click", skipToEnd);
+  btnPlay.addEventListener("click", () => { if (playing) stopPlaying(); else startPlaying(); });
+  speedInput.addEventListener("input", () => {
+    if (playing) { stopPlaying(); startPlaying(); }
+  });
+
+  window.addEventListener("resize", () => {
+    const [r0, c0] = positions[step];
+    positionHighlight(r0, c0);
+  });
+
+  function setCellSize() {
+    const w = window.innerWidth;
+    const cell = w < 420 ? 22 : w < 700 ? 28 : 34;
+    const cello = w < 420 ? 22 : w < 700 ? 28 : 34;
+    const cellk = w < 420 ? 40 : w < 700 ? 46 : 52;
+    document.documentElement.style.setProperty("--cell", cell + "px");
+    document.documentElement.style.setProperty("--cello", cello + "px");
+    document.documentElement.style.setProperty("--cellk", cellk + "px");
+  }
+  setCellSize();
+  window.addEventListener("resize", setCellSize);
+
+  requestAnimationFrame(() => requestAnimationFrame(render));
+})();
+</script>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

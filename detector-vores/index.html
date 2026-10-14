@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Detector de vores: com funciona la convolució</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --panel: #f6f7f9;
+    --border: #d5d9e0;
+    --accent: #2563eb;
+    --accent-soft: #dbe6fd;
+    --danger: #dc2626;
+    --good: #16a34a;
+    --cell-border: #9aa1ab;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a;
+      --fg: #eceef1;
+      --muted: #9aa3af;
+      --panel: #1f2228;
+      --border: #33373f;
+      --accent: #5b8cff;
+      --accent-soft: #223357;
+      --danger: #ff6b6b;
+      --good: #4ade80;
+      --cell-border: #565c66;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a;
+    --fg: #eceef1;
+    --muted: #9aa3af;
+    --panel: #1f2228;
+    --border: #33373f;
+    --accent: #5b8cff;
+    --accent-soft: #223357;
+    --danger: #ff6b6b;
+    --good: #4ade80;
+    --cell-border: #565c66;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    padding: 24px 16px 60px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: clamp(20px, 4vw, 28px);
+    margin: 0 0 6px;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: clamp(13px, 2.4vw, 15px);
+    margin: 0 0 26px;
+    line-height: 1.5;
+  }
+
+  .stage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 22px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px 20px;
+  }
+  .panel h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+    margin: 0 0 12px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .img-wrap { position: relative; display: inline-block; }
+  .grid {
+    display: grid;
+    gap: 3px;
+    background: var(--cell-border);
+    border: 3px solid var(--cell-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .img-grid { grid-template-columns: repeat(5, var(--cell, 52px)); }
+  .kernel-grid { grid-template-columns: repeat(3, var(--cell, 52px)); }
+  .output-grid { grid-template-columns: repeat(3, var(--cell, 52px)); }
+
+  .cell {
+    width: var(--cell, 52px);
+    height: var(--cell, 52px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: clamp(12px, 2.6vw, 15px);
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+  }
+  .kernel-cell { background: #fff; color: #111; }
+  .output-cell {
+    background: var(--panel);
+    color: var(--muted);
+    border: 1px dashed var(--cell-border);
+  }
+  .output-cell.done {
+    border-style: solid;
+    color: inherit;
+  }
+  .output-cell.current {
+    outline: 3px solid var(--accent);
+    outline-offset: -3px;
+  }
+
+  .highlight {
+    position: absolute;
+    border: 4px solid var(--danger);
+    border-radius: 4px;
+    pointer-events: none;
+    transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease;
+    box-shadow: 0 0 0 2px rgba(0,0,0,.15);
+  }
+
+  .op {
+    align-self: center;
+    font-size: clamp(24px, 5vw, 34px);
+    font-weight: 700;
+    color: var(--muted);
+    padding-top: 60px;
+  }
+
+  .calc-panel {
+    min-width: 230px;
+    max-width: 280px;
+  }
+  .calc-line {
+    font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+    font-size: clamp(11px, 2.2vw, 13px);
+    line-height: 1.7;
+    white-space: pre;
+    color: var(--fg);
+    text-align: left;
+  }
+  .calc-result {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    text-align: center;
+    font-weight: 700;
+    font-size: clamp(16px, 3vw, 20px);
+  }
+  .verdict {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .verdict.edge { color: var(--danger); }
+  .verdict.flat { color: var(--good); }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  button:disabled { opacity: .45; cursor: default; }
+
+  .status {
+    text-align: center;
+    margin: 14px 0 4px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .status b { color: var(--fg); }
+
+  .caption {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  .done-banner {
+    margin-top: 20px;
+    text-align: center;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    font-size: 14px;
+    display: none;
+  }
+  .done-banner.show { display: block; }
+
+  @media (max-width: 640px) {
+    .stage { gap: 16px; }
+    .op { padding-top: 40px; }
+  }
+</style>
+<meta name="description" content="Com funciona un detector de vores: un kernel llisca per una imatge 5×5 i apareixen els contorns pas a pas.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/detector-vores/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Detector de vores: com funciona la convolució">
+<meta property="og:description" content="Com funciona un detector de vores: un kernel llisca per una imatge 5×5 i apareixen els contorns pas a pas.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/detector-vores/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <h1>Com funciona un detector de vores?</h1>
+  <p class="subtitle">El kernel K es va desplaçant per la imatge I, regió de 3×3 en 3×3.<br>
+  A cada posició, multiplica i suma per calcular un únic píxel del resultat.</p>
+
+  <div class="stage">
+    <div class="panel">
+      <h2>Imatge I (5×5)</h2>
+      <div class="img-wrap" id="imgWrap">
+        <div class="grid img-grid" id="imgGrid"></div>
+        <div class="highlight" id="highlight"></div>
+      </div>
+    </div>
+
+    <div class="op">×</div>
+
+    <div class="panel">
+      <h2>Kernel K</h2>
+      <div class="grid kernel-grid" id="kernelGrid"></div>
+    </div>
+
+    <div class="op">=</div>
+
+    <div class="panel calc-panel">
+      <h2>Càlcul</h2>
+      <div class="calc-line" id="calcLine"></div>
+      <div class="calc-result" id="calcResult"></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+
+  <div class="stage" style="margin-top:-6px;">
+    <div class="panel">
+      <h2>Resultat (3×3)</h2>
+      <div class="grid output-grid" id="outputGrid"></div>
+      <p class="caption">Es va omplint a mesura que avances</p>
+    </div>
+  </div>
+
+  <p class="status" id="status">Posició <b>1</b> de <b>9</b> — fila 2, columna 2</p>
+
+  <div class="controls">
+    <button id="btnReset">↺ Reiniciar</button>
+    <button id="btnPrev">← Anterior</button>
+    <button id="btnPlay" class="primary">▶ Reproduir</button>
+    <button id="btnNext">Següent →</button>
+  </div>
+
+  <div class="done-banner" id="doneBanner">
+    <b>Ja tens el mapa de vores complet.</b> Fixa't com el centre (zona plana) dona un valor proper a 0,
+    mentre que tota la resta (vora del quadrat) dona valors grans: així «veu» un ordinador els contorns.
+  </div>
+
+<script>
+(function () {
+  const I = [
+    [10, 10, 10, 10, 10],
+    [10, 200, 200, 200, 10],
+    [10, 200, 200, 200, 10],
+    [10, 200, 200, 200, 10],
+    [10, 10, 10, 10, 10],
+  ];
+  const K = [
+    [-1, -1, -1],
+    [-1, 8, -1],
+    [-1, -1, -1],
+  ];
+
+  // top-left offsets of the 3x3 window, row-major
+  const positions = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) positions.push([r, c]);
+
+  const imgGrid = document.getElementById("imgGrid");
+  const kernelGrid = document.getElementById("kernelGrid");
+  const outputGrid = document.getElementById("outputGrid");
+  const highlight = document.getElementById("highlight");
+  const imgWrap = document.getElementById("imgWrap");
+  const calcLine = document.getElementById("calcLine");
+  const calcResult = document.getElementById("calcResult");
+  const verdict = document.getElementById("verdict");
+  const statusEl = document.getElementById("status");
+  const doneBanner = document.getElementById("doneBanner");
+
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnPlay = document.getElementById("btnPlay");
+  const btnReset = document.getElementById("btnReset");
+
+  function gray(v) {
+    v = Math.max(0, Math.min(255, v));
+    return `rgb(${v},${v},${v})`;
+  }
+  function textColor(v) { return v < 130 ? "#fff" : "#111"; }
+
+  // build image grid cells
+  const imgCells = [];
+  I.forEach((row, r) => {
+    row.forEach((v, c) => {
+      const d = document.createElement("div");
+      d.className = "cell";
+      d.style.background = gray(v);
+      d.style.color = textColor(v);
+      d.textContent = v;
+      imgGrid.appendChild(d);
+      imgCells.push(d);
+    });
+  });
+
+  // kernel grid (static)
+  K.forEach((row) => {
+    row.forEach((v) => {
+      const d = document.createElement("div");
+      d.className = "cell kernel-cell";
+      d.textContent = v;
+      kernelGrid.appendChild(d);
+    });
+  });
+
+  // output grid cells
+  const outCells = [];
+  for (let i = 0; i < 9; i++) {
+    const d = document.createElement("div");
+    d.className = "cell output-cell";
+    d.textContent = "?";
+    outputGrid.appendChild(d);
+    outCells.push(d);
+  }
+
+  function computeAt(r0, c0) {
+    let sum = 0;
+    const terms = [];
+    for (let i = 0; i < 3; i++) {
+      const rowTerms = [];
+      for (let j = 0; j < 3; j++) {
+        const iv = I[r0 + i][c0 + j];
+        const kv = K[i][j];
+        sum += iv * kv;
+        rowTerms.push(`(${kv}\u00d7${iv})`);
+      }
+      terms.push(rowTerms.join(" + "));
+    }
+    return { sum, terms };
+  }
+
+  function positionHighlight(r0, c0) {
+    const topLeftIdx = r0 * 5 + c0;
+    const bottomRightIdx = (r0 + 2) * 5 + (c0 + 2);
+    const a = imgCells[topLeftIdx].getBoundingClientRect();
+    const b = imgCells[bottomRightIdx].getBoundingClientRect();
+    const wrapRect = imgWrap.getBoundingClientRect();
+    highlight.style.left = (a.left - wrapRect.left - 4) + "px";
+    highlight.style.top = (a.top - wrapRect.top - 4) + "px";
+    highlight.style.width = (b.right - a.left + 4) + "px";
+    highlight.style.height = (b.bottom - a.top + 4) + "px";
+  }
+
+  let step = 0;
+  let visited = new Array(9).fill(null);
+  let playing = false;
+  let playTimer = null;
+
+  function render() {
+    const [r0, c0] = positions[step];
+    positionHighlight(r0, c0);
+
+    const { sum, terms } = computeAt(r0, c0);
+    calcLine.textContent = terms.join("\n+ ");
+    calcResult.textContent = "= " + sum;
+
+    if (Math.abs(sum) < 100) {
+      verdict.textContent = "Zona uniforme \u2192 gairebé 0, no hi ha vora";
+      verdict.className = "verdict flat";
+    } else {
+      verdict.textContent = "Canvi brusc \u2192 vora detectada";
+      verdict.className = "verdict edge";
+    }
+
+    // update output grid up to current step
+    outCells.forEach((cell, i) => {
+      if (i < step) {
+        const [pr, pc] = positions[i];
+        const v = visited[i] !== null ? visited[i] : computeAt(pr, pc).sum;
+        visited[i] = v;
+        const clamped = Math.max(0, Math.min(255, v));
+        cell.textContent = v;
+        cell.style.background = gray(clamped);
+        cell.style.color = textColor(clamped);
+        cell.classList.add("done");
+        cell.classList.remove("current");
+      } else if (i === step) {
+        cell.textContent = "?";
+        cell.style.background = "";
+        cell.style.color = "";
+        cell.classList.remove("done");
+        cell.classList.add("current");
+      } else {
+        cell.textContent = "?";
+        cell.style.background = "";
+        cell.style.color = "";
+        cell.classList.remove("done", "current");
+      }
+    });
+
+    const rowLabel = r0 + 2, colLabel = c0 + 2; // 1-indexed labels matching the worksheet (2..4)
+    statusEl.innerHTML = `Posició <b>${step + 1}</b> de <b>9</b> — fila ${rowLabel}, columna ${colLabel}`;
+
+    btnPrev.disabled = step === 0;
+    btnNext.disabled = step === 8 && visited[8] !== null;
+
+    if (step === 8 && visited[8] !== null) {
+      doneBanner.classList.add("show");
+    } else {
+      doneBanner.classList.remove("show");
+    }
+  }
+
+  function commitCurrentAndAdvance() {
+    const [r0, c0] = positions[step];
+    visited[step] = computeAt(r0, c0).sum;
+    if (step < 8) {
+      step++;
+    } else {
+      stopPlaying();
+    }
+    render();
+  }
+
+  function goPrev() {
+    if (step > 0) {
+      step--;
+      render();
+    }
+  }
+
+  function goNext() {
+    if (step < 8) {
+      commitCurrentAndAdvance();
+    } else if (visited[8] === null) {
+      visited[8] = computeAt(...positions[8]).sum;
+      render();
+    }
+  }
+
+  function reset() {
+    stopPlaying();
+    step = 0;
+    visited = new Array(9).fill(null);
+    render();
+  }
+
+  function stopPlaying() {
+    playing = false;
+    btnPlay.textContent = "\u25b6 Reproduir";
+    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+  }
+
+  function startPlaying() {
+    playing = true;
+    btnPlay.textContent = "\u23f8 Pausa";
+    playTimer = setInterval(() => {
+      if (step === 8 && visited[8] !== null) {
+        stopPlaying();
+        return;
+      }
+      goNext();
+    }, 1600);
+  }
+
+  btnPrev.addEventListener("click", () => { stopPlaying(); goPrev(); });
+  btnNext.addEventListener("click", () => { stopPlaying(); goNext(); });
+  btnReset.addEventListener("click", reset);
+  btnPlay.addEventListener("click", () => {
+    if (playing) stopPlaying(); else startPlaying();
+  });
+
+  window.addEventListener("resize", () => {
+    const [r0, c0] = positions[step];
+    positionHighlight(r0, c0);
+  });
+
+  // responsive cell sizing
+  function setCellSize() {
+    const w = window.innerWidth;
+    const size = w < 420 ? 40 : w < 700 ? 46 : 52;
+    document.documentElement.style.setProperty("--cell", size + "px");
+  }
+  setCellSize();
+  window.addEventListener("resize", setCellSize);
+
+  // initial render (wait a tick so layout/cell sizes are applied before measuring)
+  requestAnimationFrame(() => requestAnimationFrame(render));
+})();
+</script>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

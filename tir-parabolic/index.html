@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Tir parabòlic — simulador interactiu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#ffffff; --fg:#1a1a1a; --muted:#6b7280; --panel:#f6f7f9; --border:#d5d9e0;
+    --accent:#2563eb; --accent-soft:#dbe6fd; --sky1:#bfe0ff; --sky2:#eef8ff; --ground:#6b9c5a;
+    --traj-a:#2563eb; --traj-b:#dc2626; --vx-color:#16a34a; --vy-color:#f59e0b; --vres-color:#7c3aed;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+      --accent:#5b8cff; --accent-soft:#223357; --sky1:#1b2a3d; --sky2:#101418; --ground:#355c2c;
+      --traj-a:#5b8cff; --traj-b:#ff6b6b; --vx-color:#4ade80; --vy-color:#fbbf24; --vres-color:#a78bfa;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#14161a; --fg:#eceef1; --muted:#9aa3af; --panel:#1f2228; --border:#33373f;
+    --accent:#5b8cff; --accent-soft:#223357; --sky1:#1b2a3d; --sky2:#101418; --ground:#355c2c;
+    --traj-a:#5b8cff; --traj-b:#ff6b6b; --vx-color:#4ade80; --vy-color:#fbbf24; --vres-color:#a78bfa;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  body { padding:24px 16px 60px; max-width:1100px; margin:0 auto; }
+  h1 { font-size:clamp(20px,4vw,28px); margin:0 0 6px; text-align:center; }
+  .subtitle { text-align:center; color:var(--muted); font-size:clamp(13px,2.4vw,15px); margin:0 0 20px; line-height:1.5; }
+
+  .stage { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:22px; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px 18px 18px; }
+  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:0 0 12px; text-align:center; font-weight:600; }
+
+  svg { display:block; border-radius:8px; }
+
+  .controls-col { display:flex; flex-direction:column; gap:14px; min-width:270px; max-width:310px; }
+
+  .ctrl-row { margin-bottom: 10px; }
+  .ctrl-row:last-child { margin-bottom: 0; }
+  .ctrl-label { display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
+  .ctrl-label b { font-variant-numeric: tabular-nums; color: var(--fg); }
+  input[type="range"] { width:100%; }
+  select {
+    width:100%; font:inherit; font-size:13.5px; padding:8px 10px; border-radius:8px;
+    border:1px solid var(--border); background:var(--bg); color:var(--fg);
+  }
+
+  .angle-presets { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .angle-presets button {
+    font:inherit; font-weight:600; font-size:11.5px; padding:6px 10px; border-radius:999px;
+    border:1.5px solid var(--border); background:var(--bg); color:var(--fg); cursor:pointer;
+  }
+  .angle-presets button:hover { border-color:var(--accent); }
+
+  .toggle-row { display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:10px; }
+
+  .compare-block { border-top:1px dashed var(--border); margin-top:6px; padding-top:12px; display:none; }
+  .compare-block.show { display:block; }
+  .compare-block .ctrl-label b { color: var(--traj-b); }
+
+  .btn-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:6px; }
+  button.action {
+    font:inherit; font-weight:700; font-size:13.5px; padding:10px 16px; border-radius:999px;
+    border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer;
+  }
+  button.action.secondary { background:var(--panel); color:var(--fg); border-color:var(--border); }
+
+  .readout {
+    display:grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size:13px; margin-top: 4px;
+  }
+  .readout .k { color: var(--muted); }
+  .readout .v { text-align:right; font-variant-numeric: tabular-nums; font-weight:600; }
+
+  .formula-box {
+    margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft);
+    font-size: 12.5px; line-height: 1.7; font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+  }
+
+  .legend { display:flex; justify-content:center; gap:16px; font-size:12px; color:var(--muted); margin-top:10px; flex-wrap:wrap; }
+  .legend span { display:inline-flex; align-items:center; gap:5px; }
+  .swatch { width:14px; height:3px; display:inline-block; border-radius:2px; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+  @media (max-width:640px) { .stage { gap:14px; } }
+</style>
+<meta name="description" content="Simulador de tir parabòlic: canvia la velocitat, l&#x27;angle i la gravetat (Terra, Lluna, Mart, Júpiter) i compara trajectòries.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/tir-parabolic/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Tir parabòlic — simulador interactiu">
+<meta property="og:description" content="Simulador de tir parabòlic: canvia la velocitat, l&#x27;angle i la gravetat (Terra, Lluna, Mart, Júpiter) i compara trajectòries.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/tir-parabolic/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <h1>🚀 Tir parabòlic</h1>
+  <p class="subtitle">Sense fricció de l'aire. Toca les variables i llança — mira com canvien l'abast, l'alçada màxima i el temps de vol.</p>
+
+  <div class="stage">
+    <div class="panel" style="flex:1 1 560px; max-width:640px;">
+      <h2>Trajectòria</h2>
+      <svg id="svg" width="600" height="380" viewBox="0 0 600 380"></svg>
+      <div class="legend" id="legend">
+        <span><span class="swatch" style="background:var(--traj-a)"></span> trajectòria A</span>
+        <span><span class="swatch" style="background:var(--vx-color)"></span> v<sub>x</sub></span>
+        <span><span class="swatch" style="background:var(--vy-color)"></span> v<sub>y</sub></span>
+        <span><span class="swatch" style="background:var(--vres-color)"></span> v (resultant)</span>
+      </div>
+      <div class="btn-row">
+        <button class="action" id="btnLaunch">🚀 Llançar</button>
+        <button class="action secondary" id="btnReset">↺ Reiniciar</button>
+        <select id="speedSel" style="width:auto;">
+          <option value="0.4">Càmera lenta</option>
+          <option value="1" selected>Velocitat normal</option>
+          <option value="2.5">Ràpid</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls-col">
+      <div class="panel">
+        <h2>Trajectòria A</h2>
+        <div class="ctrl-row">
+          <div class="ctrl-label"><span>Velocitat inicial v₀</span><b id="v0aLabel">20 m/s</b></div>
+          <input type="range" id="v0a" min="5" max="40" step="1" value="20">
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label"><span>Angle θ</span><b id="angleaLabel">45°</b></div>
+          <input type="range" id="anglea" min="1" max="89" step="1" value="45">
+          <div class="angle-presets" id="anglePresets"></div>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label"><span>Alçada de llançament h₀</span><b id="h0Label">0 m</b></div>
+          <input type="range" id="h0" min="0" max="30" step="1" value="0">
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label"><span>Gravetat</span><span></span></div>
+          <select id="gSel">
+            <option value="9.8" selected>Terra (9,8 m/s²)</option>
+            <option value="1.62">Lluna (1,62 m/s²)</option>
+            <option value="3.71">Mart (3,71 m/s²)</option>
+            <option value="24.79">Júpiter (24,79 m/s²)</option>
+          </select>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="showVectors" checked>
+          <label for="showVectors">Mostra els vectors velocitat</label>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="compareToggle">
+          <label for="compareToggle">Compara amb una trajectòria B</label>
+        </div>
+
+        <div class="compare-block" id="compareBlock">
+          <div class="ctrl-row">
+            <div class="ctrl-label"><span>v₀ (B)</span><b id="v0bLabel">20 m/s</b></div>
+            <input type="range" id="v0b" min="5" max="40" step="1" value="30">
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-label"><span>Angle θ (B)</span><b id="anglebLabel">45°</b></div>
+            <input type="range" id="angleb" min="1" max="89" step="1" value="30">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>En directe</h2>
+        <div class="readout" id="readout"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Resultats de la trajectòria A</h2>
+        <div class="formula-box" id="formulaBox"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const svg = document.getElementById("svg");
+  const VW = 600, VH = 380;
+  const MARGIN = { top: 30, right: 24, bottom: 46, left: 46 };
+
+  function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+
+  const v0aEl = document.getElementById("v0a"), angleaEl = document.getElementById("anglea"), h0El = document.getElementById("h0"), gSelEl = document.getElementById("gSel");
+  const v0bEl = document.getElementById("v0b"), anglebEl = document.getElementById("angleb");
+  const v0aLabel = document.getElementById("v0aLabel"), angleaLabel = document.getElementById("angleaLabel"), h0Label = document.getElementById("h0Label");
+  const v0bLabel = document.getElementById("v0bLabel"), anglebLabel = document.getElementById("anglebLabel");
+  const showVectorsEl = document.getElementById("showVectors");
+  const compareToggleEl = document.getElementById("compareToggle");
+  const compareBlock = document.getElementById("compareBlock");
+  const btnLaunch = document.getElementById("btnLaunch");
+  const btnReset = document.getElementById("btnReset");
+  const speedSel = document.getElementById("speedSel");
+  const readout = document.getElementById("readout");
+  const formulaBox = document.getElementById("formulaBox");
+  const anglePresets = document.getElementById("anglePresets");
+
+  [15, 30, 45, 60, 75].forEach((a) => {
+    const b = document.createElement("button");
+    b.textContent = a + "°";
+    b.addEventListener("click", () => { angleaEl.value = a; onParamsChange(); });
+    anglePresets.appendChild(b);
+  });
+
+  function physics(v0, angleDeg, h0, g) {
+    const th = (angleDeg * Math.PI) / 180;
+    const vx0 = v0 * Math.cos(th);
+    const vy0 = v0 * Math.sin(th);
+    const disc = vy0 * vy0 + 2 * g * h0;
+    const T = (vy0 + Math.sqrt(disc)) / g;
+    const R = vx0 * T;
+    const H = h0 + (vy0 * vy0) / (2 * g);
+    const tApex = vy0 / g;
+    return { vx0, vy0, T, R, H, tApex };
+  }
+
+  function stateAt(t, v0, angleDeg, h0, g) {
+    const th = (angleDeg * Math.PI) / 180;
+    const vx0 = v0 * Math.cos(th);
+    const vy0 = v0 * Math.sin(th);
+    const x = vx0 * t;
+    const y = h0 + vy0 * t - 0.5 * g * t * t;
+    const vy = vy0 - g * t;
+    return { x: x, y: Math.max(0, y), vx: vx0, vy: vy };
+  }
+
+  // ---- static SVG scaffold ----
+  const gridGroup = ns("g"); svg.appendChild(gridGroup);
+  const groundRect = ns("rect"); svg.appendChild(groundRect);
+  const axisGroup = ns("g"); svg.appendChild(axisGroup);
+  const pathAGroup = ns("g"); svg.appendChild(pathAGroup);
+  const pathBGroup = ns("g"); svg.appendChild(pathBGroup);
+  const trailA = ns("polyline"); trailA.setAttribute("fill", "none"); trailA.setAttribute("stroke", "var(--traj-a)"); trailA.setAttribute("stroke-width", "2.5"); pathAGroup.appendChild(trailA);
+  const trailB = ns("polyline"); trailB.setAttribute("fill", "none"); trailB.setAttribute("stroke", "var(--traj-b)"); trailB.setAttribute("stroke-width", "2.5"); pathBGroup.appendChild(trailB);
+  const ghostA = ns("polyline"); ghostA.setAttribute("fill", "none"); ghostA.setAttribute("stroke", "var(--traj-a)"); ghostA.setAttribute("stroke-width", "1.5"); ghostA.setAttribute("stroke-dasharray", "3 5"); ghostA.setAttribute("opacity", "0.35"); pathAGroup.insertBefore(ghostA, trailA);
+  const ghostB = ns("polyline"); ghostB.setAttribute("fill", "none"); ghostB.setAttribute("stroke", "var(--traj-b)"); ghostB.setAttribute("stroke-width", "1.5"); ghostB.setAttribute("stroke-dasharray", "3 5"); ghostB.setAttribute("opacity", "0.35"); pathBGroup.insertBefore(ghostB, trailB);
+
+  const ballA = ns("circle"); ballA.setAttribute("r", 7); ballA.setAttribute("fill", "var(--traj-a)"); svg.appendChild(ballA);
+  const ballB = ns("circle"); ballB.setAttribute("r", 7); ballB.setAttribute("fill", "var(--traj-b)"); svg.appendChild(ballB);
+
+  const vecGroup = ns("g"); svg.appendChild(vecGroup);
+
+  groundRect.setAttribute("fill", "var(--ground)");
+
+  let scale = 5; // px per meter, recomputed
+  let originX = MARGIN.left, originY = VH - MARGIN.bottom;
+
+  function toScreen(x, y) { return [originX + x * scale, originY - y * scale]; }
+
+  function niceStep(maxVal) {
+    const rough = maxVal / 6;
+    const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    const norm = rough / mag;
+    let step;
+    if (norm < 1.5) step = 1; else if (norm < 3.5) step = 2; else if (norm < 7.5) step = 5; else step = 10;
+    return step * mag;
+  }
+
+  function drawScaffold(maxX, maxY) {
+    const availW = VW - MARGIN.left - MARGIN.right;
+    const availH = VH - MARGIN.top - MARGIN.bottom;
+    scale = Math.max(0.5, Math.min(availW / (maxX * 1.08), availH / (maxY * 1.25)));
+
+    gridGroup.innerHTML = "";
+    const stepX = niceStep(maxX);
+    const stepY = niceStep(maxY);
+    for (let gx = 0; gx <= maxX * 1.08; gx += stepX) {
+      const [sx, sy1] = toScreen(gx, 0);
+      const [, sy2] = toScreen(gx, maxY * 1.25);
+      const l = ns("line");
+      l.setAttribute("x1", sx); l.setAttribute("y1", sy1); l.setAttribute("x2", sx); l.setAttribute("y2", sy2);
+      l.setAttribute("stroke", "var(--border)"); l.setAttribute("stroke-width", "1"); l.setAttribute("opacity", "0.5");
+      gridGroup.appendChild(l);
+      const t = ns("text");
+      t.setAttribute("x", sx); t.setAttribute("y", sy1 + 16); t.setAttribute("text-anchor", "middle");
+      t.setAttribute("font-size", "10"); t.setAttribute("fill", "var(--muted)");
+      t.textContent = Math.round(gx);
+      gridGroup.appendChild(t);
+    }
+    for (let gy = 0; gy <= maxY * 1.25; gy += stepY) {
+      const [sx1, sy] = toScreen(0, gy);
+      const [sx2] = toScreen(maxX * 1.08, gy);
+      const l = ns("line");
+      l.setAttribute("x1", sx1); l.setAttribute("y1", sy); l.setAttribute("x2", sx2); l.setAttribute("y2", sy);
+      l.setAttribute("stroke", "var(--border)"); l.setAttribute("stroke-width", "1"); l.setAttribute("opacity", "0.5");
+      gridGroup.appendChild(l);
+      const t = ns("text");
+      t.setAttribute("x", sx1 - 8); t.setAttribute("y", sy + 3); t.setAttribute("text-anchor", "end");
+      t.setAttribute("font-size", "10"); t.setAttribute("fill", "var(--muted)");
+      t.textContent = Math.round(gy);
+      gridGroup.appendChild(t);
+    }
+
+    const [gx0, gy0] = toScreen(0, 0);
+    const [gx1] = toScreen(maxX * 1.08, 0);
+    groundRect.setAttribute("x", gx0 - 40);
+    groundRect.setAttribute("y", gy0);
+    groundRect.setAttribute("width", (gx1 - gx0) + 80);
+    groundRect.setAttribute("height", 6);
+  }
+
+  function fmt(v, d) { return Number(v).toFixed(d === undefined ? 2 : d); }
+
+  let flightA = null, flightB = null;
+  let simTime = 0, playing = false, landed = false, lastTs = null;
+
+  function computeAll() {
+    const v0a = Number(v0aEl.value), anglea = Number(angleaEl.value), h0 = Number(h0El.value), g = Number(gSelEl.value);
+    v0aLabel.textContent = v0a + " m/s";
+    angleaLabel.textContent = anglea + "°";
+    h0Label.textContent = h0 + " m";
+
+    flightA = physics(v0a, anglea, h0, g);
+    flightA.v0 = v0a; flightA.angle = anglea; flightA.h0 = h0; flightA.g = g;
+
+    let maxX = flightA.R, maxY = Math.max(flightA.H, h0);
+
+    if (compareToggleEl.checked) {
+      const v0b = Number(v0bEl.value), angleb = Number(anglebEl.value);
+      v0bLabel.textContent = v0b + " m/s";
+      anglebLabel.textContent = angleb + "°";
+      flightB = physics(v0b, angleb, h0, g);
+      flightB.v0 = v0b; flightB.angle = angleb; flightB.h0 = h0; flightB.g = g;
+      maxX = Math.max(maxX, flightB.R);
+      maxY = Math.max(maxY, flightB.H, h0);
+    } else {
+      flightB = null;
+    }
+
+    drawScaffold(Math.max(maxX, 5), Math.max(maxY, 2));
+    drawGhost(ghostA, flightA);
+    if (flightB) { drawGhost(ghostB, flightB); ghostB.setAttribute("opacity", "0.35"); }
+    else { ghostB.setAttribute("points", ""); }
+
+    formulaBox.innerHTML =
+      `Alçada màxima H = ${fmt(flightA.H)} m<br>` +
+      `Abast R = ${fmt(flightA.R)} m<br>` +
+      `Temps de vol T = ${fmt(flightA.T)} s`;
+
+    ballA.setAttribute("visibility", "visible");
+    ballB.setAttribute("visibility", flightB ? "visible" : "hidden");
+  }
+
+  function drawGhost(el, f) {
+    const pts = [];
+    const N = 100;
+    for (let i = 0; i <= N; i++) {
+      const t = (f.T * i) / N;
+      const st = stateAt(t, f.v0, f.angle, f.h0, f.g);
+      pts.push(toScreen(st.x, st.y));
+    }
+    el.setAttribute("points", pts.map((p) => p.join(",")).join(" "));
+  }
+
+  function drawVector(x0, y0, dx, dy, color, key) {
+    let el = vecGroup.querySelector('[data-k="' + key + '"]');
+    if (!el) {
+      el = ns("line");
+      el.setAttribute("data-k", key);
+      el.setAttribute("stroke", color);
+      el.setAttribute("stroke-width", 2.5);
+      el.setAttribute("marker-end", "url(#arrow-" + key + ")");
+      vecGroup.appendChild(el);
+
+      const marker = ns("marker");
+      marker.setAttribute("id", "arrow-" + key);
+      marker.setAttribute("markerWidth", "8");
+      marker.setAttribute("markerHeight", "8");
+      marker.setAttribute("refX", "6");
+      marker.setAttribute("refY", "3");
+      marker.setAttribute("orient", "auto");
+      const path = ns("path");
+      path.setAttribute("d", "M0,0 L0,6 L7,3 z");
+      path.setAttribute("fill", color);
+      marker.appendChild(path);
+      svg.insertBefore(marker, svg.firstChild);
+    }
+    el.setAttribute("x1", x0); el.setAttribute("y1", y0);
+    el.setAttribute("x2", x0 + dx); el.setAttribute("y2", y0 + dy);
+  }
+
+  function updateFrame() {
+    const tA = Math.min(simTime, flightA.T);
+    const stA = stateAt(tA, flightA.v0, flightA.angle, flightA.h0, flightA.g);
+    const [bxA, byA] = toScreen(stA.x, stA.y);
+    ballA.setAttribute("cx", bxA); ballA.setAttribute("cy", byA);
+
+    // trail up to now
+    const ptsA = [];
+    const steps = 60;
+    for (let i = 0; i <= steps; i++) {
+      const t = (tA * i) / steps;
+      const s = stateAt(t, flightA.v0, flightA.angle, flightA.h0, flightA.g);
+      ptsA.push(toScreen(s.x, s.y));
+    }
+    trailA.setAttribute("points", ptsA.map((p) => p.join(",")).join(" "));
+
+    let stB = null, bxB, byB;
+    if (flightB) {
+      const tB = Math.min(simTime, flightB.T);
+      stB = stateAt(tB, flightB.v0, flightB.angle, flightB.h0, flightB.g);
+      [bxB, byB] = toScreen(stB.x, stB.y);
+      ballB.setAttribute("cx", bxB); ballB.setAttribute("cy", byB);
+      const ptsB = [];
+      for (let i = 0; i <= steps; i++) {
+        const t = (tB * i) / steps;
+        const s = stateAt(t, flightB.v0, flightB.angle, flightB.h0, flightB.g);
+        ptsB.push(toScreen(s.x, s.y));
+      }
+      trailB.setAttribute("points", ptsB.map((p) => p.join(",")).join(" "));
+    } else {
+      trailB.setAttribute("points", "");
+    }
+
+    vecGroup.innerHTML = "";
+    if (showVectorsEl.checked) {
+      const vScale = 3.2;
+      drawVector(bxA, byA, stA.vx * vScale, 0, "var(--vx-color)", "vxA");
+      drawVector(bxA, byA, 0, -stA.vy * vScale, "var(--vy-color)", "vyA");
+      drawVector(bxA, byA, stA.vx * vScale, -stA.vy * vScale, "var(--vres-color)", "vresA");
+    }
+
+    const speedA = Math.hypot(stA.vx, stA.vy);
+    let readoutHtml =
+      `<span class="k">t</span><span class="v">${fmt(tA)} s</span>` +
+      `<span class="k">x</span><span class="v">${fmt(stA.x)} m</span>` +
+      `<span class="k">y</span><span class="v">${fmt(stA.y)} m</span>` +
+      `<span class="k">vₓ</span><span class="v">${fmt(stA.vx)} m/s</span>` +
+      `<span class="k">v_y</span><span class="v">${fmt(stA.vy)} m/s</span>` +
+      `<span class="k">|v|</span><span class="v">${fmt(speedA)} m/s</span>`;
+    if (flightB) {
+      readoutHtml += `<span class="k" style="color:var(--traj-b)">R (B)</span><span class="v" style="color:var(--traj-b)">${fmt(flightB.R)} m</span>`;
+    }
+    readout.innerHTML = readoutHtml;
+
+    landed = simTime >= flightA.T && (!flightB || simTime >= flightB.T);
+  }
+
+  function tick(ts) {
+    if (!playing) return;
+    if (lastTs === null) lastTs = ts;
+    const dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+    const speed = Number(speedSel.value);
+    simTime += dt * speed;
+    updateFrame();
+    if (landed) {
+      playing = false;
+      btnLaunch.textContent = "🚀 Llançar";
+      lastTs = null;
+      return;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function onParamsChange() {
+    const wasPlaying = playing;
+    computeAll();
+    if (!wasPlaying) { simTime = 0; updateFrame(); }
+  }
+
+  [v0aEl, angleaEl, h0El, gSelEl, v0bEl, anglebEl, showVectorsEl].forEach((el) => el.addEventListener("input", onParamsChange));
+  compareToggleEl.addEventListener("change", () => {
+    compareBlock.classList.toggle("show", compareToggleEl.checked);
+    onParamsChange();
+  });
+
+  btnLaunch.addEventListener("click", () => {
+    if (playing) {
+      playing = false;
+      btnLaunch.textContent = "▶ Continua";
+    } else {
+      if (landed || simTime === 0) { simTime = 0; }
+      playing = true;
+      lastTs = null;
+      btnLaunch.textContent = "⏸ Pausa";
+      requestAnimationFrame(tick);
+    }
+  });
+
+  btnReset.addEventListener("click", () => {
+    playing = false;
+    simTime = 0;
+    lastTs = null;
+    btnLaunch.textContent = "🚀 Llançar";
+    updateFrame();
+  });
+
+  computeAll();
+  updateFrame();
+})();
+</script>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body>
+</html>

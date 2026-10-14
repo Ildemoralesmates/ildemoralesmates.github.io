@@ -1,0 +1,537 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="description" content="Aventura interactiva: tria el camí, recull engranatges i torna a casa amb La Màquina del Temps.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/maquina-temps/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="La Màquina del Temps">
+<meta property="og:description" content="Aventura interactiva: tria el camí, recull engranatges i torna a casa amb La Màquina del Temps.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/maquina-temps/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+</head><body>
+<title>La Màquina del Temps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@500;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@700&display=swap">
+<style>
+/* Layout: una columna de llibre-joc — placa d'època il·lustrada, motxilla, text gran i botons de decisió grossos per a tablet */
+:root{
+  --bg:#eef1f4; --card:#ffffff; --ink:#1d2433; --muted:#5b6477; --line:#d5dbe4;
+  --brass:#a8701a;
+  --acc-casa:#a8701a; --acc-dino:#2c7a38; --acc-roma:#b24e25; --acc-castell:#5a45a8;
+  --bad:#b8323f;
+  --accent:var(--acc-casa);
+  --f-display:"Grandstander","Comic Sans MS","Trebuchet MS",sans-serif;
+  --f-body:"Atkinson Hyperlegible","Verdana",system-ui,sans-serif;
+  --f-dial:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12151c; --card:#1b2030; --ink:#e8ebf2; --muted:#9aa3b8; --line:#2e3547;
+  --brass:#e0a94a;
+  --acc-casa:#e0a94a; --acc-dino:#6cc27a; --acc-roma:#ec8c60; --acc-castell:#ab98f2;
+  --bad:#f07a86; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12151c; --card:#1b2030; --ink:#e8ebf2; --muted:#9aa3b8; --line:#2e3547;
+  --brass:#e0a94a;
+  --acc-casa:#e0a94a; --acc-dino:#6cc27a; --acc-roma:#ec8c60; --acc-castell:#ab98f2;
+  --bad:#f07a86; color-scheme:dark }
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;margin:0}
+#app[data-era="casa"]{--accent:var(--acc-casa)}
+#app[data-era="dino"]{--accent:var(--acc-dino)}
+#app[data-era="roma"]{--accent:var(--acc-roma)}
+#app[data-era="castell"]{--accent:var(--acc-castell)}
+#app{max-width:42rem;margin:0 auto;padding-inline:16px;padding-block:18px 48px;display:flex;flex-direction:column;gap:16px}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-family:var(--f-display);font-weight:800;font-size:1.35rem;margin:0;color:var(--brass);letter-spacing:.01em}
+.hdr-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.finals{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.small-btn{font:700 .85rem var(--f-body);background:transparent;color:var(--muted);border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.small-btn:hover{color:var(--ink);border-color:var(--muted)}
+.small-btn.warn{color:var(--bad);border-color:var(--bad)}
+
+.plate{position:relative;border-radius:18px;overflow:hidden;background:color-mix(in srgb,var(--accent) 14%,var(--card));border:2px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.plate svg{display:block;width:100%;height:auto;max-width:100%}
+.plate-label{position:absolute;left:14px;top:12px;display:flex;flex-direction:column;gap:2px}
+.plate-label .place{font-family:var(--f-display);font-weight:800;font-size:1.25rem;color:var(--ink)}
+.plate-label .year{font-family:var(--f-dial);font-size:.9rem;color:var(--accent);background:var(--card);border-radius:6px;padding:2px 8px;align-self:flex-start;border:1.5px solid color-mix(in srgb,var(--accent) 50%,transparent)}
+
+.bag{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.gears{display:flex;gap:6px;align-items:center}
+.gears .lbl,.items .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-right:4px}
+.gear{width:30px;height:30px;color:var(--line)}
+.gear.on{color:var(--brass)}
+.gear.on.pop{animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.4) rotate(-90deg)}70%{transform:scale(1.25)}100%{transform:scale(1) rotate(0)}}
+.items{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font-size:.85rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--card);border:1.5px solid var(--line)}
+.chip.empty{font-weight:400;color:var(--muted);font-style:italic;border-style:dashed}
+
+.story{background:var(--card);border-radius:18px;padding:22px 20px;border:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.story h2{font-family:var(--f-display);font-weight:800;font-size:1.6rem;margin:0;text-wrap:balance;color:var(--accent)}
+.story.bad h2{color:var(--bad)}
+.tag{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--muted)}
+.story p{font-size:1.2rem;line-height:1.6;margin:0;max-width:60ch}
+.story p.talk{padding-left:12px;border-left:3px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.story p.riddle{font-family:var(--f-display);font-weight:700;font-size:1.35rem;text-align:center;color:var(--accent);padding:6px 0}
+.story p.hint{font-size:1rem;color:var(--muted);font-style:italic}
+
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{font:700 1.15rem var(--f-display);text-align:left;background:var(--card);color:var(--ink);border:2.5px solid var(--accent);border-radius:14px;padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .15s, transform .1s}
+.choice::before{content:"";width:12px;height:12px;flex:none;border-radius:50%;background:var(--accent)}
+.choice:hover{background:color-mix(in srgb,var(--accent) 14%,var(--card))}
+.choice:active{transform:scale(.98)}
+.choice:focus-visible,.small-btn:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
+.choice.alt{border-color:var(--line)}
+.choice.alt::before{background:var(--muted)}
+
+.fade{animation:fade .45s ease}
+@keyframes fade{from{opacity:.2;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+#warp{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 88%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;backdrop-filter:blur(3px)}
+#warp .spin{width:110px;height:110px;color:var(--brass);animation:spin 1.3s cubic-bezier(.6,0,.4,1)}
+#warp .dial{font-family:var(--f-dial);font-size:1.4rem;color:var(--ink);font-variant-numeric:tabular-nums}
+#warp .plof{font-family:var(--f-display);font-weight:800;font-size:2rem;color:var(--brass)}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(720deg)}}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+</style>
+
+<div id="app" data-era="casa">
+  <header>
+    <h1>La Màquina del Temps</h1>
+    <div class="hdr-right">
+      <span class="finals" id="finals"></span>
+      <button class="small-btn" id="restart" type="button">Començar de nou</button>
+    </div>
+  </header>
+
+  <div class="plate" id="plate"></div>
+
+  <div class="bag">
+    <div class="gears" id="gears"><span class="lbl">Engranatges</span></div>
+    <div class="items" id="items"></div>
+  </div>
+
+  <article class="story" id="story" aria-live="polite"></article>
+  <div class="choices" id="choices"></div>
+</div>
+
+<div id="warp" hidden>
+  <svg class="spin" viewBox="0 0 100 100" aria-hidden="true"><use href="#gearShape"/></svg>
+  <div class="plof" id="warpPlof">PLOF!</div>
+  <div class="dial" id="warpDial"></div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="gearShape" fill="currentColor" fill-rule="evenodd" d="M44 4h12l2 12a35 35 0 0 1 9 4l10-7 9 9-7 10a35 35 0 0 1 4 9l12 2v12l-12 2a35 35 0 0 1-4 9l7 10-9 9-10-7a35 35 0 0 1-9 4l-2 12H44l-2-12a35 35 0 0 1-9-4l-10 7-9-9 7-10a35 35 0 0 1-4-9L4 56V44l12-2a35 35 0 0 1 4-9l-7-10 9-9 10 7a35 35 0 0 1 9-4zM50 36a14 14 0 1 0 0.01 0z"/>
+  </defs>
+</svg>
+
+<script>
+/* ---------- Èpoques ---------- */
+const ERAS = {
+  casa:    {place:"El garatge de casa", year:"HUI", dial:"2026"},
+  dino:    {place:"La selva del Cretaci", year:"FA 68.000.000 ANYS", dial:"-68.000.000"},
+  roma:    {place:"Valentia romana", year:"SEGLE I", dial:"ANY 60"},
+  castell: {place:"El castell de Xàtiva", year:"ANY 1250", dial:"ANY 1250"}
+};
+const ART = {
+  casa:`<svg viewBox="0 0 400 120" aria-hidden="true">
+    <rect x="0" y="100" width="400" height="20" fill="color-mix(in srgb,var(--accent) 25%,transparent)"/>
+    <rect x="230" y="30" width="150" height="70" rx="4" fill="color-mix(in srgb,var(--accent) 22%,transparent)"/>
+    <g fill="color-mix(in srgb,var(--accent) 40%,transparent)"><rect x="240" y="40" width="130" height="8"/><rect x="240" y="54" width="130" height="8"/><rect x="240" y="68" width="130" height="8"/><rect x="240" y="82" width="130" height="8"/></g>
+    <circle cx="330" cy="18" r="10" fill="none" stroke="var(--brass)" stroke-width="3"/><path d="M330 12v6l4 3" stroke="var(--brass)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <g transform="translate(150,48) scale(.5)" style="color:var(--brass)"><use href="#gearShape"/></g>
+    <g transform="translate(185,70) scale(.3)" style="color:var(--brass);opacity:.7"><use href="#gearShape"/></g>
+  </svg>`,
+  dino:`<svg viewBox="0 0 400 120" aria-hidden="true">
+    <path d="M240 100 L290 30 L305 30 L360 100Z" fill="color-mix(in srgb,var(--accent) 30%,transparent)"/>
+    <path d="M290 30 q7 -10 15 0" fill="var(--bad)" opacity=".7"/>
+    <circle cx="300" cy="14" r="7" fill="color-mix(in srgb,var(--muted) 35%,transparent)"/><circle cx="312" cy="6" r="5" fill="color-mix(in srgb,var(--muted) 25%,transparent)"/>
+    <rect x="0" y="100" width="400" height="20" fill="color-mix(in srgb,var(--accent) 35%,transparent)"/>
+    <g fill="var(--accent)" opacity=".75"><path d="M40 100 q-10 -40 20 -70 q-5 35 -8 70z"/><path d="M55 100 q20 -35 55 -45 q-35 20 -45 45z"/><path d="M180 100 q5 -30 -15 -55 q30 20 25 55z"/><path d="M380 100 q-15 -30 5 -60 q5 35 3 60z"/></g>
+  </svg>`,
+  roma:`<svg viewBox="0 0 400 120" aria-hidden="true">
+    <rect x="0" y="100" width="400" height="20" fill="color-mix(in srgb,var(--accent) 28%,transparent)"/>
+    <path d="M200 30 L300 8 L400 30Z" fill="color-mix(in srgb,var(--accent) 45%,transparent)"/>
+    <rect x="200" y="30" width="200" height="8" fill="color-mix(in srgb,var(--accent) 45%,transparent)"/>
+    <g fill="color-mix(in srgb,var(--accent) 30%,transparent)"><rect x="212" y="38" width="16" height="62"/><rect x="252" y="38" width="16" height="62"/><rect x="292" y="38" width="16" height="62"/><rect x="332" y="38" width="16" height="62"/><rect x="372" y="38" width="16" height="62"/></g>
+    <path d="M150 100 q-6 -30 6 -38 q12 8 6 38z" fill="color-mix(in srgb,var(--accent) 40%,transparent)"/>
+  </svg>`,
+  castell:`<svg viewBox="0 0 400 120" aria-hidden="true">
+    <circle cx="200" cy="30" r="14" fill="color-mix(in srgb,var(--brass) 45%,transparent)"/>
+    <path d="M0 120 L0 95 Q120 60 230 70 Q320 78 400 50 L400 120Z" fill="color-mix(in srgb,var(--accent) 28%,transparent)"/>
+    <path d="M225 70 v-16 h6 v5 h6 v-5 h6 v5 h6 v-5 h6 v14 h20 v-22 h6 v5 h6 v-5 h6 v5 h6 v-5 h6 v24 h30 v-14 h6 v5 h6 v-5 h6 v5 h6 v-5 h6 v18" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M150 88 q10 -12 22 0z" fill="var(--ink)" opacity=".55"/>
+  </svg>`
+};
+
+/* ---------- Història ---------- */
+const S = {
+inici:{era:"casa", text:[
+  "Plou. Plou tant que fins i tot els caragols s'han quedat a casa.",
+  "Baixes al garatge a buscar la pilota i, darrere de les caixes de Nadal, veus una cosa tapada amb un llençol. El lleves: és una cadira de fusta plena de rellotges, palanques i un volant de llautó. Una placa diu: MÀQUINA DEL TEMPS. Vicent, rellotger, 1924.",
+  "De dins d'un rellotge ix un grill de metall. Bada, estira les potes i et mira.",
+  ">—Per fi algú! Sóc Tic. Esta màquina era del teu rebesavi. Funciona... però li falten tres engranatges que es van perdre en tres viatges. Sense ells, no podríem tornar mai a casa.",
+  ">—I si els anem a buscar? —diu, fent vibrar les antenes."],
+ choices:[{t:"Pujar a la màquina", go:"equip"},{t:"Tapar-la i anar a vore la tele", go:"fi_tele", alt:true}]},
+
+fi_tele:{era:"casa", ending:"bad", title:"La fi més curta del món", text:[
+  "Tapes la màquina, puges a casa i poses la tele. Fan un documental de dinosaures.",
+  "Podries jurar que, des del garatge, se sent un grill que sospira."]},
+
+equip:{era:"casa", text:[
+  ">—Una cosa —diu Tic—. La màquina té una butxaca xicoteta i només hi cap un objecte. Tria bé, que no sabem què ens trobarem."],
+ choices:[
+  {t:"Agafar la llanterna", go:"dino_arribada", set:s=>{s.llanterna=true}},
+  {t:"Agafar l'entrepà de truita de la iaia", go:"dino_arribada", set:s=>{s.entrepa=true}}]},
+
+dino_arribada:{era:"dino", text:[
+  "Tic gira el volant. Tot comença a donar voltes: els rellotges, el garatge, la teua panxa...",
+  "Fa una calor que apega. Estàs enmig d'una selva de falgueres més altes que un autobús. Una libèl·lula grossa com un avió de paper passa per damunt del teu cap.",
+  ">—Detecte l'engranatge —diu Tic—. Està a la platja del volcà, per allà.",
+  "Però, de sobte, de l'altra banda sents uns plors. Uns plors molt forts. Uns plors... de cosa grossa."],
+ choices:[{t:"Anar a vore qui plora", go:"dino_cria"},{t:"Anar directament a la platja", go:"dino_platja"}]},
+
+dino_cria:{era:"dino", text:[
+  "Entre els arbustos hi ha una cria de triceratops, grossa com una vaca, amb les potes enfonsades en un bassal de fang. Com més s'espenta, més s'enfonsa.",
+  ">—No és el nostre problema —diu Tic—. Bé... sí que ho serà si arriba sa mare i ens troba ací."],
+ choices:[{t:"Ajudar-la", go:"dino_ajuda"},{t:"Deixar-la i anar a la platja", go:"dino_platja"}]},
+
+dino_ajuda:{era:"dino", onEnter:s=>{s.trici=true}, text:[
+  "Arrossegues branques i les poses davall de les seues potes. Després l'espentes pel cul. Espentes. Espentes més fort. ¡XOF! La cria ix del fang... i tu caus de cap al bassal.",
+  "Quan t'alces, eres un monstre de fang de dalt a baix. La cria et llepa la cara. Ecs.",
+  "De colp, la terra tremola: arriba la mare triceratops, enorme. Et mira. Resopla. I... abaixa el cap perquè li rasques entre les banyes.",
+  ">—Crec que ara tenim amics grans —diu Tic."],
+ choices:[{t:"Anar a la platja del volcà", go:"dino_platja"}]},
+
+dino_platja:{era:"dino", text:[
+  "A la platja, al costat d'un volcà que treu fum com una cafetera, brilla l'engranatge.",
+  "El problema és on està: entre les potes d'un tiranosaure que dorm panxa amunt. Cada ronc fa tremolar la sorra."],
+ choices:[
+  {t:"Anar-hi de puntetes", go:"dino_puntetes"},
+  {t:"Llançar l'entrepà ben lluny per distraure'l", go:"dino_entrepa", if:s=>s.entrepa},
+  {t:"Cridar la mare triceratops", go:"dino_mare", if:s=>s.trici}]},
+
+dino_puntetes:{era:"dino", text:[
+  "Un pas. Un altre. Ja quasi el toques... ¡CRAC! Has trepitjat una closca d'ou.",
+  "El tiranosaure obri un ull. Després l'altre. Ensuma l'aire."],
+ choices:[
+  {t:"Quedar-te quiet com una estàtua", go:s=>s.trici?"dino_fang":"dino_fi_palmera"},
+  {t:"Córrer!", go:"dino_fi_palmera"}]},
+
+dino_fang:{era:"dino", onEnter:s=>{s.gears++}, text:[
+  "El tiranosaure t'acosta el morro. Ensuma. Torna a ensumar... i arruga el nas: fas olor de fang de triceratops. I als tiranosaures les triceratops no els agraden gens, perquè punxen.",
+  "Se'n va rondinant. Tu agafes l'engranatge amb les mans tremolant.",
+  ">—Mai pensava que diria açò —diu Tic—, però visca el fang."],
+ choices:[{t:"Tornar a la màquina", go:"dino_eixida"}]},
+
+dino_fi_palmera:{era:"dino", ending:"bad", title:"Vacances a la palmera", text:[
+  "Corres com no has corregut mai i puges a una palmera. El tiranosaure s'asseu davall. I espera. I espera.",
+  "Tres dies després encara estàs allí dalt, menjant cocos. Això sí: ara eres el campió mundial d'estar dalt d'una palmera."]},
+
+dino_entrepa:{era:"dino", onEnter:s=>{s.entrepa=false; s.gears++}, text:[
+  "Desembolics l'entrepà. El tiranosaure obri els ulls de colp: l'olor de la truita de la iaia és massa bona. Llances l'entrepà ben lluny i el dinosaure hi corre darrere com un gosset.",
+  "Mentre mastega tot feliç, tu agafes l'engranatge.",
+  ">—La truita de la iaia acaba de salvar la humanitat —diu Tic."],
+ choices:[{t:"Tornar a la màquina", go:"dino_eixida"}]},
+
+dino_mare:{era:"dino", onEnter:s=>{s.gears++; s.dent=true}, text:[
+  "Crides tan fort com pots. La terra tremola i apareix la mare triceratops, amb la cria darrere. Abaixa les banyes i... a la càrrega!",
+  "El tiranosaure es desperta, veu venir tres banyes i fuig corrent com una gallina gegant. En la fugida, se li cau una dent.",
+  "Agafes l'engranatge. I la dent també, de record: és llarga com un plàtan."],
+ choices:[{t:"Tornar a la màquina", go:"dino_eixida"}]},
+
+dino_eixida:{era:"dino", text:s=>[
+  "Tic col·loca l'engranatge a la màquina: ¡clic! Un de tres.",
+  s.trici ? "La cria de triceratops et diu adéu movent la cua. Tu li dius adéu amb una mà plena de fang sec."
+          : "De lluny encara se senten aquells plors. Tic no diu res, però se li han quedat les antenes caigudes."],
+ choices:[{t:"Següent salt!", go:"roma_arribada"}]},
+
+roma_arribada:{era:"roma", text:[
+  "Ara fa olor de pa calent i de peix. Estàs en una plaça plena de columnes, amb gent amb túnica que crida preus: és el fòrum de Valentia. Sí, València, però fa quasi dos mil anys.",
+  ">—L'engranatge està en aquella parada —diu Tic—. El mercader el porta penjat al coll com si fóra un amulet.",
+  "Al costat de la font, una xiqueta amb una túnica blava plora: «Lupa! On eres, Lupa?»"],
+ choices:[{t:"Anar a parlar amb el mercader", go:"roma_mercader"},{t:"Preguntar a la xiqueta què li passa", go:"roma_julia"}]},
+
+roma_mercader:{era:"roma", text:[
+  "El mercader es diu Marcus i té una panxa com una àmfora.",
+  ">—Este amulet? És el meu tresor. Només te'l canvie per alguna cosa que no s'haja vist mai en tot l'Imperi."],
+ choices:[
+  {t:"Ensenyar-li la dent de tiranosaure", go:"roma_paga_dent", if:s=>s.dent},
+  {t:"Ensenyar-li la llanterna", go:"roma_paga_llum", if:s=>s.llanterna},
+  {t:"Anar a parlar amb la xiqueta", go:"roma_julia"},
+  {t:"Intentar agafar-lo quan no mire", go:"roma_fi_lladre", alt:true}]},
+
+roma_paga_dent:{era:"roma", onEnter:s=>{s.dent=false; s.pagat="dent"; s.romaGear=true; s.gears++}, text:[
+  "Marcus mira la dent. Se li obri la boca.",
+  ">—Per Júpiter! Una dent de drac! Tracte fet!",
+  "Et dóna l'engranatge.",
+  ">—I ara? —diu Tic—. Podríem anar-nos-en... però aquella xiqueta continua plorant."],
+ choices:[{t:"Ajudar la xiqueta abans d'anar-nos-en", go:"roma_julia"},{t:"Tornar a la màquina", go:"roma_eixida"}]},
+
+roma_paga_llum:{era:"roma", onEnter:s=>{s.llanterna=false; s.pagat="llanterna"; s.romaGear=true; s.gears++}, text:[
+  "Encens la llanterna. Marcus fa un bot arrere.",
+  ">—Un sol xicotet dins d'una capsa! Tracte fet, tracte fet!",
+  "Et dóna l'engranatge. Tic et xiuxiueja: «Espere que no ens faça falta, eixa llanterna...»",
+  ">—Per cert —afig—, aquella xiqueta continua plorant."],
+ choices:[{t:"Ajudar la xiqueta abans d'anar-nos-en", go:"roma_julia"},{t:"Tornar a la màquina", go:"roma_eixida"}]},
+
+roma_fi_lladre:{era:"roma", ending:"bad", title:"Aprenent de pescador", text:[
+  "Allargues la mà... i Marcus et mira. Tota la plaça et mira. Un soldat amb un casc de plomes et porta al port: el càstig és ajudar els pescadors fins que hages après la lliçó.",
+  "Tres setmanes després ja saps netejar sardines amb els ulls tancats. Tic diu que potser val més tornar arrere i fer-ho bé."]},
+
+roma_julia:{era:"roma", text:[
+  "La xiqueta es diu Júlia. La seua gossa, Lupa, s'ha escapat este matí.",
+  ">—És blanca amb una taca negra a l'ull —diu, i s'eixuga el nas amb la mànega.",
+  ">—On la busquem? —pregunta Tic."],
+ choices:[{t:"A les termes", go:"roma_termes"},{t:"Al port", go:"roma_port"},{t:"Al circ", go:"roma_fi_circ"}]},
+
+roma_termes:{era:"roma", text:[
+  "Les termes són uns banys públics enormes. Entres corrent, rellisques pel marbre banyat i... ¡CHOF!, caus de cap a la piscina d'aigua gelada.",
+  "Uns senyors molt seriosos amb tovallola esclafeixen a riure. De gossa, ni rastre."],
+ choices:[{t:"Buscar al port", go:"roma_port"},{t:"Buscar al circ", go:"roma_fi_circ"}]},
+
+roma_fi_circ:{era:"roma", ending:"bad", title:"Campió del circ", text:[
+  "Al circ estan a punt de començar les curses de carros. Algú et confon amb un auriga, et posa un casc i... ja estàs dalt d'un carro amb quatre cavalls!",
+  "Guanyes la cursa i tota Valentia crida el teu nom. Ara eres tan famós que no et deixen anar-te'n: tens entrenament cada matí. Ah, i Lupa no estava allí."]},
+
+roma_port:{era:"roma", onEnter:s=>{s.julia=true}, text:[
+  "Al port hi ha vaixells, cordes, gavines i centenars d'àmfores. Darrere d'unes que fan una olor horrible (és garum, una salsa romana de peix podrit) sents un lladruc.",
+  "És Lupa! Està bé, però fa una pudor de peix que tomba. Júlia l'abraça tan fort que la gossa fa un gemec."],
+ choices:[{t:"Tornar amb Júlia al fòrum", go:"roma_pare"}]},
+
+roma_pare:{era:"roma",
+ onEnter:s=>{
+   if(s.romaGear){ s.retornat=s.pagat; if(s.pagat==="dent") s.dent=true; if(s.pagat==="llanterna") s.llanterna=true; }
+   else { s.gears++; s.romaGear=true; }
+   s.moneda=true; },
+ text:s=>[
+  "Júlia et porta de la mà fins al fòrum cridant: «Pare! Pare! Me l'ha trobada!». I el pare de Júlia és... Marcus, el mercader.",
+  s.retornat
+    ? `>—Qui troba la gossa de la meua filla no paga res en esta parada! —diu Marcus, i et torna la ${s.retornat==="dent"?"dent de tiranosaure":"llanterna"}.`
+    : ">—Per a tu —diu Marcus, llevant-se l'amulet del coll—. Cap amulet val més que la meua filla contenta.",
+  "Júlia et regala una moneda amb la cara de l'emperador. «Perquè te'n recordes de nosaltres.»"],
+ choices:[{t:"Tornar a la màquina", go:"roma_eixida"}]},
+
+roma_eixida:{era:"roma", text:[
+  "Tic col·loca el segon engranatge: ¡clic! Dos de tres.",
+  ">—Només en queda un —diu—. I el detector marca... un castell. I una cosa molt, molt calenta."],
+ choices:[{t:"Últim salt!", go:"castell_arribada"}]},
+
+castell_arribada:{era:"castell", text:[
+  "És de nit. Dalt d'una muntanya hi ha un castell llarguíssim, amb muralles que pugen i baixen com una serp: el castell de Xàtiva.",
+  ">—L'engranatge està a la cova de davall del castell —diu Tic—. I a la cova viu... bé, ja ho voràs.",
+  "Hi ha dos camins: la boca d'un túnel secret, negra com la gola d'un llop, o un caminet de cabres que puja per la muntanya."],
+ choices:[
+  {t:"Entrar pel túnel secret", go:s=>s.llanterna?"castell_tunel_llum":"castell_tunel_fosc"},
+  {t:"Pujar pel camí de les cabres", go:"castell_cabres"}]},
+
+castell_tunel_llum:{era:"castell", text:[
+  "Encens la llanterna. El túnel està ple de teranyines i de dibuixos antics a les parets: cavallers, estrelles i... un drac.",
+  "En cinc minuts arribes a la boca d'una cova que fa olor de fum.",
+  ">—Ara entenc per què el rebesavi deia que una llanterna sempre fa falta —diu Tic."],
+ choices:[{t:"Entrar a la cova", go:"cova_drac"}]},
+
+castell_tunel_fosc:{era:"castell", text:[
+  "Entres. Deu passos després ja no veus ni la teua mà. Les parets són humides i fredes. Alguna cosa fa «pit-pit» al costat del teu peu.",
+  ">—Crec que ací una llanterna haguera vingut bé —diu Tic amb veu de grill poruc."],
+ choices:[{t:"Seguir la paret a mà dreta", go:"castell_fi_cuina"},{t:"Tornar arrere i agafar el camí de les cabres", go:"castell_cabres"}]},
+
+castell_fi_cuina:{era:"castell", ending:"bad", title:"Pelador oficial de cebes", text:[
+  "Camines a les fosques fins que veus llum: és una porta... de la cuina del castell! La cuinera et veu, et posa un davantal i diu: «Per fi, l'ajudant nou! Hi ha tres-centes cebes per pelar.»",
+  "Plores molt. Però és per les cebes."]},
+
+castell_cabres:{era:"castell", text:[
+  "El camí és tan costerut que has d'anar a quatre grapes. Una cabra et segueix i intenta menjar-se Tic.",
+  ">—QUE NO SÓC UNA FULLA! —crida Tic.",
+  "Arribes dalt amb les cames com un flam, davant d'una cova d'on ix fum."],
+ choices:[{t:"Entrar a la cova", go:"cova_drac"}]},
+
+cova_drac:{era:"castell", text:[
+  "Dins de la cova hi ha muntanyes de monedes, copes i... paper. Molt de paper: a Xàtiva es fabricava paper, i a qui viu ací li encanta col·leccionar-lo.",
+  "Enmig de tot, enroscada, hi ha una dragona verda i daurada. Obri un ull groc com un fanal.",
+  ">—Qui s'atreveix a entrar a la cova de Na Brasa?",
+  "Al capdamunt del tresor brilla l'últim engranatge."],
+ choices:[{t:"Dir-li la veritat", go:"drac_veritat"},{t:"Amagar-te i esperar que s'adorma", go:"drac_fi_espera", alt:true}]},
+
+drac_fi_espera:{era:"castell", ending:"bad", title:"Cent anys d'espera", text:[
+  "T'amagues darrere d'una copa gegant. Na Brasa badalla... i s'adorm. Ho has aconseguit! Bé, no del tot: els dracs dormen cent anys seguits, i quan ronquen fan tanta calor que no t'hi pots acostar.",
+  "Tic calcula que podràs agafar l'engranatge l'any 1350. Potser millor tornar a provar-ho."]},
+
+drac_veritat:{era:"castell", text:s=>{
+  const t=["Li ho contes tot: el garatge, la màquina, el rebesavi, els engranatges. Na Brasa escolta amb el cap de costat.",
+    ">—Una història bonica —diu—. Però ningú no s'emporta res del meu tresor sense guanyar-s'ho."];
+  if(s.trici) t.push("De sobte, ensuma. Ensuma més fort. «Un moment... Tu fas olor de triceratops!». Encara et queda fang sec a les orelles.");
+  return t;},
+ choices:[
+  {t:"Contar-li com vas ajudar la cria de triceratops", go:"drac_amiga", if:s=>s.trici},
+  {t:"Regalar-li la dent de tiranosaure", go:"drac_dent", if:s=>s.dent},
+  {t:"Acceptar el seu repte", go:"drac_repte"}]},
+
+drac_amiga:{era:"castell", onEnter:s=>{s.gears++; s.dracAmiga=true}, text:[
+  "Quan acabes, a Na Brasa li cau una llàgrima que fa «fsss» en tocar el terra.",
+  ">—Els dinosaures són els rebesavis dels dracs. Qui ajuda un dinosaure és amic meu per sempre.",
+  "Amb la punta de la cua, t'acosta l'engranatge."],
+ choices:[{t:"Tornar a casa!", go:"final"}]},
+
+drac_dent:{era:"castell", onEnter:s=>{s.dent=false; s.gears++}, text:[
+  "Na Brasa agafa la dent amb dues ungles, com si fóra de vidre.",
+  ">—Una dent del meu rebesavi! La posaré al lloc més bonic del tresor.",
+  "A canvi, t'acosta l'engranatge amb la cua."],
+ choices:[{t:"Tornar a casa!", go:"final"}]},
+
+drac_repte:{era:"castell", text:[
+  ">—Una endevinalla —diu Na Brasa, i li ix fum pel nas—. Si l'encertes, l'engranatge és teu. Escolta bé:",
+  "?Què és allò que, com més en lleves, més gran es fa?"],
+ choices:[{t:"Una ombra", go:"drac_fi_error"},{t:"Un forat", go:"drac_encert"},{t:"Un gelat a l'estiu", go:"drac_fi_error"}]},
+
+drac_encert:{era:"castell", onEnter:s=>{s.gears++}, text:[
+  ">—Un forat! —dius—. Com més terra en lleves, més gran es fa!",
+  "Na Brasa riu, i la cova s'omple d'un fum que fa olor de torrades.",
+  ">—Llest, el menut! Endavant, és teu."],
+ choices:[{t:"Tornar a casa!", go:"final"}]},
+
+drac_fi_error:{era:"castell", ending:"bad", title:"Netejador d'escates", text:[
+  ">—Error! —diu Na Brasa—. Ara em netejaràs les escates. Totes. Una a una.",
+  "Una dragona té quaranta mil escates. Ja en portes tres-centes dotze. Tic et porta un got d'aigua i et diu que potser l'endevinalla anava de terra i de pales."]},
+
+final:{era:"casa", ending:s=>(s.trici&&s.julia)?"heroi":"bo",
+ title:s=>(s.trici&&s.julia)?"Heroi del temps":"Tornada a casa",
+ text:s=>{
+  const t=["Tic col·loca l'últim engranatge: ¡clic! La màquina fa un soroll de rellotge content. Tot gira i... tornes a estar al garatge. Continua plovent. Segons el rellotge, només han passat cinc minuts."];
+  t.push(s.trici
+    ? "Setmanes després, al museu, voràs el fòssil d'una cria de triceratops. Té una pota un poc torta, com si un dia s'haguera quedat enganxada en el fang. Qui sap."
+    : "A vegades, quan sents plorar algú, penses en aquella selva i en uns plors que no vas anar a vore.");
+  if(s.julia) t.push("I a l'Almoina de València, entre les pedres romanes, hi ha una làpida xicoteta on algú va gravar: JÚLIA I LUPA, AMIGUES PER SEMPRE.");
+  if(s.moneda) t.push("La moneda de l'emperador la guardes al calaix dels tresors.");
+  if(s.dent) t.push("I la dent de tiranosaure? Te la vas quedar. Ara és l'objecte més famós de tota la classe.");
+  t.push(">—Mamaaa! Què hi ha per sopar? —crides. I, des del garatge, un grill de llautó canta.");
+  if(!(s.trici&&s.julia)) t.push("!Pista: hi ha un final encara millor. Què passaria si ajudares tothom que et trobes pel camí?");
+  return t;}}
+};
+
+const ALL_ENDINGS = ["fi_tele","dino_fi_palmera","roma_fi_lladre","roma_fi_circ","castell_fi_cuina","drac_fi_espera","drac_fi_error","final:bo","final:heroi"];
+
+/* ---------- Estat ---------- */
+const fresh = () => ({llanterna:false,entrepa:false,dent:false,moneda:false,trici:false,julia:false,romaGear:false,pagat:null,retornat:null,dracAmiga:false,gears:0});
+let game = {scene:"inici", s:fresh(), hist:[]};
+let found = new Set();
+let lastGears = 0;
+let busy = false;
+const KEY="maquina-temps-v1";
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify({game, found:[...found]})); }catch(e){} }
+function load(){
+  try{ const d=JSON.parse(localStorage.getItem(KEY)||"null");
+    if(d && d.game && S[d.game.scene]){ game=d.game; found=new Set(d.found||[]); } }catch(e){}
+}
+const val = (v,s) => typeof v==="function" ? v(s) : v;
+
+/* ---------- Pintat ---------- */
+const $ = id => document.getElementById(id);
+const esc = t => t.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function renderPlate(era){
+  const e=ERAS[era];
+  $("app").dataset.era=era;
+  $("plate").innerHTML = ART[era] + `<div class="plate-label"><span class="place">${e.place}</span><span class="year">${e.year}</span></div>`;
+}
+function renderBag(){
+  const s=game.s, g=$("gears");
+  g.innerHTML='<span class="lbl">Engranatges</span>';
+  for(let i=0;i<3;i++){
+    const on=i<s.gears, pop=on && i>=lastGears;
+    g.insertAdjacentHTML("beforeend",`<svg class="gear${on?" on":""}${pop?" pop":""}" viewBox="0 0 100 100" role="img" aria-label="${on?"Engranatge aconseguit":"Engranatge que falta"}"><use href="#gearShape"/></svg>`);
+  }
+  lastGears=s.gears;
+  const it=[];
+  if(s.llanterna) it.push("Llanterna");
+  if(s.entrepa) it.push("Entrepà de truita");
+  if(s.dent) it.push("Dent de tiranosaure");
+  if(s.moneda) it.push("Moneda romana");
+  $("items").innerHTML='<span class="lbl">Motxilla</span>' + (it.length ? it.map(x=>`<span class="chip">${x}</span>`).join("") : '<span class="chip empty">buida</span>');
+}
+function renderFinals(){ $("finals").textContent=`Finals descoberts: ${found.size} de ${ALL_ENDINGS.length}`; }
+
+function render(){
+  const sc=S[game.scene], s=game.s;
+  renderPlate(sc.era); renderBag();
+  const endingKind = sc.ending ? val(sc.ending,s) : null;
+  if(endingKind){ found.add(game.scene==="final" ? "final:"+endingKind : game.scene); }
+  renderFinals();
+
+  const st=$("story");
+  st.className="story fade" + (endingKind==="bad"?" bad":"");
+  let html="";
+  if(endingKind){
+    html += `<span class="tag">${endingKind==="bad"?"Final desastrós":"Final"}</span><h2>${esc(val(sc.title,s))}</h2>`;
+  }
+  for(const p of val(sc.text,s)){
+    if(p[0]===">") html+=`<p class="talk">${esc(p.slice(1))}</p>`;
+    else if(p[0]==="?") html+=`<p class="riddle">«${esc(p.slice(1))}»</p>`;
+    else if(p[0]==="!") html+=`<p class="hint">${esc(p.slice(1))}</p>`;
+    else html+=`<p>${esc(p)}</p>`;
+  }
+  st.innerHTML=html;
+  void st.offsetWidth;
+
+  const ch=$("choices"); ch.innerHTML="";
+  const add=(label,fn,alt)=>{ const b=document.createElement("button"); b.type="button"; b.className="choice"+(alt?" alt":""); b.textContent=label; b.onclick=fn; ch.appendChild(b); };
+  if(endingKind==="bad"){
+    add("Tornar a l'última decisió", undo);
+    add("Començar de nou", restart, true);
+  } else if(endingKind){
+    add("Tornar a jugar", restart);
+  } else {
+    (sc.choices||[]).filter(c=>!c.if||c.if(s)).forEach(c=>add(c.t,()=>choose(c),c.alt));
+  }
+  save();
+}
+
+function choose(c){
+  if(busy) return;
+  game.hist.push(JSON.parse(JSON.stringify({scene:game.scene, s:game.s})));
+  if(c.set) c.set(game.s);
+  const next = val(c.go, game.s);
+  const fromEra = S[game.scene].era;
+  game.scene = next;
+  const sc=S[next];
+  if(sc.onEnter) sc.onEnter(game.s);
+  if(sc.era!==fromEra) warp(sc.era, render); else { render(); scrollTop(); }
+}
+function undo(){
+  const prev=game.hist.pop(); if(!prev) return restart();
+  game.scene=prev.scene; game.s=prev.s; lastGears=game.s.gears; render(); scrollTop();
+}
+function restart(){ game={scene:"inici", s:fresh(), hist:[]}; lastGears=0; render(); scrollTop(); }
+function scrollTop(){ try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){ window.scrollTo(0,0); } }
+
+function warp(era, done){
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ done(); scrollTop(); return; }
+  busy=true;
+  const w=$("warp"); $("warpDial").textContent=ERAS[era].dial; w.hidden=false;
+  setTimeout(()=>{ w.hidden=true; busy=false; done(); scrollTop(); },1400);
+}
+
+/* Començar de nou des de la capçalera: doble toc per confirmar */
+let armed=null;
+$("restart").onclick=()=>{
+  const b=$("restart");
+  if(armed){ clearTimeout(armed); armed=null; b.classList.remove("warn"); b.textContent="Començar de nou"; restart(); return; }
+  b.classList.add("warn"); b.textContent="Segur? Toca una altra vegada";
+  armed=setTimeout(()=>{ armed=null; b.classList.remove("warn"); b.textContent="Començar de nou"; },3000);
+};
+
+load(); lastGears=game.s.gears; render();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>
