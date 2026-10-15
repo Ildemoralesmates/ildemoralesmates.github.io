@@ -27,6 +27,7 @@
   --grid: rgba(37, 99, 235, 0.07);
   --c-mates: #2563eb; --c-fisica: #d9480f; --c-misc: #7c3aed; --c-curio: #0f8a5f;
   --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-misc: #efe6ff; --t-curio: #dcf5ea;
+  --s-1: #4338ca; --s-2: #0369a1; --s-3: #0e7490; --s-4: #6d28d9;
   --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -37,6 +38,7 @@
     --grid: rgba(122, 162, 255, 0.07);
     --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-misc: #b799ff; --c-curio: #4fd3a0;
     --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-misc: #2f2450; --t-curio: #15392e;
+    --s-1: #a5b4fc; --s-2: #7dd3fc; --s-3: #67e8f9; --s-4: #c4b5fd;
   }
 }
 * { box-sizing: border-box; }
@@ -99,9 +101,9 @@ h1 em { font-style: normal; color: var(--c-mates); }
 .card .go { white-space: nowrap; }
 .card:hover, .card:focus-visible { border-color: var(--c); }
 .card:hover h3, .card:focus-visible h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
-.subh { font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0.7rem; font-weight: 500; }
+.subh { font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sc, var(--muted)); margin: 1.6rem 0 0.7rem; font-weight: 500; }
 .subh:first-of-type { margin-top: 0.4rem; }
-.subh span { color: var(--c); margin-left: 0.4rem; }
+.subh span { color: inherit; opacity: 0.65; margin-left: 0.4rem; }
 .glyph.long { font-size: 1.5rem; letter-spacing: -0.03em; }
 .soon {
   border: 2px dashed var(--line); border-radius: 14px; padding: 1.4rem; color: var(--muted);
@@ -199,9 +201,11 @@ function renderSections() {
       body = `<div class="soon" style="--c:var(--c-${c.id})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
     } else {
       const subs = [...new Set(items.map((r) => r.sub || ''))];
+      const SUBC = { 'Història i nombres': 1, 'Geometria i àlgebra': 2, 'Fraccions i proporcionalitat': 3, 'Matrius': 4 };
       body = subs.map((sb) => {
         const g = items.filter((r) => (r.sub || '') === sb);
-        const head = subs.length > 1 && sb ? `<h3 class="subh">${sb} <span>${g.length}</span></h3>` : '';
+        const sc = SUBC[sb] ? ` style="--sc:var(--s-${SUBC[sb]})"` : '';
+        const head = subs.length > 1 && sb ? `<h3 class="subh"${sc}>${sb} <span>${g.length}</span></h3>` : '';
         return `${head}<div class="grid">${g.map(card).join('')}</div>`;
       }).join('');
     }
