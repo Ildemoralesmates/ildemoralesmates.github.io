@@ -1,0 +1,323 @@
+<!doctype html><html lang="ca"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="description" content="Cada bloc x pesa el mateix. Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/equacions-balanca/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Equacions com a balança">
+<meta property="og:description" content="Cada bloc x pesa el mateix. Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/equacions-balanca/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Equacions com a balança</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+</head><body>
+<style>
+/* Concepte: quadern quadriculat. Un full amb la figura a l'esquerra i el tauler de control i lectura a la dreta. */
+:root{
+  --bg:#EDF1F6; --grid:rgba(36,84,214,.09);
+  --surface:#FFFFFF; --surface2:#F3F6FA;
+  --fg:#14202E; --muted:#526174; --line:#C7D2E0;
+  --accent:#2454D6; --accent-ink:#FFFFFF;
+  --ta:#0E8F7E; --tb:#DDA000; --tc:#D23F6B;
+  --ok:#1E8449; --warn:#C0392B;
+  --font-display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+    --surface:#162826; --surface2:#1B302D;
+    --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+    --accent:#7FA6FF; --accent-ink:#0B1A2E;
+    --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+    --ok:#5BD08C; --warn:#FF8A78;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+  --surface:#162826; --surface2:#1B302D;
+  --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+  --accent:#7FA6FF; --accent-ink:#0B1A2E;
+  --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+  --ok:#5BD08C; --warn:#FF8A78;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--fg);
+  font:400 17px/1.5 var(--font-body);
+  padding-inline:16px;
+  padding-block:24px 56px;
+}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
+p{margin:0}
+button{font-family:inherit}
+.page{max-width:1120px;margin-inline:auto}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px 24px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-weight:800;font-size:clamp(1.9rem,5vw,3rem);line-height:1;letter-spacing:-.025em}
+.top .kicker{font:500 .8rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.btn:focus-visible,.seg button:focus-visible,.chip:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
+
+.sheet{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:22px}
+.ph{margin-bottom:16px;display:grid;gap:4px}
+.ph h2{font-weight:700;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.01em}
+.ph p{color:var(--muted);max-width:62ch}
+
+.wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:start}
+.wrap>*{min-width:0}
+.stage{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.stage svg{display:block;width:100%;height:auto}
+.side{display:grid;gap:16px}
+.ctl{display:grid;gap:14px}
+.grp{display:grid;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px}
+.grp[hidden]{display:none}
+.gt{font:700 .8rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:600}
+.row output{font:600 1.05rem var(--font-mono)}
+input[type=range]{width:100%;height:30px;margin:0;accent-color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{
+  cursor:pointer;font:600 1rem var(--font-body);
+  padding:9px 14px;border-radius:10px;
+  border:2px solid var(--fg);background:var(--surface);color:var(--fg);
+  min-height:44px;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.op{font-family:var(--font-mono);font-weight:600;min-width:64px}
+.chip{
+  cursor:pointer;font:500 .92rem var(--font-mono);padding:6px 11px;border-radius:99px;
+  border:1.5px solid var(--line);background:var(--surface2);color:var(--fg);
+}
+.chip:hover{border-color:var(--fg)}
+.seg{display:inline-flex;max-width:100%;overflow-x:auto;border:2px solid var(--fg);border-radius:11px}
+.seg button{flex:none;border:0;background:var(--surface);color:var(--fg);cursor:pointer;padding:9px 14px;font:600 .98rem var(--font-body);min-height:42px}
+.seg button+button{border-left:2px solid var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.read{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.read .eq{font:500 1.1rem var(--font-mono)}
+.read .big{font:700 1.7rem/1.2 var(--font-display)}
+.read .note{color:var(--muted);font-size:.95rem}
+.read .ok{color:var(--ok);font-weight:700}
+.read .bad{color:var(--warn);font-weight:700}
+.tip{font-size:.95rem;color:var(--muted);border-left:3px solid var(--tb);padding-left:12px}
+.tip b{color:var(--fg)}
+.ta{color:var(--ta)} .tb{color:var(--tb)} .tc{color:var(--tc)}
+.num{font-variant-numeric:tabular-nums}
+
+
+/* Balança */
+#bal-svg .beam{stroke:var(--fg);stroke-width:9;stroke-linecap:round}
+#bal-svg .pivot{fill:var(--surface);stroke:var(--fg);stroke-width:4}
+#bal-svg .stand{fill:var(--fg)}
+#bal-svg .rope{stroke:var(--muted);stroke-width:2}
+#bal-svg .plate{fill:var(--fg)}
+#bal-svg .bx{fill:var(--accent);stroke:var(--fg);stroke-width:1.5}
+#bal-svg .bu{fill:var(--tb);stroke:var(--fg);stroke-width:1.2}
+#bal-svg .bxl{fill:var(--accent-ink);font:600 22px var(--font-mono)}
+.eqbig{font:700 clamp(1.5rem,4vw,2.1rem)/1.2 var(--font-mono);letter-spacing:-.01em}
+.eqbig.off{color:var(--warn)}
+.log{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
+.log span{font:500 .85rem var(--font-mono);background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:2px 8px}
+
+
+.back{display:inline-block;margin-bottom:14px;font:600 .9rem var(--font-mono);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--fg);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr)}
+  .sheet{padding:16px}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .brow{grid-template-columns:minmax(0,1fr)}
+  .brow .cap{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <div class="top">
+    <h1>Equacions com a balança</h1>
+    <p class="kicker">2n ESO · Àlgebra</p>
+  </div>
+
+  <div class="sheet">
+
+    <section class="panel" id="p-balanca">
+      <div class="ph">
+        <p>Cada bloc <b>x</b> pesa el mateix. Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.</p>
+      </div>
+      <div class="wrap">
+        <div class="stage"><svg id="bal-svg" viewBox="0 0 640 420" role="img" aria-label="Balança amb blocs x i unitats"></svg></div>
+        <div class="side">
+          <div class="read">
+            <div class="eqbig num" id="bal-eq"></div>
+            <div class="note" id="bal-orig"></div>
+            <div id="bal-msg" aria-live="polite"></div>
+          </div>
+          <div class="ctl">
+            <div class="grp">
+              <div class="gt">Aplica l’operació</div>
+              <div class="seg" role="group" aria-label="Costat">
+                <button type="button" id="bal-both" aria-pressed="true">Als dos costats</button>
+                <button type="button" id="bal-left" aria-pressed="false">Només a l’esquerra</button>
+              </div>
+              <div class="btns">
+                <button class="btn op" type="button" data-op="u+">+ 1</button>
+                <button class="btn op" type="button" data-op="u-">− 1</button>
+                <button class="btn op" type="button" data-op="x+">+ x</button>
+                <button class="btn op" type="button" data-op="x-">− x</button>
+              </div>
+              <div class="btns">
+                <button class="btn op" type="button" data-op="d2">÷ 2</button>
+                <button class="btn op" type="button" data-op="d3">÷ 3</button>
+                <button class="btn op" type="button" data-op="d4">÷ 4</button>
+              </div>
+            </div>
+            <div class="btns">
+              <button class="btn" type="button" id="bal-undo">Desfés</button>
+              <button class="btn primary" type="button" id="bal-new">Equació nova</button>
+            </div>
+            <div class="log" id="bal-log" aria-label="Passos fets"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f=(n,d=2)=>{const k=Math.pow(10,d);return String(Math.round(n*k)/k).replace('.',',');};
+
+/* ---------- 2. Balança ---------- */
+(function(){
+  const svg=$('#bal-svg'),eqEl=$('#bal-eq'),orig=$('#bal-orig'),msg=$('#bal-msg'),logEl=$('#bal-log'),undo=$('#bal-undo');
+  const btnBoth=$('#bal-both'),btnLeft=$('#bal-left');
+  const LIM_X=8,LIM_U=24;
+  let X=0,st=null,first=null,hist=[],logs=[],mode='both',theta=0,target=0,raf=0,broke=false;
+  const rnd=n=>Math.floor(Math.random()*n);
+  function gen(){
+    for(;;){
+      const x=1+rnd(6),lx=2+rnd(3),rx=rnd(lx),lu=rnd(7);
+      if(lu===0&&rx===0)continue;
+      const ru=(lx-rx)*x+lu;
+      if(ru>LIM_U)continue;
+      X=x;return {lx:lx,lu:lu,rx:rx,ru:ru};
+    }
+  }
+  const W=s=>[s.lx*X+s.lu,s.rx*X+s.ru];
+  const bal=s=>{const w=W(s);return w[0]===w[1];};
+  const side=(x,u)=>{const p=[];if(x)p.push((x===1?'':x)+'x');if(u||!x)p.push(String(u));return p.join(' + ');};
+  const eqText=s=>side(s.lx,s.lu)+' '+(bal(s)?'=':'≠')+' '+side(s.rx,s.ru);
+  const div=(s,k)=>({lx:s.lx/k,lu:s.lu/k,rx:s.rx/k,ru:s.ru/k});
+  const OPS={
+    'u+':(s,b)=>({lx:s.lx,lu:s.lu+1,rx:s.rx,ru:s.ru+(b?1:0)}),
+    'u-':(s,b)=>({lx:s.lx,lu:s.lu-1,rx:s.rx,ru:s.ru-(b?1:0)}),
+    'x+':(s,b)=>({lx:s.lx+1,lu:s.lu,rx:s.rx+(b?1:0),ru:s.ru}),
+    'x-':(s,b)=>({lx:s.lx-1,lu:s.lu,rx:s.rx-(b?1:0),ru:s.ru}),
+    'd2':s=>div(s,2),'d3':s=>div(s,3),'d4':s=>div(s,4)
+  };
+  const LBL={'u+':'+ 1','u-':'− 1','x+':'+ x','x-':'− x','d2':'÷ 2','d3':'÷ 3','d4':'÷ 4'};
+  const valid=s=>[s.lx,s.lu,s.rx,s.ru].every(Number.isInteger)&&s.lx>=0&&s.rx>=0&&s.lu>=0&&s.ru>=0&&s.lx<=LIM_X&&s.rx<=LIM_X&&s.lu<=LIM_U&&s.ru<=LIM_U;
+
+  function pan(x,y,nx,nu){
+    let g='<g transform="translate('+x.toFixed(1)+','+y.toFixed(1)+')"><line x1="0" y1="0" x2="-92" y2="200" class="rope"/><line x1="0" y1="0" x2="92" y2="200" class="rope"/>';
+    const xr=Math.ceil(nx/4);
+    for(let i=0;i<nx;i++){
+      const r=Math.floor(i/4),c=i%4,cnt=Math.min(4,nx-r*4),px=-cnt*21+c*42+1,py=200-(r+1)*42+2;
+      g+='<rect x="'+px+'" y="'+py+'" width="40" height="40" rx="5" class="bx"/><text x="'+(px+20)+'" y="'+(py+21)+'" class="bxl" text-anchor="middle" dominant-baseline="central">x</text>';
+    }
+    const base=200-xr*42-2;
+    for(let i=0;i<nu;i++){
+      const r=Math.floor(i/8),c=i%8,cnt=Math.min(8,nu-r*8),px=-cnt*11+c*22+1,py=base-(r+1)*22+2;
+      g+='<rect x="'+px+'" y="'+py+'" width="20" height="20" rx="3" class="bu"/>';
+    }
+    return g+'<rect x="-98" y="200" width="196" height="12" rx="5" class="plate"/></g>';
+  }
+  function draw(){
+    const cx=320,cy=84,arm=210,r=theta*Math.PI/180,co=Math.cos(r),si=Math.sin(r);
+    const L=[cx-arm*co,cy-arm*si],R=[cx+arm*co,cy+arm*si];
+    let s='<polygon points="'+(cx-12)+','+cy+' '+(cx+12)+','+cy+' '+(cx+34)+',392 '+(cx-34)+',392" class="stand"/>';
+    s+='<rect x="'+(cx-150)+'" y="392" width="300" height="16" rx="6" class="stand"/>';
+    s+=pan(L[0],L[1],st.lx,st.lu)+pan(R[0],R[1],st.rx,st.ru);
+    s+='<line x1="'+L[0].toFixed(1)+'" y1="'+L[1].toFixed(1)+'" x2="'+R[0].toFixed(1)+'" y2="'+R[1].toFixed(1)+'" class="beam"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="11" class="pivot"/>';
+    svg.innerHTML=s;
+  }
+  function animate(){
+    cancelAnimationFrame(raf);
+    if(RM){theta=target;draw();return;}
+    (function step(){
+      theta+=(target-theta)*0.16;
+      if(Math.abs(target-theta)<0.04){theta=target;draw();return;}
+      draw();raf=requestAnimationFrame(step);
+    })();
+  }
+  function refresh(){
+    const b=mode==='both';
+    $$('[data-op]',$('#p-balanca')).forEach(bt=>{
+      const op=bt.dataset.op,c=OPS[op](st,b);
+      bt.disabled=!valid(c)||(op[0]==='d'&&!bal(st));
+    });
+    undo.disabled=hist.length===0;
+    const w=W(st);
+    target=-Math.max(-16,Math.min(16,(w[0]-w[1])*2));
+    const ok=bal(st);
+    eqEl.textContent=eqText(st);
+    eqEl.classList.toggle('off',!ok);
+    orig.textContent='Equació inicial: '+eqText(first);
+    let solved=null;
+    if(ok&&st.lx===1&&st.lu===0&&st.rx===0)solved=st.ru;
+    else if(ok&&st.rx===1&&st.ru===0&&st.lx===0)solved=st.lu;
+    if(solved!==null)msg.innerHTML='<p class="ok">Resolt: x = '+solved+'. Comprova-ho substituint a l’equació inicial.</p>';
+    else if(!ok)msg.innerHTML='<p class="bad">La balança s’ha descompensat: el que fas a un costat, has de fer-ho a l’altre. Desfés el pas o compensa l’altre plat.</p>';
+    else msg.innerHTML='<p class="note">Equilibri. Vés aïllant la x.</p>';
+    logEl.innerHTML=logs.slice(-8).map(l=>'<span>'+l+'</span>').join('');
+    animate();
+  }
+  function run(op){
+    const b=mode==='both',c=OPS[op](st,b);
+    if(!valid(c))return;
+    hist.push({s:st,l:logs.slice()});
+    logs.push(LBL[op]+(op[0]!=='d'&&!b?' (esq.)':''));
+    st=c;refresh();
+  }
+  function fresh(){
+    st=gen();first=st;hist=[];logs=[];theta=0;refresh();
+  }
+  $$('[data-op]',$('#p-balanca')).forEach(bt=>bt.addEventListener('click',()=>run(bt.dataset.op)));
+  undo.addEventListener('click',()=>{const h=hist.pop();if(!h)return;st=h.s;logs=h.l;refresh();});
+  $('#bal-new').addEventListener('click',fresh);
+  function setMode(m){mode=m;btnBoth.setAttribute('aria-pressed',String(m==='both'));btnLeft.setAttribute('aria-pressed',String(m==='left'));refresh();}
+  btnBoth.addEventListener('click',()=>setMode('both'));
+  btnLeft.addEventListener('click',()=>setMode('left'));
+  fresh();
+})();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>

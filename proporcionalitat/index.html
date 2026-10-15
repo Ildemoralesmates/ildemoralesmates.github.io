@@ -1,0 +1,257 @@
+<!doctype html><html lang="ca"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="description" content="Puja el valor de x i mira com es construeix la taula i la gràfica. Compara una situació proporcional amb una que no ho és.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/proporcionalitat/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Proporcionalitat directa">
+<meta property="og:description" content="Puja el valor de x i mira com es construeix la taula i la gràfica. Compara una situació proporcional amb una que no ho és.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/proporcionalitat/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Proporcionalitat directa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+</head><body>
+<style>
+/* Concepte: quadern quadriculat. Un full amb la figura a l'esquerra i el tauler de control i lectura a la dreta. */
+:root{
+  --bg:#EDF1F6; --grid:rgba(36,84,214,.09);
+  --surface:#FFFFFF; --surface2:#F3F6FA;
+  --fg:#14202E; --muted:#526174; --line:#C7D2E0;
+  --accent:#2454D6; --accent-ink:#FFFFFF;
+  --ta:#0E8F7E; --tb:#DDA000; --tc:#D23F6B;
+  --ok:#1E8449; --warn:#C0392B;
+  --font-display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+    --surface:#162826; --surface2:#1B302D;
+    --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+    --accent:#7FA6FF; --accent-ink:#0B1A2E;
+    --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+    --ok:#5BD08C; --warn:#FF8A78;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+  --surface:#162826; --surface2:#1B302D;
+  --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+  --accent:#7FA6FF; --accent-ink:#0B1A2E;
+  --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+  --ok:#5BD08C; --warn:#FF8A78;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--fg);
+  font:400 17px/1.5 var(--font-body);
+  padding-inline:16px;
+  padding-block:24px 56px;
+}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
+p{margin:0}
+button{font-family:inherit}
+.page{max-width:1120px;margin-inline:auto}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px 24px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-weight:800;font-size:clamp(1.9rem,5vw,3rem);line-height:1;letter-spacing:-.025em}
+.top .kicker{font:500 .8rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.btn:focus-visible,.seg button:focus-visible,.chip:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
+
+.sheet{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:22px}
+.ph{margin-bottom:16px;display:grid;gap:4px}
+.ph h2{font-weight:700;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.01em}
+.ph p{color:var(--muted);max-width:62ch}
+
+.wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:start}
+.wrap>*{min-width:0}
+.stage{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.stage svg{display:block;width:100%;height:auto}
+.side{display:grid;gap:16px}
+.ctl{display:grid;gap:14px}
+.grp{display:grid;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px}
+.grp[hidden]{display:none}
+.gt{font:700 .8rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:600}
+.row output{font:600 1.05rem var(--font-mono)}
+input[type=range]{width:100%;height:30px;margin:0;accent-color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{
+  cursor:pointer;font:600 1rem var(--font-body);
+  padding:9px 14px;border-radius:10px;
+  border:2px solid var(--fg);background:var(--surface);color:var(--fg);
+  min-height:44px;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.op{font-family:var(--font-mono);font-weight:600;min-width:64px}
+.chip{
+  cursor:pointer;font:500 .92rem var(--font-mono);padding:6px 11px;border-radius:99px;
+  border:1.5px solid var(--line);background:var(--surface2);color:var(--fg);
+}
+.chip:hover{border-color:var(--fg)}
+.seg{display:inline-flex;max-width:100%;overflow-x:auto;border:2px solid var(--fg);border-radius:11px}
+.seg button{flex:none;border:0;background:var(--surface);color:var(--fg);cursor:pointer;padding:9px 14px;font:600 .98rem var(--font-body);min-height:42px}
+.seg button+button{border-left:2px solid var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.read{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.read .eq{font:500 1.1rem var(--font-mono)}
+.read .big{font:700 1.7rem/1.2 var(--font-display)}
+.read .note{color:var(--muted);font-size:.95rem}
+.read .ok{color:var(--ok);font-weight:700}
+.read .bad{color:var(--warn);font-weight:700}
+.tip{font-size:.95rem;color:var(--muted);border-left:3px solid var(--tb);padding-left:12px}
+.tip b{color:var(--fg)}
+.ta{color:var(--ta)} .tb{color:var(--tb)} .tc{color:var(--tc)}
+.num{font-variant-numeric:tabular-nums}
+
+
+/* Proporcionalitat */
+#pr-svg .gl{stroke:var(--line);stroke-width:1}
+#pr-svg .ax{stroke:var(--fg);stroke-width:2}
+#pr-svg .tx{fill:var(--muted);font:500 14px var(--font-mono)}
+#pr-svg .tl{fill:var(--fg);font:600 15px var(--font-mono)}
+#pr-svg .ghost{stroke:var(--muted);stroke-width:2;stroke-dasharray:6 6;fill:none}
+#pr-svg .live{stroke:var(--accent);stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#pr-svg .pt{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+#pr-svg .pt.now{fill:var(--tc);stroke:var(--fg)}
+#pr-svg .hole{fill:var(--surface);stroke:var(--fg);stroke-width:2.5}
+#pr-svg .guide{stroke:var(--tc);stroke-width:1.5;stroke-dasharray:4 4}
+.scroller{overflow-x:auto;border:1.5px solid var(--line);border-radius:12px}
+table.vals{border-collapse:collapse;width:100%;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:.92rem}
+table.vals th,table.vals td{padding:6px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+table.vals th:first-child{text-align:left;position:sticky;left:0;background:var(--surface2);color:var(--muted);font-weight:600}
+table.vals tr:last-child td,table.vals tr:last-child th{border-bottom:0}
+table.vals td.now{background:var(--surface2);font-weight:700;color:var(--tc)}
+
+.back{display:inline-block;margin-bottom:14px;font:600 .9rem var(--font-mono);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--fg);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr)}
+  .sheet{padding:16px}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .brow{grid-template-columns:minmax(0,1fr)}
+  .brow .cap{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <div class="top">
+    <h1>Proporcionalitat directa</h1>
+    <p class="kicker">2n ESO · Proporcionalitat</p>
+  </div>
+
+  <div class="sheet">
+
+    <section class="panel" id="p-proporcio">
+      <div class="ph">
+        <p>Puja el valor de x i mira com es construeix la taula i la gràfica. Compara una situació proporcional amb una que no ho és.</p>
+      </div>
+      <div class="wrap">
+        <div class="stage"><svg id="pr-svg" viewBox="0 0 520 340" role="img" aria-label="Gràfica de la relació entre x i y"></svg></div>
+        <div class="side">
+          <div class="ctl">
+            <div class="seg" role="group" aria-label="Situació">
+              <button type="button" data-d="paella" aria-pressed="true">Paella</button>
+              <button type="button" data-d="mapa" aria-pressed="false">Mapa</button>
+              <button type="button" data-d="taxi" aria-pressed="false">Taxi</button>
+            </div>
+            <div class="grp">
+              <label class="row" for="pr-n"><span id="pr-xl">Persones</span><output id="pr-no">5</output></label>
+              <input type="range" id="pr-n" min="1" max="12" step="1" value="5">
+              <p class="note" id="pr-note" style="color:var(--muted);font-size:.95rem"></p>
+            </div>
+          </div>
+          <div class="scroller"><table class="vals" id="pr-tbl"></table></div>
+          <div class="read" id="pr-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f=(n,d=2)=>{const k=Math.pow(10,d);return String(Math.round(n*k)/k).replace('.',',');};
+
+/* ---------- 5. Proporcionalitat ---------- */
+(function(){
+  const DS={
+    paella:{xl:'Persones',yl:'arròs (g)',f:x=>100*x,ymax:1200,ystep:200,note:'Cada persona porta 100 g d’arròs.'},
+    mapa:{xl:'Centímetres al mapa',yl:'km reals',f:x=>2.5*x,ymax:30,ystep:5,note:'Escala 1 : 250 000. Un centímetre del mapa són 2,5 km de terreny.'},
+    taxi:{xl:'Quilòmetres recorreguts',yl:'preu (€)',f:x=>3+1.5*x,ymax:24,ystep:4,note:'3 € de baixada de bandera i 1,5 € per cada quilòmetre.'}
+  };
+  let key='paella';
+  const svg=$('#pr-svg'),N=$('#pr-n'),tbl=$('#pr-tbl'),out=$('#pr-out');
+  const ML=58,MT=16,PW=444,PH=270,XMAX=12;
+  function draw(){
+    const d=DS[key],n=+N.value,X=x=>ML+x/XMAX*PW,Y=y=>MT+PH-y/d.ymax*PH;
+    let s='';
+    for(let x=0;x<=XMAX;x+=2){s+='<line class="gl" x1="'+X(x)+'" x2="'+X(x)+'" y1="'+MT+'" y2="'+(MT+PH)+'"/><text class="tx" x="'+X(x)+'" y="'+(MT+PH+22)+'" text-anchor="middle">'+x+'</text>';}
+    for(let y=0;y<=d.ymax+0.001;y+=d.ystep){s+='<line class="gl" x1="'+ML+'" x2="'+(ML+PW)+'" y1="'+Y(y)+'" y2="'+Y(y)+'"/><text class="tx" x="'+(ML-8)+'" y="'+Y(y)+'" text-anchor="end" dominant-baseline="central">'+f(y)+'</text>';}
+    s+='<line class="ax" x1="'+ML+'" x2="'+(ML+PW)+'" y1="'+(MT+PH)+'" y2="'+(MT+PH)+'"/><line class="ax" x1="'+ML+'" x2="'+ML+'" y1="'+MT+'" y2="'+(MT+PH)+'"/>';
+    s+='<text class="tx" x="'+(ML+PW/2)+'" y="'+(MT+PH+42)+'" text-anchor="middle">'+d.xl.toLowerCase()+' (x)</text>';
+    s+='<text class="tx" transform="translate(14,'+(MT+PH/2)+') rotate(-90)" text-anchor="middle">'+d.yl+' (y)</text>';
+    s+='<line class="ghost" x1="'+X(0)+'" y1="'+Y(d.f(0))+'" x2="'+X(XMAX)+'" y2="'+Y(d.f(XMAX))+'"/>';
+    s+='<line class="live" x1="'+X(0)+'" y1="'+Y(d.f(0))+'" x2="'+X(n)+'" y2="'+Y(d.f(n))+'"/>';
+    s+='<circle class="hole" cx="'+X(0)+'" cy="'+Y(d.f(0))+'" r="6"/>';
+    for(let i=1;i<=n;i++)s+='<circle class="pt'+(i===n?' now':'')+'" cx="'+X(i)+'" cy="'+Y(d.f(i))+'" r="'+(i===n?7:5)+'"/>';
+    s+='<line class="guide" x1="'+X(n)+'" x2="'+X(n)+'" y1="'+Y(d.f(n))+'" y2="'+(MT+PH)+'"/><line class="guide" x1="'+ML+'" x2="'+X(n)+'" y1="'+Y(d.f(n))+'" y2="'+Y(d.f(n))+'"/>';
+    const left=n>8,lx=X(n)+(left?-12:12);
+    s+='<text class="tl" x="'+lx+'" y="'+(Y(d.f(n))-14)+'" text-anchor="'+(left?'end':'start')+'">('+n+' ; '+f(d.f(n))+')</text>';
+    svg.innerHTML=s;
+
+    let h1='<tr><th>x</th>',h2='<tr><th>y</th>',h3='<tr><th>y / x</th>';
+    const ratios=[];
+    for(let i=1;i<=n;i++){
+      const y=d.f(i),cl=i===n?' class="now"':'';
+      ratios.push(y/i);
+      h1+='<td'+cl+'>'+i+'</td>';h2+='<td'+cl+'>'+f(y)+'</td>';h3+='<td'+cl+'>'+f(y/i)+'</td>';
+    }
+    tbl.innerHTML=h1+'</tr>'+h2+'</tr>'+h3+'</tr>';
+    $('#pr-xl').textContent=d.xl;$('#pr-no').textContent=n;$('#pr-note').textContent=d.note;
+    const mx=Math.max.apply(null,ratios),mn=Math.min.apply(null,ratios);
+    let msg;
+    if(n<2)msg='<p class="note">Avança fins a x = 2 o més per comprovar si la raó y / x es manté.</p>';
+    else if(mx-mn<1e-9)msg='<p class="ok">y / x val sempre '+f(mx)+'. És proporcionalitat directa.</p><p class="note">La gràfica és una recta que passa per l’origen (0, 0).</p>';
+    else msg='<p class="bad">y / x canvia: passa de '+f(ratios[0])+' a '+f(ratios[n-1])+'. No és proporcional.</p><p class="note">La recta talla l’eix vertical a '+f(d.f(0))+', no a l’origen.</p>';
+    out.innerHTML=msg;
+  }
+  N.addEventListener('input',draw);
+  $$('[data-d]',$('#p-proporcio')).forEach(bt=>bt.addEventListener('click',()=>{
+    key=bt.dataset.d;
+    $$('[data-d]',$('#p-proporcio')).forEach(x=>x.setAttribute('aria-pressed',String(x===bt)));
+    draw();
+  }));
+  draw();
+})();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>

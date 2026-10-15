@@ -1,0 +1,258 @@
+<!doctype html><html lang="ca"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="description" content="Quatre triangles iguals es recol·loquen dins d’un mateix quadrat. Els espais que queden lliures canvien de forma, però no d’àrea.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/pitagores/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Pitàgores per àrees">
+<meta property="og:description" content="Quatre triangles iguals es recol·loquen dins d’un mateix quadrat. Els espais que queden lliures canvien de forma, però no d’àrea.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/pitagores/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Pitàgores per àrees</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+</head><body>
+<style>
+/* Concepte: quadern quadriculat. Un full amb la figura a l'esquerra i el tauler de control i lectura a la dreta. */
+:root{
+  --bg:#EDF1F6; --grid:rgba(36,84,214,.09);
+  --surface:#FFFFFF; --surface2:#F3F6FA;
+  --fg:#14202E; --muted:#526174; --line:#C7D2E0;
+  --accent:#2454D6; --accent-ink:#FFFFFF;
+  --ta:#0E8F7E; --tb:#DDA000; --tc:#D23F6B;
+  --ok:#1E8449; --warn:#C0392B;
+  --font-display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+    --surface:#162826; --surface2:#1B302D;
+    --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+    --accent:#7FA6FF; --accent-ink:#0B1A2E;
+    --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+    --ok:#5BD08C; --warn:#FF8A78;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+  --surface:#162826; --surface2:#1B302D;
+  --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+  --accent:#7FA6FF; --accent-ink:#0B1A2E;
+  --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+  --ok:#5BD08C; --warn:#FF8A78;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--fg);
+  font:400 17px/1.5 var(--font-body);
+  padding-inline:16px;
+  padding-block:24px 56px;
+}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
+p{margin:0}
+button{font-family:inherit}
+.page{max-width:1120px;margin-inline:auto}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px 24px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-weight:800;font-size:clamp(1.9rem,5vw,3rem);line-height:1;letter-spacing:-.025em}
+.top .kicker{font:500 .8rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.btn:focus-visible,.seg button:focus-visible,.chip:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
+
+.sheet{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:22px}
+.ph{margin-bottom:16px;display:grid;gap:4px}
+.ph h2{font-weight:700;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.01em}
+.ph p{color:var(--muted);max-width:62ch}
+
+.wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:start}
+.wrap>*{min-width:0}
+.stage{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.stage svg{display:block;width:100%;height:auto}
+.side{display:grid;gap:16px}
+.ctl{display:grid;gap:14px}
+.grp{display:grid;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px}
+.grp[hidden]{display:none}
+.gt{font:700 .8rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:600}
+.row output{font:600 1.05rem var(--font-mono)}
+input[type=range]{width:100%;height:30px;margin:0;accent-color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{
+  cursor:pointer;font:600 1rem var(--font-body);
+  padding:9px 14px;border-radius:10px;
+  border:2px solid var(--fg);background:var(--surface);color:var(--fg);
+  min-height:44px;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.op{font-family:var(--font-mono);font-weight:600;min-width:64px}
+.chip{
+  cursor:pointer;font:500 .92rem var(--font-mono);padding:6px 11px;border-radius:99px;
+  border:1.5px solid var(--line);background:var(--surface2);color:var(--fg);
+}
+.chip:hover{border-color:var(--fg)}
+.seg{display:inline-flex;max-width:100%;overflow-x:auto;border:2px solid var(--fg);border-radius:11px}
+.seg button{flex:none;border:0;background:var(--surface);color:var(--fg);cursor:pointer;padding:9px 14px;font:600 .98rem var(--font-body);min-height:42px}
+.seg button+button{border-left:2px solid var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.read{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.read .eq{font:500 1.1rem var(--font-mono)}
+.read .big{font:700 1.7rem/1.2 var(--font-display)}
+.read .note{color:var(--muted);font-size:.95rem}
+.read .ok{color:var(--ok);font-weight:700}
+.read .bad{color:var(--warn);font-weight:700}
+.tip{font-size:.95rem;color:var(--muted);border-left:3px solid var(--tb);padding-left:12px}
+.tip b{color:var(--fg)}
+.ta{color:var(--ta)} .tb{color:var(--tb)} .tc{color:var(--tc)}
+.num{font-variant-numeric:tabular-nums}
+
+
+/* Pitàgores */
+#pit-svg .frame{fill:var(--surface);stroke:var(--fg);stroke-width:2}
+#pit-svg .sqa{fill:var(--ta);fill-opacity:.4;stroke:var(--ta);stroke-width:2}
+#pit-svg .sqb{fill:var(--tb);fill-opacity:.45;stroke:var(--tb);stroke-width:2}
+#pit-svg .sqc{fill:var(--tc);fill-opacity:.4;stroke:var(--tc);stroke-width:2}
+#pit-svg .tri{fill:var(--accent);fill-opacity:.24;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+#pit-svg .lab{fill:var(--fg);font-family:var(--font-mono);font-weight:600}
+#pit-svg .edge{fill:var(--muted);font:600 14px var(--font-mono)}
+
+
+.back{display:inline-block;margin-bottom:14px;font:600 .9rem var(--font-mono);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--fg);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr)}
+  .sheet{padding:16px}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .brow{grid-template-columns:minmax(0,1fr)}
+  .brow .cap{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <div class="top">
+    <h1>Pitàgores per àrees</h1>
+    <p class="kicker">2n ESO · Geometria</p>
+  </div>
+
+  <div class="sheet">
+
+    <section class="panel" id="p-pitagores">
+      <div class="ph">
+        <p>Quatre triangles iguals es recol·loquen dins d’un mateix quadrat. Els espais que queden lliures canvien de forma, però no d’àrea.</p>
+      </div>
+      <div class="wrap">
+        <div class="stage"><svg id="pit-svg" viewBox="0 0 340 340" role="img" aria-label="Demostració de Pitàgores per recol·locació de triangles"></svg></div>
+        <div class="side">
+          <div class="ctl">
+            <div class="grp">
+              <label class="row" for="pit-a"><span>Catet <b class="ta">a</b></span><output id="pit-ao">3</output></label>
+              <input type="range" id="pit-a" min="1" max="12" step="1" value="3">
+              <label class="row" for="pit-b"><span>Catet <b class="tb">b</b></span><output id="pit-bo">4</output></label>
+              <input type="range" id="pit-b" min="1" max="12" step="1" value="4">
+            </div>
+            <div class="grp">
+              <label class="row" for="pit-t"><span>Recol·locació</span></label>
+              <input type="range" id="pit-t" min="0" max="1000" step="1" value="0">
+              <div class="btns"><button class="btn primary" id="pit-go" type="button">Recol·loca els triangles</button></div>
+            </div>
+            <div class="btns" aria-label="Exemples">
+              <button class="chip" type="button" data-a="3" data-b="4">3 · 4 · 5</button>
+              <button class="chip" type="button" data-a="5" data-b="12">5 · 12 · 13</button>
+              <button class="chip" type="button" data-a="6" data-b="8">6 · 8 · 10</button>
+              <button class="chip" type="button" data-a="1" data-b="1">1 · 1 · √2</button>
+            </div>
+          </div>
+          <div class="read" id="pit-out" aria-live="polite"></div>
+          <p class="tip"><b>Per a la classe:</b> abans de moure res, demana quant val l’àrea del quadrat de la hipotenusa si els catets són 3 i 4.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f=(n,d=2)=>{const k=Math.pow(10,d);return String(Math.round(n*k)/k).replace('.',',');};
+
+/* ---------- 1. Pitàgores ---------- */
+(function(){
+  const svg=$('#pit-svg'),A=$('#pit-a'),B=$('#pit-b'),T=$('#pit-t'),go=$('#pit-go'),out=$('#pit-out'),ao=$('#pit-ao'),bo=$('#pit-bo');
+  let t=0,raf=0;
+  function draw(){
+    const a=+A.value,b=+B.value,S=a+b,k=300/S,o=20,c2=a*a+b*b;
+    const P=(x,y)=>(o+x*k).toFixed(1)+','+(o+y*k).toFixed(1);
+    const poly=(pts,dx,dy)=>pts.map(p=>P(p[0]+(dx||0),p[1]+(dy||0))).join(' ');
+    const tri=(pts,dx,dy)=>'<polygon points="'+poly(pts,dx,dy)+'" class="tri"/>';
+    const txt=(x,y,str,op,size)=>'<text x="'+(o+x*k).toFixed(1)+'" y="'+(o+y*k).toFixed(1)+'" class="lab" text-anchor="middle" dominant-baseline="central" style="opacity:'+op.toFixed(2)+';font-size:'+size+'px">'+str+'</text>';
+    let s='';
+    s+='<polygon points="'+poly([[0,0],[S,0],[S,S],[0,S]])+'" class="frame"/>';
+    s+='<polygon points="'+poly([[0,0],[a,0],[a,a],[0,a]])+'" class="sqa" style="opacity:'+(1-t).toFixed(3)+'"/>';
+    s+='<polygon points="'+poly([[a,a],[S,a],[S,S],[a,S]])+'" class="sqb" style="opacity:'+(1-t).toFixed(3)+'"/>';
+    s+='<polygon points="'+poly([[a,0],[S,a],[b,S],[0,b]])+'" class="sqc" style="opacity:'+t.toFixed(3)+'"/>';
+    s+=tri([[a,0],[S,0],[S,a]],0,0);
+    s+=tri([[a,0],[a,a],[S,a]],-a*t,b*t);
+    s+=tri([[0,a],[a,a],[0,S]],0,-a*t);
+    s+=tri([[a,S],[0,S],[a,a]],b*t,0);
+    if(a*k>=26)s+=txt(a/2,a/2,a*k>=78?'a² = '+a*a:String(a*a),1-t,Math.min(18,a*k*0.22+6));
+    if(b*k>=26)s+=txt(a+b/2,a+b/2,b*k>=78?'b² = '+b*b:String(b*b),1-t,Math.min(18,b*k*0.22+6));
+    s+=txt(S/2,S/2,'c² = '+c2,Math.max(0,(t-0.55)/0.45),20);
+    const ex=(px,py,str)=>'<text x="'+px.toFixed(1)+'" y="'+py.toFixed(1)+'" class="edge" text-anchor="middle" dominant-baseline="central">'+str+'</text>';
+    s+=ex(o+a/2*k,11,'a')+ex(o+(a+b/2)*k,11,'b')+ex(9,o+a/2*k,'a')+ex(9,o+(a+b/2)*k,'b');
+    svg.innerHTML=s;
+
+    const c=Math.sqrt(c2),int=Number.isInteger(c);
+    out.innerHTML=
+      '<div class="eq"><span class="ta">a²</span> + <span class="tb">b²</span> = <span class="tc">c²</span></div>'+
+      '<div class="eq num"><span class="ta">'+a*a+'</span> + <span class="tb">'+b*b+'</span> = <span class="tc">'+c2+'</span></div>'+
+      '<div class="big num">c = √'+c2+' '+(int?'= '+c:'≈ '+f(c,3))+'</div>'+
+      '<p class="note">'+(int?'('+a+', '+b+', '+c+') és una <b>terna pitagòrica</b>: els tres costats són nombres enters.':'√'+c2+' no és enter: c és un nombre irracional.')+'</p>';
+    ao.textContent=a;bo.textContent=b;
+    go.textContent=t>=0.999?'Torna al principi':'Recol·loca els triangles';
+  }
+  function play(){
+    cancelAnimationFrame(raf);
+    const from=t,to=t>=0.999?0:1;
+    if(RM){t=to;T.value=Math.round(t*1000);draw();return;}
+    const dur=2800*Math.max(0.25,Math.abs(to-from)),t0=performance.now();
+    function step(now){
+      const p=Math.min(1,(now-t0)/dur),e=p*p*(3-2*p);
+      t=from+(to-from)*e;T.value=Math.round(t*1000);draw();
+      if(p<1)raf=requestAnimationFrame(step);
+    }
+    raf=requestAnimationFrame(step);
+  }
+  A.addEventListener('input',draw);B.addEventListener('input',draw);
+  T.addEventListener('input',()=>{cancelAnimationFrame(raf);t=T.value/1000;draw();});
+  go.addEventListener('click',play);
+  $$('.chip',$('#p-pitagores')).forEach(c=>c.addEventListener('click',()=>{A.value=c.dataset.a;B.value=c.dataset.b;draw();}));
+  draw();
+})();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>

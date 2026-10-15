@@ -1,0 +1,291 @@
+<!doctype html><html lang="ca"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="description" content="Totes les barres tenen la mateixa longitud per unitat, així es poden comparar a ull.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/fraccions-barres/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Fraccions amb barres">
+<meta property="og:description" content="Totes les barres tenen la mateixa longitud per unitat, així es poden comparar a ull.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/fraccions-barres/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Fraccions amb barres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+</head><body>
+<style>
+/* Concepte: quadern quadriculat. Un full amb la figura a l'esquerra i el tauler de control i lectura a la dreta. */
+:root{
+  --bg:#EDF1F6; --grid:rgba(36,84,214,.09);
+  --surface:#FFFFFF; --surface2:#F3F6FA;
+  --fg:#14202E; --muted:#526174; --line:#C7D2E0;
+  --accent:#2454D6; --accent-ink:#FFFFFF;
+  --ta:#0E8F7E; --tb:#DDA000; --tc:#D23F6B;
+  --ok:#1E8449; --warn:#C0392B;
+  --font-display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+    --surface:#162826; --surface2:#1B302D;
+    --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+    --accent:#7FA6FF; --accent-ink:#0B1A2E;
+    --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+    --ok:#5BD08C; --warn:#FF8A78;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1D1B; --grid:rgba(255,255,255,.045);
+  --surface:#162826; --surface2:#1B302D;
+  --fg:#E9F1EF; --muted:#9DB4AF; --line:#2F4C47;
+  --accent:#7FA6FF; --accent-ink:#0B1A2E;
+  --ta:#3DD0B9; --tb:#F2C14E; --tc:#FF7A9E;
+  --ok:#5BD08C; --warn:#FF8A78;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--fg);
+  font:400 17px/1.5 var(--font-body);
+  padding-inline:16px;
+  padding-block:24px 56px;
+}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
+p{margin:0}
+button{font-family:inherit}
+.page{max-width:1120px;margin-inline:auto}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px 24px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-weight:800;font-size:clamp(1.9rem,5vw,3rem);line-height:1;letter-spacing:-.025em}
+.top .kicker{font:500 .8rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.btn:focus-visible,.seg button:focus-visible,.chip:focus-visible{outline:3px solid var(--accent);outline-offset:-4px}
+
+.sheet{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:22px}
+.ph{margin-bottom:16px;display:grid;gap:4px}
+.ph h2{font-weight:700;font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.01em}
+.ph p{color:var(--muted);max-width:62ch}
+
+.wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:start}
+.wrap>*{min-width:0}
+.stage{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.stage svg{display:block;width:100%;height:auto}
+.side{display:grid;gap:16px}
+.ctl{display:grid;gap:14px}
+.grp{display:grid;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px}
+.grp[hidden]{display:none}
+.gt{font:700 .8rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:600}
+.row output{font:600 1.05rem var(--font-mono)}
+input[type=range]{width:100%;height:30px;margin:0;accent-color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{
+  cursor:pointer;font:600 1rem var(--font-body);
+  padding:9px 14px;border-radius:10px;
+  border:2px solid var(--fg);background:var(--surface);color:var(--fg);
+  min-height:44px;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.op{font-family:var(--font-mono);font-weight:600;min-width:64px}
+.chip{
+  cursor:pointer;font:500 .92rem var(--font-mono);padding:6px 11px;border-radius:99px;
+  border:1.5px solid var(--line);background:var(--surface2);color:var(--fg);
+}
+.chip:hover{border-color:var(--fg)}
+.seg{display:inline-flex;max-width:100%;overflow-x:auto;border:2px solid var(--fg);border-radius:11px}
+.seg button{flex:none;border:0;background:var(--surface);color:var(--fg);cursor:pointer;padding:9px 14px;font:600 .98rem var(--font-body);min-height:42px}
+.seg button+button{border-left:2px solid var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.read{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.read .eq{font:500 1.1rem var(--font-mono)}
+.read .big{font:700 1.7rem/1.2 var(--font-display)}
+.read .note{color:var(--muted);font-size:.95rem}
+.read .ok{color:var(--ok);font-weight:700}
+.read .bad{color:var(--warn);font-weight:700}
+.tip{font-size:.95rem;color:var(--muted);border-left:3px solid var(--tb);padding-left:12px}
+.tip b{color:var(--fg)}
+.ta{color:var(--ta)} .tb{color:var(--tb)} .tc{color:var(--tc)}
+.num{font-variant-numeric:tabular-nums}
+
+
+/* Fraccions */
+.fr{display:inline-grid;text-align:center;vertical-align:middle;line-height:1.15;margin-inline:3px;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.fr>span{padding-inline:5px}
+.fr>span:first-child{border-bottom:2px solid currentColor}
+.brow{display:grid;grid-template-columns:minmax(64px,auto) minmax(0,1fr);gap:14px;align-items:center;margin-bottom:14px}
+.brow:last-child{margin-bottom:0}
+.brow .cap{font-size:1.15rem;text-align:center}
+.brow .cap small{display:block;font:500 .78rem var(--font-mono);color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.bar{display:block;width:100%;height:auto}
+.bar .fa{fill:var(--ta);fill-opacity:.85}
+.bar .fb{fill:var(--tb);fill-opacity:.9}
+.bar .fc{fill:var(--tc);fill-opacity:.85}
+.bar .tk{stroke:var(--fg);stroke-opacity:.35;stroke-width:1}
+.bar .tk.w{stroke-opacity:.95;stroke-width:2}
+.bar .out{fill:none;stroke:var(--fg);stroke-width:2}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:1.15rem}
+
+
+.back{display:inline-block;margin-bottom:14px;font:600 .9rem var(--font-mono);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--fg);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr)}
+  .sheet{padding:16px}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .brow{grid-template-columns:minmax(0,1fr)}
+  .brow .cap{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <div class="top">
+    <h1>Fraccions amb barres</h1>
+    <p class="kicker">2n ESO · Fraccions</p>
+  </div>
+
+  <div class="sheet">
+
+    <section class="panel" id="p-fraccions">
+      <div class="ph">
+        <p>Totes les barres tenen la mateixa longitud per unitat, així es poden comparar a ull.</p>
+      </div>
+      <div class="wrap">
+        <div class="stage" id="fr-bars"></div>
+        <div class="side">
+          <div class="ctl">
+            <div class="seg" role="group" aria-label="Mode">
+              <button type="button" data-m="eq" aria-pressed="true">Equivalents</button>
+              <button type="button" data-m="cmp" aria-pressed="false">Comparar</button>
+              <button type="button" data-m="sum" aria-pressed="false">Sumar</button>
+            </div>
+            <div class="grp">
+              <div class="gt ta">Fracció A</div>
+              <label class="row" for="fa-n"><span>Numerador</span><output id="fa-no">2</output></label>
+              <input type="range" id="fa-n" min="0" max="3" step="1" value="2">
+              <label class="row" for="fa-d"><span>Denominador</span><output id="fa-do">3</output></label>
+              <input type="range" id="fa-d" min="1" max="12" step="1" value="3">
+            </div>
+            <div class="grp" id="grp-b" hidden>
+              <div class="gt tb">Fracció B</div>
+              <label class="row" for="fb-n"><span>Numerador</span><output id="fb-no">3</output></label>
+              <input type="range" id="fb-n" min="0" max="4" step="1" value="3">
+              <label class="row" for="fb-d"><span>Denominador</span><output id="fb-do">4</output></label>
+              <input type="range" id="fb-d" min="1" max="12" step="1" value="4">
+            </div>
+            <div class="grp" id="grp-k">
+              <div class="gt">Multiplica dalt i baix per</div>
+              <label class="row" for="fk"><span>Factor</span><output id="fk-o">2</output></label>
+              <input type="range" id="fk" min="1" max="6" step="1" value="2">
+            </div>
+          </div>
+          <div class="read" id="fr-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f=(n,d=2)=>{const k=Math.pow(10,d);return String(Math.round(n*k)/k).replace('.',',');};
+
+/* ---------- 3. Fraccions ---------- */
+(function(){
+  const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+  const lcm=(a,b)=>a/gcd(a,b)*b;
+  const fr=(n,d)=>'<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>';
+  const el={an:$('#fa-n'),ad:$('#fa-d'),bn:$('#fb-n'),bd:$('#fb-d'),k:$('#fk')};
+  const outs={an:$('#fa-no'),ad:$('#fa-do'),bn:$('#fb-no'),bd:$('#fb-do'),k:$('#fk-o')};
+  const bars=$('#fr-bars'),out=$('#fr-out'),grpB=$('#grp-b'),grpK=$('#grp-k');
+  let mode='eq';
+  function bar(ticks,fills,wholes){
+    const W=300*wholes,H=44,minor=ticks*wholes<=48;
+    let s='<svg viewBox="0 0 '+W+' '+H+'" class="bar" role="img" aria-label="Barra de fracció">';
+    fills.forEach(q=>{s+='<rect x="'+(q.s*300)+'" y="0" width="'+(q.l*300)+'" height="'+H+'" class="'+q.c+'"/>';});
+    for(let i=1;i<ticks*wholes;i++){
+      const w=i%ticks===0;
+      if(!w&&!minor)continue;
+      const x=i/ticks*300;
+      s+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+H+'" class="'+(w?'tk w':'tk')+'"/>';
+    }
+    for(let w=0;w<wholes;w++)s+='<rect x="'+(w*300+1)+'" y="1" width="298" height="'+(H-2)+'" class="out"/>';
+    return s+'</svg>';
+  }
+  const row=(cap,svg,label)=>'<div class="brow"><div class="cap">'+(label?'<small>'+label+'</small>':'')+cap+'</div>'+svg+'</div>';
+  function clampNums(){
+    el.an.max=el.ad.value;if(+el.an.value>+el.ad.value)el.an.value=el.ad.value;
+    el.bn.max=el.bd.value;if(+el.bn.value>+el.bd.value)el.bn.value=el.bd.value;
+    const kmax=Math.max(1,Math.min(6,Math.floor(48/+el.ad.value)));
+    el.k.max=kmax;if(+el.k.value>kmax)el.k.value=kmax;
+    Object.keys(el).forEach(key=>{outs[key].textContent=el[key].value;});
+  }
+  function render(){
+    clampNums();
+    const an=+el.an.value,ad=+el.ad.value,bn=+el.bn.value,bd=+el.bd.value,k=+el.k.value;
+    let b='',o='';
+    if(mode==='eq'){
+      const g=gcd(an,ad),simp=an===0?'0':(ad/g===1?String(an/g):fr(an/g,ad/g));
+      b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],1),'Original')+row(fr(an*k,ad*k),bar(ad*k,[{s:0,l:an/ad,c:'fa'}],1),'Equivalent');
+      o='<div class="steps num">'+fr(an,ad)+' = '+fr(an+' × '+k,ad+' × '+k)+' = '+fr(an*k,ad*k)+'</div>'+
+        '<p class="note">La part ombrejada no canvia: només l’hem tallada en trossos més petits.</p>'+
+        '<p class="eq num">Irreductible: '+(g>1||an===0?simp:'ja ho és')+'</p>'+
+        '<p class="eq num">Valor decimal: '+f(an/ad,3)+'</p>';
+    }else if(mode==='cmp'){
+      const x=an*bd,y=bn*ad,sym=x>y?'>':(x<y?'<':'=');
+      b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],1),'A')+row(fr(bn,bd),bar(bd,[{s:0,l:bn/bd,c:'fb'}],1),'B');
+      o='<div class="big num">'+fr(an,ad)+' '+sym+' '+fr(bn,bd)+'</div>'+
+        '<p class="eq num">'+f(an/ad,3)+' '+sym+' '+f(bn/bd,3)+'</p>'+
+        '<p class="eq num">En creu: '+an+'·'+bd+' = '+x+' &nbsp;'+sym+'&nbsp; '+bn+'·'+ad+' = '+y+'</p>'+
+        '<p class="note">'+(x===y?'Són fraccions equivalents.':(x>y?'A és més gran que B.':'B és més gran que A.'))+'</p>';
+    }else{
+      const m=lcm(ad,bd),na=an*m/ad,nb=bn*m/bd,ns=na+nb,g=gcd(ns,m);
+      b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],2),'A')+
+        row(fr(bn,bd),bar(bd,[{s:0,l:bn/bd,c:'fb'}],2),'B')+
+        row(fr(ns,m),bar(m,[{s:0,l:na/m,c:'fa'},{s:na/m,l:nb/m,c:'fb'}],2),'A + B');
+      const q=Math.floor(ns/m),r=ns-q*m,g2=gcd(r,m);
+      let simp='';
+      if(g>1)simp=' = '+(ns/g%(m/g)===0?String(ns/m):fr(ns/g,m/g));
+      const mixed=(q>=1&&r>0)?' = '+q+' '+fr(r/g2,m/g2):'';
+      o='<p class="eq num">Denominador comú: mcm('+ad+', '+bd+') = <b>'+m+'</b></p>'+
+        '<div class="steps num">'+fr(an,ad)+' + '+fr(bn,bd)+' = '+fr(na,m)+' + '+fr(nb,m)+' = '+fr(ns,m)+simp+mixed+'</div>'+
+        '<p class="note">Només es poden sumar trossos de la mateixa mida; per això primer igualem els denominadors.</p>';
+    }
+    bars.innerHTML=b;out.innerHTML=o;
+    grpB.hidden=mode==='eq';grpK.hidden=mode!=='eq';
+  }
+  Object.keys(el).forEach(key=>el[key].addEventListener('input',render));
+  $$('[data-m]',$('#p-fraccions')).forEach(bt=>bt.addEventListener('click',()=>{
+    mode=bt.dataset.m;
+    $$('[data-m]',$('#p-fraccions')).forEach(x=>x.setAttribute('aria-pressed',String(x===bt)));
+    render();
+  }));
+  render();
+})();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>
