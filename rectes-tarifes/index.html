@@ -1,0 +1,1093 @@
+<!doctype html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Escriu el pendent i l'ordenada en l'origen i mira la taula i la recta. Compara tarifes reals en la mateixa gràfica i descobreix quina convé.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/rectes-tarifes/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Rectes i tarifes">
+<meta property="og:description" content="Escriu el pendent i l'ordenada en l'origen i mira la taula i la recta. Compara tarifes reals en la mateixa gràfica i descobreix quina convé.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/rectes-tarifes/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Rectes i tarifes</title>
+</head><body>
+<style>
+/* Layout: capçalera amb nivell, pestanyes; dues columnes (enunciat+preguntes | gràfica sobre paper mil·limetrat + taula) que s'apilen al mòbil */
+:root{
+  --paper:#f2f5f1; --surface:#ffffff; --ink:#17201b; --muted:#56635b; --line:#d3dcd5;
+  --plot:#fbfdf9; --grid:#d6e8dc; --grid-major:#a8ccb5;
+  --accent:#1d6b4d; --accent-ink:#ffffff; --tint:#e2eee6;
+  --ok:#1b7c44; --bad:#b5352a;
+  --s1:#2457c2; --s2:#cf5d17; --s3:#8a3bb4; --s4:#8f7205;
+  --f-ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-math:"Cambria Math",Cambria,"STIX Two Math","Latin Modern Math",Georgia,"Times New Roman",serif;
+  --f-num:ui-monospace,"Cascadia Mono","Segoe UI Mono",Consolas,Menlo,"DejaVu Sans Mono",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111613; --surface:#19201c; --ink:#e3ebe5; --muted:#9aa9a0; --line:#2c3832;
+    --plot:#151c18; --grid:#1f2e26; --grid-major:#2f4a3b;
+    --accent:#5fc497; --accent-ink:#0b1a12; --tint:#1d3027;
+    --ok:#5ccf8a; --bad:#ff7d6e;
+    --s1:#7aa7ff; --s2:#ff9a56; --s3:#c78bf3; --s4:#e2c241;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111613; --surface:#19201c; --ink:#e3ebe5; --muted:#9aa9a0; --line:#2c3832;
+  --plot:#151c18; --grid:#1f2e26; --grid-major:#2f4a3b;
+  --accent:#5fc497; --accent-ink:#0b1a12; --tint:#1d3027;
+  --ok:#5ccf8a; --bad:#ff7d6e;
+  --s1:#7aa7ff; --s2:#ff9a56; --s3:#c78bf3; --s4:#e2c241;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.5;margin:0}
+.app{max-width:1200px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.brand svg{flex:none}
+h1{font-size:1.65rem;line-height:1.15;margin:0;font-weight:750;letter-spacing:-.01em;text-wrap:balance}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.seg button{font:600 .92rem var(--f-ui);padding:7px 14px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg-wrap{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin:18px 0 16px;overflow-x:auto}
+.tabs button{font:650 1rem var(--f-ui);padding:10px 14px;border:0;background:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1.5px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:14px}
+.bar label{font-weight:600;color:var(--muted);font-size:.9rem}
+select{font:600 .95rem var(--f-ui);padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);max-width:100%;min-width:0}
+.btn{font:650 .92rem var(--f-ui);padding:8px 14px;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.small{padding:6px 12px;font-size:.88rem}
+.btn.link{border-color:transparent;background:transparent;color:var(--accent);text-decoration:underline;padding-inline:4px}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.layout{display:grid;gap:16px;grid-template-areas:"a1" "b" "a2"}
+.a1{grid-area:a1;display:grid;gap:14px;min-width:0}
+.b{grid-area:b;display:grid;gap:14px;min-width:0;align-content:start}
+.a2{grid-area:a2;min-width:0;align-self:start}
+@media (min-width:940px){
+  .layout{grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);grid-template-areas:"a1 b" "a2 b";grid-template-rows:auto 1fr;align-items:start}
+}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.statement{background:var(--tint);border-radius:10px;padding:14px 16px;font-size:1.03rem;line-height:1.6}
+.statement p{margin:0 0 6px}
+.statement ul{margin:6px 0 0;padding-left:1.2em}
+.statement .task{margin-top:10px;font-size:.94rem;color:var(--muted)}
+.eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:0 0 8px}
+.formula{font-family:var(--f-math);font-size:1.7rem;line-height:1.2;margin:0 0 12px;overflow-x:auto;white-space:nowrap}
+.formula i,.eq i{font-style:italic}
+.ph{color:var(--muted);font-style:italic;border-bottom:1.5px dashed var(--muted)}
+.fields{display:flex;flex-wrap:wrap;gap:12px 22px}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--muted);font-weight:600}
+.fld i{font-family:var(--f-math);font-size:1.05rem;color:var(--ink)}
+input.num{font:600 1.05rem var(--f-num);width:7.5rem;padding:7px 9px;border:1.5px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+input.num.sm{width:5.6rem}
+input.num.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,var(--surface))}
+input.num.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--surface))}
+input.num:disabled{opacity:1;color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:14px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--tint);color:var(--accent);font-weight:700;font-size:.85rem}
+.fb{margin:8px 0 0;font-size:.95rem}
+.fb:empty{display:none}
+.fb.ok{color:var(--ok);font-weight:600}
+.fb.bad{color:var(--bad)}
+.fb.sol{background:var(--tint);color:var(--ink);padding:8px 11px;border-radius:8px}
+.hint{color:var(--ink)}
+.freebox{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.graphcard{padding:12px 12px 10px}
+.graphcard svg{display:block;width:100%;height:auto;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.readout{font:.9rem var(--f-num);color:var(--muted);min-height:1.5em;margin:6px 4px 0;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink)}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;margin:8px 4px 0;font-size:.92rem}
+.toggles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th{font:700 .74rem var(--f-ui);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:right;padding:6px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:5px 10px;text-align:right;font-family:var(--f-num);font-size:.93rem;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td.calc{color:var(--muted);font-size:.85rem;text-align:center}
+th.calc{text-align:center}
+td.best{background:color-mix(in srgb,var(--c) 17%,transparent);font-weight:700;color:var(--ink)}
+.tbl-note{color:var(--muted);font-size:.85rem;margin:8px 0 0}
+.empty{color:var(--muted);font-size:.93rem;margin:4px 0}
+.qhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.qhead h2{font-size:1.15rem;margin:0}
+.score{font:700 .88rem var(--f-ui);padding:3px 10px;border-radius:999px;background:var(--tint);color:var(--accent);font-variant-numeric:tabular-nums}
+.qhelp{color:var(--muted);font-size:.88rem;margin:4px 0 12px}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:4px;counter-reset:q}
+.q{counter-increment:q;border-top:1px solid var(--line);padding:12px 0 10px;display:grid;grid-template-columns:2rem minmax(0,1fr);column-gap:4px}
+.q::before{content:counter(q);grid-row:1 / span 4;font:750 .95rem var(--f-ui);color:var(--accent);width:1.6rem;height:1.6rem;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;margin-top:1px}
+.q.is-done::before{content:"✓";background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.q.is-shown::before{background:var(--muted);border-color:var(--muted);color:var(--surface)}
+.qt{margin:0 0 8px}
+.qt .note{display:block;color:var(--muted);font-size:.86rem}
+.qf{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.qf .lab{display:flex;align-items:center;gap:6px;font-weight:600;font-size:.92rem}
+.qf .u{color:var(--muted);font-weight:500}
+.opts{border:0;margin:0;padding:0;display:grid;gap:6px;width:100%}
+.opt{display:flex;gap:9px;align-items:flex-start;padding:7px 10px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;font-size:.95rem}
+.opt input{margin-top:4px;accent-color:var(--accent)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 9%,var(--surface))}
+.opt.bad{border-color:var(--bad)}
+.qa{display:flex;gap:8px;margin-top:8px;align-items:center}
+.trows{display:grid;gap:2px}
+.trow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.trow:last-child{border-bottom:0}
+.sw{width:14px;height:14px;border-radius:3px;flex:none}
+.tname-fixed{font-weight:700;min-width:5.6em}
+input.tname{font:600 .95rem var(--f-ui);width:7rem;padding:7px 9px;border:1.5px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink)}
+.eq{font-family:var(--f-math);font-size:1.2rem}
+.mark{font-weight:800;min-width:1.2em}
+.mark.ok{color:var(--ok)} .mark.bad{color:var(--bad)}
+.del{border:0;background:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:0 6px;line-height:1}
+.back{display:inline-block;margin-bottom:14px;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.explore{margin:0;padding-left:1.2em;display:grid;gap:6px}
+footer{margin-top:28px;color:var(--muted);font-size:.85rem}
+@media (prefers-reduced-motion:no-preference){ .q,.opt,input.num{transition:background-color .2s,border-color .2s} }
+</style>
+
+<div class="app">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div class="brand">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+        <rect x="1" y="1" width="42" height="42" rx="8" style="fill:var(--surface);stroke:var(--line)"/>
+        <path d="M8 1v42M15 1v42M22 1v42M29 1v42M36 1v42M1 8h42M1 15h42M1 22h42M1 29h42M1 36h42" style="stroke:var(--grid);stroke-width:1"/>
+        <path d="M6 34 L38 12" style="stroke:var(--s1);stroke-width:3;stroke-linecap:round"/>
+        <path d="M6 26 L38 20" style="stroke:var(--s2);stroke-width:3;stroke-linecap:round"/>
+        <circle cx="22.4" cy="22.9" r="3" style="fill:var(--ink)"/>
+      </svg>
+      <div>
+        <h1>Rectes i tarifes</h1>
+        <p>Proporcionalitat i funció afí amb situacions reals</p>
+      </div>
+    </div>
+    <div class="seg-wrap">Nivell
+      <div class="seg" role="group" aria-label="Nivell">
+        <button id="niv2" aria-pressed="true">2n ESO</button>
+        <button id="niv4" aria-pressed="false">4t ESO</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-rel" aria-selected="true" aria-controls="pane-rel">Una relació</button>
+    <button role="tab" id="tab-tar" aria-selected="false" aria-controls="pane-tar">Compara tarifes</button>
+  </nav>
+
+  <!-- PESTANYA 1: UNA RELACIÓ -->
+  <section id="pane-rel" role="tabpanel">
+    <div class="bar">
+      <label for="rel-ctx">Situació</label>
+      <select id="rel-ctx"></select>
+      <button id="rel-new" class="btn ghost">Nou exercici</button>
+    </div>
+    <div class="layout">
+      <div class="a1">
+        <div class="statement" id="rel-text"></div>
+        <div class="card">
+          <p class="eyebrow">La teua recta</p>
+          <div class="formula" id="rel-formula"></div>
+          <div class="fields">
+            <label class="fld" for="rel-m">Pendent <i>m</i><input class="num" id="rel-m" autocomplete="off" spellcheck="false"></label>
+            <label class="fld" for="rel-n">Ordenada en l'origen <i>n</i><input class="num" id="rel-n" autocomplete="off" spellcheck="false"></label>
+          </div>
+          <div class="freebox" id="rel-free" hidden>
+            <label class="fld" for="rel-x0"><span><i>x</i> des de</span><input class="num sm" id="rel-x0" value="0"></label>
+            <label class="fld" for="rel-x1"><span>fins a</span><input class="num sm" id="rel-x1" value="10"></label>
+            <label class="fld" for="rel-step"><span>pas de la taula</span><input class="num sm" id="rel-step" value="1"></label>
+          </div>
+          <div class="row">
+            <button class="btn" id="rel-check">Comprova l'expressió</button>
+            <button class="btn link" id="rel-sol" hidden>Mostra la solució</button>
+            <span id="rel-badge"></span>
+          </div>
+          <p class="fb" id="rel-fb" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="b">
+        <div class="card graphcard">
+          <svg id="rel-svg" viewBox="0 0 640 420" role="img" aria-label="Gràfica de la recta"></svg>
+          <div class="readout" id="rel-read"></div>
+        </div>
+        <div class="card">
+          <p class="eyebrow">Taula de valors</p>
+          <div class="tbl-wrap" id="rel-table"></div>
+        </div>
+      </div>
+      <div class="a2 card" id="rel-qs"></div>
+    </div>
+  </section>
+
+  <!-- PESTANYA 2: COMPARA TARIFES -->
+  <section id="pane-tar" role="tabpanel" hidden>
+    <div class="bar">
+      <label for="tar-ctx">Situació</label>
+      <select id="tar-ctx"></select>
+      <button id="tar-new" class="btn ghost">Nou exercici</button>
+    </div>
+    <div class="layout">
+      <div class="a1">
+        <div class="statement" id="tar-text"></div>
+        <div class="card">
+          <p class="eyebrow">Expressió de cada tarifa</p>
+          <div class="trows" id="tar-rows"></div>
+          <div class="freebox" id="tar-free" hidden>
+            <button class="btn ghost small" id="tar-add">Afig una tarifa</button>
+            <label class="fld" for="tar-x1"><span><i>x</i> fins a</span><input class="num sm" id="tar-x1" value="300"></label>
+            <label class="fld" for="tar-step"><span>pas de la taula</span><input class="num sm" id="tar-step" value="50"></label>
+          </div>
+          <div class="row" id="tar-checkrow">
+            <button class="btn" id="tar-check">Comprova les expressions</button>
+            <button class="btn link" id="tar-sol" hidden>Mostra la solució</button>
+          </div>
+          <p class="fb" id="tar-fb" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="b">
+        <div class="card graphcard">
+          <svg id="tar-svg" viewBox="0 0 640 420" role="img" aria-label="Gràfica de les tarifes"></svg>
+          <div class="readout" id="tar-read"></div>
+          <div class="toggles">
+            <label><input type="checkbox" id="tar-cuts"> Mostra els punts de tall on canvia la més barata</label>
+            <label><input type="checkbox" id="tar-bands"> Mostra on convé cada tarifa</label>
+          </div>
+        </div>
+        <div class="card">
+          <p class="eyebrow">Taula comparativa</p>
+          <div class="tbl-wrap" id="tar-table"></div>
+        </div>
+      </div>
+      <div class="a2 card" id="tar-qs"></div>
+    </div>
+  </section>
+
+  <footer>Pots escriure els decimals amb coma o amb punt, i també fraccions com 40/3. Cada «Nou exercici» canvia els nombres.</footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const r2 = v => Math.round(v * 100) / 100;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const NAMES = ['A', 'B', 'C', 'D'];
+const COL = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)'];
+
+/* ---------- Nombres ---------- */
+function fmt(v, dec = 2, fixed = false) {
+  if (v == null || !isFinite(v)) return '—';
+  const f = Math.pow(10, dec);
+  let x = Math.round(v * f) / f; if (x === 0) x = 0;
+  const neg = x < 0;
+  let s = fixed ? Math.abs(x).toFixed(dec) : String(+Math.abs(x).toFixed(dec));
+  let [i, d] = s.split('.');
+  if (i.length > 4) i = i.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return (neg ? '−' : '') + i + (d ? ',' + d : '');
+}
+const N = (v, d = 3) => fmt(v, d);
+const E = (v, d = 2) => fmt(v, d, true) + ' €';
+function parseNum(s) {
+  if (s == null) return NaN;
+  s = String(s).trim().replace(/\s/g, '').replace(/[−–]/g, '-').replace(/,/g, '.');
+  if (s === '') return NaN;
+  const fr = s.match(/^([-+]?\d*\.?\d+)\/([-+]?\d*\.?\d+)$/);
+  if (fr) { const b = Number(fr[2]); return b === 0 ? NaN : Number(fr[1]) / b; }
+  if (!/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+  return Number(s);
+}
+function niceStep(v) { const c = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000]; for (const x of c) if (x >= v - 1e-12) return x; return c[c.length - 1]; }
+function niceInt(v) { const c = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000]; for (const x of c) if (x >= v - 1e-12) return x; return 1000; }
+const pm = m => m < 0 ? `(${N(m)})` : N(m);
+function calcStr(m, n, x) { let s = `${pm(m)} · ${x < 0 ? '(' + N(x) + ')' : N(x)}`; if (n > 0) s += ` + ${N(n)}`; else if (n < 0) s += ` − ${N(-n)}`; return s; }
+function exprTxt(m, n) {
+  let s = 'y = ';
+  if (m === 0) return s + N(n);
+  s += (m === 1 ? '' : m === -1 ? '−' : N(m)) + 'x';
+  if (n > 0) s += ' + ' + N(n); else if (n < 0) s += ' − ' + N(-n);
+  return s;
+}
+function formulaHTML(m, n) {
+  const okm = isFinite(m), okn = isFinite(n);
+  const PH = t => `<span class="ph">${t}</span>`;
+  let s = '<i>y</i> = ';
+  if (okm && m === 0) return s + (okn ? N(n) : PH('n'));
+  s += (okm ? (m === 1 ? '' : m === -1 ? '−' : N(m)) : PH('m')) + '<i>x</i>';
+  if (!okn) s += ' + ' + PH('n'); else if (n > 0) s += ' + ' + N(n); else if (n < 0) s += ' − ' + N(-n);
+  return s;
+}
+function classify(m, n) {
+  if (!isFinite(m) || !isFinite(n)) return '';
+  if (m === 0) return 'Funció constant';
+  if (n === 0) return `Proporcionalitat directa · constant k = ${N(m)}`;
+  return 'Funció afí (no és proporcional)';
+}
+
+/* ---------- Situacions: una relació ---------- */
+const REL = [
+ { id: 'taronges', niv: [2, 4], titol: 'Taronges a la fruiteria', xn: 'els quilos', xa: 'massa (kg)', xs: 'quilo', xu: 'kg', yn: 'el preu', ya: 'preu (€)', yu: '€', money: true,
+   gen: () => ({ m: pick([1.2, 1.4, 1.5, 1.8, 2.1, 2.4]), n: 0 }),
+   text: p => `A la fruiteria del mercat, les taronges es venen a <b>${E(p.m)} el quilo</b>. El preu que pagues depén dels quilos que compres.`,
+   xmax: () => 10, step: () => 1, qStep: 1, extrap: true,
+   pX: X => `Quant pagaràs per ${N(X)} kg de taronges?`,
+   pY: Y => `Quants quilos de taronges pots comprar amb ${E(Y)}?`,
+   sM: p => `Cada quilo de taronges costa ${E(p.m)}.`, sN: () => `És el que pagues sense comprar cap quilo.` },
+ { id: 'gasolina', niv: [2, 4], titol: 'Posar gasolina', xn: 'els litres', xa: 'gasolina (L)', xs: 'litre', xu: 'L', yn: 'el preu', ya: 'preu (€)', yu: '€', money: true,
+   gen: () => ({ m: pick([1.55, 1.59, 1.62, 1.68, 1.72]), n: 0 }),
+   text: p => `En una gasolinera, el litre de gasolina costa <b>${E(p.m)}</b>. El que pagues depén dels litres que poses al dipòsit.`,
+   xmax: () => 50, step: () => 5, qStep: 1,
+   pX: X => `Quant costen ${N(X)} litres de gasolina?`,
+   pY: Y => `Has pagat ${E(Y)}. Quants litres has posat?`,
+   sM: p => `Cada litre de gasolina costa ${E(p.m)}.`, sN: () => `És el que pagues sense posar cap litre.` },
+ { id: 'tren', niv: [2, 4], titol: 'Un tren a velocitat constant', xn: 'el temps', xa: 'temps (h)', xs: 'hora', xu: 'h', yn: 'la distància recorreguda', ya: 'distància (km)', yu: 'km', money: false,
+   gen: () => ({ m: pick([80, 90, 100, 120]), n: 0 }),
+   text: p => `Un tren de mitjana distància circula a una velocitat constant de <b>${N(p.m)} km/h</b>. Estudiem la distància que recorre segons el temps que porta en marxa.`,
+   xmax: () => 5, step: () => 1, qStep: 0.5,
+   pX: X => `Quina distància recorre en ${N(X)} hores?`,
+   pY: Y => `Quant de temps tarda a recórrer ${N(Y)} km?`,
+   sM: p => `Cada hora recorre ${N(p.m)} km: és la velocitat del tren.`, sN: () => `És la distància que porta recorreguda en eixir.` },
+ { id: 'taxi', niv: [2, 4], titol: 'Viatge en taxi', xn: 'la distància', xa: 'distància (km)', xs: 'quilòmetre', xu: 'km', yn: 'el preu', ya: 'preu (€)', yu: '€', money: true,
+   gen: () => ({ m: pick([0.9, 1.1, 1.2, 1.3]), n: pick([3, 3.5, 4, 4.5]) }),
+   text: p => `Un taxi de la ciutat cobra <b>${E(p.n)} de baixada de bandera</b> (només per pujar) i <b>${E(p.m)} per cada quilòmetre</b> recorregut.`,
+   xmax: () => 20, step: () => 2, qStep: 1,
+   pX: X => `Quant costa un viatge de ${N(X)} km?`,
+   pY: Y => `Si el viatge t'ha costat ${E(Y)}, quants quilòmetres has fet?`,
+   sM: p => `Cada quilòmetre recorregut fa pujar el preu ${E(p.m)}.`, sN: () => `És el que pagues només per pujar al taxi, abans de fer cap quilòmetre.` },
+ { id: 'bici', niv: [2, 4], titol: 'Lloguer de bicicletes', xn: 'el temps', xa: 'temps (h)', xs: 'hora', xu: 'h', yn: 'el preu', ya: 'preu (€)', yu: '€', money: true,
+   gen: () => ({ m: pick([2.5, 3, 3.5, 4]), n: pick([2, 3, 5]) }),
+   text: p => `Un servei de lloguer de bicicletes al passeig marítim cobra <b>${E(p.n)} per la reserva</b> i <b>${E(p.m)} per cada hora</b> d'ús.`,
+   xmax: () => 8, step: () => 1, qStep: 0.5,
+   pX: X => `Quant pagaràs si llogues la bici durant ${N(X)} hores?`,
+   pY: Y => `Si has pagat ${E(Y)}, quantes hores has tingut la bici?`,
+   sM: p => `Cada hora de lloguer costa ${E(p.m)}.`, sN: () => `És el preu de la reserva, que pagues encara que no la uses.` },
+ { id: 'fontaner', niv: [2, 4], titol: 'Factura del fontaner', xn: 'el temps de treball', xa: 'temps (h)', xs: 'hora', xu: 'h', yn: 'la factura', ya: 'factura (€)', yu: '€', money: true,
+   gen: () => ({ m: pick([30, 35, 40, 45]), n: pick([20, 25, 30]) }),
+   text: p => `Un fontaner cobra <b>${E(p.n)} pel desplaçament</b> fins a casa i <b>${E(p.m)} per cada hora</b> de treball.`,
+   xmax: () => 6, step: () => 1, qStep: 0.5,
+   pX: X => `Quant costarà una reparació de ${N(X)} hores?`,
+   pY: Y => `Si la factura és de ${E(Y)}, quantes hores ha treballat?`,
+   sM: p => `Cada hora de treball costa ${E(p.m)}.`, sN: () => `És el preu del desplaçament, encara que no treballe cap hora.` },
+ { id: 'molla', niv: [4], titol: 'Allargament d\'una molla', xn: 'la massa penjada', xa: 'massa (kg)', xs: 'quilo', xu: 'kg', yn: 'la longitud de la molla', ya: 'longitud (cm)', yu: 'cm', money: false,
+   gen: () => ({ m: pick([2, 2.5, 4, 5]), n: pick([10, 12, 15, 20]) }),
+   text: p => `Una molla fa <b>${N(p.n)} cm</b> quan no hi pengem res. Per cada quilo que hi pengem, s'allarga <b>${N(p.m)} cm</b> (llei de Hooke).`,
+   xmax: () => 5, step: () => 1, qStep: 0.5,
+   pX: X => `Quant fa la molla si hi pengem ${N(X)} kg?`,
+   pY: Y => `Quina massa hem penjat si la molla fa ${N(Y)} cm?`,
+   sM: p => `Cada quilo penjat allarga la molla ${N(p.m)} cm.`, sN: () => `És la longitud de la molla sense cap pes (longitud natural).` },
+ { id: 'diposit', niv: [4], titol: 'Un dipòsit que es buida', xn: 'el temps', xa: 'temps (min)', xs: 'minut', xu: 'min', yn: 'l\'aigua del dipòsit', ya: 'aigua (L)', yu: 'L', money: false, yDec: 0,
+   gen: () => { const n = pick([600, 800, 1000, 1200]); const m = -pick([20, 25, 40, 50].filter(v => Number.isInteger(n / v))); return { m, n }; },
+   text: p => `Un dipòsit de reg conté <b>${N(p.n)} litres</b> d'aigua. S'obri l'aixeta i en surten <b>${N(-p.m)} litres cada minut</b>.`,
+   xmax: p => -p.n / p.m, step: p => niceInt(-p.n / p.m / 8), qStep: 1,
+   pX: X => `Quanta aigua queda al dipòsit després de ${N(X)} minuts?`,
+   pY: Y => `Quan queden ${N(Y)} litres, quants minuts han passat?`,
+   zeroQ: `Quant de temps tarda a buidar-se el dipòsit?`,
+   sM: p => `Cada minut el dipòsit perd ${N(-p.m)} litres.`, sN: () => `És l'aigua que hi ha al dipòsit en obrir l'aixeta.` },
+ { id: 'altitud', niv: [4], titol: 'Temperatura i altitud', xn: 'l\'altitud', xa: 'altitud (km)', xs: 'quilòmetre', xu: 'km', yn: 'la temperatura', ya: 'temperatura (°C)', yu: '°C', money: false,
+   gen: () => ({ m: -6.5, n: pick([14, 16, 18, 20, 22, 24]) }),
+   text: p => `Quan pugem en l'atmosfera, la temperatura baixa aproximadament <b>6,5 °C per cada quilòmetre</b> d'altitud. Un dia d'estiu, a nivell de la mar, hi ha <b>${N(p.n)} °C</b>.`,
+   xmax: () => 6, step: () => 1, qStep: 0.5,
+   pX: X => `Quina temperatura hi haurà a ${N(X)} km d'altitud?`,
+   pY: Y => `A quina altitud la temperatura serà de ${N(Y)} °C?`,
+   zeroQ: `A quina altitud la temperatura és de 0 °C? <span class="note">Arredoneix a les centèsimes.</span>`,
+   sM: () => `Cada quilòmetre que pugem, la temperatura baixa 6,5 °C.`, sN: () => `És la temperatura a nivell de la mar.` },
+ { id: 'bus', niv: [4], titol: 'Targeta del bus urbà', xn: 'el nombre de viatges', xa: 'viatges', xs: 'viatge', xu: 'viatges', yn: 'el saldo', ya: 'saldo (€)', yu: '€', money: true,
+   gen: () => { const [n, m] = pick([[20, -1.25], [15, -1.5], [10, -1.25], [25, -1.25], [30, -1.5], [12, -1.5]]); return { m, n }; },
+   text: p => `Carregues la targeta del bus urbà amb <b>${E(p.n)}</b>. Cada viatge en descompta <b>${E(-p.m)}</b>.`,
+   xmax: p => -p.n / p.m, step: p => niceInt(-p.n / p.m / 8), qStep: 1,
+   pX: X => `Quin saldo et queda després de ${N(X)} viatges?`,
+   pY: Y => `Si et queden ${E(Y)}, quants viatges has fet?`,
+   zeroQ: `Quants viatges pots fer fins a deixar la targeta a 0 €?`,
+   sM: p => `Cada viatge descompta ${E(-p.m)} del saldo.`, sN: () => `És el saldo inicial, el que has carregat.` },
+ { id: 'cotxe', niv: [4], titol: 'Un cotxe que es devalua', xn: 'els anys', xa: 'temps (anys)', xs: 'any', xu: 'anys', yn: 'el valor del cotxe', ya: 'valor (€)', yu: '€', money: true, yDec: 0,
+   gen: () => { const [n, m] = pick([[18000, -1500], [20000, -2000], [24000, -2000], [24000, -2400], [18000, -2000], [21000, -1500]]); return { m, n }; },
+   text: p => `Un cotxe nou costa <b>${E(p.n, 0)}</b> i perd <b>${E(-p.m, 0)} de valor cada any</b> (suposem que es devalua de manera lineal).`,
+   xmax: p => -p.n / p.m, step: p => niceInt(-p.n / p.m / 8), qStep: 1,
+   pX: X => `Quant valdrà el cotxe al cap de ${N(X)} anys?`,
+   pY: Y => `Quan el cotxe valga ${E(Y, 0)}, quants anys tindrà?`,
+   zeroQ: `Segons aquest model, quants anys tarda el cotxe a no valer res?`,
+   sM: p => `Cada any el cotxe perd ${E(-p.m, 0)} de valor.`, sN: () => `És el preu del cotxe nou.` },
+ { id: 'bateria', niv: [4], titol: 'Bateria del mòbil', xn: 'el temps', xa: 'temps (h)', xs: 'hora', xu: 'h', yn: 'la càrrega de la bateria', ya: 'bateria (%)', yu: '%', money: false,
+   gen: () => ({ m: pick([-8, -10, -12.5, -20]), n: 100 }),
+   text: p => `Tens el mòbil al <b>100 %</b>. Mentre veus vídeos, la bateria baixa <b>${N(-p.m)} punts percentuals cada hora</b>.`,
+   xmax: p => -p.n / p.m, step: p => niceStep(-p.n / p.m / 8) < 1 ? 1 : niceInt(-p.n / p.m / 8), qStep: 0.5,
+   pX: X => `Quina càrrega tindrà després de ${N(X)} hores?`,
+   pY: Y => `Quantes hores han passat si la bateria està al ${N(Y)} %?`,
+   zeroQ: `Quantes hores dura la bateria?`,
+   sM: p => `Cada hora la bateria baixa ${N(-p.m)} punts percentuals.`, sN: () => `És la càrrega inicial de la bateria.` },
+ { id: 'lliure', niv: [2, 4], free: true, titol: 'Mode lliure (sense enunciat)', xa: 'x', ya: 'y' }
+];
+
+/* ---------- Situacions: tarifes ---------- */
+const TAR = [
+ { id: 'mobil', titol: 'Telefonia mòbil', intro: 'Una companyia de telefonia ofereix aquestes tarifes mensuals per a les trucades:', xn: 'els minuts que parles al mes', xa: 'trucades (min)', ya: 'factura (€)', xu: 'min', uPl: 'minuts',
+   per: 'per minut', fixed: 'al mes', flat: 'minuts il·limitats',
+   amb: X => `parles ${N(X)} minuts al mes`,
+   mSets: { 2: [[0.12, 0.05], [0.10, 0.04], [0.15, 0.05], [0.09, 0.03]], 3: [[0.15, 0.08, 0.03], [0.12, 0.06, 0], [0.10, 0.05, 0.02], [0.14, 0.06, 0]], 4: [[0.15, 0.08, 0.03, 0], [0.12, 0.07, 0.03, 0]] },
+   n1: [0, 0, 2, 3], bStep: 20, bMin: 60, bMax: 320, xmax: 400, tstep: 50, qStep: 10, nMax: 40 },
+ { id: 'gimnas', titol: 'Gimnàs municipal', intro: 'El poliesportiu municipal ofereix aquestes maneres de pagar el gimnàs:', xn: 'els dies que vas al mes', xa: 'dies al mes', ya: 'cost (€)', xu: 'dies', uPl: 'dies',
+   per: 'per dia', fixed: 'de quota mensual', flat: 'tarifa plana, accés il·limitat',
+   amb: X => `vas ${N(X)} dies al mes`,
+   mSets: { 2: [[5, 2], [6, 3], [4, 2], [6, 2]], 3: [[5, 2, 0], [6, 3, 0], [6, 3, 1], [5, 2.5, 0]] },
+   n1: [0], bStep: 2, bMin: 4, bMax: 22, xmax: 30, tstep: 5, qStep: 1, nMax: 80 },
+ { id: 'cotxe', titol: 'Lloguer de cotxe', intro: 'Per a una excursió d\'un dia, compares aquestes ofertes de lloguer de cotxe:', xn: 'els quilòmetres que fas', xa: 'distància (km)', ya: 'cost (€)', xu: 'km', uPl: 'quilòmetres',
+   per: 'per km', fixed: 'per dia', flat: 'quilòmetres il·limitats',
+   amb: X => `fas ${N(X)} km en el dia`,
+   mSets: { 2: [[0.25, 0.10], [0.30, 0.12], [0.20, 0.08]], 3: [[0.25, 0.10, 0], [0.30, 0.15, 0.05], [0.20, 0.10, 0]] },
+   n1: [15, 20, 25], bStep: 20, bMin: 100, bMax: 400, xmax: 500, tstep: 50, qStep: 10, nMax: 150 },
+ { id: 'copies', titol: 'Copisteria', intro: 'Per imprimir els apunts del curs, una copisteria ofereix:', xn: 'les còpies que fas', xa: 'còpies', ya: 'cost (€)', xu: 'còpies', uPl: 'còpies',
+   per: 'per còpia', fixed: 'per la targeta de client', flat: 'còpies il·limitades durant el curs',
+   amb: X => `fas ${N(X)} còpies`,
+   mSets: { 2: [[0.06, 0.03], [0.08, 0.04], [0.05, 0.02]], 3: [[0.08, 0.05, 0.02], [0.06, 0.03, 0], [0.10, 0.05, 0.03]] },
+   n1: [0], bStep: 100, bMin: 200, bMax: 1200, xmax: 1500, tstep: 250, qStep: 50, nMax: 60 },
+ { id: 'llum', titol: 'Tarifes de la llum', intro: 'Compares aquestes tarifes de llum per a casa:', xn: 'els kWh que consumeixes al mes', xa: 'consum (kWh)', ya: 'factura (€)', xu: 'kWh', uPl: 'kWh',
+   per: 'per kWh', fixed: 'al mes de terme fix', flat: 'consum il·limitat',
+   amb: X => `consumeixes ${N(X)} kWh al mes`,
+   mSets: { 2: [[0.20, 0.15], [0.18, 0.12], [0.22, 0.16]], 3: [[0.22, 0.17, 0.13], [0.20, 0.16, 0.12], [0.24, 0.18, 0.14]] },
+   n1: [6, 8, 10], bStep: 25, bMin: 100, bMax: 400, xmax: 500, tstep: 50, qStep: 10, nMax: 80 },
+ { id: 'piscina', titol: 'Piscina d\'estiu', intro: 'La piscina municipal d\'estiu ofereix:', xn: 'els dies que vas a la piscina', xa: 'dies de piscina', ya: 'cost (€)', xu: 'dies', uPl: 'dies',
+   per: 'per entrada', fixed: 'd\'abonament', flat: 'abonament de temporada, entrades il·limitades',
+   amb: X => `vas ${N(X)} dies a la piscina`,
+   mSets: { 2: [[4, 2], [3.5, 1.5], [5, 2]], 3: [[4, 2, 0], [5, 2.5, 0], [4.5, 2, 0]] },
+   n1: [0], bStep: 2, bMin: 6, bMax: 30, xmax: 40, tstep: 5, qStep: 1, nMax: 90 },
+ { id: 'lliure', free: true, titol: 'Mode lliure (les teues tarifes)', xa: 'x', ya: 'cost (€)', xu: '', uPl: 'unitats' }
+];
+function tarDesc(ctx, m, n) {
+  if (m === 0) return `${E(n)} ${ctx.fixed} (${ctx.flat})`;
+  if (n === 0) return `${E(m)} ${ctx.per}, sense cap quota fixa`;
+  return `${E(n)} ${ctx.fixed} més ${E(m)} ${ctx.per}`;
+}
+
+/* ---------- Estat ---------- */
+const S = { niv: 2, tab: 'rel', rel: {}, tar: {} };
+
+/* ---------- Gràfica ---------- */
+const W = 640, H = 420, ML = 64, MR = 20, MT = 30, MB = 52;
+function niceTicks(lo, hi, target) {
+  if (!(hi - lo > 1e-9)) { hi = lo + 1; }
+  const raw = (hi - lo) / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  const lead = f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10;
+  const st = lead * p;
+  const a = Math.floor(lo / st + 1e-9) * st, b = Math.ceil(hi / st - 1e-9) * st;
+  const t = []; for (let k = 0; a + k * st <= b + st * 1e-6; k++) t.push(+(a + k * st).toFixed(10));
+  return { ticks: t, step: st, min: a, max: b, lead: lead === 10 ? 1 : lead };
+}
+const decOf = st => st >= 1 ? 0 : Math.min(3, Math.ceil(-Math.log10(st) - 1e-9));
+function envelope(L, a, b) {
+  const pts = [a, b];
+  for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+    const d = L[i].m - L[j].m; if (Math.abs(d) < 1e-12) continue;
+    const x = (L[j].n - L[i].n) / d; if (x > a + 1e-9 && x < b - 1e-9) pts.push(x);
+  }
+  pts.sort((p, q) => p - q);
+  const segs = [];
+  for (let k = 0; k < pts.length - 1; k++) {
+    const u = pts[k], v = pts[k + 1]; if (v - u < 1e-9) continue;
+    const mid = (u + v) / 2; let best = -1, bv = Infinity;
+    L.forEach((l, i) => { const y = l.m * mid + l.n; if (y < bv - 1e-9) { bv = y; best = i; } });
+    const last = segs[segs.length - 1];
+    if (last && last.idx === best) last.b = v; else segs.push({ a: u, b: v, idx: best });
+  }
+  return segs;
+}
+function argmin(L, x) { let best = -1, bv = Infinity; L.forEach((l, i) => { const y = l.m * x + l.n; if (y < bv - 1e-9) { bv = y; best = i; } }); return best; }
+
+function drawGraph(svg, cfg) {
+  const lines = cfg.lines.filter(l => isFinite(l.m) && isFinite(l.n));
+  const xt = niceTicks(cfg.xmin, cfg.xmax, 8);
+  const X0 = xt.min, X1 = xt.max;
+  let ys = [0];
+  lines.forEach(l => { ys.push(l.m * X0 + l.n, l.m * X1 + l.n); });
+  if (!lines.length) ys.push(10);
+  const yt = niceTicks(Math.min(...ys), Math.max(...ys), 7);
+  const Y0 = yt.min, Y1 = yt.max;
+  const pw = W - ML - MR, ph = H - MT - MB;
+  const sx = v => ML + (v - X0) / (X1 - X0) * pw;
+  const sy = v => MT + ph - (v - Y0) / (Y1 - Y0) * ph;
+  const cid = svg.id + '-clip';
+  let o = `<defs><clipPath id="${cid}"><rect x="${ML}" y="${MT}" width="${pw}" height="${ph}"/></clipPath></defs>`;
+  o += `<rect x="${ML}" y="${MT}" width="${pw}" height="${ph}" class="g-plot"/>`;
+  // bandes
+  let segs = [];
+  if (cfg.bands && lines.length >= 2) {
+    segs = envelope(lines, X0, X1);
+    segs.forEach(s => {
+      if (s.idx < 0) return;
+      const c = lines[s.idx].color;
+      o += `<rect x="${sx(s.a)}" y="${MT}" width="${Math.max(0, sx(s.b) - sx(s.a))}" height="${ph}" style="fill:${c};opacity:.11"/>`;
+    });
+  }
+  // quadrícula
+  const minorX = xt.step / (xt.lead === 2 ? 4 : 5), minorY = yt.step / (yt.lead === 2 ? 4 : 5);
+  let g = '';
+  if ((X1 - X0) / minorX <= 80) for (let v = X0; v <= X1 + 1e-9; v += minorX) g += `M${sx(v).toFixed(1)} ${MT}V${MT + ph}`;
+  if ((Y1 - Y0) / minorY <= 80) for (let v = Y0; v <= Y1 + 1e-9; v += minorY) g += `M${ML} ${sy(v).toFixed(1)}H${ML + pw}`;
+  o += `<path d="${g}" class="g-minor"/>`;
+  g = '';
+  xt.ticks.forEach(v => g += `M${sx(v).toFixed(1)} ${MT}V${MT + ph}`);
+  yt.ticks.forEach(v => g += `M${ML} ${sy(v).toFixed(1)}H${ML + pw}`);
+  o += `<path d="${g}" class="g-major"/>`;
+  // eixos
+  const ax = (Y0 <= 0 && Y1 >= 0) ? sy(0) : MT + ph;
+  const ay = (X0 <= 0 && X1 >= 0) ? sx(0) : ML;
+  o += `<path d="M${ML} ${ax}H${ML + pw}M${ay} ${MT}V${MT + ph}" class="g-axis"/>`;
+  const dx = decOf(xt.step), dy = decOf(yt.step);
+  xt.ticks.forEach(v => o += `<text x="${sx(v)}" y="${MT + ph + 18}" text-anchor="middle" class="g-tick">${fmt(v, dx)}</text>`);
+  yt.ticks.forEach(v => o += `<text x="${ML - 8}" y="${sy(v) + 4}" text-anchor="end" class="g-tick">${fmt(v, dy)}</text>`);
+  o += `<text x="${ML + pw}" y="${H - 8}" text-anchor="end" class="g-title">${esc(cfg.xlab)}</text>`;
+  o += `<text x="${ML - 4}" y="${MT - 12}" text-anchor="start" class="g-title">${esc(cfg.ylab)}</text>`;
+  // etiquetes de bandes
+  if (segs.length) segs.forEach(s => {
+    if (s.idx < 0) return; const w = sx(s.b) - sx(s.a); if (w < 46) return;
+    o += `<text x="${(sx(s.a) + sx(s.b)) / 2}" y="${MT + 16}" text-anchor="middle" class="g-band" style="fill:${lines[s.idx].color}">convé ${esc(lines[s.idx].name)}</text>`;
+  });
+  // rectes
+  o += `<g clip-path="url(#${cid})">`;
+  lines.forEach(l => { o += `<line x1="${sx(X0)}" y1="${sy(l.m * X0 + l.n)}" x2="${sx(X1)}" y2="${sy(l.m * X1 + l.n)}" style="stroke:${l.color}" class="g-line"/>`; });
+  (cfg.dots || []).forEach(d => { if (isFinite(d.y)) o += `<circle cx="${sx(d.x)}" cy="${sy(d.y)}" r="4" style="fill:var(--surface);stroke:${d.color}" class="g-dot"/>`; });
+  o += `</g>`;
+  // punts de tall
+  if (cfg.cuts && lines.length >= 2) {
+    // amb 3 o més rectes només es marquen els punts on canvia la tarifa més barata
+    const keep = lines.length >= 3 ? envelope(lines, X0, X1).slice(1).map(s => s.a) : null;
+    for (let i = 0; i < lines.length; i++) for (let j = i + 1; j < lines.length; j++) {
+      const d = lines[i].m - lines[j].m; if (Math.abs(d) < 1e-12) continue;
+      const x = (lines[j].n - lines[i].n) / d, y = lines[i].m * x + lines[i].n;
+      if (keep && !keep.some(k => Math.abs(k - x) < 1e-6)) continue;
+      if (x < X0 - 1e-9 || x > X1 + 1e-9 || y < Y0 - 1e-9 || y > Y1 + 1e-9) continue;
+      const px = sx(x), py = sy(y), right = px > ML + pw * 0.7;
+      o += `<circle cx="${px}" cy="${py}" r="5" class="g-cut"/>`;
+      o += `<text x="${px + (right ? -9 : 9)}" y="${py - 9}" text-anchor="${right ? 'end' : 'start'}" class="g-cutlab">(${fmt(x, 2)} ; ${fmt(y, 2)})</text>`;
+    }
+  }
+  if (!lines.length) o += `<text x="${ML + pw / 2}" y="${MT + ph / 2}" text-anchor="middle" class="g-empty">${esc(cfg.emptyMsg || 'Escriu m i n per dibuixar la recta')}</text>`;
+  o += `<g class="guide"></g><rect x="${ML}" y="${MT}" width="${pw}" height="${ph}" class="g-hit"/>`;
+  svg.innerHTML = o;
+  svg._g = { X0, X1, Y0, Y1, sx, sy, lines, cfg, pw };
+  if (!svg._wired) {
+    svg._wired = true;
+    const move = e => {
+      const G = svg._g; if (!G || !G.lines.length) return;
+      const rect = svg.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width * W;
+      let x = G.X0 + (px - ML) / G.pw * (G.X1 - G.X0);
+      x = Math.max(G.X0, Math.min(G.X1, x));
+      const snap = niceStep((G.X1 - G.X0) / 100);
+      x = Math.round(x / snap) * snap; x = +x.toFixed(6);
+      let h = `<line x1="${G.sx(x)}" y1="${MT}" x2="${G.sx(x)}" y2="${MT + H - MT - MB}" class="g-guide"/>`;
+      G.lines.forEach(l => { const y = l.m * x + l.n; if (y >= G.Y0 && y <= G.Y1) h += `<circle cx="${G.sx(x)}" cy="${G.sy(y)}" r="5.5" style="fill:${l.color}" class="g-gdot"/>`; });
+      svg.querySelector('.guide').innerHTML = h;
+      if (G.cfg.onRead) G.cfg.onRead(x);
+    };
+    svg.addEventListener('pointermove', move);
+    svg.addEventListener('pointerdown', move);
+  }
+}
+
+/* ---------- Preguntes (comú) ---------- */
+function qHTML(q, i, pfx) {
+  let f = '';
+  if (q.type === 'num') {
+    f = q.fields.map((fl, j) => `<label class="lab">${fl.lab ? `<span>${fl.lab}</span>` : ''}<input class="num sm" data-f="${j}" id="${pfx}-q${i}-${j}" autocomplete="off" spellcheck="false" aria-label="Resposta ${i + 1}${fl.lab ? ' ' + esc(fl.lab) : ''}">${fl.unit ? `<span class="u">${esc(fl.unit)}</span>` : ''}</label>`).join('');
+  } else {
+    f = `<fieldset class="opts">` + q.options.map((op, k) => `<label class="opt"><input type="radio" name="${pfx}-q${i}" id="${pfx}-q${i}-o${k}" value="${k}"><span>${op}</span></label>`).join('') + `</fieldset>`;
+  }
+  return `<li class="q" data-i="${i}"><p class="qt">${q.html}</p><div class="qf">${f}</div>
+    <div class="qa"><button class="btn small chk">Comprova</button><button class="btn link small sol" hidden>Mostra la solució</button></div>
+    <p class="fb" aria-live="polite"></p></li>`;
+}
+function renderQs(box, P, pfx, help) {
+  if (!P.qs.length) return;
+  box.innerHTML = `<div class="qhead"><h2>Preguntes</h2><span class="score" id="${pfx}-score"></span></div>
+    <p class="qhelp">${help}</p><ol class="qlist">${P.qs.map((q, i) => qHTML(q, i, pfx)).join('')}</ol>`;
+  updateScore(P, pfx);
+}
+function updateScore(P, pfx) {
+  const el = $('#' + pfx + '-score'); if (!el) return;
+  const items = [P.expr, ...P.qs];
+  const ok = items.filter(q => q.done && !q.shown).length;
+  el.textContent = `Encerts: ${ok} de ${items.length}`;
+}
+function checkQ(q, li) {
+  if (q.done) return;
+  const fb = li.querySelector('.fb');
+  let ok = true;
+  if (q.type === 'num') {
+    const ins = $$('input[data-f]', li);
+    if (ins.every(x => x.value.trim() === '')) { fb.className = 'fb bad'; fb.textContent = 'Escriu una resposta abans de comprovar.'; return; }
+    q.fields.forEach((fl, j) => {
+      const inp = ins[j], v = parseNum(inp.value);
+      const good = isFinite(v) && Math.abs(v - fl.ans) <= fl.tol;
+      inp.classList.toggle('ok', good); inp.classList.toggle('bad', !good);
+      if (!good) ok = false;
+    });
+  } else {
+    const sel = li.querySelector('input[type=radio]:checked');
+    if (!sel) { fb.className = 'fb bad'; fb.textContent = 'Tria una opció.'; return; }
+    $$('.opt', li).forEach(o => o.classList.remove('ok', 'bad'));
+    ok = +sel.value === q.ans;
+    sel.closest('.opt').classList.add(ok ? 'ok' : 'bad');
+  }
+  if (ok) {
+    q.done = true;
+    li.classList.add('is-done');
+    fb.className = 'fb ok'; fb.textContent = 'Correcte!';
+    $$('input', li).forEach(x => x.disabled = true);
+    li.querySelector('.chk').disabled = true; li.querySelector('.sol').hidden = true;
+  } else {
+    q.tries = (q.tries || 0) + 1;
+    fb.className = 'fb bad'; fb.innerHTML = `Encara no. <span class="hint">${q.hint}</span>`;
+    if (q.tries >= 2) li.querySelector('.sol').hidden = false;
+  }
+}
+function showSol(q, li) {
+  q.done = true; q.shown = true;
+  li.classList.add('is-shown');
+  if (q.type === 'num') $$('input[data-f]', li).forEach((inp, j) => { inp.value = fmt(q.fields[j].ans, 2); inp.classList.remove('bad'); });
+  else { $$('.opt', li).forEach(o => o.classList.remove('bad')); const r = li.querySelector(`input[value="${q.ans}"]`); r.checked = true; r.closest('.opt').classList.add('ok'); }
+  $$('input', li).forEach(x => x.disabled = true);
+  li.querySelector('.chk').disabled = true; li.querySelector('.sol').hidden = true;
+  const fb = li.querySelector('.fb'); fb.className = 'fb sol'; fb.innerHTML = q.sol;
+}
+function wireQs(box, getP, pfx) {
+  box.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const li = b.closest('.q'); if (!li) return;
+    const P = getP(), q = P.qs[+li.dataset.i];
+    if (b.classList.contains('chk')) checkQ(q, li); else if (b.classList.contains('sol')) showSol(q, li);
+    updateScore(P, pfx);
+  });
+  box.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || !e.target.matches('.q input[data-f]')) return;
+    e.preventDefault();
+    const li = e.target.closest('.q'), P = getP();
+    checkQ(P.qs[+li.dataset.i], li); updateScore(P, pfx);
+  });
+}
+function candX(lo, hi, q, exclude) {
+  const c = []; for (let k = 1; k * q < hi - 1e-9; k++) { const x = r2(k * q); if (x > lo + 1e-9 && !exclude(x)) c.push(x); } return c;
+}
+
+/* ================= PESTANYA 1 ================= */
+function relCtxList() { return REL.filter(c => c.niv.includes(S.niv)); }
+function fillSelect(sel, list, cur) {
+  sel.innerHTML = list.map(c => `<option value="${c.id}"${c.id === cur ? ' selected' : ''}>${esc(c.titol)}</option>`).join('');
+}
+function buildRelQs(ctx, p) {
+  const { m, n } = p, f = x => r2(m * x + n);
+  const x1 = ctx.xmax(p), st = ctx.step(p), q = ctx.qStep || 1;
+  const inTable = x => Math.abs(x / st - Math.round(x / st)) < 1e-9 && x <= x1 + 1e-9;
+  let cand = candX(0, ctx.extrap ? x1 * 1.6 : x1, q, inTable);
+  if (cand.length < 2) cand = candX(0, x1, q, () => false);
+  const X = pick(cand), X2 = pick(cand.filter(v => v !== X)) ?? X;
+  const Y = f(X2);
+  const fy = v => ctx.money ? fmt(v, ctx.yDec ?? 2, true) : fmt(v, ctx.yDec ?? 2);
+  const qs = [];
+  qs.push({ type: 'choice', html: 'La relació entre les dues magnituds és de <b>proporcionalitat directa</b>?',
+    options: ['Sí, és de proporcionalitat directa', 'No, no és de proporcionalitat directa'], ans: n === 0 ? 0 : 1,
+    hint: 'En una proporcionalitat directa, quan x = 0 també y = 0, i el quocient y/x sempre dona el mateix.',
+    sol: n === 0 ? `Sí: y = ${N(m)}x. Quan x = 0, y = 0, i la constant de proporcionalitat és ${N(m)}.` : `No: quan x = 0, y val ${N(n)}, no 0. És una funció afí.` });
+  qs.push({ type: 'num', html: ctx.pX(X), fields: [{ lab: '', ans: f(X), tol: 0.006, unit: ctx.yu }],
+    hint: `Substitueix x = ${N(X)} en la teua expressió y = m·x + n.`,
+    sol: `y = ${calcStr(m, n, X)} = ${fy(f(X))} ${ctx.yu}` });
+  qs.push({ type: 'num', html: ctx.pY(Y), fields: [{ lab: '', ans: X2, tol: 0.006, unit: ctx.xu }],
+    hint: `Planteja l'equació ${N(Y)} = m·x + n (amb els teus valors de m i n) i aïlla x.`,
+    sol: n === 0 ? `${N(Y)} = ${N(m)}·x → x = ${N(Y)} : ${pm(m)} = ${N(X2)} ${ctx.xu}`
+      : `${N(Y)} = ${exprTxt(m, n).slice(4)} → x = (${N(Y)} ${n > 0 ? '−' : '+'} ${N(Math.abs(n))}) : ${pm(m)} = ${N(X2)} ${ctx.xu}` });
+  const optsM = shuffle([[ctx.sM(p), 1], [`És ${ctx.yn} que correspon a 0 ${ctx.xu}.`, 0], [`Per cada ${ctx.xs} més, ${ctx.yn} es multiplica per ${N(m)}.`, 0]]);
+  qs.push({ type: 'choice', html: 'Què significa el <b>pendent</b> en aquesta situació?', options: optsM.map(o => o[0]), ans: optsM.findIndex(o => o[1]),
+    hint: `Fixa't en què passa amb ${ctx.yn} quan ${ctx.xn} augmenta en 1 ${ctx.xs}.`, sol: `El pendent és el que canvia y per cada unitat de x: ${ctx.sM(p)}` });
+  if (n !== 0) {
+    const optsN = shuffle([[ctx.sN(p), 1], [ctx.sM(p), 0], [`És ${ctx.yn} que correspon a 1 ${ctx.xs}.`, 0]]);
+    qs.push({ type: 'choice', html: 'Què significa l\'<b>ordenada en l\'origen</b> en aquesta situació?', options: optsN.map(o => o[0]), ans: optsN.findIndex(o => o[1]),
+      hint: 'L\'ordenada en l\'origen és el valor de y quan x = 0.', sol: `És el valor de y quan x = 0: ${ctx.sN(p)}` });
+  }
+  if (S.niv === 4) {
+    const d = st * pick([2, 3]);
+    qs.push({ type: 'num', html: `Si ${ctx.xn} augmenta ${N(d)} ${ctx.xu}, quant canvia ${ctx.yn}? <span class="note">Si disminueix, escriu-ho amb signe negatiu.</span>`,
+      fields: [{ lab: '', ans: r2(m * d), tol: 0.006, unit: ctx.yu }],
+      hint: `El pendent és el que canvia y quan x augmenta 1. Ací x augmenta ${N(d)}.`,
+      sol: `${N(d)} · ${pm(m)} = ${N(m * d)} ${ctx.yu}` });
+    if (m < 0 && ctx.zeroQ) {
+      const z = -n / m;
+      qs.push({ type: 'num', html: ctx.zeroQ, fields: [{ lab: '', ans: z, tol: 0.006, unit: ctx.xu }],
+        hint: 'Busca el valor de x que fa y = 0: planteja 0 = m·x + n i aïlla x. És el punt de tall amb l\'eix X.',
+        sol: `0 = ${exprTxt(m, n).slice(4)} → x = ${N(n)} : ${N(-m)} = ${fmt(z, 2)} ${ctx.xu}` });
+    }
+  }
+  return qs;
+}
+function newRel(ctxId) {
+  const list = relCtxList();
+  const ctx = list.find(c => c.id === ctxId) || list[0];
+  const R = S.rel = { ctx, p: ctx.free ? null : ctx.gen(), qs: [], expr: { done: false, shown: false, tries: 0 } };
+  fillSelect($('#rel-ctx'), list, ctx.id);
+  const free = !!ctx.free;
+  $('#rel-free').hidden = !free; $('#rel-new').hidden = free;
+  $('#rel-check').hidden = free; $('#rel-sol').hidden = true;
+  $('#rel-fb').textContent = ''; $('#rel-fb').className = 'fb';
+  ['rel-m', 'rel-n'].forEach(id => { const i = $('#' + id); i.classList.remove('ok', 'bad'); i.disabled = false; });
+  if (free) {
+    $('#rel-m').value = '2'; $('#rel-n').value = '1';
+    $('#rel-text').innerHTML = `<p>Escriu qualsevol pendent i ordenada en l'origen i observa la taula i la recta. També pots canviar l'interval de x.</p>`;
+    const ex = S.niv === 2
+      ? ['Posa n = 0 i canvia m. Per quin punt passen totes les rectes?', 'Què passa amb la recta quan m es fa més gran?', 'Deixa m fix i canvia n. Què li passa a la recta?', 'Si dupliques x, es duplica y? Prova-ho amb n = 0 i amb n = 3.']
+      : ['Què passa amb la recta si m és negatiu?', 'Com és la recta quan m = 0?', 'Busca dues rectes paral·leles. Què tenen en comú?', 'On talla la recta l\'eix X? Calcula-ho i comprova-ho en la gràfica.'];
+    $('#rel-qs').innerHTML = `<div class="qhead"><h2>Per explorar</h2></div><p class="qhelp">En mode lliure no hi ha correcció automàtica. Prova i pensa:</p><ol class="explore">${ex.map(t => `<li>${t}</li>`).join('')}</ol>`;
+  } else {
+    $('#rel-m').value = ''; $('#rel-n').value = '';
+    $('#rel-text').innerHTML = `<p>${ctx.text(R.p)}</p><p class="task">Anomena <i>x</i> ${esc(ctx.xn)} i <i>y</i> ${esc(ctx.yn)}. Escriu el pendent <i>m</i> i l'ordenada en l'origen <i>n</i> de la recta <i>y</i> = <i>mx</i> + <i>n</i>.</p>`;
+    R.qs = buildRelQs(ctx, R.p);
+    renderQs($('#rel-qs'), R, 'rel', 'Usa la taula i la gràfica per ajudar-te. Després de dos intents pots veure la solució, però no compta com a encert.');
+  }
+  drawRel();
+}
+function relDomain() {
+  const R = S.rel;
+  if (R.ctx.free) {
+    let x0 = parseNum($('#rel-x0').value), x1 = parseNum($('#rel-x1').value), st = parseNum($('#rel-step').value);
+    if (!isFinite(x0)) x0 = 0; if (!isFinite(x1) || x1 <= x0) x1 = x0 + 10; if (!isFinite(st) || st <= 0) st = 1;
+    if ((x1 - x0) / st > 40) st = (x1 - x0) / 40;
+    return { x0, x1, st };
+  }
+  return { x0: 0, x1: R.ctx.xmax(R.p), st: R.ctx.step(R.p) };
+}
+function drawRel() {
+  const R = S.rel, ctx = R.ctx;
+  const m = parseNum($('#rel-m').value), n = parseNum($('#rel-n').value);
+  $('#rel-formula').innerHTML = formulaHTML(m, n);
+  const showBadge = ctx.free || R.expr.done;
+  const cl = classify(m, n);
+  $('#rel-badge').innerHTML = showBadge && cl ? `<span class="badge">${cl}</span>` : '';
+  const { x0, x1, st } = relDomain();
+  const xs = []; for (let k = 0; x0 + k * st <= x1 + 1e-9 && k < 41; k++) xs.push(+(x0 + k * st).toFixed(6));
+  if (xs[xs.length - 1] < x1 - 1e-9 && xs.length < 42) xs.push(+x1.toFixed(6));
+  const valid = isFinite(m) && isFinite(n);
+  const fy = v => ctx.money ? fmt(v, ctx.yDec ?? 2, true) : fmt(v, ctx.yDec ?? 3);
+  const xlab = ctx.free ? 'x' : ctx.xa, ylab = ctx.free ? 'y' : ctx.ya;
+  if (!valid) {
+    $('#rel-table').innerHTML = `<p class="empty">Quan escrigues <i>m</i> i <i>n</i>, ací apareixerà la taula de valors, amb el càlcul de cada fila.</p>`;
+  } else {
+    $('#rel-table').innerHTML = `<table><thead><tr><th>${esc(xlab)}</th><th class="calc">càlcul</th><th>${esc(ylab)}</th></tr></thead><tbody>` +
+      xs.map(x => `<tr><td>${fmt(x, 3)}</td><td class="calc">${calcStr(m, n, x)}</td><td>${fy(m * x + n)}</td></tr>`).join('') + `</tbody></table>`;
+  }
+  const read = $('#rel-read');
+  read.innerHTML = valid ? 'Passa el ratolí o el dit per la gràfica per llegir-ne valors.' : '';
+  drawGraph($('#rel-svg'), {
+    xmin: x0, xmax: x1, xlab, ylab,
+    lines: valid ? [{ m, n, color: COL[0], name: '' }] : [],
+    dots: valid ? xs.map(x => ({ x, y: m * x + n, color: COL[0] })) : [],
+    onRead: x => { read.innerHTML = `x = <b>${fmt(x, 3)}</b> ${esc(ctx.xu || '')} → y = <b>${fy(m * x + n)}</b> ${esc(ctx.yu || '')}`; }
+  });
+}
+function checkRelExpr() {
+  const R = S.rel; if (R.expr.done) return;
+  const mi = $('#rel-m'), ni = $('#rel-n');
+  const m = parseNum(mi.value), n = parseNum(ni.value);
+  const fb = $('#rel-fb');
+  if (!isFinite(m) || !isFinite(n)) { fb.className = 'fb bad'; fb.textContent = 'Escriu un nombre en m i en n.'; return; }
+  const om = Math.abs(m - R.p.m) < 1e-9, on = Math.abs(n - R.p.n) < 1e-9;
+  mi.classList.toggle('ok', om); mi.classList.toggle('bad', !om);
+  ni.classList.toggle('ok', on); ni.classList.toggle('bad', !on);
+  if (om && on) {
+    R.expr.done = true; mi.disabled = ni.disabled = true;
+    fb.className = 'fb ok'; fb.textContent = `Correcte! La recta és ${exprTxt(m, n)}.`;
+    $('#rel-sol').hidden = true;
+  } else {
+    R.expr.tries++;
+    const parts = [];
+    if (!om) parts.push('el pendent és el que canvia y per cada unitat que augmenta x (si y baixa, és negatiu)');
+    if (!on) parts.push('l\'ordenada en l\'origen és el valor de y quan x = 0');
+    fb.className = 'fb bad'; fb.innerHTML = `Encara no. <span class="hint">Recorda: ${parts.join('; ')}.</span>`;
+    if (R.expr.tries >= 2) $('#rel-sol').hidden = false;
+  }
+  drawRel(); updateScore(R, 'rel');
+}
+function solRelExpr() {
+  const R = S.rel;
+  $('#rel-m').value = fmt(R.p.m, 3); $('#rel-n').value = fmt(R.p.n, 3);
+  R.expr.done = true; R.expr.shown = true;
+  ['rel-m', 'rel-n'].forEach(id => { const i = $('#' + id); i.classList.remove('bad'); i.disabled = true; });
+  $('#rel-sol').hidden = true;
+  const fb = $('#rel-fb'); fb.className = 'fb sol'; fb.innerHTML = `La recta és ${exprTxt(R.p.m, R.p.n)}: m = ${N(R.p.m)} i n = ${N(R.p.n)}.`;
+  drawRel(); updateScore(R, 'rel');
+}
+
+/* ================= PESTANYA 2 ================= */
+function genTar(ctx, k) {
+  for (let t = 0; t < 400; t++) {
+    const sets = ctx.mSets[k] || ctx.mSets[3] || ctx.mSets[2];
+    const ms = [...pick(sets)].sort((a, b) => b - a), kk = ms.length;
+    const cand = []; for (let b = ctx.bMin; b <= ctx.bMax; b += ctx.bStep) cand.push(b);
+    const bs = shuffle(cand).slice(0, kk - 1).sort((a, b) => a - b);
+    let ok = true; for (let i = 1; i < bs.length; i++) if (bs[i] - bs[i - 1] < 2 * ctx.bStep) ok = false;
+    if (!ok) continue;
+    const ns = [pick(ctx.n1)];
+    for (let i = 1; i < kk; i++) ns.push(r2(ns[i - 1] + (ms[i - 1] - ms[i]) * bs[i - 1]));
+    if (ctx.nMax && ns[kk - 1] > ctx.nMax) continue;
+    const list = shuffle(ms.map((m, i) => ({ m, n: ns[i] })));
+    const xmax = Math.max(ctx.xmax, Math.ceil(bs[bs.length - 1] * 1.3 / ctx.tstep) * ctx.tstep);
+    return { list, xmax };
+  }
+  return { list: [{ m: 0.1, n: 0 }, { m: 0.05, n: 5 }], xmax: ctx.xmax };
+}
+function buildTarQs(ctx, T) {
+  const L = T.list, val = (i, x) => r2(L[i].m * x + L[i].n);
+  const env = envelope(L, 0, T.xmax);
+  const nm = i => `Tarifa ${NAMES[i]}`;
+  const inTable = x => Math.abs(x / ctx.tstep - Math.round(x / ctx.tstep)) < 1e-9;
+  const pickIn = (s, avoid) => {
+    const lo = s.a + ctx.bStep / 2, hi = s.b - ctx.bStep / 2;
+    let c = candX(lo - 1e-9, hi + 1e-9, ctx.qStep, x => inTable(x) || x === avoid || x > hi + 1e-9);
+    if (!c.length) c = candX(s.a, s.b, ctx.qStep, x => x === avoid);
+    return c.length ? pick(c) : r2((s.a + s.b) / 2);
+  };
+  const si = Math.floor(Math.random() * env.length);
+  const X1 = pickIn(env[si]);
+  const sj = env.length > 1 ? pick(env.map((_, i) => i).filter(i => i !== si)) : si;
+  const X2 = pickIn(env[sj], X1);
+  const allVals = x => L.map((l, i) => `${NAMES[i]}: ${calcStr(l.m, l.n, x)} = ${E(val(i, x))}`).join('<br>');
+  const qs = [];
+  qs.push({ type: 'num', html: `Quant pagaries amb cada tarifa si ${ctx.amb(X1)}?`,
+    fields: L.map((l, i) => ({ lab: NAMES[i], ans: val(i, X1), tol: 0.006, unit: '€' })),
+    hint: `Substitueix x = ${N(X1)} en l'expressió de cada tarifa. Els que estan en roig encara no són correctes.`, sol: allVals(X1) });
+  const opts = L.map((_, i) => nm(i));
+  const b1 = argmin(L, X1);
+  qs.push({ type: 'choice', html: `Amb aquests preus, quina tarifa et convé si ${ctx.amb(X1)}?`, options: opts, ans: b1,
+    hint: 'Compara els preus de la pregunta anterior: convé la que costa menys.', sol: `${nm(b1)}, perquè és la més barata: ${E(val(b1, X1))}.` });
+  const b2 = argmin(L, X2);
+  qs.push({ type: 'choice', html: `I si ${ctx.amb(X2)}, quina et convé?`, options: opts, ans: b2,
+    hint: `Calcula el preu de cada tarifa per a x = ${N(X2)} i compara'ls.`, sol: `${nm(b2)}:<br>${allVals(X2)}` });
+  if (env.length >= 2) {
+    const P = env[0].idx, Q = env[1].idx, xc = r2(env[1].a), yc = val(P, xc);
+    qs.push({ type: 'num', html: `Per a quants ${ctx.uPl} les tarifes ${NAMES[P]} i ${NAMES[Q]} costen el mateix? Quin és aquest preu?`,
+      fields: [{ lab: 'x =', ans: xc, tol: 0.006, unit: ctx.xu }, { lab: 'preu =', ans: yc, tol: 0.006, unit: '€' }],
+      hint: `Iguala les expressions de les dues tarifes i resol l'equació. A la gràfica és el punt on es tallen les dues rectes.`,
+      sol: `${exprTxt(L[P].m, L[P].n).slice(4)} = ${exprTxt(L[Q].m, L[Q].n).slice(4)} → x = ${N(xc)} ${ctx.xu}; preu = ${E(yc)}` });
+    if (S.niv === 4) for (let s = 2; s < env.length; s++) {
+      const R = env[s].idx, Pv = env[s - 1].idx, xr = r2(env[s].a);
+      qs.push({ type: 'num', html: `A partir de quants ${ctx.uPl} passa a convenir la tarifa ${NAMES[R]}?`,
+        fields: [{ lab: '', ans: xr, tol: 0.006, unit: ctx.xu }],
+        hint: `Fins ara convenia la tarifa ${NAMES[Pv]}. Busca on es tallen la recta de ${NAMES[Pv]} i la de ${NAMES[R]}.`,
+        sol: `${exprTxt(L[Pv].m, L[Pv].n).slice(4)} = ${exprTxt(L[R].m, L[R].n).slice(4)} → x = ${N(xr)} ${ctx.xu}` });
+    }
+    if (S.niv === 4 && env.length >= 2) {
+      const first = env[0].idx;
+      qs.push({ type: 'choice', html: `Fins a quants ${ctx.uPl} convé la tarifa ${NAMES[first]}?`,
+        options: shuffle([`Fins a ${N(r2(env[1].a))} ${ctx.uPl}`, `A partir de ${N(r2(env[1].a))} ${ctx.uPl}`, `Sempre, perquè té el pendent més ${L[first].m === Math.min(...L.map(l => l.m)) ? 'baix' : 'alt'}`]).map(String),
+        ans: -1, hint: '', sol: '' });
+      const qq = qs[qs.length - 1];
+      qq.ans = qq.options.indexOf(`Fins a ${N(r2(env[1].a))} ${ctx.uPl}`);
+      qq.hint = 'Mira la gràfica: quina recta queda més avall a l\'esquerra, i on la travessa una altra?';
+      qq.sol = `Fins a ${N(r2(env[1].a))} ${ctx.uPl}: abans d'eixe punt la seua recta és la més baixa; després, la tarifa ${NAMES[env[1].idx]} és més barata.`;
+    }
+  }
+  return qs;
+}
+function newTar(ctxId) {
+  const ctx = TAR.find(c => c.id === ctxId) || TAR[0];
+  const T = S.tar = { ctx, qs: [], expr: { done: false, shown: false, tries: 0 } };
+  fillSelect($('#tar-ctx'), TAR, ctx.id);
+  const free = !!ctx.free;
+  $('#tar-free').hidden = !free; $('#tar-new').hidden = free;
+  $('#tar-checkrow').hidden = free; $('#tar-sol').hidden = true;
+  $('#tar-fb').textContent = ''; $('#tar-fb').className = 'fb';
+  $('#tar-cuts').checked = free; $('#tar-bands').checked = free;
+  if (free) {
+    T.rows = [{ name: 'A', m: '0,10', n: '5' }, { name: 'B', m: '0,05', n: '12' }];
+    $('#tar-text').innerHTML = `<p>Inventa fins a quatre tarifes, posa'ls nom i escriu el pendent (preu per unitat) i l'ordenada en l'origen (quota fixa) de cadascuna.</p>`;
+    $('#tar-qs').innerHTML = `<div class="qhead"><h2>Per explorar</h2></div><p class="qhelp">En mode lliure no hi ha correcció automàtica. Prova i pensa:</p><ol class="explore">
+      <li>Fes dues tarifes amb el mateix pendent. Es tallen mai? Quina convé sempre?</li>
+      <li>Fes una tarifa plana (m = 0). Com és la seua recta?</li>
+      <li>Busca valors perquè dues tarifes costen igual exactament per a x = 100.</li>
+      ${S.niv === 4 ? '<li>Amb tres tarifes, és possible que una no convinga mai? Prova-ho.</li>' : ''}</ol>`;
+  } else {
+    let k = S.niv === 2 ? 2 : 3;
+    if (S.niv === 4 && ctx.mSets[4] && Math.random() < 0.4) k = 4;
+    const g = genTar(ctx, k);
+    T.list = g.list; T.xmax = g.xmax;
+    T.rows = T.list.map((_, i) => ({ name: NAMES[i], m: '', n: '' }));
+    $('#tar-text').innerHTML = `<p>${esc(ctx.intro)}</p><ul>${T.list.map((t, i) => `<li><b style="color:${COL[i]}">Tarifa ${NAMES[i]}:</b> ${tarDesc(ctx, t.m, t.n)}</li>`).join('')}</ul>
+      <p class="task">Anomena <i>x</i> ${esc(ctx.xn)} i <i>y</i> el preu en euros. Escriu l'expressió <i>y</i> = <i>mx</i> + <i>n</i> de cada tarifa.</p>`;
+    T.qs = buildTarQs(ctx, T);
+    renderQs($('#tar-qs'), T, 'tar', 'Pots activar els punts de tall i les zones de la gràfica per comprovar les respostes, però intenta primer calcular-les.');
+  }
+  renderTarRows();
+  drawTar();
+}
+function readTarRows() {
+  const T = S.tar;
+  T.rows.forEach((r, i) => {
+    const mi = $('#tar-m-' + i), ni = $('#tar-n-' + i), na = $('#tar-name-' + i);
+    if (mi) r.m = mi.value; if (ni) r.n = ni.value; if (na) r.name = na.value;
+  });
+}
+function renderTarRows() {
+  const T = S.tar, free = !!T.ctx.free;
+  $('#tar-rows').innerHTML = T.rows.map((r, i) => `<div class="trow">
+    <span class="sw" style="background:${COL[i]}"></span>
+    ${free ? `<input class="tname" id="tar-name-${i}" value="${esc(r.name)}" maxlength="14" aria-label="Nom de la tarifa ${i + 1}">` : `<span class="tname-fixed" style="color:${COL[i]}">Tarifa ${NAMES[i]}</span>`}
+    <span class="eq"><i>y</i> =</span>
+    <input class="num sm" id="tar-m-${i}" placeholder="m" value="${esc(r.m)}" autocomplete="off" spellcheck="false" aria-label="Pendent de la tarifa ${i + 1}">
+    <span class="eq"><i>x</i> +</span>
+    <input class="num sm" id="tar-n-${i}" placeholder="n" value="${esc(r.n)}" autocomplete="off" spellcheck="false" aria-label="Ordenada en l'origen de la tarifa ${i + 1}">
+    <span class="mark" id="tar-mark-${i}"></span>
+    ${free && T.rows.length > 2 ? `<button class="del" data-del="${i}" aria-label="Elimina la tarifa ${i + 1}">×</button>` : ''}
+  </div>`).join('');
+  $('#tar-add').disabled = T.rows.length >= 4;
+}
+function tarLines() {
+  const T = S.tar;
+  return T.rows.map((r, i) => {
+    const m = parseNum($('#tar-m-' + i)?.value), n = parseNum($('#tar-n-' + i)?.value);
+    const name = T.ctx.free ? (($('#tar-name-' + i)?.value || '').trim() || NAMES[i]) : NAMES[i];
+    return { m, n, color: COL[i], name };
+  });
+}
+function drawTar() {
+  const T = S.tar, ctx = T.ctx;
+  const all = tarLines();
+  const ok = all.filter(l => isFinite(l.m) && isFinite(l.n));
+  let xmax, st;
+  if (ctx.free) {
+    xmax = parseNum($('#tar-x1').value); st = parseNum($('#tar-step').value);
+    if (!isFinite(xmax) || xmax <= 0) xmax = 300; if (!isFinite(st) || st <= 0) st = xmax / 6;
+    if (xmax / st > 40) st = xmax / 40;
+  } else { xmax = T.xmax; st = ctx.tstep; }
+  const xs = []; for (let k = 0; k * st <= xmax + 1e-9 && k < 41; k++) xs.push(+(k * st).toFixed(6));
+  if (xs[xs.length - 1] < xmax - 1e-9) xs.push(xmax);
+  if (!ok.length) {
+    $('#tar-table').innerHTML = `<p class="empty">Quan escrigues les expressions, ací podràs comparar el preu de cada tarifa. La més barata de cada fila es marca amb el seu color.</p>`;
+  } else {
+    $('#tar-table').innerHTML = `<table><thead><tr><th>${esc(ctx.xa)}</th>${ok.map(l => `<th style="color:${l.color}">${esc(l.name)}</th>`).join('')}</tr></thead><tbody>` +
+      xs.map(x => { const vals = ok.map(l => l.m * x + l.n); const mn = Math.min(...vals); const many = vals.filter(v => Math.abs(v - mn) < 1e-9).length;
+        return `<tr><td>${fmt(x, 3)}</td>${vals.map((v, i) => `<td class="${ok.length > 1 && many === 1 && Math.abs(v - mn) < 1e-9 ? 'best' : ''}" style="--c:${ok[i].color}">${fmt(v, 2, true)}</td>`).join('')}</tr>`; }).join('') +
+      `</tbody></table>${ok.length > 1 ? '<p class="tbl-note">La cel·la acolorida és la tarifa més barata per a eixe valor de x.</p>' : ''}`;
+  }
+  const read = $('#tar-read');
+  read.innerHTML = ok.length ? 'Passa el ratolí o el dit per la gràfica per comparar preus.' : '';
+  drawGraph($('#tar-svg'), {
+    xmin: 0, xmax, xlab: ctx.xa, ylab: ctx.ya, lines: ok,
+    cuts: $('#tar-cuts').checked, bands: $('#tar-bands').checked,
+    emptyMsg: 'Escriu m i n de cada tarifa per dibuixar-les',
+    onRead: x => {
+      const vals = ok.map(l => l.m * x + l.n), mn = Math.min(...vals);
+      read.innerHTML = `x = <b>${fmt(x, 3)}</b> ${esc(ctx.xu)} → ` + ok.map((l, i) => `<span style="color:${l.color};font-weight:700">${esc(l.name)}</span> ${Math.abs(vals[i] - mn) < 1e-9 && ok.length > 1 ? `<b>${fmt(vals[i], 2, true)} €</b>` : fmt(vals[i], 2, true) + ' €'}`).join(' · ');
+    }
+  });
+}
+function checkTarExpr() {
+  const T = S.tar; if (T.expr.done) return;
+  const fb = $('#tar-fb'); let all = true, any = false;
+  T.list.forEach((t, i) => {
+    const mi = $('#tar-m-' + i), ni = $('#tar-n-' + i);
+    const m = parseNum(mi.value), n = parseNum(ni.value);
+    if (mi.value.trim() || ni.value.trim()) any = true;
+    const om = Math.abs(m - t.m) < 1e-9, on = Math.abs(n - t.n) < 1e-9;
+    mi.classList.toggle('ok', om); mi.classList.toggle('bad', !om);
+    ni.classList.toggle('ok', on); ni.classList.toggle('bad', !on);
+    const mk = $('#tar-mark-' + i); mk.className = 'mark ' + (om && on ? 'ok' : 'bad'); mk.textContent = om && on ? '✓' : '✗';
+    if (!(om && on)) all = false;
+  });
+  if (!any) { fb.className = 'fb bad'; fb.textContent = 'Escriu primer les expressions.'; return; }
+  if (all) {
+    T.expr.done = true; $$('#tar-rows input').forEach(x => x.disabled = true);
+    fb.className = 'fb ok'; fb.textContent = 'Correcte! Totes les expressions estan bé.'; $('#tar-sol').hidden = true;
+  } else {
+    T.expr.tries++;
+    fb.className = 'fb bad'; fb.innerHTML = `Encara no. <span class="hint">El pendent <i>m</i> és el que pagues per cada unitat (si és tarifa plana, m = 0); l'ordenada <i>n</i> és la part fixa, la que pagues encara que x = 0.</span>`;
+    if (T.expr.tries >= 2) $('#tar-sol').hidden = false;
+  }
+  drawTar(); updateScore(T, 'tar');
+}
+function solTarExpr() {
+  const T = S.tar;
+  T.list.forEach((t, i) => {
+    const mi = $('#tar-m-' + i), ni = $('#tar-n-' + i);
+    mi.value = fmt(t.m, 3); ni.value = fmt(t.n, 3);
+    [mi, ni].forEach(x => { x.classList.remove('bad'); x.disabled = true; });
+    const mk = $('#tar-mark-' + i); mk.className = 'mark'; mk.textContent = '';
+  });
+  T.expr.done = true; T.expr.shown = true; $('#tar-sol').hidden = true;
+  const fb = $('#tar-fb'); fb.className = 'fb sol';
+  fb.innerHTML = T.list.map((t, i) => `${NAMES[i]}: ${exprTxt(t.m, t.n)}`).join('<br>');
+  drawTar(); updateScore(T, 'tar');
+}
+
+/* ---------- Esdeveniments ---------- */
+function setNiv(v) {
+  S.niv = v;
+  $('#niv2').setAttribute('aria-pressed', v === 2); $('#niv4').setAttribute('aria-pressed', v === 4);
+  newRel(S.rel.ctx ? S.rel.ctx.id : null);
+  newTar(S.tar.ctx ? S.tar.ctx.id : null);
+}
+function setTab(t) {
+  S.tab = t;
+  $('#tab-rel').setAttribute('aria-selected', t === 'rel'); $('#tab-tar').setAttribute('aria-selected', t === 'tar');
+  $('#pane-rel').hidden = t !== 'rel'; $('#pane-tar').hidden = t !== 'tar';
+}
+$('#niv2').addEventListener('click', () => setNiv(2));
+$('#niv4').addEventListener('click', () => setNiv(4));
+$('#tab-rel').addEventListener('click', () => setTab('rel'));
+$('#tab-tar').addEventListener('click', () => setTab('tar'));
+$('#rel-ctx').addEventListener('change', e => newRel(e.target.value));
+$('#rel-new').addEventListener('click', () => newRel(S.rel.ctx.id));
+['rel-m', 'rel-n', 'rel-x0', 'rel-x1', 'rel-step'].forEach(id => $('#' + id).addEventListener('input', e => { e.target.classList.remove('ok', 'bad'); drawRel(); }));
+$('#rel-check').addEventListener('click', checkRelExpr);
+$('#rel-sol').addEventListener('click', solRelExpr);
+['rel-m', 'rel-n'].forEach(id => $('#' + id).addEventListener('keydown', e => { if (e.key === 'Enter' && !S.rel.ctx.free) checkRelExpr(); }));
+$('#tar-ctx').addEventListener('change', e => newTar(e.target.value));
+$('#tar-new').addEventListener('click', () => newTar(S.tar.ctx.id));
+$('#tar-rows').addEventListener('input', e => { e.target.classList.remove('ok', 'bad'); const mk = e.target.closest('.trow')?.querySelector('.mark'); if (mk) { mk.textContent = ''; } drawTar(); });
+$('#tar-rows').addEventListener('keydown', e => { if (e.key === 'Enter' && !S.tar.ctx.free && e.target.matches('input')) checkTarExpr(); });
+$('#tar-rows').addEventListener('click', e => {
+  const b = e.target.closest('[data-del]'); if (!b) return;
+  readTarRows(); S.tar.rows.splice(+b.dataset.del, 1); renderTarRows(); drawTar();
+});
+$('#tar-add').addEventListener('click', () => {
+  readTarRows(); const T = S.tar; if (T.rows.length >= 4) return;
+  const used = T.rows.map(r => r.name); const nm = NAMES.find(x => !used.includes(x)) || NAMES[T.rows.length];
+  T.rows.push({ name: nm, m: '', n: '' }); renderTarRows(); drawTar();
+  $('#tar-m-' + (T.rows.length - 1)).focus();
+});
+['tar-x1', 'tar-step', 'tar-cuts', 'tar-bands'].forEach(id => $('#' + id).addEventListener(id.startsWith('tar-c') || id.startsWith('tar-b') ? 'change' : 'input', drawTar));
+$('#tar-check').addEventListener('click', checkTarExpr);
+$('#tar-sol').addEventListener('click', solTarExpr);
+wireQs($('#rel-qs'), () => S.rel, 'rel');
+wireQs($('#tar-qs'), () => S.tar, 'tar');
+
+setNiv(2);
+setTab('rel');
+})();
+</script>
+<style>
+.g-plot{fill:var(--plot)}
+.g-minor{stroke:var(--grid);stroke-width:.7;fill:none}
+.g-major{stroke:var(--grid-major);stroke-width:1;fill:none}
+.g-axis{stroke:var(--ink);stroke-width:1.6;fill:none}
+.g-tick{fill:var(--muted);font:12px var(--f-num)}
+.g-title{fill:var(--ink);font:600 13px var(--f-ui)}
+.g-band{font:700 12px var(--f-ui)}
+.g-empty{fill:var(--muted);font:15px var(--f-ui)}
+.g-line{stroke-width:3;stroke-linecap:round}
+.g-dot{stroke-width:2.2}
+.g-cut{fill:var(--ink);stroke:var(--plot);stroke-width:2}
+.g-cutlab{fill:var(--ink);font:700 12px var(--f-num);paint-order:stroke;stroke:var(--plot);stroke-width:4px;stroke-linejoin:round}
+.g-guide{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 4}
+.g-gdot{stroke:var(--plot);stroke-width:2}
+.g-hit{fill:transparent;cursor:crosshair}
+</style>
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</body></html>
