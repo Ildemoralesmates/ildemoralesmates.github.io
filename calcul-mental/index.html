@@ -464,13 +464,14 @@ function generateItems(cfg,seed){
 /* ============ Interfície ============ */
 const $=id=>document.getElementById(id);
 const KEY='generador-calcul-mental-v1';
-const DEF={titol:'Càlcul mental',subtitol:'',mode:'rapid',n:40,cols:4,espai:'38',lletra:'1',mul:'·',ordre:'barrejat',seed:1001,versions:1,sol:true,passos:true,
+const DEF={titol:'',subtitol:'',mode:'rapid',n:40,cols:4,espai:'38',lletra:'1',mul:'·',ordre:'barrejat',seed:1001,versions:1,sol:true,passos:true,
   levels:{nat:1,comb:1,ent:1,fdp:1},types:{taules:true}};
 let cfg;
 try{cfg=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){cfg=Object.assign({},DEF);}
 cfg.levels=Object.assign({},DEF.levels,cfg.levels||{});
 Object.keys(cfg.levels).forEach(k=>cfg.levels[k]=[].concat(cfg.levels[k]).map(Number));
 let LAST=[];
+if(cfg.titol==='Càlcul mental')cfg.titol='';
 
 function buildPanel(){
   const box=$('blocks');
@@ -505,7 +506,7 @@ function header(title,seed,extra){
 }
 function renderSheet(items,seed){
   const quick=cfg.mode==='rapid';
-  let h=`<section class="sheet fs${cfg.lletra}">`+header(cfg.titol||'Càlcul mental',seed);
+  let h=`<section class="sheet fs${cfg.lletra}">`+header(titleOf(),seed);
   h+=`<div class="fields"><div class="f">Nom: <span class="l" style="width:70mm"></span></div><div class="f">Grup: <span class="l" style="width:16mm"></span></div><div class="f">Data: <span class="l" style="width:24mm"></span></div>`;
   if(quick)h+=`<div class="f">Temps: <span class="l" style="width:18mm"></span></div><div class="f">Encerts: <span class="l" style="width:12mm"></span> / ${items.length}</div>`;
   h+=`</div><div class="items ${quick?'quick':'work'}" style="--cols:${cfg.cols};--sp:${cfg.espai}mm">`;
@@ -521,7 +522,7 @@ function renderSheet(items,seed){
 function renderSol(items,seed){
   const anySteps=cfg.passos&&items.some(it=>it.steps);
   const cols=anySteps?2:(cfg.mode==='rapid'?4:3);
-  let h=`<section class="sheet sol">`+header('Solucionari · '+(cfg.titol||'Càlcul mental'),seed);
+  let h=`<section class="sheet sol">`+header('Solucionari · '+(titleOf()),seed);
   h+=`<div class="items" style="--cols:${cols}">`;
   items.forEach((it,i)=>{
     const mid=(cfg.passos&&it.steps)?' = '+it.steps.join(' = '):'';
@@ -532,6 +533,7 @@ function renderSol(items,seed){
 function update(){
   fromUI();
   try{localStorage.setItem(KEY,JSON.stringify(cfg));}catch(e){}
+  $('titol').placeholder='Automàtic: '+autoTitle();
   $('rowEspai').style.display=cfg.mode==='treball'?'':'none';
   const pv=$('preview');
   if(!Object.keys(cfg.types).length){pv.innerHTML='<div class="msg">Marca almenys un tipus d\'operació al tauler de l\'esquerra.</div>';return;}
@@ -544,6 +546,21 @@ function update(){
   pv.innerHTML=sheets+sols;
 }
 
+const SHORT={taules:'taules',divt:'divisions',pot10:'× i : per 10, 100…',sumres:'sumes i restes',dobles:'dobles i meitats',estrat:'estratègies',jer:'jerarquia',par:'parèntesis',sument:"sumes d'enters",mulent:"productes d'enters",combent:"combinades d'enters",frq:"fracció d'una quantitat",frs:'sumes de fraccions',frm:'productes de fraccions',d10:'decimals ×10',ds:'sumes de decimals',dm:'productes de decimals',quad:'quadrats i arrels',pent:'potències',ppot:'propietats de potències',perc:'percentatges'};
+const BSHORT={nat:'naturals',comb:'combinades',ent:'enters',fdp:'fraccions i potències'};
+const LVW={1:'fàcil',2:'mitjà',3:'difícil'};
+function autoTitle(){
+  const ph=[];
+  BLOCKS.forEach(b=>{
+    const sel=b.types.filter(t=>cfg.types[t.id]);if(!sel.length)return;
+    const lv=[].concat(cfg.levels[b.id]||[1]).map(Number).sort();
+    const lw=lv.length===3?'tots els nivells':lv.map(l=>LVW[l]).join('/');
+    const what=(sel.length===b.types.length||sel.length>2)?BSHORT[b.id]:sel.map(t=>SHORT[t.id]).join(' i ');
+    ph.push(what+' '+lw);});
+  if(!ph.length)return 'Càlcul mental';
+  return 'Càlcul '+(ph.length>1?ph.slice(0,-1).join(', ')+' i '+ph[ph.length-1]:ph[0]);}
+const titleOf=()=>(cfg.titol||'').trim()||autoTitle();
+const slug=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').replace(/^(.{1,60})(-.*)?$/,'$1');
 /* ============ Exportació a Word (.docx), sense llibreries ============ */
 const X=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,' ');
 function wrun(text,o){o=o||{};let pr='';
@@ -579,7 +596,7 @@ function wheader(title,seed,first){
 function wsheet(items,seed,first){
   const quick=cfg.mode==='rapid',sz=[26,32,40][(+cfg.lletra||1)-1],cols=cfg.cols,w=Math.floor(TW/cols);
   const rowH=quick?560:Math.round(+cfg.espai*56.7)+520;
-  let x=wheader(cfg.titol||'Càlcul mental',seed,first);
+  let x=wheader(titleOf(),seed,first);
   x+=WP(wrun('Nom:',{sz:22})+TAB+wrun('   Grup:',{sz:22})+TAB+wrun('   Data:',{sz:22})+TAB,
     '<w:tabs><w:tab w:val="left" w:leader="underscore" w:pos="5200"/><w:tab w:val="left" w:leader="underscore" w:pos="6900"/><w:tab w:val="left" w:leader="underscore" w:pos="9300"/></w:tabs><w:spacing w:before="160" w:after="120"/>');
   if(quick)x+=WP(wrun('Temps:',{sz:22})+TAB+wrun('   Encerts:',{sz:22})+TAB+wrun(' / '+items.length,{sz:22}),
@@ -596,7 +613,7 @@ function wsheet(items,seed,first){
   return x+wtbl(rows,cols);}
 function wsol(items,seed){
   const quick=cfg.mode==='rapid',sz=22,anySteps=cfg.passos&&items.some(it=>it.steps),cols=anySteps?2:(quick?4:3),w=Math.floor(TW/cols);
-  let x=wheader('Solucionari · '+(cfg.titol||'Càlcul mental'),seed,false),rows='',cells=[];
+  let x=wheader('Solucionari · '+(titleOf()),seed,false),rows='',cells=[];
   const flush=()=>{if(!cells.length)return;while(cells.length<cols)cells.push(wcell('',w));rows+=wrow(cells.join(''),0);cells=[];};
   x+=WP('','<w:spacing w:after="60"/>');
   items.forEach((it,i)=>{
@@ -637,7 +654,7 @@ function buildDocx(){
     ['word/document.xml',H+`<w:document ${NS}><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="794" w:right="794" w:bottom="794" w:left="794" w:header="397" w:footer="397" w:gutter="0"/></w:sectPr></w:body></w:document>`]]);}
 function downloadDocx(){
   if(!LAST.length)return;
-  const a=document.createElement('a');a.href=URL.createObjectURL(buildDocx());a.download='calcul-mental_'+LAST[0].seed+'.docx';
+  const a=document.createElement('a');a.href=URL.createObjectURL(buildDocx());a.download=(slug(titleOf())||'calcul-mental')+'_'+LAST[0].seed+'.docx';
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
 
 buildPanel();toUI();
