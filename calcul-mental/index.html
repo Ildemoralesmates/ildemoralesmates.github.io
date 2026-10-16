@@ -36,6 +36,8 @@ legend{font-weight:600;padding:0 4px;color:var(--accent)}
 .lvl{font-size:12px;color:var(--muted);margin:2px 0 4px}
 .chk{display:flex;gap:6px;align-items:flex-start;margin:3px 0;line-height:1.25}
 .chk input{margin-top:2px}
+.lvrow{display:flex;gap:4px 12px;flex-wrap:wrap;margin:4px 0;align-items:center}
+.lvrow label{display:flex;gap:4px;align-items:center}
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 button{font:inherit;padding:7px 12px;border-radius:7px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
 button.sec{background:#fff;color:var(--accent)}
@@ -61,8 +63,9 @@ button.sec{background:#fff;color:var(--accent)}
 .gh i{font-weight:400}
 .gh:first-child{margin-top:0}
 .quick .it{display:flex;align-items:center;flex-wrap:wrap;gap:.2em;padding:.42em 0;break-inside:avoid}
-.quick .ex{flex:none}
-.quick .bl{flex:1;min-width:1.4em;height:1.15em}
+.quick .bl{flex:1 1 0;min-width:0;height:1.15em}
+.quick .eq{flex:0 1 auto;min-width:0}
+.quick .eq .nm{vertical-align:middle}
 .nm{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;aspect-ratio:1;min-width:1.9em;height:1.9em;padding:0 .3em;background:#e4e4e4;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:999px;font-weight:700;font-size:.68em;line-height:1;margin-right:.35em;flex:none}
 .work .it{break-inside:avoid;padding-top:2mm}
 .work .sp{height:var(--sp)}
@@ -97,7 +100,8 @@ sup{font-size:.68em;line-height:0}
     <a class="back" href="../">← Recursos de matemàtiques</a>
     <h2>Generador de càlcul mental</h2>
     <div class="btns">
-      <button id="bPrint">🖨️ Imprimir / PDF</button>
+      <button id="bPrint">🖨️ PDF / Imprimir</button>
+      <button id="bDocx">📄 Word (.docx)</button>
       <button class="sec" id="bNew">🎲 Nova fitxa</button>
     </div>
     <div class="row"><span>Títol</span><input type="text" id="titol"></div>
@@ -118,7 +122,7 @@ sup{font-size:.68em;line-height:0}
     <div class="row"><span>Versions diferents</span><input type="number" id="versions" min="1" max="10"></div>
     <label class="chk"><input type="checkbox" id="sol"> Solucionari en pàgina a part</label>
     <label class="chk"><input type="checkbox" id="passos"> Passos intermedis en les combinades</label>
-    <div class="small">El mateix número de fitxa i la mateixa configuració generen sempre la mateixa fitxa. Amb diverses versions, cada una usa el número següent.</div>
+    <div class="small">El mateix número de fitxa i la mateixa configuració generen sempre la mateixa fitxa. Amb diverses versions, cada una usa el número següent. Per a PDF, al diàleg d'impressió tria «Desa com a PDF». Pots marcar diversos nivells a cada bloc: les operacions es repartiran entre ells.</div>
     <div id="blocks"></div>
   </aside>
   <main class="preview" id="preview"></main>
@@ -445,12 +449,12 @@ const BLOCKS=[
 function generateItems(cfg,seed){
   R=mulberry32(seed*7919+13);MUL=cfg.mul;
   const sel=[];
-  BLOCKS.forEach(b=>b.types.forEach(t=>{if(cfg.types[t.id])sel.push({t,l:+cfg.levels[b.id]});}));
+  BLOCKS.forEach(b=>b.types.forEach(t=>{if(cfg.types[t.id]){const lv=[].concat(cfg.levels[b.id]||1).map(Number);sel.push({t,lv,k:ri(0,lv.length-1)});}}));
   if(!sel.length)return [];
   const pool=[];for(let i=0;i<cfg.n;i++)pool.push(i%sel.length);
   if(cfg.ordre==='barrejat')shuffle(pool);else pool.sort((a,b)=>a-b);
   const seen=new Set(),items=[];
-  for(const idx of pool){const {t,l}=sel[idx];let it;
+  for(const idx of pool){const S=sel[idx],t=S.t,l=S.lv[(S.k++)%S.lv.length];let it;
     for(let k=0;k<40;k++){it=t.gen(l);if(!seen.has(it.q))break;}
     seen.add(it.q);it.type=t;items.push(it);}
   return items;
@@ -465,13 +469,15 @@ const DEF={titol:'Càlcul mental',subtitol:'',mode:'rapid',n:40,cols:4,espai:'38
 let cfg;
 try{cfg=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){cfg=Object.assign({},DEF);}
 cfg.levels=Object.assign({},DEF.levels,cfg.levels||{});
+Object.keys(cfg.levels).forEach(k=>cfg.levels[k]=[].concat(cfg.levels[k]).map(Number));
+let LAST=[];
 
 function buildPanel(){
   const box=$('blocks');
   BLOCKS.forEach(b=>{
     const fs=document.createElement('fieldset');
     fs.innerHTML=`<legend>${b.nom}</legend>
-      <div class="row"><span>Nivell</span><select data-level="${b.id}"><option value="1">1 · Bàsic</option><option value="2">2 · Mitjà</option><option value="3">3 · Avançat</option></select></div>
+      <div class="lvrow"><span>Nivells:</span><label><input type="checkbox" data-lv="${b.id}" value="1"> Bàsic</label><label><input type="checkbox" data-lv="${b.id}" value="2"> Mitjà</label><label><input type="checkbox" data-lv="${b.id}" value="3"> Avançat</label></div>
       <div class="lvl">${b.niv}</div>`+
       b.types.map(t=>`<label class="chk"><input type="checkbox" data-type="${t.id}"> ${t.nom}</label>`).join('');
     box.appendChild(fs);
@@ -480,7 +486,7 @@ function buildPanel(){
 function toUI(){
   ['titol','subtitol','mode','n','cols','espai','lletra','mul','ordre','seed','versions'].forEach(k=>$(k).value=cfg[k]);
   $('sol').checked=cfg.sol;$('passos').checked=cfg.passos;
-  document.querySelectorAll('[data-level]').forEach(s=>s.value=cfg.levels[s.dataset.level]);
+  document.querySelectorAll('[data-lv]').forEach(c=>c.checked=cfg.levels[c.dataset.lv].includes(+c.value));
   document.querySelectorAll('[data-type]').forEach(c=>c.checked=!!cfg.types[c.dataset.type]);
 }
 function fromUI(){
@@ -490,7 +496,7 @@ function fromUI(){
   cfg.seed=Math.max(1,parseInt($('seed').value)||1);
   cfg.versions=Math.max(1,Math.min(10,parseInt($('versions').value)||1));
   cfg.sol=$('sol').checked;cfg.passos=$('passos').checked;
-  document.querySelectorAll('[data-level]').forEach(s=>cfg.levels[s.dataset.level]=+s.value);
+  BLOCKS.forEach(b=>{let a=[...document.querySelectorAll(`[data-lv="${b.id}"]:checked`)].map(c=>+c.value);if(!a.length){a=[1];document.querySelector(`[data-lv="${b.id}"][value="1"]`).checked=true;}cfg.levels[b.id]=a;});
   cfg.types={};document.querySelectorAll('[data-type]').forEach(c=>{if(c.checked)cfg.types[c.dataset.type]=true;});
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -507,7 +513,7 @@ function renderSheet(items,seed){
   items.forEach((it,i)=>{
     if(cfg.ordre==='agrupat'&&it.type!==last){last=it.type;h+=`<div class="gh">${it.type.nom}${it.type.ins?` · <i>${it.type.ins}</i>`:''}</div>`;}
     const hint=(cfg.ordre==='barrejat'&&it.type.hint)?` <span class="hint">${it.type.hint}</span>`:'';
-    if(quick)h+=`<div class="it"><span class="nm">${i+1}</span><span class="ex">${it.q}</span><span>=</span><span class="bl"></span>${hint}</div>`;
+    if(quick)h+=`<div class="it"><span class="eq"><span class="nm">${i+1}</span><span class="ex">${it.q}</span>&nbsp;=</span><span class="bl"></span>${hint}</div>`;
     else h+=`<div class="it"><div><span class="nm">${i+1}</span> ${it.q} =${hint}</div><div class="sp"></div></div>`;
   });
   return h+`</div></section>`;
@@ -529,14 +535,111 @@ function update(){
   $('rowEspai').style.display=cfg.mode==='treball'?'':'none';
   const pv=$('preview');
   if(!Object.keys(cfg.types).length){pv.innerHTML='<div class="msg">Marca almenys un tipus d\'operació al tauler de l\'esquerra.</div>';return;}
-  let sheets='',sols='';
+  let sheets='',sols='';LAST=[];
   for(let v=0;v<cfg.versions;v++){
     const s=cfg.seed+v,items=generateItems(cfg,s);
-    sheets+=renderSheet(items,s);
+    LAST.push({seed:s,items});sheets+=renderSheet(items,s);
     if(cfg.sol)sols+=renderSol(items,s);
   }
   pv.innerHTML=sheets+sols;
 }
+
+/* ============ Exportació a Word (.docx), sense llibreries ============ */
+const X=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,' ');
+function wrun(text,o){o=o||{};let pr='';
+  if(o.bold)pr+='<w:b/>';if(o.italic)pr+='<w:i/>';
+  if(o.color)pr+=`<w:color w:val="${o.color}"/>`;
+  if(o.sz)pr+=`<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>`;
+  if(o.fill)pr+=`<w:shd w:val="clear" w:color="auto" w:fill="${o.fill}"/>`;
+  if(o.sup)pr+='<w:vertAlign w:val="superscript"/>';
+  return `<w:r>${pr?`<w:rPr>${pr}</w:rPr>`:''}<w:t xml:space="preserve">${X(text)}</w:t></w:r>`;}
+function mrun(t,o){return `<m:r><m:rPr><m:sty m:val="${o.bold?'b':'p'}"/></m:rPr><w:rPr><w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>${o.sz?`<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>`:''}</w:rPr><m:t xml:space="preserve">${X(t)}</m:t></m:r>`;}
+function htmlRuns(html,o){
+  const d=new DOMParser().parseFromString('<body>'+html+'</body>','text/html').body;let out='';
+  (function walk(n,sup){n.childNodes.forEach(c=>{
+    if(c.nodeType===3){out+=wrun(c.textContent,Object.assign({},o,{sup}));return;}
+    if(c.nodeName==='SUP'){walk(c,true);return;}
+    if(c.classList&&c.classList.contains('fr')){const k=c.children;
+      out+=`<m:oMath><m:f><m:num>${mrun(k[0].textContent,o)}</m:num><m:den>${mrun(k[1].textContent,o)}</m:den></m:f></m:oMath>`;return;}
+    if(c.classList&&c.classList.contains('rad')){const ix=c.querySelector('.ix'),rc=c.querySelector('.rc');
+      out+=`<m:oMath><m:rad><m:radPr>${ix?'':'<m:degHide m:val="1"/>'}<m:ctrlPr/></m:radPr><m:deg>${ix?mrun(ix.textContent,o):''}</m:deg><m:e>${mrun(rc.textContent,o)}</m:e></m:rad></m:oMath>`;return;}
+    walk(c,sup);});})(d,false);
+  return out;}
+const TAB='<w:r><w:tab/></w:r>';
+const WP=(inner,ppr)=>`<w:p>${ppr?`<w:pPr>${ppr}</w:pPr>`:''}${inner}</w:p>`;
+const chip=(n,sz)=>wrun((n<10?'  ':' ')+n+(n<10?'  ':' '),{bold:true,sz:Math.round(sz*.68),fill:'E4E4E4'})+wrun(' ',{sz});
+const TW=10318;
+const wcell=(paras,w,span)=>`<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${span?`<w:gridSpan w:val="${span}"/>`:''}</w:tcPr>${paras||'<w:p/>'}</w:tc>`;
+const wrow=(cells,h)=>`<w:tr><w:trPr><w:cantSplit/>${h?`<w:trHeight w:val="${h}" w:hRule="atLeast"/>`:''}</w:trPr>${cells}</w:tr>`;
+function wtbl(rows,cols){const w=Math.floor(TW/cols);
+  return `<w:tbl><w:tblPr><w:tblW w:w="${w*cols}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="60" w:type="dxa"/><w:right w:w="60" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${('<w:gridCol w:w="'+w+'"/>').repeat(cols)}</w:tblGrid>${rows}</w:tbl>`;}
+function wheader(title,seed,first){
+  return WP(wrun(title,{bold:true,sz:34})+(cfg.subtitol?wrun('   '+cfg.subtitol,{sz:22}):'')+TAB+wrun('Fitxa nº '+seed,{sz:18,color:'444444'}),
+    (first?'':'<w:pageBreakBefore/>')+'<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="000000"/></w:pBdr><w:tabs><w:tab w:val="right" w:pos="'+TW+'"/></w:tabs><w:spacing w:after="120"/>');}
+function wsheet(items,seed,first){
+  const quick=cfg.mode==='rapid',sz=[26,32,40][(+cfg.lletra||1)-1],cols=cfg.cols,w=Math.floor(TW/cols);
+  const rowH=quick?560:Math.round(+cfg.espai*56.7)+520;
+  let x=wheader(cfg.titol||'Càlcul mental',seed,first);
+  x+=WP(wrun('Nom:',{sz:22})+TAB+wrun('   Grup:',{sz:22})+TAB+wrun('   Data:',{sz:22})+TAB,
+    '<w:tabs><w:tab w:val="left" w:leader="underscore" w:pos="5200"/><w:tab w:val="left" w:leader="underscore" w:pos="6900"/><w:tab w:val="left" w:leader="underscore" w:pos="9300"/></w:tabs><w:spacing w:before="160" w:after="120"/>');
+  if(quick)x+=WP(wrun('Temps:',{sz:22})+TAB+wrun('   Encerts:',{sz:22})+TAB+wrun(' / '+items.length,{sz:22}),
+    '<w:tabs><w:tab w:val="left" w:leader="underscore" w:pos="2600"/><w:tab w:val="left" w:leader="underscore" w:pos="4800"/></w:tabs><w:spacing w:after="160"/>');
+  let rows='',cells=[],last=null;
+  const flush=()=>{if(!cells.length)return;while(cells.length<cols)cells.push(wcell('',w));rows+=wrow(cells.join(''),rowH);cells=[];};
+  items.forEach((it,i)=>{
+    if(cfg.ordre==='agrupat'&&it.type!==last){flush();last=it.type;
+      rows+=wrow(wcell(WP(wrun(it.type.nom,{bold:true,sz:21})+(it.type.ins?wrun(' · '+it.type.ins,{italic:true,sz:21}):''),'<w:keepNext/><w:spacing w:before="160" w:after="40"/>'),w*cols,cols),0);}
+    const hint=(cfg.ordre==='barrejat'&&it.type.hint)?wrun('  '+it.type.hint,{italic:true,color:'444444',sz:Math.round(sz*.65)}):'';
+    cells.push(wcell(WP(chip(i+1,sz)+htmlRuns(it.q,{sz})+wrun(' =',{sz})+hint,'<w:spacing w:before="60" w:after="60"/>'),w));
+    if(cells.length===cols)flush();});
+  flush();
+  return x+wtbl(rows,cols);}
+function wsol(items,seed){
+  const quick=cfg.mode==='rapid',sz=22,anySteps=cfg.passos&&items.some(it=>it.steps),cols=anySteps?2:(quick?4:3),w=Math.floor(TW/cols);
+  let x=wheader('Solucionari · '+(cfg.titol||'Càlcul mental'),seed,false),rows='',cells=[];
+  const flush=()=>{if(!cells.length)return;while(cells.length<cols)cells.push(wcell('',w));rows+=wrow(cells.join(''),0);cells=[];};
+  x+=WP('','<w:spacing w:after="60"/>');
+  items.forEach((it,i)=>{
+    const mid=(cfg.passos&&it.steps)?' = '+it.steps.join(' = '):'';
+    cells.push(wcell(WP(chip(i+1,sz)+htmlRuns(it.q,{sz})+wrun(mid+' = ',{sz})+htmlRuns(it.a,{sz,bold:true}),'<w:spacing w:before="40" w:after="40"/>'),w));
+    if(cells.length===cols)flush();});
+  flush();
+  return x+wtbl(rows,cols);}
+const CRCT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRCT[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function zipFiles(files){
+  const enc=new TextEncoder(),parts=[],cd=[];let off=0;
+  files.forEach(([name,str])=>{
+    const nb=enc.encode(name),db=enc.encode(str),crc=crc32(db);
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(12,0x21,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,db.length,true);lh.setUint32(22,db.length,true);lh.setUint16(26,nb.length,true);
+    parts.push(new Uint8Array(lh.buffer),nb,db);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(14,0x21,true);
+    ch.setUint32(16,crc,true);ch.setUint32(20,db.length,true);ch.setUint32(24,db.length,true);ch.setUint16(28,nb.length,true);ch.setUint32(42,off,true);
+    cd.push(new Uint8Array(ch.buffer),nb);off+=30+nb.length+db.length;});
+  const cdSize=cd.reduce((a,b)=>a+b.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cdSize,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});}
+function buildDocx(){
+  const NS='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"';
+  let body='';
+  LAST.forEach((v,i)=>{body+=wsheet(v.items,v.seed,i===0);});
+  if(cfg.sol)LAST.forEach(v=>{body+=wsol(v.items,v.seed);});
+  body+='<w:p><w:pPr><w:spacing w:before="0" w:after="0"/><w:rPr><w:sz w:val="2"/></w:rPr></w:pPr></w:p>';
+  const H='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+  return zipFiles([
+    ['[Content_Types].xml',H+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>'],
+    ['_rels/.rels',H+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'],
+    ['word/_rels/document.xml.rels',H+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
+    ['word/styles.xml',H+'<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" w:eastAsia="Arial"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="ca-ES"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style></w:styles>'],
+    ['word/document.xml',H+`<w:document ${NS}><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="794" w:right="794" w:bottom="794" w:left="794" w:header="397" w:footer="397" w:gutter="0"/></w:sectPr></w:body></w:document>`]]);}
+function downloadDocx(){
+  if(!LAST.length)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(buildDocx());a.download='calcul-mental_'+LAST[0].seed+'.docx';
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
+
 buildPanel();toUI();
 $('panel').addEventListener('input',e=>{
   if(e.target.id==='mode'){
@@ -548,6 +651,7 @@ $('panel').addEventListener('input',e=>{
 $('panel').addEventListener('change',update);
 $('bNew').onclick=()=>{$('seed').value=1000+Math.floor(Math.random()*9000);update();};
 $('bPrint').onclick=()=>window.print();
+$('bDocx').onclick=downloadDocx;
 update();
 </script>
 </body>
