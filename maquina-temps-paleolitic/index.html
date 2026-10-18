@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La Màquina del Temps: Aventura al Paleolític</title>
+<meta name="description" content="Aventura interactiva al Paleolític: tria el camí, resol candaus de mates, ajuda els animals i recupera els tres engranatges de la màquina del temps.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/maquina-temps-paleolitic/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="La Màquina del Temps: Aventura al Paleolític">
+<meta property="og:description" content="Aventura interactiva al Paleolític: tria el camí, resol candaus de mates, ajuda els animals i recupera els tres engranatges de la màquina del temps.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/maquina-temps-paleolitic/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@500;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf6ef;
+  --fg: #2a2520;
+  --fg2: #5a5550;
+  --accent: #c45a2d;
+  --accent2: #e8a547;
+  --card: #fff;
+  --card-border: #e0d8cc;
+  --btn-bg: #c45a2d;
+  --btn-fg: #fff;
+  --btn-alt-bg: #e8a547;
+  --btn-alt-fg: #2a2520;
+  --energy: #3ea86f;
+  --energy-low: #d44;
+  --gear-empty: #d0c8bb;
+  --gear-full: #e8a547;
+  --overlay-bg: rgba(42,37,32,.92);
+  --hint-bg: #fff3cd;
+  --hint-fg: #856404;
+  --riddle-bg: #e3f0ff;
+  --riddle-fg: #1a5276;
+  --dialog-fg: #555;
+  --ending-good: #2d8c5a;
+  --ending-bad: #c45a2d;
+  --ending-hero: #8b5cf6;
+  --font-title: 'Grandstander', 'Comic Sans MS', cursive;
+  --font-body: 'Atkinson Hyperlegible Next', 'Verdana', sans-serif;
+  --font-mono: 'Courier Prime', 'Courier New', monospace;
+  --radius: 12px;
+  --max-w: 42rem;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1714;--fg:#e8e0d6;--fg2:#a09890;--accent:#e87040;
+    --accent2:#f0b860;--card:#262220;--card-border:#3a3530;
+    --btn-bg:#e87040;--btn-fg:#fff;--btn-alt-bg:#f0b860;--btn-alt-fg:#1a1714;
+    --overlay-bg:rgba(10,8,6,.94);--hint-bg:#3a3020;--hint-fg:#f0c860;
+    --riddle-bg:#1a2a3a;--riddle-fg:#7ab8e8;--dialog-fg:#bbb;
+    --ending-good:#40c080;--ending-bad:#e87040;--ending-hero:#a78bfa;
+    --energy:#50c880;--energy-low:#f06050;--gear-empty:#3a3530;--gear-full:#f0b860;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1714;--fg:#e8e0d6;--fg2:#a09890;--accent:#e87040;
+  --accent2:#f0b860;--card:#262220;--card-border:#3a3530;
+  --btn-bg:#e87040;--btn-fg:#fff;--btn-alt-bg:#f0b860;--btn-alt-fg:#1a1714;
+  --overlay-bg:rgba(10,8,6,.94);--hint-bg:#3a3020;--hint-fg:#f0c860;
+  --riddle-bg:#1a2a3a;--riddle-fg:#7ab8e8;--dialog-fg:#bbb;
+  --ending-good:#40c080;--ending-bad:#e87040;--ending-hero:#a78bfa;
+  --energy:#50c880;--energy-low:#f06050;--gear-empty:#3a3530;--gear-full:#f0b860;
+}
+[data-era="pal1"]{--accent:#5a8c3a;--accent2:#8cc040;--btn-bg:#4f7d31;--btn-alt-bg:#8cc040;}
+[data-era="pal2"]{--accent:#2f6f9f;--accent2:#7fb8dc;--btn-bg:#2f6f9f;--btn-alt-bg:#7fb8dc;}
+[data-era="pal3"]{--accent:#a8431f;--accent2:#e0a050;--btn-bg:#a8431f;--btn-alt-bg:#e0a050;}
+[hidden]{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);font-size:1.2rem;line-height:1.6;background:var(--bg);color:var(--fg);min-height:100dvh;padding:0 16px}
+#app{max-width:var(--max-w);margin:0 auto;padding-bottom:3rem}
+header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0;border-bottom:2px solid var(--card-border);margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+h1{font-family:var(--font-title);font-size:1.4rem;color:var(--accent)}
+.hud{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.energy-bar{display:flex;gap:4px;align-items:center}
+.crystal{width:18px;height:24px;clip-path:polygon(50% 0%,100% 35%,80% 100%,20% 100%,0% 35%);transition:background .3s,opacity .3s}
+.crystal.full{background:var(--energy)}
+.crystal.empty{background:var(--gear-empty);opacity:.4}
+.crystal.low{background:var(--energy-low);animation:pulse-low 1s infinite}
+@keyframes pulse-low{0%,100%{opacity:1}50%{opacity:.5}}
+.gears{display:flex;gap:6px;align-items:center}
+.gear-slot{width:24px;height:24px;border-radius:50%;border:2px solid var(--gear-empty);display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .3s}
+.gear-slot.found{background:var(--gear-full);border-color:var(--gear-full);color:#fff}
+.backpack{font-family:var(--font-title);font-size:.85rem;cursor:pointer;background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius);padding:4px 10px;color:var(--fg)}
+.backpack-panel{background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius);padding:.8rem 1rem;margin-bottom:1rem;font-size:.95rem}
+.backpack-panel .item{display:inline-block;background:var(--accent2);color:var(--btn-alt-fg);padding:2px 10px;border-radius:20px;margin:4px;font-size:.85rem;font-family:var(--font-title)}
+.era-plate{background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;text-align:center}
+.era-plate h2{font-family:var(--font-title);color:var(--accent);font-size:1.3rem;margin-bottom:.3rem}
+.era-plate .era-sub{font-size:.9rem;color:var(--fg2)}
+.era-plate svg{max-width:200px;margin:.5rem auto;display:block}
+#story{margin-bottom:1.5rem}
+#story p{margin-bottom:.8rem}
+#story .dialog{color:var(--dialog-fg);font-style:italic;padding-left:1rem;border-left:3px solid var(--accent2);margin-bottom:.8rem}
+#story .hint{background:var(--hint-bg);color:var(--hint-fg);padding:.5rem .8rem;border-radius:8px;font-size:1rem;margin-bottom:.8rem}
+#story .riddle{background:var(--riddle-bg);color:var(--riddle-fg);padding:.8rem 1rem;border-radius:8px;font-size:1.05rem;margin-bottom:.8rem;font-family:var(--font-mono)}
+#choices{display:flex;flex-direction:column;gap:.6rem}
+#choices button{font-family:var(--font-title);font-size:1.1rem;padding:.8rem 1.2rem;border:none;border-radius:var(--radius);cursor:pointer;text-align:left;transition:transform .1s,box-shadow .1s;line-height:1.3}
+#choices button:active{transform:scale(.97)}
+#choices button.main{background:var(--btn-bg);color:var(--btn-fg)}
+#choices button.alt{background:var(--btn-alt-bg);color:var(--btn-alt-fg)}
+#choices button:disabled{opacity:.5;cursor:not-allowed}
+.ending-box{background:var(--card);border:3px solid var(--ending-bad);border-radius:var(--radius);padding:1.2rem;text-align:center;margin-top:1rem}
+.ending-box.good{border-color:var(--ending-good)}
+.ending-box.hero{border-color:var(--ending-hero)}
+.ending-box h3{font-family:var(--font-title);font-size:1.3rem;margin-bottom:.5rem}
+.ending-box .ending-count{font-size:.85rem;color:var(--fg2);margin-top:.8rem}
+.ending-box button{margin-top:.8rem;font-family:var(--font-title);font-size:1rem;padding:.6rem 1.2rem;border:none;border-radius:var(--radius);cursor:pointer;margin-right:.5rem}
+.ending-box .btn-undo{background:var(--btn-bg);color:var(--btn-fg)}
+.ending-box .btn-restart{background:var(--card-border);color:var(--fg)}
+.intro-screen{text-align:center;padding:1.5rem 0}
+.intro-screen h2{font-family:var(--font-title);font-size:1.6rem;color:var(--accent);margin-bottom:1rem}
+.intro-screen .intro-sub{font-family:var(--font-title);font-size:1.1rem;color:var(--fg2);margin:-.6rem 0 1rem}
+.intro-error{color:var(--energy-low);font-family:var(--font-title);font-size:1rem;margin-bottom:.8rem}
+.intro-screen .desc{font-size:1rem;color:var(--fg2);margin-bottom:1.2rem;text-align:left}
+.intro-screen input[type=text]{font-family:var(--font-body);font-size:1.2rem;padding:.6rem 1rem;border:2px solid var(--card-border);border-radius:var(--radius);width:100%;max-width:20rem;text-align:center;background:var(--card);color:var(--fg);margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto}
+.intro-screen button{font-family:var(--font-title);font-size:1.2rem;padding:.8rem 2rem;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:var(--radius);cursor:pointer}
+.restart-hdr{font-size:.8rem;color:var(--fg2);cursor:pointer;user-select:none;padding:4px 8px;border-radius:6px}
+.restart-hdr:active{background:var(--card-border)}
+#overlay{position:fixed;inset:0;background:var(--overlay-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;color:#fff;font-family:var(--font-title);transition:opacity .3s}
+#overlay .plof{font-size:3rem;margin-bottom:1rem;animation:plof-bounce .7s ease-out}
+#overlay .era-name{font-size:1.4rem;opacity:.8}
+@keyframes plof-bounce{0%{transform:scale(0);opacity:0}60%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  #overlay .plof{animation:none}
+  .crystal{transition:none}
+}
+.math-input{display:flex;gap:.5rem;align-items:center;margin:.8rem 0}
+.math-input input{font-family:var(--font-mono);font-size:1.3rem;padding:.5rem;width:6rem;text-align:center;border:2px solid var(--card-border);border-radius:8px;background:var(--card);color:var(--fg)}
+.math-input button{font-family:var(--font-title);font-size:1rem;padding:.5rem 1rem;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:8px;cursor:pointer}
+.math-feedback{font-family:var(--font-title);font-size:1.1rem;margin:.5rem 0;padding:.4rem .8rem;border-radius:8px;display:inline-block}
+.math-feedback.ok{background:#d4edda;color:#155724}
+.math-feedback.ko{background:#f8d7da;color:#721c24}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .math-feedback.ok{background:#1a3a2a;color:#80e0a0}
+  :root:not([data-theme="light"]) .math-feedback.ko{background:#3a1a1a;color:#f08080}
+}
+:root[data-theme="dark"] .math-feedback.ok{background:#1a3a2a;color:#80e0a0}
+:root[data-theme="dark"] .math-feedback.ko{background:#3a1a1a;color:#f08080}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="hdr" hidden>
+    <h1>⚙️ Màquina del Temps · Paleolític</h1>
+    <div class="hud">
+      <div class="energy-bar" id="energyBar"></div>
+      <div class="gears" id="gearsBar"></div>
+      <span class="backpack" id="backpackBtn">🎒 Motxilla</span>
+      <span class="restart-hdr" id="restartBtn">↺</span>
+    </div>
+  </header>
+  <div id="backpackPanel" class="backpack-panel" hidden></div>
+  <div id="eraPlate" class="era-plate" hidden></div>
+  <div id="story"></div>
+  <div id="choices"></div>
+  <div id="endingBox" hidden></div>
+</div>
+<div id="overlay" hidden></div>
+
+<script>
+'use strict';
+const SAVE_KEY='maquina_temps_paleolitic_v1';
+const ALL_ENDINGS=['tele','hienes','bolets','mamut','ninot','energia','os','selfie','bo','heroi'];
+const ENDING_NAMES={
+  tele:'Campió del sofà',hienes:'Humorista de la sabana',bolets:'Tres dies de riure',
+  mamut:'Passatger de mamut',ninot:'Escultor del gel',energia:'Cap de la tribu',
+  os:'Manta d\'ós',selfie:'El primer selfie',bo:'Mestre del temps',heroi:'Heroi del Paleolític'
+};
+
+let s={},scene='intro',hist=[],discovered=[];
+try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.scene){s=d.s;scene=d.scene;hist=d.hist||[];discovered=d.discovered||[];}}catch(e){}
+
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({s,scene,hist,discovered}));}catch(e){}}
+function discoverEnding(e){if(e&&!discovered.includes(e)){discovered.push(e);save();}}
+
+function sanitize(v){return String(v).replace(/[<>&"']/g,'')}
+
+/* hn: process text - name substitution + bold */
+function hn(txt){
+  // 1. Gender markers {m|f} (not used in this adventure)
+  txt=txt.replace(/\{([^{}|]+)\|([^{}|]+)\}/g,(m,masc,fem)=>(s.gen==='f'?fem:masc));
+  // 2. Name substitution with bold+uppercase
+  if(s.nom) txt=txt.replace(/\{nom\}/g,'<b>'+s.nom.toUpperCase()+'</b>');
+  // 3. Bold uppercase for companion name
+  txt=txt.replace(/\b(Roda|Borgo|Tuk|Fumet)\b/g,(m)=>'<b>'+m.toUpperCase()+'</b>');
+  return txt;
+}
+
+function renderText(lines){
+  return lines.map(l=>{
+    if(typeof l==='function') l=l(s);
+    if(!l) return '';
+    l=hn(l);
+    if(l.startsWith('&gt;')||l.startsWith('>')) return '<p class="dialog">—'+l.slice(l.startsWith('&gt;')?4:1).replace(/^\s*—\s*/,'').trim()+'</p>';
+    if(l.startsWith('?')) return '<div class="riddle">'+l.slice(1).trim()+'</div>';
+    if(l.startsWith('!')) return '<div class="hint">💡 '+l.slice(1).trim()+'</div>';
+    return '<p>'+l+'</p>';
+  }).join('');
+}
+
+function renderEnergy(){
+  const bar=document.getElementById('energyBar');
+  if(!bar) return;
+  let h='⚡';
+  for(let i=0;i<5;i++){
+    const cls=i<s.energia?(s.energia<=1?'crystal low':'crystal full'):'crystal empty';
+    h+=`<div class="${cls}"></div>`;
+  }
+  bar.innerHTML=h;
+}
+function renderGears(){
+  const bar=document.getElementById('gearsBar');
+  if(!bar) return;
+  let h='';
+  for(let i=1;i<=3;i++){
+    h+=`<div class="gear-slot ${s['gear'+i]?'found':''}">⚙</div>`;
+  }
+  bar.innerHTML=h;
+}
+function renderBackpack(){
+  const panel=document.getElementById('backpackPanel');
+  const items=[];
+  if(s.llanterna) items.push('🔦 Llanterna');
+  if(s.entrepa) items.push('🥪 Entrepà');
+  if(s.pell) items.push('🧥 Pell d\'ós');
+  if(items.length===0) items.push('(buida)');
+  panel.innerHTML='<strong>🎒 Motxilla:</strong> '+items.map(i=>'<span class="item">'+i+'</span>').join('');
+}
+
+let backpackOpen=false;
+document.getElementById('backpackBtn').addEventListener('click',()=>{
+  backpackOpen=!backpackOpen;
+  const panel=document.getElementById('backpackPanel');
+  if(backpackOpen){renderBackpack();panel.hidden=false;}
+  else panel.hidden=true;
+});
+
+let restartTaps=0,restartTimer=null;
+document.getElementById('restartBtn').addEventListener('click',()=>{
+  restartTaps++;
+  if(restartTaps===1){
+    document.getElementById('restartBtn').textContent='↺ Segur?';
+    restartTimer=setTimeout(()=>{restartTaps=0;document.getElementById('restartBtn').textContent='↺';},2000);
+  } else if(restartTaps>=2){
+    clearTimeout(restartTimer);
+    restartTaps=0;
+    document.getElementById('restartBtn').textContent='↺';
+    doRestart();
+  }
+});
+
+function doRestart(){
+  s={};scene='intro';hist=[];save();render();
+}
+
+function showOverlay(text,eraName,cb){
+  const ov=document.getElementById('overlay');
+  ov.innerHTML=`<div class="plof">${text}</div><div class="era-name">${eraName}</div>`;
+  ov.hidden=false;
+  // Block clicks
+  const dur=window.matchMedia('(prefers-reduced-motion:reduce)').matches?200:1400;
+  setTimeout(()=>{ov.hidden=true;if(cb)cb();},dur);
+}
+
+function choose(c){
+  hist.push({scene:scene,s:JSON.parse(JSON.stringify(s))});
+  if(c.set) c.set(s);
+  let target=typeof c.go==='function'?c.go(s):c.go;
+  // Check energy
+  if(s.energia!==undefined && s.energia<=0 && !S[target]?.ending){
+    target='final_energia';
+  }
+  const newScene=S[target];
+  if(!newScene){console.error('Scene not found:',target);return;}
+  // Check era change for transition
+  const oldEra=S[scene]?.era;
+  const newEra=newScene.era;
+  if(newEra && oldEra!==newEra){
+    const plofTexts={pal1:'CRAC-PLOF!',pal2:'BRRR-PLOF!',pal3:'XOF-PLOF!'};
+    const eraNames={pal1:'Paleolític inferior · fa 400.000 anys',pal2:'Paleolític mitjà · fa 60.000 anys',pal3:'Paleolític superior · fa 17.000 anys'};
+    scene=target;
+    showOverlay(plofTexts[newEra]||'PLOF!',eraNames[newEra]||'',()=>{
+      if(newScene.onEnter && !s['_entered_'+target]){s['_entered_'+target]=true;newScene.onEnter(s);}
+      render();save();
+    });
+    return;
+  }
+  scene=target;
+  if(newScene.onEnter && !s['_entered_'+target]){s['_entered_'+target]=true;newScene.onEnter(s);}
+  render();save();
+}
+
+function render(){
+  const sc=S[scene];
+  if(!sc){console.error('No scene:',scene);return;}
+  const hdr=document.getElementById('hdr');
+  const eraPlate=document.getElementById('eraPlate');
+  const storyEl=document.getElementById('story');
+  const choicesEl=document.getElementById('choices');
+  const endingBox=document.getElementById('endingBox');
+
+  // Set era on body
+  if(sc.era) document.body.setAttribute('data-era',sc.era);
+  else document.body.removeAttribute('data-era');
+
+  // Show/hide HUD
+  hdr.hidden=(scene==='intro');
+
+  // Era plate
+  if(sc.plate){
+    eraPlate.hidden=false;
+    eraPlate.innerHTML=`<h2>${sc.plate.title}</h2><div class="era-sub">${sc.plate.sub}</div>`;
+  } else {
+    eraPlate.hidden=true;
+  }
+
+  // Render text
+  const lines=typeof sc.text==='function'?sc.text(s):sc.text;
+  storyEl.innerHTML=lines?renderText(lines):'';
+
+  // Render energy/gears
+  if(scene!=='intro'){renderEnergy();renderGears();}
+  if(backpackOpen) renderBackpack();
+
+  // Ending?
+  if(sc.ending){
+    choicesEl.innerHTML='';
+    const endType=typeof sc.ending==='function'?sc.ending(s):sc.ending;
+    const endTitle=typeof sc.title==='function'?sc.title(s):sc.title;
+    discoverEnding(endType);
+    const cls=endType==='heroi'?'hero':(endType==='bo'?'good':'');
+    const total=ALL_ENDINGS.length;
+    const found=discovered.length;
+    endingBox.hidden=false;
+    endingBox.className='ending-box'+(cls?' '+cls:'');
+    let btns='';
+    if(endType!=='bo'&&endType!=='heroi'){
+      btns+=`<button class="btn-undo" onclick="undo()">⟲ Tornar a l'última decisió</button>`;
+    }
+    btns+=`<button class="btn-restart" onclick="doRestart()">↺ Tornar a jugar</button>`;
+    endingBox.innerHTML=`<h3>${endTitle||'Fi'}</h3><div class="ending-count">Finals descoberts: ${found} de ${total}</div>${btns}`;
+  } else {
+    endingBox.hidden=true;
+    // Render choices
+    if(sc.choices){
+      choicesEl.innerHTML=sc.choices
+        .filter(c=>!c.if||c.if(s))
+        .map((c,i)=>{
+          const cls=c.alt?'alt':'main';
+          return `<button class="${cls}" onclick="choose(S['${scene}'].choices.filter(c=>!c.if||c.if(window.s))[${i}])">${hn(typeof c.t==='function'?c.t(s):c.t)}</button>`;
+        }).join('');
+    } else {
+      choicesEl.innerHTML='';
+    }
+  }
+  // Scroll to top
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Make s and choose globally accessible for inline handlers
+window.s=s;window.choose=choose;window.doRestart=doRestart;
+function undo(){
+  if(hist.length){
+    const prev=hist.pop();
+    scene=prev.scene;
+    s=prev.s;
+    window.s=s;
+    save();render();
+  }
+}
+window.undo=undo;
+
+/* Math puzzle renderer */
+function mathPuzzle(questionText,answer,goodGo,badGo){
+  const storyEl=document.getElementById('story');
+  const choicesEl=document.getElementById('choices');
+  const sc=S[scene];
+  const lines=typeof sc.text==='function'?sc.text(s):sc.text;
+  let h=lines?renderText(lines):'';
+  h+=`<div class="riddle">${questionText}</div>`;
+  h+=`<div class="math-input"><input type="number" id="mathAns" inputmode="numeric" placeholder="?"><button onclick="checkMath()">Comprovar</button></div>`;
+  h+=`<div id="mathFeedback"></div>`;
+  storyEl.innerHTML=h;
+  choicesEl.innerHTML='';
+  window._mathAnswer=answer;
+  window._mathGoodGo=goodGo;
+  window._mathBadGo=badGo;
+  window._mathTries=0;
+}
+window.mathPuzzle=mathPuzzle;
+
+function checkMath(){
+  const input=document.getElementById('mathAns');
+  const fb=document.getElementById('mathFeedback');
+  if(!input) return;
+  const val=parseInt(input.value,10);
+  window._mathTries++;
+  if(val===window._mathAnswer){
+    fb.innerHTML='<span class="math-feedback ok">✓ Correcte!</span>';
+    setTimeout(()=>{
+      choose({go:window._mathGoodGo,set:s=>{s.mathOk=(s.mathOk||0)+1;}});
+    },800);
+  } else {
+    if(window._mathTries>=3){
+      fb.innerHTML=`<span class="math-feedback ko">La resposta era ${window._mathAnswer}. Endavant! (⚡-1)</span>`;
+      setTimeout(()=>{
+        choose({go:window._mathBadGo,set:s=>{s.energia--;}});
+      },1200);
+    } else {
+      fb.innerHTML=`<span class="math-feedback ko">No… Torna-ho a intentar! (intent ${window._mathTries}/3)</span>`;
+      input.value='';input.focus();
+    }
+  }
+}
+window.checkMath=checkMath;
+
+/* ============= SCENES ============= */
+const S = {
+
+/* --- INTRO --- */
+intro: {
+  text: null,
+  choices: null
+},
+
+/* --- PRÒLEG --- */
+proleg: {
+  text: [
+    "Una vesprada de pluja, busques una pilota al traster de casa i trobes una cosa increïble: una màquina enorme, plena d'engranatges rovellats i amb un dial ple de dates impossibles.",
+    ">XIIIIIC! —xiula una cosa dins d'una esfera de vidre. És un hàmster! Corre dins d'una bola transparent i, cada vegada que accelera, els engranatges de la màquina es mouen un poc.",
+    ">Ja era hora! —diu l'hàmster, aturant-se—. Em dic Roda. Porte ací dins des del 1642… o era el 1643? El temps és confús quan ets un hàmster.",
+    "El dial de la màquina s'ha encallat en una sola paraula: PALEOLÍTIC. I a més li falten tres engranatges, escampats per tres moments de la Prehistòria.",
+    ">La meua esfera genera energia quan corre —diu Roda—, però no és infinita. Si ens quedem sense energia… bé, millor no pensar-hi."
+  ],
+  choices: [
+    {t:"Buscar els engranatges! L'aventura comença!",go:'tria'},
+    {t:"Tapar la màquina i anar a vore la tele",go:'final_tele',alt:true}
+  ]
+},
+
+/* --- TRIA D'OBJECTE --- */
+tria: {
+  text: [
+    "Abans d'activar la màquina, tens temps d'agafar UNA cosa del traster. Tria bé, perquè l'altra es quedarà ací!",
+    ">Jo agafaria l'entrepà —diu Roda, mirant-te des de la seua esfera—. Tinc fam. Però tu manes."
+  ],
+  choices: [
+    {t:"🔦 Agafar la llanterna",go:'pal1_arr',set:s=>{s.llanterna=true;}},
+    {t:"🥪 Agafar l'entrepà d'atún",go:'pal1_arr',set:s=>{s.entrepa=true;}}
+  ]
+},
+
+/* ===== CAPÍTOL 1: PALEOLÍTIC INFERIOR ===== */
+pal1_arr: {
+  era:'pal1',
+  plate:{title:'Paleolític inferior',sub:'Fa 400.000 anys'},
+  onEnter: s=>{s.energia=5;},
+  text: [
+    "CRAC! La màquina aterra sobre l'herba alta. Fa calor i el cel és immens. Ací no hi ha carrers ni cases, ni cap cartell que diga «Prohibit aparcar màquines del temps».",
+    ">Estem al Paleolític inferior —diu Roda, traient el nas de l'esfera—. Per ací viuen els Homo erectus. Caminen drets, fan eines de pedra i han aprés a controlar el foc.",
+    "A la dreta se sent el soroll d'un riu. A l'esquerra, una columna de fum puja cap al cel."
+  ],
+  choices: [
+    {t:"🌊 Anar cap al riu",go:'pal1_riu'},
+    {t:"🔥 Seguir el fum",go:'pal1_camp'}
+  ]
+},
+
+pal1_riu: {
+  era:'pal1',
+  text: [
+    "El riu és ample i brilla com un mirall. A la vora, enganxada al fang fins als genolls, hi ha una cria d'elefant. Té les orelles enormes i dos ullals xicotets i rectes: és un elefant antic, d'aquells que ja no existeixen.",
+    "La cria belluga la trompa i fa un soroll com una trompeta de joguet: PFF-PFIIIU!",
+    ">Eh, {nom}… —xiuxiueja Roda—. No et dic què has de fer. Però el fang no se'l mereix ningú."
+  ],
+  choices: [
+    {t:"Ajudar la cria (⚡-1)",go:'pal1_ajuda',set:s=>{s.energia--;s.cria=true;}},
+    {t:"No hi ha temps, cap a la roca de les marques",go:'pal1_repte'}
+  ]
+},
+
+pal1_ajuda: {
+  era:'pal1',
+  text: [
+    "Rodes els peus pel fang, t'agafes a la trompa, tires i empenys. PLOF! La cria surt disparada com un tap d'ampolla i et cau al damunt. El fang et cobreix des del cap fins als peus.",
+    "La cria et llepa la cara amb la trompa. PFFFFF. Després, des del bosc, es sent un TRUUUUU greu, com una tuba gegant. És la seua mare. La cria se'n va trotant i es gira dues vegades per a mirar-te.",
+    "!Alguna cosa em diu que eixa mare no oblidarà el favor.",
+    "Més avant, entre els arbres, es veu una roca plana i molt gran."
+  ],
+  choices: [
+    {t:"Anar cap a la roca",go:'pal1_repte'}
+  ]
+},
+
+pal1_camp: {
+  era:'pal1',
+  text: [
+    "Seguint el fum arribes a un campament: cabanes de branques, pells esteses i, al mig, un foc que cruix. Al voltant, una desena d'Homo erectus et mira en silenci. La gent menuda s'amaga darrere les cames dels grans.",
+    "Un dels grans s'acosta i et posa a les mans una cistella de bolets de colors: vermells amb punts blancs, blaus que brillen i uns grocs que fan pessigolles només de mirar-los.",
+    ">No els mengis —murmura Roda—. Els que fan pessigolles de mirar-los són els pitjors.",
+    "Una dona del campament assenyala amb el dit cap a una roca plana que es veu al lluny."
+  ],
+  choices: [
+    {t:"Anar cap a la roca",go:'pal1_repte'},
+    {t:"Tastar els bolets de colors",go:'final_bolets',alt:true}
+  ]
+},
+
+pal1_repte: {
+  era:'pal1',
+  text: [
+    "La roca és plana i immensa, plena de marques gravades: cinc fileres de punts, tots ben alineats. Sota la pedra, entre l'herba, una cosa daurada fa pampallugues. L'engranatge!",
+    "Però la roca no es mou. Al mig hi ha gravada una mà amb els dits oberts, com si demanara que contares.",
+    ">És un candau de comptar —diu Roda—. Els erectus no escriuen, però compten amb marques. Concentra't, {nom}."
+  ],
+  choices: [
+    {t:"Comptar les marques",go:'_pal1_math'}
+  ]
+},
+
+_pal1_math: {
+  era:'pal1',
+  text: [
+    "Davant la roca, cada fila té el mateix nombre de marques. Fixa't bé:"
+  ],
+  choices: null
+},
+
+pal1_math_ok: {
+  era:'pal1',
+  onEnter: s=>{s.gear1=true;},
+  text: [
+    "CLIC! Les marques s'il·luminen una per una, i la roca es desplaça amb un cruixit. Darrere, sobre un llit d'herba, brilla el primer engranatge daurat!",
+    ">Un de tres! —crida Roda, corrent com un boig dins l'esfera—. Però no et confies!",
+    "Agafes l'engranatge. I en eixe moment, entre l'herba alta, sona una cosa que no és gens simpàtica: JI-JI-JI-JI! JI-JI-JI! No és un riure d'alegria. Són hienes, i s'acosten."
+  ],
+  choices: [
+    {t:"Girar-se a mirar…",go:'pal1_hienes'}
+  ]
+},
+
+pal1_math_ko: {
+  era:'pal1',
+  onEnter: s=>{s.gear1=true;},
+  text: [
+    "No era la resposta, però tens més força que paciència. T'abraces a la roca i empenys amb tot el cos. CRAAAC! Cedeix, i et deixa els braços fets una nyap (⚡-1).",
+    ">Un de tres, a la brava! —diu Roda, que no sap si riure o plorar.",
+    "Agafes l'engranatge. I llavors, entre l'herba alta, sona: JI-JI-JI-JI! JI-JI-JI! No és un riure d'alegria. Són hienes, i s'acosten."
+  ],
+  choices: [
+    {t:"Girar-se a mirar…",go:'pal1_hienes'}
+  ]
+},
+
+pal1_hienes: {
+  era:'pal1',
+  text: s => {
+    const base=[
+      "Tres hienes apareixen entre l'herba, amb el pelatge tacat i uns ulls que no semblen gens amics. Se't posen davant, mostrant les dents. JI-JI-JI."
+    ];
+    if(s.cria){
+      base.push("De sobte, la terra tremola. BUUUM. BUUUM. Un elefant gegant, amb dos ullals llargs i rectes, apareix entre els arbres i alça la trompa: TRRRUUUUUUU!");
+      base.push("Les hienes es miren entre elles. Després, amb la cua entre les cames, desapareixen més depressa que un ratolí en un laberint.");
+      base.push("És la mare de la cria que vas ajudar! Et dóna un colp amable amb la trompa a l'esquena, com dient «de res».");
+      base.push(">Mare meua —diu Roda—. Això sí que és un favor ben invertit.");
+    } else {
+      base.push(">No tinc cap pla —admet Roda—. Només tinc l'esfera i moltes ganes de no ser el berenar.");
+    }
+    return base;
+  },
+  choices: s => s.cria
+    ? [{t:"Tornar a la màquina amb l'engranatge!",go:'pal2_arr'}]
+    : [
+        {t:"🥪 Llançar-los l'entrepà",go:'pal2_arr',if:s=>s.entrepa,set:s=>{s.entrepa=false;}},
+        {t:"Córrer amb totes les forces! (⚡-1)",go:'pal2_arr',set:s=>{s.energia--;}},
+        {t:"Intentar caure-los bé amb uns quants acudits",go:'final_hienes',alt:true}
+      ]
+},
+
+/* ===== CAPÍTOL 2: PALEOLÍTIC MITJÀ ===== */
+pal2_arr: {
+  era:'pal2',
+  plate:{title:'Paleolític mitjà',sub:'Fa 60.000 anys'},
+  text: [
+    "PUF! La màquina aterra sobre la neu. Fa un fred que pela. Han passat 340.000 anys i el món s'ha convertit en una immensa estepa blanca, amb un cel gris i un vent que talla.",
+    ">Brrr —diu Roda, tremolant dins l'esfera—. Això és el Paleolític mitjà. Per ací viuen els neandertals. Són baixets, forts com una roca i, crec, amables si no els molestes.",
+    "A lluny, uns mamuts amb pèl llarg caminen lentament, com muntanyes amb cabellera. A l'esquerra puja el fum d'un campament; a la dreta, un riu glaçat."
+  ],
+  choices: [
+    {t:"⛺ Anar al campament",go:'pal2_camp'},
+    {t:"🧊 Anar al riu glaçat",go:'pal2_riu'}
+  ]
+},
+
+pal2_camp: {
+  era:'pal2',
+  text: s => {
+    const l=[
+      "El campament és una cova baixa amb pells penjades a l'entrada. Els neandertals tenen les cames curtes, el cap gros i unes espatlles d'armari. Un caçador de barba escarolada, Borgo, et rep amb un gruny que sembla un «hola».",
+      ">UGH —diu Borgo—. Ugh-ugh.",
+      ">Crec que diu que li agrada la teua cara —tradueix Roda, amb molta imaginació—. O que li agraden les patates. És difícil de saber.",
+      "Borgo et mostra una pell d'ós enorme i peluda. Després assenyala el riu, preocupat. Roda ho entén a mitges: la seua filla Tuk ha anat al riu fa estona i no torna."
+    ];
+    if(s.llanterna){
+      l.push("Borgo mira la teua llanterna amb els ulls com a plats. Vol canviar-la per la pell d'ós.");
+    } else {
+      l.push("No tens res que puga interessar-li, així que només li dónes les gràcies amb un somriure.");
+    }
+    return l;
+  },
+  choices: s => {
+    const ch=[];
+    if(s.llanterna){
+      ch.push({t:"Canviar la llanterna per la pell d'ós",go:'pal2_riu',set:s=>{s.llanterna=false;s.pell=true;s.pagat=true;}});
+      ch.push({t:"Quedar-te la llanterna",go:'pal2_riu',alt:true});
+    } else {
+      ch.push({t:"Anar cap al riu",go:'pal2_riu'});
+    }
+    return ch;
+  }
+},
+
+pal2_riu: {
+  era:'pal2',
+  text: [
+    "El riu és un camí de gel gris i esquerdat. Asseguda sobre una pedra, una xiqueta neandertal plora amb tota la cara. És Tuk, la filla de Borgo.",
+    "Se sent un gemec xicotet que ve de sota el gel: IIII-IIII-IIII. Per una escletxa s'hi veu un cadell de llop, Fumet, que ha caigut i no pot eixir.",
+    ">Això sona a problema —diu Roda—. I a oportunitat. Però sobretot a problema."
+  ],
+  choices: [
+    {t:"Rescatar Fumet (⚡-1)",go:'pal2_llop',set:s=>{s.energia--;s.llop=true;}},
+    {t:"No hi ha temps, seguir endavant",go:'pal2_tempesta'}
+  ]
+},
+
+pal2_llop: {
+  era:'pal2',
+  onEnter: s=>{ if(s.pagat){s.llanterna=true;s.retornat=true;} },
+  text: s => {
+    const l=[
+      "T'estires a plat ventre sobre el gel. Roda s'enrotlla amb l'esfera al teu turmell, fent de contrapés. Allarga el braç… un poc més… i agafes el cadell per la pell del clatell. PLOF! El treus.",
+      "Tuk se't tira als braços i Fumet et neteja la cara a llepades. Tots tres teniu els ulls plens de llàgrimes, i Roda també, encara que diu que és de fred."
+    ];
+    if(s.retornat){
+      l.push("En això arriba Borgo, esverat. Quan veu la seua filla abraçada al cadell, deixa anar un UGH tan fort que cauen els carambucs dels arbres. Després es treu de la bossa la teua llanterna i te la torna.");
+      l.push(">Diu que una llum així no és per a un caçador —tradueix Roda—. És per a qui sap utilitzar-la.");
+    } else {
+      l.push("Borgo arriba corrents. No sap com agrair-t'ho, així que et dóna una palmada a l'espatlla que gairebé et tira a terra.");
+    }
+    return l;
+  },
+  choices: [
+    {t:"Continuar",go:'pal2_tempesta'}
+  ]
+},
+
+pal2_tempesta: {
+  era:'pal2',
+  text: s => {
+    const l=["El cel es posa fosc de sobte. El vent ulla i la neu cau en horitzontal. Una tempesta de neu!"];
+    if(s.pell){
+      l.push("Per sort portes la pell d'ós de Borgo. Fa olor de neandertal, però calenta, calenta de veres.");
+    } else {
+      l.push("No portes res d'abric. Els dits se't posen blaus i Roda assegura que té «el bigoti més gelat de la història».");
+    }
+    return l;
+  },
+  choices: s => s.pell
+    ? [{t:"Travessar la tempesta amb la pell d'ós",go:'pal2_repte'}]
+    : [{t:"Travessar la tempesta (⚡-1)",go:'pal2_repte',set:s=>{s.energia--;}}]
+},
+
+pal2_repte: {
+  era:'pal2',
+  text: [
+    "Quan escampa la tempesta, arribeu a una gran cabana de pells. Dins, entre els estris, una cosa daurada fa pampallugues. L'engranatge!",
+    "Fora, un grup de caçadors acaba de tornar amb 72 trossos de carn. Han de repartir-los entre 8 famílies, a parts iguals, i ningú sap com. L'última vegada que algú ho va fer mal, va acabar amb un mamut molt enfadat.",
+    ">Si ajudem a repartir-ho bé, ens donaran l'engranatge —diu Roda—. Concentra't, {nom}."
+  ],
+  choices: [
+    {t:"Ajudar a repartir la carn",go:'_pal2_math'},
+    {t:"Pujar a un mamut que passa pel costat",go:'final_mamut',alt:true},
+    {t:"Fer un ninot de neu gegant",go:'final_ninot',alt:true}
+  ]
+},
+
+_pal2_math: {
+  era:'pal2',
+  text: [
+    "Els caçadors estenen la carn damunt la neu i et miren amb esperança:"
+  ],
+  choices: null
+},
+
+pal2_math_ok: {
+  era:'pal2',
+  onEnter: s=>{s.gear2=true;},
+  text: [
+    "Cada família rep exactament 9 trossos. Els caçadors fan un UGH-UGH d'alegria que fa caure neu dels arbres. El més vell s'emociona tant que et regala l'engranatge amb les dues mans.",
+    ">Dos de tres! —crida Roda—. Hem deixat tothom content. I això que no sabia ni de què parlaven.",
+    "Tornes a la màquina amb l'engranatge. El dial tremola: ja toca anar cap a l'últim viatge."
+  ],
+  choices: [
+    {t:"Activar la màquina",go:'pal3_arr'}
+  ]
+},
+
+pal2_math_ko: {
+  era:'pal2',
+  onEnter: s=>{s.gear2=true;},
+  text: [
+    "El repartiment no queda gens bé. Unes famílies es queden amb massa i altres amb poc, i es munta un gran embolic de gruns (⚡-1).",
+    "Al final, per pena, Borgo et dóna l'engranatge. Només et demana que diguis «UGH» amb la cara més seriosa que puguis. Ho fas. Tots aplaudeixen.",
+    ">Dos de tres —diu Roda—. Dit en neandertal: UGH.",
+    "Tornes a la màquina amb l'engranatge. El dial tremola: ja toca anar cap a l'últim viatge."
+  ],
+  choices: [
+    {t:"Activar la màquina",go:'pal3_arr'}
+  ]
+},
+
+/* ===== CAPÍTOL 3: PALEOLÍTIC SUPERIOR ===== */
+pal3_arr: {
+  era:'pal3',
+  plate:{title:'Paleolític superior',sub:'Fa 17.000 anys'},
+  text: [
+    "XOF! La màquina aterra en un replà de roca, davant d'una cova enorme. Han passat 43.000 anys. Més avall, el mar brilla; darrere teu, les muntanyes tenen una forma que et sona.",
+    ">Mira estes muntanyes —diu Roda—. Juraria que algun dia estaran prop d'un lloc que es dirà Gandia.",
+    "A l'entrada de la cova, unes persones pinten amb les mans: bufen pols roja al voltant de la mà, i en deixen la silueta damunt la roca. Són Homo sapiens, com tu.",
+    ">Són artistes —diu Roda—. L'últim engranatge ha de ser a dins. Però les coves són fosques, i de vegades no estan buides."
+  ],
+  choices: [
+    {t:"Parlar amb els artistes",go:'pal3_artistes'},
+    {t:"Entrar directament a la cova",go:'pal3_cova'}
+  ]
+},
+
+pal3_artistes: {
+  era:'pal3',
+  text: [
+    "Una artista amb les mans roges d'ocre t'ensenya el truc: pols de color, una canya per a bufar i la mà ben plana sobre la roca. Quan l'aparta, hi queda una mà blanca envoltada de roig. Sembla màgia.",
+    "Després es posa el dit als llavis: «Shhh». Assenyala la cova i imita un ronc enorme: HRRRRRR.",
+    ">Diu que dins hi ha un ós que dorm —tradueix Roda—. Que no el desperteu. I, sobretot, que no li doneu cap abraçada."
+  ],
+  choices: [
+    {t:"Entrar a la cova",go:'pal3_cova'}
+  ]
+},
+
+pal3_cova: {
+  era:'pal3',
+  text: s => {
+    const l=["Dins de la cova fa fresca i el silenci pesa. Les gotes cauen d'algun lloc: PLIC. PLIC. PLIC."];
+    if(s.llanterna){
+      l.push("Encens la llanterna. El feix de llum recorre les parets i deixa a la vista cavalls, cérvols, bisons i cabres pintats fa mil·lenis. Roda es queda amb la boca oberta.");
+    } else {
+      l.push("No tens llum. La foscor és tan espessa que sembla de melmelada. Hauràs d'avançar a les palpentes, tocant la paret freda i humida, mentre Roda fa servir la seua esfera com a llumeta de nit (⚡-2).");
+      if(s.pagat && !s.retornat){
+        l.push(">Ja t'ho dic —murmura Roda—: la llanterna que vas canviar ara ens vindria molt bé.");
+      }
+    }
+    return l;
+  },
+  choices: s => s.llanterna
+    ? [{t:"Avançar amb la llanterna",go:'pal3_os'}]
+    : [{t:"Avançar a les palpentes (⚡-2)",go:'pal3_os',set:s=>{s.energia-=2;}}]
+},
+
+pal3_os: {
+  era:'pal3',
+  text: [
+    "Al fons del corredor hi ha una muntanya peluda que ronca. És un ós de les cavernes, gegant, amb unes urpes com a forquilles. Cada ronc fa vibrar la paret: HRRRRRR… PFFFFF… HRRRRRR…",
+    "Darrere seu, es veu una paret immensa plena de pintures. L'engranatge ha de ser allà.",
+    ">Tranquil·lament —xiuxiueja Roda—. Només cal no despertar-lo."
+  ],
+  choices: s => {
+    const ch=[{t:"Passar de puntetes",go:'pal3_repte'}];
+    if(s.entrepa) ch.push({t:"🥪 Deixar-li l'entrepà al costat i passar",go:'pal3_repte',set:s=>{s.entrepa=false;}});
+    ch.push({t:"Acariciar l'ós, que té cara de bona persona",go:'final_os',alt:true});
+    return ch;
+  }
+},
+
+pal3_repte: {
+  era:'pal3',
+  text: [
+    "L'ós queda enrere. Davant teu s'obri una paret immensa plena d'animals pintats: cavalls, cérvols, bisons, cabres, tot en quatre grans blocs. Entre els dibuixos hi ha una cabra amb un ull daurat: l'engranatge!",
+    "Les mans pintades al voltant semblen assenyalar els blocs, com si digueren: «comptem?». Cada bloc té el mateix nombre d'animals.",
+    ">L'últim, {nom} —xiuxiueja Roda—. Compta bé… i més baixet, que l'ós ens pot sentir."
+  ],
+  choices: [
+    {t:"Comptar els animals",go:'_pal3_math'},
+    {t:"Pintar el teu retrat al costat dels animals",go:'final_selfie',alt:true}
+  ]
+},
+
+_pal3_math: {
+  era:'pal3',
+  text: [
+    "Quatre blocs de dibuixos, tots igual de grans. Compta amb cura:"
+  ],
+  choices: null
+},
+
+pal3_math_ok: {
+  era:'pal3',
+  onEnter: s=>{s.gear3=true;},
+  text: s => {
+    const l=[
+      "CLIC! L'ull de la cabra gira com una clau i un bloc de roca s'obri en silenci. Dins, damunt un llit de pols d'ocre, brilla l'últim engranatge.",
+      ">Tres de tres! —crida Roda, en veu baixeta, que és la veu de cridar quan hi ha un ós—. Anem a casa!"
+    ];
+    if(s.cria || s.llop){
+      l.push("Quan l'agafes, t'adones d'una cosa estranya: entre els animals pintats a la paret hi ha uns dibuixos que abans no hi eren… "+(s.cria&&s.llop?"un elefant amb una cria i un cadell de llop":(s.cria?"un elefant amb una cria":"un cadell de llop"))+", i una xicoteta figura que porta una bola amb un hàmster dins.");
+    }
+    return l;
+  },
+  choices: [
+    {t:"Tornar a la màquina i muntar els engranatges!",go:s=>s.cria&&s.llop?'final_heroi':'final_bo'}
+  ]
+},
+
+pal3_math_ko: {
+  era:'pal3',
+  onEnter: s=>{s.gear3=true;},
+  text: s => {
+    const l=[
+      "No era el nombre bo, però l'ós ronca cada vegada més fort i no hi ha temps de pensar. Amb una empenta a la paret, l'ull de la cabra cau a terra i l'engranatge rodola fins als teus peus (⚡-1).",
+      ">Tres de tres! —diu Roda, en veu baixeta—. No ha sigut molt elegant, però ara toca marxar."
+    ];
+    if(s.cria || s.llop){
+      l.push("Quan l'agafes, t'adones d'una cosa estranya: entre els animals pintats a la paret hi ha uns dibuixos que abans no hi eren… "+(s.cria&&s.llop?"un elefant amb una cria i un cadell de llop":(s.cria?"un elefant amb una cria":"un cadell de llop"))+", i una xicoteta figura que porta una bola amb un hàmster dins.");
+    }
+    return l;
+  },
+  choices: [
+    {t:"Tornar a la màquina i muntar els engranatges!",go:s=>s.cria&&s.llop?'final_heroi':'final_bo'}
+  ]
+},
+
+/* ===== FINALS ===== */
+final_tele: {
+  text: [
+    "Tapes la màquina amb una manta vella i te'n vas a vore la tele. Passes la vesprada sencera mirant un programa on un senyor explica com es fa un entrepà de tomaca.",
+    "Quan acaba, en comença un altre, sobre com es fa un entrepà de tomaca amb formatge. Després, un tercer: la tomaca i el formatge, en directe des de la cuina del senyor.",
+    "Quan vols adonar-te'n, ja és de nit. De la màquina del temps, sota la manta, s'escolta un xiulet trist: «Xiiiic…»"
+  ],
+  ending:'tele',title:'Campió del sofà'
+},
+
+final_hienes: {
+  era:'pal1',
+  text: [
+    "Respires fondo i comences: «Per què no creuen les hienes la carretera?». Les hienes s'han quedat quietes. «…Perquè no saben llegir el semàfor!»",
+    "Un silenci llarguíssim. I llavors, la primera hiena esclata: JI-JI-JI-JI-JI-JI! La segona també. La tercera cau de panxa enlaire. Totes riuen tant que no poden ni perseguir-te.",
+    "A partir d'eixe dia, les hienes de la sabana et reclamen cada vesprada per a un espectacle. Tens públic.",
+    ">Havia imaginat moltes formes de morir al Paleolític —murmura Roda—. Cap era «triomfar amb l'humor»."
+  ],
+  ending:'hienes',title:'Humorista de la sabana'
+},
+
+final_bolets: {
+  era:'pal1',
+  text: [
+    "Agafes el bolet groc, el que fa pessigolles només de mirar-lo, i te'l menges. Passen tres segons. Després, tres més.",
+    "I comences a riure. No pots parar. Rius amb el foc, rius amb el cel, rius amb les pedres. Els erectus et miren, es miren entre ells i, al final, també riuen. Passa així tres dies.",
+    ">Jo t'ho vaig dir —diu Roda, tapant-se les orelles amb les potes—. Però ara mateix no sé ni de què parlem."
+  ],
+  ending:'bolets',title:'Tres dies de riure'
+},
+
+final_mamut: {
+  era:'pal2',
+  text: [
+    "Corres cap al mamut, agafes un floc de pèl llarg, puges d'un bot i t'asseus damunt del llom. El mamut gira el cap, et mira i fa un «BRRRUUU» tranquil·lòn.",
+    "I comença a caminar. No s'atura. Ni per a menjar, ni per a beure, ni quan crides «Para!». Tres dies després, ets en una vall que ningú no coneix.",
+    ">Hem aconseguit viatjar sense màquina del temps —diu Roda, marejat de tant bressol—. Ara només ens falta saber on som."
+  ],
+  ending:'mamut',title:'Passatger de mamut'
+},
+
+final_ninot: {
+  era:'pal2',
+  text: [
+    "Comences a rodolar una bola de neu. Una altra. Una altra. Quan acabes, el ninot fa quatre metres i té una pedra gran per nas. Els neandertals s'apleguen al voltant, amb la boca oberta.",
+    "Ningú havia vist mai una cosa així. Tothom s'agenolla davant del ninot i li porta menjar. Tu et converteixes en «la persona dels ninots gegants».",
+    "Cada vesprada, un ninot nou. Però arriba la primavera i tots comencen a fondre's, un darrere l'altre, amb un plop trist.",
+    ">Això ja és art conceptual —diu Roda, solemne."
+  ],
+  ending:'ninot',title:'Escultor del gel'
+},
+
+final_energia: {
+  text: s => [
+    "L'esfera de Roda s'atura. Sense energia, la màquina del temps no pot funcionar. Esteu atrapats al Paleolític.",
+    "Passen els anys. Aprens a fer foc, a pintar mans a la paret i a dir «UGH» amb molt de sentiment. La tribu t'adopta i et fa cap: «la persona de la roda que parla amb l'hàmster».",
+    ">Almenys —diu Roda, mentre mastega un tros de pinya—, a la tribu no els falta mai escalfor ni conversa."
+  ],
+  ending:'energia',title:'Cap de la tribu'
+},
+
+final_os: {
+  era:'pal3',
+  text: [
+    "Alces la mà i acaricies el cap de l'ós, que sembla molt tranquil. L'ós obri un ull. Després, l'altre. T'agafa amb una abraçada d'ós gegant, tan càlida que tot el cos et queda adormit.",
+    "Es torna a adormir, amb tu a sobre, com si fores un coixí. I no vol deixar-te anar. Passa l'hivern sencer. Passa el segon. A la primavera, l'ós badalla i et deixa anar.",
+    ">He après una cosa —diu Roda, que s'ha passat l'hivern pelant llavors de gira-sol—: «no li doneu cap abraçada» volia dir exactament això."
+  ],
+  ending:'os',title:'Manta d\'ós'
+},
+
+final_selfie: {
+  era:'pal3',
+  text: [
+    "T'agafes un tros d'ocre, i començas a pintar al costat dels cavalls i dels bisons. Fas el teu cap, els teus braços i, al costat, Roda dins la seua bola, amb el seu bigoti ben llarg.",
+    "Queda preciosíssim. Tan bé, que no vols marxar d'ací. Passes els dies ampliant l'obra: la teua cara, la de Roda, la de la màquina del temps.",
+    "Passaran els mil·lenis. I algun dia uns arqueòlegs trobaran esta paret i es faran una pregunta molt gran: «Qui va pintar una persona amb un hàmster dins d'una bola?».",
+    ">El primer selfie de la història —diu Roda, orgullós—. I tinc els millors bigotis."
+  ],
+  ending:'selfie',title:'El primer selfie'
+},
+
+final_bo: {
+  text: s => {
+    const l=[
+      "Muntes els tres engranatges a la màquina. Roda corre dins l'esfera com mai, generant tota l'energia necessària. Les llums s'encenen. El dial deixa de marcar PALEOLÍTIC i marca una paraula nova: CASA.",
+      "PAM! Estàs al traster. La pilota que buscaves estava darrere de la màquina, tot el temps. Ni un segon ha passat des que te'n vas.",
+      ">Gràcies, {nom} —diu Roda—. Ha estat el viatge més llarg que he fet en 400.000 anys. I n'he fet uns quants."
+    ];
+    if(s.pell) l.push("Encara portes la pell d'ós de Borgo. Fa olor de neandertal, i a casa ningú entén per què.");
+    if(s.cria) l.push("A la butxaca del jersei trobes un pèl llarg i dur, d'elefant antic.");
+    if(s.llop) l.push("Una llepada humida et recorda un cadell de llop que ara deu estar corrent per la neu.");
+    l.push("Dins de molts mil·lenis, a la cova del Parpalló, prop de Gandia, trobaran milers de pedres pintades i gravades per gent com la que has conegut.");
+    l.push(">Em pregunte què haguera passat —diu Roda, mirant l'engranatge— si haguérem ajudat tothom que ens necessitava pel camí, {nom}…");
+    return l;
+  },
+  ending:'bo',title:'Mestre del temps'
+},
+
+final_heroi: {
+  text: [
+    "Muntes els tres engranatges. Roda corre dins l'esfera… però la màquina no s'encén! Es fa un silenci llarguíssim.",
+    "I llavors, el dial gira per ell mateix. Ja no diu PALEOLÍTIC. No diu CASA. Hi apareix una frase nova, escrita amb ocre: «QUALSEVOL ÈPOCA».",
+    ">Mare meua —diu Roda—. L'elefant, el llop i els artistes… han deixat la màquina així, per a vosaltres.",
+    "PAM! Estàs al traster. Sobre la màquina hi ha una pedra plana i pintada: un elefant amb una cria, un cadell de llop i una xicoteta figura amb una bola amb un hàmster dins. Al darrere hi ha escrit amb ocre un únic nom: {nom}.",
+    ">Ha estat l'aventura més bona que he tingut en 400.000 anys —diu Roda, amb els ulls brillants—. Quan vulgues… podem tornar.",
+    "A la cova del Parpalló, prop de Gandia, hi ha de veritat milers de pedres pintades així. Però esta l'has pintada tu."
+  ],
+  ending:'heroi',title:'Heroi del Paleolític'
+}
+
+};
+
+/* Dynamic choices for scenes with functions */
+Object.keys(S).forEach(k=>{
+  const sc=S[k];
+  if(typeof sc.choices==='function'){
+    const fn=sc.choices;
+    Object.defineProperty(sc,'choices',{get(){return fn(s);}});
+  }
+});
+
+/* ===== RENDER INTRO SCREEN ===== */
+function renderIntro(){
+  const storyEl=document.getElementById('story');
+  const choicesEl=document.getElementById('choices');
+  document.getElementById('hdr').hidden=true;
+  document.getElementById('eraPlate').hidden=true;
+  document.getElementById('endingBox').hidden=true;
+  document.getElementById('backpackPanel').hidden=true;
+
+  storyEl.innerHTML=`
+    <div class="intro-screen">
+      <h2>⚙️ La Màquina del Temps</h2>
+      <h3 class="intro-sub">Aventura al Paleolític</h3>
+      <div class="desc">
+        <p>Estàs a punt de viure una aventura a través de la Prehistòria! Algunes coses que has de saber:</p>
+        <p>⚡ Tens <strong>5 cristalls d'energia</strong>. Algunes accions en gasten. Si et quedes sense energia… tindràs problemes.</p>
+        <p>🎒 Portaràs una <strong>motxilla</strong> amb objectes. Alguns obrin camins que d'altra manera estan tancats, i altres es poden canviar per coses.</p>
+        <p>⚙️ Has de trobar <strong>3 engranatges</strong> per a reparar la màquina.</p>
+        <p>🔢 Trobaràs <strong>candaus matemàtics</strong> que cal resoldre per a avançar. Si no els encertes, podràs continuar… però et costarà.</p>
+        <p>Hi ha <strong>${ALL_ENDINGS.length} finals</strong> diferents. Ja veuràs quins. Sempre pots tornar a l'última decisió!</p>
+      </div>
+      <label for="nameInput" style="font-family:var(--font-title);font-size:1.1rem;">Com et diuen?</label><br>
+      <input type="text" id="nameInput" maxlength="20" placeholder="Escriu el teu nom" autocomplete="off" onkeydown="if(event.key==='Enter')startGame()"><br>
+      <p id="nameErr" class="intro-error" hidden>Escriu el teu nom per a començar l'aventura</p>
+      <button onclick="startGame()">Començar l'aventura!</button>
+      ${discovered.length>0?`<p style="margin-top:1rem;font-size:.85rem;color:var(--fg2)">Finals descoberts: ${discovered.length} de ${ALL_ENDINGS.length}</p>`:''}
+    </div>`;
+  choicesEl.innerHTML='';
+}
+
+function startGame(){
+  const input=document.getElementById('nameInput');
+  const nom=input?sanitize(input.value.trim().slice(0,20)).trim():'';
+  if(!nom){
+    const err=document.getElementById('nameErr');
+    if(err) err.hidden=false;
+    if(input) input.focus();
+    return;
+  }
+  s={nom:nom,energia:5,gear1:false,gear2:false,gear3:false,llanterna:false,entrepa:false,pell:false,cria:false,llop:false,pagat:false,retornat:false,mathOk:0};
+  window.s=s;
+  scene='proleg';
+  hist=[];
+  save();
+  render();
+}
+window.startGame=startGame;
+
+/* Override render for intro and math scenes */
+const _render=render;
+render=function(){
+  if(scene==='intro'){renderIntro();return;}
+  if(scene==='_pal1_math'){
+    _render();
+    mathPuzzle(
+      'La roca té <b>5 fileres</b> de marques. Cada fila en té <b>6</b>.<br>Quantes marques hi ha <b>en total</b>?',
+      30,'pal1_math_ok','pal1_math_ko'
+    );
+    return;
+  }
+  if(scene==='_pal2_math'){
+    _render();
+    mathPuzzle(
+      'Hi ha <b>72 trossos</b> de carn per a repartir entre <b>8 famílies</b>, a parts iguals.<br>Quants trossos toca a cada família?',
+      9,'pal2_math_ok','pal2_math_ko'
+    );
+    return;
+  }
+  if(scene==='_pal3_math'){
+    _render();
+    mathPuzzle(
+      'La paret té <b>4 blocs</b> de dibuixos. En cada bloc hi ha <b>25 animals</b>.<br>Quants animals hi ha <b>en total</b>?',
+      100,'pal3_math_ok','pal3_math_ko'
+    );
+    return;
+  }
+  _render();
+};
+
+/* First render */
+render();
+
+</script>
+</body>
+</html>
