@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lleis de Kepler</title>
+<meta name="description" content="Simulador interactiu de les tres lleis de Kepler: òrbites el·líptiques, àrees iguals en temps iguals i la relació T²/a³.">
+<meta name="author" content="Ilde">
+<style>
+/* Layout: escenario orbital a la izquierda, mandos a la derecha, las tres leyes en fichas debajo */
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --sun:#d79700; --orbit:#7d879d;
+  --secA:rgba(35,80,200,.09); --secB:rgba(35,80,200,.19); --secNow:rgba(35,80,200,.42); --secEdge:rgba(35,80,200,.28);
+  --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --sun:#ffc93a; --orbit:#6f7b95;
+  --secA:rgba(118,162,255,.08); --secB:rgba(118,162,255,.17); --secNow:rgba(118,162,255,.40); --secEdge:rgba(118,162,255,.25);
+  --chip:#1a2338; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --sun:#ffc93a; --orbit:#6f7b95;
+  --secA:rgba(118,162,255,.08); --secB:rgba(118,162,255,.17); --secNow:rgba(118,162,255,.40); --secEdge:rgba(118,162,255,.25);
+  --chip:#1a2338; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:44ch}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,.seg button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.legend{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.dot.a{background:var(--pa)} .dot.b{background:var(--pb);margin-left:8px}
+.clock{margin-left:auto;font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.stage{position:relative;height:clamp(320px,62vh,620px);background:var(--stage)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+legend .sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) 4.9rem 2.6rem;align-items:center;gap:4px 8px}
+.ctl label{grid-column:1/-1;font-size:13.5px}
+.ctl input[type=range]{width:100%;accent-color:var(--pa);margin:0}
+.ctl input[type=number]{width:100%;font-family:var(--f-num);font-size:13px;padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:var(--stage);color:var(--ink)}
+.ctl .unit{font-size:12px;color:var(--muted)}
+.ctl.b input[type=range]{accent-color:var(--pb)}
+.off{opacity:.45}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.law{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.law h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.law h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.law p{margin:0;color:var(--muted);font-size:14px}
+.law p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:5px 0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.tbl tr.b td{color:var(--pb)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:4px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.plot{position:relative;height:230px}
+.plot canvas{position:absolute;inset:0;width:100%;height:100%}
+.note{font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Gravitació · Moviment planetari</p>
+      <h1>Lleis de Kepler</h1>
+    </div>
+    <p class="lede">Canvia el semieix, l'excentricitat o la massa de l'estrela i mira com responen l'òrbita, la velocitat i el període.</p>
+  </header>
+
+  <main class="app">
+    <section class="stage-card" aria-label="Simulació de l'òrbita">
+      <div class="bar">
+        <button id="play" class="btn primary" type="button">Pausa</button>
+        <button id="reset" class="btn" type="button">Reinicia</button>
+        <span class="legend"><i class="dot a"></i>Planeta A<span id="legB"><i class="dot b"></i>Planeta B</span></span>
+        <span class="clock" id="clock">t = 0,00 anys</span>
+      </div>
+      <div class="stage" id="stage"><canvas id="cv" aria-label="Òrbita al voltant de l'estrela"></canvas></div>
+    </section>
+
+    <aside class="panel" aria-label="Controls">
+      <fieldset>
+        <legend><span class="sw" style="background:var(--pa)"></span>Planeta A</legend>
+        <div class="chips" id="presets"></div>
+        <div id="ctlA" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset>
+        <legend><span class="sw" style="background:var(--pb)"></span>Planeta B (comparació)</legend>
+        <label class="check"><input type="checkbox" id="showB" checked> Mostra el planeta B</label>
+        <div id="ctlB" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Estrela i temps</legend>
+        <div id="ctlS" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Mostra</legend>
+        <label class="check"><input type="checkbox" id="l1" checked> 1a llei: segon focus, r i r′</label>
+        <label class="check"><input type="checkbox" id="l2" checked> 2a llei: sectors de temps igual</label>
+        <label class="check"><input type="checkbox" id="vel" checked> Vector velocitat</label>
+      </fieldset>
+    </aside>
+  </main>
+
+  <section class="laws">
+    <article class="law">
+      <h2><small>1a llei</small>Òrbites el·líptiques</h2>
+      <p>L'òrbita és una el·lipse amb l'estrela en un focus. Per a qualsevol punt, <b>r + r′ = 2a</b>.</p>
+      <dl>
+        <dt>r (estrela – planeta)</dt><dd id="o-r">—</dd>
+        <dt>r′ (l'altre focus – planeta)</dt><dd id="o-r2">—</dd>
+        <dt>r + r′</dt><dd id="o-sum" class="hl">—</dd>
+        <dt>2a</dt><dd id="o-2a">—</dd>
+        <dt>Periheli a(1 − e)</dt><dd id="o-rp">—</dd>
+        <dt>Afeli a(1 + e)</dt><dd id="o-ra">—</dd>
+      </dl>
+    </article>
+
+    <article class="law">
+      <h2><small>2a llei</small>Àrees iguals en temps iguals</h2>
+      <p>Cada sector ombrejat dura <b>T/N</b> i tots tenen la mateixa àrea <b>πab/N</b>. Prop del periheli el planeta va més ràpid.</p>
+      <dl>
+        <dt>Temps per sector T/N</dt><dd id="o-dt">—</dd>
+        <dt>Àrea per sector πab/N</dt><dd id="o-area">—</dd>
+        <dt>v ara</dt><dd id="o-v" class="hl">—</dd>
+        <dt>v al periheli</dt><dd id="o-vp">—</dd>
+        <dt>v a l'afeli</dt><dd id="o-va">—</dd>
+        <dt>v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub></dt><dd id="o-ratio">—</dd>
+      </dl>
+    </article>
+
+    <article class="law">
+      <h2><small>3a llei</small>Períodes i semieixos</h2>
+      <p>T² és proporcional a a³. Amb T en anys, a en UA i M en masses solars: <b>T²/a³ = 1/M</b>.</p>
+      <table class="tbl">
+        <thead><tr><th></th><th>a (UA)</th><th>T (anys)</th><th>T²/a³</th></tr></thead>
+        <tbody>
+          <tr><td>Planeta A</td><td id="t-aA">—</td><td id="t-TA">—</td><td id="t-kA">—</td></tr>
+          <tr class="b" id="rowB"><td>Planeta B</td><td id="t-aB">—</td><td id="t-TB">—</td><td id="t-kB">—</td></tr>
+        </tbody>
+      </table>
+      <div class="seg" role="group" aria-label="Tipus de gràfica">
+        <button type="button" id="pLog" aria-pressed="true">log T – log a</button>
+        <button type="button" id="pLin" aria-pressed="false">T² enfront de a³</button>
+      </div>
+      <div class="plot"><canvas id="pv" aria-label="Gràfica de la tercera llei"></canvas></div>
+      <p class="note">Punts grisos: planetes del sistema solar (M = 1). Línia contínua: estrela actual.</p>
+    </article>
+  </section>
+</div>
+
+<script>
+(()=>{
+const TAU=Math.PI*2, KMS=4.74047, DAY=365.25;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const state={t:0,M:1,speed:0.4,N:12,playing:!reduce,plot:'log',
+  show:{l1:true,l2:true,vel:true,b:true}};
+const A={a:1.5,e:0.55,m:0}, B={a:1,e:0.017,m:0};
+const SOLAR=[['Me',0.387],['V',0.723],['T',1],['Ma',1.524],['J',5.203],['S',9.537],['U',19.19],['N',30.07]];
+const PRESETS=[['Mercuri',0.387,0.206],['Terra',1,0.017],['Mart',1.524,0.093],['Júpiter',5.203,0.049],['Plutó',39.48,0.249],['Halley',17.83,0.967],['Molt excèntrica',2,0.75]];
+
+const $=s=>document.getElementById(s);
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toLocaleString('ca-ES',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const period=a=>Math.sqrt(a*a*a/state.M);
+
+function solveE(M,e){
+  let E=e<0.8?M:Math.PI;
+  for(let i=0;i<40;i++){const d=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));E-=d;if(Math.abs(d)<1e-12)break;}
+  return E;
+}
+function pos(p,m){
+  const E=solveE(m,p.e), b=p.a*Math.sqrt(1-p.e*p.e), T=period(p.a);
+  const Ed=(TAU/T)/(1-p.e*Math.cos(E));
+  return {x:p.a*(Math.cos(E)-p.e), y:b*Math.sin(E), r:p.a*(1-p.e*Math.cos(E)),
+          vx:-p.a*Math.sin(E)*Ed, vy:b*Math.cos(E)*Ed};
+}
+const speedAt=(p,r)=>Math.sqrt(4*Math.PI*Math.PI*state.M*Math.max(0,2/r-1/p.a)); // UA/año
+
+/* ---------- mandos ---------- */
+function control(host,cfg){
+  const w=document.createElement('div'); w.className='ctl'+(cfg.cls?' '+cfg.cls:'');
+  w.innerHTML=`<label for="${cfg.id}">${cfg.label}</label><input type="range" id="${cfg.id}" min="0" max="1000" step="1"><input type="number" id="${cfg.id}-n" min="${cfg.min}" max="${cfg.max}" step="${cfg.step}" aria-label="${cfg.label.replace(/<[^>]+>/g,'')}"><span class="unit">${cfg.unit||''}</span>`;
+  host.appendChild(w);
+  const r=w.querySelector('input[type=range]'), n=w.querySelector('input[type=number]');
+  const dec=(String(cfg.step).split('.')[1]||'').length;
+  const rnd=v=>Math.min(cfg.max,Math.max(cfg.min,Math.round(v/cfg.step)*cfg.step));
+  const to=v=>cfg.log?1000*Math.log(v/cfg.min)/Math.log(cfg.max/cfg.min):1000*(v-cfg.min)/(cfg.max-cfg.min);
+  const from=u=>cfg.log?cfg.min*Math.pow(cfg.max/cfg.min,u/1000):cfg.min+(cfg.max-cfg.min)*u/1000;
+  const set=v=>{r.value=to(v);n.value=(+v).toFixed(dec)};
+  r.addEventListener('input',()=>{const v=rnd(from(+r.value));n.value=v.toFixed(dec);cfg.on(v)});
+  n.addEventListener('change',()=>{let v=parseFloat(String(n.value).replace(',','.'));if(!Number.isFinite(v))v=cfg.get();v=rnd(v);set(v);cfg.on(v)});
+  set(cfg.get()); w.set=set; return w;
+}
+const cA=$('ctlA'), cB=$('ctlB'), cS=$('ctlS');
+const aA=control(cA,{id:'aA',label:'Semieix major <i>a</i>',min:0.2,max:50,step:0.01,log:true,unit:'UA',get:()=>A.a,on:v=>A.a=v});
+const eA=control(cA,{id:'eA',label:'Excentricitat <i>e</i>',min:0,max:0.97,step:0.001,unit:'',get:()=>A.e,on:v=>A.e=v});
+const aB=control(cB,{id:'aB',cls:'b',label:'Semieix major <i>a</i>',min:0.2,max:50,step:0.01,log:true,unit:'UA',get:()=>B.a,on:v=>B.a=v});
+const eB=control(cB,{id:'eB',cls:'b',label:'Excentricitat <i>e</i>',min:0,max:0.97,step:0.001,unit:'',get:()=>B.e,on:v=>B.e=v});
+control(cS,{id:'mS',label:'Massa de l\'estrela <i>M</i>',min:0.1,max:5,step:0.01,log:true,unit:'M☉',get:()=>state.M,on:v=>state.M=v});
+const sp=control(cS,{id:'sp',label:'Velocitat de la simulació',min:0.01,max:50,step:0.01,log:true,unit:'anys/s',get:()=>state.speed,on:v=>state.speed=v});
+control(cS,{id:'nS',label:'Nombre de sectors <i>N</i> (2a llei)',min:4,max:24,step:1,unit:'',get:()=>state.N,on:v=>state.N=v});
+
+const pr=$('presets');
+PRESETS.forEach(([name,a,e])=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=name;
+  b.addEventListener('click',()=>{A.a=a;A.e=e;A.m=0;aA.set(a);eA.set(e);
+    state.speed=Math.min(50,Math.max(0.01,period(a)/6));sp.set(state.speed);});
+  pr.appendChild(b);
+});
+
+$('play').addEventListener('click',toggle);
+function toggle(){state.playing=!state.playing;$('play').textContent=state.playing?'Pausa':'Reprodueix';}
+$('play').textContent=state.playing?'Pausa':'Reprodueix';
+$('reset').addEventListener('click',()=>{A.m=0;B.m=0;state.t=0;});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();toggle();}});
+[['l1','l1'],['l2','l2'],['vel','vel'],['showB','b']].forEach(([id,k])=>$(id).addEventListener('change',e=>{state.show[k]=e.target.checked;syncB();}));
+function syncB(){cB.classList.toggle('off',!state.show.b);$('legB').hidden=!state.show.b;$('rowB').hidden=!state.show.b;
+  cB.querySelectorAll('input').forEach(i=>i.disabled=!state.show.b);}
+$('pLog').addEventListener('click',()=>setPlot('log'));$('pLin').addEventListener('click',()=>setPlot('lin'));
+function setPlot(m){state.plot=m;$('pLog').setAttribute('aria-pressed',m==='log');$('pLin').setAttribute('aria-pressed',m==='lin');}
+
+/* ---------- lienzos ---------- */
+const cv=$('cv'),ctx=cv.getContext('2d'),pv=$('pv'),pctx=pv.getContext('2d');
+let DPR=1;
+function fit(c){const r=c.getBoundingClientRect();DPR=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width*DPR)),h=Math.max(1,Math.round(r.height*DPR));
+  if(c.width!==w||c.height!==h){c.width=w;c.height=h;}return {w:r.width,h:r.height};}
+let C={};
+function colors(){const s=getComputedStyle(document.documentElement);
+  ['bg','panel','stage','ink','muted','line','pa','pb','sun','orbit','secA','secB','secNow','secEdge','f-body','f-num'].forEach(k=>C[k]=s.getPropertyValue('--'+k).trim());}
+
+const view={s:0,ox:0};
+function arrow(g,x0,y0,x1,y1,col){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return;
+  const ux=dx/L,uy=dy/L,h=Math.min(9,L*0.4);
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=2;
+  g.beginPath();g.moveTo(x0,y0);g.lineTo(x1-ux*h*0.8,y1-uy*h*0.8);g.stroke();
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x1-ux*h-uy*h*0.5,y1-uy*h+ux*h*0.5);g.lineTo(x1-ux*h+uy*h*0.5,y1-uy*h-ux*h*0.5);g.closePath();g.fill();
+}
+function label(g,t,x,y,col,align='left',size=12){g.font=`${size}px ${C['f-body']}`;g.fillStyle=col;g.textAlign=align;g.textBaseline='middle';g.fillText(t,x,y);}
+
+function draw(){
+  const {w,h}=fit(cv);
+  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const ps=[A];if(state.show.b)ps.push(B);
+  let xmin=0,xmax=0,ymax=0;
+  for(const p of ps){xmin=Math.min(xmin,-p.a*(1+p.e));xmax=Math.max(xmax,p.a*(1-p.e));ymax=Math.max(ymax,p.a*Math.sqrt(1-p.e*p.e));}
+  const pad=44, ts=Math.min((w-2*pad)/(xmax-xmin),(h-2*pad)/(2*ymax)), tox=w/2-ts*(xmin+xmax)/2;
+  if(!view.s){view.s=ts;view.ox=tox;}else{view.s+=(ts-view.s)*0.15;view.ox+=(tox-view.ox)*0.15;}
+  const S=view.s,OX=view.ox,OY=h/2,X=x=>OX+x*S,Y=y=>OY-y*S;
+
+  // 2ª ley: sectores
+  if(state.show.l2){
+    const N=state.N,d=TAU/N,k=Math.min(N-1,Math.floor(A.m/d));
+    const sector=(m0,m1,col)=>{ctx.beginPath();ctx.moveTo(X(0),Y(0));
+      const n=Math.max(6,Math.ceil((m1-m0)/TAU*360));
+      for(let j=0;j<=n;j++){const q=pos(A,m0+(m1-m0)*j/n);ctx.lineTo(X(q.x),Y(q.y));}
+      ctx.closePath();ctx.fillStyle=col;ctx.fill();};
+    for(let i=0;i<N;i++)sector(i*d,(i+1)*d,i%2?C.secB:C.secA);
+    sector(k*d,A.m,C.secNow);
+    ctx.strokeStyle=C.secEdge;ctx.lineWidth=1;
+    for(let i=0;i<N;i++){const q=pos(A,i*d);ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(q.x),Y(q.y));ctx.stroke();}
+  }
+
+  // órbitas
+  for(const p of ps){const b=p.a*Math.sqrt(1-p.e*p.e);
+    ctx.beginPath();ctx.ellipse(X(-p.a*p.e),OY,p.a*S,b*S,0,0,TAU);
+    ctx.strokeStyle=p===A?C.pa:C.pb;ctx.globalAlpha=p===A?0.9:0.7;ctx.lineWidth=1.6;ctx.stroke();ctx.globalAlpha=1;}
+
+  const qA=pos(A,A.m);
+  // 1ª ley
+  if(state.show.l1){
+    const fx=-2*A.a*A.e;
+    ctx.setLineDash([4,5]);ctx.strokeStyle=C.orbit;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(X(-A.a*(1+A.e)),OY);ctx.lineTo(X(A.a*(1-A.e)),OY);ctx.stroke();ctx.setLineDash([]);
+    ctx.lineWidth=1.4;ctx.strokeStyle=C.ink;ctx.globalAlpha=.55;
+    ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(qA.x),Y(qA.y));ctx.moveTo(X(fx),OY);ctx.lineTo(X(qA.x),Y(qA.y));ctx.stroke();ctx.globalAlpha=1;
+    ctx.beginPath();ctx.arc(X(fx),OY,4,0,TAU);ctx.fillStyle=C.stage;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.stroke();
+    label(ctx,'F′',X(fx),OY+15,C.muted,'center');
+    label(ctx,'F',X(0),OY+17,C.muted,'center');
+    label(ctx,'r',X(qA.x/2)+8,Y(qA.y/2)-8,C.ink);
+    label(ctx,'r′',(X(fx)+X(qA.x))/2+8,(OY+Y(qA.y))/2-8,C.ink);
+    if(A.e>0.02){
+      label(ctx,'periheli',X(A.a*(1-A.e))+7,OY-10,C.muted);
+      label(ctx,'afeli',X(-A.a*(1+A.e))-7,OY-10,C.muted,'right');
+    }
+  }
+
+  // estrella
+  const sx=X(0),sy=Y(0),gr=ctx.createRadialGradient(sx,sy,0,sx,sy,22);
+  gr.addColorStop(0,C.sun);gr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.globalAlpha=.45;ctx.fillStyle=gr;ctx.beginPath();ctx.arc(sx,sy,22,0,TAU);ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=C.sun;ctx.beginPath();ctx.arc(sx,sy,8,0,TAU);ctx.fill();
+
+  // planetas
+  for(const p of ps){
+    const q=p===A?qA:pos(p,p.m),col=p===A?C.pa:C.pb,px=X(q.x),py=Y(q.y);
+    if(state.show.vel){const vp=speedAt(p,p.a*(1-p.e)),L=0.35*p.a*S/vp;
+      arrow(ctx,px,py,px+q.vx*L,py-q.vy*L,col);}
+    ctx.beginPath();ctx.arc(px,py,6.5,0,TAU);ctx.fillStyle=col;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=C.stage;ctx.stroke();
+    label(ctx,p===A?'A':'B',px+10,py+12,col,'left',13);
+  }
+  // escala
+  const sc=niceStep(80/S);label(ctx,'',0,0,C.muted);
+  ctx.strokeStyle=C.muted;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(14,h-16);ctx.lineTo(14+sc*S,h-16);
+  ctx.moveTo(14,h-20);ctx.lineTo(14,h-12);ctx.moveTo(14+sc*S,h-20);ctx.lineTo(14+sc*S,h-12);ctx.stroke();
+  label(ctx,fmtTick(sc)+' UA',14+sc*S+6,h-16,C.muted);
+}
+function niceStep(raw){const p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+function fmtTick(v){const d=v>=10?0:v>=1?(Number.isInteger(v)?0:1):Math.min(3,Math.ceil(-Math.log10(v)));return v.toLocaleString('ca-ES',{maximumFractionDigits:d});}
+
+/* ---------- 3ª ley ---------- */
+function drawPlot(){
+  const {w,h}=fit(pv);const g=pctx;
+  g.setTransform(DPR,0,0,DPR,0,0);g.fillStyle=C.panel;g.fillRect(0,0,w,h);
+  const L=46,R=10,T=8,Bm=34,pw=w-L-R,ph=h-T-Bm;
+  const ps=[[A,C.pa,'A']];if(state.show.b)ps.push([B,C.pb,'B']);
+  g.font=`11px ${C['f-body']}`;g.lineWidth=1;
+  let px,py,xs=[],ys=[],xl,yl,line;
+  if(state.plot==='log'){
+    const x0=-1,x1=2,y0=-2,y1=4;
+    px=a=>L+(Math.log10(a)-x0)/(x1-x0)*pw; py=t=>T+(y1-Math.log10(t))/(y1-y0)*ph;
+    for(let i=x0;i<=x1;i++)xs.push([Math.pow(10,i),['0,1','1','10','100'][i-x0]]);
+    for(let i=y0;i<=y1;i++)ys.push([Math.pow(10,i),['0,01','0,1','1','10','100','1000','10⁴'][i-y0]]);
+    xl='a (UA)';yl='T (anys)';
+    line=(M)=>{const pts=[];for(let i=0;i<=40;i++){const a=Math.pow(10,x0+(x1-x0)*i/40);pts.push([px(a),py(Math.pow(a,1.5)/Math.sqrt(M))]);}return pts;};
+    var P=(a,M)=>[px(a),py(Math.pow(a,1.5)/Math.sqrt(M))];
+  }else{
+    let mx=1.5;for(const [p] of ps)mx=Math.max(mx,1.15*p.a**3);
+    const st=niceStep(mx/4);mx=Math.ceil(mx/st)*st;
+    let my=mx*Math.max(1,1/state.M);const sty=niceStep(my/4);my=Math.ceil(my/sty)*sty;
+    px=x=>L+x/mx*pw; py=y=>T+(1-y/my)*ph;
+    for(let v=0;v<=mx+1e-9;v+=st)xs.push([v,fmtTick(v)]);
+    for(let v=0;v<=my+1e-9;v+=sty)ys.push([v,fmtTick(v)]);
+    xl='a³ (UA³)';yl='T² (anys²)';
+    line=(M)=>[[px(0),py(0)],[px(mx),py(mx/M)]];
+    var P=(a,M)=>[px(a**3),py(a**3/M)];
+    var inRange=a=>a**3<=mx;
+  }
+  // rejilla
+  g.strokeStyle=C.line;g.fillStyle=C.muted;
+  for(const [v,t] of xs){const x=px(v);g.beginPath();g.moveTo(x,T);g.lineTo(x,T+ph);g.stroke();g.textAlign='center';g.textBaseline='top';g.fillText(t,x,T+ph+4);}
+  for(const [v,t] of ys){const y=py(v);g.beginPath();g.moveTo(L,y);g.lineTo(L+pw,y);g.stroke();g.textAlign='right';g.textBaseline='middle';g.fillText(t,L-5,y);}
+  g.textAlign='center';g.textBaseline='bottom';g.fillText(xl,L+pw/2,h-1);
+  g.save();g.translate(11,T+ph/2);g.rotate(-Math.PI/2);g.textBaseline='middle';g.fillText(yl,0,0);g.restore();
+  g.save();g.beginPath();g.rect(L,T,pw,ph);g.clip();
+  const drawLine=(pts,col,dash)=>{g.setLineDash(dash);g.strokeStyle=col;g.lineWidth=1.6;g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.stroke();g.setLineDash([]);};
+  if(Math.abs(state.M-1)>1e-6)drawLine(line(1),C.muted,[4,4]);
+  drawLine(line(state.M),C.ink,[]);
+  for(const [n,a] of SOLAR){if(inRange&&!inRange(a))continue;const [x,y]=P(a,1);
+    g.fillStyle=C.muted;g.beginPath();g.arc(x,y,3,0,TAU);g.fill();g.textAlign='left';g.textBaseline='bottom';g.fillText(n,x+4,y-2);}
+  for(const [p,col,n] of ps){const [x,y]=P(p.a,state.M);
+    g.fillStyle=col;g.beginPath();g.arc(x,y,5.5,0,TAU);g.fill();g.strokeStyle=C.panel;g.lineWidth=1.5;g.stroke();
+    g.font=`bold 12px ${C['f-body']}`;g.textAlign='right';g.textBaseline='top';g.fillText(n,x-6,y+3);g.font=`11px ${C['f-body']}`;}
+  g.restore();
+}
+
+/* ---------- lecturas ---------- */
+const out={};
+function put(id,v){if(out[id]!==v){out[id]=v;$(id).textContent=v;}}
+function readouts(){
+  const q=pos(A,A.m),fx=-2*A.a*A.e,r2=Math.hypot(q.x-fx,q.y),b=A.a*Math.sqrt(1-A.e*A.e),T=period(A.a);
+  const rp=A.a*(1-A.e),ra=A.a*(1+A.e);
+  put('o-r',fmt(q.r,3)+' UA');put('o-r2',fmt(r2,3)+' UA');put('o-sum',fmt(q.r+r2,3)+' UA');put('o-2a',fmt(2*A.a,3)+' UA');
+  put('o-rp',fmt(rp,3)+' UA');put('o-ra',fmt(ra,3)+' UA');
+  const dtS=T/state.N;put('o-dt',dtS<1?fmt(dtS*DAY,1)+' dies':fmt(dtS,2)+' anys');
+  put('o-area',fmt(Math.PI*A.a*b/state.N,4)+' UA²');
+  put('o-v',fmt(speedAt(A,q.r)*KMS,1)+' km/s');put('o-vp',fmt(speedAt(A,rp)*KMS,1)+' km/s');put('o-va',fmt(speedAt(A,ra)*KMS,1)+' km/s');
+  put('o-ratio',fmt(ra/rp,2));
+  put('t-aA',fmt(A.a,3));put('t-TA',fmt(T,3));put('t-kA',fmt(T*T/A.a**3,3));
+  const TB=period(B.a);put('t-aB',fmt(B.a,3));put('t-TB',fmt(TB,3));put('t-kB',fmt(TB*TB/B.a**3,3));
+  put('clock','t = '+fmt(state.t,2)+' anys');
+}
+
+/* ---------- bucle ---------- */
+let last=performance.now(),tick=0;
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(state.playing){const dy=dt*state.speed;state.t+=dy;
+    for(const p of [A,B])p.m=(p.m+TAU*dy/period(p.a))%TAU;}
+  if(tick++%30===0)colors();
+  draw();drawPlot();readouts();
+  requestAnimationFrame(frame);
+}
+colors();syncB();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',colors);}catch(e){}
+new MutationObserver(colors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
