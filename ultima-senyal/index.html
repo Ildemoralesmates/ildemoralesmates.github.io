@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L'Última Senyal: Una aventura en l'espai</title>
+<meta name="description" content="Aventura interactiva a l'espai: tria el camí, resol candaus de mates, ajuda les criatures que trobes i descodifica l'última senyal amb la lluerna Lumi. Bilingüe valencià/castellà.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/ultima-senyal/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="L'Última Senyal: Una aventura en l'espai">
+<meta property="og:description" content="Aventura interactiva a l'espai: tria el camí, resol candaus de mates, ajuda les criatures que trobes i descodifica l'última senyal amb la lluerna Lumi. Bilingüe valencià/castellà.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/ultima-senyal/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@500;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+:root{
+  --bg:#0d1117;--fg:#c9d1d9;--accent:#58a6ff;--accent2:#f0883e;
+  --card:#161b22;--border:#30363d;--btn:#238636;--btn-hover:#2ea043;
+  --bad:#da3633;--good:#3fb950;--hero:#d2a8ff;
+  --pyros:#f97316;--glacius:#38bdf8;--umbra:#a78bfa;
+  --font-title:'Grandstander',cursive;--font-body:'Atkinson Hyperlegible',sans-serif;--font-mono:'Courier Prime',monospace;
+}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#f6f8fa;--fg:#1f2328;--card:#fff;--border:#d0d7de;
+    --accent:#0969da;--accent2:#bf8700;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f6f8fa;--fg:#1f2328;--card:#fff;--border:#d0d7de;
+  --accent:#0969da;--accent2:#bf8700;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117;--fg:#c9d1d9;--card:#161b22;--border:#30363d;
+  --accent:#58a6ff;--accent2:#f0883e;
+  color-scheme:dark;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--font-body);color:var(--fg);background:var(--bg);line-height:1.6;min-height:100dvh;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  margin:0}
+#app{max-width:42rem;margin:0 auto;padding-block:1rem}
+header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);margin-bottom:1rem}
+header h1{font-family:var(--font-title);font-size:1.2rem;color:var(--accent)}
+#hdr-btns{display:flex;gap:.5rem;align-items:center}
+#hdr-btns button{font-family:var(--font-body);font-size:.75rem;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:.4rem;padding:.25rem .5rem;cursor:pointer}
+#hdr-btns button.lang-active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chapter-plate{background:var(--card);border:1px solid var(--border);border-radius:.75rem;padding:1rem;margin-bottom:1rem;text-align:center}
+.chapter-plate h2{font-family:var(--font-title);font-size:1.4rem;color:var(--accent);margin-bottom:.25rem}
+.chapter-plate .sub{font-size:.85rem;opacity:.7}
+#objectives{display:flex;gap:.5rem;justify-content:center;margin:1rem 0}
+.obj-slot{width:2.5rem;height:2.5rem;border:2px dashed var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all .3s}
+.obj-slot.found{border-style:solid;border-color:var(--good);background:var(--good);color:#fff}
+#backpack{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:.2rem .6rem;font-size:.8rem;display:inline-flex;align-items:center;gap:.3rem}
+.chip .icon{font-size:1rem}
+#story{font-size:1.2rem;margin-bottom:1.5rem}
+#story p{margin-bottom:.8rem}
+#story .dialogue{padding-left:1rem;border-left:3px solid var(--accent);margin:.6rem 0;font-style:italic}
+#story .hint{background:var(--card);border-left:3px solid var(--accent2);padding:.5rem .8rem;border-radius:0 .4rem .4rem 0;margin:.6rem 0;font-size:1rem}
+#story .riddle{background:var(--card);border:2px dashed var(--accent);padding:.8rem;border-radius:.5rem;margin:.8rem 0;text-align:center;font-family:var(--font-title);font-size:1.1rem}
+#choices{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
+#choices button{font-family:var(--font-title);font-size:1.05rem;padding:.8rem 1.2rem;border:2px solid var(--accent);border-radius:.6rem;background:var(--card);color:var(--fg);cursor:pointer;text-align:left;transition:transform .1s,background .2s;-webkit-tap-highlight-color:transparent}
+#choices button:hover,#choices button:focus{background:var(--accent);color:#fff;transform:scale(1.02)}
+#choices button.alt{border-color:var(--accent2);font-size:.95rem;opacity:.85}
+#ending-box{text-align:center;padding:1.5rem;background:var(--card);border-radius:.75rem;border:2px solid var(--border);margin-bottom:1rem}
+#ending-box h2{font-family:var(--font-title);font-size:1.5rem;margin-bottom:.5rem}
+#ending-box.bad h2{color:var(--bad)}
+#ending-box.good h2{color:var(--good)}
+#ending-box.hero h2{color:var(--hero)}
+#ending-box p{margin:.5rem 0}
+#ending-btns{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+#ending-btns button{font-family:var(--font-title);padding:.7rem;border-radius:.5rem;border:none;cursor:pointer;font-size:1rem}
+.btn-undo{background:var(--accent);color:#fff}
+.btn-restart{background:var(--border);color:var(--fg)}
+.btn-hero{background:var(--hero);color:#000}
+#endings-counter{text-align:center;font-size:.85rem;opacity:.7;margin-top:.5rem}
+#map-container{margin:1rem 0}
+#map-container svg{width:100%;max-width:20rem;margin:0 auto;display:block}
+.map-planet{transition:fill .5s}
+#intro-screen{text-align:center;padding:2rem 0}
+#intro-screen h1{font-family:var(--font-title);font-size:2rem;color:var(--accent);margin-bottom:.5rem}
+#intro-screen .subtitle{font-size:1rem;opacity:.7;margin-bottom:1.5rem}
+#intro-screen .mechanics{text-align:left;background:var(--card);border-radius:.5rem;padding:1rem;margin:1rem 0;font-size:.95rem;line-height:1.5}
+#intro-screen .mechanics li{margin:.3rem 0;list-style:none;padding-left:1.5rem;position:relative}
+#intro-screen .mechanics li::before{content:'✦';position:absolute;left:0;color:var(--accent)}
+#intro-screen input[type=text]{font-family:var(--font-body);font-size:1.1rem;padding:.6rem 1rem;border:2px solid var(--accent);border-radius:.5rem;background:var(--bg);color:var(--fg);width:100%;max-width:16rem;text-align:center;margin:.8rem 0}
+#intro-screen .start-btn{font-family:var(--font-title);font-size:1.3rem;padding:.8rem 2rem;border:none;border-radius:.6rem;background:var(--btn);color:#fff;cursor:pointer;margin-top:1rem;transition:background .2s}
+#intro-screen .start-btn:hover{background:var(--btn-hover)}
+#transition{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;pointer-events:all}
+#transition .plof{font-family:var(--font-title);font-size:3rem;color:var(--accent);animation:plofPulse .7s ease-in-out}
+#transition .chapter-name{font-family:var(--font-title);font-size:1.5rem;color:var(--fg);margin-top:.5rem;opacity:0;animation:fadeUp .5s .4s forwards}
+@keyframes plofPulse{0%{transform:scale(0);opacity:0}50%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(10px)}}
+@media(prefers-reduced-motion:reduce){
+  #transition .plof,#transition .chapter-name{animation:none;opacity:1;transform:none}
+}
+#dice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;pointer-events:all}
+#dice-overlay .dice-box{width:5rem;height:5rem;background:var(--card);border:3px solid var(--accent);border-radius:.8rem;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:3rem;font-weight:700;color:var(--accent);animation:diceShake .6s ease-out}
+#dice-overlay .dice-result-text{font-family:var(--font-title);font-size:1.2rem;color:var(--fg);margin-top:1rem;opacity:0;animation:fadeUp .4s .7s forwards}
+@keyframes diceShake{0%{transform:rotate(0)}20%{transform:rotate(15deg)}40%{transform:rotate(-15deg)}60%{transform:rotate(8deg)}80%{transform:rotate(-5deg)}100%{transform:rotate(0)}}
+@keyframes lumiGlow{0%,100%{filter:drop-shadow(0 0 4px var(--accent))}50%{filter:drop-shadow(0 0 12px var(--accent))}}
+.lumi-icon{animation:lumiGlow 2s infinite;display:inline-block}
+#confirm-restart{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bad);color:#fff;padding:.6rem 1.2rem;border-radius:.5rem;font-family:var(--font-title);font-size:.9rem;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="intro-screen">
+    <h1>🚀 <span id="intro-title"></span></h1>
+    <p class="subtitle" id="intro-sub"></p>
+    <div class="mechanics">
+      <ul id="intro-rules"></ul>
+    </div>
+    <label id="intro-name-label" style="display:block;margin-top:1rem;font-family:var(--font-title)"></label>
+    <input type="text" id="name-input" maxlength="20" autofocus>
+    <br>
+    <button class="start-btn" onclick="startGame()" id="intro-start-btn"></button>
+  </div>
+  <div id="game-screen" hidden>
+    <header>
+      <h1>🚀 <span id="hdr-title"></span></h1>
+      <div id="hdr-btns">
+        <button id="btn-val" onclick="setLang('ca')">VAL</button>
+        <button id="btn-cas" onclick="setLang('es')">CAS</button>
+        <button onclick="toggleMap()">🗺️</button>
+        <button id="restart-btn" onclick="handleRestart()">↺</button>
+      </div>
+    </header>
+    <div id="map-container" hidden></div>
+    <div class="chapter-plate" id="chapter-plate" hidden></div>
+    <div id="objectives"></div>
+    <div id="backpack"></div>
+    <div id="story"></div>
+    <div id="choices"></div>
+    <div id="ending-box" hidden></div>
+    <div id="endings-counter"></div>
+  </div>
+</div>
+<div id="transition" hidden></div>
+<div id="dice-overlay" hidden></div>
+<div id="confirm-restart" hidden></div>
+
+<script>
+/* ===== BILINGÜE ===== */
+const x = (ca, es) => ({ca, es});
+let lang = 'ca';
+function T(v){ return (v && typeof v === 'object' && ('ca' in v)) ? v[lang] : v; }
+
+const TITLE = x("L'Última Senyal", "La Última Señal");
+const DESC  = x("Una aventura en l'espai", "Una aventura en el espacio");
+const TITLE_FULL = x("L'Última Senyal: Una aventura en l'espai", "La Última Señal: Una aventura en el espacio");
+
+/* ===== UI STRINGS ===== */
+const UI = {
+  nameQ: x("Com et diuen?", "¿Cómo te llamas?"),
+  namePh: x("Escriu el teu nom", "Escribe tu nombre"),
+  start: x("Començar l'aventura", "Comenzar la aventura"),
+  mochila: x("Motxilla:", "Mochila:"),
+  linterna: x("🔦 Llanterna estel·lar", "🔦 Linterna estelar"),
+  bocadillo: x("🥪 Entrepà", "🥪 Bocadillo"),
+  diente: x("🦷 Dent de gel", "🦷 Diente de hielo"),
+  finales: (n,t) => x(`Finals descoberts: ${n} de ${t}`, `Finales descubiertos: ${n} de ${t}`),
+  undo: x("↩ Tornar a l'última decisió", "↩ Volver a la última decisión"),
+  restart: x("🔄 Començar de nou", "🔄 Empezar de nuevo"),
+  playAgain: x("🔄 Tornar a jugar", "🔄 Volver a jugar"),
+  heroPlay: x("🌟 Tornar a jugar", "🌟 Volver a jugar"),
+  confirmRestart: x("Toca de nou per a reiniciar", "Toca otra vez para empezar de nuevo"),
+  diceDefault: (n) => x(`Has tret un ${n}`, `Has sacado un ${n}`),
+  rules: x(
+    [
+      "Explora tres planetes i troba els <b>3 cristalls de freqüència</b> per a desxifrar un senyal misteriós.",
+      "Guarda objectes a la teua <b>Motxilla</b>: alguns obrin camins que uns altres no.",
+      "De vegades hauràs de llançar un <b>dau</b> per a decidir la teua sort.",
+      "Descobreix el <b>mapa estel·lar</b> a mesura que avances.",
+      "Hi ha <b>9 finals</b> diferents. Sempre pots tornar a l'última decisió.",
+    ],
+    [
+      "Explora tres planetas y encuentra los <b>3 cristales de frecuencia</b> para descifrar una señal misteriosa.",
+      "Guarda objetos en tu <b>Mochila</b>: algunos abren caminos que otros no.",
+      "A veces tendrás que lanzar un <b>dado</b> para decidir tu suerte.",
+      "Descubre el <b>mapa estelar</b> a medida que avances.",
+      "Hay <b>9 finales</b> diferentes. Siempre puedes volver a la última decisión.",
+    ]
+  ),
+};
+
+const ERA_NAMES = {
+  dino:    x('🌋 Planeta Pyros',    '🌋 Planeta Pyros'),
+  hielo:   x('❄️ Planeta Glacius',  '❄️ Planeta Glacius'),
+  sombra:  x('🌑 Planeta Umbra',    '🌑 Planeta Umbra'),
+  tierra:  x('🏠 Casa',             '🏠 Casa'),
+  espacio: x('🚀 Espai profund',    '🚀 Espacio profundo'),
+};
+const MAP_LABELS = {
+  tierra: x('Terra','Tierra'), pyros: x('Pyros','Pyros'),
+  glacius: x('Glacius','Glacius'), umbra: x('Umbra','Umbra'),
+};
+
+/* ===== STATE & ENGINE ===== */
+const SAVE_KEY = 'ultimaSenal_v2';
+const ALL_ENDINGS = ['tele','lava','hielo','perdido','sombras','circo','piratas','bueno','heroe'];
+let s = {};
+let hist = [];
+let discoveredEndings = new Set();
+let restartPending = false;
+let transitioning = false;
+
+function cleanName(n){return n.replace(/[<>&"']/g,'')}
+function defaultState(){
+  return {scene:'prologo',nom:'',linterna:false,bocadillo:false,
+    trici:false,julia:false,gears:0,pagado:false,retornado:false,
+    lastDice:0,visitated:['tierra']}
+}
+
+function setLang(l){
+  lang = l;
+  document.documentElement.lang = l === 'es' ? 'es' : 'ca';
+  document.title = T(TITLE_FULL);
+  document.getElementById('btn-val').className = l==='ca' ? 'lang-active' : '';
+  document.getElementById('btn-cas').className = l==='es' ? 'lang-active' : '';
+  document.getElementById('hdr-title').textContent = T(TITLE);
+  if(!document.getElementById('game-screen').hidden) renderScene();
+  else renderIntro();
+  saveGame();
+}
+
+function renderIntro(){
+  document.getElementById('intro-title').textContent = T(TITLE);
+  document.getElementById('intro-sub').textContent = T(DESC);
+  document.getElementById('intro-name-label').textContent = T(UI.nameQ);
+  document.getElementById('name-input').placeholder = T(UI.namePh);
+  document.getElementById('intro-start-btn').textContent = T(UI.start);
+  const rules = T(UI.rules);
+  document.getElementById('intro-rules').innerHTML = rules.map(r => `<li>${r}</li>`).join('');
+  document.getElementById('endings-counter').textContent = T(UI.finales(discoveredEndings.size, ALL_ENDINGS.length));
+}
+
+function startGame(){
+  let raw = document.getElementById('name-input').value.trim();
+  raw = cleanName(raw);
+  if(!raw) return;
+  s = defaultState();
+  s.nom = raw;
+  hist = [];
+  document.getElementById('intro-screen').hidden = true;
+  document.getElementById('game-screen').hidden = false;
+  renderScene();
+  saveGame();
+}
+
+function hn(text){
+  text = text.replace(/\{([^{}|]+)\|([^{}|]+)\}/g, (m,masc,fem) => s.gen==='f'?fem:masc);
+  text = text.replace(/\{nom\}/g, `<b>${(s.nom||'').toUpperCase()}</b>`);
+  text = text.replace(/\bLumi\b/g,'<b>LUMI</b>');
+  return text;
+}
+
+function renderText(lines){
+  return lines.map(raw => {
+    let l = T(raw);
+    if(l.startsWith('>')) return `<p class="dialogue">${hn(l.slice(1))}</p>`;
+    if(l.startsWith('?')) return `<div class="riddle">${hn(l.slice(1))}</div>`;
+    if(l.startsWith('!')) return `<div class="hint">${hn(l.slice(1))}</div>`;
+    return `<p>${hn(l)}</p>`;
+  }).join('');
+}
+
+function renderScene(){
+  const sc = S[s.scene];
+  if(!sc){console.error('Missing scene:',s.scene);return}
+  const plate = document.getElementById('chapter-plate');
+  if(sc.era && ERA_NAMES[sc.era]){
+    plate.hidden = false;
+    plate.innerHTML = `<h2>${T(ERA_NAMES[sc.era])}</h2>`;
+    document.documentElement.setAttribute('data-era',sc.era);
+  } else { plate.hidden = true; }
+  const objEl = document.getElementById('objectives');
+  objEl.innerHTML = [0,1,2].map(i =>
+    `<div class="obj-slot ${s.gears>i?'found':''}">${s.gears>i?'💎':'◇'}</div>`
+  ).join('');
+  const bp = document.getElementById('backpack');
+  let chips = [];
+  if(s.linterna) chips.push(`<span class="chip">${T(UI.linterna)}</span>`);
+  if(s.bocadillo) chips.push(`<span class="chip">${T(UI.bocadillo)}</span>`);
+  if(s.diente) chips.push(`<span class="chip">${T(UI.diente)}</span>`);
+  bp.innerHTML = chips.length ? `<b>${T(UI.mochila)}</b> ${chips.join('')}` : '';
+  const lines = typeof sc.text === 'function' ? sc.text(s) : sc.text;
+  document.getElementById('story').innerHTML = renderText(lines);
+  const choicesEl = document.getElementById('choices');
+  const endBox = document.getElementById('ending-box');
+  if(sc.ending){
+    choicesEl.innerHTML = '';
+    const endType = typeof sc.ending === 'function' ? sc.ending(s) : sc.ending;
+    const title = typeof sc.title === 'function' ? sc.title(s) : T(sc.title);
+    endBox.hidden = false;
+    endBox.className = endType==='bad'?'bad':endType==='bueno'?'good':'hero';
+    let btns = '';
+    if(endType==='bad'){
+      btns = `<button class="btn-undo" onclick="undo()">${T(UI.undo)}</button>
+              <button class="btn-restart" onclick="fullRestart()">${T(UI.restart)}</button>`;
+    } else if(endType==='heroe'){
+      btns = `<button class="btn-hero" onclick="fullRestart()">${T(UI.heroPlay)}</button>`;
+    } else {
+      btns = `<button class="btn-undo" onclick="fullRestart()">${T(UI.playAgain)}</button>`;
+    }
+    endBox.innerHTML = `<h2>${endType==='bad'?'💥':'🌟'} ${title}</h2><div id="ending-btns">${btns}</div>`;
+    const sceneToEnding = {
+      fin_tele:'tele',fin_lava:'lava',fin_hielo:'hielo',fin_perdido:'perdido',
+      fin_sombras:'sombras',fin_circo:'circo',fin_piratas:'piratas',
+      final_bueno:'bueno',final_heroe:'heroe'
+    };
+    if(sceneToEnding[s.scene]) discoveredEndings.add(sceneToEnding[s.scene]);
+    saveGame();
+  } else {
+    endBox.hidden = true;
+    const choices = sc.choices.filter(c => !c.if || c.if(s));
+    choicesEl.innerHTML = choices.map((c,i) =>
+      `<button class="${c.alt?'alt':''}" onclick="choose(${i})">${hn(T(c.t))}</button>`
+    ).join('');
+  }
+  document.getElementById('endings-counter').textContent = T(UI.finales(discoveredEndings.size, ALL_ENDINGS.length));
+  renderMap();
+  window.scrollTo({top:0});
+}
+
+function choose(idx){
+  if(transitioning) return;
+  const sc = S[s.scene];
+  const avail = sc.choices.filter(c => !c.if || c.if(s));
+  const c = avail[idx];
+  if(!c) return;
+  hist.push({scene:s.scene, s:JSON.parse(JSON.stringify(s))});
+  if(c.set) c.set(s);
+  if(c.dice){ s.lastDice = Math.ceil(Math.random()*6); }
+  const nextScene = typeof c.go === 'function' ? c.go(s) : c.go;
+  const nextSc = S[nextScene];
+  if(nextSc && nextSc.onEnter){
+    if(!s['_entered_'+nextScene]){ nextSc.onEnter(s); s['_entered_'+nextScene] = true; }
+  }
+  s.scene = nextScene;
+  const prevEra = sc.era;
+  const newEra = nextSc ? nextSc.era : null;
+  if(c.dice){
+    const dtxt = c.diceText ? T(c.diceText(s)) : T(UI.diceDefault(s.lastDice));
+    showDice(s.lastDice, dtxt, () => {
+      if(newEra && newEra !== prevEra && !sc.ending){
+        showTransition(nextSc, () => { renderScene(); saveGame(); });
+      } else { renderScene(); saveGame(); }
+    });
+  } else if(newEra && newEra !== prevEra && !sc.ending){
+    showTransition(nextSc, () => { renderScene(); saveGame(); });
+  } else { renderScene(); saveGame(); }
+}
+
+function undo(){
+  if(hist.length === 0) return;
+  const snap = hist.pop();
+  s = snap.s; s.scene = snap.scene;
+  renderScene(); saveGame();
+}
+
+function showTransition(sc, cb){
+  transitioning = true;
+  const el = document.getElementById('transition');
+  const name = sc.era && ERA_NAMES[sc.era] ? T(ERA_NAMES[sc.era]) : '';
+  el.innerHTML = `<div class="plof">¡WHOOSH!</div><div class="chapter-name">${name}</div>`;
+  el.hidden = false;
+  setTimeout(()=>{el.hidden=true;transitioning=false;cb();},1400);
+}
+
+function showDice(result, text, cb){
+  transitioning = true;
+  const el = document.getElementById('dice-overlay');
+  el.innerHTML = `<div class="dice-box">${result}</div><div class="dice-result-text">${text}</div>`;
+  el.hidden = false;
+  setTimeout(()=>{el.hidden=true;transitioning=false;cb();},1800);
+}
+
+function toggleMap(){
+  const mc = document.getElementById('map-container');
+  mc.hidden = !mc.hidden;
+  if(!mc.hidden) renderMap();
+}
+
+function renderMap(){
+  const mc = document.getElementById('map-container');
+  const v = s.visitated || [];
+  const planets = [
+    {id:'tierra',cx:100,cy:180,r:14,color:v.includes('tierra')?'#58a6ff':'#555'},
+    {id:'pyros',cx:40,cy:60,r:12,color:v.includes('pyros')?'#f97316':'#555'},
+    {id:'glacius',cx:160,cy:40,r:12,color:v.includes('glacius')?'#38bdf8':'#555'},
+    {id:'umbra',cx:100,cy:15,r:12,color:v.includes('umbra')?'#a78bfa':'#555'},
+  ];
+  let svg = `<svg viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" style="background:transparent">`;
+  for(let i=0;i<25;i++){
+    const xp=Math.random()*200,yp=Math.random()*210,r=Math.random()*1.2+.3;
+    svg+=`<circle cx="${xp.toFixed(1)}" cy="${yp.toFixed(1)}" r="${r.toFixed(1)}" fill="var(--fg)" opacity=".3"/>`;
+  }
+  svg+=`<line x1="100" y1="180" x2="40" y2="60" stroke="var(--border)" stroke-width="1" stroke-dasharray="4"/>`;
+  svg+=`<line x1="40" y1="60" x2="160" y2="40" stroke="var(--border)" stroke-width="1" stroke-dasharray="4"/>`;
+  svg+=`<line x1="160" y1="40" x2="100" y2="15" stroke="var(--border)" stroke-width="1" stroke-dasharray="4"/>`;
+  svg+=`<line x1="100" y1="180" x2="160" y2="40" stroke="var(--border)" stroke-width="1" stroke-dasharray="4" opacity=".4"/>`;
+  for(const p of planets){
+    svg+=`<circle cx="${p.cx}" cy="${p.cy}" r="${p.r}" fill="${p.color}" class="map-planet"/>`;
+    svg+=`<text x="${p.cx}" y="${p.cy+p.r+12}" text-anchor="middle" fill="var(--fg)" font-size="9" font-family="var(--font-body)">${T(MAP_LABELS[p.id])}</text>`;
+  }
+  const cur = planets.find(p => {
+    if(s.scene.startsWith('pyros') || s.scene.startsWith('fin_lava')) return p.id==='pyros';
+    if(s.scene.startsWith('glacius') || s.scene.startsWith('fin_hielo') || s.scene.startsWith('fin_perdido')) return p.id==='glacius';
+    if(s.scene.startsWith('umbra') || s.scene.startsWith('fin_sombras') || s.scene.startsWith('fin_circo')) return p.id==='umbra';
+    return p.id==='tierra';
+  });
+  if(cur){
+    svg+=`<circle cx="${cur.cx}" cy="${cur.cy}" r="${cur.r+5}" fill="none" stroke="var(--accent)" stroke-width="2" opacity=".6">
+      <animate attributeName="r" from="${cur.r+4}" to="${cur.r+8}" dur="1.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" from=".6" to=".1" dur="1.5s" repeatCount="indefinite"/>
+    </circle>`;
+  }
+  svg += `</svg>`;
+  mc.innerHTML = svg;
+}
+
+function handleRestart(){
+  if(restartPending){ fullRestart(); return; }
+  restartPending = true;
+  const cr = document.getElementById('confirm-restart');
+  cr.textContent = T(UI.confirmRestart);
+  cr.hidden = false;
+  setTimeout(()=>{restartPending=false;cr.hidden=true;},2500);
+}
+function fullRestart(){
+  restartPending = false;
+  document.getElementById('confirm-restart').hidden = true;
+  document.getElementById('game-screen').hidden = true;
+  document.getElementById('intro-screen').hidden = false;
+  document.getElementById('name-input').value = '';
+  hist = [];
+  s = defaultState();
+  renderIntro();
+}
+
+function saveGame(){
+  try{
+    localStorage.setItem(SAVE_KEY,JSON.stringify({s,hist,disc:[...discoveredEndings],lang}));
+  }catch(e){}
+}
+function loadGame(){
+  try{
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(d){
+      if(d.lang === 'ca' || d.lang === 'es') lang = d.lang;
+      if(d.disc) discoveredEndings = new Set(d.disc);
+      if(d.s && d.s.scene && S[d.s.scene]){
+        s = d.s;
+        hist = d.hist || [];
+        document.getElementById('intro-screen').hidden = true;
+        document.getElementById('game-screen').hidden = false;
+        setLang(lang);
+        renderScene();
+        return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+
+/* ===== SCENES ===== */
+const S = {
+
+/* --- PRÒLEG / PRÓLOGO --- */
+prologo: {
+  era: 'tierra',
+  text: [
+    x("És de nit i la teua habitació està en silenci. Bé, quasi en silenci.",
+       "Es de noche y tu habitación está en silencio. Bueno, casi en silencio."),
+    x(">—¡Bip-bip-bip-bip! —Lumi, la teua lluerna espacial, parpelleja com una alarma d'incendis damunt de la prestatgeria.",
+       ">—¡Bip-bip-bip-bip! —Lumi, tu luciérnaga espacial, parpadea como una alarma de incendios encima de la estantería."),
+    x("La coneixes bé: quan Lumi brilla en blau, tot va bé. Quan brilla en taronja, passa alguna cosa interessant. Però ara està en roig furiós, girant en cercles.",
+       "La conoces bien: cuando Lumi brilla en azul, todo va bien. Cuando brilla en naranja, algo interesante pasa. Pero ahora está en rojo furioso, girando en círculos."),
+    x(">—¡BIP! ¡BIP! ¡BIIIIIP! —insisteix, assenyalant la vella ràdio d'ona curta que tens a la taula.",
+       ">—¡BIP! ¡BIP! ¡BIIIIIP! —insiste, señalando la vieja radio de onda corta que tienes en la mesa."),
+    x("Encens la ràdio. Entre l'estàtica, se sent alguna cosa: una seqüència de pitits que no és aleatòria. Algú, o alguna cosa, està enviant un missatge des de l'espai profund.",
+       "Enciendes la radio. Entre la estática, se oye algo: una secuencia de pitidos que no es aleatoria. Alguien, o algo, está enviando un mensaje desde el espacio profundo."),
+    x("!Lumi es posa al teu muscle i brilla amb un to daurat que mai no li havies vist. Significa: «Açò és important, {nom}.»",
+       "!Lumi se posa en tu hombro y brilla con un tono dorado que nunca le habías visto. Significa: «Esto es importante, {nom}.»"),
+  ],
+  choices: [
+    {t: x("Baixar al garatge a preparar la nau", "Bajar al garaje a preparar la nave"), go:'garaje'},
+    {t: x("Tapar la ràdio amb el coixí i anar a veure la tele", "Tapar la radio con la almohada e ir a ver la tele"), go:'fin_tele', alt:true},
+  ]
+},
+
+fin_tele: {
+  era:'tierra',
+  text:[
+    x("T'arreceres al sofà i canvies de canal. Un d'eixos programes de gent cuinant. Després un altre de gent cuinant. Després un tercer de… sí, més gent cuinant.",
+       "Te acurrucas en el sofá y cambias de canal. Uno de esos programas de gente cocinando. Luego otro de gente cocinando. Luego un tercero de… sí, más gente cocinando."),
+    x("Lumi et mira des de la porta amb cara de decepció. El seu brill s'apaga lentament fins a quedar-se en gris.",
+       "Lumi te mira desde la puerta con cara de decepción. Su brillo se apaga lentamente hasta quedarse en gris."),
+    x("El senyal es perd per sempre. Tu et converteixes en el major expert en programes de cuina del veïnat. Ningú t'ho ha demanat.",
+       "La señal se pierde para siempre. Tú te conviertes en el mayor experto en programas de cocina del vecindario. Nadie te lo ha pedido."),
+  ],
+  ending:'bad', title: x("Campió del sofà", "Campeón del sofá")
+},
+
+garaje: {
+  era:'tierra',
+  text:[
+    x("El garatge fa olor d'oli de motor i d'aventura. Al racó del fons, sota una lona vella, està la Centella: la teua nau compacta amb capacitat per a una persona i una lluerna.",
+       "El garaje huele a aceite de motor y a aventura. En el rincón del fondo, bajo una lona vieja, está la Centella: tu nave compacta con capacidad para una persona y una luciérnaga."),
+    x("Lumi revoloteja al voltant del panell de control i encén els sistemes. La pantalla mostra tres punts en l'espai: tres planetes d'on podria vindre el senyal. Per a desxifrar-lo, necessites un cristall de freqüència de cada un.",
+       "Lumi revolotea alrededor del panel de control y enciende los sistemas. La pantalla muestra tres puntos en el espacio: tres planetas de donde podría venir la señal. Para descifrarla, necesitas un cristal de frecuencia de cada uno."),
+    x(">—Bip-bip —diu Lumi, assenyalant la prestatgeria d'eines. Només hi ha lloc per a una cosa més a la motxilla.",
+       ">—Bip-bip —dice Lumi, señalando la estantería de herramientas. Solo hay sitio para una cosa más en la mochila."),
+    x("!A la prestatgeria veus una llanterna estel·lar i un entrepà d'emergència embolicat en paper d'alumini.",
+       "!En la estantería ves una linterna estelar y un bocadillo de emergencia envuelto en papel de aluminio."),
+  ],
+  choices: [
+    {t: x("🔦 Agafar la llanterna estel·lar", "🔦 Coger la linterna estelar"), go:'despegue', set: s=>{s.linterna=true}},
+    {t: x("🥪 Agafar l'entrepà d'emergència", "🥪 Coger el bocadillo de emergencia"), go:'despegue', set: s=>{s.bocadillo=true}},
+  ]
+},
+
+despegue: {
+  era:'tierra',
+  text:[
+    x("¡BRRUUUMM! La Centella tremola i s'eleva. El sostre del garatge s'obri (la teua família el va dissenyar així, clar) i en segons estàs entre les estreles.",
+       "¡BRRUUUMM! La Centella tiembla y se eleva. El techo del garaje se abre (tu familia lo diseñó así, claro) y en segundos estás entre las estrellas."),
+    x("Lumi projecta el mapa al parabrisa. Tres planetes, tres cristalls. El més pròxim brilla en roig.",
+       "Lumi proyecta el mapa en el parabrisas. Tres planetas, tres cristales. El más cercano brilla en rojo."),
+    x(">—¡Bip! —diu Lumi, assenyalant el planeta volcànic. Sembla bona idea començar per ahí.",
+       ">—¡Bip! —dice Lumi, señalando el planeta volcánico. Parece buena idea empezar por ahí."),
+  ],
+  choices: [
+    {t: x("🌋 Rumb al Planeta Pyros", "🌋 Rumbo al Planeta Pyros"), go:'pyros_llegada', set: s=>{if(!s.visitated.includes('pyros'))s.visitated.push('pyros')}},
+  ]
+},
+
+/* --- CAPÍTOL 1: PYROS --- */
+pyros_llegada: {
+  era:'dino',
+  text:[
+    x("Pyros és exactament el que esperaves: rius de lava taronja, roques negres que cruixen davall dels teus peus i una calor que fa suar fins i tot Lumi.",
+       "Pyros es exactamente lo que esperabas: ríos de lava naranja, rocas negras que crujen bajo tus pies y un calor que hace sudar hasta a Lumi."),
+    x("La nau aterra en una plataforma de pedra. Al lluny veus una estructura metàl·lica mig soterrada: sembla un antic laboratori.",
+       "La nave aterriza en una plataforma de piedra. A lo lejos ves una estructura metálica medio enterrada: parece un antiguo laboratorio."),
+    x("Lumi assenyala dos camins: un baixa per unes coves que semblen més fresques, i un altre puja per la cresta del cràter amb vistes a la vall de lava.",
+       "Lumi señala dos caminos: uno baja por unas cuevas que parecen más frescas, y otro sube por la cresta del cráter con vistas al valle de lava."),
+  ],
+  choices: [
+    {t: x("🕳️ Baixar per les coves", "🕳️ Bajar por las cuevas"), go:'pyros_cuevas'},
+    {t: x("⛰️ Pujar per la cresta del cràter", "⛰️ Subir por la cresta del cráter"), go:'pyros_cresta'},
+  ]
+},
+
+pyros_cuevas: {
+  era:'dino',
+  text:[
+    x("Les coves estan calentes, però almenys no et dona el sol directament. Les parets brillen amb venes de mineral ataronjat.",
+       "Las cuevas están calientes, pero al menos no te da el sol directamente. Las paredes brillan con venas de mineral anaranjado."),
+    x("De sobte, el sòl tremola. Un guèiser de lava erupciona just davant, bloquejant el camí principal. Hi ha un buit estret a l'esquerra… però sembla inestable.",
+       "De pronto, el suelo tiembla. Un géiser de lava erupciona justo delante, bloqueando el camino principal. Hay un hueco estrecho a la izquierda… pero parece inestable."),
+    x("Lumi es posa taronja: perill mitjà.",
+       "Lumi se pone naranja: peligro medio."),
+  ],
+  choices: [
+    {t: x("Passar pel buit estret (amb compte)", "Pasar por el hueco estrecho (con cuidado)"), go:'pyros_cria'},
+    {t: x("Saltar per damunt del guèiser", "Saltar por encima del géiser"), go:'fin_lava', alt:true},
+  ]
+},
+
+fin_lava: {
+  era:'dino',
+  text:[
+    x("¡SPLASH! Bé, més bé ¡SPLOOOSH!",
+       "¡SPLASH! Bueno, más bien ¡SPLOOOSH!"),
+    x("Resulta que saltar per damunt d'un guèiser de lava no era tan bona idea com semblava al teu cap. Et converteixes en una torrada espacial perfectament daurada.",
+       "Resulta que saltar por encima de un géiser de lava no era tan buena idea como parecía en tu cabeza. Te conviertes en una tostada espacial perfectamente dorada."),
+    x("Lumi et dedica un parpelleig trist i se'n va volant a buscar ajuda. Quan torna tres hores després, ja eres una atracció turística: «L'Estàtua de l'Aventurer Impacient».",
+       "Lumi te dedica un parpadeo triste y se va volando a buscar ayuda. Cuando vuelve tres horas después, ya eres una atracción turística: «La Estatua del Aventurero Impaciente»."),
+  ],
+  ending:'bad', title: x("Torrada espacial", "Tostada espacial")
+},
+
+pyros_cresta: {
+  era:'dino',
+  text:[
+    x("Des de la cresta es veu tot el planeta: valls de lava serpentejant, columnes de fum negre i, al lluny, el laboratori on deu estar el cristall.",
+       "Desde la cresta se ve todo el planeta: valles de lava serpenteante, columnas de humo negro y, a lo lejos, el laboratorio donde debe estar el cristal."),
+    x("El camí és més llarg però segur. Mentre camines, sents un gemec feble darrere d'unes roques.",
+       "El camino es más largo pero seguro. Mientras caminas, oyes un quejido débil detrás de unas rocas."),
+    x("Lumi s'acosta i torna brillant en turquesa: hi ha alguna cosa viva ahí.",
+       "Lumi se acerca y vuelve brillando en turquesa: hay algo vivo ahí."),
+  ],
+  choices: [
+    {t: x("Investigar el gemec", "Investigar el quejido"), go:'pyros_cria'},
+    {t: x("No hi ha temps, continuar avant", "No hay tiempo, seguir adelante"), go:'pyros_candado1'},
+  ]
+},
+
+pyros_cria: {
+  era:'dino',
+  text:[
+    x("Darrere de les roques trobes una cria de salamandra de foc. Fa la mida d'un gat i té una pota atrapada davall d'una pedra. Les seues escames brillen en roig i daurat, i et mira amb uns ulls enormes.",
+       "Detrás de las rocas encuentras una cría de salamandra de fuego. Es del tamaño de un gato y tiene una pata atrapada bajo una piedra. Sus escamas brillan en rojo y dorado, y te mira con unos ojos enormes."),
+    x(">—Miii… —gemega la criatura, intentant alliberar-se.",
+       ">—Miii… —gime la criatura, intentando liberarse."),
+    x("Lumi aterra al seu costat i li acaricia el cap amb les antenes. La cria es calma una mica.",
+       "Lumi aterriza junto a ella y le acaricia la cabeza con sus antenas. La cría se calma un poco."),
+    x("!Moure la pedra et portaria uns minuts. No sembla perillós, però tampoc saps si la mare és a prop.",
+       "!Mover la piedra te llevaría unos minutos. No parece peligroso, pero tampoco sabes si la madre anda cerca."),
+  ],
+  choices: [
+    {t: x("Apartar la pedra i alliberar la cria", "Apartar la piedra y liberar a la cría"), go:'pyros_cria_ok', set: s=>{s.trici=true}},
+    {t: x("Deixar-la i continuar (algú la trobarà)", "Dejarla y seguir (alguien la encontrará)"), go:'pyros_candado1'},
+  ]
+},
+
+pyros_cria_ok: {
+  era:'dino',
+  text:[
+    x("Empenyes la pedra amb totes les teues forces. ¡Crac! La cria ix disparada, fa tres voltes al voltant de les teues cames com un gat agraït i desapareix entre les roques llançant espurnes.",
+       "Empujas la piedra con todas tus fuerzas. ¡Crack! La cría sale disparada, da tres vueltas alrededor de tus piernas como un gato agradecido y desaparece entre las rocas echando chispas."),
+    x(">—¡Bip-bip! —Lumi parpelleja en verd. Bona acció.",
+       ">—¡Bip-bip! —Lumi parpadea en verde. Buena acción."),
+    x("Des de lluny, un rugit greu fa eco entre les muntanyes. La mare ha sentit la seua cria. No ve cap a tu: s'allunya. Però alguna cosa et diu que es recordarà d'açò.",
+       "Desde lejos, un rugido grave hace eco entre las montañas. La madre ha oído a su cría. No viene hacia ti: se aleja. Pero algo te dice que se acordará de esto."),
+  ],
+  choices: [
+    {t: x("Continuar cap al laboratori", "Continuar hacia el laboratorio"), go:'pyros_candado1'},
+  ]
+},
+
+pyros_candado1: {
+  era:'dino',
+  text:[
+    x("Arribes al laboratori. La porta té un panell numèric cobert de cendra. Lumi bufa la cendra (bé, aleteja molt fort) i apareix una inscripció:",
+       "Llegas al laboratorio. La puerta tiene un panel numérico cubierto de ceniza. Lumi sopla la ceniza (bueno, aletea muy fuerte) y aparece una inscripción:"),
+    x("?A la quadrícula hi ha 7 files de 8 llums. Introdueix el total per a obrir.",
+       "?En la cuadrícula hay 7 filas de 8 luces. Introduce el total para abrir."),
+    x("!Lumi et mira com dient: «Vinga, que açò és fàcil, {nom}.»",
+       "!Lumi te mira como diciendo: «Venga, que esto es fácil, {nom}.»"),
+  ],
+  choices: [
+    {t:'54', go:'pyros_candado1_mal'},
+    {t:'56', go:'pyros_cristal'},
+    {t:'48', go:'pyros_candado1_mal'},
+  ]
+},
+
+pyros_candado1_mal: {
+  era:'dino',
+  text:[
+    x("El panell sona: ¡BZZZT! Resposta incorrecta.",
+       "El panel suena: ¡BZZZT! Respuesta incorrecta."),
+    x(">—Bip… —Lumi nega amb el cap i dibuixa en l'aire set ratlletes de huit puntets. Recompta.",
+       ">—Bip… —Lumi niega con la cabeza y dibuja en el aire siete rayitas de ocho puntitos. Recuenta."),
+    x("!7 files × 8 llums cada una…",
+       "!7 filas × 8 luces cada una…"),
+  ],
+  choices: [
+    {t:'56', go:'pyros_cristal'},
+    {t:'54', go:'fin_lava'},
+    {t:'48', go:'fin_lava'},
+  ]
+},
+
+pyros_cristal: {
+  era:'dino',
+  onEnter: s => { s.gears++ },
+  text:[
+    x("¡CLONK! La porta s'obri amb un sospir metàl·lic. Dins, sobre un pedestal d'obsidiana, flota un cristall roig que vibra suaument.",
+       "¡CLONK! La puerta se abre con un suspiro metálico. Dentro, sobre un pedestal de obsidiana, flota un cristal rojo que vibra suavemente."),
+    x("💎 Primer cristall de freqüència aconseguit!",
+       "💎 ¡Primer cristal de frecuencia conseguido!"),
+    x("El guardes amb compte. Lumi fa una volta de celebració i brilla en tots els colors alhora.",
+       "Lo guardas con cuidado. Lumi da una vuelta de celebración y brilla en todos los colores a la vez."),
+    x("De camí a l'eixida, un mercader espacial amb un abric massa gran per a esta calor et talla el pas.",
+       "De camino a la salida, un mercader espacial con un abrigo demasiado grande para este calor te corta el paso."),
+    x(">—Eh, tu! Tinc un escut tèrmic de primera qualitat. Et vindrà bé al pròxim planeta. Només demane alguna cosa a canvi…",
+       ">—¡Eh, tú! Tengo un escudo térmico de primera calidad. Te vendrá bien en el próximo planeta. Solo pido algo a cambio…"),
+  ],
+  choices: [
+    {t: x("🔦 Canviar la llanterna per l'escut", "🔦 Cambiar la linterna por el escudo"), go:'pyros_pagar', if: s=>s.linterna, set: s=>{s.linterna=false;s.pagado=true}},
+    {t: x("🥪 Oferir l'entrepà", "🥪 Ofrecer el bocadillo"), go:'pyros_bocadillo', if: s=>s.bocadillo},
+    {t: x("Declinar i tornar a la nau", "Declinar y volver a la nave"), go:'glacius_prep'},
+  ]
+},
+
+pyros_pagar: {
+  era:'dino',
+  text:[
+    x("El mercader agafa la llanterna amb avidesa i et lliura un cinturó metàl·lic que brilla amb un to blavós.",
+       "El mercader coge la linterna estelar con avidez y te entrega un cinturón metálico que brilla con un tono azulado."),
+    x(">—Bon negoci, bon negoci —murmura mentre s'allunya entre les roques.",
+       ">—Buen negocio, buen negocio —murmura mientras se aleja entre las rocas."),
+    x("Lumi et mira amb un centelleig taronja. Era bona idea quedar-se sense llanterna? Supose que ho descobriràs més avant.",
+       "Lumi te mira con un destello naranja. ¿Era buena idea quedarte sin linterna? Supongo que lo descubrirás más adelante."),
+  ],
+  choices: [
+    {t: x("Tornar a la nau", "Volver a la nave"), go:'glacius_prep'},
+  ]
+},
+
+pyros_bocadillo: {
+  era:'dino',
+  text:[
+    x(">—Un entrepà? —El mercader l'olora, l'examina, li pega un mos i posa cara de fàstic—. Açò no val ni mig crèdit. Llarg.",
+       ">—¿Un bocadillo? —El mercader lo huele, lo examina, le da un mordisco y pone cara de asco—. Esto no vale ni medio crédito. Largo."),
+    x("Bé, almenys ho has intentat. Et quedes amb el teu entrepà mossegat i sense escut.",
+       "Bueno, al menos lo has intentado. Te quedas con tu bocadillo mordido y sin escudo."),
+    x("Lumi es riu. Bé, parpelleja ràpid, que és la seua forma de riure's.",
+       "Lumi se ríe. Bueno, parpadea rápido, que es su forma de reírse."),
+  ],
+  choices: [
+    {t: x("Tornar a la nau", "Volver a la nave"), go:'glacius_prep'},
+  ]
+},
+
+glacius_prep: {
+  era:'dino',
+  text:[
+    x("La Centella despega de Pyros deixant arrere la calor infernal. Pròxima parada: Glacius, el planeta de gel.",
+       "La Centella despega de Pyros dejando atrás el calor infernal. Siguiente parada: Glacius, el planeta de hielo."),
+    x("Lumi mostra les coordenades a la pantalla. Cal fer un salt de velocitat.",
+       "Lumi muestra las coordenadas en la pantalla. Hay que hacer un salto de velocidad."),
+  ],
+  choices: [
+    {t: x("❄️ Rumb a Glacius", "❄️ Rumbo a Glacius"), go:'glacius_llegada', set: s=>{if(!s.visitated.includes('glacius'))s.visitated.push('glacius')}},
+  ]
+},
+
+/* --- CAPÍTOL 2: GLACIUS --- */
+glacius_llegada: {
+  era:'hielo',
+  text:[
+    x("Glacius et rep amb un vent gelat que fa tremolar la nau en aterrar. Tot és blanc, blau i cristal·lí. Els icebergs floten sobre un mar congelat i les muntanyes de gel reflecteixen les estreles.",
+       "Glacius te recibe con un viento helado que hace temblar la nave al aterrizar. Todo es blanco, azul y cristalino. Los icebergs flotan sobre un mar congelado y las montañas de hielo reflejan las estrellas."),
+    x("Lumi es fica dins del teu coll per a protegir-se del fred. El seu brill escalfa una mica.",
+       "Lumi se mete dentro de tu cuello para protegerse del frío. Su brillo calienta un poco."),
+    x("L'escàner detecta el cristall en una cova a l'altre costat d'un llac congelat. Hi ha dos formes d'arribar.",
+       "El escáner detecta el cristal en una cueva al otro lado de un lago congelado. Hay dos formas de llegar."),
+  ],
+  choices: [
+    {t: x("🧊 Travessar el llac gelat directament", "🧊 Cruzar el lago helado directamente"), go:'glacius_lago'},
+    {t: x("🕳️ Envoltar pels túnels de gel", "🕳️ Rodear por los túneles de hielo"), go:'glacius_tuneles'},
+  ]
+},
+
+glacius_lago: {
+  era:'hielo',
+  text:[
+    x("El llac sembla sòlid, però a mitat de camí el gel comença a cruixir davall dels teus peus. ¡CRAC, CRAC!",
+       "El lago parece sólido, pero a mitad de camino el hielo empieza a crujir bajo tus pies. ¡CRAC, CRAC!"),
+    x("Lumi es posa roja i assenyala una esquerda que s'estén davant de tu. Necessitaràs sort per a travessar.",
+       "Lumi se pone roja y señala una grieta que se extiende delante de ti. Vas a necesitar suerte para cruzar."),
+    x("!Moment de llançar el dau. Amb 4 o més, travesses. Amb menys… espere que sàpigues nadar en aigua gelada.",
+       "!Momento de lanzar el dado. Con 4 o más, cruzas. Con menos… espero que sepas nadar en agua helada."),
+  ],
+  choices: [
+    {t: x("🎲 Llançar el dau i córrer", "🎲 Lanzar el dado y correr"),
+     go: s => s.lastDice >= 4 ? 'glacius_cruce_ok' : 'fin_hielo',
+     dice:true,
+     diceText: s => s.lastDice>=4
+       ? x(`Un ${s.lastDice}! Passes corrent!`, `¡Un ${s.lastDice}! ¡Pasas corriendo!`)
+       : x(`Un ${s.lastDice}... El gel es trenca.`, `Un ${s.lastDice}... El hielo se rompe.`)},
+  ]
+},
+
+fin_hielo: {
+  era:'hielo',
+  text:[
+    x("¡CRAAAAACK! ¡SPLASH!",
+       "¡CRAAAAACK! ¡SPLASH!"),
+    x("Caus a l'aigua gelada i en tres segons et converteixes en el cubet de gel més elegant de tot Glacius.",
+       "Caes al agua helada y en tres segundos te conviertes en el cubito de hielo más elegante de todo Glacius."),
+    x("Els turistes alienígenes et fotografien durant mesos. Un cartell diu: «Escultura natural: L'Aventurer Congelat». Lumi et posa un gorret de neu al cap perquè faces més bonic.",
+       "Los turistas alienígenas te fotografían durante meses. Un cartel dice: «Escultura natural: El Aventurero Congelado». Lumi te pone un gorrito de nieve en la cabeza para que quedes más mono."),
+  ],
+  ending:'bad', title: x("Escultura de gel", "Escultura de hielo")
+},
+
+glacius_cruce_ok: {
+  era:'hielo',
+  text:[
+    x("Ho has aconseguit! Travesses el llac a tota velocitat, saltant de placa en placa com un cangur sobre patins.",
+       "¡Lo has conseguido! Cruzas el lago a toda velocidad, saltando de placa en placa como un canguro sobre patines."),
+    x("A l'altre costat, recuperes l'alé. Lumi parpelleja en verd: a salvo.",
+       "Al otro lado, recuperas el aliento. Lumi parpadea en verde: a salvo."),
+    x("Prop de l'entrada de la cova, sents un gemec suau que ve de darrere d'un munt de neu.",
+       "Cerca de la entrada de la cueva, oyes un gemido suave que viene de detrás de un montículo de nieve."),
+  ],
+  choices: [
+    {t: x("Investigar el gemec", "Investigar el gemido"), go:'glacius_zorro'},
+    {t: x("Anar directament a la cova del cristall", "Ir directamente a la cueva del cristal"), go:'glacius_candado2'},
+  ]
+},
+
+glacius_tuneles: {
+  era:'hielo',
+  text:[
+    x("Els túnels de gel són preciosos: les parets refracten la llum i creen arcs de Sant Martí en miniatura. Lumi està encantada i brilla en tots els tons de blau.",
+       "Los túneles de hielo son preciosos: las paredes refractan la luz y crean arcoíris en miniatura. Lumi está encantada y brilla en todos los tonos de azul."),
+    x("El camí és més llarg però segur. Després d'una estona, arribes a l'eixida i veus la cova del cristall al davant.",
+       "El camino es más largo pero seguro. Después de un rato, llegas a la salida y ves la cueva del cristal enfrente."),
+    x("Però també sents un gemec feble prop de l'entrada…",
+       "Pero también oyes un gemido débil cerca de la entrada…"),
+  ],
+  choices: [
+    {t: x("Investigar el gemec", "Investigar el gemido"), go:'glacius_zorro'},
+    {t: x("Entrar directament a la cova del cristall", "Entrar directamente a la cueva del cristal"), go:'glacius_candado2'},
+  ]
+},
+
+glacius_zorro: {
+  era:'hielo',
+  text:[
+    x("Darrere del munt trobes un rabosa de gel: una criatura menuda amb pelatge blanc cristal·lí i orelles translúcides. Té una pota enredada en uns cables vells.",
+       "Detrás del montículo encuentras un zorro de hielo: una criatura pequeña con pelaje blanco cristalino y orejas translúcidas. Tiene una pata enredada en unos cables viejos."),
+    x(">—Kiuu… —gemega la rabosa, tremolant.",
+       ">—Kiuu… —gime el zorro, temblando."),
+    x("Lumi s'acosta i la rabosa es calma. Sembla domèstica: porta un collar amb una placa que diu «Escarcha». Algú l'ha perduda.",
+       "Lumi se acerca y el zorro se calma. Parece doméstico: lleva un collar con una placa que dice «Escarcha». Alguien lo ha perdido."),
+    x("!Alliberar la rabosa és fàcil, però portar-la amb tu ocupa espai als braços.",
+       "!Liberar al zorro es fácil, pero llevarlo contigo ocupa espacio en los brazos."),
+  ],
+  choices: [
+    {t: x("Alliberar Escarcha i portar-la amb tu", "Liberar a Escarcha y llevarlo contigo"), go:'glacius_zorro_ok', set: s=>{s.julia=true}},
+    {t: x("Alliberar-la i deixar-la anar", "Liberarlo y dejarlo ir"), go:'glacius_candado2'},
+  ]
+},
+
+glacius_zorro_ok: {
+  era:'hielo',
+  text:[
+    x("Desenredes els cables amb compte. Escarcha salta als teus braços i et llepa la cara amb una llengua freda com un polo de gel. ¡BRRRR!",
+       "Desenredas los cables con cuidado. Escarcha salta a tus brazos y te lame la cara con una lengua fría como un polo de hielo. ¡BRRRR!"),
+    x(">—¡Bip! —Lumi parpelleja contenta.",
+       ">—¡Bip! —Lumi parpadea contenta."),
+    x("La rabosa s'acomoda a la teua motxilla amb el cap fora, observant-ho tot amb curiositat.",
+       "El zorro se acomoda en tu mochila con la cabeza fuera, observando todo con curiosidad."),
+  ],
+  choices: [
+    {t: x("Anar a la cova del cristall", "Ir a la cueva del cristal"), go:'glacius_candado2'},
+  ]
+},
+
+glacius_candado2: {
+  era:'hielo',
+  text:[
+    x("La cova del cristall té una comporta blindada amb un altre panell numèric. Esta vegada hi ha un missatge gravat en el gel:",
+       "La cueva del cristal tiene una compuerta blindada con otro panel numérico. Esta vez hay un mensaje grabado en el hielo:"),
+    x("?El teu depòsit té 120 litres de combustible. Gastes 15 litres cada hora. Quantes hores pots volar?",
+       "?Tu depósito tiene 120 litros de combustible. Gastas 15 litros cada hora. ¿Cuántas horas puedes volar?"),
+    x("!Lumi encén una calculadora imaginària amb les antenes. Vinga, {nom}, que açò és dividir.",
+       "!Lumi enciende una calculadora imaginaria con sus antenas. Venga, {nom}, que esto es dividir."),
+  ],
+  choices: [
+    {t: x("6 hores", "6 horas"), go:'glacius_candado2_mal'},
+    {t: x("8 hores", "8 horas"), go:'glacius_cristal'},
+    {t: x("10 hores", "10 horas"), go:'glacius_candado2_mal'},
+  ]
+},
+
+glacius_candado2_mal: {
+  era:'hielo',
+  text:[
+    x("¡BZZZT! Error.",
+       "¡BZZZT! Error."),
+    x(">—Bip-bip… —Lumi dibuixa en l'aire: 120 ÷ 15 = ?",
+       ">—Bip-bip… —Lumi dibuja en el aire: 120 ÷ 15 = ?"),
+    x("!Pensa: quantes vegades cap 15 en 120?",
+       "!Piensa: ¿cuántas veces cabe 15 en 120?"),
+  ],
+  choices: [
+    {t: x("8 hores", "8 horas"), go:'glacius_cristal'},
+    {t: x("6 hores", "6 horas"), go:'fin_perdido'},
+    {t: x("10 hores", "10 horas"), go:'fin_perdido'},
+  ]
+},
+
+fin_perdido: {
+  era:'hielo',
+  text:[
+    x("El panell es bloqueja definitivament i activa un mecanisme de seguretat que et catapulta fora de la cova. Voles pels aires i aterres en un camp de neu blana.",
+       "El panel se bloquea definitivamente y activa un mecanismo de seguridad que te catapulta fuera de la cueva. Vuelas por los aires y aterrizas en un campo de nieve blandita."),
+    x("Sense cristall i sense GPS, passes les tres setmanes següents donant voltes per Glacius buscant la nau. Quan la trobes, té un pingüí alien dins que es nega a eixir.",
+       "Sin cristal y sin GPS, pasas las siguientes tres semanas dando vueltas por Glacius buscando la nave. Cuando la encuentras, tiene un pingüino alien dentro que se niega a salir."),
+    x("Et converteixes en guia turístic de Glacius. El sou és malíssim, però els paisatges són bonics.",
+       "Te conviertes en guía turístico de Glacius. El sueldo es malísimo pero los paisajes son bonitos."),
+  ],
+  ending:'bad', title: x("Turista etern", "Turista eterno")
+},
+
+glacius_cristal: {
+  era:'hielo',
+  onEnter: s => { s.gears++ },
+  text:[
+    x("¡CLONK! La comporta s'obri. Dins, flotant en un bloc de gel semitransparent, brilla un cristall blau.",
+       "¡CLONK! La compuerta se abre. Dentro, flotando en un bloque de hielo semitransparente, brilla un cristal azul."),
+    x("💎 Segon cristall de freqüència aconseguit!",
+       "💎 ¡Segundo cristal de frecuencia conseguido!"),
+    x("El traus amb compte. Lumi celebra deixant un rastre d'espurnes daurades per la cova.",
+       "Lo sacas con cuidado. Lumi celebra dejando un rastro de chispas doradas por la cueva."),
+    x("Dos de tres. Queda un planeta: Umbra, el món de les ombres.",
+       "Dos de tres. Queda un planeta: Umbra, el mundo de las sombras."),
+  ],
+  choices: [
+    {t: x("🌑 Rumb a Umbra", "🌑 Rumbo a Umbra"), go:'umbra_llegada', set: s=>{if(!s.visitated.includes('umbra'))s.visitated.push('umbra')}},
+  ]
+},
+
+/* --- CAPÍTOL 3: UMBRA --- */
+umbra_llegada: {
+  era:'sombra',
+  text: s => {
+    const lines = [
+      x("Umbra no reflecteix la llum: l'absorbeix. El planeta és una esfera fosca on les ombres tenen volum i textura, com si pogueres tocar-les.",
+         "Umbra no refleja la luz: la absorbe. El planeta es una esfera oscura donde las sombras tienen volumen y textura, como si pudieras tocarlas."),
+      x("La nau aterra en una meseta de roca negra. Lumi redueix el seu brill al mínim per a no atraure les criatures nocturnes.",
+         "La nave aterriza en una meseta de roca negra. Lumi reduce su brillo al mínimo para no atraer a las criaturas nocturnas."),
+      x(">—Bip… bip… —xiuxiueja Lumi, nerviosa. Les seues antenes assenyalen una esquerda a la roca que baixa cap a les profunditats. El cristall és a baix.",
+         ">—Bip… bip… —susurra Lumi, nerviosa. Sus antenas señalan una grieta en la roca que baja hacia las profundidades. El cristal está abajo."),
+    ];
+    if(s.linterna) lines.push(x("!La teua llanterna estel·lar projecta un feix ferm en la foscor. Ben pensat.",
+                                 "!Tu linterna estelar proyecta un haz firme en la oscuridad. Bien pensado."));
+    else lines.push(x("!Està molt fosc. Sense llanterna, açò serà complicat…",
+                       "!Está muy oscuro. Sin linterna, esto va a ser complicado…"));
+    return lines;
+  },
+  choices: [
+    {t: x("🔦 Baixar amb la llanterna encesa", "🔦 Bajar con la linterna encendida"), go:'umbra_con_luz', if: s=>s.linterna},
+    {t: x("🌑 Baixar a les fosques", "🌑 Bajar a oscuras"), go:'umbra_sin_luz', if: s=>!s.linterna},
+    {t: x("🌑 Baixar a les fosques (més emocionant)", "🌑 Bajar a oscuras (más emocionante)"), go:'umbra_sin_luz', if: s=>s.linterna, alt:true},
+  ]
+},
+
+umbra_con_luz: {
+  era:'sombra',
+  text:[
+    x("La llanterna estel·lar il·lumina el camí i les ombres retrocedeixen al teu pas. Lumi vola al costat del feix de llum, tranquil·la per primera vegada en este planeta.",
+       "La linterna estelar ilumina el camino y las sombras retroceden a tu paso. Lumi vuela junto al haz de luz, tranquila por primera vez en este planeta."),
+    x("El passadís descendeix en espiral. A les parets hi ha dibuixos antics: criatures d'ombra que dansen al voltant d'un cristall brillant.",
+       "El pasadizo desciende en espiral. En las paredes hay dibujos antiguos: criaturas de sombra que danzan alrededor de un cristal brillante."),
+    x("Després d'uns minuts arribes a una sala àmplia. Al centre, sobre un altar de pedra negra, veus la resplendor violeta del tercer cristall. Però entre tu i l'altar, les ombres s'agiten…",
+       "Después de unos minutos llegas a una sala amplia. En el centro, sobre un altar de piedra negra, ves el resplandor violeta del tercer cristal. Pero entre tú y el altar, las sombras se agitan…"),
+  ],
+  choices: [
+    {t: x("Avançar amb la llanterna en alt", "Avanzar con la linterna en alto"), go:'umbra_sombras'},
+  ]
+},
+
+umbra_sin_luz: {
+  era:'sombra',
+  text: s => {
+    const lines = [
+      x("Sense llanterna, cada pas és una aposta. Lumi intenta il·luminar, però el seu brill natural a penes cobreix un metre al voltant.",
+         "Sin linterna, cada paso es una apuesta. Lumi intenta iluminar, pero su brillo natural apenas cubre un metro alrededor."),
+      x("Les ombres s'acosten. Notes alguna cosa freda que et rossa el turmell. Després un altre toc al muscle. Lumi es posa roja brillant.",
+         "Las sombras se acercan. Notas algo frío que te roza el tobillo. Luego otro toque en el hombro. Lumi se pone roja brillante."),
+    ];
+    if(s.julia) lines.push(x(">—¡KIUU! —De sobte, Escarcha, la rabosa de gel, salta de la teua motxilla i ix corrents per un passadís lateral. El seu pelatge cristal·lí emet un brill tènue que il·lumina un camí.",
+                              ">—¡KIUU! —De repente, Escarcha, el zorro de hielo, salta de tu mochila y sale corriendo por un pasadizo lateral. Su pelaje cristalino emite un brillo tenue que ilumina un camino."));
+    return lines;
+  },
+  choices: [
+    {t: x("🦊 Seguir Escarcha pel passadís", "🦊 Seguir a Escarcha por el pasadizo"), go:'umbra_mercader2', if: s=>s.julia},
+    {t: x("Avançar a les palpentes pel passadís principal", "Avanzar a tientas por el pasadizo principal"), go: s => s.trici ? 'umbra_madre' : 'fin_sombras'},
+  ]
+},
+
+umbra_mercader2: {
+  era:'sombra',
+  text:[
+    x("Escarcha et guia a través d'un laberint de túnels fins a una cova lateral on hi ha llum. Dins, assegut al costat d'una foguera violeta, està… el mercader de Pyros!",
+       "Escarcha te guía a través de un laberinto de túneles hasta una cueva lateral donde hay luz. Dentro, sentado junto a una hoguera violeta, está… ¡el mercader de Pyros!"),
+    x(">—Escarcha! La meua raboseta! —El mercader s'alça d'un bot i abraça la rabosa—. Portava setmanes buscant-la!",
+       ">—¡Escarcha! ¡Mi zorrito! —El mercader se levanta de un salto y abraza al zorro—. ¡Llevaba semanas buscándolo!"),
+    x("El mercader et mira amb els ulls brillants d'agraïment.",
+       "El mercader te mira con los ojos brillantes de agradecimiento."),
+    x(">—Pren, et torne la teua llanterna. I a més, t'ensenye una drecera fins al cristall. És el mínim.",
+       ">—Toma, te devuelvo tu linterna. Y además, te enseño un atajo hasta el cristal. Es lo mínimo."),
+  ],
+  choices: [
+    {t: x("Acceptar la llanterna i seguir la drecera", "Aceptar la linterna y seguir el atajo"), go:'umbra_con_luz', set: s=>{s.linterna=true;s.retornado=true}},
+  ]
+},
+
+umbra_madre: {
+  era:'sombra',
+  text:[
+    x("Les ombres et rodegen. Ja no pots veure ni les teues pròpies mans. Lumi parpelleja desesperada en roig i es queda sense força per a brillar.",
+       "Las sombras te rodean. Ya no puedes ver ni tus propias manos. Lumi parpadea desesperada en rojo y se queda sin fuerza para brillar."),
+    x("Just quan creus que tot està perdut… ¡GROOOAAARRR!",
+       "Justo cuando crees que todo está perdido… ¡GROOOAAARRR!"),
+    x("Un rugit tremend sacseja les parets. Una criatura enorme apareix pel passadís: és una salamandra de foc adulta, i les seues escames il·luminen tota la cova en roig i daurat.",
+       "Un rugido tremendo sacude las paredes. Una criatura enorme aparece por el pasadizo: es una salamandra de fuego adulta, y sus escamas iluminan toda la cueva en rojo y dorado."),
+    x("És la mare de la cria que vas salvar a Pyros! Les ombres retrocedeixen aterrides davant la seua llum i la seua calor.",
+       "¡Es la madre de la cría que salvaste en Pyros! Las sombras retroceden aterradas ante su luz y su calor."),
+    x(">—Miii —diu la cria, traient el cap darrere de la seua mare i mirant-te com dient: «T'he dit que es recordaria.»",
+       ">—Miii —dice la cría, asomando detrás de su madre y mirándote como diciendo: «Te dije que se acordaría.»"),
+    x("La mare es col·loca al teu costat i t'escorta fins a la sala del cristall. Les ombres no s'atreveixen a acostar-se.",
+       "La madre se coloca a tu lado y te escolta hasta la sala del cristal. Las sombras no se atreven a acercarse."),
+  ],
+  choices: [
+    {t: x("Avançar escortat per la salamandra", "Avanzar escoltado por la salamandra"), go:'umbra_sombras'},
+  ]
+},
+
+fin_sombras: {
+  era:'sombra',
+  text:[
+    x("Les ombres t'emboliquen com una manta gelada. Quan tornes a veure la llum… estàs en un saló de te subterrani, envoltat de criatures d'ombra que et miren expectants.",
+       "Las sombras te envuelven como una manta helada. Cuando vuelves a ver la luz… estás en un salón de té subterráneo, rodeado de criaturas de sombra que te miran expectantes."),
+    x(">—Ara eres la nostra mascota —diu l'Ombra Cap, posant-te un collar amb cascavell—. El teu treball: fer trucs. Seu. Dona la pota. Rodola.",
+       ">—Ahora eres nuestra mascota —dice la Sombra Jefe, poniéndote un collar con cascabel—. Tu trabajo: hacer trucos. Siéntate. Da la pata. Rueda."),
+    x("Lumi es parteix de riure (parpelleig ràpid) i es nega a rescatar-te. Diu que és el que et mereixes per no ajudar ningú pel camí.",
+       "Lumi se parte de risa (parpadeo rápido) y se niega a rescatarte. Dice que es lo que te mereces por no ayudar a nadie en el camino."),
+  ],
+  ending:'bad', title: x("Mascota de les ombres", "Mascota de las sombras")
+},
+
+umbra_sombras: {
+  era:'sombra',
+  text:[
+    x("Les ombres s'agiten al voltant de l'altar, però no ataquen: o tens llum suficient o alguna cosa les manté a ratlla. Lumi assenyala el panell d'accés al costat del cristall.",
+       "Las sombras se agitan alrededor del altar, pero no atacan: o tienes luz suficiente o algo las mantiene a raya. Lumi señala el panel de acceso junto al cristal."),
+    x("Un altre cadenat numèric. La inscripció diu:",
+       "Otro candado numérico. La inscripción dice:"),
+    x("?Codi d'accés: La seqüència és 3, 9, 27, 81, ___ . Quin número segueix?",
+       "?Código de acceso: La secuencia es 3, 9, 27, 81, ___ . ¿Qué número sigue?"),
+    x("!Lumi dibuixa la seqüència amb centelleigs de llum. Cada número és… quantes vegades l'anterior?",
+       "!Lumi dibuja la secuencia con destellos de luz. Cada número es… ¿cuántas veces el anterior?"),
+  ],
+  choices: [
+    {t:'162', go:'umbra_candado3_mal'},
+    {t:'243', go:'umbra_cristal'},
+    {t:'108', go:'umbra_candado3_mal'},
+  ]
+},
+
+umbra_candado3_mal: {
+  era:'sombra',
+  text:[
+    x("¡BZZZT! Error. Les ombres s'acosten un pas.",
+       "¡BZZZT! Error. Las sombras se acercan un paso."),
+    x(">—¡BIP! —Lumi parpelleja la seqüència: 3, 9, 27, 81… Cada un és l'anterior ×3.",
+       ">—¡BIP! —Lumi parpadea la secuencia: 3, 9, 27, 81… Cada uno es el anterior ×3."),
+    x("!81 × 3 = ???",
+       "!81 × 3 = ???"),
+  ],
+  choices: [
+    {t:'243', go:'umbra_cristal'},
+    {t:'162', go:'fin_circo'},
+    {t:'108', go:'fin_circo'},
+  ]
+},
+
+fin_circo: {
+  era:'sombra',
+  text:[
+    x("El panell es bloqueja i una trampeta s'obri davall dels teus peus. ¡PLOF! Caus per un tobogan fosc i aterres en… un escenari?",
+       "El panel se bloquea y una trampilla se abre bajo tus pies. ¡PLOF! Caes por un tobogán oscuro y aterrizas en… ¿un escenario?"),
+    x("Resulta que les ombres tenen un circ subterrani i necessiten un pallasso nou. Et pinten la cara, et posen sabates enormes i et donen un poal de confeti.",
+       "Resulta que las sombras tienen un circo subterráneo y necesitan un payaso nuevo. Te pintan la cara, te ponen zapatos enormes y te dan un cubo de confeti."),
+    x("El teu primer número: «L'Humà que No Sap Multiplicar per Tres». El públic d'ombres aplaudeix amb entusiasme.",
+       "Tu primer número: «El Humano que No Sabe Multiplicar por Tres». El público de sombras aplaude con entusiasmo."),
+    x("Lumi es converteix en la teua assistent d'espectacle. Almenys sembla que s'ho passa bé.",
+       "Lumi se convierte en tu asistente de espectáculo. Al menos parece que se lo pasa bien."),
+  ],
+  ending:'bad', title: x("Pallasso intergalàctic", "Payaso intergaláctico")
+},
+
+umbra_cristal: {
+  era:'sombra',
+  onEnter: s => { s.gears++ },
+  text:[
+    x("¡CLONK! L'altar s'obri i el cristall violeta flota cap a les teues mans. Les ombres s'aparten formant un passadís de respecte.",
+       "¡CLONK! El altar se abre y el cristal violeta flota hacia tus manos. Las sombras se apartan formando un pasillo de respeto."),
+    x("💎 Tercer cristall de freqüència aconseguit! Els tens tots!",
+       "💎 ¡Tercer cristal de frecuencia conseguido! ¡Los tienes todos!"),
+    x("Lumi brilla en daurat intens i es posa a fer voltes de celebració.",
+       "Lumi brilla en dorado intenso y se pone a dar vueltas de celebración."),
+    x("Els tres cristalls vibren a l'uníson a la teua motxilla. És hora de tornar a la nau i desxifrar el senyal.",
+       "Los tres cristales vibran al unísono en tu mochila. Es hora de volver a la nave y descifrar la señal."),
+  ],
+  choices: [
+    {t: x("🚀 Tornar a la Centella i desxifrar el senyal", "🚀 Volver a la Centella y descifrar la señal"), go:'decodificar'},
+  ]
+},
+
+/* --- DESCODIFICACIÓ I FINALS --- */
+decodificar: {
+  era:'espacio',
+  text:[
+    x("De tornada a la Centella, col·loques els tres cristalls al panell de comunicacions. Encaixen perfectament: roig, blau, violeta.",
+       "De vuelta en la Centella, colocas los tres cristales en el panel de comunicaciones. Encajan perfectamente: rojo, azul, violeta."),
+    x("La ràdio crepita. El senyal s'aclareix. Però per a apuntar l'antena correctament, necessites calcular la distància.",
+       "La radio crepita. La señal se aclara. Pero para apuntar la antena correctamente, necesitas calcular la distancia."),
+    x("?Estàs a 240 km de la font del senyal. La teua nau va a 60 km per hora. Quantes hores tardes a arribar?",
+       "?Estás a 240 km de la fuente de la señal. Tu nave va a 60 km por hora. ¿Cuántas horas tardas en llegar?"),
+    x("Lumi et mira. Este és l'últim pas, {nom}.",
+       "Lumi te mira. Este es el último paso, {nom}."),
+  ],
+  choices: [
+    {t: x("4 hores", "4 horas"), go:'decodificar_ok'},
+    {t: x("3 hores", "3 horas"), go:'decodificar_dado'},
+    {t: x("6 hores", "6 horas"), go:'decodificar_dado'},
+  ]
+},
+
+decodificar_ok: {
+  era:'espacio',
+  text:[
+    x("Correcte! L'antena s'alinea perfectament. Els cristalls brillen a l'uníson i el missatge es desxifra a la pantalla:",
+       "¡Correcto! La antena se alinea perfectamente. Los cristales brillan al unísono y el mensaje se descifra en la pantalla:"),
+  ],
+  choices: [
+    {t: x("Llegir el missatge", "Leer el mensaje"), go: s => (s.trici && s.julia) ? 'final_heroe' : 'final_bueno'},
+  ]
+},
+
+decodificar_dado: {
+  era:'espacio',
+  text:[
+    x("L'antena no s'alinea del tot bé. El senyal és feble.",
+       "La antena no se alinea del todo bien. La señal es débil."),
+    x(">—¡Bip-bip! —Lumi ajusta els cristalls manualment. Necessites sort per a captar el missatge.",
+       ">—¡Bip-bip! —Lumi ajusta los cristales manualmente. Necesitas suerte para captar el mensaje."),
+    x("!Dau: amb 3 o més, Lumi ho aconsegueix. Amb menys…",
+       "!Dado: con 3 o más, Lumi lo consigue. Con menos…"),
+  ],
+  choices: [
+    {t: x("🎲 Deixar que Lumi ajuste", "🎲 Dejar que Lumi ajuste"),
+     go: s => s.lastDice >= 3 ? (s.trici && s.julia ? 'final_heroe' : 'final_bueno') : 'fin_piratas',
+     dice:true,
+     diceText: s => s.lastDice>=3
+       ? x(`Un ${s.lastDice}! Lumi ho aconsegueix!`, `¡Un ${s.lastDice}! ¡Lumi lo consigue!`)
+       : x(`Un ${s.lastDice}... El senyal rebota cap als pirates.`, `Un ${s.lastDice}... La señal rebota hacia los piratas.`)},
+  ]
+},
+
+fin_piratas: {
+  era:'espacio',
+  text:[
+    x("El senyal rebota mal i atrau l'atenció d'una nau pirata que passava pel barri. T'atrapen amb un raig tractor.",
+       "La señal rebota mal y atrae la atención de una nave pirata que pasaba por el barrio. Te atrapan en un rayo tractor."),
+    x("El Capità Potablava (té una pota de fusta, però blava) t'inspecciona de dalt a baix.",
+       "El Capitán Patazurda (tiene una pata de palo, pero azul) te inspecciona de arriba abajo."),
+    x(">—Hmm. No sembles útil per al combat. A la cuina! Hi ha 300 creïlles espacials per a pelar per al sopar de la tripulació.",
+       ">—Hmm. No pareces útil para el combate. ¡A la cocina! Hay 300 patatas espaciales que pelar para la cena de la tripulación."),
+    x("Lumi intenta negociar, però els pirates la fan servir com a llàntia de lectura del capità. Almenys té bones vistes des de la tauleta de nit.",
+       "Lumi intenta negociar, pero los piratas la usan como lámpara de lectura del capitán. Al menos tiene buenas vistas desde la mesilla de noche."),
+  ],
+  ending:'bad', title: x("Pelador de creïlles espacials", "Pelador de patatas espaciales")
+},
+
+final_bueno: {
+  era:'espacio',
+  text:[
+    x("El missatge es desxifra línia a línia a la pantalla. Lumi i tu el llegiu en silenci:",
+       "El mensaje se descifra línea a línea en la pantalla. Lumi y tú lo leéis en silencio:"),
+    x(">«Hola. Hi ha algú ahí? Sóc una exploradora com tu. Porte molt de temps viatjant a soles. Si reps este missatge, respon. No importa qui sigues. Només vull saber que no estic a soles en l'univers.»",
+       ">«Hola. ¿Hay alguien ahí? Soy una exploradora como tú. Llevo mucho tiempo viajando sola. Si recibes este mensaje, responde. No importa quién seas. Solo quiero saber que no estoy sola en el universo.»"),
+    x("Un calfred et recorre l'esquena. Mires Lumi. Lumi et mira a tu. Sense dir res, prems el botó de resposta.",
+       "Un escalofrío te recorre la espalda. Miras a Lumi. Lumi te mira a ti. Sin decir nada, pulsas el botón de respuesta."),
+    x(">«Hola. Et sent. No estàs a soles.»",
+       ">«Hola. Te oigo. No estás sola.»"),
+    x("Els cristalls brillen una última vegada i s'apaguen. El missatge ha arribat. En algun lloc del cosmos, algú somriu.",
+       "Los cristales brillan una última vez y se apagan. El mensaje ha llegado. En algún lugar del cosmos, alguien sonríe."),
+    x("Lumi es posa al teu muscle i brilla en daurat. De vegades, l'aventura més gran és simplement respondre quan algú crida.",
+       "Lumi se posa en tu hombro y brilla en dorado. A veces, la aventura más grande es simplemente responder cuando alguien llama."),
+    x("!{nom}, has completat la teua missió. Però… i si hagueres ajudat tots els que vas trobar pel camí? Potser el senyal tenia alguna cosa més a dir.",
+       "!{nom}, has completado tu misión. Pero… ¿y si hubieras ayudado a todos los que encontraste por el camino? Quizá la señal tenía algo más que decir."),
+  ],
+  ending:'bueno', title: x("El missatge", "El mensaje")
+},
+
+final_heroe: {
+  era:'espacio',
+  text:[
+    x("El missatge es desxifra… però esta vegada hi ha alguna cosa més. Els cristalls continuen brillant després de la primera part. Una segona transmissió apareix a la pantalla:",
+       "El mensaje se descifra… pero esta vez hay algo más. Los cristales siguen brillando después de la primera parte. Una segunda transmisión aparece en pantalla:"),
+    x(">«Hola. Hi ha algú ahí? Sóc una exploradora com tu.»",
+       ">«Hola. ¿Hay alguien ahí? Soy una exploradora como tú.»"),
+    x("Respons igual que abans. Però llavors el missatge continua:",
+       "Respondes igual que antes. Pero entonces el mensaje continúa:"),
+    x(">«Gràcies per respondre. I gràcies per ser qui eres. Hem vist com vas tractar la cria de salamandra. Com vas rescatar la rabosa perduda. Com vas triar ajudar quan podies haver passat de llarg.»",
+       ">«Gracias por responder. Y gracias por ser quien eres. Hemos visto cómo trataste a la cría de salamandra. Cómo rescataste al zorro perdido. Cómo elegiste ayudar cuando podías haber pasado de largo.»"),
+    x(">«Les estreles es fixen en qui estén la mà. Per això t'envie les coordenades d'un lloc especial: el Jardí de les Estreles, on totes les espècies que s'han ajudat entre si es troben.»",
+       ">«Las estrellas se fijan en quien tiende la mano. Por eso te envío las coordenadas de un lugar especial: el Jardín de las Estrellas, donde todas las especies que se han ayudado entre sí se encuentran.»"),
+    x("La pantalla mostra unes coordenades noves. Lumi brilla com mai no l'havies vista.",
+       "La pantalla muestra unas coordenadas nuevas. Lumi brilla como nunca la habías visto."),
+    x(">—Bip —diu simplement. Però eixe bip significa: «Anem-hi, {nom}.»",
+       ">—Bip —dice simplemente. Pero ese bip significa: «Vamos allá, {nom}.»"),
+    x("Poses rumb al Jardí. No saps el que trobaràs, però saps que ho trobaràs perquè vas fer el correcte en cada moment.",
+       "Pones rumbo al Jardín. No sabes lo que encontrarás, pero sabes que lo encontrarás porque hiciste lo correcto en cada momento."),
+    x("I en algun lloc de Pyros, una cria de salamandra i la seua mare rugen al cel, celebrant.",
+       "Y en algún lugar de Pyros, una cría de salamandra y su madre rugen al cielo, celebrando."),
+  ],
+  ending:'heroe', title: x("Explorador del cosmos", "Explorador del cosmos")
+},
+
+};/* end of S */
+
+/* ===== INIT ===== */
+window.addEventListener('DOMContentLoaded', () => {
+  if(!loadGame()){
+    document.getElementById('btn-val').className = 'lang-active';
+    document.getElementById('btn-cas').className = '';
+    document.documentElement.lang = 'ca';
+    document.title = T(TITLE_FULL);
+    document.getElementById('intro-screen').hidden = false;
+    renderIntro();
+  }
+});
+</script>
+</body>
+</html>
