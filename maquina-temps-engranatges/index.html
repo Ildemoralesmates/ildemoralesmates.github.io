@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Màquina del Temps: Els tres engranatges perduts</title>
+<meta name="description" content="Aventura interactiva per Valentia, Xàtiva i la Llotja: tria el camí, resol candaus de mates i recupera els tres engranatges de la màquina del temps amb el lloro Cronet.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/maquina-temps-engranatges/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="La Màquina del Temps: Els tres engranatges perduts">
+<meta property="og:description" content="Aventura interactiva per Valentia, Xàtiva i la Llotja: tria el camí, resol candaus de mates i recupera els tres engranatges de la màquina del temps amb el lloro Cronet.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/maquina-temps-engranatges/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Courier+Prime:wght@400;700&family=Grandstander:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6ec; --ink:#241a12; --card:#fffdf8; --muted:#6b5a4a; --line:#e5d8c3;
+  --accent:#6b44a8; --on-accent:#ffffff; --danger:#a3361f;
+  --font-title:"Grandstander","Trebuchet MS",system-ui,sans-serif;
+  --font-read:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --font-dial:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+}
+body[data-era="casa"]{--accent:#6b44a8}
+body[data-era="roma"]{--accent:#a3361f}
+body[data-era="xativa"]{--accent:#1f7a4a}
+body[data-era="llotja"]{--accent:#2563a8}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body[data-era="casa"]{--accent:#c9aaf5;--on-accent:#16110c}
+  :root:not([data-theme="light"]) body[data-era="roma"]{--accent:#ff9b85;--on-accent:#16110c}
+  :root:not([data-theme="light"]) body[data-era="xativa"]{--accent:#6fd9a0;--on-accent:#16110c}
+  :root:not([data-theme="light"]) body[data-era="llotja"]{--accent:#8fbdf5;--on-accent:#16110c}
+  :root:not([data-theme="light"]) #plof{background:color-mix(in srgb,var(--accent) 40%,#000)}
+}
+:root[data-theme="dark"] body[data-era="casa"]{--accent:#c9aaf5;--on-accent:#16110c}
+:root[data-theme="dark"] body[data-era="roma"]{--accent:#ff9b85;--on-accent:#16110c}
+:root[data-theme="dark"] body[data-era="xativa"]{--accent:#6fd9a0;--on-accent:#16110c}
+:root[data-theme="dark"] body[data-era="llotja"]{--accent:#8fbdf5;--on-accent:#16110c}
+:root[data-theme="dark"] #plof{background:color-mix(in srgb,var(--accent) 40%,#000)}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-read);line-height:1.55;transition:background .3s}
+.top{max-width:42rem;margin:0 auto;padding:.75rem 1rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between}
+.brand{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.05rem}
+.tools{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.pill{font-family:var(--font-title);font-weight:700;font-size:.9rem;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:.35rem .8rem;cursor:pointer;min-height:2.4rem}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pill:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:42rem;margin:0 auto;padding:0 1rem 3rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:1.2rem;padding:1.1rem 1.1rem 1.3rem;box-shadow:0 2px 0 var(--line)}
+.plate{display:flex;gap:.8rem;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:.7rem;margin-bottom:.8rem}
+.plate svg{flex:0 0 auto;width:5.5rem;height:3.4rem;color:var(--accent)}
+.plate .pn{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.1rem;line-height:1.2}
+.hud{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.2rem 0 1rem;font-size:.95rem}
+.hud .grp{display:flex;align-items:center;gap:.4rem}
+.hud .lbl{font-family:var(--font-title);font-weight:700;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.hud svg{width:1.7rem;height:1.7rem;color:var(--accent)}
+.pips{display:flex;gap:.25rem}
+.pip{width:1.05rem;height:1.05rem;border-radius:50%;border:2px solid var(--accent);background:transparent}
+.pip.on{background:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{font-size:.9rem;border:2px solid var(--line);border-radius:999px;padding:.1rem .6rem;background:var(--bg)}
+.chip.empty{color:var(--muted);border-style:dashed}
+.txt p{font-size:1.2rem;margin:.7rem 0}
+.txt p.dlg{padding-left:.9rem;border-left:4px solid var(--accent)}
+.txt p.riddle{font-family:var(--font-title);font-weight:700;background:color-mix(in srgb,var(--accent) 14%,var(--card));border-radius:.8rem;padding:.7rem .9rem}
+.txt p.hint{color:var(--muted);font-style:italic;font-size:1.05rem}
+.choices{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+.btn{font-family:var(--font-title);font-weight:700;font-size:1.15rem;line-height:1.3;text-align:left;border:3px solid var(--accent);background:var(--card);color:var(--ink);border-radius:1rem;padding:.8rem 1rem;min-height:3.4rem;cursor:pointer;transition:transform .08s,background .15s}
+.btn:hover{background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.btn:active{transform:scale(.985)}
+.btn.main{background:var(--accent);color:var(--on-accent);text-align:center}
+.btn.main:hover{background:var(--accent);filter:brightness(1.08)}
+.btn.ghost{border-color:var(--line);font-size:1rem;min-height:2.8rem;font-weight:500;text-align:center}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.undo{margin-top:1rem;text-align:center}
+h1{font-family:var(--font-title);font-weight:800;font-size:2rem;line-height:1.1;margin:.2rem 0 .3rem;color:var(--accent)}
+h2{font-family:var(--font-title);font-weight:800;font-size:1.6rem;line-height:1.15;margin:.2rem 0 .6rem;color:var(--accent)}
+.sub{font-family:var(--font-title);font-size:1.2rem;color:var(--muted);margin:.1rem 0 1rem}
+.intro ul{padding-left:1.2rem;font-size:1.1rem}
+.intro li{margin:.4rem 0}
+.intro label{display:block;font-family:var(--font-title);font-weight:700;font-size:1.1rem;margin:1.1rem 0 .4rem}
+.intro input{width:100%;font:inherit;font-size:1.3rem;padding:.7rem .9rem;border:3px solid var(--line);border-radius:.9rem;background:var(--bg);color:var(--ink)}
+.intro input:focus{border-color:var(--accent)}
+.gloss dl{margin:.6rem 0 0}
+.gloss dt{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.15rem;margin-top:.9rem}
+.gloss dd{margin:.1rem 0 0;font-size:1.1rem}
+.err{color:var(--danger);font-weight:700;margin:.5rem 0 0}
+.counter{margin-top:1rem;text-align:center;color:var(--muted);font-family:var(--font-dial);font-size:.95rem}
+.endnote{font-family:var(--font-dial);color:var(--muted);margin-top:1rem;font-size:.95rem}
+#plof{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:color-mix(in srgb,var(--accent) 88%,#000);color:#fff;text-align:center;padding:1rem}
+#plof .big{font-family:var(--font-title);font-weight:800;font-size:3.4rem;animation:pop .5s ease-out both}
+#plof svg{width:6rem;height:6rem;animation:spin 1.4s linear infinite}
+#plof .dial{font-family:var(--font-dial);font-size:1.15rem;border:2px solid #fff;border-radius:.6rem;padding:.4rem .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  #plof svg,#plof .big{animation:none}
+  .btn{transition:none}
+}
+@media (max-width:30rem){
+  h1{font-size:1.7rem}
+  .plate svg{width:4.4rem}
+}
+</style>
+</head>
+<body data-era="casa">
+<header class="top">
+  <div class="brand" id="brand">La màquina del temps</div>
+  <div class="tools">
+    <button class="pill" id="gloss" aria-pressed="false" type="button">Paraules</button>
+    <button class="pill" id="lang-ca" aria-pressed="true" type="button">VAL</button>
+    <button class="pill" id="lang-es" aria-pressed="false" type="button">CAS</button>
+    <button class="pill" id="restart" type="button" aria-label="Començar de nou">↻</button>
+  </div>
+</header>
+<main id="app"></main>
+<div id="plof" hidden role="status" aria-live="polite">
+  <div class="big">¡PLOF!</div>
+  <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="45" cy="45" r="30" fill="none" stroke="#fff" stroke-width="7"/><line x1="67" y1="67" x2="92" y2="92" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="45" cy="45" r="4" fill="#fff"/></svg>
+  <div class="dial" id="plof-dial"></div>
+</div>
+
+<script>
+/* ============ DADES ============ */
+const KEY = 'tres-engranatges-perduts-v1';
+const x = (ca, es) => ({ ca: ca, es: es });
+
+const TITLE = x(`La màquina del temps`, `La máquina del tiempo`);
+const DESC  = x(`Els tres engranatges perduts`, `Los tres engranajes perdidos`);
+const TITLE_FULL = x(`La màquina del temps: Els tres engranatges perduts`, `La máquina del tiempo: Los tres engranajes perdidos`);
+
+const ON = {
+  llanterna: x(`la llanterna`, `la linterna`),
+  imant: x(`l'imant`, `el imán`),
+  corda: x(`la corda`, `la cuerda`)
+};
+const OCHIP = {
+  llanterna: x(`Llanterna de rellotger`, `Linterna de relojero`),
+  imant: x(`Imant de rellotger`, `Imán de relojero`),
+  corda: x(`Corda amb ganxo`, `Cuerda con gancho`)
+};
+const ERA = {
+  casa:   { ch: false, n: x(`Pròleg · El taller de la mestra`, `Prólogo · El taller de la maestra`) },
+  roma:   { ch: true,  n: x(`Capítol 1 · Valentia, any 138 aC`, `Capítulo 1 · Valentia, año 138 a. C.`) },
+  xativa: { ch: true,  n: x(`Capítol 2 · Xàtiva i el seu paper`, `Capítulo 2 · Xàtiva y su papel`) },
+  llotja: { ch: true,  n: x(`Capítol 3 · La Llotja de la Seda`, `Capítulo 3 · La Lonja de la Seda`) }
+};
+
+const ALL_ENDINGS = ['berenar', 'cronet_data', 'roma_atrapat', 'xativa_fosc', 'llotja_perd', 'sabata'];   // todos los finales salvo 'bo' y 'heroi'
+const TOTAL_FINALS = ALL_ENDINGS.length + 2;
+
+const GL = [
+  { w: x(`Cronista`, `Cronista`), d: x(`Persona que apunta el que va passant perquè no s'oblide.`, `Persona que apunta lo que va pasando para que no se olvide.`) },
+  { w: x(`Engranatge`, `Engranaje`), d: x(`Roda amb dents que, en encaixar amb altres, fa moure un mecanisme.`, `Rueda con dientes que, al encajar con otras, mueve un mecanismo.`) },
+  { w: x(`Fòrum`, `Foro`), d: x(`La plaça principal d'una ciutat romana, on hi havia mercat i reunions.`, `La plaza principal de una ciudad romana, donde había mercado y reuniones.`) },
+  { w: x(`Termes`, `Termas`), d: x(`Banys públics romans, amb aigua calenta, aigua freda i vapor.`, `Baños públicos romanos, con agua caliente, agua fría y vapor.`) },
+  { w: x(`Sesterci`, `Sestercio`), d: x(`Moneda de bronze de l'antiga Roma.`, `Moneda de bronce de la antigua Roma.`) },
+  { w: x(`Ànfora`, `Ánfora`), d: x(`Gerra alta amb dues nanses, per a guardar oli, vi o salaons.`, `Jarra alta con dos asas, para guardar aceite, vino o salazones.`) },
+  { w: x(`Paperer`, `Papelero`), d: x(`Persona que fabrica paper; antigament, amb draps vells ben picats i mullats.`, `Persona que fabrica papel; antiguamente, con trapos viejos bien picados y mojados.`) },
+  { w: x(`Llotja`, `Lonja`), d: x(`Edifici on els comerciants feien tractes i contractes.`, `Edificio donde los comerciantes hacían tratos y contratos.`) },
+  { w: x(`Notari`, `Notario`), d: x(`Persona que escriu i signa documents perquè tinguen validesa.`, `Persona que escribe y firma documentos para que tengan validez.`) },
+  { w: x(`Mercader`, `Mercader`), d: x(`Persona que es dedica a comprar i vendre mercaderies.`, `Persona que se dedica a comprar y vender mercancías.`) }
+];
+
+const U = {
+  start: x(`Començar l'aventura`, `Empezar la aventura`),
+  nameQ: x(`Com et diuen?`, `¿Cómo te llamas?`),
+  nameErr: x(`Escriu el teu nom per a començar.`, `Escribe tu nombre para empezar.`),
+  namePh: x(`El teu nom`, `Tu nombre`),
+  energy: x(`Energia`, `Energía`),
+  pieces: x(`Engranatges`, `Engranajes`),
+  pack: x(`Motxilla`, `Mochila`),
+  empty: x(`buida`, `vacía`),
+  undo: x(`↶ Tornar a la decisió anterior`, `↶ Volver a la decisión anterior`),
+  backLast: x(`Tornar a l'última decisió`, `Volver a la última decisión`),
+  again: x(`Començar de nou`, `Empezar de nuevo`),
+  playAgain: x(`Tornar a jugar`, `Jugar otra vez`),
+  restartAsk: x(`Toca de nou per a reiniciar`, `Toca de nuevo para reiniciar`),
+  restartLbl: x(`Començar de nou`, `Empezar de nuevo`),
+  finalsCount: (n) => x(`Finals descoberts: ${n} de ${TOTAL_FINALS}`, `Finales descubiertos: ${n} de ${TOTAL_FINALS}`),
+  newEnd: x(`Final descobert!`, `¡Final descubierto!`),
+  paperChip: x(`Full de paper de Xàtiva`, `Hoja de papel de Xàtiva`),
+  ladderChip: x(`Escala de la Llotja`, `Escalera de la Lonja`),
+  glossBtn: x(`Paraules`, `Palabras`),
+  glossTitle: x(`Paraules noves`, `Palabras nuevas`),
+  glossBack: x(`Tornar a l'aventura`, `Volver a la aventura`)
+};
+
+function gainEn(s) { s.en = Math.min(5, s.en + 1); }
+
+const S = {
+
+intro: { era: 'casa', text: [], choices: [] },
+
+/* ---------- PRÒLEG ---------- */
+pro: { era: 'casa',
+  text: [
+    x(`El taller de la mestra Anselma fa olor d'oli de màquines i de te amb canyella. Damunt la taula brilla el maletí de la Màquina del Temps: un rellotge enorme que s'obri com una maleta.`,
+      `El taller de la maestra Anselma huele a aceite de máquinas y a té con canela. Sobre la mesa brilla el maletín de la Máquina del Tiempo: un reloj enorme que se abre como una maleta.`),
+    x(`Tu, {nom}, fas d'aprenent de rellotger del temps. Avui la mestra ha anat un moment a posar la tetera al foc: «Torne abans que xiule!», ha dit.`,
+      `Tú, {nom}, haces de aprendiz de relojero del tiempo. Hoy la maestra ha ido un momento a poner la tetera al fuego: «¡Vuelvo antes de que silbe!», ha dicho.`),
+    x(`¡PLOF! ¡CLINC! ¡PAM! Tres engranatges d'acer i llautó surten disparats de la màquina, creuen la finestra del temps i desapareixen en un núvol de pols daurada.`,
+      `¡PLOF! ¡CLINC! ¡PAM! Tres engranajes de acero y latón salen disparados de la máquina, cruzan la ventana del tiempo y desaparecen en una nube de polvo dorado.`),
+    x(`>—Ai, ai, ai! —grazna Cronet, el lloro cronista, aterrant sobre la teua espatlla—. Ho apunte: «Tres engranatges volen». Ara cal saber en quin segle han caigut.`,
+      `>—¡Ay, ay, ay! —grazna Cronet, el loro cronista, aterrizando sobre tu hombro—. Lo apunto: «Tres engranajes vuelan». Ahora hay que saber en qué siglo han caído.`),
+    x(`A la tapa de la màquina hi ha una nota de la mestra: «Cada engranatge s'ha quedat en un lloc que sap guardar l'hora. La maneta de seguretat només et farà fer tres salts. Quan xiule la tetera, tot ha d'estar al seu lloc.»`,
+      `En la tapa de la máquina hay una nota de la maestra: «Cada engranaje se ha quedado en un lugar que sabe guardar la hora. La manivela de seguridad solo te hará dar tres saltos. Cuando silbe la tetera, todo tiene que estar en su sitio.»`)
+  ],
+  choices: [
+    { t: x(`Obrir el calaix d'eines de la mestra`, `Abrir el cajón de herramientas de la maestra`), go: 'pro_obj' },
+    { t: x(`Tapar la màquina amb un llençol i anar a berenar`, `Tapar la máquina con una sábana e ir a merendar`), go: 'berenar' }
+  ] },
+
+pro_obj: { era: 'casa',
+  text: [
+    x(`Al calaix només hi ha tres eines, i la butxaca de l'aprenent només n'admet una. Cal triar bé.`,
+      `En el cajón solo hay tres herramientas, y el bolsillo del aprendiz solo admite una. Hay que elegir bien.`),
+    x(`>—Jo sóc qui apunta, no qui carrega —diu Cronet—. Tria tu.`,
+      `>—Yo soy quien apunta, no quien carga —dice Cronet—. Elige tú.`),
+    x(`!Cada eina servirà en un lloc diferent, i només en pots portar una.`,
+      `!Cada herramienta servirá en un lugar distinto, y solo puedes llevar una.`)
+  ],
+  choices: [
+    { t: x(`La llanterna de rellotger`, `La linterna de relojero`), go: 'pro_any', set: s => { s.obj = 'llanterna'; } },
+    { t: x(`L'imant de rellotger`, `El imán de relojero`), go: 'pro_any', set: s => { s.obj = 'imant'; } },
+    { t: x(`La corda amb ganxo`, `La cuerda con gancho`), go: 'pro_any', set: s => { s.obj = 'corda'; } }
+  ] },
+
+pro_any: { era: 'casa',
+  text: [
+    x(`Cronet obri el seu quadern, ple de gargots i taques de tinta.`,
+      `Cronet abre su cuaderno, lleno de garabatos y manchas de tinta.`),
+    x(`>—Primer engranatge: Valentia, la ciutat romana. Any mil cent trenta-huit abans de Crist. Ho tinc apuntat, ho tinc apuntat!`,
+      `>—Primer engranaje: Valentia, la ciudad romana. Año mil ciento treinta y ocho antes de Cristo. ¡Lo tengo apuntado, lo tengo apuntado!`),
+    x(`Però a la maneta, la mestra ha escrit amb lletra menuda: «Valentia: any 138 aC».`,
+      `Pero en la manivela, la maestra ha escrito con letra pequeña: «Valentia: año 138 a. C.».`),
+    x(`!Cronet apunta moltíssimes coses. Per desgràcia, no sempre les apunta bé.`,
+      `!Cronet apunta muchísimas cosas. Por desgracia, no siempre las apunta bien.`)
+  ],
+  choices: [
+    { t: x(`Posar la maneta en l'any 1138 aC (el de Cronet)`, `Poner la manivela en el año 1138 a. C. (el de Cronet)`), go: 'cronet_data' },
+    { t: x(`Posar la maneta en l'any 138 aC (el de la mestra)`, `Poner la manivela en el año 138 a. C. (el de la maestra)`), go: 'c1_arribada' }
+  ] },
+
+/* ---------- CAPÍTOL 1: VALENTIA ---------- */
+c1_arribada: { era: 'roma',
+  text: [
+    x(`¡PLOF! El maletí s'obri en un racó ombrívol del fòrum de Valentia. Hi ha carros, ànfores i soldats de passeig. La ciutat és nova: els romans l'acaben de fundar.`,
+      `¡PLOF! El maletín se abre en un rincón sombrío del foro de Valentia. Hay carros, ánforas y soldados de paseo. La ciudad es nueva: los romanos acaban de fundarla.`),
+    x(`El fòrum és la plaça major, on la gent compra, ven i xarra de tot. Al fons es veuen les termes, uns banys públics amb molt de vapor.`,
+      `El foro es la plaza mayor, donde la gente compra, vende y charla de todo. Al fondo se ven las termas, unos baños públicos con mucho vapor.`),
+    x(`>—Ho apunte —diu Cronet—: «Valentia, any 138 aC. Els romans la van fundar perquè els agradaven el sol i l'orxata».`,
+      `>—Lo apunto —dice Cronet—: «Valentia, año 138 a. C. Los romanos la fundaron porque les gustaban el sol y la horchata».`),
+    x(`!No et fies de tot el que apunta Cronet.`, `!No te fíes de todo lo que apunta Cronet.`),
+    x(`L'engranatge brilla ací prop: o al mercat del fòrum, o a les termes.`,
+      `El engranaje brilla aquí cerca: o en el mercado del foro, o en las termas.`)
+  ],
+  choices: [
+    { t: x(`Anar al mercat del fòrum`, `Ir al mercado del foro`), go: 'c1_mercat' },
+    { t: x(`Anar directament a les termes`, `Ir directamente a las termas`), go: 'c1_porta' }
+  ] },
+
+c1_mercat: { era: 'roma',
+  text: [
+    x(`Entre muntanyes de figues i cistelles d'olives, una xiqueta plora darrere d'un parament d'ànfores: es diu Livia.`,
+      `Entre montañas de higos y cestas de aceitunas, una niña llora detrás de un puesto de ánforas: se llama Livia.`),
+    x(`>—He perdut el meu gatet, Bum! —diu Livia—. Es diu així perquè, quan s'espanta, bota com un petard. El meu pare, Quint, vigila les termes. Potser s'hi ha colat.`,
+      `>—¡He perdido a mi gatito, Bum! —dice Livia—. Se llama así porque, cuando se asusta, salta como un petardo. Mi padre, Quint, vigila las termas. Quizá se ha colado.`),
+    x(`Mentre sanglota, t'ofereix una figa seca per al camí.`,
+      `Mientras solloza, te ofrece un higo seco para el camino.`)
+  ],
+  choices: [
+    { t: x(`Acceptar la figa i prometre que buscaràs Bum (+1 energia)`, `Aceptar el higo y prometer que buscarás a Bum (+1 energía)`), go: 'c1_porta', set: s => { s.livia = 1; gainEn(s); } },
+    { t: x(`Seguir cap a les termes sense parar`, `Seguir hacia las termas sin parar`), go: 'c1_porta' }
+  ] },
+
+c1_porta: { era: 'roma',
+  text: s => [
+    x(`Les termes tenen una porta enorme de fusta i, davant, un vigilant amb cara de pocs amics: Quint.`,
+      `Las termas tienen una puerta enorme de madera y, delante, un vigilante con cara de pocos amigos: Quint.`),
+    s.livia
+      ? x(`Quint ha vist de lluny que Livia et parlava, i et fa un gest amb el cap: potser et deixa passar.`,
+          `Quint ha visto de lejos que Livia te hablaba, y te hace un gesto con la cabeza: quizá te deja pasar.`)
+      : x(`>—L'entrada val 45 sestercis —diu Quint— o un objecte de valor.`,
+          `>—La entrada vale 45 sestercios —dice Quint— o un objeto de valor.`)
+  ],
+  choices: [
+    { t: x(`Dir a Quint que véns de part de Livia`, `Decirle a Quint que vienes de parte de Livia`), if: s => s.livia, go: 'c1_dins' },
+    { t: s => x(`Donar-li ${ON[s.obj].ca} a canvi de l'entrada`, `Darle ${ON[s.obj].es} a cambio de la entrada`), if: s => s.obj, go: 'c1_dins', set: s => { s.pagat = s.obj; s.obj = null; } },
+    { t: x(`Pagar l'entrada amb les teues monedes`, `Pagar la entrada con tus monedas`), go: 'c1_m1' }
+  ] },
+
+c1_m1: { era: 'roma',
+  text: s => [
+    x(`Tens tres bossetes i, a cadascuna, hi ha 20 sestercis. L'entrada costa 45.`,
+      `Tienes tres bolsitas y en cada una hay 20 sestercios. La entrada cuesta 45.`),
+    x(`?Quants sestercis et sobren després de pagar?`, `?¿Cuántos sestercios te sobran después de pagar?`),
+    ...(s.fail ? [x(`>—No em quadren els comptes —diu Quint, i et fa recomptar.`, `>—No me cuadran las cuentas —dice Quint, y te hace recontar.`)] : []),
+    x(`!Primer, quant tens en total: tres vegades vint. Després lleva'n quaranta-cinc.`,
+      `!Primero, cuánto tienes en total: tres veces veinte. Después réstale cuarenta y cinco.`)
+  ],
+  choices: [
+    { t: x(`25 sestercis`, `25 sestercios`), go: 'c1_m1', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`15 sestercis`, `15 sestercios`), go: 'c1_dins', set: s => { s.fail = 0; } },
+    { t: x(`105 sestercis`, `105 sestercios`), go: 'c1_m1', set: s => { s.fail = 1; s.en -= 1; } }
+  ] },
+
+c1_dins: { era: 'roma',
+  text: [
+    x(`Dins fa una calor de caldera. El vapor puja del sòl i els romans, embolicats en tovalloles de lli, van d'un bany a l'altre.`,
+      `Dentro hace un calor de caldera. El vapor sube del suelo y los romanos, envueltos en toallas de lino, van de un baño a otro.`),
+    x(`>—Ho apunte —diu Cronet—: «Els romans es banyaven perquè encara no havien inventat la televisió».`,
+      `>—Lo apunto —dice Cronet—: «Los romanos se bañaban porque todavía no habían inventado la televisión».`),
+    x(`Es sent un miol llunyà entre els tubs, i un soroll de metall que raspa a la sala calenta.`,
+      `Se oye un maullido lejano entre los tubos, y un ruido de metal que raspa en la sala caliente.`)
+  ],
+  choices: [
+    { t: x(`Seguir el miol (−1 energia)`, `Seguir el maullido (−1 energía)`), go: 'c1_gat', set: s => { s.en -= 1; } },
+    { t: x(`Anar directament a la sala calenta`, `Ir directamente a la sala caliente`), go: 'c1_calda' }
+  ] },
+
+c1_gat: { era: 'roma',
+  onEnter: s => { s.gat = 1; if (s.pagat && !s.retornat) { s.retornat = 1; s.obj = s.pagat; } },
+  text: s => [
+    x(`Darrere d'una pila de tovalloles hi ha una bola de pèl gris amb uns ulls enormes: Bum. Quan sent el teu pas, bota com un petard i se't penja del coll. ¡BUM!`,
+      `Detrás de una pila de toallas hay una bola de pelo gris con unos ojos enormes: Bum. Cuando oye tus pasos, salta como un petardo y se te cuelga del cuello. ¡BUM!`),
+    x(`>—L'has trobat! —crida Livia, que ha vingut corrent amb el seu pare—. Gràcies, gràcies, gràcies!`,
+      `>—¡Lo has encontrado! —grita Livia, que ha venido corriendo con su padre—. ¡Gracias, gracias, gracias!`),
+    (s.pagat && ON[s.pagat])
+      ? x(`Quint, emocionat, et torna ${ON[s.pagat].ca} que li havies donat: «Un favor es paga amb un altre favor».`,
+          `Quint, emocionado, te devuelve ${ON[s.pagat].es} que le habías dado: «Un favor se paga con otro favor».`)
+      : x(`Quint et dona una palmada a l'esquena: «Esta ciutat necessita gent com tu».`,
+          `Quint te da una palmada en la espalda: «Esta ciudad necesita gente como tú».`)
+  ],
+  choices: [
+    { t: x(`Continuar cap a la sala calenta`, `Continuar hacia la sala caliente`), go: 'c1_calda' }
+  ] },
+
+c1_calda: { era: 'roma',
+  text: s => [
+    x(`La sala calenta té un estany d'aigua bullent i, al fons, darrere d'una reixa de bronze, brilla l'engranatge. Els barrots estan massa junts per a passar la mà.`,
+      `La sala caliente tiene un estanque de agua hirviendo y, al fondo, detrás de una reja de bronce, brilla el engranaje. Los barrotes están demasiado juntos para pasar la mano.`),
+    x(`Al marc hi ha un rètol gravat en llatí, i Cronet el tradueix: «Qui diga què sóc, que passe.»`,
+      `En el marco hay un rótulo grabado en latín, y Cronet lo traduce: «Quien diga qué soy, que pase.»`),
+    x(`?Sóc rodó com una moneda i tinc dos braços que no abracen; no parle, però et dic quina hora és.`,
+      `?Soy redondo como una moneda y tengo dos brazos que no abrazan; no hablo, pero te digo qué hora es.`),
+    ...(s.fail ? [x(`La reixa grunyeix i et salpica d'aigua calenta. Cronet s'espolsa les plomes, ofés.`, `La reja gruñe y te salpica de agua caliente. Cronet se sacude las plumas, ofendido.`)] : []),
+    ...(s.obj === 'imant' ? [x(`!L'imant de la butxaca s'ha posat a vibrar: l'engranatge és d'acer.`, `!El imán del bolsillo se ha puesto a vibrar: el engranaje es de acero.`)] : [])
+  ],
+  choices: [
+    { t: x(`Una roda de carro`, `Una rueda de carro`), go: 'c1_calda', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`Un rellotge`, `Un reloj`), go: 'c1_gear', set: s => { s.fail = 0; } },
+    { t: x(`Una moneda gran`, `Una moneda grande`), go: 'c1_calda', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`Pescar l'engranatge amb l'imant`, `Pescar el engranaje con el imán`), if: s => s.obj === 'imant', go: 'c1_gear', set: s => { s.fail = 0; } },
+    { t: x(`Estirar el braç tant com puga (−1 energia)`, `Estirar el brazo cuanto pueda (−1 energía)`), go: 'c1_gear', set: s => { s.fail = 0; s.en -= 1; } }
+  ] },
+
+c1_gear: { era: 'roma',
+  onEnter: s => { s.f1 = 1; },
+  text: [
+    x(`L'engranatge cau al teu palmell, calent com un panet acabat de fer. ¡CLINC! Al maletí, un forat s'il·lumina.`,
+      `El engranaje cae en tu palma, caliente como un panecillo recién hecho. ¡CLINC! En el maletín, un hueco se ilumina.`),
+    x(`>—Primer engranatge! —diu Cronet—. Ho apunte: «L'engranatge el va trobar un lloro, amb una mica d'ajuda».`,
+      `>—¡Primer engranaje! —dice Cronet—. Lo apunto: «El engranaje lo encontró un loro, con un poco de ayuda».`)
+  ],
+  choices: [
+    { t: x(`Tornar al racó on espera el maletí`, `Volver al rincón donde espera el maletín`), go: 'c1_tancament' }
+  ] },
+
+c1_tancament: { era: 'roma',
+  text: [
+    x(`El maletí espera entre dues ànfores. A la sortida, uns vigilants del fòrum miren amb sospita tot el que du la gent.`,
+      `El maletín espera entre dos ánforas. A la salida, unos vigilantes del foro miran con sospecha todo lo que lleva la gente.`),
+    x(`!Passejar per Valentia amb un engranatge a la mà no sembla gens bona idea.`,
+      `!Pasear por Valentia con un engranaje en la mano no parece nada buena idea.`)
+  ],
+  choices: [
+    { t: x(`Creuar el fòrum amb l'engranatge a la vista, per anar més ràpid`, `Cruzar el foro con el engranaje a la vista, para ir más rápido`), go: 'roma_atrapat' },
+    { t: x(`Amagar l'engranatge, obrir el maletí i girar la maneta`, `Esconder el engranaje, abrir el maletín y girar la manivela`), go: 'c2_arribada' }
+  ] },
+
+/* ---------- CAPÍTOL 2: XÀTIVA ---------- */
+c2_arribada: { era: 'xativa',
+  text: [
+    x(`¡PLOF! El maletí s'obri en un carreró estret, al peu d'una muntanya amb un castell enlaire. Estem a Xàtiva, al segle XIII, i l'aire fa olor de drap mullat.`,
+      `¡PLOF! El maletín se abre en un callejón estrecho, al pie de una montaña con un castillo en lo alto. Estamos en Xàtiva, en el siglo XIII, y el aire huele a trapo mojado.`),
+    x(`>—Ho apunte —diu Cronet—: «Xàtiva, on els lloros van inventar el paper».`,
+      `>—Lo apunto —dice Cronet—: «Xàtiva, donde los loros inventaron el papel».`),
+    x(`!Ja saps com és Cronet.`, `!Ya sabes cómo es Cronet.`),
+    x(`El mapa de la màquina assenyala dos llocs: un molí de paper vora el riu, i una reixa que tanca un canal sota la muntanya.`,
+      `El mapa de la máquina señala dos sitios: un molino de papel junto al río, y una reja que cierra un canal bajo la montaña.`)
+  ],
+  choices: [
+    { t: x(`Seguir l'olor de drap mullat fins al molí de paper`, `Seguir el olor a trapo mojado hasta el molino de papel`), go: 'c2_moli' },
+    { t: x(`Buscar la reixa del canal`, `Buscar la reja del canal`), go: 'c2_reixa' }
+  ] },
+
+c2_moli: { era: 'xativa',
+  text: [
+    x(`Una roda d'aigua fa moure uns mallets de fusta que piquen draps vells fins a fer-ne una pasta blanca. És el molí de Bernat, el paperer.`,
+      `Una rueda de agua mueve unos mazos de madera que machacan trapos viejos hasta hacer una pasta blanca. Es el molino de Bernat, el papelero.`),
+    x(`Als fils del pati, centenars de fulls s'assequen al sol. Però al cel s'amunteguen uns núvols negres com mores.`,
+      `En los hilos del patio, cientos de hojas se secan al sol. Pero en el cielo se amontonan unas nubes negras como moras.`),
+    x(`>—Ei, tu! —crida Bernat—. Ve tempesta i tinc tot el paper estés! Si es mulla, adeu a una setmana de feina! M'ajudes?`,
+      `>—¡Eh, tú! —grita Bernat—. ¡Viene tormenta y tengo todo el papel tendido! ¡Si se moja, adiós a una semana de trabajo! ¿Me ayudas?`)
+  ],
+  choices: [
+    { t: x(`Ajudar Bernat a arreplegar els fulls`, `Ayudar a Bernat a recoger las hojas`), go: 'c2_calcul' },
+    { t: x(`Passar de llarg i buscar el canal`, `Pasar de largo y buscar el canal`), go: 'c2_reixa' }
+  ] },
+
+c2_calcul: { era: 'xativa',
+  text: s => [
+    x(`Bernat et passa una pila de fulls; ell en porta una altra. Corren pel pati entre el vent.`,
+      `Bernat te pasa una pila de hojas; él lleva otra. Corren por el patio entre el viento.`),
+    x(`>—Tinc quatre piles de 48 fulls cada una —diu Bernat, sense alé—. Quants fulls hem de tapar abans que arribe la pluja?`,
+      `>—Tengo cuatro pilas de 48 hojas cada una —dice Bernat, sin aliento—. ¿Cuántas hojas tenemos que tapar antes de que llegue la lluvia?`),
+    x(`?Quants fulls són quatre piles de 48?`, `?¿Cuántas hojas son cuatro pilas de 48?`),
+    ...(s.fail ? [x(`>—No, no, em falten fulls! —diu Bernat, i ho recompteu junts.`, `>—¡No, no, me faltan hojas! —dice Bernat, y lo recontáis juntos.`)] : []),
+    x(`!Pots fer 4 × 40 i 4 × 8, i sumar.`, `!Puedes hacer 4 × 40 y 4 × 8, y sumar.`)
+  ],
+  choices: [
+    { t: x(`182 fulls`, `182 hojas`), go: 'c2_calcul', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`192 fulls`, `192 hojas`), go: 'c2_paper_ok', set: s => { s.fail = 0; } },
+    { t: x(`52 fulls`, `52 hojas`), go: 'c2_calcul', set: s => { s.fail = 1; s.en -= 1; } }
+  ] },
+
+c2_paper_ok: { era: 'xativa',
+  onEnter: s => { s.paper = 1; gainEn(s); },
+  text: [
+    x(`Entre els dos arrepleguen l'últim full just quan cauen les primeres gotes. La pluja tamborineja sobre el teulat i Bernat riu, content.`,
+      `Entre los dos recogéis la última hoja justo cuando caen las primeras gotas. La lluvia tamborilea sobre el tejado y Bernat ríe, contento.`),
+    x(`>—Hi ha gent que passa de llarg i gent que s'atura —diu—. Pren este full del millor paper de Xàtiva: amb ell, qualsevol escrivà t'obrirà les portes.`,
+      `>—Hay gente que pasa de largo y gente que se detiene —dice—. Toma esta hoja del mejor papel de Xàtiva: con ella, cualquier escribano te abrirá las puertas.`),
+    x(`A més, et serveix un tros de pa amb mel (+1 energia) i et deixa una llàntia d'oli per al canal fosc.`,
+      `Además, te sirve un trozo de pan con miel (+1 energía) y te deja una lamparilla de aceite para el canal oscuro.`)
+  ],
+  choices: [
+    { t: x(`Anar a la reixa del canal`, `Ir a la reja del canal`), go: 'c2_reixa' }
+  ] },
+
+c2_reixa: { era: 'xativa',
+  text: s => [
+    x(`La reixa del canal és de ferro vell i té un pany de rodes numerades. Al costat, algú ha gravat una sèrie de números.`,
+      `La reja del canal es de hierro viejo y tiene un candado de ruedas numeradas. Al lado, alguien ha grabado una serie de números.`),
+    x(`?5 · 10 · 20 · 40 · …`, `?5 · 10 · 20 · 40 · …`),
+    ...(s.fail ? [x(`El pany grinyola i no cedeix. Cronet mossega el ferro, per si de cas.`, `El candado rechina y no cede. Cronet muerde el hierro, por si acaso.`)] : []),
+    x(`!Fixa't en com es passa de 5 a 10, i de 10 a 20…`, `!Fíjate en cómo se pasa de 5 a 10, y de 10 a 20…`)
+  ],
+  choices: [
+    { t: x(`60`, `60`), go: 'c2_reixa', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`80`, `80`), go: 'c2_canal', set: s => { s.fail = 0; } },
+    { t: x(`50`, `50`), go: 'c2_reixa', set: s => { s.fail = 1; s.en -= 1; } }
+  ] },
+
+c2_canal: { era: 'xativa',
+  text: [
+    x(`Darrere la reixa, un canal d'aigua baixa pel ventre de la muntanya, en una foscor total. Fa fred i fa olor de molsa.`,
+      `Detrás de la reja, un canal de agua baja por el vientre de la montaña, en una oscuridad total. Hace frío y huele a musgo.`),
+    x(`>—A les fosques jo no apunte res —diu Cronet—. Ni la meua cua veig.`,
+      `>—A oscuras yo no apunto nada —dice Cronet—. Ni mi cola veo.`),
+    x(`!Amb una mica de llum, la foscor no faria por.`, `!Con un poco de luz, la oscuridad no daría miedo.`)
+  ],
+  choices: [
+    { t: x(`Encendre la llanterna de rellotger`, `Encender la linterna de relojero`), if: s => s.obj === 'llanterna', go: 'c2_enigma' },
+    { t: x(`Encendre la llàntia que t'ha donat Bernat`, `Encender la lamparilla que te ha dado Bernat`), if: s => s.paper, go: 'c2_enigma' },
+    { t: x(`Avançar a les palpentes (−1 energia)`, `Avanzar a tientas (−1 energía)`), go: 'c2_perdut', set: s => { s.en -= 1; } }
+  ] },
+
+c2_perdut: { era: 'xativa',
+  text: [
+    x(`A les palpentes, el canal es parteix en dos túnels. Per un puja un soroll d'aigua; per l'altre baixa un corrent d'aire fred que et pessiga el coll.`,
+      `A tientas, el canal se parte en dos túneles. Por uno sube un ruido de agua; por el otro baja una corriente de aire frío que te pellizca el cuello.`),
+    x(`>—Jo diria que... —comença Cronet, i s'ho pensa—. Jo no diria res. Mai no he estat ací.`,
+      `>—Yo diría que... —empieza Cronet, y se lo piensa—. Yo no diría nada. Nunca he estado aquí.`)
+  ],
+  choices: [
+    { t: x(`Seguir el soroll de l'aigua cap amunt (−1 energia)`, `Seguir el ruido del agua hacia arriba (−1 energía)`), go: 'c2_enigma', set: s => { s.en -= 1; } },
+    { t: x(`Seguir el corrent d'aire fred cap avall`, `Seguir la corriente de aire frío hacia abajo`), go: 'xativa_fosc' }
+  ] },
+
+c2_enigma: { era: 'xativa',
+  text: s => [
+    x(`Al final del túnel hi ha una porta de pedra amb lletres gravades. Per les juntes es veu el relluir de l'engranatge.`,
+      `Al final del túnel hay una puerta de piedra con letras grabadas. Por las juntas se ve el brillo del engranaje.`),
+    x(`?M'han fet amb draps vells, m'han mullat i m'han estés; ara porte paraules sense tindre boca.`,
+      `?Me han hecho con trapos viejos, me han mojado y me han tendido; ahora llevo palabras sin tener boca.`),
+    ...(s.fail ? [x(`La porta no es mou ni un pam. Una gota freda et cau pel coll.`, `La puerta no se mueve ni un palmo. Una gota fría te cae por el cuello.`)] : []),
+    x(`!Al molí d'ací dalt, en tenien centenars estesos al sol.`, `!En el molino de arriba tenían cientos tendidos al sol.`)
+  ],
+  choices: [
+    { t: x(`Un mocador`, `Un pañuelo`), go: 'c2_enigma', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`Un full de paper`, `Una hoja de papel`), go: 'c2_gear', set: s => { s.fail = 0; } },
+    { t: x(`Una vela`, `Una vela`), go: 'c2_enigma', set: s => { s.fail = 1; s.en -= 1; } }
+  ] },
+
+c2_gear: { era: 'xativa',
+  onEnter: s => { s.f2 = 1; },
+  text: [
+    x(`La porta s'obri amb un gemec de pedra i l'engranatge, content, salta al teu palmell. ¡CLINC! Al maletí s'il·lumina el segon forat.`,
+      `La puerta se abre con un gemido de piedra y el engranaje, contento, salta a tu palma. ¡CLINC! En el maletín se ilumina el segundo hueco.`),
+    x(`>—Segon! —exclama Cronet—. Ho apunte: «El va trobar un lloro que no tenia por». Bé, va tindre una mica de por.`,
+      `>—¡Segundo! —exclama Cronet—. Lo apunto: «Lo encontró un loro que no tenía miedo». Bueno, tuvo un poquito de miedo.`)
+  ],
+  choices: [
+    { t: x(`Pujar fins al maletí`, `Subir hasta el maletín`), go: 'c2_tancament' }
+  ] },
+
+c2_tancament: { era: 'xativa',
+  text: [
+    x(`Puges seguint la llum d'una tempesta que s'allunya. El maletí espera al carreró, sec i brillant.`,
+      `Subes siguiendo la luz de una tormenta que se aleja. El maletín espera en el callejón, seco y brillante.`),
+    x(`>—Només falta l'últim —diu Cronet, mirant el quadern—. «València, finals del segle XV. La Llotja de la Seda.» Esta vegada sí que m'he apuntat bé l'any.`,
+      `>—Solo falta el último —dice Cronet, mirando el cuaderno—. «Valencia, finales del siglo XV. La Lonja de la Seda.» Esta vez sí que he apuntado bien el año.`)
+  ],
+  choices: [
+    { t: x(`Girar la maneta cap al segle XV`, `Girar la manivela hacia el siglo XV`), go: 'c3_arribada' }
+  ] },
+
+/* ---------- CAPÍTOL 3: LA LLOTJA ---------- */
+c3_arribada: { era: 'llotja',
+  text: s => [
+    x(`¡PLOF! El maletí s'obri darrere d'una columna de la Llotja de la Seda, a València. La sala és enorme, amb columnes retorçudes com cordes que pugen fins a les voltes.`,
+      `¡PLOF! El maletín se abre detrás de una columna de la Lonja de la Seda, en Valencia. La sala es enorme, con columnas retorcidas como cuerdas que suben hasta las bóvedas.`),
+    x(`Mercaders de tot arreu canten preus, pesen sedes i signen contractes. I allà dalt, penjat d'un llum de ferro, l'engranatge brilla.`,
+      `Mercaderes de todas partes cantan precios, pesan sedas y firman contratos. Y allá arriba, colgado de una lámpara de hierro, el engranaje brilla.`),
+    x(`>—Ho apunte —diu Cronet—: «A la Llotja els mercaders jugaven a cartes perquè la seda és molt avorrida».`,
+      `>—Lo apunto —dice Cronet—: «En la Lonja los mercaderes jugaban a cartas porque la seda es muy aburrida».`),
+    ...(s.moneder ? [x(`Pere, el vell mercader, et saluda amb la mà des de lluny.`, `Pere, el viejo mercader, te saluda con la mano desde lejos.`)] : []),
+    x(`!El llum és molt alt. Caldrà trobar com arribar-hi, i com pujar a la galeria.`,
+      `!La lámpara está muy alta. Habrá que encontrar cómo llegar, y cómo subir a la galería.`)
+  ],
+  choices: [
+    { t: x(`Anar a parlar amb el notari de la galeria`, `Ir a hablar con el notario de la galería`), go: 'c3_notari' },
+    { t: x(`Acostar-te a la partida de cartes dels mercaders`, `Acercarte a la partida de cartas de los mercaderes`), go: 'c3_cartes' },
+    { t: x(`Tornar el moneder que un mercader acaba de deixar caure`, `Devolver el monedero que un mercader acaba de dejar caer`), if: s => !s.moneder, go: 'c3_pere' }
+  ] },
+
+c3_pere: { era: 'llotja',
+  onEnter: s => { s.moneder = 1; },
+  text: [
+    x(`Corres darrere d'un vell mercader de sedes, amb barret de feltre, i li tornes el moneder abans que desaparega entre la gent.`,
+      `Corres detrás de un viejo mercader de sedas, con sombrero de fieltro, y le devuelves el monedero antes de que desaparezca entre la gente.`),
+    x(`>—Moltes gràcies! —diu, respirant amb dificultat—. Em dic Pere. Si necessites un favor a la Llotja, digues que véns de part meua.`,
+      `>—¡Muchas gracias! —dice, respirando con dificultad—. Me llamo Pere. Si necesitas un favor en la Lonja, di que vienes de mi parte.`)
+  ],
+  choices: [
+    { t: x(`Tornar a la sala de la Llotja`, `Volver a la sala de la Lonja`), go: 'c3_arribada' }
+  ] },
+
+c3_notari: { era: 'llotja',
+  text: s => [
+    x(`Un notari, amb una ploma d'oca i el nas ple de tinta, controla qui puja a la galeria alta.`,
+      `Un notario, con una pluma de oca y la nariz llena de tinta, controla quién sube a la galería alta.`),
+    x(`>—Només passen les persones de confiança —diu—. O qui sap respondre la meua endevinalla.`,
+      `>—Solo pasan las personas de confianza —dice—. O quien sepa responder a mi adivinanza.`),
+    x(`?Tinc quaranta cares i cap boca; tothom em reparteix i ningú no em menja.`,
+      `?Tengo cuarenta caras y ninguna boca; todos me reparten y nadie me come.`),
+    ...(s.fail ? [x(`>—No, no —diu el notari, i esborra la teua resposta amb la mànega.`, `>—No, no —dice el notario, y borra tu respuesta con la manga.`)] : []),
+    x(`!Els mercaders en tenen una damunt de la taula, allà al racó.`, `!Los mercaderes tienen una encima de la mesa, allí en el rincón.`)
+  ],
+  choices: [
+    { t: x(`Ensenyar-li el full de paper de Xàtiva`, `Enseñarle la hoja de papel de Xàtiva`), if: s => s.paper, go: 'c3_galeria', set: s => { s.fail = 0; } },
+    { t: x(`Dir que véns de part del mercader Pere`, `Decir que vienes de parte del mercader Pere`), if: s => s.moneder, go: 'c3_galeria', set: s => { s.fail = 0; } },
+    { t: x(`Una sabata`, `Un zapato`), go: 'c3_notari', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`Una baralla de cartes`, `Una baraja de cartas`), go: 'c3_galeria', set: s => { s.fail = 0; } },
+    { t: x(`Un rellotge`, `Un reloj`), go: 'c3_notari', set: s => { s.fail = 1; s.en -= 1; } }
+  ] },
+
+c3_cartes: { era: 'llotja',
+  text: s => [
+    x(`Quatre mercaders juguen a cartes en un racó, entre bales de seda. Cada vegada que algú es queda amb una sola carta, crida a ple pulmó: —¡UNA!`,
+      `Cuatro mercaderes juegan a cartas en un rincón, entre balas de seda. Cada vez que alguien se queda con una sola carta, grita a pleno pulmón: —¡UNA!`),
+    x(`>—Seu amb nosaltres i et deixarem l'escala per a pujar al llum —diu un d'ells—. Tens un 7 i un 9 a la mà. Posa la carta justa i el total serà vint.`,
+      `>—Siéntate con nosotros y te dejaremos la escalera para subir a la lámpara —dice uno de ellos—. Tienes un 7 y un 9 en la mano. Pon la carta justa y el total será veinte.`),
+    x(`?Quina carta cal afegir al 7 i al 9 per a arribar a 20?`,
+      `?¿Qué carta hay que añadir al 7 y al 9 para llegar a 20?`),
+    ...(s.fail ? [x(`>—Eixa no, eixa no! —riuen els mercaders, i et fan un lloc més a la taula.`, `>—¡Esa no, esa no! —ríen los mercaderes, y te hacen un sitio más en la mesa.`)] : []),
+    x(`!Primer suma 7 i 9. Després pregunta't quant falta fins a vint.`, `!Primero suma 7 y 9. Después pregúntate cuánto falta hasta veinte.`)
+  ],
+  choices: [
+    { t: x(`Un 6`, `Un 6`), go: 'c3_cartes', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`Un 4`, `Un 4`), go: 'c3_galeria', set: s => { s.fail = 0; s.escala = 1; } },
+    { t: x(`Un 13`, `Un 13`), go: 'c3_cartes', set: s => { s.fail = 1; s.en -= 1; } },
+    { t: x(`Apostar un dels engranatges que portes, per guanyar més ràpid`, `Apostar uno de los engranajes que llevas, para ganar más rápido`), if: s => s.f1 || s.f2, go: 'llotja_perd' },
+    { t: x(`Deixar la partida i tornar a la sala`, `Dejar la partida y volver a la sala`), go: 'c3_arribada', set: s => { s.fail = 0; } }
+  ] },
+
+c3_galeria: { era: 'llotja',
+  text: [
+    x(`A la galeria alta, el llum de ferro penja a molts metres del terra, com una aranya de bronze. L'engranatge gira lentament entre les cadenes.`,
+      `En la galería alta, la lámpara de hierro cuelga a muchos metros del suelo, como una araña de bronce. El engranaje gira lentamente entre las cadenas.`),
+    x(`!Qui tinga corda, ganxo o escala, ho té més fàcil.`, `!Quien tenga cuerda, gancho o escalera lo tiene más fácil.`)
+  ],
+  choices: [
+    { t: x(`Llançar el ganxo de la corda a les cadenes`, `Lanzar el gancho de la cuerda a las cadenas`), if: s => s.obj === 'corda', go: 'c3_gear' },
+    { t: x(`Pujar amb l'escala dels mercaders`, `Subir con la escalera de los mercaderes`), if: s => s.escala, go: 'c3_gear' },
+    { t: x(`Pujar a pols per la columna retorçuda (−1 energia)`, `Subir a pulso por la columna retorcida (−1 energía)`), go: 'c3_gear', set: s => { s.en -= 1; } }
+  ] },
+
+c3_gear: { era: 'llotja',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`Amb molta cura, l'engranatge es desenganxa de la cadena i cau entre els teus dits. ¡CLINC! Tercer forat il·luminat!`,
+      `Con mucho cuidado, el engranaje se suelta de la cadena y cae entre tus dedos. ¡CLINC! ¡Tercer hueco iluminado!`),
+    x(`>—Tres de tres! —aplaudeix Cronet amb les ales—. Ho apunte: «Això s'ha fet molt bé, i jo hi tinc part».`,
+      `>—¡Tres de tres! —aplaude Cronet con las alas—. Lo apunto: «Esto se ha hecho muy bien, y yo tengo parte».`)
+  ],
+  choices: [
+    { t: x(`Baixar fins al maletí`, `Bajar hasta el maletín`), go: 'c3_tancament' }
+  ] },
+
+c3_tancament: { era: 'llotja',
+  text: [
+    x(`Tens els tres engranatges! A l'oïda ja se't sent un xiulet llunyà: és la tetera del taller.`,
+      `¡Tienes los tres engranajes! En el oído ya se te oye un silbido lejano: es la tetera del taller.`),
+    x(`>—Anem, anem! —grazna Cronet—. Ho apunte: «Vam arribar just a temps», i esta vegada és veritat.`,
+      `>—¡Vamos, vamos! —grazna Cronet—. Lo apunto: «Llegamos justo a tiempo», y esta vez es verdad.`)
+  ],
+  choices: [
+    { t: x(`Girar la maneta de seguretat per fer l'últim salt cap a casa`, `Girar la manivela de seguridad para dar el último salto a casa`), go: s => (s.gat && s.paper && s.moneder) ? 'fi_heroi' : 'fi_bo' }
+  ] },
+
+/* ---------- FINALS ---------- */
+berenar: { ending: 'berenar', title: x(`El taller sense màquina`, `El taller sin máquina`),
+  text: [
+    x(`Tapes la màquina amb un llençol i te'n vas a berenar. El pa amb xocolate està boníssim, però a cada mos tens un nus a l'estómac.`,
+      `Tapas la máquina con una sábana y te vas a merendar. El pan con chocolate está buenísimo, pero a cada bocado tienes un nudo en el estómago.`),
+    x(`Quan la tetera xiula, la mestra Anselma entra al taller, alça el llençol i un silenci de mil rellotges s'estén per la sala.`,
+      `Cuando la tetera silba, la maestra Anselma entra en el taller, levanta la sábana y un silencio de mil relojes se extiende por la sala.`),
+    x(`>—Falten tres engranatges —diu, molt seria—. I tu no m'ho has dit.`,
+      `>—Faltan tres engranajes —dice, muy seria—. Y tú no me lo has dicho.`),
+    x(`Durant una llarga temporada només poses oli als rellotges de paret. Tota aventura comença per un primer pas, i este encara no l'has fet.`,
+      `Durante una larga temporada solo pones aceite a los relojes de pared. Toda aventura empieza por un primer paso, y este todavía no lo has dado.`)
+  ] },
+
+cronet_data: { ending: 'cronet_data', title: x(`Mil anys massa prompte`, `Mil años demasiado pronto`),
+  text: [
+    x(`Gires la maneta fins a 1138 aC. ¡PLOF! El maletí s'obri… en un prat. Hi ha herba, pedres, un cel enorme i una cabra que mastega, tranquil·la.`,
+      `Giras la manivela hasta 1138 a. C. ¡PLOF! El maletín se abre… en un prado. Hay hierba, piedras, un cielo enorme y una cabra que mastica, tranquila.`),
+    x(`No hi ha cases, ni fòrum, ni termes. Valentia encara no existeix: no existirà fins d'ací a mil anys.`,
+      `No hay casas, ni foro, ni termas. Valentia todavía no existe: no existirá hasta dentro de mil años.`),
+    x(`>—Ho apunte —diu Cronet, baixet—: «No hi ha ningú». I per una vegada, ho he apuntat bé.`,
+      `>—Lo apunto —dice Cronet, bajito—: «No hay nadie». Y por una vez, lo he apuntado bien.`),
+    x(`La màquina no pot saltar sense l'engranatge. Per sort, la mestra Anselma sap llegir el nombre de la maneta des del taller i, quan la tetera xiula, ve a buscar-vos. Has après que no cal fiar-se només d'un quadern.`,
+      `La máquina no puede saltar sin el engranaje. Por suerte, la maestra Anselma sabe leer el número de la manivela desde el taller y, cuando la tetera silba, viene a buscaros. Has aprendido que no hay que fiarse solo de un cuaderno.`)
+  ] },
+
+roma_atrapat: { ending: 'roma_atrapat', title: x(`Una estada massa llarga a Valentia`, `Una estancia demasiado larga en Valentia`),
+  text: [
+    x(`Camines pel fòrum amb l'engranatge de metall a la vista. Els vigilants, que ja n'han vist moltes, et paren.`,
+      `Caminas por el foro con el engranaje de metal a la vista. Los vigilantes, que ya han visto muchas, te paran.`),
+    x(`>—Això és un objecte de valor —diu un—. D'on l'has tret?`,
+      `>—Eso es un objeto de valor —dice uno—. ¿De dónde lo has sacado?`),
+    x(`No saps explicar-ho. Durant setmanes ajudes un escrivà a copiar llistes de figues i de sestercis. Aprens a escriure molt bé en llatí, però la màquina es queda sense tu.`,
+      `No sabes explicarlo. Durante semanas ayudas a un escribano a copiar listas de higos y de sestercios. Aprendes a escribir muy bien en latín, pero la máquina se queda sin ti.`),
+    x(`Quan la mestra Anselma aconsegueix trobar-vos, ja ha passat un mes d'aquell temps. L'aventura es va quedar a mitges.`,
+      `Cuando la maestra Anselma consigue encontraros, ya ha pasado un mes de aquel tiempo. La aventura se quedó a medias.`)
+  ] },
+
+xativa_fosc: { ending: 'xativa_fosc', title: x(`A les fosques, sota el castell`, `A oscuras, bajo el castillo`),
+  text: [
+    x(`El corrent d'aire fred et porta cap avall, cada vegada més avall. Els túnels es repeteixen, tots iguals, tots humits.`,
+      `La corriente de aire frío te lleva hacia abajo, cada vez más abajo. Los túneles se repiten, todos iguales, todos húmedos.`),
+    x(`Cronet ha deixat de parlar. A la fi, un paperer que busca una cabra perduda us troba, tremolant, i us treu a la llum amb una llàntia.`,
+      `Cronet ha dejado de hablar. Al fin, un papelero que busca una cabra perdida os encuentra, temblando, y os saca a la luz con una lamparilla.`),
+    x(`Has perdut hores, i les forces. L'engranatge continua dins la porta de pedra, on algú més atent podrà trobar-lo. Tu necessites descansar.`,
+      `Has perdido horas, y las fuerzas. El engranaje sigue dentro de la puerta de piedra, donde alguien más atento podrá encontrarlo. Tú necesitas descansar.`)
+  ] },
+
+llotja_perd: { ending: 'llotja_perd', title: x(`Les cartes de la Llotja`, `Las cartas de la Lonja`),
+  text: [
+    x(`Poses un engranatge sobre la taula, amb la certesa que no pots perdre. Els mercaders somriuen.`,
+      `Pones un engranaje sobre la mesa, con la certeza de que no puedes perder. Los mercaderes sonríen.`),
+    x(`>—¡UNA! —crida un d'ells, i en un segon la partida s'ha acabat.`,
+      `>—¡UNA! —grita uno de ellos, y en un segundo la partida ha terminado.`),
+    x(`Els mercaders s'enduen l'engranatge. Sense ell, la màquina no pot tornar a casa. Passes una llarga temporada a la Llotja copiant comptes: aprens a sumar moltíssim.`,
+      `Los mercaderes se llevan el engranaje. Sin él, la máquina no puede volver a casa. Pasas una larga temporada en la Lonja copiando cuentas: aprendes a sumar muchísimo.`),
+    x(`La mestra Anselma, preocupada, aprén a fabricar-ne un de nou. Tarda anys. Cal pensar-s'ho dos vegades abans d'apostar el que no és teu.`,
+      `La maestra Anselma, preocupada, aprende a fabricar uno nuevo. Tarda años. Hay que pensárselo dos veces antes de apostar lo que no es tuyo.`)
+  ] },
+
+sabata: { ending: 'sabata', title: x(`Sense energia`, `Sin energía`),
+  text: [
+    x(`Les cames se't tornen de plom i els ulls es tanquen sols. T'asseus un moment per a descansar… i t'adorms.`,
+      `Las piernas se te vuelven de plomo y los ojos se cierran solos. Te sientas un momento a descansar… y te duermes.`),
+    x(`Quan et desperten, la màquina ha tornat sola al taller amb Cronet, que et mira fixament des de dalt del maletí.`,
+      `Cuando te despiertan, la máquina ha vuelto sola al taller con Cronet, que te mira fijamente desde lo alto del maletín.`),
+    x(`>—Un aprenent sense energia no arriba lluny —diu—. Descansa, berena i torna a provar-ho.`,
+      `>—Un aprendiz sin energía no llega lejos —dice—. Descansa, merienda y vuelve a probar.`)
+  ] },
+
+fi_bo: { era: 'casa', ending: 'bo', title: x(`La tetera xiula`, `La tetera silba`),
+  text: s => {
+    const t = [
+      x(`¡PLOF! El maletí aterra damunt la taula del taller. Els tres engranatges encaixen amb tres clics i la màquina ronroneja com un gat gran.`,
+        `¡PLOF! El maletín aterriza sobre la mesa del taller. Los tres engranajes encajan con tres clics y la máquina ronronea como un gato grande.`),
+      x(`En eixe moment, la tetera comença a xiular i la mestra Anselma entra amb una safata de pastes.`,
+        `En ese momento, la tetera empieza a silbar y la maestra Anselma entra con una bandeja de pastas.`),
+      x(`>—Ja sóc ací! Què és este soroll de… —mira la màquina, et mira, mira Cronet—. Ho heu arreglat? Tot? En el temps d'una tetera?`,
+        `>—¡Ya estoy aquí! ¿Qué es este ruido de…? —mira la máquina, te mira, mira a Cronet—. ¿Lo habéis arreglado? ¿Todo? ¿En el tiempo de una tetera?`),
+      x(`{nom}, ets ja de ple dret aprenent de rellotger del temps.`,
+        `{nom}, ya eres de pleno derecho aprendiz de relojero del tiempo.`)
+    ];
+    let k = 0;
+    if (s.gat) { k++; t.push(x(`Una figa seca a la butxaca et recorda Livia, Quint i el gatet Bum.`, `Un higo seco en el bolsillo te recuerda a Livia, a Quint y al gatito Bum.`)); }
+    if (s.paper) { k++; t.push(x(`El full de paper de Bernat fa olor de riu i de pluja de fa set segles.`, `La hoja de papel de Bernat huele a río y a lluvia de hace siete siglos.`)); }
+    if (s.moneder) { k++; t.push(x(`Un cordó de seda, regal de Pere, llueix al teu canell.`, `Un cordón de seda, regalo de Pere, luce en tu muñeca.`)); }
+    if (k < 3) t.push(x(`>—Mira el meu quadern —murmura Cronet—: «En cada època hi havia una petita bondat per fer, que ningú no ens va demanar». N'hem fet ${k} de 3. Les altres… em sembla que les vaig apuntar malament.`,
+                        `>—Mira mi cuaderno —murmura Cronet—: «En cada época había una pequeña bondad por hacer, que nadie nos pidió». Hemos hecho ${k} de 3. Las otras… creo que las apunté mal.`));
+    return t;
+  } },
+
+fi_heroi: { era: 'casa', ending: 'heroi', title: x(`El temps, en bones mans`, `El tiempo, en buenas manos`),
+  text: [
+    x(`¡PLOF! El maletí aterra damunt la taula del taller. Els tres engranatges encaixen amb tres clics i la màquina s'il·lumina de dalt a baix, com una nit d'estrelles.`,
+      `¡PLOF! El maletín aterriza sobre la mesa del taller. Los tres engranajes encajan con tres clics y la máquina se ilumina de arriba abajo, como una noche de estrellas.`),
+    x(`Just llavors la tetera comença a xiular, i la mestra Anselma entra amb una safata de pastes.`,
+      `Justo entonces la tetera empieza a silbar, y la maestra Anselma entra con una bandeja de pastas.`),
+    x(`>—Ja sóc ací! Per què brilla tant la màquina? —s'atura, i entén—. {nom}, no només heu recuperat els engranatges. Heu fet les bones accions.`,
+      `>—¡Ya estoy aquí! ¿Por qué brilla tanto la máquina? —se detiene, y comprende—. {nom}, no solo habéis recuperado los engranajes. Habéis hecho las buenas acciones.`),
+    x(`A Valentia, Livia i Quint tornen a sentir els miols de Bum cada vesprada. A Xàtiva, Bernat estén paper sota un sol sense nuvolades. A la Llotja, Pere compta els diners amb un somriure.`,
+      `En Valentia, Livia y Quint vuelven a oír los maullidos de Bum cada tarde. En Xàtiva, Bernat tiende papel bajo un sol sin nubes. En la Lonja, Pere cuenta el dinero con una sonrisa.`),
+    x(`La mestra Anselma et penja un engranatge xicotet al coll: «Un rellotger del temps no es mesura pels engranatges que recupera, sinó pels favors que fa pel camí».`,
+      `La maestra Anselma te cuelga un pequeño engranaje del cuello: «Un relojero del tiempo no se mide por los engranajes que recupera, sino por los favores que hace por el camino».`),
+    x(`>—Ho apunte —diu Cronet, amb les plomes inflades—: «138 aC». Per fi, un any ben apuntat!`,
+      `>—Lo apunto —dice Cronet, con las plumas infladas—: «138 a. C.». ¡Por fin, un año bien apuntado!`)
+  ] }
+
+};
+
+/* ============ MOTOR ============ */
+function initState() {
+  return { nom: '', obj: null, pagat: null, en: 5, f1: 0, f2: 0, f3: 0,
+           livia: 0, gat: 0, retornat: 0, paper: 0, moneder: 0, escala: 0, fail: 0 };
+}
+const st = { scene: 'intro', s: initState(), hist: [], found: {}, lang: 'ca', era: 'casa', gloss: false };
+let locked = false;
+let restartArmed = false;
+let restartTimer = null;
+
+function T(v) { return (v && typeof v === 'object') ? v[st.lang] : v; }
+function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function hn(text) {
+  let t = esc(text);
+  t = t.replace(/\{([^{}|]+)\|([^{}|]+)\}/g, function (m, a, b) { return st.s.gen === 'f' ? b : a; });
+  t = t.replace(/\{nom\}/g, '<b>' + esc(String(st.s.nom || '').toUpperCase()) + '</b>');
+  t = t.replace(/\b(Cronet|Anselma|Livia|Quint|Bum|Bernat|Pere)\b/g, function (m) { return '<b>' + m.toUpperCase() + '</b>'; });
+  return t;
+}
+
+function foundCount() {
+  let n = 0;
+  ALL_ENDINGS.forEach(function (k) { if (st.found[k]) n++; });
+  if (st.found.bo) n++;
+  if (st.found.heroi) n++;
+  return n;
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ scene: st.scene, s: st.s, hist: st.hist.slice(-40), found: st.found, lang: st.lang, era: st.era }));
+  } catch (e) { /* sense emmagatzematge */ }
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.lang === 'ca' || d.lang === 'es') st.lang = d.lang;
+    if (d.found && typeof d.found === 'object') st.found = d.found;
+    if (d.scene && S[d.scene]) {
+      st.scene = d.scene;
+      st.s = Object.assign(initState(), d.s || {});
+      st.hist = Array.isArray(d.hist) ? d.hist : [];
+      st.era = d.era || (S[d.scene].era || 'casa');
+    }
+  } catch (e) { /* res */ }
+}
+
+function plateSVG(era) {
+  const a = 'currentColor';
+  if (era === 'roma') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><rect x="8" y="10" width="94" height="9" rx="2" opacity=".9"/><rect x="14" y="19" width="10" height="43" opacity=".7"/><rect x="38" y="19" width="10" height="43" opacity=".7"/><rect x="62" y="19" width="10" height="43" opacity=".7"/><rect x="86" y="19" width="10" height="43" opacity=".7"/></g><rect x="4" y="62" width="102" height="4" fill="' + a + '"/></svg>';
+  }
+  if (era === 'xativa') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><path d="M6 16 H70" stroke="' + a + '" stroke-width="3" fill="none" stroke-linecap="round"/><g fill="' + a + '"><rect x="10" y="18" width="14" height="22" opacity=".85"/><rect x="28" y="20" width="14" height="22" opacity=".6"/><rect x="46" y="18" width="14" height="22" opacity=".85"/></g><g fill="none" stroke="' + a + '" stroke-width="4"><circle cx="86" cy="44" r="16"/><path d="M86 28 v32 M70 44 h32 M75 33 l22 22 M97 33 l-22 22" stroke-width="3"/></g><rect x="2" y="62" width="106" height="4" fill="' + a + '"/></svg>';
+  }
+  if (era === 'llotja') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="none" stroke="' + a + '" stroke-width="6" stroke-linecap="round"><path d="M22 62 q10-14 0-28 q-10-14 0-28" opacity=".85"/><path d="M55 62 q10-14 0-28 q-10-14 0-28" opacity=".7"/><path d="M88 62 q10-14 0-28 q-10-14 0-28" opacity=".85"/></g><rect x="2" y="62" width="106" height="4" fill="' + a + '"/></svg>';
+  }
+  return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M10 34 L55 6 L100 34 Z" opacity=".85"/><rect x="20" y="34" width="70" height="28" opacity=".5"/><rect x="48" y="44" width="14" height="18" opacity=".9"/><rect x="26" y="40" width="12" height="12" opacity=".9"/><rect x="72" y="40" width="12" height="12" opacity=".9"/></g></svg>';
+}
+
+function slotSVG(kind, on) {
+  const a = 'currentColor';
+  let teeth = '';
+  for (let i = 0; i < 8; i++) teeth += '<rect x="14" y="1" width="4" height="6" rx="1" transform="rotate(' + (i * 45) + ' 16 16)"/>';
+  const g = '<g fill="' + (on ? a : 'none') + '" stroke="' + a + '" stroke-width="2"' + (on ? '' : ' stroke-dasharray="3 2" opacity=".5"') + '>' + teeth + '<circle cx="16" cy="16" r="9"/></g>';
+  const hole = '<circle cx="16" cy="16" r="3.5" fill="' + (on ? 'var(--card)' : 'none') + '" stroke="' + a + '" stroke-width="2"' + (on ? '' : ' opacity=".5"') + '/>';
+  return '<svg viewBox="0 0 32 32" aria-hidden="true">' + g + hole + '</svg>';
+}
+
+function hudHTML() {
+  const s = st.s;
+  let pips = '';
+  for (let i = 1; i <= 5; i++) pips += '<span class="pip' + (i <= s.en ? ' on' : '') + '"></span>';
+  const chips = [];
+  if (s.obj) chips.push('<span class="chip">' + esc(T(OCHIP[s.obj])) + '</span>');
+  if (s.paper) chips.push('<span class="chip">' + esc(T(U.paperChip)) + '</span>');
+  if (s.escala) chips.push('<span class="chip">' + esc(T(U.ladderChip)) + '</span>');
+  if (!chips.length) chips.push('<span class="chip empty">' + esc(T(U.empty)) + '</span>');
+  return '<div class="hud">' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pieces)) + '</span>' + slotSVG(1, s.f1) + slotSVG(2, s.f2) + slotSVG(3, s.f3) + '</div>' +
+    '<div class="grp" aria-label="' + esc(T(U.energy)) + ' ' + s.en + '/5"><span class="lbl">' + esc(T(U.energy)) + '</span><span class="pips">' + pips + '</span></div>' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pack)) + '</span><span class="chips">' + chips.join('') + '</span></div>' +
+    '</div>';
+}
+
+function textHTML(arr) {
+  return arr.map(function (item) {
+    let line = T(item);
+    let cls = '';
+    const c = line.charAt(0);
+    if (c === '>') { cls = 'dlg'; line = line.slice(1); }
+    else if (c === '?') { cls = 'riddle'; line = line.slice(1); }
+    else if (c === '!') { cls = 'hint'; line = line.slice(1); }
+    return '<p' + (cls ? ' class="' + cls + '"' : '') + '>' + hn(line) + '</p>';
+  }).join('');
+}
+
+function renderIntro() {
+  const app = document.getElementById('app');
+  const l = st.lang;
+  const body = {
+    ca: {
+      hola: `Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs.`,
+      li: [
+        `<b>Energia:</b> tens cinc cercles. Algunes decisions en gasten i altres en recuperen. Si te'n quedes sense, la cosa es complica.`,
+        `<b>Motxilla:</b> ací guardes l'eina que triaràs al principi i altres coses que trobes pel camí. Algunes obrin camins, i també es poden regalar.`,
+        `<b>Engranatges:</b> n'hi ha tres i cal trobar-los tots. Els veuràs a dalt de cada pantalla.`,
+        `<b>Finals:</b> hi ha ${TOTAL_FINALS} finals diferents. A veure quants descobreixes!`,
+        `<b>Paraules noves:</b> si trobes una paraula estranya, toca el botó «Paraules» de dalt.`,
+        `Sempre pots tornar a l'última decisió amb el botó ↶.`
+      ]
+    },
+    es: {
+      hola: `¡Hola! Aquí decides tú qué pasa. Al final de cada escena elegirás qué hacer, y la historia cambiará según lo que elijas.`,
+      li: [
+        `<b>Energía:</b> tienes cinco círculos. Algunas decisiones gastan y otras recuperan. Si te quedas sin ninguno, la cosa se complica.`,
+        `<b>Mochila:</b> aquí guardas la herramienta que elegirás al principio y otras cosas que encuentres por el camino. Algunas abren caminos, y también se pueden regalar.`,
+        `<b>Engranajes:</b> hay tres y hay que encontrarlos todos. Los verás arriba en cada pantalla.`,
+        `<b>Finales:</b> hay ${TOTAL_FINALS} finales distintos. ¡A ver cuántos descubres!`,
+        `<b>Palabras nuevas:</b> si encuentras una palabra rara, toca el botón «Palabras» de arriba.`,
+        `Siempre puedes volver a la última decisión con el botón ↶.`
+      ]
+    }
+  }[l];
+  app.innerHTML =
+    '<section class="card intro">' +
+    '<h1>' + esc(T(TITLE)) + '</h1>' +
+    '<p class="sub">' + esc(T(DESC)) + '</p>' +
+    '<p style="font-size:1.15rem">' + body.hola + '</p>' +
+    '<ul>' + body.li.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>' +
+    '<label for="nom">' + esc(T(U.nameQ)) + '</label>' +
+    '<input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="' + esc(T(U.namePh)) + '">' +
+    '<p class="err" id="nom-err" hidden>' + esc(T(U.nameErr)) + '</p>' +
+    '<div class="choices"><button class="btn main" id="go-start" type="button">' + esc(T(U.start)) + '</button></div>' +
+    '<p class="counter">' + esc(T(U.finalsCount(foundCount()))) + '</p>' +
+    '</section>';
+  const input = document.getElementById('nom');
+  const err = document.getElementById('nom-err');
+  function go() {
+    const v = input.value.replace(/[<>&"'`{}|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+    if (!v) { err.hidden = false; input.focus(); return; }
+    st.s = initState();
+    st.s.nom = v;
+    st.hist = [];
+    enter('pro');
+  }
+  document.getElementById('go-start').addEventListener('click', go);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  input.addEventListener('input', function () { err.hidden = true; });
+}
+
+function renderGloss() {
+  const app = document.getElementById('app');
+  let h = '<section class="card gloss"><h2>' + esc(T(U.glossTitle)) + '</h2><dl>';
+  GL.forEach(function (g) { h += '<dt>' + esc(T(g.w)) + '</dt><dd>' + esc(T(g.d)) + '</dd>'; });
+  h += '</dl><div class="choices"><button class="btn main" id="gloss-back" type="button">' + esc(T(U.glossBack)) + '</button></div></section>';
+  app.innerHTML = h;
+  document.getElementById('gloss-back').addEventListener('click', function () { st.gloss = false; render(); });
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const sc = S[st.scene];
+  document.body.dataset.era = st.era;
+  document.documentElement.lang = st.lang === 'es' ? 'es' : 'ca';
+  document.title = T(TITLE_FULL);
+  document.getElementById('brand').textContent = T(TITLE);
+  document.getElementById('lang-ca').setAttribute('aria-pressed', String(st.lang === 'ca'));
+  document.getElementById('lang-es').setAttribute('aria-pressed', String(st.lang === 'es'));
+  document.getElementById('restart').setAttribute('aria-label', T(U.restartLbl));
+  const gb = document.getElementById('gloss');
+  gb.textContent = T(U.glossBtn);
+  gb.setAttribute('aria-pressed', String(st.gloss));
+  if (st.gloss) { renderGloss(); window.scrollTo(0, 0); return; }
+  if (st.scene === 'intro') { renderIntro(); window.scrollTo(0, 0); return; }
+
+  const tx = typeof sc.text === 'function' ? sc.text(st.s) : sc.text;
+  let html = '<section class="card">';
+  if (ERA[sc.era] && !sc.ending) {
+    html += '<div class="plate">' + plateSVG(sc.era) + '<div class="pn">' + esc(T(ERA[sc.era].n)) + '</div></div>';
+  }
+  if (!sc.ending) html += hudHTML();
+  if (sc.ending) html += '<h2>' + esc(T(sc.title)) + '</h2>';
+  html += '<div class="txt">' + textHTML(tx) + '</div>';
+
+  if (sc.ending) {
+    html += '<p class="endnote">' + esc(T(U.newEnd)) + ' · ' + esc(T(U.finalsCount(foundCount()))) + '</p>';
+    html += '<div class="choices">';
+    if (sc.ending === 'bo' || sc.ending === 'heroi') {
+      html += '<button class="btn main" data-act="again" type="button">' + esc(T(U.playAgain)) + '</button>';
+    } else {
+      html += '<button class="btn main" data-act="undo" type="button">' + esc(T(U.backLast)) + '</button>';
+      html += '<button class="btn ghost" data-act="again" type="button">' + esc(T(U.again)) + '</button>';
+    }
+    html += '</div>';
+  } else {
+    const ch = sc.choices.filter(function (c) { return !c.if || c.if(st.s); });
+    html += '<div class="choices">';
+    ch.forEach(function (c, i) {
+      const label = typeof c.t === 'function' ? c.t(st.s) : c.t;
+      html += '<button class="btn" data-i="' + i + '" type="button">' + hn(T(label)) + '</button>';
+    });
+    html += '</div>';
+    if (st.hist.length) html += '<div class="undo"><button class="btn ghost" data-act="undo" type="button">' + esc(T(U.undo)) + '</button></div>';
+    app.innerHTML = html + '</section>';
+    app.querySelectorAll('button[data-i]').forEach(function (b) {
+      b.addEventListener('click', function () { choose(ch[Number(b.dataset.i)]); });
+    });
+    bindActs(app);
+    window.scrollTo(0, 0);
+    return;
+  }
+  app.innerHTML = html + '</section>';
+  bindActs(app);
+  window.scrollTo(0, 0);
+}
+
+function bindActs(app) {
+  app.querySelectorAll('button[data-act]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.act === 'undo') undo();
+      else resetGame();
+    });
+  });
+}
+
+function choose(c) {
+  if (locked) return;
+  st.hist.push({ scene: st.scene, s: clone(st.s), era: st.era });
+  if (st.hist.length > 80) st.hist.shift();
+  if (c.set) c.set(st.s);
+  const target = typeof c.go === 'function' ? c.go(st.s) : c.go;
+  enter(target);
+}
+
+function enter(id) {
+  const prevEra = st.era;
+  let sc = S[id];
+  st.scene = id;
+  if (sc.onEnter) sc.onEnter(st.s);
+  if (st.s.en <= 0 && !sc.ending && id !== 'intro') { id = 'sabata'; sc = S[id]; st.scene = id; }
+  if (sc.era) st.era = sc.era;
+  if (sc.ending) st.found[sc.ending] = 1;
+  render();
+  save();
+  if (!sc.ending && sc.era && sc.era !== prevEra && ERA[sc.era] && ERA[sc.era].ch) plof(sc.era);
+}
+
+function undo() {
+  if (locked) return;
+  const h = st.hist.pop();
+  if (!h) { resetGame(); return; }
+  st.scene = h.scene;
+  st.s = Object.assign(initState(), h.s);
+  st.era = h.era || (S[h.scene].era || st.era);
+  render();
+  save();
+}
+
+function resetGame() {
+  st.s = initState();
+  st.hist = [];
+  st.scene = 'intro';
+  st.era = 'casa';
+  st.gloss = false;
+  render();
+  save();
+}
+
+function plof(eraKey) {
+  const el = document.getElementById('plof');
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('plof-dial').textContent = T(ERA[eraKey].n);
+  locked = true;
+  el.hidden = false;
+  setTimeout(function () { el.hidden = true; locked = false; }, reduced ? 500 : 1400);
+}
+
+function setLang(l) {
+  st.lang = l;
+  render();
+  save();
+}
+
+document.getElementById('gloss').addEventListener('click', function () { st.gloss = !st.gloss; render(); });
+document.getElementById('lang-ca').addEventListener('click', function () { setLang('ca'); });
+document.getElementById('lang-es').addEventListener('click', function () { setLang('es'); });
+document.getElementById('restart').addEventListener('click', function () {
+  const b = document.getElementById('restart');
+  if (!restartArmed) {
+    restartArmed = true;
+    b.textContent = T(U.restartAsk);
+    restartTimer = setTimeout(function () { restartArmed = false; b.textContent = '↻'; }, 2500);
+  } else {
+    clearTimeout(restartTimer);
+    restartArmed = false;
+    b.textContent = '↻';
+    resetGame();
+  }
+});
+
+load();
+render();
+</script>
+</body>
+</html>
