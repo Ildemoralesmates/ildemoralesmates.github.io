@@ -65,7 +65,14 @@ h1 em { font-style: normal; color: var(--c-mates); }
 .lede { color: var(--muted); font-size: 1.1rem; max-width: 38rem; margin: 0; }
 
 /* Filtres */
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.75rem 0 2.25rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.75rem 0 0.9rem; }
+.filters { display: grid; gap: 0.55rem; margin: 0 0 0.9rem; }
+.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; }
+.flabel { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); min-width: 6.5rem; }
+.chip.sm { font-size: 0.85rem; padding: 0.3rem 0.75rem; }
+.chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.status { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.9rem; color: var(--muted); font-size: 0.9rem; margin: 0 0 1.6rem; min-height: 1.5rem; }
+.reset { font: inherit; background: none; border: 0; padding: 0; color: var(--c-mates); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 700; }
 .chip {
   font: inherit; font-weight: 700; font-size: 0.92rem; cursor: pointer;
   border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
@@ -117,6 +124,7 @@ h1 em { font-style: normal; color: var(--c-mates); }
 footer { border-top: 1px solid var(--line); padding: 1.5rem 0 3rem; color: var(--muted); font-size: 0.85rem; }
 footer p { margin: 0 0 0.4rem; max-width: 46rem; }
 @media (max-width: 520px) {
+  .flabel { min-width: 100%; }
   .hero { padding-top: 2.2rem; }
   .card { grid-template-columns: 3.4rem 1fr; }
   .glyph { width: 3.4rem; height: 3.4rem; font-size: 1.9rem; }
@@ -135,6 +143,8 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
   </header>
 
   <nav class="chips" id="chips" aria-label="Categories"></nav>
+  <div class="filters" id="filters"></div>
+  <p class="status" id="status" aria-live="polite"></p>
   <main id="app"></main>
 
   <footer>
@@ -156,68 +166,110 @@ const CATS = [
 ];
 const RES = [
   // Matemàtiques · Història i nombres
-  { cat: 'mates', sub: 'Història i nombres', href: 'fites-matematiques/', glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
-  { cat: 'mates', sub: 'Història i nombres', href: 'eratostenes/', glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
+  { cat: 'mates', sub: 'Història i nombres', href: 'fites-matematiques/', niv: [], tipus: ['Línia del temps'], glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
+  { cat: 'mates', sub: 'Història i nombres', href: 'eratostenes/', niv: ['1r ESO', '2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
   // Matemàtiques · Càlcul i aritmètica
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'calcul-mental/', glyph: '×', t: 'Generador de càlcul mental', d: 'Fitxes per imprimir de taules, combinades, enters, fraccions, decimals, potències i percentatges. Tres nivells, versions diferents i solucionari amb passos.', tag: 'Fulls imprimibles · ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'calcul-mental/', niv: ['1r ESO', '2n ESO', '3r ESO', '4t ESO'], bloc: 'Numèric', tipus: ['Full de treball'], glyph: '×', t: 'Generador de càlcul mental', d: 'Fitxes per imprimir de taules, combinades, enters, fraccions, decimals, potències i percentatges. Tres nivells, versions diferents i solucionari amb passos.', tag: 'Fulls imprimibles · ESO' },
   // Matemàtiques · Geometria i àlgebra
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'pitagores/', glyph: 'c²', t: 'Pitàgores per àrees', d: 'Quatre triangles iguals es recol·loquen dins d\'un mateix quadrat: els espais lliures canvien de forma, però no d\'àrea.', tag: 'Teorema de Pitàgores · 2n ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-balanca/', glyph: '⚖', t: 'Equacions com a balança', d: 'Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.', tag: 'Equacions · 2n ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-segon-grau/', glyph: 'x²', t: 'Equacions de segon grau', d: 'Tir a cistella, salts d\'animals, coets de falla... Mira el discriminant, les solucions i la paràbola, i quines tenen sentit.', tag: 'Equacions · 3r i 4t ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'thales/', glyph: '∥', t: 'Thales i semblança', d: 'Arrossega els vèrtexs del triangle i comprova que els quocients de la paral·lela DE segueixen coincidint.', tag: 'Semblança · 2n ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'trigonometria/', glyph: 'sin', t: 'Circumferència goniomètrica', d: 'Mou un punt per la circumferència i mira com canvien sinus, cosinus i tangent. Angles notables amb valors exactes, gràfica i test.', tag: 'Trigonometria · 4t ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'pitagores/', niv: ['2n ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: 'c²', t: 'Pitàgores per àrees', d: 'Quatre triangles iguals es recol·loquen dins d\'un mateix quadrat: els espais lliures canvien de forma, però no d\'àrea.', tag: 'Teorema de Pitàgores · 2n ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-balanca/', niv: ['2n ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '⚖', t: 'Equacions com a balança', d: 'Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.', tag: 'Equacions · 2n ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-segon-grau/', niv: ['3r ESO', '4t ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: 'x²', t: 'Equacions de segon grau', d: 'Tir a cistella, salts d\'animals, coets de falla... Mira el discriminant, les solucions i la paràbola, i quines tenen sentit.', tag: 'Equacions · 3r i 4t ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'thales/', niv: ['2n ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: '∥', t: 'Thales i semblança', d: 'Arrossega els vèrtexs del triangle i comprova que els quocients de la paral·lela DE segueixen coincidint.', tag: 'Semblança · 2n ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'trigonometria/', niv: ['4t ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: 'sin', t: 'Circumferència goniomètrica', d: 'Mou un punt per la circumferència i mira com canvien sinus, cosinus i tangent. Angles notables amb valors exactes, gràfica i test.', tag: 'Trigonometria · 4t ESO' },
   // Matemàtiques · Fraccions i proporcionalitat
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'fraccions-barres/', glyph: '½', t: 'Fraccions amb barres', d: 'Fraccions equivalents, comparació i suma amb barres de la mateixa longitud, per veure-ho a ull.', tag: 'Fraccions · 2n ESO' },
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'proporcionalitat/', glyph: '∝', t: 'Proporcionalitat directa', d: 'Puja el valor de x i mira com es construeixen la taula i la gràfica. Compara una situació proporcional amb una que no ho és.', tag: 'Proporcionalitat · 2n ESO' },
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'rectes-tarifes/', glyph: 'mx+n', t: 'Rectes i tarifes', d: 'Escriu el pendent i l\'ordenada en l\'origen d\'una situació real i mira la taula i la recta. Compara fins a quatre tarifes i descobreix quan convé cadascuna.', tag: 'Funció afí · 2n i 4t ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'fraccions-barres/', niv: ['2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '½', t: 'Fraccions amb barres', d: 'Fraccions equivalents, comparació i suma amb barres de la mateixa longitud, per veure-ho a ull.', tag: 'Fraccions · 2n ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'proporcionalitat/', niv: ['2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '∝', t: 'Proporcionalitat directa', d: 'Puja el valor de x i mira com es construeixen la taula i la gràfica. Compara una situació proporcional amb una que no ho és.', tag: 'Proporcionalitat · 2n ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'rectes-tarifes/', niv: ['2n ESO', '4t ESO'], bloc: 'Funcions', tipus: ['Simulador'], glyph: 'mx+n', t: 'Rectes i tarifes', d: 'Escriu el pendent i l\'ordenada en l\'origen d\'una situació real i mira la taula i la recta. Compara fins a quatre tarifes i descobreix quan convé cadascuna.', tag: 'Funció afí · 2n i 4t ESO' },
   // Matemàtiques · Matrius
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matrius-activitats/', glyph: '✎', t: 'Les matrius no viuen només al llibre', d: 'Full de treball amb tres activitats basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.', tag: 'Full de treball' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'graus-separacio/', glyph: '⬡', t: 'Graus de separació', d: 'Setze alumnes i les seues amistats: les potències de la matriu compten els camins entre dues persones.', tag: 'Potències de matrius' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matriu-rotacio/', glyph: '↻', t: 'La matriu de rotació en acció', d: 'Gira una figura multiplicant cada punt per la mateixa matriu i observa què passa amb els números.', tag: 'Rotacions' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'autovectors/', glyph: 'λ', t: 'Com deforma l\'espai una matriu', d: 'La quadrícula es transforma punt a punt. Descobreix els autovectors: les direccions que no giren.', tag: 'Transformacions lineals' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'detector-vores/', glyph: '◧', t: 'Detector de vores', d: 'Un kernel llisca per una imatge xicoteta de 5×5 i, pas a pas, apareixen els contorns.', tag: 'Convolució' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'convolucio-12x12/', glyph: '⊛', t: 'Convolució en acció', d: 'Una imatge de 12×12, un kernel i tres filtres: vores, difuminat i enfocar. El resultat es forma píxel a píxel.', tag: 'Convolució' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'filtre-matrius/', glyph: '▦', t: 'El filtre que tu dissenyes', d: 'Inventa un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'cifra-hill/', glyph: '🔐', t: 'Xifrat amb matrius', d: 'La cifra de Hill: xifra amb una matriu 2×2 i desxifra amb la seua inversa.', tag: 'Criptografia · Batxillerat' },
-  { cat: 'mates', sub: 'Sistemes i espai · Batxillerat', href: 'sistemes-3x3/', glyph: '3×3', t: 'Sistemes 3×3 i plans', d: 'Discuteix un sistema amb Rouché-Frobenius pas a pas, també amb paràmetre, i mira en 3D com es tallen els tres plans.', tag: 'Sistemes · 2n Batxillerat' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matrius-activitats/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Full de treball'], glyph: '✎', t: 'Les matrius no viuen només al llibre', d: 'Full de treball amb tres activitats basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.', tag: 'Full de treball' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'graus-separacio/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⬡', t: 'Graus de separació', d: 'Setze alumnes i les seues amistats: les potències de la matriu compten els camins entre dues persones.', tag: 'Potències de matrius' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matriu-rotacio/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '↻', t: 'La matriu de rotació en acció', d: 'Gira una figura multiplicant cada punt per la mateixa matriu i observa què passa amb els números.', tag: 'Rotacions' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'autovectors/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: 'λ', t: 'Com deforma l\'espai una matriu', d: 'La quadrícula es transforma punt a punt. Descobreix els autovectors: les direccions que no giren.', tag: 'Transformacions lineals' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'detector-vores/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '◧', t: 'Detector de vores', d: 'Un kernel llisca per una imatge xicoteta de 5×5 i, pas a pas, apareixen els contorns.', tag: 'Convolució' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'convolucio-12x12/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⊛', t: 'Convolució en acció', d: 'Una imatge de 12×12, un kernel i tres filtres: vores, difuminat i enfocar. El resultat es forma píxel a píxel.', tag: 'Convolució' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'filtre-matrius/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '▦', t: 'El filtre que tu dissenyes', d: 'Inventa un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'cifra-hill/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '🔐', t: 'Xifrat amb matrius', d: 'La cifra de Hill: xifra amb una matriu 2×2 i desxifra amb la seua inversa.', tag: 'Criptografia · Batxillerat' },
+  { cat: 'mates', sub: 'Sistemes i espai · Batxillerat', href: 'sistemes-3x3/', niv: ['Batxillerat'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '3×3', t: 'Sistemes 3×3 i plans', d: 'Discuteix un sistema amb Rouché-Frobenius pas a pas, també amb paràmetre, i mira en 3D com es tallen els tres plans.', tag: 'Sistemes · 2n Batxillerat' },
   // Física
-  { cat: 'fisica', href: 'tir-parabolic/', glyph: '↗', t: 'Tir parabòlic', d: 'Canvia velocitat, angle i gravetat (Terra, Lluna, Mart, Júpiter) i compara dues trajectòries.', tag: 'Cinemàtica' },
-  { cat: 'fisica', href: 'escala-univers/', glyph: '10ⁿ', t: 'Escala de l\'univers', d: 'De l\'àtom a la galàxia, multiplicant per 10 cada vegada. Potències i notació científica en acció.', tag: 'Ordres de magnitud · 3r ESO' },
-  { cat: 'fisica', sub: 'Gravitació · Batxillerat', href: 'lleis-kepler/', glyph: 'T²', t: 'Lleis de Kepler', d: 'Canvia el semieix, l\'excentricitat i la massa de l\'estrela: comprova r + r′ = 2a, les àrees iguals en temps iguals i la relació T²/a³ amb dos planetes.', tag: 'Gravitació · Batxillerat' },
-  { cat: 'fisica', href: 'pla-inclinat/', glyph: '∠', t: 'Pla inclinat', d: 'Canvia l\'angle i mira com el pes es descompon en P∥ i P⊥, amb la normal i el fregament. Deixa anar el bloc i comprova a = g·sin θ.', tag: 'Dinàmica · 4t ESO' },
-  { cat: 'fisica', href: 'muntanya-russa/', glyph: 'Ep', t: 'La muntanya russa de l\'energia', d: 'Deixa anar la vagoneta i compara Ep i Ec amb barres i gràfica. Canvia massa, gravetat, fregament, altura d\'eixida i forma de la pista. Amb preguntes i humor, en valencià i castellà.', tag: 'Energia mecànica · 4t ESO' },
+  { cat: 'fisica', href: 'tir-parabolic/', niv: ['4t ESO', 'Batxillerat'], tipus: ['Simulador'], glyph: '↗', t: 'Tir parabòlic', d: 'Canvia velocitat, angle i gravetat (Terra, Lluna, Mart, Júpiter) i compara dues trajectòries.', tag: 'Cinemàtica' },
+  { cat: 'fisica', href: 'escala-univers/', niv: ['3r ESO'], tipus: ['Simulador'], glyph: '10ⁿ', t: 'Escala de l\'univers', d: 'De l\'àtom a la galàxia, multiplicant per 10 cada vegada. Potències i notació científica en acció.', tag: 'Ordres de magnitud · 3r ESO' },
+  { cat: 'fisica', sub: 'Gravitació · Batxillerat', href: 'lleis-kepler/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: 'T²', t: 'Lleis de Kepler', d: 'Canvia el semieix, l\'excentricitat i la massa de l\'estrela: comprova r + r′ = 2a, les àrees iguals en temps iguals i la relació T²/a³ amb dos planetes.', tag: 'Gravitació · Batxillerat' },
+  { cat: 'fisica', href: 'pla-inclinat/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: '∠', t: 'Pla inclinat', d: 'Canvia l\'angle i mira com el pes es descompon en P∥ i P⊥, amb la normal i el fregament. Deixa anar el bloc i comprova a = g·sin θ.', tag: 'Dinàmica · 4t ESO' },
+  { cat: 'fisica', href: 'muntanya-russa/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: 'Ep', t: 'La muntanya russa de l\'energia', d: 'Deixa anar la vagoneta i compara Ep i Ec amb barres i gràfica. Canvia massa, gravetat, fregament, altura d\'eixida i forma de la pista. Amb preguntes i humor, en valencià i castellà.', tag: 'Energia mecànica · 4t ESO' },
   // Química
-  { cat: 'quimica', sub: 'Estructura de la matèria · 3r ESO', href: 'models-atomics/', glyph: '⚛', t: 'Models atòmics: Thomson, Rutherford i Bohr', d: 'Dispara partícules α contra l\'àtom de Thomson i el de Rutherford (força de Coulomb real) i mesura les desviacions. Després fes saltar l\'electró de Bohr entre nivells i construeix l\'espectre de l\'hidrogen. Bilingüe valencià i castellà.', tag: 'Models atòmics · 3r ESO' },
-  { cat: 'quimica', sub: 'Gasos · 2n i 3r ESO', href: 'lleis-gasos/', glyph: 'PV', t: 'Lleis dels gasos', d: 'Un gas ideal fet de partícules que reboten: la pressió es mesura comptant els xocs contra l\'èmbol. Comprova Boyle, Charles i Gay-Lussac, anota punts a la taula i mira la gràfica. Bilingüe valencià i castellà.', tag: 'Gasos · 2n i 3r ESO' },
-  { cat: 'quimica', sub: 'Estats de la matèria · 2n i 3r ESO', href: 'estats-materia/', glyph: '🧊', t: 'Estats de la matèria i teoria cineticomolecular', d: 'Partícules amb control de temperatura, canvis de fase i gràfica de calfament en paral·lel (aigua o etanol). Bilingüe valencià i castellà.', tag: 'Canvis d\'estat · 2n i 3r ESO' },
-  { cat: 'quimica', sub: 'Reaccions · 3r i 4t ESO', href: 'ajust-reaccions/', glyph: '⚖️', t: 'Ajust de reaccions: la balança', d: 'Balança visual amb molècules: equilibra els àtoms de cada costat. Mode lliure i repte de 5 reaccions amb pistes i estrelles. Bilingüe valencià i castellà.', tag: 'Ajust de reaccions · 3r i 4t ESO' },
-  { cat: 'quimica', sub: 'Dissolucions · 3r i 4t ESO', href: 'dissolucions/', glyph: '🥛', t: 'Dissolucions i concentració', d: 'Afegeix solut i mira la concentració en g/L, % en massa i mol/L i la saturació amb precipitat. Amb corba de solubilitat i repte de 5 tasques. Bilingüe valencià i castellà.', tag: 'Concentració i solubilitat · 3r i 4t ESO' },
-  { cat: 'quimica', sub: 'Mescles i separació · 1r i 2n ESO', href: 'mescles-separacio/', glyph: '🧪', t: 'Mescles i separació', d: 'Filtració, decantació, destil·lació i cromatografia pas a pas, amb mescles on la tècnica funciona i on no. Bilingüe valencià i castellà.', tag: 'Tècniques de separació · 1r i 2n ESO' },
+  { cat: 'quimica', sub: 'Estructura de la matèria · 3r ESO', href: 'models-atomics/', niv: ['3r ESO'], tipus: ['Simulador'], glyph: '⚛', t: 'Models atòmics: Thomson, Rutherford i Bohr', d: 'Dispara partícules α contra l\'àtom de Thomson i el de Rutherford (força de Coulomb real) i mesura les desviacions. Després fes saltar l\'electró de Bohr entre nivells i construeix l\'espectre de l\'hidrogen. Bilingüe valencià i castellà.', tag: 'Models atòmics · 3r ESO' },
+  { cat: 'quimica', sub: 'Gasos · 2n i 3r ESO', href: 'lleis-gasos/', niv: ['2n ESO', '3r ESO'], tipus: ['Simulador'], glyph: 'PV', t: 'Lleis dels gasos', d: 'Un gas ideal fet de partícules que reboten: la pressió es mesura comptant els xocs contra l\'èmbol. Comprova Boyle, Charles i Gay-Lussac, anota punts a la taula i mira la gràfica. Bilingüe valencià i castellà.', tag: 'Gasos · 2n i 3r ESO' },
+  { cat: 'quimica', sub: 'Estats de la matèria · 2n i 3r ESO', href: 'estats-materia/', niv: ['2n ESO', '3r ESO'], tipus: ['Simulador'], glyph: '🧊', t: 'Estats de la matèria i teoria cineticomolecular', d: 'Partícules amb control de temperatura, canvis de fase i gràfica de calfament en paral·lel (aigua o etanol). Bilingüe valencià i castellà.', tag: 'Canvis d\'estat · 2n i 3r ESO' },
+  { cat: 'quimica', sub: 'Reaccions · 3r i 4t ESO', href: 'ajust-reaccions/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador', 'Joc'], glyph: '⚖️', t: 'Ajust de reaccions: la balança', d: 'Balança visual amb molècules: equilibra els àtoms de cada costat. Mode lliure i repte de 5 reaccions amb pistes i estrelles. Bilingüe valencià i castellà.', tag: 'Ajust de reaccions · 3r i 4t ESO' },
+  { cat: 'quimica', sub: 'Dissolucions · 3r i 4t ESO', href: 'dissolucions/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador', 'Joc'], glyph: '🥛', t: 'Dissolucions i concentració', d: 'Afegeix solut i mira la concentració en g/L, % en massa i mol/L i la saturació amb precipitat. Amb corba de solubilitat i repte de 5 tasques. Bilingüe valencià i castellà.', tag: 'Concentració i solubilitat · 3r i 4t ESO' },
+  { cat: 'quimica', sub: 'Mescles i separació · 1r i 2n ESO', href: 'mescles-separacio/', niv: ['1r ESO', '2n ESO'], tipus: ['Simulador'], glyph: '🧪', t: 'Mescles i separació', d: 'Filtració, decantació, destil·lació i cromatografia pas a pas, amb mescles on la tècnica funciona i on no. Bilingüe valencià i castellà.', tag: 'Tècniques de separació · 1r i 2n ESO' },
   // Biologia
-  { cat: 'biologia', sub: 'Genètica · 4t ESO', href: 'genetica-punnett/', glyph: 'Aa', t: 'Quadres de Punnett', d: 'Tria els genotips dels progenitors i mira el quadre per a un o dos gens, amb dominància completa o incompleta. Simula centenars de descendents i comprova que les freqüències s\'acosten a les esperades. Amb mode predicció per a l\'aula. Bilingüe valencià i castellà.', tag: 'Genètica mendeliana · 4t ESO' },
-  { cat: 'biologia', sub: 'Evolució · 4t ESO', href: 'seleccio-natural/', glyph: '🪲', t: 'Selecció natural', d: 'Escarabats de color heretable sobre una escorça: els ocells capturen els menys camuflats i la població evoluciona generació a generació. Pots fer d\'ocell tu. Bilingüe valencià i castellà.', tag: 'Selecció natural · 4t ESO' },
+  { cat: 'biologia', sub: 'Genètica · 4t ESO', href: 'genetica-punnett/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: 'Aa', t: 'Quadres de Punnett', d: 'Tria els genotips dels progenitors i mira el quadre per a un o dos gens, amb dominància completa o incompleta. Simula centenars de descendents i comprova que les freqüències s\'acosten a les esperades. Amb mode predicció per a l\'aula. Bilingüe valencià i castellà.', tag: 'Genètica mendeliana · 4t ESO' },
+  { cat: 'biologia', sub: 'Evolució · 4t ESO', href: 'seleccio-natural/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: '🪲', t: 'Selecció natural', d: 'Escarabats de color heretable sobre una escorça: els ocells capturen els menys camuflats i la població evoluciona generació a generació. Pots fer d\'ocell tu. Bilingüe valencià i castellà.', tag: 'Selecció natural · 4t ESO' },
   // Geologia
-  { cat: 'geologia', sub: 'Sismologia · Batxillerat', href: 'escala-richter/', glyph: '📈', t: 'Escala de Richter', d: 'Compara dos terratrèmols: cada punt de magnitud multiplica l\'amplitud per 10 i l\'energia per ≈32. Sismograma, equivalències en bombes i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala logarítmica · Batxillerat' },
-  { cat: 'geologia', sub: 'Geofísica · Batxillerat', href: 'ones-sismiques/', glyph: '🌍', t: 'Ones sísmiques P i S', d: 'Raigs sísmics en una Terra esfèrica amb velocitats tipus PREM: zones d\'ombra i per què sabem que el nucli extern és líquid. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Interior de la Terra · Batxillerat' },
-  { cat: 'geologia', sub: 'Datació · Batxillerat', href: 'desintegracio-radioactiva/', glyph: '☢️', t: 'Desintegració radioactiva i datació', d: 'Àtoms que es desintegren a l\'atzar, període de semidesintegració i càlcul de l\'edat d\'una mostra. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Datació radiomètrica · Batxillerat' },
-  { cat: 'geologia', sub: 'Geodinàmica · Batxillerat', href: 'isostasia/', glyph: '🏔️', t: 'Isostasia', d: 'Muntanyes amb arrels (Airy) i rebot glacial amb un mantell viscós: l\'escorça flota. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Isostasia · Batxillerat' },
+  { cat: 'geologia', sub: 'Sismologia · Batxillerat', href: 'escala-richter/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '📈', t: 'Escala de Richter', d: 'Compara dos terratrèmols: cada punt de magnitud multiplica l\'amplitud per 10 i l\'energia per ≈32. Sismograma, equivalències en bombes i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala logarítmica · Batxillerat' },
+  { cat: 'geologia', sub: 'Geofísica · Batxillerat', href: 'ones-sismiques/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '🌍', t: 'Ones sísmiques P i S', d: 'Raigs sísmics en una Terra esfèrica amb velocitats tipus PREM: zones d\'ombra i per què sabem que el nucli extern és líquid. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Interior de la Terra · Batxillerat' },
+  { cat: 'geologia', sub: 'Datació · Batxillerat', href: 'desintegracio-radioactiva/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '☢️', t: 'Desintegració radioactiva i datació', d: 'Àtoms que es desintegren a l\'atzar, període de semidesintegració i càlcul de l\'edat d\'una mostra. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Datació radiomètrica · Batxillerat' },
+  { cat: 'geologia', sub: 'Geodinàmica · Batxillerat', href: 'isostasia/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '🏔️', t: 'Isostasia', d: 'Muntanyes amb arrels (Airy) i rebot glacial amb un mantell viscós: l\'escorça flota. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Isostasia · Batxillerat' },
   // Aventures interactives per a xiquets curiosos (8 a 10 anys)
-  { cat: 'misc', href: 'maquina-temps/', glyph: '⚙', t: 'La Màquina del Temps: Aventura per tres èpoques', d: 'Dinosaures, Roma i un castell medieval: tria el camí, resol candaus de mates, recull engranatges i torna a casa amb Roda l\'hàmster.', tag: 'Aventura interactiva' },
-  { cat: 'misc', href: 'maquina-temps-paleolitic/', glyph: '🦣', t: 'La Màquina del Temps: Aventura al Paleolític', d: 'Tres viatges per la Prehistòria amb Roda l\'hàmster: ajuda una cria d\'elefant i un cadell de llop, resol candaus de mates i troba els 10 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
-  { cat: 'misc', href: 'maquina-temps-engranatges/', glyph: '🦜', t: 'La Màquina del Temps: Els tres engranatges perduts', d: 'Valentia romana, el paper de Xàtiva i la Llotja de la Seda: tria el camí, resol candaus de mates i troba els 8 finals amb el lloro Cronet.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
-  { cat: 'misc', href: 'ultima-senyal/', glyph: '🚀', t: 'L\'Última Senyal: Una aventura en l\'espai', d: 'Tres planetes, tres cristalls i un missatge misteriós: tria el camí, resol candaus de mates i ajuda les criatures amb la lluerna Lumi. Bilingüe VAL/CAS, 9 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
+  { cat: 'misc', href: 'maquina-temps/', niv: ['Primària'], tipus: ['Aventura'], glyph: '⚙', t: 'La Màquina del Temps: Aventura per tres èpoques', d: 'Dinosaures, Roma i un castell medieval: tria el camí, resol candaus de mates, recull engranatges i torna a casa amb Roda l\'hàmster.', tag: 'Aventura interactiva' },
+  { cat: 'misc', href: 'maquina-temps-paleolitic/', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦣', t: 'La Màquina del Temps: Aventura al Paleolític', d: 'Tres viatges per la Prehistòria amb Roda l\'hàmster: ajuda una cria d\'elefant i un cadell de llop, resol candaus de mates i troba els 10 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
+  { cat: 'misc', href: 'maquina-temps-engranatges/', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦜', t: 'La Màquina del Temps: Els tres engranatges perduts', d: 'Valentia romana, el paper de Xàtiva i la Llotja de la Seda: tria el camí, resol candaus de mates i troba els 8 finals amb el lloro Cronet.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
+  { cat: 'misc', href: 'ultima-senyal/', niv: ['Primària'], tipus: ['Aventura'], glyph: '🚀', t: 'L\'Última Senyal: Una aventura en l\'espai', d: 'Tres planetes, tres cristalls i un missatge misteriós: tria el camí, resol candaus de mates i ajuda les criatures amb la lluerna Lumi. Bilingüe VAL/CAS, 9 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
   // Curiositats
-  { cat: 'curio', href: 'atles-art-rupestre/', glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
+  { cat: 'curio', href: 'atles-art-rupestre/', niv: [], tipus: ['Línia del temps', 'Joc'], glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
 ];
 const $ = (s) => document.querySelector(s);
-let current = 'tot';
-const count = (id) => RES.filter((r) => r.cat === id).length;
+
+// Filtres combinables (I entre grups). Un recurs sense `niv` és d'ús general: apareix en tots els nivells d'ESO i Batxillerat.
+// «Bloc» segueix els blocs del currículum valencià de Matemàtiques (només s'assigna als recursos de mates).
+const NIVELLS = ['Primària', '1r ESO', '2n ESO', '3r ESO', '4t ESO', 'Batxillerat'];
+const BLOCS = ['Numèric', 'Algebraic', 'Funcions', 'Espacial i geometria'];
+const TIPUS = ['Simulador', 'Full de treball', 'Línia del temps', 'Joc', 'Aventura'];
+const GROUPS = [
+  { g: 'niv',   label: 'Nivell',            vals: NIVELLS },
+  { g: 'bloc',  label: 'Bloc de mates',     vals: BLOCS },
+  { g: 'tipus', label: 'Tipus de recurs',   vals: TIPUS },
+];
+const F = { cat: 'tot', niv: '', bloc: '', tipus: '' };
+
+function match(r, g, v) {
+  if (!v || v === 'tot') return true;
+  if (g === 'cat') return r.cat === v;
+  if (g === 'niv') return (r.niv || []).length ? r.niv.includes(v) : v !== 'Primària'; // sense `niv` = ESO i Batxillerat
+  if (g === 'bloc') return r.bloc === v;
+  if (g === 'tipus') return (r.tipus || []).includes(v);
+  return true;
+}
+// Recursos que passen tots els filtres actius, tret del grup `skip` (per als comptadors de cada xip).
+const pass = (r, skip) => ['cat', 'niv', 'bloc', 'tipus'].every((g) => g === skip || match(r, g, F[g]));
+const countFor = (g, v) => RES.filter((r) => pass(r, g) && match(r, g, v)).length;
+
+const chip = (g, v, label, n, extra = '', cls = '') => {
+  const on = F[g] === v;
+  const dis = !on && n === 0 ? ' disabled' : '';
+  return `<button class="chip${cls}" data-g="${g}" data-v="${v}" aria-pressed="${on}"${dis}${extra ? ` style="${extra}"` : ''}>${extra ? '<span class="dot"></span>' : ''}${label} <span class="n">${n}</span></button>`;
+};
 
 function renderChips() {
-  const all = `<button class="chip" data-id="tot" aria-pressed="${current === 'tot'}">Tot <span class="n">${RES.length}</span></button>`;
-  $('#chips').innerHTML = all + CATS.map((c) =>
-    `<button class="chip" style="--c:var(--c-${c.id})" data-id="${c.id}" aria-pressed="${current === c.id}"><span class="dot"></span>${c.n} <span class="n">${count(c.id)}</span></button>`).join('');
+  $('#chips').innerHTML =
+    chip('cat', 'tot', 'Tot', countFor('cat', 'tot')) +
+    CATS.map((c) => chip('cat', c.id, c.n, countFor('cat', c.id), `--c:var(--c-${c.id})`)).join('');
 }
+function renderFilters() {
+  $('#filters').innerHTML = GROUPS.map(({ g, label, vals }) => {
+    const chips = vals.map((v) => [v, countFor(g, v)]);
+    if (!F[g] && chips.every(([, n]) => n === 0)) return '';
+    return `<div class="fgroup" role="group" aria-labelledby="fl-${g}"><span class="flabel" id="fl-${g}">${label}</span>${chips.map(([v, n]) => chip(g, v, v, n, '', ' sm')).join('')}</div>`;
+  }).join('');
+}
+function renderStatus() {
+  const n = RES.filter((r) => pass(r)).length;
+  const active = F.cat !== 'tot' || F.niv || F.bloc || F.tipus;
+  $('#status').innerHTML = `<span>${active ? `Mostrant ${n} de ${RES.length} recursos` : `${RES.length} recursos`}</span>` +
+    (active ? '<button class="reset" id="reset" type="button">Neteja els filtres</button>' : '');
+}
+
 const SUBBG = { 'Història i nombres': 1, 'Càlcul i aritmètica': 5, 'Geometria i àlgebra': 2, 'Fraccions i proporcionalitat': 3, 'Matrius · Batxillerat': 4, 'Sistemes i espai · Batxillerat': 6, 'Gravitació · Batxillerat': 4, 'Estructura de la matèria · 3r ESO': 2, 'Gasos · 2n i 3r ESO': 3, 'Genètica · 4t ESO': 5, 'Evolució · 4t ESO': 1 };
 function card(r) {
   const cb = SUBBG[r.sub] ? `;--cb:var(--bg-s${SUBBG[r.sub]})` : '';
@@ -227,17 +279,21 @@ function card(r) {
     <div class="tag"><span>${r.tag}</span><span class="go">Obri →</span></div></a>`;
 }
 function renderSections() {
-  const list = CATS.filter((c) => current === 'tot' || current === c.id);
-  $('#app').innerHTML = list.map((c) => {
-    const items = RES.filter((r) => r.cat === c.id);
+  const filtered = F.niv || F.bloc || F.tipus;
+  const list = CATS.filter((c) => F.cat === 'tot' || F.cat === c.id);
+  let html = list.map((c) => {
+    const all = RES.filter((r) => r.cat === c.id);
+    const items = all.filter((r) => pass(r));
+    if (filtered && !items.length) return '';
     let body;
     if (!items.length) {
       body = `<div class="soon" style="--c:var(--c-${c.id})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
     } else {
+      const allSubs = new Set(all.map((r) => r.sub || ''));
       const subs = [...new Set(items.map((r) => r.sub || ''))];
       body = subs.map((sb) => {
         const g = items.filter((r) => (r.sub || '') === sb);
-        const head = subs.length > 1 && sb ? `<h3 class="subh">${sb} <span>${g.length}</span></h3>` : '';
+        const head = allSubs.size > 1 && sb ? `<h3 class="subh">${sb} <span>${g.length}</span></h3>` : '';
         return `${head}<div class="grid">${g.map(card).join('')}</div>`;
       }).join('');
     }
@@ -245,12 +301,35 @@ function renderSections() {
       <div class="sec-head"><h2 id="h-${c.id}">${c.n}</h2><p class="sub">${c.d}</p></div>
       ${body}</section>`;
   }).join('');
+  if (!html) html = '<div class="soon" style="--c:var(--c-mates)"><b aria-hidden="true">∅</b><span>Cap recurs amb esta combinació de filtres. Prova de llevar-ne algun.</span></div>';
+  $('#app').innerHTML = html;
 }
-$('#chips').addEventListener('click', (e) => {
-  const b = e.target.closest('.chip'); if (!b) return;
-  current = b.dataset.id; renderChips(); renderSections();
+
+// L'estat dels filtres viu en el hash (#niv=4t%20ESO&tipus=Simulador) perquè es puga compartir l'enllaç.
+function readHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  const ok = { cat: ['tot', ...CATS.map((c) => c.id)], niv: NIVELLS, bloc: BLOCS, tipus: TIPUS };
+  for (const g of Object.keys(F)) { const v = p.get(g); F[g] = v && ok[g].includes(v) ? v : (g === 'cat' ? 'tot' : ''); }
+}
+function writeHash() {
+  const p = new URLSearchParams();
+  for (const g of Object.keys(F)) if (F[g] && F[g] !== 'tot') p.set(g, F[g]);
+  const h = p.toString();
+  history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : ''));
+}
+function render() { renderChips(); renderFilters(); renderStatus(); renderSections(); writeHash(); }
+
+document.addEventListener('click', (e) => {
+  if (e.target.closest('#reset')) { Object.assign(F, { cat: 'tot', niv: '', bloc: '', tipus: '' }); render(); return; }
+  const b = e.target.closest('.chip[data-g]'); if (!b || b.disabled) return;
+  const { g, v } = b.dataset;
+  F[g] = g === 'cat' ? v : (F[g] === v ? '' : v);
+  render();
+  const again = document.querySelector(`.chip[data-g="${g}"][data-v="${v}"]`);
+  if (again) again.focus({ preventScroll: true });
 });
-renderChips(); renderSections();
+window.addEventListener('hashchange', () => { readHash(); render(); });
+readHash(); render();
 </script>
 </body>
 </html>

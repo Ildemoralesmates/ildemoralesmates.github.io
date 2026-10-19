@@ -3,6 +3,11 @@
 - Cada pàgina HTML nova ha de portar, just abans de `</head>`, el comptador de visites:
   `<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>`
 - Afegir cada recurs nou a `index.html` (targeta) i a `sitemap.xml`.
+- Cada entrada de `RES` a `index.html` du metadades per als filtres de la portada, just després de `href`:
+  - `niv`: llista de nivells entre `Primària`, `1r ESO`, `2n ESO`, `3r ESO`, `4t ESO`, `Batxillerat`. Si s'omet o és `[]`, el recurs és general i apareix en tots els nivells d'ESO i Batxillerat (no en Primària).
+  - `bloc`: només per als recursos de mates, un dels blocs del currículum: `Numèric`, `Algebraic`, `Funcions`, `Espacial i geometria`.
+  - `tipus`: llista entre `Simulador`, `Full de treball`, `Línia del temps`, `Joc`, `Aventura`.
+  - Si cal un valor nou, afegir-lo també a les constants `NIVELLS`, `BLOCS` o `TIPUS` del script de la portada; si no, el filtre no el mostrarà.
 
 # Versions en castellà (`es/`)
 
