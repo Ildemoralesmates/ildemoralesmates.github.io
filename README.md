@@ -1,4 +1,4 @@
-# Recursos de matemàtiques i ciència · Ilde
+# Aprendre jugant · Mates, ciències i cultura · Ilde
 
 Portada: https://ildemoralesmates.github.io/
 
