@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Potències: blat als escacs i paper fins a la Lluna</title>
+<meta name="description" content="Potències de base 2 que creixen fins a eixir de la pantalla: la llegenda del blat al tauler d'escacs i plegar un full 42 vegades fins a la Lluna. Per a 1r d'ESO, amb predicció i test autocorregit.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/potencies-escacs-paper/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/potencies-escacs-paper/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/potencies-escacs-paper/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/potencies-escacs-paper/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Potències: blat als escacs i paper fins a la Lluna">
+<meta property="og:description" content="Potències de base 2 que creixen fins a eixir de la pantalla: la llegenda del blat al tauler d'escacs i plegar un full 42 vegades fins a la Lluna. Per a 1r d'ESO, amb predicció i test autocorregit.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/potencies-escacs-paper/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.tabs{font-size:15px}
+.tabs button{padding:8px 16px;font-size:14.5px}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.pred{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pred .chip[aria-pressed=true]{background:var(--pb);border-color:var(--pb)}
+.stat .v{word-break:break-word}
+.stat .v sup{font-size:.65em}
+.boardwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+@media (max-width:820px){.boardwrap{grid-template-columns:1fr}}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemàtiques · 1r ESO · Potències</p>
+      <h1 data-i18n="h1">Potències que se n'ixen de la pantalla</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivell de la pàgina"><button type="button" data-level="basic" data-i18n="lvl_basic">Bàsic</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avançat</button></div>
+      <p class="lede" data-i18n="lede">Duplicar i tornar a duplicar sembla poca cosa… fins que deixa de ser-ho.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="seg tabs" id="tabs" role="group" data-i18n-aria="aria.tabs" aria-label="Tria la història"><button type="button" data-tab="wheat" aria-pressed="true" data-i18n="tab_wheat">🌾 Blat als escacs</button><button type="button" data-tab="paper" aria-pressed="false" data-i18n="tab_paper">📄 Plegar paper</button></div>
+
+<section class="card" id="pWheat">
+<h2 data-i18n="w_title">La llegenda del blat</h2>
+<p data-i18n-html="w_story">L'inventor dels escacs va demanar al rei un premi «modest»: <b>1 gra</b> de blat a la primera casella, <b>2</b> a la segona, <b>4</b> a la tercera… i així, <b>duplicant</b>, fins a la casella 64. El rei es va riure. No hauria d'haver-ho fet.</p>
+<div class="pred"><span class="mut" data-i18n="w_pred">Abans de començar: quants grans hi haurà a l'última casella?</span><span id="wPred"></span></div>
+<div class="row">
+<button class="btn primary" id="wPlay" type="button"></button>
+<button class="btn" id="wStep" type="button" data-i18n="w_step">+1 casella</button>
+<button class="btn" id="wReset" type="button" data-i18n="reset">Torna a començar</button>
+</div>
+<div class="boardwrap">
+<canvas id="board"></canvas>
+<div class="stats" style="grid-template-columns:1fr">
+<div class="stat"><span class="k" data-i18n="w_sq">Casella</span><span class="v" id="wSq"></span></div>
+<div class="stat"><span class="k" data-i18n="w_this">Grans en aquesta casella</span><span class="v" id="wThis"></span></div>
+<div class="stat"><span class="k" data-i18n="w_total">Grans en total fins ara</span><span class="v" id="wTot"></span></div>
+<div class="stat"><span class="k" data-i18n="w_mass">Pes total (gra ≈ 0,04 g)</span><span class="v" id="wMass"></span></div>
+</div>
+</div>
+<p class="msg" id="wMsg" aria-live="polite"></p>
+<h3 data-i18n="w_bar_t">Si posem en fila els grans d'aquesta casella…</h3>
+<p class="note" data-i18n="w_bar_n">Cada gra fa uns 5 mm. La càmera està quieta: la fila prompte se n'ix de la pantalla. Allunya la càmera per veure fins on arriba.</p>
+<div class="row"><button class="btn" id="wOut" type="button" data-i18n="cam_out">Allunya la càmera ×10</button><button class="btn" id="wIn" type="button" data-i18n="cam_in">Apropa ÷10</button><label class="chk"><input type="checkbox" id="wAuto"> <span data-i18n="cam_auto">La càmera segueix la barra</span></label></div>
+<canvas id="wBar"></canvas>
+<div class="idea" data-lvl="basic" data-i18n-html="w_idea"><b>La idea:</b> a la casella <i>n</i> hi ha 2·2·2·…·2 (n − 1 vegades) = <b>2<sup>n−1</sup></b> grans. Cada casella té el <b>doble</b> que l'anterior, i això fa que el número creixca a una velocitat que no ens imaginem. Una potència és una multiplicació repetida, no una suma.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="w_idea_adv"><b>Un patró amagat:</b> 1 = 2 − 1; 1 + 2 = 4 − 1; 1 + 2 + 4 = 8 − 1… El total fins a la casella <i>n</i> és <b>2<sup>n</sup> − 1</b>: sempre un gra menys que el que hi haurà a la casella següent.</div>
+</section>
+
+<section class="card" id="pPaper" hidden>
+<h2 data-i18n="p_title">Un full de paper fins a la Lluna</h2>
+<p data-i18n-html="p_story">Un full de paper fa uns <b>0,1 mm</b> de gruix. Cada vegada que el plegues per la meitat, el gruix es <b>duplica</b>. Quantes vegades caldria plegar-lo per a arribar a la Lluna, a 384 400 km?</p>
+<div class="pred"><span class="mut" data-i18n="p_pred">La teua predicció: quants plecs calen?</span><span id="pPred"></span></div>
+<div class="row">
+<button class="btn primary" id="pPlay" type="button"></button>
+<button class="btn" id="pStep" type="button" data-i18n="p_step">+1 plec</button>
+<button class="btn" id="pReset" type="button" data-i18n="reset">Torna a començar</button>
+<button class="btn" id="pOut" type="button" data-i18n="cam_out">Allunya la càmera ×10</button><button class="btn" id="pIn" type="button" data-i18n="cam_in">Apropa ÷10</button>
+<label class="chk"><input type="checkbox" id="pAuto"> <span data-i18n="cam_auto">La càmera segueix la barra</span></label>
+</div>
+<div class="gridW">
+<canvas id="pCv"></canvas>
+<div class="stats" style="grid-template-columns:1fr">
+<div class="stat"><span class="k" data-i18n="p_folds">Plecs</span><span class="v" id="pN"></span></div>
+<div class="stat"><span class="k" data-i18n="p_layers">Capes de paper</span><span class="v" id="pL"></span></div>
+<div class="stat"><span class="k" data-i18n="p_thick">Gruix</span><span class="v" id="pT"></span></div>
+<div class="stat"><span class="k" data-i18n="p_screens">Altura de la barra</span><span class="v" id="pS"></span></div>
+</div>
+</div>
+<p class="msg" id="pMsg" aria-live="polite"></p>
+<div class="idea" data-lvl="basic" data-i18n-html="p_idea"><b>La idea:</b> després de <i>n</i> plecs hi ha <b>2<sup>n</sup></b> capes de paper, i el gruix és 0,1 mm · 2<sup>n</sup>. Amb 10 plecs, unes 1000 capes (10 cm); amb 20, un milió de capes (100 m); amb 30, mil milions (100 km).</div>
+<div class="idea" data-lvl="adv" data-i18n-html="p_idea_adv"><b>Truc per a calcular de cap:</b> 2<sup>10</sup> = 1024 ≈ 1000. Per tant, 2<sup>20</sup> ≈ un milió, 2<sup>30</sup> ≈ mil milions i 2<sup>40</sup> ≈ un bilió. Amb 40 plecs: 0,1 mm · 10<sup>12</sup> = 10<sup>11</sup> mm = 100 000 km. Dos plecs més (×4) i passem la Lluna.</div>
+<p class="note" data-i18n="p_note">És un experiment mental: un full de veritat no es pot plegar per la meitat més de 7 o 8 vegades. El rècord, amb un paper molt llarg i molt fi, és de 12 plecs.</p>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Potències: blat als escacs i paper fins a la Lluna",
+"eyebrow":"Matemàtiques · 1r ESO · Potències",
+"h1":"Potències que se n'ixen de la pantalla",
+"lede":"Duplicar i tornar a duplicar sembla poca cosa… fins que deixa de ser-ho.",
+"aria.tabs":"Tria la història",
+"tab_wheat":"🌾 Blat als escacs",
+"tab_paper":"📄 Plegar paper",
+"w_title":"La llegenda del blat",
+"w_story":"L'inventor dels escacs va demanar al rei un premi «modest»: <b>1 gra</b> de blat a la primera casella, <b>2</b> a la segona, <b>4</b> a la tercera… i així, <b>duplicant</b>, fins a la casella 64. El rei es va riure. No hauria d'haver-ho fet.",
+"w_pred":"Abans de començar: quants grans hi haurà a l'última casella?",
+"wp0":"Uns mil","wp1":"Un milió","wp2":"Mil milions","wp3":"Milions de bilions",
+"w_play":"▶ Omple el tauler","w_pause":"❚❚ Pausa","w_step":"+1 casella","reset":"Torna a començar",
+"w_sq":"Casella","w_this":"Grans en aquesta casella","w_total":"Grans en total fins ara","w_mass":"Pes total (gra ≈ 0,04 g)",
+"w_bar_t":"Si posem en fila els grans d'aquesta casella…",
+"w_bar_n":"Cada gra fa uns 5 mm. La càmera està quieta: la fila prompte se n'ix de la pantalla. Allunya la càmera per veure fins on arriba.",
+"cam_out":"Allunya la càmera ×10","cam_in":"Apropa ÷10","cam_auto":"La càmera segueix la barra",
+"screens":"La barra fa {0} pantalles","fits":"La barra cap a la pantalla",
+"scale":"Amplada de la pantalla: {0}","scale_v":"Altura de la pantalla: {0}",
+"w_end":"La casella 64 té 2<sup>63</sup> ≈ 9,2 trilions de grans (9,2·10<sup>18</sup>). En total, 2<sup>64</sup> − 1 ≈ 1,8·10<sup>19</sup> grans: unes {0} de tones, més de 900 anys de tota la collita mundial de blat (≈ 800 milions de tones l'any).",
+"w_pred_ok":"✔ La teua predicció era bona: milions de bilions!",
+"w_pred_ko":"✘ Havies dit «{0}». Ni de lluny: la realitat és milions de milions de vegades més gran.",
+"w_idea":"<b>La idea:</b> a la casella <i>n</i> hi ha 2·2·2·…·2 (n − 1 vegades) = <b>2<sup>n−1</sup></b> grans. Cada casella té el <b>doble</b> que l'anterior, i això fa que el número creixca a una velocitat que no ens imaginem. Una potència és una multiplicació repetida, no una suma.",
+"w_idea_adv":"<b>Un patró amagat:</b> 1 = 2 − 1; 1 + 2 = 4 − 1; 1 + 2 + 4 = 8 − 1… El total fins a la casella <i>n</i> és <b>2<sup>n</sup> − 1</b>: sempre un gra menys que el que hi haurà a la casella següent.",
+"p_title":"Un full de paper fins a la Lluna",
+"p_story":"Un full de paper fa uns <b>0,1 mm</b> de gruix. Cada vegada que el plegues per la meitat, el gruix es <b>duplica</b>. Quantes vegades caldria plegar-lo per a arribar a la Lluna, a 384 400 km?",
+"p_pred":"La teua predicció: quants plecs calen?",
+"pp0":"42","pp1":"Uns 1000","pp2":"Uns 100 000","pp3":"Un milió",
+"p_play":"▶ Plega","p_pause":"❚❚ Pausa","p_step":"+1 plec",
+"p_folds":"Plecs","p_layers":"Capes de paper","p_thick":"Gruix","p_screens":"Altura de la barra",
+"p_end":"Amb 42 plecs el gruix és 0,1 mm · 2<sup>42</sup> ≈ 440 000 km: ja hem passat la Lluna! Amb 41 plecs, 220 000 km, encara no arribàvem.",
+"p_pred_ok":"✔ Encertat: només 42 plecs!",
+"p_pred_ko":"✘ Havies dit «{0}». Només en calen 42: duplicar és molt més potent que sumar.",
+"p_idea":"<b>La idea:</b> després de <i>n</i> plecs hi ha <b>2<sup>n</sup></b> capes de paper, i el gruix és 0,1 mm · 2<sup>n</sup>. Amb 10 plecs, unes 1000 capes (10 cm); amb 20, un milió de capes (100 m); amb 30, mil milions (100 km).",
+"p_idea_adv":"<b>Truc per a calcular de cap:</b> 2<sup>10</sup> = 1024 ≈ 1000. Per tant, 2<sup>20</sup> ≈ un milió, 2<sup>30</sup> ≈ mil milions i 2<sup>40</sup> ≈ un bilió. Amb 40 plecs: 0,1 mm · 10<sup>12</sup> = 10<sup>11</sup> mm = 100 000 km. Dos plecs més (×4) i passem la Lluna.",
+"p_note":"És un experiment mental: un full de veritat no es pot plegar per la meitat més de 7 o 8 vegades. El rècord, amb un paper molt llarg i molt fi, és de 12 plecs.",
+"r_mm":"{0} mm","r_cm":"{0} cm","r_m":"{0} m","r_km":"{0} km","r_ly":"{0} anys llum",
+"ref_sheet":"un full","ref_phone":"un mòbil","ref_ruler":"un regle","ref_person":"una persona","ref_build":"edifici de 10 plantes","ref_eiffel":"Torre Eiffel","ref_everest":"Everest","ref_plane":"un avió","ref_iss":"Estació Espacial","ref_moon":"la Lluna",
+"ref_1m":"1 metre","ref_field":"camp de futbol","ref_1km":"1 km","ref_mb":"Madrid–Barcelona","ref_earth":"una volta a la Terra","ref_moonD":"Terra–Lluna","ref_sun":"Terra–Sol","ref_nep":"Terra–Neptú","ref_ly":"1 any llum",
+"t_kg":"{0} kg","t_g":"{0} g","t_t":"{0} tones",
+"r1.q":"Quants grans hi ha a la casella 10?",
+"r1.o0":"20","r1.o1":"100","r1.o2":"512","r1.o3":"1024",
+"r1.e":"Casella n → 2<sup>n−1</sup>: 2<sup>9</sup> = 512.",
+"r2.q":"Cada vegada que pleguem el full, el gruix…",
+"r2.o0":"es duplica","r2.o1":"augmenta 0,1 mm","r2.o2":"es triplica",
+"r2.e":"Plegar per la meitat posa una capa damunt de l'altra: el doble de capes.",
+"r3.q":"Pleguem 5 vegades un full de 0,1 mm. Quin gruix té, en mm?",
+"r3.u":"mm",
+"r3.e":"0,1 · 2<sup>5</sup> = 0,1 · 32 = 3,2 mm.",
+"r4.q":"Què vol dir 2<sup>5</sup>?",
+"r4.o0":"2 · 5 = 10","r4.o1":"2 + 2 + 2 + 2 + 2 = 10","r4.o2":"2 · 2 · 2 · 2 · 2 = 32","r4.o3":"5 · 5 = 25",
+"r4.e":"L'exponent diu quantes vegades multipliquem la base per ella mateixa.",
+"r5.q":"La casella 20 té 524 288 grans. Quants en té la casella 21?",
+"r5.o0":"524 289","r5.o1":"1 048 576","r5.o2":"524 308","r5.o3":"1 000 000",
+"r5.e":"El doble: 524 288 · 2 = 1 048 576 = 2<sup>20</sup>.",
+"r6.q":"1 = 2 − 1; 1 + 2 = 4 − 1; 1 + 2 + 4 = 8 − 1… Quants grans hi ha en total en les <i>n</i> primeres caselles?",
+"r6.o0":"2<sup>n</sup> − 1","r6.o1":"2·n","r6.o2":"n<sup>2</sup>","r6.o3":"2<sup>n</sup>",
+"r6.e":"Sempre un menys que la potència següent: 2<sup>n</sup> − 1.",
+"r7.q":"Quants plecs calen, com a mínim, perquè un full de 0,1 mm supere 1 m de gruix?",
+"r7.u":"plecs",
+"r7.e":"1 m = 1000 mm = 10 000 vegades 0,1 mm. 2<sup>13</sup> = 8192 no arriba; 2<sup>14</sup> = 16 384 sí: 14 plecs."
+},
+es:{
+"title":"Potencias: trigo en el ajedrez y papel hasta la Luna",
+"eyebrow":"Matemáticas · 1.º ESO · Potencias",
+"h1":"Potencias que se salen de la pantalla",
+"lede":"Duplicar y volver a duplicar parece poca cosa… hasta que deja de serlo.",
+"aria.tabs":"Elige la historia",
+"tab_wheat":"🌾 Trigo en el ajedrez",
+"tab_paper":"📄 Doblar papel",
+"w_title":"La leyenda del trigo",
+"w_story":"El inventor del ajedrez pidió al rey un premio «modesto»: <b>1 grano</b> de trigo en la primera casilla, <b>2</b> en la segunda, <b>4</b> en la tercera… y así, <b>duplicando</b>, hasta la casilla 64. El rey se rio. No debería haberlo hecho.",
+"w_pred":"Antes de empezar: ¿cuántos granos habrá en la última casilla?",
+"wp0":"Unos mil","wp1":"Un millón","wp2":"Mil millones","wp3":"Millones de billones",
+"w_play":"▶ Llena el tablero","w_pause":"❚❚ Pausa","w_step":"+1 casilla","reset":"Volver a empezar",
+"w_sq":"Casilla","w_this":"Granos en esta casilla","w_total":"Granos en total hasta ahora","w_mass":"Peso total (grano ≈ 0,04 g)",
+"w_bar_t":"Si ponemos en fila los granos de esta casilla…",
+"w_bar_n":"Cada grano mide unos 5 mm. La cámara está quieta: la fila pronto se sale de la pantalla. Aleja la cámara para ver hasta dónde llega.",
+"cam_out":"Aleja la cámara ×10","cam_in":"Acerca ÷10","cam_auto":"La cámara sigue la barra",
+"screens":"La barra mide {0} pantallas","fits":"La barra cabe en la pantalla",
+"scale":"Anchura de la pantalla: {0}","scale_v":"Altura de la pantalla: {0}",
+"w_end":"La casilla 64 tiene 2<sup>63</sup> ≈ 9,2 trillones de granos (9,2·10<sup>18</sup>). En total, 2<sup>64</sup> − 1 ≈ 1,8·10<sup>19</sup> granos: unas {0} de toneladas, más de 900 años de toda la cosecha mundial de trigo (≈ 800 millones de toneladas al año).",
+"w_pred_ok":"✔ Tu predicción era buena: ¡millones de billones!",
+"w_pred_ko":"✘ Habías dicho «{0}». Ni de lejos: la realidad es millones de millones de veces mayor.",
+"w_idea":"<b>La idea:</b> en la casilla <i>n</i> hay 2·2·2·…·2 (n − 1 veces) = <b>2<sup>n−1</sup></b> granos. Cada casilla tiene el <b>doble</b> que la anterior, y eso hace que el número crezca a una velocidad que no nos imaginamos. Una potencia es una multiplicación repetida, no una suma.",
+"w_idea_adv":"<b>Un patrón escondido:</b> 1 = 2 − 1; 1 + 2 = 4 − 1; 1 + 2 + 4 = 8 − 1… El total hasta la casilla <i>n</i> es <b>2<sup>n</sup> − 1</b>: siempre un grano menos que el que habrá en la casilla siguiente.",
+"p_title":"Una hoja de papel hasta la Luna",
+"p_story":"Una hoja de papel tiene unos <b>0,1 mm</b> de grosor. Cada vez que la doblas por la mitad, el grosor se <b>duplica</b>. ¿Cuántas veces habría que doblarla para llegar a la Luna, a 384 400 km?",
+"p_pred":"Tu predicción: ¿cuántos dobleces hacen falta?",
+"pp0":"42","pp1":"Unos 1000","pp2":"Unos 100 000","pp3":"Un millón",
+"p_play":"▶ Dobla","p_pause":"❚❚ Pausa","p_step":"+1 doblez",
+"p_folds":"Dobleces","p_layers":"Capas de papel","p_thick":"Grosor","p_screens":"Altura de la barra",
+"p_end":"Con 42 dobleces el grosor es 0,1 mm · 2<sup>42</sup> ≈ 440 000 km: ¡ya hemos pasado la Luna! Con 41 dobleces, 220 000 km, todavía no llegábamos.",
+"p_pred_ok":"✔ Acertaste: ¡solo 42 dobleces!",
+"p_pred_ko":"✘ Habías dicho «{0}». Solo hacen falta 42: duplicar es mucho más potente que sumar.",
+"p_idea":"<b>La idea:</b> después de <i>n</i> dobleces hay <b>2<sup>n</sup></b> capas de papel, y el grosor es 0,1 mm · 2<sup>n</sup>. Con 10 dobleces, unas 1000 capas (10 cm); con 20, un millón de capas (100 m); con 30, mil millones (100 km).",
+"p_idea_adv":"<b>Truco para calcular de cabeza:</b> 2<sup>10</sup> = 1024 ≈ 1000. Por tanto, 2<sup>20</sup> ≈ un millón, 2<sup>30</sup> ≈ mil millones y 2<sup>40</sup> ≈ un billón. Con 40 dobleces: 0,1 mm · 10<sup>12</sup> = 10<sup>11</sup> mm = 100 000 km. Dos dobleces más (×4) y pasamos la Luna.",
+"p_note":"Es un experimento mental: una hoja de verdad no se puede doblar por la mitad más de 7 u 8 veces. El récord, con un papel muy largo y muy fino, es de 12 dobleces.",
+"r_mm":"{0} mm","r_cm":"{0} cm","r_m":"{0} m","r_km":"{0} km","r_ly":"{0} años luz",
+"ref_sheet":"una hoja","ref_phone":"un móvil","ref_ruler":"una regla","ref_person":"una persona","ref_build":"edificio de 10 plantas","ref_eiffel":"Torre Eiffel","ref_everest":"Everest","ref_plane":"un avión","ref_iss":"Estación Espacial","ref_moon":"la Luna",
+"ref_1m":"1 metro","ref_field":"campo de fútbol","ref_1km":"1 km","ref_mb":"Madrid–Barcelona","ref_earth":"una vuelta a la Tierra","ref_moonD":"Tierra–Luna","ref_sun":"Tierra–Sol","ref_nep":"Tierra–Neptuno","ref_ly":"1 año luz",
+"t_kg":"{0} kg","t_g":"{0} g","t_t":"{0} toneladas",
+"r1.q":"¿Cuántos granos hay en la casilla 10?",
+"r1.o0":"20","r1.o1":"100","r1.o2":"512","r1.o3":"1024",
+"r1.e":"Casilla n → 2<sup>n−1</sup>: 2<sup>9</sup> = 512.",
+"r2.q":"Cada vez que doblamos la hoja, el grosor…",
+"r2.o0":"se duplica","r2.o1":"aumenta 0,1 mm","r2.o2":"se triplica",
+"r2.e":"Doblar por la mitad pone una capa encima de la otra: el doble de capas.",
+"r3.q":"Doblamos 5 veces una hoja de 0,1 mm. ¿Qué grosor tiene, en mm?",
+"r3.u":"mm",
+"r3.e":"0,1 · 2<sup>5</sup> = 0,1 · 32 = 3,2 mm.",
+"r4.q":"¿Qué significa 2<sup>5</sup>?",
+"r4.o0":"2 · 5 = 10","r4.o1":"2 + 2 + 2 + 2 + 2 = 10","r4.o2":"2 · 2 · 2 · 2 · 2 = 32","r4.o3":"5 · 5 = 25",
+"r4.e":"El exponente dice cuántas veces multiplicamos la base por sí misma.",
+"r5.q":"La casilla 20 tiene 524 288 granos. ¿Cuántos tiene la casilla 21?",
+"r5.o0":"524 289","r5.o1":"1 048 576","r5.o2":"524 308","r5.o3":"1 000 000",
+"r5.e":"El doble: 524 288 · 2 = 1 048 576 = 2<sup>20</sup>.",
+"r6.q":"1 = 2 − 1; 1 + 2 = 4 − 1; 1 + 2 + 4 = 8 − 1… ¿Cuántos granos hay en total en las <i>n</i> primeras casillas?",
+"r6.o0":"2<sup>n</sup> − 1","r6.o1":"2·n","r6.o2":"n<sup>2</sup>","r6.o3":"2<sup>n</sup>",
+"r6.e":"Siempre uno menos que la potencia siguiente: 2<sup>n</sup> − 1.",
+"r7.q":"¿Cuántos dobleces hacen falta, como mínimo, para que una hoja de 0,1 mm supere 1 m de grosor?",
+"r7.u":"dobleces",
+"r7.e":"1 m = 1000 mm = 10 000 veces 0,1 mm. 2<sup>13</sup> = 8192 no llega; 2<sup>14</sup> = 16 384 sí: 14 dobleces."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/potencies-escacs-paper/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Potències ===== */
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+const supN=n=>String(n).split('').map(d=>SUP[+d]).join('');
+const nfs=(x,d)=>nf(x,d).replace(/\./g,'\u00a0');
+const big=n=>(2n**BigInt(n)).toLocaleString(LANG==='es'?'es-ES':'ca-ES').replace(/[. ]/g,' ');
+function sci(x,d=1){if(x<1e6)return nfs(x,x<10?2:0);const e=Math.floor(Math.log10(x));let m=x/Math.pow(10,e);
+  if(+m.toFixed(d)>=10){m/=10;}return nfs(m,d)+'·10<sup>'+e+'</sup>';}
+function len(m){ /* metres -> text */
+  if(m<0.01)return tt('r_mm',nfs(m*1000,m<0.001?2:1));
+  if(m<1)return tt('r_cm',nfs(m*100,1));
+  if(m<1000)return tt('r_m',nfs(m,m<10?2:0));
+  if(m<9.461e14)return tt('r_km',m<1e9?nfs(m/1000,m<1e4?2:0):sci(m/1000,1));
+  return tt('r_ly',nfs(m/9.461e15,1));}
+let tab='wheat';
+$$('#tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;$$('#tabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  $('#pWheat').hidden=tab!=='wheat';$('#pPaper').hidden=tab!=='paper';});
+
+/* ---- predicció genèrica ---- */
+function predBox(host,keys,correct,store){
+  const el=$(host);el.innerHTML='';
+  keys.forEach((k,i)=>{const c=document.createElement('button');c.type='button';c.className='chip';c.dataset.k=k;c.textContent=t(k);
+    c.setAttribute('aria-pressed',String(store.p===i));
+    c.onclick=()=>{store.p=i;predBox(host,keys,correct,store);};el.appendChild(c);});
+}
+
+/* ---- barra amb càmera ---- */
+function Camera(cvId,W,H,vertical,refs,s0){
+  const c=fitCanvas($(cvId),W,H);
+  const o={c,W,H,vertical,refs,scale:s0,s0,target:s0,auto:false,value:0};
+  o.out=()=>{o.auto=false;o.target=o.target*10;};
+  o.in=()=>{o.auto=false;o.target=Math.max(o.s0/1000,o.target/10);};
+  o.reset=()=>{o.scale=o.target=o.s0;};
+  o.step=()=>{
+    if(o.auto&&o.value>0){const want=Math.pow(10,Math.ceil(Math.log10(o.value/0.9)));o.target=Math.max(o.s0,want);}
+    const k=REDUCE?1:0.12;o.scale=Math.exp(lerp(Math.log(o.scale),Math.log(o.target),k));
+  };
+  o.draw=()=>{
+    const ink=css('--ink'),mut=css('--muted'),pb=css('--pb'),pa=css('--pa');
+    c.fillStyle=css('--stage');c.fillRect(0,0,W,H);
+    const L=vertical?H-46:W-40, at=v=>v/o.scale*L;  /* longitud en px */
+    const x0=vertical?0:20,y0=vertical?H-30:0;
+    /* referències */
+    c.font='13px system-ui';c.lineWidth=1;
+    let lastPos=-99;
+    refs.forEach(([m,k])=>{const p=at(m);if(p<6||p>L+2)return;if(Math.abs(p-lastPos)<(vertical?17:70))return;lastPos=p;
+      c.strokeStyle=mut;c.setLineDash([4,4]);c.beginPath();
+      if(vertical){const y=y0-p;c.moveTo(0,y);c.lineTo(W,y);c.stroke();c.setLineDash([]);c.fillStyle=mut;c.textAlign='right';c.fillText(t(k)+' · '+len(m),W-8,y-4);}
+      else{const x=x0+p;c.moveTo(x,10);c.lineTo(x,H-26);c.stroke();c.setLineDash([]);c.fillStyle=mut;c.textAlign='center';c.fillText(t(k),x,H-10);}
+    });
+    /* barra */
+    const p=at(o.value),over=p>L+(vertical?40:36);
+    const pp=Math.min(p,L+(vertical?40:36));
+    c.fillStyle=pb;
+    if(vertical){const bw=70,bx=60;if(pp>0)c.fillRect(bx,y0-pp,bw,Math.max(pp,o.value>0?1.5:0));
+      c.fillStyle=ink;c.fillRect(0,y0,W,2);
+      if(over){c.fillStyle=css('--warn');c.font='bold 20px system-ui';c.textAlign='left';c.fillText('▲▲▲',bx+8,18);}
+    } else {const bh=34,by=(H-bh)/2-8;if(pp>0)c.fillRect(x0,by,Math.max(pp,o.value>0?1.5:0),bh);
+      c.fillStyle=ink;c.fillRect(x0-2,by-14,2,bh+28);
+      if(over){c.fillStyle=css('--warn');c.font='bold 20px system-ui';c.textAlign='right';c.fillText('▶▶▶',W-4,by-4);}
+    }
+    c.fillStyle=ink;c.font='bold 13px system-ui';c.textAlign='left';
+    c.fillText(tt(vertical?'scale_v':'scale',len(o.scale)),vertical?8:24,vertical?16:18);
+  };
+  o.screens=()=>o.value/o.scale;
+  return o;
+}
+const W_REFS=[[1,'ref_1m'],[105,'ref_field'],[1000,'ref_1km'],[5.04e5,'ref_mb'],[4.0075e7,'ref_earth'],[3.844e8,'ref_moonD'],[1.496e11,'ref_sun'],[4.5e12,'ref_nep'],[9.461e15,'ref_ly']];
+const P_REFS=[[0.0001,'ref_sheet'],[0.008,'ref_phone'],[0.3,'ref_ruler'],[1.7,'ref_person'],[30,'ref_build'],[330,'ref_eiffel'],[8849,'ref_everest'],[11000,'ref_plane'],[4.08e5,'ref_iss'],[3.844e8,'ref_moon']];
+const camW=Camera('#wBar',900,150,false,W_REFS,1);
+const camP=Camera('#pCv',560,520,true,P_REFS,0.1);
+$('#wOut').onclick=()=>{$('#wAuto').checked=false;camW.out();};$('#wIn').onclick=()=>{$('#wAuto').checked=false;camW.in();};
+$('#pOut').onclick=()=>{$('#pAuto').checked=false;camP.out();};$('#pIn').onclick=()=>{$('#pAuto').checked=false;camP.in();};
+$('#wAuto').onchange=e=>{camW.auto=e.target.checked;};$('#pAuto').onchange=e=>{camP.auto=e.target.checked;};
+
+/* ---- blat ---- */
+const BW=440,bx=fitCanvas($('#board'),BW,BW);
+const WP={p:null};let wn=0,wPlaying=false,wAcc=0;
+const WKEYS=['wp0','wp1','wp2','wp3'];
+function wUpd(){
+  $('#wPlay').textContent=wPlaying?t('w_pause'):t('w_play');
+  $('#wSq').innerHTML=wn?String(wn):'—';
+  $('#wThis').innerHTML=wn?(wn<=40?big(wn-1):'≈ '+sci(Math.pow(2,wn-1),2))+'<br><span class="mut">= 2<sup>'+(wn-1)+'</sup></span>':'—';
+  $('#wTot').innerHTML=wn?(wn<=40?big(wn).replace(/\d$/,d=>String(+d-1)):'≈ '+sci(Math.pow(2,wn)-1,2))+'<br><span class="mut">= 2<sup>'+wn+'</sup> − 1</span>':'—';
+  const g=(Math.pow(2,wn)-1)*0.04;
+  $('#wMass').innerHTML=wn?(g<1000?tt('t_g',nfs(g,g<10?2:0)):g<1e6?tt('t_kg',nfs(g/1000,1)):tt('t_t',g<1e12?nfs(g/1e6,g<1e9?1:0):sci(g/1e6,1))):'—';
+  camW.value=wn?Math.pow(2,wn-1)*0.005:0;
+  const m=$('#wMsg');
+  if(wn===64){let h=tt('w_end',sci((Math.pow(2,64)-1)*0.04/1e6,1));
+    if(WP.p!==null)h+='<br>'+(WP.p===3?t('w_pred_ok'):tt('w_pred_ko',t(WKEYS[WP.p])));
+    m.innerHTML=h;m.className='msg '+(WP.p===null||WP.p===3?'good':'bad');}
+  else{m.innerHTML=wn?(camW.screens()>1?tt('screens',sci(camW.screens(),1)):t('fits')):'';m.className='msg';}
+  predBox('#wPred',WKEYS,3,WP);
+}
+$('#wPlay').onclick=()=>{if(wn>=64)wn=0;wPlaying=!wPlaying;wAcc=0;wUpd();};
+$('#wStep').onclick=()=>{wPlaying=false;if(wn<64)wn++;wUpd();};
+$('#wReset').onclick=()=>{wPlaying=false;wn=0;camW.reset();wUpd();};
+function drawBoard(){
+  const s=BW/8,ink=css('--ink'),pa=css('--pa'),dark=matchMedia('(prefers-color-scheme: dark)').matches;
+  for(let i=0;i<64;i++){const r=Math.floor(i/8),cc=i%8,x=cc*s,y=r*s,n=i+1;
+    const light=(r+cc)%2===0;
+    bx.fillStyle=light?(dark?'#2a3346':'#efe6d2'):(dark?'#18202f':'#c9b48d');bx.fillRect(x,y,s,s);
+    if(n<=wn){
+      bx.fillStyle='#d9a521';bx.globalAlpha=clamp(0.15+0.85*(n-1)/63,0.15,1);bx.fillRect(x+2,y+2,s-4,s-4);bx.globalAlpha=1;
+      if(n<=6){const k=Math.pow(2,n-1),cols=Math.ceil(Math.sqrt(k)),rr=Math.ceil(k/cols);
+        bx.fillStyle='#7a5200';for(let j=0;j<k;j++){const gx=x+s*(j%cols+1)/(cols+1),gy=y+s*(Math.floor(j/cols)+1)/(rr+1);
+          bx.beginPath();bx.ellipse(gx,gy,3.2,2,0.6,0,TAU);bx.fill();}}
+      else{bx.fillStyle=n>=40?'#fff':'#3b2600';bx.textAlign='center';bx.textBaseline='middle';
+        const lab=n<=17?String(Math.pow(2,n-1)):'2'+supN(n-1);
+        bx.font='bold '+(lab.length>5?11:15)+'px '+(n<=17?'ui-monospace,Menlo,Consolas,monospace':'system-ui,sans-serif');bx.fillText(lab,x+s/2,y+s/2);}
+    }
+    if(n===wn){bx.strokeStyle=pa;bx.lineWidth=4;bx.strokeRect(x+2,y+2,s-4,s-4);}
+  }
+  bx.textBaseline='alphabetic';
+}
+
+/* ---- paper ---- */
+const PP={p:null};let pn=0,pPlaying=false,pAcc=0;
+const PKEYS=['pp0','pp1','pp2','pp3'];
+function pUpd(){
+  $('#pPlay').textContent=pPlaying?t('p_pause'):t('p_play');
+  $('#pN').textContent=String(pn);
+  $('#pL').innerHTML=(pn<=40?big(pn):sci(Math.pow(2,pn),2))+' <span class="mut">= 2<sup>'+pn+'</sup></span>';
+  const th=0.0001*Math.pow(2,pn);camP.value=th;
+  $('#pT').innerHTML=len(th);
+  $('#pS').innerHTML=camP.screens()>1?tt('screens',sci(camP.screens(),1)):t('fits');
+  const m=$('#pMsg');
+  if(pn>=42){let h=t('p_end');if(PP.p!==null)h+='<br>'+(PP.p===0?t('p_pred_ok'):tt('p_pred_ko',t(PKEYS[PP.p])));m.innerHTML=h;m.className='msg '+(PP.p===null||PP.p===0?'good':'bad');}
+  else{m.innerHTML='';m.className='msg';}
+  predBox('#pPred',PKEYS,0,PP);
+}
+$('#pPlay').onclick=()=>{if(pn>=42)pn=0;pPlaying=!pPlaying;pAcc=0;pUpd();};
+$('#pStep').onclick=()=>{pPlaying=false;if(pn<42)pn++;pUpd();};
+$('#pReset').onclick=()=>{pPlaying=false;pn=0;camP.reset();pUpd();};
+
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  if(wPlaying){wAcc+=dt;if(wAcc>0.45||REDUCE){wAcc=0;wn=REDUCE?64:wn+1;if(wn>=64){wn=64;wPlaying=false;}wUpd();}}
+  if(pPlaying){pAcc+=dt;if(pAcc>0.6||REDUCE){pAcc=0;pn=REDUCE?42:pn+1;if(pn>=42){pn=42;pPlaying=false;}pUpd();}}
+  camW.step();camP.step();
+  if(tab==='wheat'){drawBoard();camW.draw();
+    if(wn&&wn<64){const m=$('#wMsg'),s=camW.screens()>1?tt('screens',sci(camW.screens(),1)):t('fits');if(m.dataset.s!==s){m.dataset.s=s;m.innerHTML=s;}}}
+  else{camP.draw();const s=camP.screens()>1?tt('screens',sci(camP.screens(),1)):t('fits');if($('#pS').dataset.s!==s){$('#pS').dataset.s=s;$('#pS').innerHTML=s;}}
+  requestAnimationFrame(loop);
+}
+App.hooks.push(()=>{wUpd();pUpd();});
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":2},{"id":"r2","lvl":"all","type":"mc","n":3,"ans":0},{"id":"r3","lvl":"all","type":"num","num":3.2,"tol":0.001,"u":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"r7","lvl":"adv","type":"num","num":14,"tol":0,"u":1}];
+initQuiz(QDATA);
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

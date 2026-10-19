@@ -15,7 +15,7 @@ R=Path(__file__).resolve().parent
 OUT=R/'.build'; REPO=R.parent.parent
 BASE='https://ildemoralesmates.github.io'
 subprocess.run([sys.executable,str(R/'build.py')],check=True,cwd=R,stdout=subprocess.DEVNULL)
-MAP={'punnett':'genetica-punnett','atoms':'models-atomics','gasos':'lleis-gasos','seleccio':'seleccio-natural','richter':'escala-richter','ones':'ones-sismiques','decay':'desintegracio-radioactiva','isostasia':'isostasia'}
+MAP={'punnett':'genetica-punnett','atoms':'models-atomics','gasos':'lleis-gasos','seleccio':'seleccio-natural','richter':'escala-richter','ones':'ones-sismiques','decay':'desintegracio-radioactiva','isostasia':'isostasia','engranatges':'engranatges-mcm','rectangles':'mcd-rectangles','zoom':'zoom-recta-decimals','potencies':'potencies-escacs-paper','arrel':'arrel-quadrada-area','rebaixes':'rebaixes-encadenades'}
 DESC={'ca':{'gasos':"Simulador cinètic de gas ideal: lleis de Boyle–Mariotte, Charles i Gay-Lussac amb pressió mesurada a partir dels xocs, gràfiques i taula de mesures."},
  'es':{'punnett':"Simulador de genética mendeliana: cuadros de Punnett para uno y dos genes, dominancia completa e incompleta, y simulación de descendientes.",
  'atoms':"Simulador de los modelos atómicos de Thomson, Rutherford y Bohr: dispersión de partículas alfa con fuerza de Coulomb real y saltos electrónicos entre niveles.",
@@ -24,6 +24,12 @@ DESC={'ca':{'gasos':"Simulador cinètic de gas ideal: lleis de Boyle–Mariotte,
  'richter':"Escala de Richter: compara dos terremotos y comprueba cómo cada punto de magnitud multiplica la amplitud por 10 y la energía por ≈32. Con sismograma, equivalencias y test autocorregido.",
  'ones':"Ondas sísmicas P y S: trazado de rayos en una Tierra esférica con velocidades tipo PREM, zonas de sombra y cómo deducimos el núcleo líquido. Con test autocorregido.",
  'decay':"Desintegración radiactiva y datación radiométrica: átomos que se desintegran al azar, periodo de semidesintegración y cálculo de la edad de una muestra. Con test autocorregido.",
+ 'engranatges':"Dos ruedas dentadas con una marca cada una: ¿cuándo vuelven a coincidir? Animación para entender el mínimo común múltiplo (mcm) en 1.º de ESO, con casos predefinidos, números libres, predicción y test autocorregido.",
+ 'rectangles':"Cubre un rectángulo con las baldosas cuadradas más grandes posible: el máximo común divisor (mcd) a simple vista y el algoritmo de Euclides animado. Para 1.º de ESO, con predicción, casos predefinidos y test autocorregido.",
+ 'zoom':"Haz zoom en la recta numérica: entre 0,1 y 0,2 aparecen diez marcas, y entre dos de ellas, diez más. Para 1.º de ESO: comparar y ordenar decimales (¿0,15 o 0,2?), con retos y test autocorregido.",
+ 'potencies':"Potencias de base 2 que crecen hasta salirse de la pantalla: la leyenda del trigo en el tablero de ajedrez y doblar una hoja 42 veces hasta la Luna. Para 1.º de ESO, con predicción y test autocorregido.",
+ 'arrel':"La raíz cuadrada como el lado de un cuadrado: cambia el área y mira cómo se ajusta el lado. ¿Por qué √50 está entre 7 y 8? Cuadrados perfectos, raíz entera y aproximación por décimas para 1.º de ESO, con reto y test autocorregido.",
+ 'rebaixes':"Porcentajes encadenados a simple vista: un 20 % y después otro 20 % de rebaja no hacen un 40 %. Modelo de área y barras de precio para 1.º de ESO, con subidas y bajadas, predicción y test autocorregido.",
  'isostasia':"Isostasia: montañas con raíces (modelo de Airy) y rebote glaciar con un manto viscoso. Simulación interactiva con test autocorregido."}}
 FOOT={'ca':('Recursos de matemàtiques','deed.ca','Les imatges i materials de tercers conserven la seua pròpia llicència.'),
       'es':('Recursos de matemáticas','deed.es','Las imágenes y materiales de terceros conservan su propia licencia.')}

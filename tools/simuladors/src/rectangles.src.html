@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Màxim comú divisor amb rectangles</title>
+<meta name="description" content="Cobreix un rectangle amb les rajoles quadrades més grans possible: el màxim comú divisor (mcd) a ull i l'algorisme d'Euclides animat. Per a 1r d'ESO, amb predicció, casos predefinits i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+.predict,.numin{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:5em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.divs{font-family:var(--f-num);font-size:14px;line-height:1.9}
+.divs span{display:inline-block;min-width:2.2em;text-align:center;border-radius:5px;margin:0 1px}
+.divs .c{background:rgba(29,138,78,.18);font-weight:700}
+.divs .g{background:var(--ok);color:var(--panel);font-weight:700}
+.steps{font-family:var(--f-num);font-size:14px;line-height:1.7;margin:0;padding-left:1.3em}
+.steps li.on{color:var(--pa);font-weight:700}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="row"><span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div></div>
+<div class="numin">
+<label for="ra" data-i18n="side_a"></label><input type="number" id="ra" min="1" max="100" value="24">
+<label for="rb" data-i18n="side_b"></label><input type="number" id="rb" min="1" max="100" value="36">
+<button class="btn" id="apply" type="button" data-i18n="apply"></button>
+</div>
+<div class="predict">
+<label for="guess" data-i18n="guess_q"></label><input type="text" inputmode="numeric" id="guess" autocomplete="off">
+<button class="btn primary" id="check" type="button" data-i18n="check_guess"></button>
+</div>
+<div class="row">
+<div class="seg" id="mode" role="group" data-i18n-aria="aria.mode" aria-label=""><button type="button" data-m="tile" aria-pressed="true" data-i18n="m_tile"></button><button type="button" data-m="euc" aria-pressed="false" data-i18n="m_euc"></button></div>
+</div>
+<div class="ctrl" id="tilectl"><label for="d"><span data-i18n="tile_side"></span>: <b id="dv"></b></label><input type="range" id="d" min="1" max="24" step="1" value="5"></div>
+<div class="row" id="eucctl" hidden><button class="btn primary" id="eplay" type="button" data-i18n="e_play"></button><button class="btn" id="estep" type="button" data-i18n="e_step"></button></div>
+<canvas id="cv"></canvas>
+<p class="msg" id="msg" aria-live="polite"></p>
+<div class="grid2">
+<div class="divs" id="divs"></div>
+<div><ol class="steps" id="steps"></ol></div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Màxim comú divisor amb rectangles",
+"eyebrow":"Matemàtiques · 1r ESO · Divisibilitat",
+"h1":"Màxim comú divisor: enrajola el rectangle",
+"lede":"Cobreix un rectangle amb rajoles quadrades iguals, totes senceres i tan grans com es puga.",
+"sim_title":"Les rajoles",
+"story":"Tenim un terra rectangular i volem posar-hi <b>rajoles quadrades iguals</b>, sense tallar-ne cap i sense que quede cap forat. Volem les rajoles <b>més grans possible</b>. Prova mides o deixa que Euclides ho faça per tu.",
+"presets":"Casos:",
+"side_a":"Alt",
+"side_b":"Ample",
+"apply":"Usa aquests números",
+"guess_q":"La teua predicció: costat de la rajola més gran?",
+"check_guess":"Comprova",
+"aria.mode":"Mode",
+"m_tile":"Prova rajoles",
+"m_euc":"Mètode d'Euclides",
+"tile_side":"Costat de la rajola",
+"e_play":"▶ Retalla quadrats",
+"e_step":"Un quadrat més",
+"fits":"✔ Caben exactament: {0} × {1} = {2} rajoles de {3} × {3}.",
+"fits_max":"És la rajola més gran possible: mcd({0}, {1}) = {2}.",
+"nofit":"✘ No queden bé: sobra una franja de {0}.",
+"nofit_w":"amplada {0}","nofit_h":"altura {0}","and":" i ",
+"g_ok":"✔ Encertat! La rajola més gran és de {0} × {0}: mcd({1}, {2}) = {0}.",
+"g_small":"Les rajoles de {0} caben, però n'hi ha de més grans. Prova-ho!",
+"g_no":"Amb rajoles de {0} sobra un tros: {0} no divideix {1}.",
+"g_bad":"Escriu un número entre 1 i {0}.",
+"divs_a":"Divisors de {0}:",
+"divs_b":"Divisors de {0}:",
+"divs_c":"Divisors comuns:",
+"st_q":"Retallem {0} quadrat de {1} × {1}. Queda {2} × {3}.",
+"st_qp":"Retallem {0} quadrats de {1} × {1}. Queda {2} × {3}.",
+"st_end":"Retallem {0} quadrats de {1} × {1}. No queda res: el quadrat més xicotet, de costat <b>{1}</b>, enrajola tot el rectangle.",
+"st_end1":"Retallem {0} quadrat de {1} × {1}. No queda res: el quadrat de costat <b>{1}</b> enrajola tot el rectangle.",
+"st_div":"{0} = {1} · {2} + {3}",
+"e_done":"✔ Euclides diu: mcd({0}, {1}) = {2}. Mira la quadrícula: rajoles de {2} × {2} ho cobreixen tot.",
+"idea_basic":"<b>La idea:</b> perquè les rajoles quadren, el seu costat ha de <b>dividir l'alt i dividir l'ample</b>: ha de ser un <b>divisor comú</b>. La rajola més gran és el <b>màxim comú divisor</b>. Per a 24 × 36, mcd = 12.",
+"idea_adv":"<b>Per què funciona Euclides?</b> Una rajola que enrajola el rectangle 24 × 36 també enrajola el quadrat de 24 que llevem i, per tant, el tros que queda (24 × 12). Llevar quadrats no canvia els divisors comuns, però fa els números més xicotets. Quan el tros que queda és un quadrat exacte, el seu costat és el mcd. En números: es divideix el gran entre el xicotet i es continua amb el residu.",
+"r1.q":"Un rectangle de 12 × 18. Quin és el costat de la rajola quadrada més gran que el cobreix sense tallar-ne cap?",
+"r1.o0":"3","r1.o1":"6","r1.o2":"36","r1.o3":"2",
+"r1.e":"Divisors de 12: 1, 2, 3, 4, <b>6</b>, 12. Divisors de 18: 1, 2, 3, <b>6</b>, 9, 18. El major comú és 6.",
+"r2.q":"Un rectangle de 20 × 30. Costat de la rajola quadrada més gran?",
+"r2.u":"unitats",
+"r2.e":"mcd(20, 30) = 10.",
+"r3.q":"Cobrim un rectangle de 24 × 36 amb rajoles de 12 × 12. Quantes rajoles necessitem?",
+"r3.o0":"6","r3.o1":"12","r3.o2":"72","r3.o3":"3",
+"r3.e":"24 ÷ 12 = 2 files i 36 ÷ 12 = 3 columnes: 2 · 3 = 6 rajoles.",
+"r4.q":"Per què no podem usar rajoles de 8 × 8 en un rectangle de 24 × 36?",
+"r4.o0":"Perquè 8 no divideix 36: sobra una franja","r4.o1":"Perquè 8 és massa gran","r4.o2":"Perquè 8 no és un nombre primer","r4.o3":"Sí que es poden usar",
+"r4.e":"8 divideix 24 però no 36 (36 = 4 · 8 + 4): queda una franja de 4 d'ample sense cobrir.",
+"r5.q":"Un rectangle de 7 × 10. Quina és la rajola quadrada més gran?",
+"r5.o0":"1 × 1","r5.o1":"7 × 7","r5.o2":"10 × 10","r5.o3":"70 × 70",
+"r5.e":"7 i 10 no tenen cap divisor comú llevat de l'1: mcd(7, 10) = 1.",
+"r6.q":"Euclides amb 45 i 60: 60 = 1·45 + 15 i 45 = 3·15 + 0. Quant val el mcd(45, 60)?",
+"r6.u":"",
+"r6.e":"L'últim residu que no és zero és 15: mcd(45, 60) = 15.",
+"r7.q":"Tenim 48 llapis i 36 gomes i volem fer lots iguals, tants com siga possible, sense que sobre res. Quants lots podem fer?",
+"r7.o0":"12","r7.o1":"6","r7.o2":"144","r7.o3":"4",
+"r7.e":"El nombre de lots ha de dividir 48 i 36: el màxim és mcd(48, 36) = 12 (amb 4 llapis i 3 gomes cadascun)."
+},
+es:{
+"title":"Máximo común divisor con rectángulos",
+"eyebrow":"Matemáticas · 1.º ESO · Divisibilidad",
+"h1":"Máximo común divisor: embaldosa el rectángulo",
+"lede":"Cubre un rectángulo con baldosas cuadradas iguales, todas enteras y tan grandes como se pueda.",
+"sim_title":"Las baldosas",
+"story":"Tenemos un suelo rectangular y queremos ponerle <b>baldosas cuadradas iguales</b>, sin cortar ninguna y sin que quede ningún hueco. Queremos las baldosas <b>más grandes posible</b>. Prueba tamaños o deja que Euclides lo haga por ti.",
+"presets":"Casos:",
+"side_a":"Alto",
+"side_b":"Ancho",
+"apply":"Usa estos números",
+"guess_q":"Tu predicción: ¿lado de la baldosa más grande?",
+"check_guess":"Comprobar",
+"aria.mode":"Modo",
+"m_tile":"Prueba baldosas",
+"m_euc":"Método de Euclides",
+"tile_side":"Lado de la baldosa",
+"e_play":"▶ Recorta cuadrados",
+"e_step":"Un cuadrado más",
+"fits":"✔ Caben exactamente: {0} × {1} = {2} baldosas de {3} × {3}.",
+"fits_max":"Es la baldosa más grande posible: mcd({0}, {1}) = {2}.",
+"nofit":"✘ No encajan: sobra una franja de {0}.",
+"nofit_w":"anchura {0}","nofit_h":"altura {0}","and":" y ",
+"g_ok":"✔ ¡Acertaste! La baldosa más grande es de {0} × {0}: mcd({1}, {2}) = {0}.",
+"g_small":"Las baldosas de {0} caben, pero las hay más grandes. ¡Pruébalo!",
+"g_no":"Con baldosas de {0} sobra un trozo: {0} no divide a {1}.",
+"g_bad":"Escribe un número entre 1 y {0}.",
+"divs_a":"Divisores de {0}:",
+"divs_b":"Divisores de {0}:",
+"divs_c":"Divisores comunes:",
+"st_q":"Recortamos {0} cuadrado de {1} × {1}. Queda {2} × {3}.",
+"st_qp":"Recortamos {0} cuadrados de {1} × {1}. Queda {2} × {3}.",
+"st_end":"Recortamos {0} cuadrados de {1} × {1}. No queda nada: el cuadrado más pequeño, de lado <b>{1}</b>, embaldosa todo el rectángulo.",
+"st_end1":"Recortamos {0} cuadrado de {1} × {1}. No queda nada: el cuadrado de lado <b>{1}</b> embaldosa todo el rectángulo.",
+"st_div":"{0} = {1} · {2} + {3}",
+"e_done":"✔ Euclides dice: mcd({0}, {1}) = {2}. Mira la cuadrícula: baldosas de {2} × {2} lo cubren todo.",
+"idea_basic":"<b>La idea:</b> para que las baldosas encajen, su lado tiene que <b>dividir el alto y dividir el ancho</b>: tiene que ser un <b>divisor común</b>. La baldosa más grande es el <b>máximo común divisor</b>. Para 24 × 36, mcd = 12.",
+"idea_adv":"<b>¿Por qué funciona Euclides?</b> Una baldosa que embaldosa el rectángulo 24 × 36 también embaldosa el cuadrado de 24 que quitamos y, por tanto, el trozo que queda (24 × 12). Quitar cuadrados no cambia los divisores comunes, pero hace los números más pequeños. Cuando el trozo que queda es un cuadrado exacto, su lado es el mcd. En números: se divide el grande entre el pequeño y se sigue con el resto.",
+"r1.q":"Un rectángulo de 12 × 18. ¿Cuál es el lado de la baldosa cuadrada más grande que lo cubre sin cortar ninguna?",
+"r1.o0":"3","r1.o1":"6","r1.o2":"36","r1.o3":"2",
+"r1.e":"Divisores de 12: 1, 2, 3, 4, <b>6</b>, 12. Divisores de 18: 1, 2, 3, <b>6</b>, 9, 18. El mayor común es 6.",
+"r2.q":"Un rectángulo de 20 × 30. ¿Lado de la baldosa cuadrada más grande?",
+"r2.u":"unidades",
+"r2.e":"mcd(20, 30) = 10.",
+"r3.q":"Cubrimos un rectángulo de 24 × 36 con baldosas de 12 × 12. ¿Cuántas baldosas necesitamos?",
+"r3.o0":"6","r3.o1":"12","r3.o2":"72","r3.o3":"3",
+"r3.e":"24 ÷ 12 = 2 filas y 36 ÷ 12 = 3 columnas: 2 · 3 = 6 baldosas.",
+"r4.q":"¿Por qué no podemos usar baldosas de 8 × 8 en un rectángulo de 24 × 36?",
+"r4.o0":"Porque 8 no divide a 36: sobra una franja","r4.o1":"Porque 8 es demasiado grande","r4.o2":"Porque 8 no es un número primo","r4.o3":"Sí que se pueden usar",
+"r4.e":"8 divide a 24 pero no a 36 (36 = 4 · 8 + 4): queda una franja de 4 de ancho sin cubrir.",
+"r5.q":"Un rectángulo de 7 × 10. ¿Cuál es la baldosa cuadrada más grande?",
+"r5.o0":"1 × 1","r5.o1":"7 × 7","r5.o2":"10 × 10","r5.o3":"70 × 70",
+"r5.e":"7 y 10 no tienen ningún divisor común salvo el 1: mcd(7, 10) = 1.",
+"r6.q":"Euclides con 45 y 60: 60 = 1·45 + 15 y 45 = 3·15 + 0. ¿Cuánto vale el mcd(45, 60)?",
+"r6.u":"",
+"r6.e":"El último resto que no es cero es 15: mcd(45, 60) = 15.",
+"r7.q":"Tenemos 48 lápices y 36 gomas y queremos hacer lotes iguales, tantos como sea posible, sin que sobre nada. ¿Cuántos lotes podemos hacer?",
+"r7.o0":"12","r7.o1":"6","r7.o2":"144","r7.o3":"4",
+"r7.e":"El número de lotes tiene que dividir a 48 y a 36: el máximo es mcd(48, 36) = 12 (con 4 lápices y 3 gomas cada uno)."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== mcd amb rectangles ===== */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const PRE=[[24,36],[12,18],[20,30],[16,40],[45,60],[18,48],[15,28],[21,35]];
+let revealed=false,A=24,B=36,G=12,mode='tile',d=5,sq=[],shown=0,eplaying=false,eacc=0,last=0,msgFn=null;
+const W=900,H=500,cx=fitCanvas($('#cv'),W,H);
+const COLS=['--pa','--pb','--ok','--warn'];
+
+function buildPresets(){const box=$('#presets');box.innerHTML='';
+  PRE.forEach(([a,b])=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=a+' × '+b;
+    c.setAttribute('aria-pressed',String(a===A&&b===B));c.onclick=()=>setup(a,b);box.appendChild(c);});}
+function euclidSquares(){
+  /* quadrats en unitats; rectangle: ample B (x), alt A (y) */
+  const out=[];let x=0,y=0,w=B,h=A,step=0;
+  while(w>0&&h>0){
+    if(w>=h){const q=Math.floor(w/h);for(let i=0;i<q;i++)out.push({x:x+i*h,y,s:h,step});x+=q*h;w-=q*h;}
+    else{const q=Math.floor(h/w);for(let i=0;i<q;i++)out.push({x,y:y+i*w,s:w,step});y+=q*w;h-=q*w;}
+    step++;
+  }
+  return out;
+}
+function setup(a,b){
+  A=clamp(Math.round(a)||24,1,100);B=clamp(Math.round(b)||36,1,100);
+  $('#ra').value=A;$('#rb').value=B;G=gcd(A,B);
+  const mn=Math.min(A,B);$('#d').max=mn;d=Math.min(d,mn);if(d<1)d=1;$('#d').value=d;
+  sq=euclidSquares();shown=0;revealed=false;eplaying=false;msgFn=null;$('#msg').innerHTML='';$('#msg').className='msg';$('#guess').value='';
+  buildPresets();refresh();
+}
+$('#apply').onclick=()=>setup(+$('#ra').value,+$('#rb').value);
+['ra','rb'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')setup(+$('#ra').value,+$('#rb').value);}));
+$('#d').addEventListener('input',()=>{d=+$('#d').value;msgFn=tileMsg;refresh();});
+$$('#mode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#mode button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  $('#tilectl').hidden=mode!=='tile';$('#eucctl').hidden=mode!=='euc';msgFn=mode==='tile'?tileMsg:null;if(mode==='euc'){shown=0;eplaying=false;}refresh();});
+$('#eplay').onclick=()=>{if(shown>=sq.length)shown=0;eplaying=true;last=performance.now();eacc=0;};
+$('#estep').onclick=()=>{eplaying=false;if(shown>=sq.length)shown=0;shown++;if(shown>=sq.length)msgFn=eucDone;refresh();};
+$('#check').onclick=()=>{
+  const v=Math.round(parseNum($('#guess').value)),mn=Math.min(A,B);
+  if(!(v>=1&&v<=mn)){msgFn=()=>{$('#msg').className='msg bad';$('#msg').innerHTML=tt('g_bad',mn);};refresh();return;}
+  if(mode!=='tile')$$('#mode button')[0].click();
+  d=v;$('#d').value=v;
+  msgFn=()=>{const m=$('#msg');
+    if(v===G){revealed=true;m.className='msg good';m.innerHTML=tt('g_ok',G,A,B);}
+    else if(A%v===0&&B%v===0){m.className='msg bad';m.innerHTML=tt('g_small',v);}
+    else{m.className='msg bad';m.innerHTML=tt('g_no',v,A%v!==0?A:B);}};
+  refresh();
+};
+function tileMsg(){
+  const m=$('#msg'),rx=B%d,ry=A%d;
+  if(!rx&&!ry){if(d===G)revealed=true;m.className='msg good';m.innerHTML=tt('fits',A/d,B/d,A*B/d/d,d)+(d===G?' '+tt('fits_max',A,B,G):'');}
+  else{const parts=[];if(rx)parts.push(tt('nofit_w',rx));if(ry)parts.push(tt('nofit_h',ry));
+    m.className='msg bad';m.innerHTML=tt('nofit',parts.join(t('and')));}
+}
+function eucDone(){revealed=true;$('#msg').className='msg good';$('#msg').innerHTML=tt('e_done',A,B,G);}
+function divisors(n){const r=[];for(let i=1;i<=n;i++)if(n%i===0)r.push(i);return r;}
+function divsHTML(){
+  const da=divisors(A),db=divisors(B),com=da.filter(x=>B%x===0);
+  const sp=(arr)=>arr.map(x=>'<span class="'+(!revealed?(x===d&&mode==='tile'?'c':''):x===G?'g':com.includes(x)?'c':'')+'">'+x+'</span>').join('');
+  $('#divs').innerHTML=tt('divs_a',A)+' '+sp(da)+'<br>'+tt('divs_b',B)+' '+sp(db)+(revealed?'<br><b>'+t('divs_c')+'</b> '+sp(com):'');
+}
+function stepsHTML(){
+  const ol=$('#steps');ol.innerHTML='';
+  if(mode!=='euc')return;
+  let w=Math.max(A,B),h=Math.min(A,B),k=0,cnt=0;
+  const curStep=shown?sq[Math.min(shown,sq.length)-1].step:-1;
+  while(h>0){
+    const q=Math.floor(w/h),r=w%h;cnt+=q;
+    if(cnt-q>=shown)break;
+    const li=document.createElement('li');
+    li.innerHTML=App.level==='adv'?tt('st_div',w,q,h,r):(r?tt(q===1?'st_q':'st_qp',q,h,h,r):tt(q===1?'st_end1':'st_end',q,h));
+    if(k===curStep)li.className='on';
+    ol.appendChild(li);w=h;h=r;k++;
+  }
+}
+function refresh(){
+  $('#dv').textContent=d+' × '+d;
+  if(msgFn)msgFn();else if(mode==='tile'){msgFn=tileMsg;msgFn();}else{$('#msg').innerHTML='';$('#msg').className='msg';}
+  divsHTML();stepsHTML();
+  draw();
+}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),st=css('--stage');
+  cx.fillStyle=st;cx.fillRect(0,0,W,H);
+  const u=Math.min((W-90)/B,(H-80)/A),ox=(W-u*B)/2+10,oy=(H-u*A)/2+8;
+  const X=v=>ox+v*u,Y=v=>oy+v*u;
+  /* fons i quadrícula d'unitats */
+  cx.fillStyle=css('--panel');cx.fillRect(ox,oy,u*B,u*A);
+  if(u>=6){cx.strokeStyle=mut;cx.globalAlpha=.16;cx.lineWidth=1;cx.beginPath();
+    for(let i=1;i<B;i++){cx.moveTo(X(i),oy);cx.lineTo(X(i),Y(A));}for(let j=1;j<A;j++){cx.moveTo(ox,Y(j));cx.lineTo(X(B),Y(j));}cx.stroke();cx.globalAlpha=1;}
+  if(mode==='tile'){
+    const nx=Math.floor(B/d),ny=Math.floor(A/d),ok=B%d===0&&A%d===0,col=ok?css('--ok'):css('--pa');
+    for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){
+      cx.fillStyle=col;cx.globalAlpha=(i+j)%2?.30:.18;cx.fillRect(X(i*d),Y(j*d),u*d,u*d);cx.globalAlpha=1;
+      cx.strokeStyle=col;cx.lineWidth=2;cx.strokeRect(X(i*d)+1,Y(j*d)+1,u*d-2,u*d-2);}
+    /* sobrants */
+    cx.fillStyle=css('--warn');cx.globalAlpha=.35;
+    if(B%d)cx.fillRect(X(nx*d),oy,u*(B-nx*d),u*A);
+    if(A%d)cx.fillRect(ox,Y(ny*d),u*nx*d,u*(A-ny*d));
+    cx.globalAlpha=1;
+    if(B%d||A%d){cx.save();cx.beginPath();if(B%d)cx.rect(X(nx*d),oy,u*(B-nx*d),u*A);if(A%d)cx.rect(ox,Y(ny*d),u*nx*d,u*(A-ny*d));cx.clip();
+      cx.strokeStyle=css('--warn');cx.lineWidth=1.5;cx.beginPath();for(let k=-H;k<W+H;k+=10){cx.moveTo(k,0);cx.lineTo(k+H,H);}cx.stroke();cx.restore();}
+  } else {
+    const n=Math.min(shown,sq.length);
+    for(let i=0;i<n;i++){const q=sq[i],col=css(COLS[q.step%4]);
+      cx.fillStyle=col;cx.globalAlpha=.25;cx.fillRect(X(q.x),Y(q.y),u*q.s,u*q.s);cx.globalAlpha=1;
+      cx.strokeStyle=col;cx.lineWidth=2.5;cx.strokeRect(X(q.x)+1.5,Y(q.y)+1.5,u*q.s-3,u*q.s-3);
+      if(u*q.s>=26){cx.fillStyle=ink;cx.font='bold '+Math.min(22,u*q.s/3)+'px system-ui';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(String(q.s),X(q.x+q.s/2),Y(q.y+q.s/2));}}
+    if(n>=sq.length&&G*u>=4){cx.strokeStyle=ink;cx.globalAlpha=.55;cx.lineWidth=1;cx.setLineDash([3,3]);cx.beginPath();
+      for(let i=G;i<B;i+=G){cx.moveTo(X(i),oy);cx.lineTo(X(i),Y(A));}for(let j=G;j<A;j+=G){cx.moveTo(ox,Y(j));cx.lineTo(X(B),Y(j));}cx.stroke();cx.setLineDash([]);cx.globalAlpha=1;}
+  }
+  cx.strokeStyle=ink;cx.lineWidth=2.5;cx.strokeRect(ox,oy,u*B,u*A);
+  cx.fillStyle=ink;cx.font='bold 16px system-ui';cx.textAlign='center';cx.textBaseline='alphabetic';
+  cx.fillText(String(B),ox+u*B/2,oy-10);
+  cx.save();cx.translate(ox-14,oy+u*A/2);cx.rotate(-Math.PI/2);cx.fillText(String(A),0,0);cx.restore();
+}
+function loop(now){
+  if(eplaying){eacc+=(now-last)/1000;last=now;const per=REDUCE?0:Math.max(.12,1.6/sq.length);
+    let ch=false;while(eacc>=per&&shown<sq.length){eacc-=per;shown++;ch=true;if(REDUCE)break;}
+    if(REDUCE){shown=sq.length;ch=true;}
+    if(shown>=sq.length){eplaying=false;msgFn=eucDone;}
+    if(ch)refresh();}
+  requestAnimationFrame(loop);
+}
+App.hooks.push(refresh);
+document.addEventListener('themechange',draw);
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"num","num":10,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r6","lvl":"adv","type":"num","num":15,"tol":0},{"id":"r7","lvl":"adv","type":"mc","n":4,"ans":0}];
+initQuiz(QDATA);
+setup(24,36);
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

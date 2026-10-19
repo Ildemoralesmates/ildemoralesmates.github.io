@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Raíz cuadrada: el lado de un cuadrado</title>
+<meta name="description" content="La raíz cuadrada como el lado de un cuadrado: cambia el área y mira cómo se ajusta el lado. ¿Por qué √50 está entre 7 y 8? Cuadrados perfectos, raíz entera y aproximación por décimas para 1.º de ESO, con reto y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/arrel-quadrada-area/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/arrel-quadrada-area/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/arrel-quadrada-area/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/arrel-quadrada-area/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Raíz cuadrada: el lado de un cuadrado">
+<meta property="og:description" content="La raíz cuadrada como el lado de un cuadrado: cambia el área y mira cómo se ajusta el lado. ¿Por qué √50 está entre 7 y 8? Cuadrados perfectos, raíz entera y aproximación por décimas para 1.º de ESO, con reto y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/arrel-quadrada-area/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.formula{font-family:var(--f-num);font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:var(--ink)}
+.formula .s{color:var(--pa);font-weight:700}.formula .lo{color:var(--ok);font-weight:700}.formula .hi{color:var(--pb);font-weight:700}
+.areactl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.areactl input[type=range]{flex:1 1 16rem;accent-color:var(--pa)}
+.areactl output{font-family:var(--f-num);font-size:20px;font-weight:700;min-width:3.5em}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:16px}
+.predict input{font:inherit;font-size:16px;width:4em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}.msg.bad{color:var(--warn);font-weight:600}
+.tenths{font-family:var(--f-num);font-size:14px;line-height:1.7}
+.tenths .x{color:var(--pb);font-weight:700}.tenths .y{color:var(--ok);font-weight:700}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 1.º ESO · Potencias y raíces</p>
+      <h1 data-i18n="h1">La raíz cuadrada es el lado</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Si sabes el área de un cuadrado, su lado es la raíz cuadrada. Mueve el área y mira cómo crece el lado.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Del cuadrado a la raíz</h2>
+<p data-i18n-html="story">Cada cuadradito de la cuadrícula tiene área 1. Elige el área del <b>cuadrado azul</b>: su lado es <b>√Área</b>. Los cuadrados verde y naranja son los <b>cuadrados perfectos</b> más próximos, los que tienen un lado entero.</p>
+<div class="areactl">
+<label for="area" data-i18n="area_lbl">Área del cuadrado</label>
+<button class="btn" id="minus" type="button" aria-label="−1">−1</button>
+<input type="range" id="area" min="1" max="150" step="1" value="50">
+<button class="btn" id="plus" type="button" aria-label="+1">+1</button>
+<output id="areav" for="area"></output>
+</div>
+<canvas id="cv"></canvas>
+<div class="formula" id="formula" aria-live="polite"></div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>La idea:</b> no hay ningún número entero que, multiplicado por sí mismo, dé 50. Pero 7·7 = 49 se queda corto y 8·8 = 64 se pasa, así que el lado del cuadrado de área 50 tiene que ser <b>un poco más de 7</b>. Siempre que el área no sea un cuadrado perfecto, la raíz cae entre dos enteros.</div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="idea_adv"><b>Afinamos con décimas:</b> probamos 7,0², 7,1², 7,2²… hasta que nos pasamos. El lado queda atrapado entre dos décimas. Repitiéndolo con centésimas podríamos seguir tanto como queramos: √50 no tiene un número finito de decimales.</div><div class="tenths" id="tenths"></div></div>
+</section>
+
+<section class="card">
+<h2><small data-i18n="ch_eyebrow">Reto</small><span data-i18n="ch_title">¿Entre qué dos enteros está?</span></h2>
+<div class="predict"><span id="chq"></span>
+<label for="clo" data-i18n="between_l">entre</label><input type="text" inputmode="numeric" id="clo" autocomplete="off">
+<label for="chi" data-i18n="and">y</label><input type="text" inputmode="numeric" id="chi" autocomplete="off">
+<button class="btn primary" id="ccheck" type="button" data-i18n="check_btn">Comprobar</button>
+<button class="btn" id="cnext" type="button" data-i18n="ch_next">Otro</button></div>
+<p class="msg" id="cmsg" aria-live="polite"></p>
+<p class="score" id="cscore"></p>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Arrel quadrada: el costat d'un quadrat",
+"eyebrow":"Matemàtiques · 1r ESO · Potències i arrels",
+"h1":"L'arrel quadrada és el costat",
+"lede":"Si saps l'àrea d'un quadrat, el seu costat és l'arrel quadrada. Mou l'àrea i mira com creix el costat.",
+"sim_title":"Del quadrat a l'arrel",
+"story":"Cada quadradet de la quadrícula té àrea 1. Tria l'àrea del <b>quadrat blau</b>: el seu costat és <b>√àrea</b>. Els quadrats verd i taronja són els <b>quadrats perfectes</b> més pròxims, els que tenen un costat enter.",
+"area_lbl":"Àrea del quadrat",
+"side":"costat",
+"perfect":"<span class=\"s\">√{0} = {1}</span> exactament: {0} = {1}² és un <b>quadrat perfecte</b>.",
+"between":"<span class=\"lo\">{1}² = {2}</span> &lt; {0} &lt; <span class=\"hi\">{3}² = {4}</span><br>per tant <span class=\"lo\">{1}</span> &lt; <span class=\"s\">√{0}</span> &lt; <span class=\"hi\">{3}</span>   ·   √{0} ≈ <span class=\"s\">{5}</span>",
+"idea_basic":"<b>La idea:</b> no hi ha cap nombre enter que, multiplicat per ell mateix, done 50. Però 7·7 = 49 es queda curt i 8·8 = 64 es passa, així que el costat del quadrat d'àrea 50 ha de ser <b>un poc més de 7</b>. Sempre que l'àrea no siga un quadrat perfecte, l'arrel cau entre dos enters.",
+"idea_adv":"<b>Afinem amb dècimes:</b> provem 7,0², 7,1², 7,2²… fins que ens passem. El costat queda atrapat entre dues dècimes. Repetint-ho amb centèsimes podríem continuar tant com vulguem: √50 no té un nombre finit de decimals.",
+"tenths_res":"→ √{0} està entre <span class=\"y\">{1}</span> i <span class=\"x\">{2}</span>",
+"ch_eyebrow":"Repte",
+"ch_title":"Entre quins dos enters està?",
+"ch_q":"√{0} està",
+"between_l":"entre","and":"i",
+"check_btn":"Comprova","ch_next":"Un altre",
+"ch_ok":"✔ Correcte: {1}² = {2} &lt; {0} &lt; {3}² = {4}.",
+"ch_ko":"✘ No: {1}² = {2} &lt; {0} &lt; {3}² = {4}, així que √{0} està entre {1} i {3}.",
+"ch_bad":"Escriu dos enters.",
+"ch_score":"Encerts: {0} de {1}",
+"r1.q":"√50 està entre…",
+"r1.o0":"7 i 8","r1.o1":"5 i 6","r1.o2":"25 i 26","r1.o3":"6 i 7",
+"r1.e":"7² = 49 &lt; 50 &lt; 64 = 8².",
+"r2.q":"Un quadrat té 81 m² d'àrea. Quant fa el costat?",
+"r2.u":"m",
+"r2.e":"√81 = 9, perquè 9 · 9 = 81.",
+"r3.q":"Quin d'aquests nombres és un quadrat perfecte?",
+"r3.o0":"50","r3.o1":"64","r3.o2":"80","r3.o3":"120",
+"r3.e":"64 = 8 · 8. Els altres no són el quadrat de cap enter.",
+"r4.q":"√20 està entre…",
+"r4.o0":"4 i 5","r4.o1":"10 i 11","r4.o2":"2 i 3","r4.o3":"19 i 21",
+"r4.e":"4² = 16 &lt; 20 &lt; 25 = 5². Compte: l'arrel no és la meitat!",
+"r5.q":"Un quadrat de costat 6 té una àrea de…",
+"r5.o0":"12","r5.o1":"24","r5.o2":"36","r5.o3":"66",
+"r5.e":"Àrea = costat · costat = 6 · 6 = 36. Per això √36 = 6.",
+"r6.q":"Sabem que 7,1² = 50,41. Aleshores √50 és…",
+"r6.o0":"una mica menys de 7,1","r6.o1":"exactament 7,1","r6.o2":"una mica més de 7,1","r6.o3":"7,5",
+"r6.e":"7,1² ja es passa de 50, així que el costat és menor que 7,1 (√50 ≈ 7,07).",
+"r7.q":"Quina és l'arrel entera de 130? (l'enter més gran el quadrat del qual no passa de 130)",
+"r7.e":"11² = 121 ≤ 130 &lt; 144 = 12². L'arrel entera és 11 i el residu, 130 − 121 = 9."
+},
+es:{
+"title":"Raíz cuadrada: el lado de un cuadrado",
+"eyebrow":"Matemáticas · 1.º ESO · Potencias y raíces",
+"h1":"La raíz cuadrada es el lado",
+"lede":"Si sabes el área de un cuadrado, su lado es la raíz cuadrada. Mueve el área y mira cómo crece el lado.",
+"sim_title":"Del cuadrado a la raíz",
+"story":"Cada cuadradito de la cuadrícula tiene área 1. Elige el área del <b>cuadrado azul</b>: su lado es <b>√Área</b>. Los cuadrados verde y naranja son los <b>cuadrados perfectos</b> más próximos, los que tienen un lado entero.",
+"area_lbl":"Área del cuadrado",
+"side":"lado",
+"perfect":"<span class=\"s\">√{0} = {1}</span> exactamente: {0} = {1}² es un <b>cuadrado perfecto</b>.",
+"between":"<span class=\"lo\">{1}² = {2}</span> &lt; {0} &lt; <span class=\"hi\">{3}² = {4}</span><br>por tanto <span class=\"lo\">{1}</span> &lt; <span class=\"s\">√{0}</span> &lt; <span class=\"hi\">{3}</span>   ·   √{0} ≈ <span class=\"s\">{5}</span>",
+"idea_basic":"<b>La idea:</b> no hay ningún número entero que, multiplicado por sí mismo, dé 50. Pero 7·7 = 49 se queda corto y 8·8 = 64 se pasa, así que el lado del cuadrado de área 50 tiene que ser <b>un poco más de 7</b>. Siempre que el área no sea un cuadrado perfecto, la raíz cae entre dos enteros.",
+"idea_adv":"<b>Afinamos con décimas:</b> probamos 7,0², 7,1², 7,2²… hasta que nos pasamos. El lado queda atrapado entre dos décimas. Repitiéndolo con centésimas podríamos seguir tanto como queramos: √50 no tiene un número finito de decimales.",
+"tenths_res":"→ √{0} está entre <span class=\"y\">{1}</span> y <span class=\"x\">{2}</span>",
+"ch_eyebrow":"Reto",
+"ch_title":"¿Entre qué dos enteros está?",
+"ch_q":"√{0} está",
+"between_l":"entre","and":"y",
+"check_btn":"Comprobar","ch_next":"Otro",
+"ch_ok":"✔ Correcto: {1}² = {2} &lt; {0} &lt; {3}² = {4}.",
+"ch_ko":"✘ No: {1}² = {2} &lt; {0} &lt; {3}² = {4}, así que √{0} está entre {1} y {3}.",
+"ch_bad":"Escribe dos enteros.",
+"ch_score":"Aciertos: {0} de {1}",
+"r1.q":"√50 está entre…",
+"r1.o0":"7 y 8","r1.o1":"5 y 6","r1.o2":"25 y 26","r1.o3":"6 y 7",
+"r1.e":"7² = 49 &lt; 50 &lt; 64 = 8².",
+"r2.q":"Un cuadrado tiene 81 m² de área. ¿Cuánto mide el lado?",
+"r2.u":"m",
+"r2.e":"√81 = 9, porque 9 · 9 = 81.",
+"r3.q":"¿Cuál de estos números es un cuadrado perfecto?",
+"r3.o0":"50","r3.o1":"64","r3.o2":"80","r3.o3":"120",
+"r3.e":"64 = 8 · 8. Los otros no son el cuadrado de ningún entero.",
+"r4.q":"√20 está entre…",
+"r4.o0":"4 y 5","r4.o1":"10 y 11","r4.o2":"2 y 3","r4.o3":"19 y 21",
+"r4.e":"4² = 16 &lt; 20 &lt; 25 = 5². Ojo: ¡la raíz no es la mitad!",
+"r5.q":"Un cuadrado de lado 6 tiene un área de…",
+"r5.o0":"12","r5.o1":"24","r5.o2":"36","r5.o3":"66",
+"r5.e":"Área = lado · lado = 6 · 6 = 36. Por eso √36 = 6.",
+"r6.q":"Sabemos que 7,1² = 50,41. Entonces √50 es…",
+"r6.o0":"un poco menos de 7,1","r6.o1":"exactamente 7,1","r6.o2":"un poco más de 7,1","r6.o3":"7,5",
+"r6.e":"7,1² ya se pasa de 50, así que el lado es menor que 7,1 (√50 ≈ 7,07).",
+"r7.q":"¿Cuál es la raíz entera de 130? (el entero más grande cuyo cuadrado no pasa de 130)",
+"r7.e":"11² = 121 ≤ 130 &lt; 144 = 12². La raíz entera es 11 y el resto, 130 − 121 = 9."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../arrel-quadrada-area/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Arrel quadrada ===== */
+const W=900,H=470,cx=fitCanvas($('#cv'),W,H),G=13;
+let A=50,shown=50;
+const fx=(v,d)=>v.toFixed(d).replace('.',',');
+const isq=n=>Math.floor(Math.sqrt(n)+1e-9);
+function setA(v){A=clamp(Math.round(v),1,150);$('#area').value=A;$('#areav').textContent=A;upd();}
+$('#area').addEventListener('input',()=>setA(+$('#area').value));
+$('#minus').onclick=()=>setA(A-1);$('#plus').onclick=()=>setA(A+1);
+function upd(){
+  const n=isq(A),f=$('#formula');
+  if(n*n===A)f.innerHTML=tt('perfect',A,n);
+  else f.innerHTML=tt('between',A,n,n*n,n+1,(n+1)*(n+1),nf(Math.sqrt(A),2));
+  /* dècimes */
+  let h='';
+  if(n*n!==A){let k=n*10;const rows=[];
+    while(true){const v=k/10,sq=v*v;const over=sq>A+1e-9;
+      rows.push('<span class="'+(over?'x':(((k+1)/10)**2>A+1e-9?'y':''))+'">'+fx(v,1)+'² = '+fx(sq,2)+'</span>');
+      if(over)break;k++;}
+    h=rows.join(' · ')+'<br>'+tt('tenths_res',A,fx((k-1)/10,1),fx(k/10,1));}
+  $('#tenths').innerHTML=h;
+}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok');
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  const u=Math.floor((H-50)/G),ox=34,oy=H-24; /* origen a baix a l'esquerra */
+  /* quadrícula */
+  cx.strokeStyle=mut;cx.globalAlpha=.22;cx.lineWidth=1;cx.beginPath();
+  for(let i=0;i<=G;i++){cx.moveTo(ox+i*u,oy);cx.lineTo(ox+i*u,oy-G*u);cx.moveTo(ox,oy-i*u);cx.lineTo(ox+G*u,oy-i*u);}cx.stroke();cx.globalAlpha=1;
+  cx.fillStyle=mut;cx.font='12px system-ui';cx.textAlign='center';
+  for(let i=0;i<=G;i++){cx.fillText(String(i),ox+i*u,oy+16);}
+  cx.textAlign='right';for(let i=1;i<=G;i++)cx.fillText(String(i),ox-6,oy-i*u+4);
+  const s=Math.sqrt(shown),n=isq(A);
+  const perfect=n*n===A;
+  /* quadrat superior (n+1)² */
+  if(!perfect&&n+1<=G){cx.strokeStyle=pb;cx.lineWidth=2;cx.setLineDash([7,5]);cx.strokeRect(ox,oy-(n+1)*u,(n+1)*u,(n+1)*u);cx.setLineDash([]);
+    cx.fillStyle=pb;cx.font='bold 14px system-ui';cx.textAlign='left';cx.fillText((n+1)+'² = '+(n+1)*(n+1),ox+(n+1)*u+6,oy-(n+1)*u+14);}
+  /* quadrat perfecte inferior (verd) */
+  if(n>=1){cx.fillStyle=ok;cx.globalAlpha=.16;cx.fillRect(ox,oy-n*u,n*u,n*u);cx.globalAlpha=1;}
+  /* el que sobra del quadrat blau respecte al verd: una L */
+  cx.fillStyle=pa;cx.globalAlpha=perfect?.25:.55;
+  if(perfect)cx.fillRect(ox,oy-s*u,s*u,s*u);
+  else{cx.beginPath();cx.moveTo(ox,oy-s*u);cx.lineTo(ox+s*u,oy-s*u);cx.lineTo(ox+s*u,oy);cx.lineTo(ox+n*u,oy);cx.lineTo(ox+n*u,oy-n*u);cx.lineTo(ox,oy-n*u);cx.closePath();cx.fill();}
+  cx.globalAlpha=1;
+  if(n>=1){cx.strokeStyle=ok;cx.lineWidth=2;cx.strokeRect(ox,oy-n*u,n*u,n*u);
+    if(!perfect){cx.fillStyle=ok;cx.font='bold 14px system-ui';cx.textAlign='right';cx.fillText(n+'² = '+n*n,ox+n*u-6,oy-n*u+18);}}
+  cx.strokeStyle=pa;cx.lineWidth=3;cx.strokeRect(ox,oy-s*u,s*u,s*u);
+  /* rètol del costat */
+  cx.fillStyle=pa;cx.font='bold 16px system-ui';cx.textAlign='center';
+  cx.fillText(t('side')+' = √'+A+(perfect?' = '+n:' ≈ '+nf(Math.sqrt(A),2)),ox+s*u/2,oy-s*u-8);
+  /* recta del costat a la dreta */
+  const L=ox+G*u+70,R=W-30,Y=150,X=v=>L+(R-L)*v/G;
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(L,Y);cx.lineTo(R,Y);cx.stroke();
+  cx.fillStyle=ink;cx.font='bold 14px system-ui';cx.textAlign='left';cx.fillText(t('side'),L,Y-46);
+  for(let i=0;i<=G;i++){const x=X(i);cx.strokeStyle=ink;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(x,Y-7);cx.lineTo(x,Y+7);cx.stroke();
+    cx.fillStyle=(i===n?ok:i===n+1&&!perfect?pb:mut);cx.font=(i===n||i===n+1?'bold 15px ':'12px ')+'system-ui';cx.textAlign='center';cx.fillText(String(i),x,Y+24);}
+  cx.beginPath();cx.arc(X(s),Y,7,0,TAU);cx.fillStyle=pa;cx.fill();
+  cx.fillStyle=pa;cx.font='bold 15px system-ui';cx.fillText('√'+A,X(s),Y-16);
+  /* lupa entre n i n+1 */
+  if(!perfect){
+    const Y2=330,L2=L,R2=R,X2=v=>L2+(R2-L2)*(v-n);
+    cx.strokeStyle=mut;cx.setLineDash([3,4]);cx.lineWidth=1;cx.beginPath();cx.moveTo(X(n),Y+30);cx.lineTo(L2,Y2-40);cx.moveTo(X(n+1),Y+30);cx.lineTo(R2,Y2-40);cx.stroke();cx.setLineDash([]);
+    cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(L2,Y2);cx.lineTo(R2,Y2);cx.stroke();
+    for(let k=0;k<=10;k++){const x=L2+(R2-L2)*k/10;cx.lineWidth=k%10?1:2;cx.beginPath();cx.moveTo(x,Y2-(k%10?5:9));cx.lineTo(x,Y2+(k%10?5:9));cx.stroke();
+      cx.fillStyle=k===0?ok:k===10?pb:mut;cx.font=(k%10?'11px ':'bold 14px ')+'system-ui';cx.textAlign='center';cx.fillText(nf(n+k/10,1),x,Y2+24);}
+    cx.beginPath();cx.arc(X2(s),Y2,7,0,TAU);cx.fillStyle=pa;cx.fill();
+    cx.fillStyle=pa;cx.font='bold 15px system-ui';cx.fillText('√'+A+' ≈ '+nf(Math.sqrt(A),2),X2(s),Y2-16);
+  }
+}
+function loop(){const tgt=A;shown=REDUCE?tgt:shown+(tgt-shown)*0.15;if(Math.abs(shown-tgt)<0.01)shown=tgt;draw();requestAnimationFrame(loop);}
+/* repte */
+let cA=0,cok=0,ctot=0,cdone=false,cFn=null;
+function newCh(){do{cA=2+Math.floor(Math.random()*148);}while(isq(cA)**2===cA);cdone=false;cFn=null;$('#clo').value='';$('#chi').value='';$('#cmsg').innerHTML='';$('#cmsg').className='msg';chq();}
+function chq(){$('#chq').innerHTML=tt('ch_q',cA);}
+$('#ccheck').onclick=()=>{
+  const lo=parseNum($('#clo').value),hi=parseNum($('#chi').value);
+  if(!Number.isInteger(lo)||!Number.isInteger(hi)){$('#cmsg').className='msg bad';$('#cmsg').innerHTML=t('ch_bad');return;}
+  if(cdone)return;cdone=true;ctot++;
+  const n=isq(cA),good=lo===n&&hi===n+1;if(good)cok++;
+  cFn=()=>{$('#cmsg').className='msg '+(good?'good':'bad');$('#cmsg').innerHTML=tt(good?'ch_ok':'ch_ko',cA,n,n*n,n+1,(n+1)*(n+1));$('#cscore').innerHTML=tt('ch_score',cok,ctot);};
+  cFn();setA(cA);
+};
+$('#cnext').onclick=newCh;
+['clo','chi'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')$('#ccheck').click();}));
+App.hooks.push(()=>{upd();chq();if(cFn)cFn();});
+document.addEventListener('themechange',draw);
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":9,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"r7","lvl":"adv","type":"num","num":11,"tol":0}];
+initQuiz(QDATA);
+setA(50);newCh();
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

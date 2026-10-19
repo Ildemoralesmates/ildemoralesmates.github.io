@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zoom infinit a la recta: nombres decimals</title>
+<meta name="description" content="Fes zoom a la recta numèrica: entre 0,1 i 0,2 apareixen deu marques, i entre dues d'elles, deu més. Per a 1r d'ESO: comparar i ordenar decimals (0,15 o 0,2?), amb reptes i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+.numin{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.numin input{font:inherit;font-size:15px;width:6.5em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.level{font-size:15px;color:var(--ink)}
+#cv{cursor:zoom-in;touch-action:manipulation}
+.duel{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.duel .opt{font-family:var(--f-num);font-size:22px;font-weight:700;min-width:5.5em;text-align:center}
+.cmp{font-family:var(--f-num);font-size:15px;line-height:1.8}
+.cmp .a{color:var(--pa);font-weight:700}.cmp .b{color:var(--pb);font-weight:700}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="row">
+<button class="btn primary" id="zin" type="button" data-i18n="zin"></button>
+<button class="btn" id="zout" type="button" data-i18n="zout"></button>
+<button class="btn" id="home" type="button" data-i18n="home"></button>
+<button class="btn" id="left" type="button" aria-label="◀">◀</button>
+<button class="btn" id="right" type="button" aria-label="▶">▶</button>
+</div>
+<canvas id="cv"></canvas>
+<p class="level" id="level" aria-live="polite"></p>
+<div class="numin">
+<label for="na" data-i18n="num_a"></label><input type="text" inputmode="decimal" id="na" value="0,15" autocomplete="off">
+<label for="nb" data-i18n="num_b"></label><input type="text" inputmode="decimal" id="nb" value="0,2" autocomplete="off">
+<button class="btn" id="place" type="button" data-i18n="place"></button>
+</div>
+<div class="cmp" id="cmp"></div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<section class="card">
+<h2><small data-i18n="ch_eyebrow"></small><span data-i18n="ch_title"></span></h2>
+<p data-i18n="ch_text"></p>
+<div class="duel"><button class="opt" id="ca" type="button"></button><button class="opt" id="cb" type="button"></button><button class="btn" id="cnext" type="button" data-i18n="ch_next"></button></div>
+<p class="msg" id="cmsg" aria-live="polite"></p>
+<p class="score" id="cscore"></p>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Zoom infinit a la recta: nombres decimals",
+"eyebrow":"Matemàtiques · 1r ESO · Nombres decimals",
+"h1":"Zoom infinit a la recta",
+"lede":"Entre dues marques sempre n'hi caben deu més. Fes zoom i descobreix per què 0,15 és més xicotet que 0,2.",
+"sim_title":"La recta amb lupa",
+"story":"Toca un tros de la recta per a fer-hi zoom: el tros es fa 10 vegades més gran i hi apareixen <b>deu marques noves</b>. Pots repetir-ho tantes vegades com vulgues.",
+"zin":"🔍 Apropa ×10",
+"zout":"Allunya ÷10",
+"home":"Torna a l'inici",
+"lvl0":"Ara veus les <b>unitats</b>.",
+"lvl1":"Ara veus les <b>dècimes</b>: cada unitat es parteix en 10.",
+"lvl2":"Ara veus les <b>centèsimes</b>: cada dècima es parteix en 10.",
+"lvl3":"Ara veus les <b>mil·lèsimes</b>: cada centèsima es parteix en 10.",
+"lvl4":"Ara veus les <b>deumil·lèsimes</b>.",
+"lvl5":"Ara veus les <b>centmil·lèsimes</b>.",
+"lvl6":"Ara veus les <b>milionèsimes</b>. Podríem continuar per sempre…",
+"lvlbig":"Ara veus les <b>desenes</b>.",
+"num_a":"Nombre A",
+"num_b":"Nombre B",
+"place":"Situa'ls a la recta",
+"cmp_eq":"Escrits amb els mateixos decimals: <span class=\"a\">{0}</span> i <span class=\"b\">{1}</span>.",
+"cmp_lt":"<span class=\"{2}\">{0}</span> &lt; <span class=\"{3}\">{1}</span>: el de l'esquerra és més xicotet.",
+"cmp_same":"Són el mateix nombre: {0} = {1}.",
+"cmp_units":"Comparem {0}: {1} {2} {3}.",
+"u1":"dècimes","u2":"centèsimes","u3":"mil·lèsimes","u4":"deumil·lèsimes","u5":"centmil·lèsimes","u6":"milionèsimes",
+"bad_num":"Escriu dos nombres entre −10 i 10, amb coma decimal (per exemple, 0,15).",
+"idea_basic":"<b>La trampa:</b> «0,15 és més gran que 0,2 perquè 15 &gt; 2». Però 0,2 són 2 <b>dècimes</b> i 0,15 només és 1 dècima i mitja. Si els escrivim amb els mateixos decimals es veu de seguida: 0,<b>20</b> &gt; 0,<b>15</b>. A la recta, 0,2 està més a la dreta.",
+"idea_adv":"<b>Infinits decimals:</b> entre dos nombres decimals sempre en cap un altre, per exemple la seua mitjana: entre 0,1 i 0,2 hi ha 0,15; entre 0,1 i 0,15 hi ha 0,125… Per molt que fem zoom, la recta no s'acaba mai de «omplir»: entre 0,1 i 0,2 hi ha infinits nombres decimals.",
+"ch_eyebrow":"Repte",
+"ch_title":"Quin és més gran?",
+"ch_text":"Tria el nombre més gran. Després, la recta et mostrarà on està cadascun.",
+"ch_next":"Un altre",
+"ch_ok":"✔ Ben vist! {0} &gt; {1}.",
+"ch_ko":"✘ Compte: {0} &gt; {1}. {2}",
+"ch_eqd":"Escrits amb els mateixos decimals: {0} i {1}.",
+"ch_score":"Encerts: {0} de {1}",
+"r1.q":"Quin és més gran?",
+"r1.o0":"0,15","r1.o1":"0,2","r1.o2":"Són iguals",
+"r1.e":"0,2 = 0,20 i 20 centèsimes &gt; 15 centèsimes.",
+"r2.q":"Quantes marques de centèsima hi ha entre 0,3 i 0,4, sense comptar-los a ells?",
+"r2.o0":"9","r2.o1":"10","r2.o2":"1","r2.o3":"100",
+"r2.e":"0,31; 0,32; … ; 0,39: nou marques. Amb el 0,4 serien deu passos.",
+"r3.q":"Ordena de menor a major: 0,5 · 0,45 · 0,05",
+"r3.o0":"0,05 &lt; 0,45 &lt; 0,5","r3.o1":"0,5 &lt; 0,05 &lt; 0,45","r3.o2":"0,05 &lt; 0,5 &lt; 0,45","r3.o3":"0,45 &lt; 0,5 &lt; 0,05",
+"r3.e":"Amb dos decimals: 0,05 · 0,45 · 0,50.",
+"r4.q":"Quin d'aquests nombres està entre 0,1 i 0,2?",
+"r4.o0":"0,12","r4.o1":"0,21","r4.o2":"0,02","r4.o3":"1,5",
+"r4.e":"0,12 = 12 centèsimes, entre 10 i 20 centèsimes.",
+"r5.q":"0,7 i 0,70…",
+"r5.o0":"són el mateix nombre","r5.o1":"0,70 és més gran","r5.o2":"0,7 és més gran",
+"r5.e":"7 dècimes = 70 centèsimes. Afegir zeros al final no canvia el valor.",
+"r6.q":"Quants nombres decimals hi ha entre 0,1 i 0,2?",
+"r6.o0":"10","r6.o1":"100","r6.o2":"1000","r6.o3":"Infinits",
+"r6.e":"Cada vegada que fas zoom n'apareixen deu més, i no s'acaba mai.",
+"r7.q":"Quin nombre està just a la meitat entre 0,1 i 0,2?",
+"r7.e":"(0,1 + 0,2) : 2 = 0,15."
+},
+es:{
+"title":"Zoom infinito en la recta: números decimales",
+"eyebrow":"Matemáticas · 1.º ESO · Números decimales",
+"h1":"Zoom infinito en la recta",
+"lede":"Entre dos marcas siempre caben diez más. Haz zoom y descubre por qué 0,15 es menor que 0,2.",
+"sim_title":"La recta con lupa",
+"story":"Toca un trozo de la recta para hacer zoom: el trozo se hace 10 veces más grande y aparecen <b>diez marcas nuevas</b>. Puedes repetirlo tantas veces como quieras.",
+"zin":"🔍 Acerca ×10",
+"zout":"Aleja ÷10",
+"home":"Volver al inicio",
+"lvl0":"Ahora ves las <b>unidades</b>.",
+"lvl1":"Ahora ves las <b>décimas</b>: cada unidad se parte en 10.",
+"lvl2":"Ahora ves las <b>centésimas</b>: cada décima se parte en 10.",
+"lvl3":"Ahora ves las <b>milésimas</b>: cada centésima se parte en 10.",
+"lvl4":"Ahora ves las <b>diezmilésimas</b>.",
+"lvl5":"Ahora ves las <b>cienmilésimas</b>.",
+"lvl6":"Ahora ves las <b>millonésimas</b>. Podríamos seguir para siempre…",
+"lvlbig":"Ahora ves las <b>decenas</b>.",
+"num_a":"Número A",
+"num_b":"Número B",
+"place":"Sitúalos en la recta",
+"cmp_eq":"Escritos con los mismos decimales: <span class=\"a\">{0}</span> y <span class=\"b\">{1}</span>.",
+"cmp_lt":"<span class=\"{2}\">{0}</span> &lt; <span class=\"{3}\">{1}</span>: el de la izquierda es menor.",
+"cmp_same":"Son el mismo número: {0} = {1}.",
+"cmp_units":"Comparamos {0}: {1} {2} {3}.",
+"u1":"décimas","u2":"centésimas","u3":"milésimas","u4":"diezmilésimas","u5":"cienmilésimas","u6":"millonésimas",
+"bad_num":"Escribe dos números entre −10 y 10, con coma decimal (por ejemplo, 0,15).",
+"idea_basic":"<b>La trampa:</b> «0,15 es mayor que 0,2 porque 15 &gt; 2». Pero 0,2 son 2 <b>décimas</b> y 0,15 solo es una décima y media. Si los escribimos con los mismos decimales se ve enseguida: 0,<b>20</b> &gt; 0,<b>15</b>. En la recta, 0,2 está más a la derecha.",
+"idea_adv":"<b>Infinitos decimales:</b> entre dos números decimales siempre cabe otro, por ejemplo su media: entre 0,1 y 0,2 está 0,15; entre 0,1 y 0,15 está 0,125… Por mucho zoom que hagamos, la recta nunca se acaba de «llenar»: entre 0,1 y 0,2 hay infinitos números decimales.",
+"ch_eyebrow":"Reto",
+"ch_title":"¿Cuál es mayor?",
+"ch_text":"Elige el número mayor. Después, la recta te mostrará dónde está cada uno.",
+"ch_next":"Otro",
+"ch_ok":"✔ ¡Bien visto! {0} &gt; {1}.",
+"ch_ko":"✘ Cuidado: {0} &gt; {1}. {2}",
+"ch_eqd":"Escritos con los mismos decimales: {0} y {1}.",
+"ch_score":"Aciertos: {0} de {1}",
+"r1.q":"¿Cuál es mayor?",
+"r1.o0":"0,15","r1.o1":"0,2","r1.o2":"Son iguales",
+"r1.e":"0,2 = 0,20 y 20 centésimas &gt; 15 centésimas.",
+"r2.q":"¿Cuántas marcas de centésima hay entre 0,3 y 0,4, sin contarlos a ellos?",
+"r2.o0":"9","r2.o1":"10","r2.o2":"1","r2.o3":"100",
+"r2.e":"0,31; 0,32; … ; 0,39: nueve marcas. Con el 0,4 serían diez pasos.",
+"r3.q":"Ordena de menor a mayor: 0,5 · 0,45 · 0,05",
+"r3.o0":"0,05 &lt; 0,45 &lt; 0,5","r3.o1":"0,5 &lt; 0,05 &lt; 0,45","r3.o2":"0,05 &lt; 0,5 &lt; 0,45","r3.o3":"0,45 &lt; 0,5 &lt; 0,05",
+"r3.e":"Con dos decimales: 0,05 · 0,45 · 0,50.",
+"r4.q":"¿Cuál de estos números está entre 0,1 y 0,2?",
+"r4.o0":"0,12","r4.o1":"0,21","r4.o2":"0,02","r4.o3":"1,5",
+"r4.e":"0,12 = 12 centésimas, entre 10 y 20 centésimas.",
+"r5.q":"0,7 y 0,70…",
+"r5.o0":"son el mismo número","r5.o1":"0,70 es mayor","r5.o2":"0,7 es mayor",
+"r5.e":"7 décimas = 70 centésimas. Añadir ceros al final no cambia el valor.",
+"r6.q":"¿Cuántos números decimales hay entre 0,1 y 0,2?",
+"r6.o0":"10","r6.o1":"100","r6.o2":"1000","r6.o3":"Infinitos",
+"r6.e":"Cada vez que haces zoom aparecen diez más, y nunca se acaba.",
+"r7.q":"¿Qué número está justo en la mitad entre 0,1 y 0,2?",
+"r7.e":"(0,1 + 0,2) : 2 = 0,15."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Zoom a la recta ===== */
+const W=900,H=250,cx=fitCanvas($('#cv'),W,H);
+const HOME={c:0.5,span:1.2},MINS=1.2e-6,MAXS=24;
+let view={...HOME},anim=null,hiSeg=null,pts=[{v:0.15,cls:'a'},{v:0.2,cls:'b'}];
+const LY=150;
+const pow10=e=>e>=0?Math.pow(10,e):1/Math.pow(10,-e);
+const val=(i,e)=>e>=0?i*Math.pow(10,e):i/Math.pow(10,-e);
+const fmtD=(v,d)=>{let s=Math.abs(v)<1e-12?(0).toFixed(d):v.toFixed(d);return s.replace('-','−').replace('.',',');};
+function decs(v){for(let d=0;d<=6;d++){if(Math.abs(Math.round(v*pow10(d))-v*pow10(d))<1e-7)return d;}return 6;}
+function labelLevel(span){let e=Math.floor(Math.log10(span))-3;while(pow10(e)/span*W<52)e++;return e;}
+function goTo(c,span,seg){span=clamp(span,MINS,MAXS);anim={c0:view.c,s0:view.span,c1:c,s1:span,t:0};hiSeg=seg||null;if(REDUCE){view={c,span};anim=null;hiSeg=null;}}
+$('#zin').onclick=()=>{const e=labelLevel(view.span),st=pow10(e),k=Math.floor(view.c/st+1e-9);goTo((k+.5)*st,st*1.25,[k*st,(k+1)*st]);};
+$('#zout').onclick=()=>goTo(view.c,view.span*10);
+$('#home').onclick=()=>goTo(HOME.c,HOME.span);
+$('#left').onclick=()=>goTo(view.c-view.span*0.4,view.span);
+$('#right').onclick=()=>goTo(view.c+view.span*0.4,view.span);
+$('#cv').addEventListener('click',ev=>{
+  const r=$('#cv').getBoundingClientRect(),x=(ev.clientX-r.left)*W/r.width;
+  const v=view.c+(x-W/2)/W*view.span,e=labelLevel(view.span),st=pow10(e),k=Math.floor(v/st);
+  goTo((k+.5)*st,st*1.25,[k*st,(k+1)*st]);
+});
+function fitPair(a,b){const lo=Math.min(a,b),hi=Math.max(a,b),dd=hi-lo;
+  const span=dd>0?Math.max(dd*2.6,MINS):0.12;goTo((lo+hi)/2,span);}
+function readPts(){
+  const a=parseNum($('#na').value),b=parseNum($('#nb').value);
+  if(![a,b].every(x=>Number.isFinite(x)&&Math.abs(x)<=10)||$('#na').value.trim()===''||$('#nb').value.trim()===''){$('#cmp').innerHTML='<span class="msg bad">'+t('bad_num')+'</span>';return false;}
+  pts=[{v:a,cls:'a'},{v:b,cls:'b'}];cmpText();fitPair(a,b);return true;
+}
+$('#place').onclick=readPts;
+['na','nb'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')readPts();}));
+function cmpText(){
+  const [A,B]=pts,d=Math.max(decs(A.v),decs(B.v)),sa=fmtD(A.v,d),sb=fmtD(B.v,d);
+  let h=tt('cmp_eq',sa,sb)+'<br>';
+  if(Math.abs(A.v-B.v)<1e-12) h+=tt('cmp_same',sa,sb);
+  else{const lo=A.v<B.v?A:B,hi=A.v<B.v?B:A;
+    h+=tt('cmp_lt',fmtD(lo.v,d),fmtD(hi.v,d),lo.cls,hi.cls);
+    if(d>=1&&d<=6&&A.v>=0&&B.v>=0&&Math.floor(A.v)===Math.floor(B.v)){
+      const ia=Math.round((A.v-Math.floor(A.v))*pow10(d)),ib=Math.round((B.v-Math.floor(B.v))*pow10(d));
+      h+='<br>'+tt('cmp_units',t('u'+d),'<span class="a">'+ia+'</span>',ia<ib?'&lt;':'&gt;','<span class="b">'+ib+'</span>');}
+  }
+  $('#cmp').innerHTML=h;
+}
+function levelText(){const e=labelLevel(view.span);const k=e>=1?'lvlbig':'lvl'+clamp(-e,0,6);$('#level').innerHTML=t(k);}
+let lastLvl=null;
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb');
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  const {c,span}=view,L=c-span/2,R=c+span/2,X=v=>(v-L)/span*W;
+  if(hiSeg){cx.fillStyle=css('--warn');cx.globalAlpha=.15;cx.fillRect(X(hiSeg[0]),LY-60,X(hiSeg[1])-X(hiSeg[0]),95);cx.globalAlpha=1;}
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(0,LY);cx.lineTo(W,LY);cx.stroke();
+  const le=labelLevel(span);
+  for(let e=Math.floor(Math.log10(span))-3;e<=Math.ceil(Math.log10(span))+1;e++){
+    const st=pow10(e),px=st/span*W;if(px<4)continue;
+    const hgt=clamp(5+9*Math.log10(px/4),4,34),al=clamp((px-4)/30,0,1);
+    const i0=Math.ceil(L/st-1e-9),i1=Math.floor(R/st+1e-9);
+    if(i1-i0>400)continue;
+    cx.strokeStyle=ink;cx.globalAlpha=al;cx.lineWidth=e>=le+1?2.4:1.4;cx.beginPath();
+    for(let i=i0;i<=i1;i++){const x=X(val(i,e));cx.moveTo(x,LY-hgt);cx.lineTo(x,LY+hgt*0.4);}
+    cx.stroke();cx.globalAlpha=1;
+    if(e===le||e===le+1){
+      const dd=Math.max(0,-le);
+      for(let i=i0;i<=i1;i++){
+        if(e===le&&i%10===0)continue;
+        const v=val(i,e),x=X(v);if(x<26||x>W-26)continue;
+        cx.fillStyle=e===le+1?ink:mut;cx.font=(e===le+1?'bold 17px ':'14px ')+'ui-monospace,Menlo,Consolas,monospace';
+        cx.textAlign='center';cx.fillText(fmtD(v,e===le+1?Math.max(0,-e):dd),x,LY+(e===le+1?40:30));
+      }
+    }
+  }
+  /* punts */
+  pts.forEach((p,j)=>{const x=X(p.v);if(x<-40||x>W+40)return;const col=p.cls==='a'?pa:pb;
+    const y=LY-50-j*26;
+    cx.strokeStyle=col;cx.lineWidth=2;cx.setLineDash([3,3]);cx.beginPath();cx.moveTo(x,y+8);cx.lineTo(x,LY);cx.stroke();cx.setLineDash([]);
+    cx.beginPath();cx.arc(x,LY,6,0,TAU);cx.fillStyle=col;cx.fill();
+    const s=fmtD(p.v,decs(p.v));cx.font='bold 16px ui-monospace,Menlo,Consolas,monospace';const w=cx.measureText(s).width+14;
+    cx.fillStyle=col;rrect(cx,x-w/2,y-12,w,22,6);cx.fill();cx.fillStyle=css('--panel');cx.textAlign='center';cx.textBaseline='middle';cx.fillText(s,x,y);cx.textBaseline='alphabetic';});
+  /* fletxes si estan fora */
+  pts.forEach((p,j)=>{const x=X(p.v);if(x>=-40&&x<=W+40)return;const col=p.cls==='a'?pa:pb;cx.fillStyle=col;cx.font='bold 14px system-ui';
+    cx.textAlign=x<0?'left':'right';cx.fillText((x<0?'◀ ':'')+fmtD(p.v,decs(p.v))+(x>W?' ▶':''),x<0?8:W-8,24+j*20);});
+  const lv=labelLevel(view.span);if(lv!==lastLvl){lastLvl=lv;levelText();}
+}
+function loop(){
+  if(anim){anim.t=Math.min(1,anim.t+1/48);const k=anim.t<.5?2*anim.t*anim.t:1-Math.pow(-2*anim.t+2,2)/2;
+    const ls=lerp(Math.log(anim.s0),Math.log(anim.s1),k);view={c:lerp(anim.c0,anim.c1,k),span:Math.exp(ls)};
+    if(anim.t>=1){view={c:anim.c1,span:anim.s1};anim=null;setTimeout(()=>{if(!anim)hiSeg=null;},700);}}
+  draw();requestAnimationFrame(loop);
+}
+/* ---- repte ---- */
+const PAIRS=[[0.15,0.2],[0.7,0.65],[0.09,0.1],[1.05,1.5],[0.3,0.299],[2.4,2.38],[0.5,0.05],[0.123,0.13],[3.01,3.1],[0.8,0.799],[0.6,0.59],[1.2,1.19]];
+let order=[...PAIRS.keys()].sort(()=>Math.random()-.5),ci=0,done=false,ok=0,tot=0,cmsgFn=null;
+function showPair(){const p=PAIRS[order[ci%order.length]];const sw=Math.random()<.5;const a=sw?p[1]:p[0],b=sw?p[0]:p[1];
+  $('#ca').textContent=fmtD(a,decs(a));$('#cb').textContent=fmtD(b,decs(b));$('#ca').dataset.v=a;$('#cb').dataset.v=b;
+  ['#ca','#cb'].forEach(s=>{$(s).disabled=false;$(s).classList.remove('right','wrong');});done=false;cmsgFn=null;$('#cmsg').innerHTML='';$('#cmsg').className='msg';}
+function pick(sel){if(done)return;done=true;tot++;
+  const a=+$('#ca').dataset.v,b=+$('#cb').dataset.v,mine=+$(sel).dataset.v,big=Math.max(a,b),sm=Math.min(a,b),good=mine===big;if(good)ok++;
+  ['#ca','#cb'].forEach(s=>{$(s).disabled=true;$(s).classList.add(+$(s).dataset.v===big?'right':(s===sel?'wrong':'x'));});
+  const d=Math.max(decs(a),decs(b));
+  cmsgFn=()=>{$('#cmsg').className='msg '+(good?'good':'bad');
+    $('#cmsg').innerHTML=good?tt('ch_ok',fmtD(big,decs(big)),fmtD(sm,decs(sm))):tt('ch_ko',fmtD(big,decs(big)),fmtD(sm,decs(sm)),tt('ch_eqd',fmtD(big,d),fmtD(sm,d)));
+    $('#cscore').innerHTML=tt('ch_score',ok,tot);};
+  cmsgFn();
+  $('#na').value=fmtD(a,decs(a));$('#nb').value=fmtD(b,decs(b));pts=[{v:a,cls:'a'},{v:b,cls:'b'}];cmpText();fitPair(a,b);
+  $('#cv').scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});
+}
+$('#ca').onclick=()=>pick('#ca');$('#cb').onclick=()=>pick('#cb');
+$('#cnext').onclick=()=>{ci++;showPair();};
+App.hooks.push(()=>{levelText();cmpText();if(cmsgFn)cmsgFn();else $('#cscore').innerHTML=tot?tt('ch_score',ok,tot):'';});
+document.addEventListener('themechange',draw);
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":3,"ans":1},{"id":"r2","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":3},{"id":"r7","lvl":"adv","type":"num","num":0.15,"tol":0}];
+initQuiz(QDATA);
+showPair();
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

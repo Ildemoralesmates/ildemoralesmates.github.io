@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Engranatges i mínim comú múltiple</title>
+<meta name="description" content="Dues rodes dentades amb una marca cadascuna: quan tornen a coincidir? Animació per a entendre el mínim comú múltiple (mcm) a 1r d'ESO, amb casos predefinits, números lliures, predicció i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.fact{font-family:var(--f-num);font-size:15px;line-height:1.8}
+.fact .ka{color:var(--pa);font-weight:700}.fact .kb{color:var(--pb);font-weight:700}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.numin input{font:inherit;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="row"><span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div></div>
+<div class="numin">
+<label for="za" data-i18n="teeth_a"></label><input type="number" id="za" min="4" max="40" step="1" value="12">
+<label for="zb" data-i18n="teeth_b"></label><input type="number" id="zb" min="4" max="40" step="1" value="18">
+<button class="btn" id="apply" type="button" data-i18n="apply"></button>
+</div>
+<div class="predict">
+<label for="guess" data-i18n="guess_q"></label><input type="text" inputmode="numeric" id="guess" autocomplete="off">
+<span class="mut" data-i18n="guess_hint"></span>
+</div>
+<div class="row">
+<button class="btn primary" id="play" type="button"></button>
+<button class="btn" id="step" type="button" data-i18n="step"></button>
+<button class="btn" id="reset" type="button" data-i18n="reset"></button>
+<div class="ctrl" style="min-width:12rem;margin:0"><label for="speed"><span data-i18n="speed"></span></label><input type="range" id="speed" min="1" max="20" step="1" value="5"></div>
+</div>
+<canvas id="gears"></canvas>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="st_teeth"></span><span class="v big" id="sN">0</span></div>
+<div class="stat"><span class="k" data-i18n="st_ta"></span><span class="v" id="sA"></span></div>
+<div class="stat"><span class="k" data-i18n="st_tb"></span><span class="v" id="sB"></span></div>
+</div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<canvas id="tape"></canvas>
+<p class="note" data-i18n="tape_note"></p>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="adv_box"></div><div class="fact" id="fact"></div></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Engranatges i mínim comú múltiple",
+"eyebrow":"Matemàtiques · 1r ESO · Divisibilitat",
+"h1":"Engranatges: quan tornen a coincidir les marques?",
+"lede":"Dues rodes dentades giren juntes. Cada una té una marca. Endevina quan tornaran a trobar-se cara a cara.",
+"sim_title":"Les rodes dentades",
+"story":"Les dues rodes comencen amb les marques <b>juntes</b>, al punt de contacte. Cada vegada que una dent d'una roda passa pel punt de contacte, també hi passa una dent de l'altra. La marca d'una roda torna al seu lloc quan ha fet una <b>volta sencera</b>.",
+"presets":"Casos:",
+"teeth_a":"Dents de la roda A",
+"teeth_b":"Dents de la roda B",
+"apply":"Usa aquests números",
+"guess_q":"La teua predicció: quantes dents han de passar?",
+"guess_hint":"(escriu-la abans de donar-li al play)",
+"play":"▶ Gira",
+"pause":"❚❚ Pausa",
+"cont":"▶ Continua fins a la següent",
+"step":"+1 dent",
+"reset":"Torna a començar",
+"speed":"Velocitat",
+"st_teeth":"Dents que han passat pel contacte",
+"st_ta":"Roda A (voltes)",
+"st_tb":"Roda B (voltes)",
+"turns":"{0} ÷ {1} = {2}",
+"whole":"✔ volta sencera",
+"tape_note":"Cada marca blava és una volta completa de la roda A (un múltiple del seu nombre de dents); cada marca taronja, una volta de B. Les marques coincideixen on hi ha un múltiple comú.",
+"hit":"Coincideixen després de <b>{0}</b> dents! La roda A ha fet {1} voltes i la B, {2}. El mínim comú múltiple de {3} i {4} és <b>{0}</b>.",
+"hit_again":"Tornen a coincidir a <b>{0}</b> dents: és un altre múltiple comú, però no el mínim.",
+"g_ok":"Encertat! Havies predit {0}.",
+"g_mult":"Havies predit {0}. També és un múltiple comú i allí coincidirien, però abans ja ho fan a {1}: busquem el <b>mínim</b>.",
+"g_prod":"Havies predit {0} = {1}·{2}. Multiplicar sempre dona un múltiple comú, però no sempre el mínim: ja coincideixen a {3}.",
+"g_no":"Havies predit {0}, però allí no coincideixen: {1}",
+"g_no_a":"{0} no és múltiple de {1}, així que la roda A no ha fet voltes senceres.",
+"g_no_b":"{0} no és múltiple de {1}, així que la roda B no ha fet voltes senceres.",
+"g_small":"Havies predit {0}, però amb tan poques dents no dona temps a fer cap volta sencera.",
+"idea_basic":"<b>La idea:</b> la marca d'A torna al lloc a 12, 24, 36, 48… dents (els <b>múltiples de 12</b>) i la de B a 18, 36, 54… (els <b>múltiples de 18</b>). Les dues coincideixen en els <b>múltiples comuns</b>, i la primera vegada és el <b>mínim comú múltiple</b>: mcm(12, 18) = 36.",
+"adv_box":"<b>I la regla dels factors?</b> Perquè les dues marques tornen al lloc, el nombre de dents ha de contindre <b>tots</b> els factors de 12 i <b>tots</b> els de 18. Cada factor primer ha d'aparéixer tantes vegades com en el que més en té: per això s'agafen els factors comuns i no comuns amb el major exponent.",
+"fact_l1":"{0} = {1}",
+"fact_mcm":"mcm = {0} = {1}",
+"fact_rel":"Curiositat: mcm · mcd = {0} · {1} = {2} = {3} · {4}",
+"r1.q":"Dues rodes de 4 i 6 dents comencen amb les marques juntes. Després de quantes dents tornen a coincidir?",
+"r1.o0":"10","r1.o1":"12","r1.o2":"24","r1.o3":"2",
+"r1.e":"Múltiples de 4: 4, 8, <b>12</b>… Múltiples de 6: 6, <b>12</b>… El primer comú és 12.",
+"r2.q":"Rodes de 10 i 15 dents. Quantes dents han de passar perquè coincidisquen les marques?",
+"r2.u":"dents",
+"r2.e":"10, 20, <b>30</b> · 15, <b>30</b>. mcm(10, 15) = 30.",
+"r3.q":"Amb rodes de 12 i 18 dents, quantes voltes fa la roda de 12 fins que coincideixen?",
+"r3.o0":"2","r3.o1":"3","r3.o2":"6","r3.o3":"18",
+"r3.e":"Coincideixen a 36 dents i 36 ÷ 12 = 3 voltes (la de 18 en fa 2).",
+"r4.q":"Una roda té 7 dents i l'altra 10. No tenen cap divisor comú llevat de l'1. L'mcm és…",
+"r4.o0":"70, el producte","r4.o1":"17, la suma","r4.o2":"10, el més gran","r4.o3":"35",
+"r4.e":"Si no comparteixen cap factor, cap múltiple comú arriba abans que el producte: mcm(7, 10) = 70.",
+"r5.q":"Una roda de 6 dents i una de 18. Quan coincideixen les marques?",
+"r5.o0":"Als 6","r5.o1":"Als 18","r5.o2":"Als 108","r5.o3":"Als 24",
+"r5.e":"18 ja és múltiple de 6: quan B fa una volta, A n'ha fet 3 de senceres. mcm(6, 18) = 18.",
+"r6.q":"Un autobús passa cada 12 minuts i un altre cada 20. Si ara coincideixen a la parada, d'ací a quants minuts tornaran a coincidir?",
+"r6.u":"minuts",
+"r6.e":"És el mateix problema que les rodes: mcm(12, 20) = 60 minuts.",
+"r7.q":"Si a = 2²·3 i b = 2·3², quant val l'mcm?",
+"r7.o0":"2·3 = 6","r7.o1":"2²·3² = 36","r7.o2":"2³·3³ = 216","r7.o3":"2²·3 = 12",
+"r7.e":"Factors comuns i no comuns amb el major exponent: 2² i 3². És el cas de les rodes de 12 i 18."
+},
+es:{
+"title":"Engranajes y mínimo común múltiplo",
+"eyebrow":"Matemáticas · 1.º ESO · Divisibilidad",
+"h1":"Engranajes: ¿cuándo vuelven a coincidir las marcas?",
+"lede":"Dos ruedas dentadas giran juntas. Cada una tiene una marca. Adivina cuándo volverán a encontrarse cara a cara.",
+"sim_title":"Las ruedas dentadas",
+"story":"Las dos ruedas empiezan con las marcas <b>juntas</b>, en el punto de contacto. Cada vez que un diente de una rueda pasa por el punto de contacto, también pasa uno de la otra. La marca de una rueda vuelve a su sitio cuando ha dado una <b>vuelta completa</b>.",
+"presets":"Casos:",
+"teeth_a":"Dientes de la rueda A",
+"teeth_b":"Dientes de la rueda B",
+"apply":"Usa estos números",
+"guess_q":"Tu predicción: ¿cuántos dientes tienen que pasar?",
+"guess_hint":"(escríbela antes de darle al play)",
+"play":"▶ Gira",
+"pause":"❚❚ Pausa",
+"cont":"▶ Sigue hasta la siguiente",
+"step":"+1 diente",
+"reset":"Volver a empezar",
+"speed":"Velocidad",
+"st_teeth":"Dientes que han pasado por el contacto",
+"st_ta":"Rueda A (vueltas)",
+"st_tb":"Rueda B (vueltas)",
+"turns":"{0} ÷ {1} = {2}",
+"whole":"✔ vuelta completa",
+"tape_note":"Cada marca azul es una vuelta completa de la rueda A (un múltiplo de su número de dientes); cada marca naranja, una vuelta de B. Las marcas coinciden donde hay un múltiplo común.",
+"hit":"¡Coinciden después de <b>{0}</b> dientes! La rueda A ha dado {1} vueltas y la B, {2}. El mínimo común múltiplo de {3} y {4} es <b>{0}</b>.",
+"hit_again":"Vuelven a coincidir a los <b>{0}</b> dientes: es otro múltiplo común, pero no el mínimo.",
+"g_ok":"¡Acertaste! Habías predicho {0}.",
+"g_mult":"Habías predicho {0}. También es un múltiplo común y ahí coincidirían, pero antes ya lo hacen a los {1}: buscamos el <b>mínimo</b>.",
+"g_prod":"Habías predicho {0} = {1}·{2}. Multiplicar siempre da un múltiplo común, pero no siempre el mínimo: ya coinciden a los {3}.",
+"g_no":"Habías predicho {0}, pero ahí no coinciden: {1}",
+"g_no_a":"{0} no es múltiplo de {1}, así que la rueda A no ha dado vueltas completas.",
+"g_no_b":"{0} no es múltiplo de {1}, así que la rueda B no ha dado vueltas completas.",
+"g_small":"Habías predicho {0}, pero con tan pocos dientes no da tiempo a dar ninguna vuelta completa.",
+"idea_basic":"<b>La idea:</b> la marca de A vuelve a su sitio a los 12, 24, 36, 48… dientes (los <b>múltiplos de 12</b>) y la de B a los 18, 36, 54… (los <b>múltiplos de 18</b>). Las dos coinciden en los <b>múltiplos comunes</b>, y la primera vez es el <b>mínimo común múltiplo</b>: mcm(12, 18) = 36.",
+"adv_box":"<b>¿Y la regla de los factores?</b> Para que las dos marcas vuelvan a su sitio, el número de dientes tiene que contener <b>todos</b> los factores de 12 y <b>todos</b> los de 18. Cada factor primo tiene que aparecer tantas veces como en el que más tenga: por eso se cogen los factores comunes y no comunes con el mayor exponente.",
+"fact_l1":"{0} = {1}",
+"fact_mcm":"mcm = {0} = {1}",
+"fact_rel":"Curiosidad: mcm · mcd = {0} · {1} = {2} = {3} · {4}",
+"r1.q":"Dos ruedas de 4 y 6 dientes empiezan con las marcas juntas. ¿Después de cuántos dientes vuelven a coincidir?",
+"r1.o0":"10","r1.o1":"12","r1.o2":"24","r1.o3":"2",
+"r1.e":"Múltiplos de 4: 4, 8, <b>12</b>… Múltiplos de 6: 6, <b>12</b>… El primero común es 12.",
+"r2.q":"Ruedas de 10 y 15 dientes. ¿Cuántos dientes tienen que pasar para que coincidan las marcas?",
+"r2.u":"dientes",
+"r2.e":"10, 20, <b>30</b> · 15, <b>30</b>. mcm(10, 15) = 30.",
+"r3.q":"Con ruedas de 12 y 18 dientes, ¿cuántas vueltas da la rueda de 12 hasta que coinciden?",
+"r3.o0":"2","r3.o1":"3","r3.o2":"6","r3.o3":"18",
+"r3.e":"Coinciden a los 36 dientes y 36 ÷ 12 = 3 vueltas (la de 18 da 2).",
+"r4.q":"Una rueda tiene 7 dientes y la otra 10. No tienen ningún divisor común salvo el 1. El mcm es…",
+"r4.o0":"70, el producto","r4.o1":"17, la suma","r4.o2":"10, el mayor","r4.o3":"35",
+"r4.e":"Si no comparten ningún factor, ningún múltiplo común llega antes que el producto: mcm(7, 10) = 70.",
+"r5.q":"Una rueda de 6 dientes y una de 18. ¿Cuándo coinciden las marcas?",
+"r5.o0":"A los 6","r5.o1":"A los 18","r5.o2":"A los 108","r5.o3":"A los 24",
+"r5.e":"18 ya es múltiplo de 6: cuando B da una vuelta, A ha dado 3 completas. mcm(6, 18) = 18.",
+"r6.q":"Un autobús pasa cada 12 minutos y otro cada 20. Si ahora coinciden en la parada, ¿dentro de cuántos minutos volverán a coincidir?",
+"r6.u":"minutos",
+"r6.e":"Es el mismo problema que las ruedas: mcm(12, 20) = 60 minutos.",
+"r7.q":"Si a = 2²·3 y b = 2·3², ¿cuánto vale el mcm?",
+"r7.o0":"2·3 = 6","r7.o1":"2²·3² = 36","r7.o2":"2³·3³ = 216","r7.o3":"2²·3 = 12",
+"r7.e":"Factores comunes y no comunes con el mayor exponente: 2² y 3². Es el caso de las ruedas de 12 y 18."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Engranatges i mcm ===== */
+const gcd=(a,b)=>b?gcd(b,a%b):a, lcm=(a,b)=>a/gcd(a,b)*b;
+const PRE=[[12,18],[8,12],[6,9],[10,15],[9,12],[7,10],[6,18],[5,8]];
+let za=12,zb=18,M=36,s=0,target=36,playing=false,last=0,hits=0,guess=null;
+const GW=900,GH=430,TW=900,TH=150;
+const gx=fitCanvas($('#gears'),GW,GH),tx=fitCanvas($('#tape'),TW,TH);
+
+function buildPresets(){
+  const box=$('#presets');box.innerHTML='';
+  PRE.forEach(([a,b])=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=a+' · '+b;
+    c.setAttribute('aria-pressed',String(a===za&&b===zb));c.onclick=()=>{$('#za').value=a;$('#zb').value=b;setup(a,b);};box.appendChild(c);});
+}
+function setup(a,b){
+  za=clamp(Math.round(a)||12,4,40);zb=clamp(Math.round(b)||18,4,40);
+  $('#za').value=za;$('#zb').value=zb;
+  M=lcm(za,zb);target=M;s=0;hits=0;msgFn=null;playing=false;$('#msg').innerHTML='';$('#msg').className='msg';
+  $('#guess').value='';guess=null;
+  buildPresets();updText();fact();draw();
+}
+$('#apply').onclick=()=>setup(+$('#za').value,+$('#zb').value);
+['za','zb'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')setup(+$('#za').value,+$('#zb').value);}));
+
+function turnsTxt(n,z){
+  const q=n/z,w=Number.isInteger(q);
+  return tt('turns',nf(n,0),z,nf(q,2))+(w&&n>0?' '+t('whole'):'');
+}
+function updText(){
+  const n=Math.floor(s+1e-9);
+  $('#sN').textContent=nf(n,0);
+  $('#sA').innerHTML=turnsTxt(n,za);$('#sB').innerHTML=turnsTxt(n,zb);
+  $('#play').textContent=playing?t('pause'):(s>0&&s>=target-1e-9?t('cont'):t('play'));
+}
+function readGuess(){const v=parseNum($('#guess').value);guess=Number.isFinite(v)&&$('#guess').value.trim()!==''?Math.round(v):null;}
+
+let msgFn=null;
+function onHit(){
+  hits++;const n=Math.round(s),first=hits===1,g0=guess;
+  msgFn=()=>{const m=$('#msg');
+    if(first){
+      let h=tt('hit',n,n/za,n/zb,za,zb),cls='good';
+      if(g0!==null){
+        if(g0===M) h+='<br>'+tt('g_ok',g0);
+        else{cls='bad';
+          if(g0>0&&g0%za===0&&g0%zb===0) h+='<br>'+(g0===za*zb&&M!==za*zb?tt('g_prod',g0,za,zb,M):tt('g_mult',g0,M));
+          else if(g0<Math.min(za,zb)) h+='<br>'+tt('g_small',g0);
+          else h+='<br>'+tt('g_no',g0,g0%za!==0?tt('g_no_a',g0,za):tt('g_no_b',g0,zb));}
+      }
+      m.className='msg '+cls;m.innerHTML=h;
+    } else {m.className='msg';m.innerHTML=tt('hit_again',n);}
+  };
+  msgFn();
+}
+
+$('#play').onclick=()=>{
+  if(playing){playing=false;updText();return;}
+  if(s===0) readGuess();
+  if(s>=target-1e-9) target+=M;
+  playing=true;last=performance.now();updText();
+};
+$('#step').onclick=()=>{playing=false;if(s===0)readGuess();
+  const ns=Math.floor(s+1e-9)+1;s=ns;if(ns%M===0){target=ns;onHit();}updText();draw();};
+$('#reset').onclick=()=>setup(za,zb);
+
+/* ---- dibuix d'una roda dentada ---- */
+function gear(c,cx,cy,z,m,ang,col,markCol,markAng,labels){
+  const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z;
+  c.beginPath();
+  for(let k=0;k<z;k++){
+    const a=ang+k*2*hp;
+    const P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    const pts=[P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)];
+    pts.forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+  }
+  c.closePath();
+  c.fillStyle=col;c.globalAlpha=.18;c.fill();c.globalAlpha=1;c.strokeStyle=col;c.lineWidth=2;c.stroke();
+  c.beginPath();c.arc(cx,cy,Math.max(5,m*0.5),0,TAU);c.fillStyle=col;c.fill();
+  if(labels&&m>=13){
+    c.fillStyle=css('--muted');c.font=Math.min(13,m*0.8)+'px system-ui';c.textAlign='center';c.textBaseline='middle';
+    for(let k=0;k<z;k++){const a=ang+k*2*hp;c.fillText(String(k===0?z:k),cx+(Rf-m*0.7)*Math.cos(a),cy+(Rf-m*0.7)*Math.sin(a));}
+  }
+  /* agulla i marca */
+  const mx=cx+(R-m*0.2)*Math.cos(markAng),my=cy+(R-m*0.2)*Math.sin(markAng);
+  c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=markCol;c.lineWidth=4;c.lineCap='round';c.stroke();
+  c.beginPath();c.arc(mx,my,Math.max(6,m*0.42),0,TAU);c.fillStyle=markCol;c.fill();
+  c.lineWidth=2;c.strokeStyle=css('--panel');c.stroke();
+}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),mk=css('--ok');
+  gx.fillStyle=css('--stage');gx.fillRect(0,0,GW,GH);
+  const zmax=Math.max(za,zb);
+  const m=Math.min((GW-70)/(za+zb+2),(GH-70)/(zmax+2));
+  const tot=m*(za+zb+2),x0=(GW-tot)/2;
+  const cxA=x0+m*(za/2+1),cxB=cxA+m*(za+zb)/2,cy=GH/2+8;
+  const phA=s*2*Math.PI/za, phB=Math.PI-s*2*Math.PI/zb;
+  const atHit=Math.abs(s-Math.round(s))<1e-6&&Math.round(s)%M===0&&s>0;
+  gear(gx,cxA,cy,za,m,phA,pa,atHit?mk:pa,phA,true);
+  gear(gx,cxB,cy,zb,m,phB+Math.PI/zb,pb,atHit?mk:pb,phB,true);
+  /* punt de contacte */
+  const xc=cxA+m*za/2;
+  gx.setLineDash([4,5]);gx.strokeStyle=mut;gx.lineWidth=1.2;gx.beginPath();gx.moveTo(xc,22);gx.lineTo(xc,cy-m*2);gx.stroke();gx.setLineDash([]);
+  gx.fillStyle=mut;gx.font='13px system-ui';gx.textAlign='center';gx.textBaseline='alphabetic';
+  gx.fillText('▼',xc,20);
+  gx.fillStyle=ink;gx.font='bold 17px system-ui';gx.textAlign='left';
+  gx.fillText('A · '+za,12,26);gx.textAlign='right';gx.fillText('B · '+zb,GW-12,26);
+  if(atHit){gx.fillStyle=mk;gx.font='bold 26px system-ui';gx.textAlign='center';gx.fillText('✔ '+Math.round(s),xc,GH-12);}
+  drawTape();
+}
+function drawTape(){
+  const pa=css('--pa'),pb=css('--pb'),mut=css('--muted'),ink=css('--ink'),ok=css('--ok');
+  tx.fillStyle=css('--stage');tx.fillRect(0,0,TW,TH);
+  const N=Math.max(target,M)*1.08,L=30,R=TW-20,X=v=>L+(R-L)*v/N;
+  const yA=48,yB=104;
+  /* barra de progrés */
+  tx.fillStyle=css('--chip');tx.fillRect(L,72,R-L,10);
+  tx.fillStyle=mut;tx.fillRect(L,72,X(s)-L,10);
+  [[za,yA,pa,'A'],[zb,yB,pb,'B']].forEach(([z,y,col,lab])=>{
+    tx.strokeStyle=col;tx.globalAlpha=.35;tx.lineWidth=1.5;tx.beginPath();tx.moveTo(L,y);tx.lineTo(R,y);tx.stroke();tx.globalAlpha=1;
+    tx.fillStyle=col;tx.font='bold 13px system-ui';tx.textAlign='left';tx.fillText(lab,4,y+5);
+    for(let v=z;v<=N;v+=z){
+      const reached=v<=s+1e-9,x=X(v),common=v%za===0&&v%zb===0;
+      tx.globalAlpha=reached?1:.28;
+      tx.fillStyle=common&&reached?ok:col;
+      tx.beginPath();tx.arc(x,y,common&&reached?7:5,0,TAU);tx.fill();
+      tx.fillStyle=ink;tx.font=(common?'bold ':'')+'12px system-ui';tx.textAlign='center';
+      tx.fillText(String(v),x,y===yA?y-11:y+21);
+      tx.globalAlpha=1;
+    }
+  });
+  for(let v=M;v<=N;v+=M){if(v<=s+1e-9){tx.strokeStyle=ok;tx.lineWidth=2;tx.beginPath();tx.moveTo(X(v),yA);tx.lineTo(X(v),yB);tx.stroke();}}
+  tx.fillStyle=ink;tx.beginPath();const xs=X(s);tx.moveTo(xs,70);tx.lineTo(xs-6,62);tx.lineTo(xs+6,62);tx.fill();
+}
+function factor(n){const f={};let d=2;while(n>1){while(n%d===0){f[d]=(f[d]||0)+1;n/=d;}d++;}return f;}
+function fstr(f,cls){const k=Object.keys(f).map(Number).sort((a,b)=>a-b);return k.map(p=>'<span class="'+(cls?cls(p):'')+'">'+p+(f[p]>1?'<sup>'+f[p]+'</sup>':'')+'</span>').join('·')||'1';}
+function fact(){
+  const fa=factor(za),fb=factor(zb),fm={};
+  new Set([...Object.keys(fa),...Object.keys(fb)]).forEach(p=>{fm[p]=Math.max(fa[p]||0,fb[p]||0);});
+  const from=p=>((fa[p]||0)>=(fb[p]||0)?'ka':'kb');
+  const g=gcd(za,zb);
+  $('#fact').innerHTML=tt('fact_l1','<span class="ka">'+za+'</span>',fstr(fa))+'<br>'+tt('fact_l1','<span class="kb">'+zb+'</span>',fstr(fb))+'<br>'+
+    tt('fact_mcm',fstr(fm,from),'<b>'+M+'</b>')+'<br><span class="mut">'+tt('fact_rel',M,g,M*g,za,zb)+'</span>';
+}
+function loop(now){
+  if(playing){
+    const v=+$('#speed').value;let ds=(now-last)/1000*v;last=now;
+    if(REDUCE) ds=target-s;
+    s=Math.min(target,s+ds);
+    if(s>=target-1e-9){s=target;playing=false;onHit();}
+    updText();
+  } else last=now;
+  draw();requestAnimationFrame(loop);
+}
+App.hooks.push(()=>{updText();fact();if(msgFn)msgFn();});
+document.addEventListener('themechange',draw);
+
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"num","num":30,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"r6","lvl":"adv","type":"num","num":60,"tol":0,"u":1},{"id":"r7","lvl":"adv","type":"mc","n":4,"ans":1}];
+initQuiz(QDATA);
+setup(12,18);
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

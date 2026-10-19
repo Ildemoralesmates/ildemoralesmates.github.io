@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rebaixes encadenades: 20 % + 20 % no és 40 %</title>
+<meta name="description" content="Percentatges encadenats a ull: un 20 % i després un altre 20 % de rebaixa no fan un 40 %. Model d'àrea i barres de preu per a 1r d'ESO, amb pujades i baixades, predicció i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+.ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:10px 18px}
+.op{display:grid;gap:4px}
+.op .head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+.op output{font-family:var(--f-num);font-weight:700;font-size:16px}
+.op1 output{color:var(--pa)}.op2 output{color:var(--pb)}
+.numin{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.numin input{font:inherit;font-size:15px;width:6em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}.msg.bad{color:var(--warn);font-weight:600}
+.ticket{font-family:var(--f-num);font-size:15px;line-height:1.75;background:var(--stage);border:1px dashed var(--line);border-radius:8px;padding:10px 14px}
+.ticket .a{color:var(--pa);font-weight:700}.ticket .b{color:var(--pb);font-weight:700}.ticket .w{color:var(--warn);font-weight:700}.ticket .g{color:var(--ok);font-weight:700}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="row"><span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div></div>
+<div class="numin"><label for="price" data-i18n="price"></label><input type="text" inputmode="decimal" id="price" value="100" autocomplete="off"><span>€</span></div>
+<div class="ops">
+<div class="op op1"><div class="head"><b data-i18n="first"></b><select id="t1" aria-label="1"><option value="-1" data-i18n="down"></option><option value="1" data-i18n="up"></option></select><output id="p1v"></output></div><input type="range" id="p1" min="5" max="90" step="5" value="20" data-i18n-aria="aria.p1" aria-label=""></div>
+<div class="op op2"><div class="head"><b data-i18n="second"></b><select id="t2" aria-label="2"><option value="-1" data-i18n="down"></option><option value="1" data-i18n="up"></option></select><output id="p2v"></output></div><input type="range" id="p2" min="5" max="90" step="5" value="20" data-i18n-aria="aria.p2" aria-label=""></div>
+</div>
+<div class="numin"><label for="guess" data-i18n="guess_q"></label><input type="text" inputmode="decimal" id="guess" autocomplete="off"><span>€</span>
+<button class="btn primary" id="go" type="button" data-i18n="go"></button><button class="btn" id="again" type="button" data-i18n="again"></button></div>
+<canvas id="cv"></canvas>
+<p class="msg" id="msg" aria-live="polite"></p>
+<div class="ticket" id="ticket"></div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="idea_adv"></div><div class="ticket" id="mult" style="margin-top:8px"></div></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Rebaixes encadenades: 20 % + 20 % no és 40 %",
+"eyebrow":"Matemàtiques · 1r ESO · Percentatges",
+"h1":"Rebaixes encadenades: on és el 4 % que falta?",
+"lede":"Un 20 % de rebaixa i després un altre 20 %… no és un 40 %. Mira-ho amb els teus ulls (i que no te la colen a les rebaixes).",
+"sim_title":"La botiga",
+"story":"Un producte té una rebaixa i, a la caixa, encara en té una altra. La segona rebaixa es calcula sobre el preu <b>ja rebaixat</b>, no sobre el preu original. El quadrat gran és el 100 % del preu.",
+"presets":"Casos:",
+"price":"Preu inicial",
+"first":"1r canvi","second":"2n canvi",
+"down":"rebaixa","up":"pujada",
+"aria.p1":"Percentatge del primer canvi","aria.p2":"Percentatge del segon canvi",
+"guess_q":"La teua predicció: quant pagaràs al final?",
+"go":"▶ Passa per caixa","again":"Torna a començar",
+"l_start":"Preu inicial","l_after1":"Després del 1r","l_after2":"Preu final","l_naive":"Si sumàrem %",
+"l_lost":"Aquest {0} % ja no hi era",
+"t_line1":"{0} {1} {2} % de {3} = <span class=\"a\">{4}</span> → {5}",
+"t_line2":"{0} {1} {2} % de {3} = <span class=\"b\">{4}</span> → <span class=\"g\">{5}</span>",
+"t_down":"−","t_up":"+",
+"t_total":"Canvi total: <span class=\"g\">{0} %</span> (no {1} %). Diferència: <span class=\"w\">{3} %</span> del preu, {4}.",
+"t_same":"Canvi total: {0} {1} %.",
+"t_zero":"Al final pagues exactament el mateix que al principi.",
+"t_updown":"Puges i baixes el mateix percentatge… però no tornes al preu inicial: la pujada es calcula sobre {0} i la baixada sobre {1}.",
+"g_ok":"✔ Encertat! Pagues {0}.",
+"g_naive":"✘ Havies dit {0}: és el que surt si sumes els percentatges. En realitat pagues {1}.",
+"g_ko":"✘ Havies dit {0}. En realitat pagues {1}.",
+"g_bad":"(Si vols, escriu una predicció abans de passar per caixa.)",
+"idea_basic":"<b>La idea:</b> la segona rebaixa és un 20 % de 80 €, no de 100 €: només 16 €. Per això la rebaixa total és del 36 %, no del 40 %. Al dibuix, el racó ratllat és «el 20 % del 20 %» = 4 %: si sumem els percentatges, el comptem dues vegades.",
+"idea_adv":"<b>Amb multiplicadors:</b> rebaixar un 20 % és multiplicar per 0,8; pujar un 20 %, per 1,2. Els canvis encadenats es <b>multipliquen</b>: 0,8 · 0,8 = 0,64 → pagues el 64 %, rebaixa del 36 %. I com que l'ordre de la multiplicació no importa, tant fa quin descompte s'aplica primer.",
+"m_line":"× {0} · × {1} = × {2}  →  {3}",
+"m_pay":"pagues el {0} % del preu",
+"r1.q":"Un 20 % de rebaixa i després un altre 20 % equivalen a una rebaixa del…",
+"r1.o0":"40 %","r1.o1":"36 %","r1.o2":"44 %","r1.o3":"20 %",
+"r1.e":"100 → 80 → 64. Pagues el 64 %: la rebaixa total és del 36 %.",
+"r2.q":"Una jaqueta de 50 € té un 20 % de rebaixa i després un altre 10 %. Quant pagues?",
+"r2.u":"€",
+"r2.e":"20 % de 50 = 10 → 40 €. 10 % de 40 = 4 → 36 €.",
+"r3.q":"Un preu puja un 10 % i després baixa un 10 %. El preu final…",
+"r3.o0":"és el mateix","r3.o1":"és un 1 % més baix","r3.o2":"és un 1 % més alt","r3.o3":"és un 20 % més baix",
+"r3.e":"100 → 110 → 99. La baixada és el 10 % de 110, que és més que 10.",
+"r4.q":"El 20 % de 80 € és…",
+"r4.o0":"16 €","r4.o1":"20 €","r4.o2":"60 €","r4.o3":"4 €",
+"r4.e":"80 : 100 · 20 = 16 €.",
+"r5.q":"Una rebaixa del 50 % i després una altra del 50 %. Ho regalen?",
+"r5.o0":"No: pagues el 25 %","r5.o1":"Sí, és gratis","r5.o2":"Pagues el 50 %","r5.o3":"Pagues el 75 %",
+"r5.e":"100 → 50 → 25. La meitat de la meitat és una quarta part.",
+"r6.q":"Rebaixar un 30 % equival a multiplicar el preu per…",
+"r6.o0":"0,3","r6.o1":"0,7","r6.o2":"1,3","r6.o3":"30",
+"r6.e":"Si et lleven el 30 %, pagues el 70 %: × 0,7.",
+"r7.q":"Una rebaixa del 30 % i després una del 20 %. Quin és el percentatge de rebaixa total?",
+"r7.u":"%",
+"r7.e":"0,7 · 0,8 = 0,56 → pagues el 56 %: rebaixa del 44 % (no del 50 %)."
+},
+es:{
+"title":"Rebajas encadenadas: 20 % + 20 % no es 40 %",
+"eyebrow":"Matemáticas · 1.º ESO · Porcentajes",
+"h1":"Rebajas encadenadas: ¿dónde está el 4 % que falta?",
+"lede":"Un 20 % de rebaja y después otro 20 %… no es un 40 %. Míralo con tus propios ojos (y que no te la cuelen en las rebajas).",
+"sim_title":"La tienda",
+"story":"Un producto tiene una rebaja y, en caja, todavía tiene otra. La segunda rebaja se calcula sobre el precio <b>ya rebajado</b>, no sobre el precio original. El cuadrado grande es el 100 % del precio.",
+"presets":"Casos:",
+"price":"Precio inicial",
+"first":"1.er cambio","second":"2.º cambio",
+"down":"rebaja","up":"subida",
+"aria.p1":"Porcentaje del primer cambio","aria.p2":"Porcentaje del segundo cambio",
+"guess_q":"Tu predicción: ¿cuánto pagarás al final?",
+"go":"▶ Pasa por caja","again":"Volver a empezar",
+"l_start":"Precio inicial","l_after1":"Tras el 1.º","l_after2":"Precio final","l_naive":"Si sumáramos %",
+"l_lost":"Este {0} % ya no estaba",
+"t_line1":"{0} {1} {2} % de {3} = <span class=\"a\">{4}</span> → {5}",
+"t_line2":"{0} {1} {2} % de {3} = <span class=\"b\">{4}</span> → <span class=\"g\">{5}</span>",
+"t_down":"−","t_up":"+",
+"t_total":"Cambio total: <span class=\"g\">{0} %</span> (no {1} %). Diferencia: <span class=\"w\">{3} %</span> del precio, {4}.",
+"t_same":"Cambio total: {0} {1} %.",
+"t_zero":"Al final pagas exactamente lo mismo que al principio.",
+"t_updown":"Subes y bajas el mismo porcentaje… pero no vuelves al precio inicial: la subida se calcula sobre {0} y la bajada sobre {1}.",
+"g_ok":"✔ ¡Acertaste! Pagas {0}.",
+"g_naive":"✘ Habías dicho {0}: es lo que sale si sumas los porcentajes. En realidad pagas {1}.",
+"g_ko":"✘ Habías dicho {0}. En realidad pagas {1}.",
+"g_bad":"(Si quieres, escribe una predicción antes de pasar por caja.)",
+"idea_basic":"<b>La idea:</b> la segunda rebaja es un 20 % de 80 €, no de 100 €: solo 16 €. Por eso la rebaja total es del 36 %, no del 40 %. En el dibujo, la esquina rayada es «el 20 % del 20 %» = 4 %: si sumamos los porcentajes, la contamos dos veces.",
+"idea_adv":"<b>Con multiplicadores:</b> rebajar un 20 % es multiplicar por 0,8; subir un 20 %, por 1,2. Los cambios encadenados se <b>multiplican</b>: 0,8 · 0,8 = 0,64 → pagas el 64 %, rebaja del 36 %. Y como el orden de la multiplicación no importa, da igual qué descuento se aplica primero.",
+"m_line":"× {0} · × {1} = × {2}  →  {3}",
+"m_pay":"pagas el {0} % del precio",
+"r1.q":"Un 20 % de rebaja y después otro 20 % equivalen a una rebaja del…",
+"r1.o0":"40 %","r1.o1":"36 %","r1.o2":"44 %","r1.o3":"20 %",
+"r1.e":"100 → 80 → 64. Pagas el 64 %: la rebaja total es del 36 %.",
+"r2.q":"Una chaqueta de 50 € tiene un 20 % de rebaja y después otro 10 %. ¿Cuánto pagas?",
+"r2.u":"€",
+"r2.e":"20 % de 50 = 10 → 40 €. 10 % de 40 = 4 → 36 €.",
+"r3.q":"Un precio sube un 10 % y después baja un 10 %. El precio final…",
+"r3.o0":"es el mismo","r3.o1":"es un 1 % más bajo","r3.o2":"es un 1 % más alto","r3.o3":"es un 20 % más bajo",
+"r3.e":"100 → 110 → 99. La bajada es el 10 % de 110, que es más que 10.",
+"r4.q":"El 20 % de 80 € es…",
+"r4.o0":"16 €","r4.o1":"20 €","r4.o2":"60 €","r4.o3":"4 €",
+"r4.e":"80 : 100 · 20 = 16 €.",
+"r5.q":"Una rebaja del 50 % y después otra del 50 %. ¿Lo regalan?",
+"r5.o0":"No: pagas el 25 %","r5.o1":"Sí, es gratis","r5.o2":"Pagas el 50 %","r5.o3":"Pagas el 75 %",
+"r5.e":"100 → 50 → 25. La mitad de la mitad es una cuarta parte.",
+"r6.q":"Rebajar un 30 % equivale a multiplicar el precio por…",
+"r6.o0":"0,3","r6.o1":"0,7","r6.o2":"1,3","r6.o3":"30",
+"r6.e":"Si te quitan el 30 %, pagas el 70 %: × 0,7.",
+"r7.q":"Una rebaja del 30 % y después una del 20 %. ¿Cuál es el porcentaje de rebaja total?",
+"r7.u":"%",
+"r7.e":"0,7 · 0,8 = 0,56 → pagas el 56 %: rebaja del 44 % (no del 50 %)."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Rebaixes encadenades ===== */
+const W=900,H=440,cx=fitCanvas($('#cv'),W,H);
+const PRE=[[-1,20,-1,20],[-1,50,-1,50],[-1,30,-1,10],[-1,10,-1,30],[-1,30,-1,20],[1,20,-1,20],[-1,20,1,20],[1,10,-1,10]];
+let P=100,s1=-1,p1=20,s2=-1,p2=20,phase=0,target=0,guess=null,msgFn=null;
+const fx=(v,d)=>v.toFixed(d).replace('.',',');
+const eur=v=>{const r=Math.round(v*100)/100;return fx(r,2).replace(/,00$/,'')+' €';};
+const pct=v=>{const r=Math.round(v*100)/100;return Number.isInteger(r)?String(r):fx(r,2).replace(/0$/,'');};
+function presetLabel(a){return (a[0]<0?'−':'+')+a[1]+' % '+(a[2]<0?'−':'+')+a[3]+' %';}
+function buildPresets(){const box=$('#presets');box.innerHTML='';
+  PRE.forEach(a=>{const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=presetLabel(a);
+    c.setAttribute('aria-pressed',String(a[0]===s1&&a[1]===p1&&a[2]===s2&&a[3]===p2));
+    c.onclick=()=>{$('#t1').value=a[0];$('#p1').value=a[1];$('#t2').value=a[2];$('#p2').value=a[3];read(true);};box.appendChild(c);});}
+function read(reset){
+  const v=parseNum($('#price').value);P=Number.isFinite(v)&&v>0&&v<=100000?v:100;
+  s1=+$('#t1').value;p1=+$('#p1').value;s2=+$('#t2').value;p2=+$('#p2').value;
+  $('#p1v').textContent=(s1<0?'−':'+')+p1+' %';$('#p2v').textContent=(s2<0?'−':'+')+p2+' %';
+  if(reset){phase=0;target=0;msgFn=null;$('#msg').innerHTML='';$('#msg').className='msg';}
+  buildPresets();texts();
+}
+['t1','t2','p1','p2'].forEach(id=>$('#'+id).addEventListener('input',()=>read(true)));
+$('#price').addEventListener('input',()=>read(true));
+$('#go').onclick=()=>{const g=parseNum($('#guess').value);guess=$('#guess').value.trim()!==''&&Number.isFinite(g)?g:null;phase=0;target=3;msgFn=null;$('#msg').innerHTML='';};
+$('#again').onclick=()=>{$('#guess').value='';guess=null;read(true);};
+function vals(){const m1=1+s1*p1/100,m2=1+s2*p2/100,v1=P*m1,v2=v1*m2,naive=P*(1+(s1*p1+s2*p2)/100);
+  return {m1,m2,v1,v2,naive,tot:(m1*m2-1)*100,naiveTot:s1*p1+s2*p2};}
+function texts(){
+  const V=vals(),sg=s=>s<0?t('t_down'):t('t_up');
+  let h=tt('t_line1',eur(P),sg(s1),p1,eur(P),eur(P*p1/100),eur(V.v1))+'<br>'+tt('t_line2',eur(V.v1),sg(s2),p2,eur(V.v1),eur(V.v1*p2/100),eur(V.v2))+'<br>';
+  const tot=V.tot,sign=tot<0?'−':'+',diff=Math.abs(V.tot-V.naiveTot);
+  if(Math.abs(tot)<1e-9)h+=t('t_zero');
+  else if(diff<1e-9)h+=tt('t_same',sign,pct(Math.abs(tot)));
+  else{const sn=v=>Math.abs(v)<1e-9?'0':(v<0?'− ':'+ ')+pct(Math.abs(v));h+=tt('t_total',sn(tot),sn(V.naiveTot),pct(diff),eur(P*diff/100));}
+  if(s1!==s2&&p1===p2)h+='<br>'+tt('t_updown',eur(P),eur(V.v1));
+  $('#ticket').innerHTML=phase>=2.99?h:h.split('<br>').slice(0,phase>=1.99?2:phase>=0.99?1:0).join('<br>');
+  $('#mult').innerHTML=tt('m_line',fx(V.m1,2).replace(/0$/,''),fx(V.m2,2).replace(/0$/,''),fx(V.m1*V.m2,4).replace(/0+$/,'').replace(/,$/,''),tt('m_pay',pct(V.m1*V.m2*100)));
+  if(msgFn)msgFn();
+}
+function finish(){
+  const V=vals();
+  msgFn=()=>{const m=$('#msg');
+    if(guess===null){m.className='msg';m.innerHTML='';return;}
+    if(Math.abs(guess-V.v2)<=0.011+V.v2*0.002){m.className='msg good';m.innerHTML=tt('g_ok',eur(V.v2));}
+    else if(Math.abs(guess-V.naive)<=0.011+V.naive*0.002&&Math.abs(V.naive-V.v2)>0.01){m.className='msg bad';m.innerHTML=tt('g_naive',eur(guess),eur(V.v2));}
+    else{m.className='msg bad';m.innerHTML=tt('g_ko',eur(guess),eur(V.v2));}};
+  texts();
+}
+function hatch(x,y,w,h,col){cx.save();cx.beginPath();cx.rect(x,y,w,h);cx.clip();cx.strokeStyle=col;cx.lineWidth=2;cx.beginPath();
+  for(let k=-h;k<w+h;k+=9){cx.moveTo(x+k,y);cx.lineTo(x+k+h,y+h);}cx.stroke();cx.restore();}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok'),wn=css('--warn'),panel=css('--panel');
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  const V=vals(),f1=clamp(phase,0,1),f2=clamp(phase-1,0,1),f3=clamp(phase-2,0,1);
+  const both=s1<0&&s2<0;
+  /* --- model d'àrea (només per a dues rebaixes) o barres verticals --- */
+  const S=340,X0=40,Y0=50;
+  if(both){
+    const a=p1/100,b=p2/100;
+    cx.fillStyle=ok;cx.globalAlpha=.25;cx.fillRect(X0,Y0,S,S);cx.globalAlpha=1;
+    /* quadrícula 10×10 */
+    cx.strokeStyle=mut;cx.globalAlpha=.25;cx.lineWidth=1;cx.beginPath();for(let i=1;i<10;i++){cx.moveTo(X0+i*S/10,Y0);cx.lineTo(X0+i*S/10,Y0+S);cx.moveTo(X0,Y0+i*S/10);cx.lineTo(X0+S,Y0+i*S/10);}cx.stroke();cx.globalAlpha=1;
+    /* 1a rebaixa: franja vertical a la dreta */
+    if(f1>0){const w=S*a;cx.fillStyle=pa;cx.globalAlpha=.75*f1;cx.fillRect(X0+S-w,Y0,w,S);cx.globalAlpha=1;
+      cx.fillStyle=pa;cx.font='bold 15px system-ui';cx.textAlign='center';cx.globalAlpha=f1;cx.fillText('−'+p1+' %',X0+S-w/2,Y0+S+22);cx.globalAlpha=1;}
+    /* 2a rebaixa: franja horitzontal a dalt, només sobre el que queda */
+    if(f2>0){const h=S*b,w=S*(1-a);cx.fillStyle=pb;cx.globalAlpha=.75*f2;cx.fillRect(X0,Y0,w,h);cx.globalAlpha=1;
+      cx.fillStyle=panel;cx.font='bold 15px system-ui';cx.textAlign='center';cx.globalAlpha=f2;if(h>=20)cx.fillText('−'+p2+' %',X0+w/2,Y0+h/2+5);cx.globalAlpha=1;}
+    /* racó: el que sumaríem dues vegades */
+    if(f3>0){const w=S*a,h=S*b;cx.globalAlpha=f3;hatch(X0+S-w,Y0,w,h,wn);cx.strokeStyle=wn;cx.lineWidth=3;cx.setLineDash([6,4]);cx.strokeRect(X0+S-w,Y0,w,h);cx.setLineDash([]);
+      cx.fillStyle=wn;cx.font='bold 14px system-ui';cx.textAlign='center';cx.fillText(tt('l_lost',pct(p1*p2/100)),X0+S/2,Y0-12);cx.globalAlpha=1;}
+    cx.strokeStyle=ink;cx.lineWidth=2.5;cx.strokeRect(X0,Y0,S,S);
+    if(f2>=1){cx.fillStyle=ink;cx.font='bold 22px system-ui';cx.textAlign='center';cx.fillText(pct(100+V.tot)+' %',X0+S*(1-a)/2,Y0+S*b+(S*(1-b))/2+8);}
+    else{cx.fillStyle=ink;cx.font='bold 22px system-ui';cx.textAlign='center';cx.fillText('100 %',X0+S/2,Y0+S/2+8);}
+  }
+  /* --- barres de preu --- */
+  const bx0=both?X0+S+90:150,bw=W-bx0-100,mx=Math.max(P,V.v1,V.v2,V.naive)*1.02,BW=v=>bw*v/mx;
+  const rows=[[t('l_start'),P,null,1],[t('l_after1'),V.v1,s1,f1],[t('l_after2'),V.v2,s2,f2],[t('l_naive'),V.naive,0,f3]];
+  const rh=both?62:80,ry0=both?70:60;
+  rows.forEach(([lab,v,sg,f],i)=>{
+    if(f<=0&&i>0)return;
+    const y=ry0+i*rh;cx.globalAlpha=i?f:1;
+    cx.fillStyle=ink;cx.font='bold 13.5px system-ui';cx.textAlign='left';cx.fillText(lab,bx0,y-6);
+    const prev=i===1?P:i===2?V.v1:P;
+    if(i===3){cx.fillStyle=mut;cx.globalAlpha*=.35;cx.fillRect(bx0,y,BW(v),24);cx.globalAlpha=f;cx.strokeStyle=mut;cx.setLineDash([5,4]);cx.strokeRect(bx0,y,BW(v),24);cx.setLineDash([]);
+      if(Math.abs(v-V.v2)>1e-6){const a=Math.min(v,V.v2),b=Math.max(v,V.v2);hatch(bx0+BW(a),y,BW(b)-BW(a),24,wn);}}
+    else if(i===0){cx.fillStyle=ok;cx.globalAlpha=.55;cx.fillRect(bx0,y,BW(v),24);cx.globalAlpha=1;}
+    else{const col=i===1?pa:pb;
+      cx.fillStyle=ok;cx.globalAlpha=.55*f;cx.fillRect(bx0,y,BW(Math.min(v,prev)),24);cx.globalAlpha=f;
+      if(sg<0){cx.fillStyle=col;cx.globalAlpha=.75*f;cx.fillRect(bx0+BW(v),y,BW(prev)-BW(v),24);cx.globalAlpha=f;}
+      else{cx.fillStyle=col;cx.globalAlpha=.75*f;cx.fillRect(bx0+BW(prev),y,BW(v)-BW(prev),24);cx.globalAlpha=f;}}
+    cx.fillStyle=ink;cx.font='bold 15px ui-monospace,Menlo,Consolas,monospace';cx.textAlign='left';cx.fillText(eur(v),bx0+Math.max(BW(v),BW(i===1?P:i===2?V.v1:v))+8,y+18);
+    cx.globalAlpha=1;
+  });
+  /* línia del preu final */
+  if(f2>=1){const x=bx0+BW(V.v2);cx.strokeStyle=ok;cx.lineWidth=1.5;cx.setLineDash([3,4]);cx.beginPath();cx.moveTo(x,ry0-4);cx.lineTo(x,ry0+3*rh+28);cx.stroke();cx.setLineDash([]);}
+}
+function loop(){
+  if(phase<target){const prev=phase;phase=REDUCE?target:Math.min(target,phase+1/70);
+    if(Math.floor(prev)!==Math.floor(phase)||phase>=target)texts();
+    if(phase>=target&&target===3)finish();}
+  draw();requestAnimationFrame(loop);
+}
+App.hooks.push(()=>{read(false);});
+document.addEventListener('themechange',draw);
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"num","num":36,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":1},{"id":"r7","lvl":"adv","type":"num","num":44,"tol":0,"u":1}];
+initQuiz(QDATA);
+read(true);
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zoom infinito en la recta: números decimales</title>
+<meta name="description" content="Haz zoom en la recta numérica: entre 0,1 y 0,2 aparecen diez marcas, y entre dos de ellas, diez más. Para 1.º de ESO: comparar y ordenar decimales (¿0,15 o 0,2?), con retos y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/zoom-recta-decimals/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/zoom-recta-decimals/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/zoom-recta-decimals/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/zoom-recta-decimals/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Zoom infinito en la recta: números decimales">
+<meta property="og:description" content="Haz zoom en la recta numérica: entre 0,1 y 0,2 aparecen diez marcas, y entre dos de ellas, diez más. Para 1.º de ESO: comparar y ordenar decimales (¿0,15 o 0,2?), con retos y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/zoom-recta-decimals/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.numin{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.numin input{font:inherit;font-size:15px;width:6.5em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.level{font-size:15px;color:var(--ink)}
+#cv{cursor:zoom-in;touch-action:manipulation}
+.duel{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.duel .opt{font-family:var(--f-num);font-size:22px;font-weight:700;min-width:5.5em;text-align:center}
+.cmp{font-family:var(--f-num);font-size:15px;line-height:1.8}
+.cmp .a{color:var(--pa);font-weight:700}.cmp .b{color:var(--pb);font-weight:700}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 1.º ESO · Números decimales</p>
+      <h1 data-i18n="h1">Zoom infinito en la recta</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Entre dos marcas siempre caben diez más. Haz zoom y descubre por qué 0,15 es menor que 0,2.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">La recta con lupa</h2>
+<p data-i18n-html="story">Toca un trozo de la recta para hacer zoom: el trozo se hace 10 veces más grande y aparecen <b>diez marcas nuevas</b>. Puedes repetirlo tantas veces como quieras.</p>
+<div class="row">
+<button class="btn primary" id="zin" type="button" data-i18n="zin">🔍 Acerca ×10</button>
+<button class="btn" id="zout" type="button" data-i18n="zout">Aleja ÷10</button>
+<button class="btn" id="home" type="button" data-i18n="home">Volver al inicio</button>
+<button class="btn" id="left" type="button" aria-label="◀">◀</button>
+<button class="btn" id="right" type="button" aria-label="▶">▶</button>
+</div>
+<canvas id="cv"></canvas>
+<p class="level" id="level" aria-live="polite"></p>
+<div class="numin">
+<label for="na" data-i18n="num_a">Número A</label><input type="text" inputmode="decimal" id="na" value="0,15" autocomplete="off">
+<label for="nb" data-i18n="num_b">Número B</label><input type="text" inputmode="decimal" id="nb" value="0,2" autocomplete="off">
+<button class="btn" id="place" type="button" data-i18n="place">Sitúalos en la recta</button>
+</div>
+<div class="cmp" id="cmp"></div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>La trampa:</b> «0,15 es mayor que 0,2 porque 15 &gt; 2». Pero 0,2 son 2 <b>décimas</b> y 0,15 solo es una décima y media. Si los escribimos con los mismos decimales se ve enseguida: 0,<b>20</b> &gt; 0,<b>15</b>. En la recta, 0,2 está más a la derecha.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Infinitos decimales:</b> entre dos números decimales siempre cabe otro, por ejemplo su media: entre 0,1 y 0,2 está 0,15; entre 0,1 y 0,15 está 0,125… Por mucho zoom que hagamos, la recta nunca se acaba de «llenar»: entre 0,1 y 0,2 hay infinitos números decimales.</div>
+</section>
+
+<section class="card">
+<h2><small data-i18n="ch_eyebrow">Reto</small><span data-i18n="ch_title">¿Cuál es mayor?</span></h2>
+<p data-i18n="ch_text">Elige el número mayor. Después, la recta te mostrará dónde está cada uno.</p>
+<div class="duel"><button class="opt" id="ca" type="button"></button><button class="opt" id="cb" type="button"></button><button class="btn" id="cnext" type="button" data-i18n="ch_next">Otro</button></div>
+<p class="msg" id="cmsg" aria-live="polite"></p>
+<p class="score" id="cscore"></p>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Zoom infinit a la recta: nombres decimals",
+"eyebrow":"Matemàtiques · 1r ESO · Nombres decimals",
+"h1":"Zoom infinit a la recta",
+"lede":"Entre dues marques sempre n'hi caben deu més. Fes zoom i descobreix per què 0,15 és més xicotet que 0,2.",
+"sim_title":"La recta amb lupa",
+"story":"Toca un tros de la recta per a fer-hi zoom: el tros es fa 10 vegades més gran i hi apareixen <b>deu marques noves</b>. Pots repetir-ho tantes vegades com vulgues.",
+"zin":"🔍 Apropa ×10",
+"zout":"Allunya ÷10",
+"home":"Torna a l'inici",
+"lvl0":"Ara veus les <b>unitats</b>.",
+"lvl1":"Ara veus les <b>dècimes</b>: cada unitat es parteix en 10.",
+"lvl2":"Ara veus les <b>centèsimes</b>: cada dècima es parteix en 10.",
+"lvl3":"Ara veus les <b>mil·lèsimes</b>: cada centèsima es parteix en 10.",
+"lvl4":"Ara veus les <b>deumil·lèsimes</b>.",
+"lvl5":"Ara veus les <b>centmil·lèsimes</b>.",
+"lvl6":"Ara veus les <b>milionèsimes</b>. Podríem continuar per sempre…",
+"lvlbig":"Ara veus les <b>desenes</b>.",
+"num_a":"Nombre A",
+"num_b":"Nombre B",
+"place":"Situa'ls a la recta",
+"cmp_eq":"Escrits amb els mateixos decimals: <span class=\"a\">{0}</span> i <span class=\"b\">{1}</span>.",
+"cmp_lt":"<span class=\"{2}\">{0}</span> &lt; <span class=\"{3}\">{1}</span>: el de l'esquerra és més xicotet.",
+"cmp_same":"Són el mateix nombre: {0} = {1}.",
+"cmp_units":"Comparem {0}: {1} {2} {3}.",
+"u1":"dècimes","u2":"centèsimes","u3":"mil·lèsimes","u4":"deumil·lèsimes","u5":"centmil·lèsimes","u6":"milionèsimes",
+"bad_num":"Escriu dos nombres entre −10 i 10, amb coma decimal (per exemple, 0,15).",
+"idea_basic":"<b>La trampa:</b> «0,15 és més gran que 0,2 perquè 15 &gt; 2». Però 0,2 són 2 <b>dècimes</b> i 0,15 només és 1 dècima i mitja. Si els escrivim amb els mateixos decimals es veu de seguida: 0,<b>20</b> &gt; 0,<b>15</b>. A la recta, 0,2 està més a la dreta.",
+"idea_adv":"<b>Infinits decimals:</b> entre dos nombres decimals sempre en cap un altre, per exemple la seua mitjana: entre 0,1 i 0,2 hi ha 0,15; entre 0,1 i 0,15 hi ha 0,125… Per molt que fem zoom, la recta no s'acaba mai de «omplir»: entre 0,1 i 0,2 hi ha infinits nombres decimals.",
+"ch_eyebrow":"Repte",
+"ch_title":"Quin és més gran?",
+"ch_text":"Tria el nombre més gran. Després, la recta et mostrarà on està cadascun.",
+"ch_next":"Un altre",
+"ch_ok":"✔ Ben vist! {0} &gt; {1}.",
+"ch_ko":"✘ Compte: {0} &gt; {1}. {2}",
+"ch_eqd":"Escrits amb els mateixos decimals: {0} i {1}.",
+"ch_score":"Encerts: {0} de {1}",
+"r1.q":"Quin és més gran?",
+"r1.o0":"0,15","r1.o1":"0,2","r1.o2":"Són iguals",
+"r1.e":"0,2 = 0,20 i 20 centèsimes &gt; 15 centèsimes.",
+"r2.q":"Quantes marques de centèsima hi ha entre 0,3 i 0,4, sense comptar-los a ells?",
+"r2.o0":"9","r2.o1":"10","r2.o2":"1","r2.o3":"100",
+"r2.e":"0,31; 0,32; … ; 0,39: nou marques. Amb el 0,4 serien deu passos.",
+"r3.q":"Ordena de menor a major: 0,5 · 0,45 · 0,05",
+"r3.o0":"0,05 &lt; 0,45 &lt; 0,5","r3.o1":"0,5 &lt; 0,05 &lt; 0,45","r3.o2":"0,05 &lt; 0,5 &lt; 0,45","r3.o3":"0,45 &lt; 0,5 &lt; 0,05",
+"r3.e":"Amb dos decimals: 0,05 · 0,45 · 0,50.",
+"r4.q":"Quin d'aquests nombres està entre 0,1 i 0,2?",
+"r4.o0":"0,12","r4.o1":"0,21","r4.o2":"0,02","r4.o3":"1,5",
+"r4.e":"0,12 = 12 centèsimes, entre 10 i 20 centèsimes.",
+"r5.q":"0,7 i 0,70…",
+"r5.o0":"són el mateix nombre","r5.o1":"0,70 és més gran","r5.o2":"0,7 és més gran",
+"r5.e":"7 dècimes = 70 centèsimes. Afegir zeros al final no canvia el valor.",
+"r6.q":"Quants nombres decimals hi ha entre 0,1 i 0,2?",
+"r6.o0":"10","r6.o1":"100","r6.o2":"1000","r6.o3":"Infinits",
+"r6.e":"Cada vegada que fas zoom n'apareixen deu més, i no s'acaba mai.",
+"r7.q":"Quin nombre està just a la meitat entre 0,1 i 0,2?",
+"r7.e":"(0,1 + 0,2) : 2 = 0,15."
+},
+es:{
+"title":"Zoom infinito en la recta: números decimales",
+"eyebrow":"Matemáticas · 1.º ESO · Números decimales",
+"h1":"Zoom infinito en la recta",
+"lede":"Entre dos marcas siempre caben diez más. Haz zoom y descubre por qué 0,15 es menor que 0,2.",
+"sim_title":"La recta con lupa",
+"story":"Toca un trozo de la recta para hacer zoom: el trozo se hace 10 veces más grande y aparecen <b>diez marcas nuevas</b>. Puedes repetirlo tantas veces como quieras.",
+"zin":"🔍 Acerca ×10",
+"zout":"Aleja ÷10",
+"home":"Volver al inicio",
+"lvl0":"Ahora ves las <b>unidades</b>.",
+"lvl1":"Ahora ves las <b>décimas</b>: cada unidad se parte en 10.",
+"lvl2":"Ahora ves las <b>centésimas</b>: cada décima se parte en 10.",
+"lvl3":"Ahora ves las <b>milésimas</b>: cada centésima se parte en 10.",
+"lvl4":"Ahora ves las <b>diezmilésimas</b>.",
+"lvl5":"Ahora ves las <b>cienmilésimas</b>.",
+"lvl6":"Ahora ves las <b>millonésimas</b>. Podríamos seguir para siempre…",
+"lvlbig":"Ahora ves las <b>decenas</b>.",
+"num_a":"Número A",
+"num_b":"Número B",
+"place":"Sitúalos en la recta",
+"cmp_eq":"Escritos con los mismos decimales: <span class=\"a\">{0}</span> y <span class=\"b\">{1}</span>.",
+"cmp_lt":"<span class=\"{2}\">{0}</span> &lt; <span class=\"{3}\">{1}</span>: el de la izquierda es menor.",
+"cmp_same":"Son el mismo número: {0} = {1}.",
+"cmp_units":"Comparamos {0}: {1} {2} {3}.",
+"u1":"décimas","u2":"centésimas","u3":"milésimas","u4":"diezmilésimas","u5":"cienmilésimas","u6":"millonésimas",
+"bad_num":"Escribe dos números entre −10 y 10, con coma decimal (por ejemplo, 0,15).",
+"idea_basic":"<b>La trampa:</b> «0,15 es mayor que 0,2 porque 15 &gt; 2». Pero 0,2 son 2 <b>décimas</b> y 0,15 solo es una décima y media. Si los escribimos con los mismos decimales se ve enseguida: 0,<b>20</b> &gt; 0,<b>15</b>. En la recta, 0,2 está más a la derecha.",
+"idea_adv":"<b>Infinitos decimales:</b> entre dos números decimales siempre cabe otro, por ejemplo su media: entre 0,1 y 0,2 está 0,15; entre 0,1 y 0,15 está 0,125… Por mucho zoom que hagamos, la recta nunca se acaba de «llenar»: entre 0,1 y 0,2 hay infinitos números decimales.",
+"ch_eyebrow":"Reto",
+"ch_title":"¿Cuál es mayor?",
+"ch_text":"Elige el número mayor. Después, la recta te mostrará dónde está cada uno.",
+"ch_next":"Otro",
+"ch_ok":"✔ ¡Bien visto! {0} &gt; {1}.",
+"ch_ko":"✘ Cuidado: {0} &gt; {1}. {2}",
+"ch_eqd":"Escritos con los mismos decimales: {0} y {1}.",
+"ch_score":"Aciertos: {0} de {1}",
+"r1.q":"¿Cuál es mayor?",
+"r1.o0":"0,15","r1.o1":"0,2","r1.o2":"Son iguales",
+"r1.e":"0,2 = 0,20 y 20 centésimas &gt; 15 centésimas.",
+"r2.q":"¿Cuántas marcas de centésima hay entre 0,3 y 0,4, sin contarlos a ellos?",
+"r2.o0":"9","r2.o1":"10","r2.o2":"1","r2.o3":"100",
+"r2.e":"0,31; 0,32; … ; 0,39: nueve marcas. Con el 0,4 serían diez pasos.",
+"r3.q":"Ordena de menor a mayor: 0,5 · 0,45 · 0,05",
+"r3.o0":"0,05 &lt; 0,45 &lt; 0,5","r3.o1":"0,5 &lt; 0,05 &lt; 0,45","r3.o2":"0,05 &lt; 0,5 &lt; 0,45","r3.o3":"0,45 &lt; 0,5 &lt; 0,05",
+"r3.e":"Con dos decimales: 0,05 · 0,45 · 0,50.",
+"r4.q":"¿Cuál de estos números está entre 0,1 y 0,2?",
+"r4.o0":"0,12","r4.o1":"0,21","r4.o2":"0,02","r4.o3":"1,5",
+"r4.e":"0,12 = 12 centésimas, entre 10 y 20 centésimas.",
+"r5.q":"0,7 y 0,70…",
+"r5.o0":"son el mismo número","r5.o1":"0,70 es mayor","r5.o2":"0,7 es mayor",
+"r5.e":"7 décimas = 70 centésimas. Añadir ceros al final no cambia el valor.",
+"r6.q":"¿Cuántos números decimales hay entre 0,1 y 0,2?",
+"r6.o0":"10","r6.o1":"100","r6.o2":"1000","r6.o3":"Infinitos",
+"r6.e":"Cada vez que haces zoom aparecen diez más, y nunca se acaba.",
+"r7.q":"¿Qué número está justo en la mitad entre 0,1 y 0,2?",
+"r7.e":"(0,1 + 0,2) : 2 = 0,15."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../zoom-recta-decimals/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Zoom a la recta ===== */
+const W=900,H=250,cx=fitCanvas($('#cv'),W,H);
+const HOME={c:0.5,span:1.2},MINS=1.2e-6,MAXS=24;
+let view={...HOME},anim=null,hiSeg=null,pts=[{v:0.15,cls:'a'},{v:0.2,cls:'b'}];
+const LY=150;
+const pow10=e=>e>=0?Math.pow(10,e):1/Math.pow(10,-e);
+const val=(i,e)=>e>=0?i*Math.pow(10,e):i/Math.pow(10,-e);
+const fmtD=(v,d)=>{let s=Math.abs(v)<1e-12?(0).toFixed(d):v.toFixed(d);return s.replace('-','−').replace('.',',');};
+function decs(v){for(let d=0;d<=6;d++){if(Math.abs(Math.round(v*pow10(d))-v*pow10(d))<1e-7)return d;}return 6;}
+function labelLevel(span){let e=Math.floor(Math.log10(span))-3;while(pow10(e)/span*W<52)e++;return e;}
+function goTo(c,span,seg){span=clamp(span,MINS,MAXS);anim={c0:view.c,s0:view.span,c1:c,s1:span,t:0};hiSeg=seg||null;if(REDUCE){view={c,span};anim=null;hiSeg=null;}}
+$('#zin').onclick=()=>{const e=labelLevel(view.span),st=pow10(e),k=Math.floor(view.c/st+1e-9);goTo((k+.5)*st,st*1.25,[k*st,(k+1)*st]);};
+$('#zout').onclick=()=>goTo(view.c,view.span*10);
+$('#home').onclick=()=>goTo(HOME.c,HOME.span);
+$('#left').onclick=()=>goTo(view.c-view.span*0.4,view.span);
+$('#right').onclick=()=>goTo(view.c+view.span*0.4,view.span);
+$('#cv').addEventListener('click',ev=>{
+  const r=$('#cv').getBoundingClientRect(),x=(ev.clientX-r.left)*W/r.width;
+  const v=view.c+(x-W/2)/W*view.span,e=labelLevel(view.span),st=pow10(e),k=Math.floor(v/st);
+  goTo((k+.5)*st,st*1.25,[k*st,(k+1)*st]);
+});
+function fitPair(a,b){const lo=Math.min(a,b),hi=Math.max(a,b),dd=hi-lo;
+  const span=dd>0?Math.max(dd*2.6,MINS):0.12;goTo((lo+hi)/2,span);}
+function readPts(){
+  const a=parseNum($('#na').value),b=parseNum($('#nb').value);
+  if(![a,b].every(x=>Number.isFinite(x)&&Math.abs(x)<=10)||$('#na').value.trim()===''||$('#nb').value.trim()===''){$('#cmp').innerHTML='<span class="msg bad">'+t('bad_num')+'</span>';return false;}
+  pts=[{v:a,cls:'a'},{v:b,cls:'b'}];cmpText();fitPair(a,b);return true;
+}
+$('#place').onclick=readPts;
+['na','nb'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')readPts();}));
+function cmpText(){
+  const [A,B]=pts,d=Math.max(decs(A.v),decs(B.v)),sa=fmtD(A.v,d),sb=fmtD(B.v,d);
+  let h=tt('cmp_eq',sa,sb)+'<br>';
+  if(Math.abs(A.v-B.v)<1e-12) h+=tt('cmp_same',sa,sb);
+  else{const lo=A.v<B.v?A:B,hi=A.v<B.v?B:A;
+    h+=tt('cmp_lt',fmtD(lo.v,d),fmtD(hi.v,d),lo.cls,hi.cls);
+    if(d>=1&&d<=6&&A.v>=0&&B.v>=0&&Math.floor(A.v)===Math.floor(B.v)){
+      const ia=Math.round((A.v-Math.floor(A.v))*pow10(d)),ib=Math.round((B.v-Math.floor(B.v))*pow10(d));
+      h+='<br>'+tt('cmp_units',t('u'+d),'<span class="a">'+ia+'</span>',ia<ib?'&lt;':'&gt;','<span class="b">'+ib+'</span>');}
+  }
+  $('#cmp').innerHTML=h;
+}
+function levelText(){const e=labelLevel(view.span);const k=e>=1?'lvlbig':'lvl'+clamp(-e,0,6);$('#level').innerHTML=t(k);}
+let lastLvl=null;
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb');
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  const {c,span}=view,L=c-span/2,R=c+span/2,X=v=>(v-L)/span*W;
+  if(hiSeg){cx.fillStyle=css('--warn');cx.globalAlpha=.15;cx.fillRect(X(hiSeg[0]),LY-60,X(hiSeg[1])-X(hiSeg[0]),95);cx.globalAlpha=1;}
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(0,LY);cx.lineTo(W,LY);cx.stroke();
+  const le=labelLevel(span);
+  for(let e=Math.floor(Math.log10(span))-3;e<=Math.ceil(Math.log10(span))+1;e++){
+    const st=pow10(e),px=st/span*W;if(px<4)continue;
+    const hgt=clamp(5+9*Math.log10(px/4),4,34),al=clamp((px-4)/30,0,1);
+    const i0=Math.ceil(L/st-1e-9),i1=Math.floor(R/st+1e-9);
+    if(i1-i0>400)continue;
+    cx.strokeStyle=ink;cx.globalAlpha=al;cx.lineWidth=e>=le+1?2.4:1.4;cx.beginPath();
+    for(let i=i0;i<=i1;i++){const x=X(val(i,e));cx.moveTo(x,LY-hgt);cx.lineTo(x,LY+hgt*0.4);}
+    cx.stroke();cx.globalAlpha=1;
+    if(e===le||e===le+1){
+      const dd=Math.max(0,-le);
+      for(let i=i0;i<=i1;i++){
+        if(e===le&&i%10===0)continue;
+        const v=val(i,e),x=X(v);if(x<26||x>W-26)continue;
+        cx.fillStyle=e===le+1?ink:mut;cx.font=(e===le+1?'bold 17px ':'14px ')+'ui-monospace,Menlo,Consolas,monospace';
+        cx.textAlign='center';cx.fillText(fmtD(v,e===le+1?Math.max(0,-e):dd),x,LY+(e===le+1?40:30));
+      }
+    }
+  }
+  /* punts */
+  pts.forEach((p,j)=>{const x=X(p.v);if(x<-40||x>W+40)return;const col=p.cls==='a'?pa:pb;
+    const y=LY-50-j*26;
+    cx.strokeStyle=col;cx.lineWidth=2;cx.setLineDash([3,3]);cx.beginPath();cx.moveTo(x,y+8);cx.lineTo(x,LY);cx.stroke();cx.setLineDash([]);
+    cx.beginPath();cx.arc(x,LY,6,0,TAU);cx.fillStyle=col;cx.fill();
+    const s=fmtD(p.v,decs(p.v));cx.font='bold 16px ui-monospace,Menlo,Consolas,monospace';const w=cx.measureText(s).width+14;
+    cx.fillStyle=col;rrect(cx,x-w/2,y-12,w,22,6);cx.fill();cx.fillStyle=css('--panel');cx.textAlign='center';cx.textBaseline='middle';cx.fillText(s,x,y);cx.textBaseline='alphabetic';});
+  /* fletxes si estan fora */
+  pts.forEach((p,j)=>{const x=X(p.v);if(x>=-40&&x<=W+40)return;const col=p.cls==='a'?pa:pb;cx.fillStyle=col;cx.font='bold 14px system-ui';
+    cx.textAlign=x<0?'left':'right';cx.fillText((x<0?'◀ ':'')+fmtD(p.v,decs(p.v))+(x>W?' ▶':''),x<0?8:W-8,24+j*20);});
+  const lv=labelLevel(view.span);if(lv!==lastLvl){lastLvl=lv;levelText();}
+}
+function loop(){
+  if(anim){anim.t=Math.min(1,anim.t+1/48);const k=anim.t<.5?2*anim.t*anim.t:1-Math.pow(-2*anim.t+2,2)/2;
+    const ls=lerp(Math.log(anim.s0),Math.log(anim.s1),k);view={c:lerp(anim.c0,anim.c1,k),span:Math.exp(ls)};
+    if(anim.t>=1){view={c:anim.c1,span:anim.s1};anim=null;setTimeout(()=>{if(!anim)hiSeg=null;},700);}}
+  draw();requestAnimationFrame(loop);
+}
+/* ---- repte ---- */
+const PAIRS=[[0.15,0.2],[0.7,0.65],[0.09,0.1],[1.05,1.5],[0.3,0.299],[2.4,2.38],[0.5,0.05],[0.123,0.13],[3.01,3.1],[0.8,0.799],[0.6,0.59],[1.2,1.19]];
+let order=[...PAIRS.keys()].sort(()=>Math.random()-.5),ci=0,done=false,ok=0,tot=0,cmsgFn=null;
+function showPair(){const p=PAIRS[order[ci%order.length]];const sw=Math.random()<.5;const a=sw?p[1]:p[0],b=sw?p[0]:p[1];
+  $('#ca').textContent=fmtD(a,decs(a));$('#cb').textContent=fmtD(b,decs(b));$('#ca').dataset.v=a;$('#cb').dataset.v=b;
+  ['#ca','#cb'].forEach(s=>{$(s).disabled=false;$(s).classList.remove('right','wrong');});done=false;cmsgFn=null;$('#cmsg').innerHTML='';$('#cmsg').className='msg';}
+function pick(sel){if(done)return;done=true;tot++;
+  const a=+$('#ca').dataset.v,b=+$('#cb').dataset.v,mine=+$(sel).dataset.v,big=Math.max(a,b),sm=Math.min(a,b),good=mine===big;if(good)ok++;
+  ['#ca','#cb'].forEach(s=>{$(s).disabled=true;$(s).classList.add(+$(s).dataset.v===big?'right':(s===sel?'wrong':'x'));});
+  const d=Math.max(decs(a),decs(b));
+  cmsgFn=()=>{$('#cmsg').className='msg '+(good?'good':'bad');
+    $('#cmsg').innerHTML=good?tt('ch_ok',fmtD(big,decs(big)),fmtD(sm,decs(sm))):tt('ch_ko',fmtD(big,decs(big)),fmtD(sm,decs(sm)),tt('ch_eqd',fmtD(big,d),fmtD(sm,d)));
+    $('#cscore').innerHTML=tt('ch_score',ok,tot);};
+  cmsgFn();
+  $('#na').value=fmtD(a,decs(a));$('#nb').value=fmtD(b,decs(b));pts=[{v:a,cls:'a'},{v:b,cls:'b'}];cmpText();fitPair(a,b);
+  $('#cv').scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});
+}
+$('#ca').onclick=()=>pick('#ca');$('#cb').onclick=()=>pick('#cb');
+$('#cnext').onclick=()=>{ci++;showPair();};
+App.hooks.push(()=>{levelText();cmpText();if(cmsgFn)cmsgFn();else $('#cscore').innerHTML=tot?tt('ch_score',ok,tot):'';});
+document.addEventListener('themechange',draw);
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":3,"ans":1},{"id":"r2","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":3},{"id":"r7","lvl":"adv","type":"num","num":0.15,"tol":0}];
+initQuiz(QDATA);
+showPair();
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

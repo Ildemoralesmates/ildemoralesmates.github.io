@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arrel quadrada: el costat d'un quadrat</title>
+<meta name="description" content="L'arrel quadrada com el costat d'un quadrat: canvia l'àrea i mira com s'ajusta el costat. Per què √50 està entre 7 i 8? Quadrats perfectes, arrel entera i aproximació per dècimes per a 1r d'ESO, amb repte i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+.formula{font-family:var(--f-num);font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:var(--ink)}
+.formula .s{color:var(--pa);font-weight:700}.formula .lo{color:var(--ok);font-weight:700}.formula .hi{color:var(--pb);font-weight:700}
+.areactl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.areactl input[type=range]{flex:1 1 16rem;accent-color:var(--pa)}
+.areactl output{font-family:var(--f-num);font-size:20px;font-weight:700;min-width:3.5em}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:16px}
+.predict input{font:inherit;font-size:16px;width:4em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}.msg.bad{color:var(--warn);font-weight:600}
+.tenths{font-family:var(--f-num);font-size:14px;line-height:1.7}
+.tenths .x{color:var(--pb);font-weight:700}.tenths .y{color:var(--ok);font-weight:700}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="areactl">
+<label for="area" data-i18n="area_lbl"></label>
+<button class="btn" id="minus" type="button" aria-label="−1">−1</button>
+<input type="range" id="area" min="1" max="150" step="1" value="50">
+<button class="btn" id="plus" type="button" aria-label="+1">+1</button>
+<output id="areav" for="area"></output>
+</div>
+<canvas id="cv"></canvas>
+<div class="formula" id="formula" aria-live="polite"></div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="idea_adv"></div><div class="tenths" id="tenths"></div></div>
+</section>
+
+<section class="card">
+<h2><small data-i18n="ch_eyebrow"></small><span data-i18n="ch_title"></span></h2>
+<div class="predict"><span id="chq"></span>
+<label for="clo" data-i18n="between_l"></label><input type="text" inputmode="numeric" id="clo" autocomplete="off">
+<label for="chi" data-i18n="and"></label><input type="text" inputmode="numeric" id="chi" autocomplete="off">
+<button class="btn primary" id="ccheck" type="button" data-i18n="check_btn"></button>
+<button class="btn" id="cnext" type="button" data-i18n="ch_next"></button></div>
+<p class="msg" id="cmsg" aria-live="polite"></p>
+<p class="score" id="cscore"></p>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Arrel quadrada: el costat d'un quadrat",
+"eyebrow":"Matemàtiques · 1r ESO · Potències i arrels",
+"h1":"L'arrel quadrada és el costat",
+"lede":"Si saps l'àrea d'un quadrat, el seu costat és l'arrel quadrada. Mou l'àrea i mira com creix el costat.",
+"sim_title":"Del quadrat a l'arrel",
+"story":"Cada quadradet de la quadrícula té àrea 1. Tria l'àrea del <b>quadrat blau</b>: el seu costat és <b>√àrea</b>. Els quadrats verd i taronja són els <b>quadrats perfectes</b> més pròxims, els que tenen un costat enter.",
+"area_lbl":"Àrea del quadrat",
+"side":"costat",
+"perfect":"<span class=\"s\">√{0} = {1}</span> exactament: {0} = {1}² és un <b>quadrat perfecte</b>.",
+"between":"<span class=\"lo\">{1}² = {2}</span> &lt; {0} &lt; <span class=\"hi\">{3}² = {4}</span><br>per tant <span class=\"lo\">{1}</span> &lt; <span class=\"s\">√{0}</span> &lt; <span class=\"hi\">{3}</span>   ·   √{0} ≈ <span class=\"s\">{5}</span>",
+"idea_basic":"<b>La idea:</b> no hi ha cap nombre enter que, multiplicat per ell mateix, done 50. Però 7·7 = 49 es queda curt i 8·8 = 64 es passa, així que el costat del quadrat d'àrea 50 ha de ser <b>un poc més de 7</b>. Sempre que l'àrea no siga un quadrat perfecte, l'arrel cau entre dos enters.",
+"idea_adv":"<b>Afinem amb dècimes:</b> provem 7,0², 7,1², 7,2²… fins que ens passem. El costat queda atrapat entre dues dècimes. Repetint-ho amb centèsimes podríem continuar tant com vulguem: √50 no té un nombre finit de decimals.",
+"tenths_res":"→ √{0} està entre <span class=\"y\">{1}</span> i <span class=\"x\">{2}</span>",
+"ch_eyebrow":"Repte",
+"ch_title":"Entre quins dos enters està?",
+"ch_q":"√{0} està",
+"between_l":"entre","and":"i",
+"check_btn":"Comprova","ch_next":"Un altre",
+"ch_ok":"✔ Correcte: {1}² = {2} &lt; {0} &lt; {3}² = {4}.",
+"ch_ko":"✘ No: {1}² = {2} &lt; {0} &lt; {3}² = {4}, així que √{0} està entre {1} i {3}.",
+"ch_bad":"Escriu dos enters.",
+"ch_score":"Encerts: {0} de {1}",
+"r1.q":"√50 està entre…",
+"r1.o0":"7 i 8","r1.o1":"5 i 6","r1.o2":"25 i 26","r1.o3":"6 i 7",
+"r1.e":"7² = 49 &lt; 50 &lt; 64 = 8².",
+"r2.q":"Un quadrat té 81 m² d'àrea. Quant fa el costat?",
+"r2.u":"m",
+"r2.e":"√81 = 9, perquè 9 · 9 = 81.",
+"r3.q":"Quin d'aquests nombres és un quadrat perfecte?",
+"r3.o0":"50","r3.o1":"64","r3.o2":"80","r3.o3":"120",
+"r3.e":"64 = 8 · 8. Els altres no són el quadrat de cap enter.",
+"r4.q":"√20 està entre…",
+"r4.o0":"4 i 5","r4.o1":"10 i 11","r4.o2":"2 i 3","r4.o3":"19 i 21",
+"r4.e":"4² = 16 &lt; 20 &lt; 25 = 5². Compte: l'arrel no és la meitat!",
+"r5.q":"Un quadrat de costat 6 té una àrea de…",
+"r5.o0":"12","r5.o1":"24","r5.o2":"36","r5.o3":"66",
+"r5.e":"Àrea = costat · costat = 6 · 6 = 36. Per això √36 = 6.",
+"r6.q":"Sabem que 7,1² = 50,41. Aleshores √50 és…",
+"r6.o0":"una mica menys de 7,1","r6.o1":"exactament 7,1","r6.o2":"una mica més de 7,1","r6.o3":"7,5",
+"r6.e":"7,1² ja es passa de 50, així que el costat és menor que 7,1 (√50 ≈ 7,07).",
+"r7.q":"Quina és l'arrel entera de 130? (l'enter més gran el quadrat del qual no passa de 130)",
+"r7.e":"11² = 121 ≤ 130 &lt; 144 = 12². L'arrel entera és 11 i el residu, 130 − 121 = 9."
+},
+es:{
+"title":"Raíz cuadrada: el lado de un cuadrado",
+"eyebrow":"Matemáticas · 1.º ESO · Potencias y raíces",
+"h1":"La raíz cuadrada es el lado",
+"lede":"Si sabes el área de un cuadrado, su lado es la raíz cuadrada. Mueve el área y mira cómo crece el lado.",
+"sim_title":"Del cuadrado a la raíz",
+"story":"Cada cuadradito de la cuadrícula tiene área 1. Elige el área del <b>cuadrado azul</b>: su lado es <b>√Área</b>. Los cuadrados verde y naranja son los <b>cuadrados perfectos</b> más próximos, los que tienen un lado entero.",
+"area_lbl":"Área del cuadrado",
+"side":"lado",
+"perfect":"<span class=\"s\">√{0} = {1}</span> exactamente: {0} = {1}² es un <b>cuadrado perfecto</b>.",
+"between":"<span class=\"lo\">{1}² = {2}</span> &lt; {0} &lt; <span class=\"hi\">{3}² = {4}</span><br>por tanto <span class=\"lo\">{1}</span> &lt; <span class=\"s\">√{0}</span> &lt; <span class=\"hi\">{3}</span>   ·   √{0} ≈ <span class=\"s\">{5}</span>",
+"idea_basic":"<b>La idea:</b> no hay ningún número entero que, multiplicado por sí mismo, dé 50. Pero 7·7 = 49 se queda corto y 8·8 = 64 se pasa, así que el lado del cuadrado de área 50 tiene que ser <b>un poco más de 7</b>. Siempre que el área no sea un cuadrado perfecto, la raíz cae entre dos enteros.",
+"idea_adv":"<b>Afinamos con décimas:</b> probamos 7,0², 7,1², 7,2²… hasta que nos pasamos. El lado queda atrapado entre dos décimas. Repitiéndolo con centésimas podríamos seguir tanto como queramos: √50 no tiene un número finito de decimales.",
+"tenths_res":"→ √{0} está entre <span class=\"y\">{1}</span> y <span class=\"x\">{2}</span>",
+"ch_eyebrow":"Reto",
+"ch_title":"¿Entre qué dos enteros está?",
+"ch_q":"√{0} está",
+"between_l":"entre","and":"y",
+"check_btn":"Comprobar","ch_next":"Otro",
+"ch_ok":"✔ Correcto: {1}² = {2} &lt; {0} &lt; {3}² = {4}.",
+"ch_ko":"✘ No: {1}² = {2} &lt; {0} &lt; {3}² = {4}, así que √{0} está entre {1} y {3}.",
+"ch_bad":"Escribe dos enteros.",
+"ch_score":"Aciertos: {0} de {1}",
+"r1.q":"√50 está entre…",
+"r1.o0":"7 y 8","r1.o1":"5 y 6","r1.o2":"25 y 26","r1.o3":"6 y 7",
+"r1.e":"7² = 49 &lt; 50 &lt; 64 = 8².",
+"r2.q":"Un cuadrado tiene 81 m² de área. ¿Cuánto mide el lado?",
+"r2.u":"m",
+"r2.e":"√81 = 9, porque 9 · 9 = 81.",
+"r3.q":"¿Cuál de estos números es un cuadrado perfecto?",
+"r3.o0":"50","r3.o1":"64","r3.o2":"80","r3.o3":"120",
+"r3.e":"64 = 8 · 8. Los otros no son el cuadrado de ningún entero.",
+"r4.q":"√20 está entre…",
+"r4.o0":"4 y 5","r4.o1":"10 y 11","r4.o2":"2 y 3","r4.o3":"19 y 21",
+"r4.e":"4² = 16 &lt; 20 &lt; 25 = 5². Ojo: ¡la raíz no es la mitad!",
+"r5.q":"Un cuadrado de lado 6 tiene un área de…",
+"r5.o0":"12","r5.o1":"24","r5.o2":"36","r5.o3":"66",
+"r5.e":"Área = lado · lado = 6 · 6 = 36. Por eso √36 = 6.",
+"r6.q":"Sabemos que 7,1² = 50,41. Entonces √50 es…",
+"r6.o0":"un poco menos de 7,1","r6.o1":"exactamente 7,1","r6.o2":"un poco más de 7,1","r6.o3":"7,5",
+"r6.e":"7,1² ya se pasa de 50, así que el lado es menor que 7,1 (√50 ≈ 7,07).",
+"r7.q":"¿Cuál es la raíz entera de 130? (el entero más grande cuyo cuadrado no pasa de 130)",
+"r7.e":"11² = 121 ≤ 130 &lt; 144 = 12². La raíz entera es 11 y el resto, 130 − 121 = 9."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Arrel quadrada ===== */
+const W=900,H=470,cx=fitCanvas($('#cv'),W,H),G=13;
+let A=50,shown=50;
+const fx=(v,d)=>v.toFixed(d).replace('.',',');
+const isq=n=>Math.floor(Math.sqrt(n)+1e-9);
+function setA(v){A=clamp(Math.round(v),1,150);$('#area').value=A;$('#areav').textContent=A;upd();}
+$('#area').addEventListener('input',()=>setA(+$('#area').value));
+$('#minus').onclick=()=>setA(A-1);$('#plus').onclick=()=>setA(A+1);
+function upd(){
+  const n=isq(A),f=$('#formula');
+  if(n*n===A)f.innerHTML=tt('perfect',A,n);
+  else f.innerHTML=tt('between',A,n,n*n,n+1,(n+1)*(n+1),nf(Math.sqrt(A),2));
+  /* dècimes */
+  let h='';
+  if(n*n!==A){let k=n*10;const rows=[];
+    while(true){const v=k/10,sq=v*v;const over=sq>A+1e-9;
+      rows.push('<span class="'+(over?'x':(((k+1)/10)**2>A+1e-9?'y':''))+'">'+fx(v,1)+'² = '+fx(sq,2)+'</span>');
+      if(over)break;k++;}
+    h=rows.join(' · ')+'<br>'+tt('tenths_res',A,fx((k-1)/10,1),fx(k/10,1));}
+  $('#tenths').innerHTML=h;
+}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok');
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  const u=Math.floor((H-50)/G),ox=34,oy=H-24; /* origen a baix a l'esquerra */
+  /* quadrícula */
+  cx.strokeStyle=mut;cx.globalAlpha=.22;cx.lineWidth=1;cx.beginPath();
+  for(let i=0;i<=G;i++){cx.moveTo(ox+i*u,oy);cx.lineTo(ox+i*u,oy-G*u);cx.moveTo(ox,oy-i*u);cx.lineTo(ox+G*u,oy-i*u);}cx.stroke();cx.globalAlpha=1;
+  cx.fillStyle=mut;cx.font='12px system-ui';cx.textAlign='center';
+  for(let i=0;i<=G;i++){cx.fillText(String(i),ox+i*u,oy+16);}
+  cx.textAlign='right';for(let i=1;i<=G;i++)cx.fillText(String(i),ox-6,oy-i*u+4);
+  const s=Math.sqrt(shown),n=isq(A);
+  const perfect=n*n===A;
+  /* quadrat superior (n+1)² */
+  if(!perfect&&n+1<=G){cx.strokeStyle=pb;cx.lineWidth=2;cx.setLineDash([7,5]);cx.strokeRect(ox,oy-(n+1)*u,(n+1)*u,(n+1)*u);cx.setLineDash([]);
+    cx.fillStyle=pb;cx.font='bold 14px system-ui';cx.textAlign='left';cx.fillText((n+1)+'² = '+(n+1)*(n+1),ox+(n+1)*u+6,oy-(n+1)*u+14);}
+  /* quadrat perfecte inferior (verd) */
+  if(n>=1){cx.fillStyle=ok;cx.globalAlpha=.16;cx.fillRect(ox,oy-n*u,n*u,n*u);cx.globalAlpha=1;}
+  /* el que sobra del quadrat blau respecte al verd: una L */
+  cx.fillStyle=pa;cx.globalAlpha=perfect?.25:.55;
+  if(perfect)cx.fillRect(ox,oy-s*u,s*u,s*u);
+  else{cx.beginPath();cx.moveTo(ox,oy-s*u);cx.lineTo(ox+s*u,oy-s*u);cx.lineTo(ox+s*u,oy);cx.lineTo(ox+n*u,oy);cx.lineTo(ox+n*u,oy-n*u);cx.lineTo(ox,oy-n*u);cx.closePath();cx.fill();}
+  cx.globalAlpha=1;
+  if(n>=1){cx.strokeStyle=ok;cx.lineWidth=2;cx.strokeRect(ox,oy-n*u,n*u,n*u);
+    if(!perfect){cx.fillStyle=ok;cx.font='bold 14px system-ui';cx.textAlign='right';cx.fillText(n+'² = '+n*n,ox+n*u-6,oy-n*u+18);}}
+  cx.strokeStyle=pa;cx.lineWidth=3;cx.strokeRect(ox,oy-s*u,s*u,s*u);
+  /* rètol del costat */
+  cx.fillStyle=pa;cx.font='bold 16px system-ui';cx.textAlign='center';
+  cx.fillText(t('side')+' = √'+A+(perfect?' = '+n:' ≈ '+nf(Math.sqrt(A),2)),ox+s*u/2,oy-s*u-8);
+  /* recta del costat a la dreta */
+  const L=ox+G*u+70,R=W-30,Y=150,X=v=>L+(R-L)*v/G;
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(L,Y);cx.lineTo(R,Y);cx.stroke();
+  cx.fillStyle=ink;cx.font='bold 14px system-ui';cx.textAlign='left';cx.fillText(t('side'),L,Y-46);
+  for(let i=0;i<=G;i++){const x=X(i);cx.strokeStyle=ink;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(x,Y-7);cx.lineTo(x,Y+7);cx.stroke();
+    cx.fillStyle=(i===n?ok:i===n+1&&!perfect?pb:mut);cx.font=(i===n||i===n+1?'bold 15px ':'12px ')+'system-ui';cx.textAlign='center';cx.fillText(String(i),x,Y+24);}
+  cx.beginPath();cx.arc(X(s),Y,7,0,TAU);cx.fillStyle=pa;cx.fill();
+  cx.fillStyle=pa;cx.font='bold 15px system-ui';cx.fillText('√'+A,X(s),Y-16);
+  /* lupa entre n i n+1 */
+  if(!perfect){
+    const Y2=330,L2=L,R2=R,X2=v=>L2+(R2-L2)*(v-n);
+    cx.strokeStyle=mut;cx.setLineDash([3,4]);cx.lineWidth=1;cx.beginPath();cx.moveTo(X(n),Y+30);cx.lineTo(L2,Y2-40);cx.moveTo(X(n+1),Y+30);cx.lineTo(R2,Y2-40);cx.stroke();cx.setLineDash([]);
+    cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(L2,Y2);cx.lineTo(R2,Y2);cx.stroke();
+    for(let k=0;k<=10;k++){const x=L2+(R2-L2)*k/10;cx.lineWidth=k%10?1:2;cx.beginPath();cx.moveTo(x,Y2-(k%10?5:9));cx.lineTo(x,Y2+(k%10?5:9));cx.stroke();
+      cx.fillStyle=k===0?ok:k===10?pb:mut;cx.font=(k%10?'11px ':'bold 14px ')+'system-ui';cx.textAlign='center';cx.fillText(nf(n+k/10,1),x,Y2+24);}
+    cx.beginPath();cx.arc(X2(s),Y2,7,0,TAU);cx.fillStyle=pa;cx.fill();
+    cx.fillStyle=pa;cx.font='bold 15px system-ui';cx.fillText('√'+A+' ≈ '+nf(Math.sqrt(A),2),X2(s),Y2-16);
+  }
+}
+function loop(){const tgt=A;shown=REDUCE?tgt:shown+(tgt-shown)*0.15;if(Math.abs(shown-tgt)<0.01)shown=tgt;draw();requestAnimationFrame(loop);}
+/* repte */
+let cA=0,cok=0,ctot=0,cdone=false,cFn=null;
+function newCh(){do{cA=2+Math.floor(Math.random()*148);}while(isq(cA)**2===cA);cdone=false;cFn=null;$('#clo').value='';$('#chi').value='';$('#cmsg').innerHTML='';$('#cmsg').className='msg';chq();}
+function chq(){$('#chq').innerHTML=tt('ch_q',cA);}
+$('#ccheck').onclick=()=>{
+  const lo=parseNum($('#clo').value),hi=parseNum($('#chi').value);
+  if(!Number.isInteger(lo)||!Number.isInteger(hi)){$('#cmsg').className='msg bad';$('#cmsg').innerHTML=t('ch_bad');return;}
+  if(cdone)return;cdone=true;ctot++;
+  const n=isq(cA),good=lo===n&&hi===n+1;if(good)cok++;
+  cFn=()=>{$('#cmsg').className='msg '+(good?'good':'bad');$('#cmsg').innerHTML=tt(good?'ch_ok':'ch_ko',cA,n,n*n,n+1,(n+1)*(n+1));$('#cscore').innerHTML=tt('ch_score',cok,ctot);};
+  cFn();setA(cA);
+};
+$('#cnext').onclick=newCh;
+['clo','chi'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')$('#ccheck').click();}));
+App.hooks.push(()=>{upd();chq();if(cFn)cFn();});
+document.addEventListener('themechange',draw);
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":9,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"r7","lvl":"adv","type":"num","num":11,"tol":0}];
+initQuiz(QDATA);
+setA(50);newCh();
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
