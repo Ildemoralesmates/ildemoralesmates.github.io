@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El tiempo geológico en un año: la historia de la Tierra en 365 días</title>
+<meta name="description" content="El tiempo geológico en un año: los 4.540 millones de años de la Tierra comprimidos en un calendario, con conversor de escala, preguntas para razonar y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/temps-geologic-un-any/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/temps-geologic-un-any/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/temps-geologic-un-any/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/temps-geologic-un-any/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="El tiempo geológico en un año: la historia de la Tierra en 365 días">
+<meta property="og:description" content="El tiempo geológico en un año: los 4.540 millones de años de la Tierra comprimidos en un calendario, con conversor de escala, preguntas para razonar y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/temps-geologic-un-any/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.top2{display:grid;grid-template-columns:minmax(240px,1fr) 1.5fr;gap:14px}
+@media(max-width:760px){.top2{grid-template-columns:1fr}}
+.clock{background:var(--stage);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.clock .d{font-size:16px;color:var(--muted)}
+.clock .tm{font:700 38px/1.15 var(--f-num);font-variant-numeric:tabular-nums;color:var(--ink)}
+.clock .ago{margin-top:4px;color:var(--pa);font-size:15px}
+.evc{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--stage);transition:opacity .2s;min-width:0}
+.evc.dim{opacity:.45}
+.evc .ic{font-size:32px;line-height:1}
+.evc h3{margin:4px 0;font-size:17px}
+.evc div{font-size:14px;color:var(--ink)}
+.evc .meta{color:var(--muted);font-size:13px;margin-top:6px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctrls label{font-size:13.5px;color:var(--muted)}
+svg.bars{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;background:var(--stage)}
+.conv{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.conv{grid-template-columns:1fr}}
+.conv input[type=number]{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);width:110px}
+.conv .res{margin-top:6px;font-weight:600;color:var(--ink);font-size:14px}
+.conv div div{font-size:14px;color:var(--ink);margin-bottom:4px}
+.tbl2{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl2 td,.tbl2 th{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;color:var(--ink)}
+.tbl2 tr.row{cursor:pointer}
+.tbl2 tr.row:hover{background:var(--chip)}
+.open textarea{width:100%;min-height:64px;margin-top:6px;font:inherit;font-size:14px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+.open details{margin-top:6px;font-size:14px;color:var(--ink)}
+.open details p{margin:6px 0 0;color:var(--ink)}
+.open summary{cursor:pointer;color:var(--pa)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Geología · Tiempo geológico</p>
+      <h1 data-i18n="h1">El tiempo geológico en un año</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Los 4.540 millones de años de la Tierra, comprimidos en un calendario de 365 días.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">El calendario cósmico de la Tierra</h2>
+<p data-i18n-html="intro">Imagina que los <b>4.540 millones de años</b> de historia de la Tierra se comprimen en <b>un solo año</b>: del 1 de enero a las 00:00 hasta el 31 de diciembre a las 24:00. Pulsa <i>Inicia</i> para el recorrido por los grandes sucesos. Antes de llegar al final, apunta a qué hora del 31 de diciembre crees que aparece <i>Homo sapiens</i>… y compáralo después con el resultado.</p>
+<p class="note" id="scale"></p>
+<div class="top2">
+<div class="clock"><div class="d" id="cdate"></div><div class="tm" id="ctime">00:00:00</div><div class="ago" id="cago"></div></div>
+<div class="evc" id="card" aria-live="polite"></div>
+</div>
+<div class="ctrls">
+<button class="btn" id="bReset" data-i18n-aria="aria_reset" aria-label="Volver al inicio">⏮</button>
+<button class="btn" id="bPrev" data-i18n-aria="aria_prev" aria-label="Suceso anterior">◀</button>
+<button class="btn primary" id="bPlay" data-i18n="play">Inicia</button>
+<button class="btn" id="bNext" data-i18n-aria="aria_next" aria-label="Suceso siguiente">▶</button>
+<label><span data-i18n="speed">Velocidad</span>
+<select id="spd"><option value="0.6">0,6×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+</div>
+<svg class="bars" id="bars" viewBox="0 0 1000 322" role="img" data-i18n-aria="aria_bars" aria-label="Cuatro barras de calendario con zoom creciente: año, diciembre, 31 de diciembre y último minuto"></svg>
+<p class="note" data-i18n="barsnote">Las cuatro barras son el mismo calendario con zoom creciente: el año, diciembre, el último día y el último minuto. Círculo vacío = suceso que aún no ha ocurrido; círculo lleno = ya ocurrido.</p>
+</section>
+
+<section class="card">
+<h2 data-i18n="convh">Conversor de escala</h2>
+<div class="conv">
+<div><div data-i18n="c1">¿Qué fecha y hora del calendario es hace…</div>
+<input type="number" id="v1" min="0" step="any" value="80" data-i18n-aria="c1" aria-label="¿Qué fecha y hora del calendario es hace…">
+<select id="u1" data-i18n-aria="c1" aria-label="¿Qué fecha y hora del calendario es hace…"><option value="1" data-i18n="u1a">años</option><option value="1000" data-i18n="u1b">miles de años</option><option value="1000000" data-i18n="u1c">millones de años</option></select>
+<div class="res" id="r1"></div></div>
+<div><div data-i18n="c2">¿Cuántos años reales dura…</div>
+<input type="number" id="v2" min="0" step="any" value="1" data-i18n-aria="c2" aria-label="¿Cuántos años reales dura…">
+<select id="u2" data-i18n-aria="c2" aria-label="¿Cuántos años reales dura…"><option value="1" data-i18n="u2a">segundos</option><option value="60" data-i18n="u2b">minutos</option><option value="3600" data-i18n="u2c">horas</option><option value="86400" data-i18n="u2d">días</option></select>
+<div class="res" id="r2"></div></div>
+</div>
+</section>
+
+<section class="card">
+<details><summary data-i18n="tabh">Tabla completa de sucesos</summary>
+<table class="tbl2" id="tab"></table></details>
+</section>
+
+<section class="card open">
+<h2 data-i18n="rz_title">Para razonar</h2>
+<div class="qcard"><p class="qtext" data-i18n-html="o1.q">Los dinosaurios no avianos dominaron desde hace ≈230 Ma hasta hace 66 Ma. ¿Cuántos días del calendario duró su reinado? Compáralo con <i>Homo sapiens</i>.</p>
+<textarea data-i18n-aria="write" aria-label="Escribe aquí tu razonamiento"></textarea>
+<details><summary data-i18n="hint">Pista</summary><p data-i18n-html="o1.h">164 Ma divididos entre los millones de años que tiene un día del calendario.</p></details>
+<details><summary data-i18n="answer">Respuesta</summary><p data-i18n-html="o1.a">164 / 12,4 ≈ <b>13 días</b> (aproximadamente del 13 al 26 de diciembre). <i>Homo sapiens</i> lleva unos 35 minutos: los dinosaurios duraron unas 540 veces más.</p></details></div>
+<div class="qcard"><p class="qtext" data-i18n-html="o2.q">Esta analogía es muy útil, pero también puede engañar. Menciona al menos dos cosas que hace «ver» mal.</p>
+<textarea data-i18n-aria="write" aria-label="Escribe aquí tu razonamiento"></textarea>
+<details><summary data-i18n="hint">Pista</summary><p data-i18n-html="o2.h">Piensa en la sensación de que «la evolución iba hacia nosotros» y en la precisión de las fechas.</p></details>
+<details><summary data-i18n="answer">Respuesta</summary><p data-i18n-html="o2.a">(1) Puede sugerir que la evolución tenía como meta a los humanos, cuando «llegar tarde» no significa ser el objetivo. (2) Da una falsa precisión: muchas fechas son aproximadas (p. ej. el origen de la vida o de los eucariotas) y cambiarlas mueve días enteros. (3) Comprimir el tiempo oculta que el ritmo del cambio no es constante (extinciones, glaciaciones…).</p></details></div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"El temps geològic en un any: la història de la Terra en 365 dies",
+"eyebrow":"Geologia · Temps geològic",
+"h1":"El temps geològic en un any",
+"lede":"Els 4.540 milions d’anys de la Terra, comprimits en un calendari de 365 dies.",
+"sim_title":"El calendari còsmic de la Terra",
+"intro":"Imagina que els <b>4.540 milions d’anys</b> d’història de la Terra es comprimeixen en <b>un únic any</b>: de l’1 de gener a les 00:00 fins al 31 de desembre a les 24:00. Prem <i>Inicia</i> per al recorregut pels grans successos. Abans d’arribar al final, apunta a quina hora del 31 de desembre creus que apareix <i>Homo sapiens</i>… i compara-ho després amb el resultat.",
+"speed":"Velocitat","play":"Inicia","pause":"Pausa","again":"Torna a començar",
+"aria_reset":"Torna a l’inici","aria_prev":"Succés anterior","aria_next":"Succés següent",
+"aria_bars":"Quatre barres de calendari amb zoom creixent: any, desembre, 31 de desembre i últim minut",
+"barsnote":"Les quatre barres són el mateix calendari amb zoom creixent: l’any, el desembre, l’últim dia i l’últim minut. Cercle buit = succés que encara no ha passat; cercle ple = ja ocorregut.",
+"yr":"Any","dec":"Desembre","day":"31 de desembre","min":"Últim minut",
+"ago":"fa","now":"avui","since":"Des del succés anterior:",
+"dd":"dies","hh":"hores","mm":"minuts","ss":"segons","mil":"milions d’anys","anys":"anys",
+"convh":"Convertidor d’escala",
+"c1":"Quina data i hora del calendari és fa…","c2":"Quants anys reals dura…",
+"u1a":"anys","u1b":"milers d’anys","u1c":"milions d’anys","u2a":"segons","u2b":"minuts","u2c":"hores","u2d":"dies",
+"tooold":"Més antic que la Terra (4.540 Ma).",
+"tabh":"Taula completa de successos","tev":"Succés","twhen":"Data al calendari","tago":"Temps real",
+"eq":"Equivalències","m1":"1 mes","d1":"1 dia","h1x":"1 hora","n1":"1 minut","s1x":"1 segon",
+"rz_title":"Per raonar","hint":"Pista","answer":"Resposta","write":"Escriu ací el teu raonament",
+"o1.q":"Els dinosaures no avians van dominar des de fa ≈230 Ma fins fa 66 Ma. Quants dies del calendari va durar el seu regnat? Compara-ho amb <i>Homo sapiens</i>.",
+"o1.h":"164 Ma dividits entre els milions d’anys que té un dia del calendari.",
+"o1.a":"164 / 12,4 ≈ <b>13 dies</b> (aproximadament del 13 al 26 de desembre). <i>Homo sapiens</i> porta uns 35 minuts: els dinosaures han durat uns 540 vegades més.",
+"o2.q":"Aquesta analogia és molt útil, però també pot enganyar. Esmenta almenys dues coses que fa «veure» malament.",
+"o2.h":"Pensa en la sensació que «l’evolució anava cap a nosaltres» i en la precisió de les dates.",
+"o2.a":"(1) Pot suggerir que l’evolució tenia com a meta els humans, quan «arribar tard» no vol dir ser l’objectiu. (2) Dona una falsa precisió: moltes dates són aproximades (p. ex. l’origen de la vida o dels eucariotes) i canviar-les mou dies sencers. (3) Comprimir el temps amaga que el ritme del canvi no és constant (extincions, glaciacions…).",
+"m1.q":"Homo sapiens té uns 300.000 anys. Aproximadament, a quina hora del 31 de desembre apareix?",
+"m1.o0":"23:58","m1.o1":"23:25","m1.o2":"18:00",
+"m1.e":"300.000 / 144 ≈ 2.080 s ≈ 35 min abans de mitjanit: cap a les 23:25.",
+"m2.q":"Molts cartells diuen que «els humans apareixen a les 23:58». Amb l’escala d’aquest calendari, quin succés humà cau realment cap a les 23:58?",
+"m2.o0":"L’aparició d’Homo sapiens","m2.o1":"L’inici de l’agricultura (≈11.500 anys)","m2.o2":"La Revolució industrial",
+"m2.e":"11.500 / 144 ≈ 80 s: l’agricultura cau a les 23:58:40. La frase del cartell és una simplificació: confon «humans» amb «civilització».",
+"m3.q":"El Fanerozoic (des de l’explosió del Cambrià, fa 539 Ma) comença en el calendari…",
+"m3.o0":"Cap a mitjans de juliol","m3.o1":"Cap a mitjans de novembre","m3.o2":"El 31 de desembre",
+"m3.e":"539 / 4.540 ≈ 12 % de l’any ≈ 43 dies abans del final: uns 18 de novembre. Gairebé tot el registre fòssil visible ocupa només la fi de l’any.",
+"m4.q":"La teua vida (≈80 anys) ocupa en aquest calendari…",
+"m4.o0":"Mig segon","m4.o1":"5 segons","m4.o2":"1 minut",
+"m4.e":"80 / 144 ≈ 0,56 s. Prova-ho al convertidor d’escala.",
+"m5.q":"Calcula l’escala: quants anys reals corresponen a 1 segon del calendari? (Un any té 365·86.400 s.)",
+"m5.u":"anys/s",
+"m5.e":"4,54·10⁹ / 3,1536·10⁷ ≈ 144 anys per segon. Un dia ≈ 12,4 milions d’anys; una hora ≈ 0,52 Ma; un minut ≈ 8.600 anys."
+},
+es:{
+"title":"El tiempo geológico en un año: la historia de la Tierra en 365 días",
+"eyebrow":"Geología · Tiempo geológico",
+"h1":"El tiempo geológico en un año",
+"lede":"Los 4.540 millones de años de la Tierra, comprimidos en un calendario de 365 días.",
+"sim_title":"El calendario cósmico de la Tierra",
+"intro":"Imagina que los <b>4.540 millones de años</b> de historia de la Tierra se comprimen en <b>un solo año</b>: del 1 de enero a las 00:00 hasta el 31 de diciembre a las 24:00. Pulsa <i>Inicia</i> para el recorrido por los grandes sucesos. Antes de llegar al final, apunta a qué hora del 31 de diciembre crees que aparece <i>Homo sapiens</i>… y compáralo después con el resultado.",
+"speed":"Velocidad","play":"Inicia","pause":"Pausa","again":"Empieza de nuevo",
+"aria_reset":"Volver al inicio","aria_prev":"Suceso anterior","aria_next":"Suceso siguiente",
+"aria_bars":"Cuatro barras de calendario con zoom creciente: año, diciembre, 31 de diciembre y último minuto",
+"barsnote":"Las cuatro barras son el mismo calendario con zoom creciente: el año, diciembre, el último día y el último minuto. Círculo vacío = suceso que aún no ha ocurrido; círculo lleno = ya ocurrido.",
+"yr":"Año","dec":"Diciembre","day":"31 de diciembre","min":"Último minuto",
+"ago":"hace","now":"hoy","since":"Desde el suceso anterior:",
+"dd":"días","hh":"horas","mm":"minutos","ss":"segundos","mil":"millones de años","anys":"años",
+"convh":"Conversor de escala",
+"c1":"¿Qué fecha y hora del calendario es hace…","c2":"¿Cuántos años reales dura…",
+"u1a":"años","u1b":"miles de años","u1c":"millones de años","u2a":"segundos","u2b":"minutos","u2c":"horas","u2d":"días",
+"tooold":"Más antiguo que la Tierra (4.540 Ma).",
+"tabh":"Tabla completa de sucesos","tev":"Suceso","twhen":"Fecha en el calendario","tago":"Tiempo real",
+"eq":"Equivalencias","m1":"1 mes","d1":"1 día","h1x":"1 hora","n1":"1 minuto","s1x":"1 segundo",
+"rz_title":"Para razonar","hint":"Pista","answer":"Respuesta","write":"Escribe aquí tu razonamiento",
+"o1.q":"Los dinosaurios no avianos dominaron desde hace ≈230 Ma hasta hace 66 Ma. ¿Cuántos días del calendario duró su reinado? Compáralo con <i>Homo sapiens</i>.",
+"o1.h":"164 Ma divididos entre los millones de años que tiene un día del calendario.",
+"o1.a":"164 / 12,4 ≈ <b>13 días</b> (aproximadamente del 13 al 26 de diciembre). <i>Homo sapiens</i> lleva unos 35 minutos: los dinosaurios duraron unas 540 veces más.",
+"o2.q":"Esta analogía es muy útil, pero también puede engañar. Menciona al menos dos cosas que hace «ver» mal.",
+"o2.h":"Piensa en la sensación de que «la evolución iba hacia nosotros» y en la precisión de las fechas.",
+"o2.a":"(1) Puede sugerir que la evolución tenía como meta a los humanos, cuando «llegar tarde» no significa ser el objetivo. (2) Da una falsa precisión: muchas fechas son aproximadas (p. ej. el origen de la vida o de los eucariotas) y cambiarlas mueve días enteros. (3) Comprimir el tiempo oculta que el ritmo del cambio no es constante (extinciones, glaciaciones…).",
+"m1.q":"Homo sapiens tiene unos 300.000 años. Aproximadamente, ¿a qué hora del 31 de diciembre aparece?",
+"m1.o0":"23:58","m1.o1":"23:25","m1.o2":"18:00",
+"m1.e":"300.000 / 144 ≈ 2.080 s ≈ 35 min antes de medianoche: hacia las 23:25.",
+"m2.q":"Muchos carteles dicen que «los humanos aparecen a las 23:58». Con la escala de este calendario, ¿qué suceso humano cae realmente hacia las 23:58?",
+"m2.o0":"La aparición de Homo sapiens","m2.o1":"El inicio de la agricultura (≈11.500 años)","m2.o2":"La Revolución industrial",
+"m2.e":"11.500 / 144 ≈ 80 s: la agricultura cae a las 23:58:40. La frase del cartel es una simplificación: confunde «humanos» con «civilización».",
+"m3.q":"El Fanerozoico (desde la explosión del Cámbrico, hace 539 Ma) empieza en el calendario…",
+"m3.o0":"Hacia mediados de julio","m3.o1":"Hacia mediados de noviembre","m3.o2":"El 31 de diciembre",
+"m3.e":"539 / 4.540 ≈ 12 % del año ≈ 43 días antes del final: hacia el 18 de noviembre. Casi todo el registro fósil visible ocupa solo el final del año.",
+"m4.q":"Tu vida (≈80 años) ocupa en este calendario…",
+"m4.o0":"Medio segundo","m4.o1":"5 segundos","m4.o2":"1 minuto",
+"m4.e":"80 / 144 ≈ 0,56 s. Pruébalo en el conversor de escala.",
+"m5.q":"Calcula la escala: ¿cuántos años reales corresponden a 1 segundo del calendario? (Un año tiene 365·86.400 s.)",
+"m5.u":"años/s",
+"m5.e":"4,54·10⁹ / 3,1536·10⁷ ≈ 144 años por segundo. Un día ≈ 12,4 millones de años; una hora ≈ 0,52 Ma; un minuto ≈ 8.600 años."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../temps-geologic-un-any/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+const nfo=(x,o)=>x.toLocaleString(LANG==='es'?'es-ES':'ca-ES',o||{});
+const TA=4540,SPY=365*86400;
+const ML=[31,28,31,30,31,30,31,31,30,31,30,31];
+const MON={ca:['gener','febrer','març','abril','maig','juny','juliol','agost','setembre','octubre','novembre','desembre'],es:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']};
+const SH={ca:['gen','feb','mar','abr','mai','jun','jul','ago','set','oct','nov','des'],es:['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']};
+const EONS={ca:["Hadeà","Arqueà","Proterozoic","Fanerozoic"],es:["Hádico","Arcaico","Proterozoico","Fanerozoico"]};
+const ERAS={ca:["Paleozoic","Mesozoic","Cenozoic"],es:["Paleozoico","Mesozoico","Cenozoico"]};
+const elOf=a=>SPY*(1-a/TA);
+const ageOf=e=>TA*(1-e/SPY);
+function dt(e){
+  e=Math.max(0,Math.min(SPY,e));
+  if(e>=SPY)return{d:31,mo:11,h:24,m:0,s:0,end:true};
+  const day=Math.floor(e/86400),sec=e-day*86400;
+  let mo=0,d=day;while(d>=ML[mo]){d-=ML[mo];mo++}
+  return{d:d+1,mo,h:Math.floor(sec/3600),m:Math.floor((sec%3600)/60),s:sec%60,end:false,near:SPY-e<120};
+}
+const p2=n=>String(n).padStart(2,'0');
+function timeStr(o){
+  if(o.end)return'24:00:00.00';
+  const s=o.near?(Math.floor(o.s*100)/100).toFixed(2).padStart(5,'0'):p2(Math.floor(o.s));
+  return p2(o.h)+':'+p2(o.m)+':'+s;
+}
+function dateStr(o){
+  const mn=MON[LANG][o.mo];
+  if(LANG==='ca')return o.d+(/^[aeiou]/.test(mn)?' d’':' de ')+mn;
+  return o.d+' de '+mn;
+}
+function fmtAge(a){
+  if(a<=0)return t('now');
+  if(a>=1)return t('ago')+' '+nfo(a,{maximumFractionDigits:a>=10?0:1})+' '+t('mil');
+  return t('ago')+' '+nfo(Math.round(a*1e6))+' '+t('anys');
+}
+function fmtYears(y){
+  if(y>=1e6)return nfo(y/1e6,{maximumFractionDigits:y>=1e7?0:1})+' '+t('mil');
+  return nfo(Math.round(y))+' '+t('anys');
+}
+function fmtDelta(s){
+  if(s>=86400)return nfo(Math.round(s/86400))+' '+t('dd');
+  if(s>=3600)return nfo(Math.round(s/3600))+' '+t('hh');
+  if(s>=60)return nfo(Math.round(s/60))+' '+t('mm');
+  return nfo(Math.round(s*10)/10)+' '+t('ss');
+}
+const EV=[
+{a:4540,i:'🌍',n:{ca:"Es forma la Terra",es:"Se forma la Tierra"},f:{ca:"La Terra s’acreta a partir del disc de gas i pols al voltant del jove Sol.",es:"La Tierra se acreta a partir del disco de gas y polvo alrededor del joven Sol."}},
+{a:4510,i:'🌙',n:{ca:"Es forma la Lluna",es:"Se forma la Luna"},f:{ca:"Segons la hipòtesi dominant, un cos de la mida de Mart va col·lidir amb la Terra primitiva.",es:"Según la hipótesis dominante, un cuerpo del tamaño de Marte chocó con la Tierra primitiva."}},
+{a:4400,i:'💎',n:{ca:"Circons de Jack Hills",es:"Circones de Jack Hills"},f:{ca:"Els minerals terrestres més antics coneguts (Austràlia): ja hi havia escorça sòlida.",es:"Los minerales terrestres más antiguos conocidos (Australia): ya había corteza sólida."}},
+{a:3500,i:'🦠',n:{ca:"Primers indicis de vida",es:"Primeros indicios de vida"},f:{ca:"Estromatòlits i microfòssils: microbis. Les dates varien segons l’estudi (≈3.500–3.800 Ma).",es:"Estromatolitos y microfósiles: microbios. Las fechas varían según el estudio (≈3.500–3.800 Ma)."}},
+{a:2400,i:'🫧',n:{ca:"Gran Oxidació",es:"Gran Oxidación"},f:{ca:"La fotosíntesi dels cianobacteris fa pujar l’oxigen de l’atmosfera i canvia la química dels oceans.",es:"La fotosíntesis de las cianobacterias hace subir el oxígeno de la atmósfera y cambia la química de los océanos."}},
+{a:1800,i:'🔬',n:{ca:"Cèl·lules eucariotes (≈)",es:"Células eucariotas (≈)"},f:{ca:"Cèl·lules amb nucli. La data és aproximada: les estimacions oscil·len entre ≈1.650 i 2.100 Ma.",es:"Células con núcleo. La fecha es aproximada: las estimaciones oscilan entre ≈1.650 y 2.100 Ma."}},
+{a:575,i:'🪼',n:{ca:"Biota d’Ediacara",es:"Biota de Ediacara"},f:{ca:"Primers organismes macroscòpics complexos, sense esquelet.",es:"Primeros organismos macroscópicos complejos, sin esqueleto."}},
+{a:539,i:'🐚',n:{ca:"Explosió del Cambrià",es:"Explosión del Cámbrico"},f:{ca:"Diversificació ràpida d’animals amb esquelet. Comença el Fanerozoic.",es:"Rápida diversificación de animales con esqueleto. Comienza el Fanerozoico."}},
+{a:470,i:'🌱',n:{ca:"Primeres plantes terrestres",es:"Primeras plantas terrestres"},f:{ca:"Les espores fòssils indiquen que les plantes comencen a colonitzar el continent.",es:"Las esporas fósiles indican que las plantas empiezan a colonizar el continente."}},
+{a:365,i:'🐸',n:{ca:"Primers tetràpodes",es:"Primeros tetrápodos"},f:{ca:"Vertebrats amb extremitats surten a terra ferma (Devonià).",es:"Vertebrados con extremidades salen a tierra firme (Devónico)."}},
+{a:310,i:'🌳',n:{ca:"Boscos del Carbonífer",es:"Bosques del Carbonífero"},f:{ca:"Grans boscos de falgueres arborescents que donaran lloc al carbó.",es:"Grandes bosques de helechos arborescentes que darán lugar al carbón."}},
+{a:252,i:'☠️',n:{ca:"Extinció del Permià–Triàsic",es:"Extinción del Pérmico–Triásico"},f:{ca:"La més gran de la història: va desaparèixer ≈90 % de les espècies marines.",es:"La mayor de la historia: desapareció ≈90 % de las especies marinas."}},
+{a:230,i:'🦖',n:{ca:"Primers dinosaures",es:"Primeros dinosaurios"},f:{ca:"Comença el domini dels dinosaures, que durarà fins al final del Cretaci.",es:"Comienza el dominio de los dinosaurios, que durará hasta el final del Cretácico."}},
+{a:220,i:'🐭',n:{ca:"Primers mamífers (≈)",es:"Primeros mamíferos (≈)"},f:{ca:"Petits animals de sang calenta que conviuran amb els dinosaures. Data aproximada.",es:"Pequeños animales de sangre caliente que convivirán con los dinosaurios. Fecha aproximada."}},
+{a:150,i:'🪶',n:{ca:"Archaeopteryx",es:"Archaeopteryx"},f:{ca:"Fòssil amb plomes i trets d’ocell i de dinosaure (Solnhofen, Alemanya).",es:"Fósil con plumas y rasgos de ave y de dinosaurio (Solnhofen, Alemania)."}},
+{a:130,i:'🌸',n:{ca:"Primeres plantes amb flor",es:"Primeras plantas con flor"},f:{ca:"Les angiospermes comencen a diversificar-se (≈130–125 Ma).",es:"Las angiospermas empiezan a diversificarse (≈130–125 Ma)."}},
+{a:66,i:'☄️',n:{ca:"Extinció del Cretaci–Paleogen",es:"Extinción del Cretácico–Paleógeno"},f:{ca:"Impacte de Chicxulub: desapareixen els dinosaures no avians i molts altres grups.",es:"Impacto de Chicxulub: desaparecen los dinosaurios no avianos y muchos otros grupos."}},
+{a:7,i:'🐒',n:{ca:"Es separa la línia humana (≈)",es:"Se separa la línea humana (≈)"},f:{ca:"Les línies dels ximpanzés i dels homínids divergeixen. Data aproximada.",es:"Las líneas de los chimpancés y de los homínidos divergen. Fecha aproximada."}},
+{a:2.8,i:'🪨',n:{ca:"Primers Homo",es:"Primeros Homo"},f:{ca:"El fòssil més antic assignat al gènere Homo (Etiòpia, ≈2,8 Ma).",es:"El fósil más antiguo asignado al género Homo (Etiopía, ≈2,8 Ma)."}},
+{a:0.3,i:'🧍',n:{ca:"Homo sapiens",es:"Homo sapiens"},f:{ca:"Fòssils de Jebel Irhoud (el Marroc): ≈300.000 anys. Compara l’hora amb la teua predicció!",es:"Fósiles de Jebel Irhoud (Marruecos): ≈300.000 años. ¡Compara la hora con tu predicción!"}},
+{a:0.0115,i:'🌾',n:{ca:"Inici de l’agricultura",es:"Inicio de la agricultura"},f:{ca:"Revolució neolítica a l’Orient Pròxim (≈11.500 anys). Açò sí que passa cap a les 23:58.",es:"Revolución neolítica en Oriente Próximo (≈11.500 años). Esto sí ocurre hacia las 23:58."}},
+{a:0.0053,i:'✍️',n:{ca:"Primera escriptura",es:"Primera escritura"},f:{ca:"Sumer, cap al 3300 aC.",es:"Sumer, hacia el 3300 a. C."}},
+{a:0.002,i:'🏛️',n:{ca:"Imperi romà",es:"Imperio romano"},f:{ca:"Fa uns 2.000 anys: tota l’època romana cap en uns 14 segons.",es:"Hace unos 2.000 años: toda la época romana cabe en unos 14 segundos."}},
+{a:0.00025,i:'⚙️',n:{ca:"Revolució industrial",es:"Revolución industrial"},f:{ca:"Fa uns 250 anys: queden menys de 2 segons per a mitjanit.",es:"Hace unos 250 años: quedan menos de 2 segundos para medianoche."}},
+{a:0,i:'📱',n:{ca:"Avui",es:"Hoy"},f:{ca:"Les 24:00 del 31 de desembre. La teua vida sencera ocupa mig segon d’aquest calendari.",es:"Las 24:00 del 31 de diciembre. Tu vida entera ocupa medio segundo de este calendario."}}
+];
+EV.forEach(e=>e.e=elOf(e.a));
+
+/* barres */
+const X0=60,XW=900;
+const ROWS=[
+ {k:'yr',t0:0,t1:SPY,y:46},
+ {k:'dec',t0:334*86400,t1:SPY,y:118},
+ {k:'day',t0:364*86400,t1:SPY,y:190},
+ {k:'min',t0:SPY-60,t1:SPY,y:262}
+];
+const xo=(r,e)=>X0+XW*(e-r.t0)/(r.t1-r.t0);
+const SM='style="fill:var(--muted)"',SI='style="fill:#1f2933"',SL='style="stroke:var(--muted)"';
+let dotEls=[],mkEls={};
+function seg(r,e0,e1,fill,label){
+  const a=Math.max(e0,r.t0),b=Math.min(e1,r.t1);if(b<=a)return'';
+  const x=xo(r,a),w=xo(r,b)-x;
+  return '<rect x="'+x.toFixed(1)+'" y="'+r.y+'" width="'+w.toFixed(1)+'" height="26" fill="'+fill+'"/>'+(label&&w>58?'<text x="'+(x+w/2).toFixed(1)+'" y="'+(r.y+17)+'" text-anchor="middle" font-size="12" '+SI+'>'+label+'</text>':'');
+}
+function buildBars(){
+  let s='';dotEls=[];mkEls={};
+  const bd=[0,elOf(4000),elOf(2500),elOf(539),SPY],bdE=[0,elOf(252),elOf(66),SPY];
+  const ecol=['#e7c9b8','#d9d2a6','#bcd9c6','#cfe8d5'],pcol=['#cfe8d5','#bfdcf0','#f3dcb0'];
+  ROWS.forEach(r=>{
+    s+='<text x="'+X0+'" y="'+(r.y-12)+'" font-size="13" font-weight="700" style="fill:var(--ink)">'+t(r.k)+'</text>';
+    if(r.k==='yr'){for(let i=0;i<4;i++)s+=seg(r,bd[i],bd[i+1],ecol[i],EONS[LANG][i]);}
+    else if(r.k==='dec'){
+      s+=seg(r,r.t0,bdE[1],pcol[0],'')+seg(r,bdE[1],bdE[2],pcol[1],ERAS[LANG][1])+seg(r,bdE[2],bdE[3],pcol[2],ERAS[LANG][2]);
+      s+='<text x="'+(X0+3)+'" y="'+(r.y+17)+'" font-size="12" '+SI+'>'+ERAS[LANG][0]+'</text>';
+    }else s+='<rect x="'+X0+'" y="'+r.y+'" width="'+XW+'" height="26" fill="#cfe8d5"/>';
+    s+='<rect x="'+X0+'" y="'+r.y+'" width="'+XW+'" height="26" fill="none" '+SL+'/>';
+    const tk=(x,lab,dx)=>'<line x1="'+x+'" x2="'+x+'" y1="'+(r.y+26)+'" y2="'+(r.y+32)+'" '+SL+'/><text x="'+(x+dx)+'" y="'+(r.y+44)+'" font-size="11" '+SM+'>'+lab+'</text>';
+    if(r.k==='yr'){let c=0;for(let m=0;m<12;m++){s+=tk(xo(r,c*86400),SH[LANG][m],2);c+=ML[m]}}
+    if(r.k==='dec'){for(let d=1;d<=31;d+=5)s+=tk(xo(r,(333+d)*86400),d,2)}
+    if(r.k==='day'){for(let h=0;h<=24;h+=3)s+=tk(xo(r,r.t0+h*3600),p2(h)+'h',-8)}
+    if(r.k==='min'){for(let q=0;q<=60;q+=10)s+=tk(xo(r,r.t0+q),'23:59:'+(q===60?'60':p2(q)),-14)}
+  });
+  EV.forEach((ev,i)=>{
+    ROWS.forEach(r=>{
+      if(ev.e>=r.t0&&ev.e<=r.t1){
+        const x=xo(r,ev.e);
+        s+='<circle data-i="'+i+'" data-r="'+r.k+'" cx="'+x.toFixed(1)+'" cy="'+(r.y+13)+'" r="6" stroke-width="1.6" style="cursor:pointer"><title>'+ev.i+' '+L(ev.n)+'</title></circle>';
+      }
+    });
+  });
+  ROWS.forEach(r=>{s+='<g id="mk_'+r.k+'"><line x1="0" x2="0" y1="'+(r.y-6)+'" y2="'+(r.y+32)+'" stroke="#c0392b" stroke-width="2.4"/><path d="M-6,'+(r.y-8)+' L6,'+(r.y-8)+' L0,'+(r.y)+' Z" fill="#c0392b"/></g>'});
+  $('#bars').innerHTML=s;
+  dotEls=$$('circle',$('#bars'));
+  ROWS.forEach(r=>mkEls[r.k]=$('#mk_'+r.k));
+}
+$('#bars').addEventListener('click',e=>{const c=e.target.closest('circle');if(c)goto(+c.dataset.i)});
+function updBars(){
+  const ink=C().ink;
+  ROWS.forEach(r=>{
+    const inside=curE>=r.t0;
+    mkEls[r.k].setAttribute('transform','translate('+xo(r,Math.max(curE,r.t0)).toFixed(1)+',0)');
+    mkEls[r.k].setAttribute('opacity',inside?1:.25);
+  });
+  dotEls.forEach(c=>{
+    const i=+c.dataset.i,reached=EV[i].e<=curE+1e-6,isCur=(i===idx&&!tween);
+    c.setAttribute('fill',reached?ink:C().stage);
+    c.setAttribute('r',isCur?9:6);
+    c.setAttribute('stroke',isCur?'#c0392b':ink);
+  });
+}
+document.addEventListener('themechange',()=>{updBars()});
+
+/* animació */
+let idx=0,curE=EV[0].e,tween=null,playing=false,holdUntil=0;
+const DUR=1700,HOLD=3600;
+const spd=()=>parseFloat($('#spd').value);
+const ease=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+function goto(i){
+  if(i<0||i>=EV.length)return;
+  if(i===idx&&!tween)return;
+  tween={from:curE,to:EV[i].e,t0:performance.now(),dur:(REDUCE?1:DUR)/spd(),toIdx:i};
+  $('#card').classList.add('dim');
+}
+function frame(ts){
+  if(tween){
+    const p=Math.min(1,(ts-tween.t0)/tween.dur);
+    curE=tween.from+(tween.to-tween.from)*ease(p);
+    if(p>=1){curE=tween.to;idx=tween.toIdx;tween=null;holdUntil=ts+HOLD/spd();$('#card').classList.remove('dim');renderCard()}
+  }else if(playing&&ts>=holdUntil){
+    if(idx<EV.length-1)goto(idx+1);else{playing=false}
+  }
+  renderClock();updBars();renderBtn();
+  requestAnimationFrame(frame);
+}
+function renderClock(){
+  const o=dt(curE);
+  $('#cdate').textContent=dateStr(o);
+  $('#ctime').textContent=timeStr(o);
+  $('#cago').textContent=fmtAge(ageOf(curE));
+}
+function renderCard(){
+  const ev=EV[idx],o=dt(ev.e);
+  let delta='';
+  if(idx>0)delta='<br>'+t('since')+' <b>'+fmtDelta(ev.e-EV[idx-1].e)+'</b>';
+  $('#card').innerHTML='<div class="ic">'+ev.i+'</div><h3>'+L(ev.n)+'</h3><div>'+L(ev.f)+'</div><div class="meta">'+dateStr(o)+' · '+timeStr(o)+' · '+fmtAge(ev.a)+delta+'</div>';
+}
+function renderBtn(){
+  const k=playing?'pause':(idx>=EV.length-1&&!tween?'again':'play'),b=$('#bPlay');
+  if(b.dataset.i18n!==k){b.dataset.i18n=k;b.textContent=t(k)}
+}
+$('#bPlay').onclick=()=>{
+  if(!playing&&idx>=EV.length-1&&!tween){idx=0;curE=EV[0].e;renderCard()}
+  playing=!playing;holdUntil=0;
+};
+$('#bNext').onclick=()=>{playing=false;goto((tween?tween.toIdx:idx)+1)};
+$('#bPrev').onclick=()=>{playing=false;goto((tween?tween.toIdx:idx)-1)};
+$('#bReset').onclick=()=>{playing=false;tween=null;idx=0;curE=EV[0].e;$('#card').classList.remove('dim');renderCard()};
+
+/* convertidors i taula */
+function conv1(){
+  const v=parseFloat($('#v1').value),u=parseFloat($('#u1').value);
+  if(!(v>=0)){$('#r1').textContent='';return}
+  const a=v*u/1e6;
+  if(a>TA){$('#r1').textContent=t('tooold');return}
+  const o=dt(elOf(a));
+  $('#r1').textContent=dateStr(o)+' · '+timeStr(o);
+}
+function conv2(){
+  const v=parseFloat($('#v2').value),u=parseFloat($('#u2').value);
+  if(!(v>=0)){$('#r2').textContent='';return}
+  $('#r2').textContent='≈ '+fmtYears(v*u*TA*1e6/SPY);
+}
+['v1','u1'].forEach(i=>$('#'+i).addEventListener('input',conv1));
+['v2','u2'].forEach(i=>$('#'+i).addEventListener('input',conv2));
+function renderTab(){
+  $('#tab').innerHTML='<tr><th>'+t('tev')+'</th><th>'+t('twhen')+'</th><th>'+t('tago')+'</th></tr>'+EV.map((e,i)=>{const o=dt(e.e);return'<tr class="row" data-i="'+i+'"><td>'+e.i+' '+L(e.n)+'</td><td>'+dateStr(o)+' · '+timeStr(o)+'</td><td>'+fmtAge(e.a)+'</td></tr>'}).join('');
+}
+$('#tab').addEventListener('click',e=>{const r=e.target.closest('tr.row');if(!r)return;playing=false;goto(+r.dataset.i);window.scrollTo({top:0,behavior:REDUCE?'auto':'smooth'})});
+function renderScale(){
+  const yps=TA*1e6/SPY;
+  $('#scale').innerHTML='<b>'+t('eq')+':</b> '+t('m1')+' ≈ '+nfo(TA/12,{maximumFractionDigits:0})+' Ma · '+t('d1')+' ≈ '+nfo(yps*86400/1e6,{maximumFractionDigits:1})+' Ma · '+t('h1x')+' ≈ '+nfo(yps*3600/1e6,{maximumFractionDigits:2})+' Ma · '+t('n1')+' ≈ '+nfo(Math.round(yps*60))+' '+t('anys')+' · '+t('s1x')+' ≈ '+nfo(Math.round(yps))+' '+t('anys');
+}
+function refresh(){buildBars();renderCard();renderBtn();renderTab();renderScale();conv1();conv2()}
+document.addEventListener('langchange',refresh);
+
+const QDATA=[{"id":"m5","lvl":"all","type":"num","num":144,"tol":0.03,"u":1},
+{"id":"m1","lvl":"all","type":"mc","n":3,"ans":1},
+{"id":"m2","lvl":"all","type":"mc","n":3,"ans":1},
+{"id":"m3","lvl":"all","type":"mc","n":3,"ans":1},
+{"id":"m4","lvl":"all","type":"mc","n":3,"ans":0}];
+initQuiz(QDATA);
+initLang();applyLang();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

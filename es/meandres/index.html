@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meandros: erosión, sedimentación y lago en media luna</title>
+<meta name="description" content="Meandros: erosión en la orilla externa, sedimentación en la interna, corte del meandro y lago en media luna. Simulador interactivo con preguntas para razonar y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/meandres/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/meandres/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/meandres/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/meandres/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Meandros: erosión, sedimentación y lago en media luna">
+<meta property="og:description" content="Meandros: erosión en la orilla externa, sedimentación en la interna, corte del meandro y lago en media luna. Simulador interactivo con preguntas para razonar y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/meandres/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.sec svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.open textarea{width:100%;min-height:64px;margin-top:6px;font:inherit;font-size:14px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+.open details{margin-top:6px;font-size:14px}
+.open details p{margin:6px 0 0;color:var(--ink)}
+.open summary{cursor:pointer;color:var(--pa)}
+ul.th{margin:0;padding-left:1.2em;display:grid;gap:6px;font-size:14px;color:var(--ink)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Geología · Procesos externos</p>
+      <h1 data-i18n="h1">Meandros: cómo un río se corta el cuello</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Un río de llanura serpentea: erosiona la orilla externa, sedimenta la interna y, al final, deja un lago en media luna.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Un río de llanura que serpentea</h2>
+<p data-i18n-html="intro">Observa cómo, con el tiempo, las curvas se acentúan hasta que el río <b>corta el cuello del meandro</b> y el tramo abandonado queda como un <b>lago en media luna</b>. Pulsa <i>Inicia</i> y, antes de leer nada más, piensa: <i>¿por qué crecen las curvas?</i></p>
+<div class="row">
+<button class="btn primary" id="bPlay" data-i18n="play">Inicia</button>
+<button class="btn" id="bFF" data-i18n="ff">Avanza hasta el próximo corte</button>
+<button class="btn" id="bReset" data-i18n="reset">Nuevo río</button>
+<label class="chk"><input type="checkbox" id="pr" checked><span data-i18n="proc">Muestra los procesos</span></label>
+</div>
+<div class="grid2">
+<div class="ctrl"><label for="sp"><span data-i18n="speed">Velocidad</span>: <b id="spv"></b></label><input type="range" id="sp" min="1" max="10" step="1" value="5"></div>
+<div class="ctrl"><label for="er"><span data-i18n="erod">Erosionabilidad de las orillas</span>: <b id="erv"></b></label><input type="range" id="er" min="0.5" max="2" step="0.1" value="1"></div>
+</div>
+<canvas id="cv" role="img" data-i18n-aria="aria_map" aria-label="Vista en planta del río, con la llanura de inundación y los lagos de meandro"></canvas>
+<div class="legend">
+<span><i style="background:#c0392b"></i><span data-i18n="lg_e">Erosión (orilla externa, cóncava)</span></span>
+<span><i style="background:#e08a1e"></i><span data-i18n="lg_s">Sedimentación (orilla interna, convexa)</span></span>
+<span><i style="background:#4aa3e0"></i><span data-i18n="lg_r">Río</span></span>
+<span><i style="background:#6e8c50"></i><span data-i18n="lg_l">Lago de meandro</span></span>
+</div>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="st_t">Tiempo simulado</span><span class="v" id="stT"></span></div>
+<div class="stat"><span class="k" data-i18n="st_s">Índice de sinuosidad</span><span class="v" id="stS"></span></div>
+<div class="stat"><span class="k" data-i18n="st_c">Meandros cortados</span><span class="v" id="stC"></span></div>
+</div>
+<canvas id="ch" role="img" data-i18n-aria="aria_chart" aria-label="Gráfica del índice de sinuosidad a lo largo del tiempo"></canvas>
+<p class="note" data-i18n="chartnote">Sinuosidad = longitud del río ÷ distancia en línea recta. Las líneas rojas marcan los cortes de meandro. La escala de tiempo es orientativa.</p>
+<div class="idea" data-i18n-html="model"><b>Modelo simplificado:</b> cada punto del río se desplaza hacia el exterior en proporción a la curvatura (suavizada, con un pequeño efecto aguas arriba). No incluye crecidas, vegetación ni heterogeneidad de la llanura aluvial. Por eso la «erosionabilidad» solo cambia el ritmo, no la forma.</div>
+</section>
+
+<section class="card sec">
+<h2 data-i18n="th">Teoría breve</h2>
+<ul class="th">
+<li data-i18n-html="t1">En una curva, el agua va más rápida por el lado exterior y más lenta por el interior. Hay una <b>corriente helicoidal</b>: en superficie empuja hacia la orilla externa y por el fondo vuelve hacia la interna, arrastrando sedimento.</li>
+<li data-i18n-html="t2">Orilla externa: <b>erosión</b> (talud vertical, canal profundo). Orilla interna: <b>sedimentación</b> (barra de punta, poco fondo).</li>
+<li data-i18n-html="t3">Resultado: la curva se cierra cada vez más y el canal migra lateralmente. Cuando los dos brazos de un meandro se acercan, una crecida rompe el cuello: es el <b>corte de meandro</b>.</li>
+<li data-i18n-html="t4">El tramo abandonado queda como un lago de meandro (<i>oxbow lake</i>) que, con el tiempo, se llena de sedimentos y acaba siendo un humedal.</li>
+</ul>
+<svg viewBox="0 0 600 210" role="img" data-i18n-aria="aria_sec" aria-label="Sección transversal asimétrica de una curva de río">
+<path d="M0,60 L140,60 L175,140 Q230,165 300,150 Q400,125 470,95 L560,62 L600,62 L600,210 L0,210 Z" fill="#c9a96a" stroke="#8a6d34"/>
+<path d="M151,85 L175,140 Q230,165 300,150 Q400,125 470,95 L497,85 Z" fill="#4aa3e0" opacity=".85"/>
+<line x1="120" y1="85" x2="520" y2="85" stroke="#2c6a9a" stroke-dasharray="4 4"/>
+<text x="8" y="30" font-size="16" font-weight="700" fill="#c0392b">A</text>
+<text x="575" y="30" font-size="16" font-weight="700" fill="#e08a1e">B</text>
+<path d="M118,48 L96,48" stroke="#c0392b" stroke-width="3" marker-end="url(#ar)"/>
+<text x="8" y="195" font-size="13" fill="#fff" data-i18n="sv1">Orilla externa: erosión</text>
+<text x="395" y="195" font-size="13" fill="#fff" data-i18n="sv2">Orilla interna: sedimentación</text>
+<text x="215" y="125" font-size="13" fill="#0b2e4a" data-i18n="sv3">canal profundo</text>
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#c0392b"/></marker></defs>
+</svg>
+<p class="note" data-i18n="svcap">Sección transversal de una curva (de A a B). El perfil es asimétrico.</p>
+</section>
+
+<section class="card open">
+<h2 data-i18n="rz_title">Para razonar</h2>
+<div class="qcard"><p class="qtext" data-i18n-html="o1.q">Las curvas no se mantienen: crecen con el tiempo. Explica por qué. (Piensa en una causa que se alimenta a sí misma.)</p>
+<textarea data-i18n-aria="write" aria-label="Escribe aquí tu razonamiento"></textarea>
+<details><summary data-i18n="hint">Pista</summary><p data-i18n-html="o1.h">Más curvatura implica más diferencia de velocidad entre las dos orillas. Y eso provoca…</p></details>
+<details><summary data-i18n="answer">Respuesta</summary><p data-i18n-html="o1.a">Es una <b>retroalimentación positiva</b>: más curvatura, más corriente en la orilla externa, más erosión allí y más sedimentación en la interna, y por tanto aún más curvatura. Por eso una pequeña irregularidad inicial acaba creciendo hasta ser un meandro.</p></details></div>
+<div class="qcard"><p class="qtext" data-i18n-html="o2.q">Si miras una foto aérea de una llanura de inundación, ¿cómo reconocerías meandros abandonados? Cita algún lugar donde se vean.</p>
+<textarea data-i18n-aria="write" aria-label="Escribe aquí tu razonamiento"></textarea>
+<details><summary data-i18n="hint">Pista</summary><p data-i18n-html="o2.h">Busca formas en arco y bandas de vegetación o suelo distinto.</p></details>
+<details><summary data-i18n="answer">Respuesta</summary><p data-i18n-html="o2.a">Se ven como lagos o franjas en forma de arco o herradura, y cicatrices de meandros (bandas curvas de vegetación o suelo distinto) junto al río actual. Ejemplos: el Misisipi, con muchos <i>oxbow lakes</i>, o el Ebro, donde estos meandros abandonados se llaman «galachos» (p. ej. en Zaragoza).</p></details></div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Meandres: erosió, sedimentació i llac en mitja lluna",
+"eyebrow":"Geologia · Processos externs",
+"h1":"Meandres: com un riu es talla el coll",
+"lede":"Un riu de plana serpenteja: erosiona la riba externa, sedimenta la interna i, al final, deixa un llac en mitja lluna.",
+"sim_title":"Un riu de plana que serpenteja",
+"intro":"Observa com, amb el temps, les corbes s’accentuen fins que el riu <b>talla el coll del meandre</b> i el tram abandonat queda com un <b>llac en mitja lluna</b>. Prem <i>Inicia</i> i, abans de llegir res més, pensa: <i>per què creixen les corbes?</i>",
+"play":"Inicia","pause":"Pausa","ff":"Avança fins al pròxim tall","reset":"Nou riu",
+"speed":"Velocitat","erod":"Erosionabilitat de les ribes","proc":"Mostra els processos",
+"aria_map":"Vista en planta del riu, amb la plana d’inundació i els llacs de meandre","aria_chart":"Gràfica de l’índex de sinuositat al llarg del temps",
+"lg_e":"Erosió (riba externa, còncava)","lg_s":"Sedimentació (riba interna, convexa)","lg_r":"Riu","lg_l":"Llac de meandre",
+"st_t":"Temps simulat","st_s":"Índex de sinuositat","st_c":"Meandres tallats","unit":"anys","flow":"Corrent →","ch_sin":"Índex de sinuositat",
+"chartnote":"Sinuositat = longitud del riu ÷ distància en línia recta. Les línies roges marquen els talls de meandre. L’escala de temps és orientativa.",
+"model":"<b>Model simplificat:</b> cada punt del riu es desplaça cap a l’exterior en proporció a la curvatura (suavitzada, amb un petit efecte aigües amunt). No inclou crescudes, vegetació ni heterogeneïtat de la plana al·luvial. Per això l’«erosionabilitat» només canvia el ritme, no la forma.",
+"th":"Teoria breu",
+"t1":"En una corba, l’aigua va més ràpida pel costat exterior i més lenta per l’interior. Hi ha un <b>corrent helicoidal</b>: en superfície empeny cap a la riba externa i pel fons torna cap a l’interna, arrossegant sediment.",
+"t2":"Riba externa: <b>erosió</b> (talús vertical, canal profund). Riba interna: <b>sedimentació</b> (barra de punta, poc fons).",
+"t3":"Resultat: la corba es tanca cada vegada més i el canal migra lateralment. Quan els dos braços d’un meandre s’acosten, una crescuda trenca el coll: és el <b>tall de meandre</b>.",
+"t4":"El tram abandonat queda com un llac de meandre (<i>oxbow lake</i>) que, amb el temps, s’omple de sediments i acaba sent un aiguamoll.",
+"sv1":"Riba externa: erosió","sv2":"Riba interna: sedimentació","sv3":"canal profund","svcap":"Secció transversal d’una corba (de A a B). El perfil és asimètric.","aria_sec":"Secció transversal asimètrica d’una corba de riu",
+"rz_title":"Per raonar","hint":"Pista","answer":"Resposta","write":"Escriu ací el teu raonament",
+"o1.q":"Les corbes no es mantenen: creixen amb el temps. Explica per què. (Pensa en una causa que s’alimenta a si mateixa.)",
+"o1.h":"Més curvatura implica més diferència de velocitat entre les dues ribes. I això provoca…",
+"o1.a":"És una <b>retroalimentació positiva</b>: més curvatura, més corrent a la riba externa, més erosió allí i més sedimentació a l’interna, i per tant encara més curvatura. Per això una petita irregularitat inicial acaba creixent fins a ser un meandre.",
+"o2.q":"Si mires una foto aèria d’una plana d’inundació, com reconeixeries meandres abandonats? Cita algun lloc on es vegin.",
+"o2.h":"Busca formes en arc i bandes de vegetació o sòl diferent.",
+"o2.a":"Es veuen com llacs o franges en forma d’arc o ferradura, i cicatrius de meandres (bandes corbes de vegetació o sòl diferent) vora el riu actual. Exemples: el Mississipí, amb molts <i>oxbow lakes</i>, o l’Ebre, on aquests meandres abandonats s’anomenen «galachos» (p. ex. a Saragossa).",
+"m1.q":"Mira la riba d’un meandre ben desenvolupat. On predomina l’erosió?",
+"m1.o0":"A la riba interna (convexa)","m1.o1":"A la riba externa (còncava)","m1.o2":"Per igual a totes dues",
+"m1.e":"A la riba externa el corrent és més ràpid i excava. A la interna frena i deposita sediment (barra de punta).",
+"m2.q":"Mira la gràfica de sinuositat. Què li passa a l’índex just en el moment d’un tall de meandre?",
+"m2.o0":"Puja de cop","m2.o1":"Baixa de cop","m2.o2":"No canvia",
+"m2.e":"El riu es salta tot el bucle: la longitud del canal disminueix, però la distància en línia recta és la mateixa. Per això la gràfica fa dents de serra.",
+"m3.q":"Què li passarà, amb el temps, al llac en mitja lluna?",
+"m3.o0":"Es mantindrà igual durant milers d’anys","m3.o1":"S’anirà omplint de sediments fins a ser un aiguamoll o prat","m3.o2":"Tornarà a ser el cabal principal del riu",
+"m3.e":"Queda aïllat i només rep aigua en les crescudes, que hi deixen llim. Sedimentació, vegetació i colmatació el van reomplint. (Només en una crescuda excepcional podria tornar a ser llit.)",
+"m4.q":"Dobles el control «Erosionabilitat de les ribes». Segons aquest model, què canvia?",
+"m4.o0":"Només el ritme: la forma és semblant però arriba abans","m4.o1":"El riu deixa de formar meandres","m4.o2":"Els meandres són més petits",
+"m4.e":"Al model, l’erosionabilitat només escala el temps. En un riu real també importen el cabal, la cohesió de les ribes i la vegetació; el model no ho recull: és una limitació a tindre present.",
+"m5.q":"Un tram de riu té 2 km de canal i una caiguda total de 3 m. Es talla un meandre i el canal passa a mesurar 1,4 km. Calcula el pendent després del tall (en %).",
+"m5.e":"Abans: 3 / 2000 = 0,15 %. Després: 3 / 1400 ≈ 0,21 %, un 43 % més. Amb més pendent l’aigua va més ràpida i té més capacitat d’erosionar: el riu es reajusta (més erosió del llit aigües amunt) fins a recuperar l’equilibri.",
+"m5.u":"%"
+},
+es:{
+"title":"Meandros: erosión, sedimentación y lago en media luna",
+"eyebrow":"Geología · Procesos externos",
+"h1":"Meandros: cómo un río se corta el cuello",
+"lede":"Un río de llanura serpentea: erosiona la orilla externa, sedimenta la interna y, al final, deja un lago en media luna.",
+"sim_title":"Un río de llanura que serpentea",
+"intro":"Observa cómo, con el tiempo, las curvas se acentúan hasta que el río <b>corta el cuello del meandro</b> y el tramo abandonado queda como un <b>lago en media luna</b>. Pulsa <i>Inicia</i> y, antes de leer nada más, piensa: <i>¿por qué crecen las curvas?</i>",
+"play":"Inicia","pause":"Pausa","ff":"Avanza hasta el próximo corte","reset":"Nuevo río",
+"speed":"Velocidad","erod":"Erosionabilidad de las orillas","proc":"Muestra los procesos",
+"aria_map":"Vista en planta del río, con la llanura de inundación y los lagos de meandro","aria_chart":"Gráfica del índice de sinuosidad a lo largo del tiempo",
+"lg_e":"Erosión (orilla externa, cóncava)","lg_s":"Sedimentación (orilla interna, convexa)","lg_r":"Río","lg_l":"Lago de meandro",
+"st_t":"Tiempo simulado","st_s":"Índice de sinuosidad","st_c":"Meandros cortados","unit":"años","flow":"Corriente →","ch_sin":"Índice de sinuosidad",
+"chartnote":"Sinuosidad = longitud del río ÷ distancia en línea recta. Las líneas rojas marcan los cortes de meandro. La escala de tiempo es orientativa.",
+"model":"<b>Modelo simplificado:</b> cada punto del río se desplaza hacia el exterior en proporción a la curvatura (suavizada, con un pequeño efecto aguas arriba). No incluye crecidas, vegetación ni heterogeneidad de la llanura aluvial. Por eso la «erosionabilidad» solo cambia el ritmo, no la forma.",
+"th":"Teoría breve",
+"t1":"En una curva, el agua va más rápida por el lado exterior y más lenta por el interior. Hay una <b>corriente helicoidal</b>: en superficie empuja hacia la orilla externa y por el fondo vuelve hacia la interna, arrastrando sedimento.",
+"t2":"Orilla externa: <b>erosión</b> (talud vertical, canal profundo). Orilla interna: <b>sedimentación</b> (barra de punta, poco fondo).",
+"t3":"Resultado: la curva se cierra cada vez más y el canal migra lateralmente. Cuando los dos brazos de un meandro se acercan, una crecida rompe el cuello: es el <b>corte de meandro</b>.",
+"t4":"El tramo abandonado queda como un lago de meandro (<i>oxbow lake</i>) que, con el tiempo, se llena de sedimentos y acaba siendo un humedal.",
+"sv1":"Orilla externa: erosión","sv2":"Orilla interna: sedimentación","sv3":"canal profundo","svcap":"Sección transversal de una curva (de A a B). El perfil es asimétrico.","aria_sec":"Sección transversal asimétrica de una curva de río",
+"rz_title":"Para razonar","hint":"Pista","answer":"Respuesta","write":"Escribe aquí tu razonamiento",
+"o1.q":"Las curvas no se mantienen: crecen con el tiempo. Explica por qué. (Piensa en una causa que se alimenta a sí misma.)",
+"o1.h":"Más curvatura implica más diferencia de velocidad entre las dos orillas. Y eso provoca…",
+"o1.a":"Es una <b>retroalimentación positiva</b>: más curvatura, más corriente en la orilla externa, más erosión allí y más sedimentación en la interna, y por tanto aún más curvatura. Por eso una pequeña irregularidad inicial acaba creciendo hasta ser un meandro.",
+"o2.q":"Si miras una foto aérea de una llanura de inundación, ¿cómo reconocerías meandros abandonados? Cita algún lugar donde se vean.",
+"o2.h":"Busca formas en arco y bandas de vegetación o suelo distinto.",
+"o2.a":"Se ven como lagos o franjas en forma de arco o herradura, y cicatrices de meandros (bandas curvas de vegetación o suelo distinto) junto al río actual. Ejemplos: el Misisipi, con muchos <i>oxbow lakes</i>, o el Ebro, donde estos meandros abandonados se llaman «galachos» (p. ej. en Zaragoza).",
+"m1.q":"Mira la orilla de un meandro bien desarrollado. ¿Dónde predomina la erosión?",
+"m1.o0":"En la orilla interna (convexa)","m1.o1":"En la orilla externa (cóncava)","m1.o2":"Por igual en las dos",
+"m1.e":"En la orilla externa la corriente es más rápida y excava. En la interna frena y deposita sedimento (barra de punta).",
+"m2.q":"Mira la gráfica de sinuosidad. ¿Qué le pasa al índice justo en el momento de un corte de meandro?",
+"m2.o0":"Sube de golpe","m2.o1":"Baja de golpe","m2.o2":"No cambia",
+"m2.e":"El río se salta todo el bucle: la longitud del canal disminuye, pero la distancia en línea recta es la misma. Por eso la gráfica hace dientes de sierra.",
+"m3.q":"¿Qué le pasará, con el tiempo, al lago en media luna?",
+"m3.o0":"Se mantendrá igual durante miles de años","m3.o1":"Se irá llenando de sedimentos hasta ser un humedal o prado","m3.o2":"Volverá a ser el cauce principal del río",
+"m3.e":"Queda aislado y solo recibe agua en las crecidas, que dejan limo. Sedimentación, vegetación y colmatación lo van rellenando. (Solo en una crecida excepcional podría volver a ser cauce.)",
+"m4.q":"Doblas el control «Erosionabilidad de las orillas». Según este modelo, ¿qué cambia?",
+"m4.o0":"Solo el ritmo: la forma es parecida pero llega antes","m4.o1":"El río deja de formar meandros","m4.o2":"Los meandros son más pequeños",
+"m4.e":"En el modelo, la erosionabilidad solo escala el tiempo. En un río real también importan el caudal, la cohesión de las orillas y la vegetación; el modelo no lo recoge: es una limitación a tener presente.",
+"m5.q":"Un tramo de río tiene 2 km de canal y un desnivel total de 3 m. Se corta un meandro y el canal pasa a medir 1,4 km. Calcula la pendiente después del corte (en %).",
+"m5.e":"Antes: 3 / 2000 = 0,15 %. Después: 3 / 1400 ≈ 0,21 %, un 43 % más. Con más pendiente el agua va más rápida y tiene más capacidad de erosionar: el río se reajusta (más erosión del lecho aguas arriba) hasta recuperar el equilibrio.",
+"m5.u":"%"
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../meandres/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Meandres: simulació ===== */
+//SIM-START
+const W=1000,H=560,DS=4,RW=11,KSIG=6.3;
+let rngS=1;
+function rnd(){rngS|=0;rngS=rngS+0x6D2B79F5|0;let q=Math.imul(rngS^rngS>>>15,1|rngS);q=q+Math.imul(q^q>>>7,61|q)^q;return((q^q>>>14)>>>0)/4294967296}
+let pts=[],lakes=[],steps=0,cuts=0,cutSteps=[];
+const KERN=(()=>{const r=Math.ceil(3*KSIG);const k=[];let s=0;for(let i=-r;i<=r;i++){const v=Math.exp(-i*i/(2*KSIG*KSIG));k.push(v);s+=v}return k.map(v=>v/s)})();
+function initSim(seed){
+  rngS=seed;lakes=[];steps=0;cuts=0;cutSteps=[];
+  const comps=[];for(let c=0;c<6;c++)comps.push({lam:90+rnd()*300,amp:3+rnd()*7,ph:rnd()*6.283});
+  pts=[];
+  for(let x=0;x<=W;x+=DS){let y=H/2;for(const c of comps)y+=c.amp*Math.sin(2*Math.PI*x/c.lam+c.ph);pts.push({x,y})}
+}
+function resample(){
+  const out=[{x:pts[0].x,y:pts[0].y}];
+  let prev=pts[0],need=DS;
+  for(let i=1;i<pts.length;i++){
+    let a=prev;const b=pts[i];
+    let d=Math.hypot(b.x-a.x,b.y-a.y);
+    while(d>=need){
+      const f=need/d;const nx=a.x+(b.x-a.x)*f,ny=a.y+(b.y-a.y)*f;
+      out.push({x:nx,y:ny});a={x:nx,y:ny};d=Math.hypot(b.x-a.x,b.y-a.y);need=DS;
+    }
+    need-=d;prev=b;
+  }
+  const last=pts[pts.length-1],lo=out[out.length-1];
+  if(Math.hypot(last.x-lo.x,last.y-lo.y)>DS*0.5)out.push({x:last.x,y:last.y});else out[out.length-1]={x:last.x,y:last.y};
+  pts=out;
+}
+function smoothCurv(){
+  const n=pts.length,k=new Float64Array(n);
+  for(let i=1;i<n-1;i++){
+    const a=pts[i-1],b=pts[i],c=pts[i+1];
+    const v1x=b.x-a.x,v1y=b.y-a.y,v2x=c.x-b.x,v2y=c.y-b.y;
+    const cross=v1x*v2y-v1y*v2x,dot=v1x*v2x+v1y*v2y;
+    k[i]=Math.atan2(cross,dot)/((Math.hypot(v1x,v1y)+Math.hypot(v2x,v2y))/2);
+  }
+  const R=(KERN.length-1)/2,ks=new Float64Array(n);
+  for(let i=0;i<n;i++){let s=0;for(let j=-R;j<=R;j++){let idx=i+j;if(idx<0)idx=0;if(idx>=n)idx=n-1;s+=KERN[j+R]*k[idx]}ks[i]=s}
+  return ks;
+}
+function stepSim(rate){
+  const n=pts.length,ks=smoothCurv(),SH=8;
+  const dx=new Float64Array(n),dy=new Float64Array(n);
+  for(let i=1;i<n-1;i++){
+    const tx=pts[i+1].x-pts[i-1].x,ty=pts[i+1].y-pts[i-1].y,l=Math.hypot(tx,ty)||1;
+    const nx=-ty/l,ny=tx/l;
+    const ke=0.55*ks[i]+0.45*ks[Math.max(0,i-SH)];
+    const f=Math.min(1,i/20,(n-1-i)/20);
+    const e=Math.min(pts[i].x,W-pts[i].x,pts[i].y,H-pts[i].y);
+    const fe=Math.max(0,Math.min(1,(e-8)/50));
+    let m=-rate*ke*f*fe;if(m>1.2)m=1.2;if(m<-1.2)m=-1.2;
+    dx[i]=nx*m;dy[i]=ny*m;
+  }
+  for(let i=1;i<n-1;i++){pts[i].x+=dx[i];pts[i].y+=dy[i]}
+  steps++;
+  resample();
+  if(steps%3===0)detectCut();
+}
+function detectCut(){
+  const n=pts.length,TH=RW*1.25,MINSEP=Math.round(170/DS);
+  let best=null,bd=1e9;
+  for(let i=0;i<n-MINSEP;i++){
+    const a=pts[i];
+    for(let j=i+MINSEP;j<n;j++){
+      const b=pts[j],ddx=a.x-b.x;if(ddx>TH||ddx<-TH)continue;
+      const ddy=a.y-b.y;if(ddy>TH||ddy<-TH)continue;
+      const d=ddx*ddx+ddy*ddy;if(d<TH*TH&&d<bd){bd=d;best=[i,j]}
+    }
+  }
+  if(!best)return;
+  const [i,j]=best;
+  lakes.push({poly:pts.slice(i,j+1).map(p=>({x:p.x,y:p.y})),born:steps});
+  cuts++;cutSteps.push(steps);
+  pts=pts.slice(0,i+1).concat(pts.slice(j));
+  resample();
+  const lo=Math.max(2,i-10),hi=Math.min(pts.length-3,i+10);
+  for(let it=0;it<25;it++)for(let q=lo;q<=hi;q++){
+    pts[q].x=0.5*pts[q].x+0.25*(pts[q-1].x+pts[q+1].x);
+    pts[q].y=0.5*pts[q].y+0.25*(pts[q-1].y+pts[q+1].y);
+  }
+}
+function riverLen(){let s=0;for(let i=1;i<pts.length;i++)s+=Math.hypot(pts[i].x-pts[i-1].x,pts[i].y-pts[i-1].y);return s}
+function sinuosity(){const a=pts[0],b=pts[pts.length-1];return riverLen()/Math.hypot(b.x-a.x,b.y-a.y)}
+//SIM-END
+
+/* ===== dibuix ===== */
+const ctx=fitCanvas($('#cv'),W,H), cx2=fitCanvas($('#ch'),1000,150);
+const hist=document.createElement('canvas');hist.width=W*2;hist.height=H*2;const hx=hist.getContext('2d');hx.scale(2,2);
+let running=false,ff=false,ffC=0,ffS=0,dashT=0,hs=[],maxSin=1.6;
+function resetHist(){
+  const g=hx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#c5dca4');g.addColorStop(1,'#b7d393');
+  hx.fillStyle=g;hx.fillRect(0,0,W,H);
+}
+function path(c,a){c.beginPath();c.moveTo(a[0].x,a[0].y);for(let i=1;i<a.length;i++)c.lineTo(a[i].x,a[i].y)}
+function mix(c1,c2,f){return 'rgb('+c1.map((v,i)=>Math.round(v+(c2[i]-v)*f)).join(',')+')'}
+function drawMain(){
+  ctx.drawImage(hist,0,0,W,H);
+  ctx.lineJoin='round';ctx.lineCap='round';
+  for(const lk of lakes){
+    const age=Math.min(1,(steps-lk.born)/5000);
+    path(ctx,lk.poly);
+    ctx.strokeStyle=mix([60,130,190],[110,140,80],age);ctx.lineWidth=(RW+1)*(1-0.6*age);ctx.stroke();
+  }
+  path(ctx,pts);ctx.strokeStyle='#2c6a9a';ctx.lineWidth=RW+3;ctx.stroke();
+  ctx.strokeStyle='#4aa3e0';ctx.lineWidth=RW;ctx.stroke();
+  ctx.setLineDash([4,16]);ctx.lineDashOffset=-dashT;ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
+  if($('#pr').checked)drawProc();
+  ctx.fillStyle='#1f2933';ctx.font='15px system-ui';ctx.textAlign='left';ctx.fillText(t('flow'),12,24);
+}
+function drawProc(){
+  const ks=smoothCurv(),n=pts.length;let last=-999,cnt=0;
+  for(let i=15;i<n-15&&cnt<8;i++){
+    const v=Math.abs(ks[i]);if(v<0.008)continue;
+    let mx=true;for(let j=-15;j<=15;j++){if(Math.abs(ks[i+j])>v){mx=false;break}}
+    if(!mx||i-last<40)continue;
+    last=i;cnt++;
+    const tx=pts[i+1].x-pts[i-1].x,ty=pts[i+1].y-pts[i-1].y,l=Math.hypot(tx,ty)||1;
+    const nx=-ty/l,ny=tx/l,s=ks[i]>0?1:-1,ox=-s*nx,oy=-s*ny,p=pts[i];
+    const x1=p.x+ox*(RW/2+3),y1=p.y+oy*(RW/2+3),x2=p.x+ox*(RW/2+24),y2=p.y+oy*(RW/2+24);
+    ctx.strokeStyle='#c0392b';ctx.fillStyle='#c0392b';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.beginPath();ctx.arc(x2,y2,4,0,6.283);ctx.fill();
+    ctx.font='bold 13px system-ui';ctx.fillText('E',x2+ox*8-4,y2+oy*8+5);
+    ctx.fillStyle='#e08a1e';
+    for(let q=0;q<4;q++){const a=(q-1.5)*0.7;const cx=p.x-ox*(RW/2+8+(q%2)*5)-oy*a*7,cy=p.y-oy*(RW/2+8+(q%2)*5)+ox*a*7;ctx.beginPath();ctx.arc(cx,cy,3,0,6.283);ctx.fill()}
+    ctx.font='bold 13px system-ui';ctx.fillText('S',p.x-ox*(RW/2+27)-4,p.y-oy*(RW/2+27)+5);
+  }
+}
+function drawChart(){
+  const g=cx2,w=1000,h=150,pad=40;
+  g.fillStyle=css('--stage');g.fillRect(0,0,w,h);
+  const maxT=Math.max(steps,2000),X=s=>pad+(w-pad-14)*s/maxT,Y=v=>h-26-(h-46)*(v-1)/(maxSin-1);
+  g.strokeStyle=css('--line');g.lineWidth=1;g.fillStyle=css('--muted');g.font='12px system-ui';g.textAlign='left';
+  g.beginPath();g.moveTo(pad,h-26);g.lineTo(w-8,h-26);g.moveTo(pad,10);g.lineTo(pad,h-26);g.stroke();
+  g.fillText('1',pad-14,h-22);g.fillText(nf(maxSin,1),pad-32,20);
+  g.fillText(t('ch_sin'),pad+8,16);g.textAlign='right';g.fillText(nf(maxT*0.25,0)+' '+t('unit'),w-12,h-8);g.textAlign='left';
+  g.strokeStyle=css('--pb');g.globalAlpha=.7;
+  for(const s of cutSteps){g.beginPath();g.moveTo(X(s),10);g.lineTo(X(s),h-26);g.stroke()}
+  g.globalAlpha=1;
+  if(hs.length>1){g.strokeStyle=css('--pa');g.lineWidth=2;g.beginPath();hs.forEach((p,i)=>{const x=X(p[0]),y=Y(p[1]);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke()}
+}
+function updStats(){
+  $('#stT').textContent=nf(steps*0.25,0)+' '+t('unit');
+  $('#stS').textContent=nf(sinuosity(),2);
+  $('#stC').textContent=cuts;
+  $('#spv').textContent=$('#sp').value+'×';
+  $('#erv').textContent=nf(+$('#er').value,1)+'×';
+}
+function setPlayLabel(){const b=$('#bPlay');b.dataset.i18n=running?'pause':'play';b.textContent=t(b.dataset.i18n)}
+function record(){const s=sinuosity();if(s>maxSin)maxSin=s*1.05;hs.push([steps,s])}
+function drawAll(){drawMain();drawChart();updStats();setPlayLabel()}
+function frame(){
+  const rate=1.2*parseFloat($('#er').value);
+  if(ff){
+    const t0=performance.now();
+    while(performance.now()-t0<14){stepSim(rate);if(steps%10===0)record();if(cuts>ffC||steps-ffS>40000){ff=false;break}}
+    trail();
+  }else if(running){
+    const sp=parseInt($('#sp').value);
+    for(let k=0;k<sp;k++){stepSim(rate);if(steps%10===0)record()}
+    trail();
+  }
+  if(running||ff)drawAll();
+  requestAnimationFrame(frame);
+}
+function trail(){dashT+=1.5;hx.strokeStyle='rgba(205,170,100,.05)';hx.lineWidth=RW+2;hx.lineJoin='round';path(hx,pts);hx.stroke()}
+function newRiver(){running=false;ff=false;hs=[];maxSin=1.6;initSim((Math.random()*1e9)|0);resetHist();record();drawAll()}
+$('#bPlay').onclick=()=>{running=!running;ff=false;drawAll()};
+$('#bFF').onclick=()=>{ff=true;ffC=cuts;ffS=steps;running=false;setPlayLabel()};
+$('#bReset').onclick=newRiver;
+$('#pr').onchange=drawAll;
+$('#sp').oninput=updStats;$('#er').oninput=updStats;
+document.addEventListener('langchange',drawAll);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawAll);
+
+/* --- preguntes --- */
+const QDATA=[{"id":"m1","lvl":"all","type":"mc","n":3,"ans":1},{"id":"m2","lvl":"all","type":"mc","n":3,"ans":1},{"id":"m3","lvl":"all","type":"mc","n":3,"ans":1},{"id":"m4","lvl":"all","type":"mc","n":3,"ans":0},{"id":"m5","lvl":"all","type":"num","num":0.2143,"tol":0.03,"u":1}];
+initQuiz(QDATA);
+newRiver();
+initLang();applyLang();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
