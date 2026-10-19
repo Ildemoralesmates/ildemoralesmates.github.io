@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circunferencia goniométrica - Razones trigonométricas (4.º ESO)</title>
+<meta name="description" content="Circunferencia goniométrica interactiva: mueve un punto y mira cómo cambian el seno, el coseno y la tangente. Tablas de ángulos notables con valores exactos (radicales), gráfica y test. Para 4.º ESO.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/trigonometria/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/trigonometria/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/trigonometria/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/trigonometria/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Circunferencia goniométrica y razones trigonométricas">
+<meta property="og:description" content="Circunferencia goniométrica interactiva: mueve un punto y mira cómo cambian el seno, el coseno y la tangente. Tablas de ángulos notables con valores exactos (radicales), gráfica y test. Para 4.º ESO.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/trigonometria/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+:root{
+  --sin:#d62839; --cos:#1769c4; --tan:#139a4b; --ang:#6a3fd1;
+  --ink:#1f2430; --muted:#5b6475; --bg:#f3f5f9; --card:#fff; --line:#d5dbe8;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:#1f2a44;color:#fff}
+header h1{margin:0;font-size:1.35rem;font-weight:700}
+header .sub{font-size:.9rem;opacity:.8}
+.tools{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.seg{display:inline-flex;border:1px solid rgba(255,255,255,.45);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;color:#fff;border:0;padding:6px 12px;font-size:.9rem;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:#1f2a44;font-weight:700}
+.wrap{max-width:1300px;margin:0 auto;padding:16px}
+.top{display:grid;grid-template-columns:minmax(300px,1.05fr) minmax(320px,1fr);gap:16px;align-items:start}
+@media(max-width:920px){.top{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:16px}
+.card h2{margin:0 0 8px;font-size:1.05rem}
+.hint{font-size:.85rem;color:var(--muted);margin:4px 0 8px}
+#circle,#graph{width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+#circle{max-width:640px;margin:0 auto;cursor:crosshair}
+.halo{paint-order:stroke;stroke:#fff;stroke-width:.04;stroke-linejoin:round}
+.halo2{paint-order:stroke;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:8px 0}
+.row label{display:inline-flex;align-items:center;gap:6px;font-size:.92rem}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--ang)}
+input[type=number]{width:92px;padding:5px 7px;font-size:1rem;border:1px solid var(--line);border-radius:8px}
+.btn{background:var(--ang);color:#fff;border:0;border-radius:8px;padding:7px 14px;font-size:.95rem;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--ang);border:1px solid var(--ang)}
+select{padding:5px;border-radius:8px;border:1px solid var(--line);font-size:.92rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 9px;border:1px solid #c5cde0;border-radius:999px;background:#fff;cursor:pointer;font-size:.9rem;color:var(--ink)}
+.chip.on{background:var(--ang);border-color:var(--ang);color:#fff}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:3px}
+.rr{display:grid;grid-template-columns:72px 98px 1fr;align-items:center;gap:6px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:1.1rem}
+.rr:last-of-type{border-bottom:0}
+.rr .lab{font-weight:700}
+.rr.s .lab{color:var(--sin)} .rr.c .lab{color:var(--cos)} .rr.t .lab{color:var(--tan)}
+.rr .dec{font-variant-numeric:tabular-nums}
+.rr .ex{font-size:1.15rem}
+.bigang{font-size:1.25rem;font-weight:700;color:var(--ang);margin-bottom:2px}
+.muted{color:var(--muted);font-size:.88rem}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;background:#eceff7;font-size:.85rem;margin:2px 0}
+.pill.ok{background:#dff3e6;color:#176a3a}
+.legend{display:flex;gap:14px;font-weight:700;font-size:.95rem;margin-bottom:2px}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 2px;font-size:.95em}
+.frac .n{border-bottom:1.5px solid currentColor;padding:0 3px 1px}
+.frac .d{padding:1px 3px 0}
+.sq{white-space:nowrap}
+.sq .rd{border-top:1.5px solid currentColor;padding:0 1px;margin-left:1px}
+.val{white-space:nowrap}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center;font-size:1.02rem}
+th{background:#eef1f8;font-size:.9rem}
+th small{font-weight:400;color:var(--muted)}
+td.clk,tr.clk{cursor:pointer}
+td.clk:hover,tr.clk:hover td{background:#f1ebff}
+.cur{background:#e3d8ff !important;font-weight:700}
+tr.qh td{background:#eef1f8;text-align:left;font-weight:600;font-size:.88rem;cursor:default}
+.qline{font-size:1.2rem;margin:6px 0 10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px}
+.opt{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px;font-size:1.25rem;cursor:pointer;min-height:58px;color:var(--ink)}
+.opt:hover:not([disabled]){border-color:var(--ang)}
+.opt.good{border-color:#1f9d55;background:#e4f6ea}
+.opt.bad{border-color:#d62839;background:#fde7ea}
+.fb{padding:10px 12px;border-radius:10px;background:#f4f6fb;margin:8px 0}
+.fb p{margin:3px 0}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:6px 0 18px}
+.backbar{padding:8px 20px;background:var(--bg)}
+.navtop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.lang{font-size:13px;font-weight:600;color:var(--ang);text-decoration:none;border:1.5px solid var(--line);border-radius:99px;padding:3px 12px;background:#fff}
+.lang:hover{border-color:var(--ang)}
+.back{display:inline-block;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+@media print{.backbar{display:none}}
+</style>
+</head>
+<body>
+<nav class="backbar navtop">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <a class="lang" href="../../trigonometria/" hreflang="ca" lang="ca">Valencià</a>
+</nav>
+<header>
+  <div>
+    <h1 data-i18n="title"></h1>
+    <div class="sub" data-i18n="sub"></div>
+  </div>
+  <div class="tools">
+    <div class="seg" role="group">
+      <button id="uDeg" aria-pressed="true" data-i18n="unitDeg"></button>
+      <button id="uRad" aria-pressed="false" data-i18n="unitRad"></button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="top">
+    <section class="card">
+      <svg id="circle" viewBox="-1.62 -1.62 3.24 3.24" role="img" aria-label="Circunferencia goniométrica"></svg>
+    </section>
+
+    <div>
+      <section class="card">
+        <h2 data-i18n="ctrlTitle"></h2>
+        <p class="hint" data-i18n="ctrlHint"></p>
+        <div class="row">
+          <label><b data-i18n="angleLbl"></b></label>
+          <input type="range" id="slider" min="0" max="360" step="1" value="30">
+          <input type="number" id="angleInput" step="1"> <span id="angleUnit"></span>
+        </div>
+        <div class="row">
+          <button class="btn" id="play"></button>
+          <label><span data-i18n="speed"></span>
+            <select id="speed">
+              <option value="15" data-i18n="slow"></option>
+              <option value="40" selected data-i18n="mid"></option>
+              <option value="90" data-i18n="fast"></option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="magnet" checked> <span data-i18n="magnet"></span></label>
+          <label><input type="checkbox" id="pauseN" checked> <span data-i18n="pauseN"></span></label>
+        </div>
+        <div class="row">
+          <b data-i18n="showLbl"></b>
+          <label><input type="checkbox" id="shSin" checked><span class="dot" style="background:var(--sin)"></span><span data-i18n="fnSin"></span></label>
+          <label><input type="checkbox" id="shCos" checked><span class="dot" style="background:var(--cos)"></span><span data-i18n="fnCos"></span></label>
+          <label><input type="checkbox" id="shTan" checked><span class="dot" style="background:var(--tan)"></span><span data-i18n="fnTan"></span></label>
+        </div>
+        <div><b data-i18n="quickTitle"></b></div>
+        <div class="chips" id="quick" style="margin-top:6px"></div>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="readTitle"></h2>
+        <div id="readout"></div>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="graphTitle"></h2>
+        <div class="legend"><span style="color:var(--sin)" data-i18n="fnSin"></span><span style="color:var(--cos)" data-i18n="fnCos"></span></div>
+        <svg id="graph" viewBox="0 0 440 230" role="img" aria-label="Gráfica"></svg>
+        <p class="hint" data-i18n="graphHint"></p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2 data-i18n="tabATitle"></h2>
+    <p class="hint" data-i18n="tabAHint"></p>
+    <div class="tw" id="tabA"></div>
+    <p class="muted" data-i18n="relNote"></p>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="tabBTitle"></h2>
+    <p class="hint" data-i18n="tabBHint"></p>
+    <div class="tw" id="tabB"></div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="testTitle"></h2>
+    <div id="testBox"></div>
+  </section>
+  <footer data-i18n="footer"></footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Dades i traduccions ---------- */
+const NOT=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360];
+const REF={
+  0:{sin:'0',cos:'1',tan:'0'},
+  30:{sin:'1/2',cos:'√3/2',tan:'√3/3'},
+  45:{sin:'√2/2',cos:'√2/2',tan:'1'},
+  60:{sin:'√3/2',cos:'1/2',tan:'√3'},
+  90:{sin:'1',cos:'0',tan:'nd'}
+};
+const SG={
+  1:{sin:'+',cos:'+',tan:'+'},
+  2:{sin:'+',cos:'-',tan:'-'},
+  3:{sin:'-',cos:'-',tan:'+'},
+  4:{sin:'-',cos:'+',tan:'-'}
+};
+const T={
+ va:{
+  title:'Circunferencia goniométrica',
+  sub:'Razones trigonométricas de un ángulo · 4.º ESO',
+  unitDeg:'Grados', unitRad:'Radianes',
+  ctrlTitle:'Mueve el punto',
+  ctrlHint:'Arrastra el punto por la circunferencia (o haz clic donde quieras), usa el deslizador o escribe el ángulo.',
+  angleLbl:'Ángulo α',
+  play:'▶ Animar', stop:'⏸ Pausa',
+  speed:'Velocidad', slow:'Lenta', mid:'Normal', fast:'Rápida',
+  magnet:'Imán a los ángulos notables',
+  pauseN:'Pausa en los notables mientras se anima',
+  showLbl:'Mostrar:',
+  fnSin:'sen α', fnCos:'cos α', fnTan:'tg α',
+  sinN:'sen', cosN:'cos', tanN:'tg',
+  quickTitle:'Ángulos notables',
+  readTitle:'Razones trigonométricas',
+  quad:['1.er cuadrante','2.º cuadrante','3.er cuadrante','4.º cuadrante'],
+  axis:'sobre un eje',
+  redLbl:'Reducción al 1.er cuadrante',
+  noRed:'ya está en el 1.er cuadrante',
+  approx:'No es un ángulo notable: valores aproximados.',
+  exactNote:'Ángulo notable: valores exactos con radicales.',
+  nd:'no existe',
+  graphTitle:'Las gráficas de sen α y cos α',
+  graphHint:'Puedes arrastrar sobre la gráfica.',
+  tabATitle:'Ángulos notables y sus relacionados',
+  tabAHint:'Haz clic en cualquier ángulo para llevar el punto allí.',
+  thAlpha:'α (1.er cuadrante)', thComp:'Complementario', thSup:'Suplementario (2.º cuadrante)', th3:'3.er cuadrante', th4:'4.º cuadrante',
+  relNote:'Recuerda: sen(90° − α) = cos α y cos(90° − α) = sen α.',
+  tabBTitle:'Valores exactos (con radicales)',
+  tabBHint:'Haz clic en una fila para llevar el punto a ese ángulo.',
+  thDeg:'α (grados)', thRad:'α (rad)', thRed:'Reducción',
+  testTitle:'Ponte a prueba',
+  qText:(f,a)=>'¿Cuál es el valor exacto de '+f+' '+a+'?',
+  next:'Siguiente', seeIt:'Verlo en la circunferencia',
+  score:'Aciertos', ok:'¡Correcto!', ko:'No es eso.',
+  chkSq:'Comprobación',
+  onAxis:(a,c,s)=>a+' está sobre un eje, así que el punto de la circunferencia es P('+c+', '+s+').',
+  abscissa:'cos es la primera coordenada (abscisa) del punto',
+  ordinate:'sen es la segunda coordenada (ordenada) del punto',
+  tanAxisND:'tg = sen / cos y cos = 0: no se puede dividir entre 0, así que no existe.',
+  tanAxis:(c)=>'tg = sen / cos = 0 / ('+c+') = 0.',
+  redIs:'Reducción:',
+  refVal:(f,a,v)=>f+' '+a+' = '+v,
+  tanRefND:(a)=>'tg '+a+' no existe, porque cos '+a+' = 0.',
+  signIs:(q,f,s)=>'En el '+q+' el signo de '+f+' es '+s+'.',
+  result:(f,a,v)=>'Por tanto, '+f+' '+a+' = '+v,
+  footer:'Archivo autocontenido: funciona sin conexión.'
+ }
+};
+
+const ST={angle:30,lang:'va',unit:'deg',playing:false,speed:40,magnet:true,pause:true,show:{sin:true,cos:true,tan:true}};
+try{
+  const u=localStorage.getItem('tg_unit'); if(u==='deg'||u==='rad') ST.unit=u;
+}catch(e){}
+const t=k=>T[ST.lang][k];
+const $=s=>document.querySelector(s);
+
+/* ---------- Utilitats de format ---------- */
+function fmt(x,d){
+  if(Math.abs(x)<Math.pow(10,-d)/2) x=0;
+  return x.toFixed(d).replace('.',',').replace('-','−');
+}
+function fmtDeg(a){ return Math.abs(a-Math.round(a))<1e-6 ? String(Math.round(a)) : fmt(a,1); }
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+function notableOf(a){ for(const n of NOT){ if(Math.abs(a-n)<1e-6) return n; } return null; }
+function piParts(deg){ const g=gcd(deg,180); return {p:deg/g,q:180/g}; }
+function frac(n,d){ return '<span class="frac"><span class="n">'+n+'</span><span class="d">'+d+'</span></span>'; }
+function radPlain(deg){
+  const {p,q}=piParts(deg); if(p===0) return '0';
+  const nu=(p===1?'':p)+'π'; return q===1?nu:nu+'/'+q;
+}
+function radHTML(deg){
+  const n=notableOf(deg); if(n===null) return fmt(deg*Math.PI/180,3);
+  const {p,q}=piParts(n); if(p===0) return '0';
+  const nu=(p===1?'':p)+'π'; return q===1?nu:frac(nu,String(q));
+}
+function angleHTML(deg,mode){ return mode==='deg' ? fmtDeg(deg)+'°' : radHTML(deg); }
+function angleText(deg,mode){
+  if(mode==='deg') return fmtDeg(deg)+'°';
+  const n=notableOf(deg); return n===null ? fmt(deg*Math.PI/180,3) : radPlain(n);
+}
+function sq(n){ return '<span class="sq">√<span class="rd">'+n+'</span></span>'; }
+function magHTML(mag){
+  if(mag==='nd') return t('nd');
+  const f=s=>s.replace(/√(\d)/,(m,d)=>sq(d));
+  const p=mag.split('/');
+  return p.length===2 ? frac(f(p[0]),f(p[1])) : f(mag);
+}
+function valHTML(v){
+  if(v.mag==='nd') return '<span class="val">'+t('nd')+'</span>';
+  const sg=(v.sign==='-'&&v.mag!=='0')?'−':'';
+  return '<span class="val">'+sg+magHTML(v.mag)+'</span>';
+}
+function quadOf(d){
+  if(d<=90) return {q:1,ref:d};
+  if(d<=180) return {q:2,ref:180-d};
+  if(d<=270) return {q:3,ref:d-180};
+  return {q:4,ref:360-d};
+}
+function exact(fn,d){
+  const {q,ref}=quadOf(d); const mag=REF[ref][fn]; let sign=SG[q][fn];
+  if(mag==='0'||mag==='nd') sign='+';
+  return {sign:sign,mag:mag};
+}
+function halfS(){ return ST.unit==='deg'?'180°':'π'; }
+function fullS(){ return ST.unit==='deg'?'360°':'2π'; }
+function redLine(a){
+  const {q,ref}=quadOf(a);
+  const A=x=>angleText(x,ST.unit);
+  if(q===1) return t('noRed');
+  if(q===2) return halfS()+' − '+A(a)+' = '+A(ref);
+  if(q===3) return A(a)+' − '+halfS()+' = '+A(ref);
+  return fullS()+' − '+A(a)+' = '+A(ref);
+}
+function redShort(d){
+  const {q,ref}=quadOf(d); const A=x=>angleText(x,ST.unit);
+  if(q===1) return '—';
+  if(q===2) return halfS()+' − '+A(ref);
+  if(q===3) return halfS()+' + '+A(ref);
+  return fullS()+' − '+A(ref);
+}
+function signSym(s){ return s==='+'?'+':'−'; }
+
+/* ---------- Circumferència ---------- */
+const NS='http://www.w3.org/2000/svg';
+function E(n,a,p){ const e=document.createElementNS(NS,n); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+const svg=$('#circle');
+const V=1.62;
+const gQ=E('g',{},svg), gG=E('g',{},svg), gL=E('g',{},svg), gD=E('g',{},svg);
+const quadRects=[
+  E('rect',{x:0,y:-V,width:V,height:V,fill:'#6a3fd1','fill-opacity':0},gQ),
+  E('rect',{x:-V,y:-V,width:V,height:V,fill:'#6a3fd1','fill-opacity':0},gQ),
+  E('rect',{x:-V,y:0,width:V,height:V,fill:'#6a3fd1','fill-opacity':0},gQ),
+  E('rect',{x:0,y:0,width:V,height:V,fill:'#6a3fd1','fill-opacity':0},gQ)
+];
+[['I',1.5,-1.45],['II',-1.5,-1.45],['III',-1.5,1.52],['IV',1.5,1.52]].forEach(q=>{
+  E('text',{x:q[1],y:q[2],'text-anchor':'middle','font-size':.1,fill:'#8a93a8','font-weight':700},gQ).textContent=q[0];
+});
+// graella i eixos
+E('line',{x1:-1.58,y1:0,x2:1.58,y2:0,stroke:'#333','stroke-width':.012},gG);
+E('line',{x1:0,y1:-1.58,x2:0,y2:1.58,stroke:'#333','stroke-width':.012},gG);
+E('line',{x1:1,y1:-1.58,x2:1,y2:1.58,stroke:'#139a4b','stroke-width':.01,'stroke-dasharray':'.05 .035',opacity:.5},gG);
+E('circle',{cx:0,cy:0,r:1,fill:'#fff','fill-opacity':.65,stroke:'#222','stroke-width':.016},gG);
+[[1,.06,'1'],[-1,.06,'−1']].forEach(a=>{ E('text',{x:a[0]*0.93,y:.115,'text-anchor':'middle','font-size':.075,fill:'#555'},gG).textContent=a[2]; });
+[[1,'1'],[-1,'−1']].forEach(a=>{ E('text',{x:-.04,y:-a[0]*0.93+.027,'text-anchor':'end','font-size':.075,fill:'#555'},gG).textContent=a[1]; });
+function buildTicks(){
+  while(gL.firstChild) gL.removeChild(gL.firstChild);
+  NOT.forEach(n=>{
+    if(n===360) return;
+    const r=n*Math.PI/180, c=Math.cos(r), s=Math.sin(r);
+    E('line',{x1:c*.96,y1:-s*.96,x2:c*1.04,y2:-s*1.04,stroke:'#222','stroke-width':.014},gL);
+    let lbl;
+    if(n===0) lbl = ST.unit==='deg' ? '0°/360°' : '0/2π';
+    else lbl = angleText(n,ST.unit);
+    const rr = n===0?1.2:1.2;
+    const anchor = (n===0)?'start':(Math.abs(c)<0.01?'middle':(c>0?'start':'end'));
+    const nearTan = (n===30||n===330);
+    const x = n===0 ? 1.07 : (nearTan ? 1.06 : c*1.1);
+    const y = -s*1.1;
+    const tx=E('text',{x:x,y:y+.027,'text-anchor':n===0?'start':anchor,'font-size':.078,fill:'#444',class:'halo'},gL);
+    tx.textContent=lbl;
+    if(n===0) tx.setAttribute('y',.2);
+  });
+}
+// dynamic elements
+const D={};
+D.sector=E('path',{fill:'#6a3fd1','fill-opacity':.14,stroke:'none'},gD);
+D.arc=E('path',{fill:'none',stroke:'#6a3fd1','stroke-width':.024},gD);
+D.tanLine=E('line',{stroke:'#139a4b','stroke-width':.011,'stroke-dasharray':'.04 .03',opacity:.7},gD);
+D.tanSeg=E('line',{stroke:'#139a4b','stroke-width':.034,'stroke-linecap':'round'},gD);
+D.cosSeg=E('line',{stroke:'#1769c4','stroke-width':.034,'stroke-linecap':'round'},gD);
+D.sinSeg=E('line',{stroke:'#d62839','stroke-width':.034,'stroke-linecap':'round'},gD);
+D.radius=E('line',{x1:0,y1:0,stroke:'#1f2430','stroke-width':.022,'stroke-linecap':'round'},gD);
+D.T=E('circle',{r:.032,fill:'#139a4b'},gD);
+D.P=E('circle',{r:.05,fill:'#1f2430',stroke:'#fff','stroke-width':.016},gD);
+D.hit=E('circle',{r:.14,fill:'transparent',style:'cursor:grab'},gD);
+D.lSin=E('text',{'font-size':.1,'font-weight':700,fill:'#d62839',class:'halo'},gD);
+D.lCos=E('text',{'font-size':.1,'font-weight':700,fill:'#1769c4','text-anchor':'middle',class:'halo'},gD);
+D.lTan=E('text',{'font-size':.1,'font-weight':700,fill:'#139a4b',class:'halo'},gD);
+D.lAng=E('text',{'font-size':.11,'font-weight':700,fill:'#6a3fd1','text-anchor':'middle',class:'halo'},gD);
+D.lSin.textContent='sin'; D.lCos.textContent='cos'; D.lTan.textContent='tg'; D.lAng.textContent='α';
+
+function drawCircle(){
+  const a=ST.angle, r=a*Math.PI/180;
+  let c=Math.cos(r), s=Math.sin(r);
+  if(Math.abs(c)<1e-12) c=0; if(Math.abs(s)<1e-12) s=0;
+  const q=Math.min(3,Math.floor(a/90+1e-9));
+  quadRects.forEach((el,i)=>el.setAttribute('fill-opacity',i===q?.09:0));
+  const ra=.3;
+  if(a<.05){ D.arc.setAttribute('d',''); D.sector.setAttribute('d',''); }
+  else if(a>=359.95){
+    const d='M '+ra+',0 A '+ra+','+ra+' 0 1 0 '+(-ra)+',0 A '+ra+','+ra+' 0 1 0 '+ra+',0';
+    D.arc.setAttribute('d',d); D.sector.setAttribute('d',d);
+  } else {
+    const la=a>180?1:0, ex=ra*c, ey=-ra*s;
+    D.arc.setAttribute('d','M '+ra+',0 A '+ra+','+ra+' 0 '+la+' 0 '+ex+','+ey);
+    D.sector.setAttribute('d','M 0,0 L '+ra+',0 A '+ra+','+ra+' 0 '+la+' 0 '+ex+','+ey+' Z');
+  }
+  D.radius.setAttribute('x2',c); D.radius.setAttribute('y2',-s);
+  D.P.setAttribute('cx',c); D.P.setAttribute('cy',-s);
+  D.hit.setAttribute('cx',c); D.hit.setAttribute('cy',-s);
+  // cos
+  D.cosSeg.setAttribute('x1',0); D.cosSeg.setAttribute('y1',0); D.cosSeg.setAttribute('x2',c); D.cosSeg.setAttribute('y2',0);
+  // sin
+  D.sinSeg.setAttribute('x1',c); D.sinSeg.setAttribute('y1',0); D.sinSeg.setAttribute('x2',c); D.sinSeg.setAttribute('y2',-s);
+  // tg
+  const nd=Math.abs(c)<1e-9;
+  const sh=ST.show;
+  let tshow=sh.tan&&!nd;
+  if(!nd){
+    let tg=s/c; tg=Math.max(-60,Math.min(60,tg));
+    D.tanSeg.setAttribute('x1',1); D.tanSeg.setAttribute('y1',0); D.tanSeg.setAttribute('x2',1); D.tanSeg.setAttribute('y2',-tg);
+    D.tanLine.setAttribute('x1',c); D.tanLine.setAttribute('y1',-s); D.tanLine.setAttribute('x2',1); D.tanLine.setAttribute('y2',-tg);
+    D.T.setAttribute('cx',1); D.T.setAttribute('cy',-tg);
+    const ly=Math.max(-1.45,Math.min(1.45,-tg/2));
+    D.lTan.setAttribute('x',1.07); D.lTan.setAttribute('y',ly+.035);
+    D.lTan.style.display = (tshow&&Math.abs(tg)>.12)?'':'none';
+  } else { D.lTan.style.display='none'; }
+  [D.tanSeg,D.tanLine,D.T].forEach(e=>e.style.display=tshow?'':'none');
+  D.cosSeg.style.display=sh.cos?'':'none';
+  D.sinSeg.style.display=sh.sin?'':'none';
+  // etiquetes
+  D.lCos.setAttribute('x',c/2); D.lCos.setAttribute('y', s>=0 ? .15 : -.07);
+  D.lCos.style.display=(sh.cos&&Math.abs(c)>.2)?'':'none';
+  const sinLeft = c>0.6;
+  const sx=c+(sinLeft?-.07:(c>=0?.07:-.07));
+  D.lSin.setAttribute('x',sx); D.lSin.setAttribute('y',-s/2+.035);
+  D.lSin.setAttribute('text-anchor',(sinLeft||c<0)?'end':'start');
+  D.lSin.style.display=(sh.sin&&Math.abs(s)>.15)?'':'none';
+  const ba=(a/2)*Math.PI/180;
+  D.lAng.setAttribute('x',.46*Math.cos(ba)); D.lAng.setAttribute('y',-.46*Math.sin(ba)+.04);
+  D.lAng.style.display=(a>14&&a<346)?'':'none';
+}
+
+/* ---------- Gràfica sin / cos ---------- */
+const G=$('#graph');
+const GW=440,GH=230,pl=44,pr=14,pt=14,pb=30;
+const gx=d=>pl+d/360*(GW-pl-pr), gy=v=>pt+(1-v)/2*(GH-pt-pb);
+const gGrid=E('g',{},G), gXL=E('g',{},G), gCur=E('g',{},G), gDyn=E('g',{},G);
+[0,90,180,270,360].forEach(d=>E('line',{x1:gx(d),y1:pt,x2:gx(d),y2:GH-pb,stroke:'#d5dbe8','stroke-width':1},gGrid));
+[-1,-.5,0,.5,1].forEach(v=>{
+  E('line',{x1:pl,y1:gy(v),x2:GW-pr,y2:gy(v),stroke:v===0?'#555':'#d5dbe8','stroke-width':v===0?1.3:1},gGrid);
+  E('text',{x:pl-6,y:gy(v)+4,'text-anchor':'end','font-size':11,fill:'#555'},gGrid).textContent=String(v).replace('.',',').replace('-','−');
+});
+(function(){
+  let ds='',dc='';
+  for(let d=0;d<=360;d+=2){
+    const r=d*Math.PI/180;
+    ds+=(d?'L':'M')+gx(d).toFixed(1)+','+gy(Math.sin(r)).toFixed(1);
+    dc+=(d?'L':'M')+gx(d).toFixed(1)+','+gy(Math.cos(r)).toFixed(1);
+  }
+  E('path',{d:ds,fill:'none',stroke:'#d62839','stroke-width':2.2},gCur);
+  E('path',{d:dc,fill:'none',stroke:'#1769c4','stroke-width':2.2},gCur);
+})();
+const GV=E('line',{y1:pt,y2:GH-pb,stroke:'#6a3fd1','stroke-width':1.4,'stroke-dasharray':'4 3'},gDyn);
+const GS=E('circle',{r:5,fill:'#d62839',stroke:'#fff','stroke-width':1.5},gDyn);
+const GC=E('circle',{r:5,fill:'#1769c4',stroke:'#fff','stroke-width':1.5},gDyn);
+function buildGraphLabels(){
+  while(gXL.firstChild) gXL.removeChild(gXL.firstChild);
+  [0,90,180,270,360].forEach(d=>{
+    const tx=E('text',{x:gx(d),y:GH-pb+16,'text-anchor':'middle','font-size':11,fill:'#555'},gXL);
+    tx.textContent=angleText(d,ST.unit);
+  });
+}
+function drawGraph(){
+  const a=ST.angle, r=a*Math.PI/180;
+  GV.setAttribute('x1',gx(a)); GV.setAttribute('x2',gx(a));
+  GS.setAttribute('cx',gx(a)); GS.setAttribute('cy',gy(Math.sin(r)));
+  GC.setAttribute('cx',gx(a)); GC.setAttribute('cy',gy(Math.cos(r)));
+  GS.style.display=ST.show.sin?'':'none';
+  GC.style.display=ST.show.cos?'':'none';
+}
+
+/* ---------- Lectura numèrica ---------- */
+function renderReadout(){
+  const a=ST.angle, r=a*Math.PI/180;
+  let s=Math.sin(r), c=Math.cos(r);
+  const nd=Math.abs(c)<1e-9;
+  const n=notableOf(a);
+  const other=ST.unit==='deg'?'rad':'deg';
+  const prim=angleHTML(a,ST.unit)+(ST.unit==='rad'?' rad':'');
+  const sec=angleHTML(a,other)+(other==='rad'?' rad':'');
+  const ax=Math.abs(a/90-Math.round(a/90))<1e-9;
+  const qi=Math.min(3,Math.floor(a/90));
+  let qtxt;
+  if(ax) qtxt=t('axis');
+  else {
+    const sg=SG[qi+1];
+    qtxt=t('quad')[qi]+' ('+t('sinN')+' '+signSym(sg.sin)+', '+t('cosN')+' '+signSym(sg.cos)+', tg '+signSym(sg.tan)+')';
+  }
+  const rowH=(cls,lab,dec,ex)=>'<div class="rr '+cls+'"><span class="lab">'+lab+'</span><span class="dec">'+dec+'</span><span class="ex">'+ex+'</span></div>';
+  const ex=fn=>n!==null?'= '+valHTML(exact(fn,n)):'';
+  let h='';
+  h+='<div class="bigang">α = '+prim+' = '+sec+'</div>';
+  h+='<div class="pill">'+qtxt+'</div> ';
+  h+='<div class="muted">'+t('redLbl')+': '+redLine(a)+'</div>';
+  h+='<div style="margin-top:6px">';
+  h+=rowH('s',t('fnSin'),'= '+fmt(s,3),ex('sin'));
+  h+=rowH('c',t('fnCos'),'= '+fmt(c,3),ex('cos'));
+  h+=rowH('t',t('fnTan'),nd?'—':'= '+fmt(s/c,3),nd?t('nd'):ex('tan'));
+  h+='</div>';
+  h+='<div class="muted" style="margin-top:6px">'+t('chkSq')+': '+t('sinN')+'²α + '+t('cosN')+'²α = '+fmt(s*s,3)+' + '+fmt(c*c,3)+' = '+fmt(s*s+c*c,3)+'</div>';
+  h+='<div style="margin-top:6px"><span class="pill'+(n!==null?' ok':'')+'">'+(n!==null?t('exactNote'):t('approx'))+'</span></div>';
+  $('#readout').innerHTML=h;
+}
+
+/* ---------- Taules ---------- */
+function buildTableA(){
+  const quarter=ST.unit==='deg'?'90°':'π/2';
+  const R=[0,30,45,60,90];
+  let h='<table><thead><tr>';
+  h+='<th>'+t('thAlpha')+'<br><small>α</small></th>';
+  h+='<th>'+t('thComp')+'<br><small>'+quarter+' − α</small></th>';
+  h+='<th>'+t('thSup')+'<br><small>'+halfS()+' − α</small></th>';
+  h+='<th>'+t('th3')+'<br><small>'+halfS()+' + α</small></th>';
+  h+='<th>'+t('th4')+'<br><small>'+fullS()+' − α</small></th>';
+  h+='</tr></thead><tbody>';
+  R.forEach(a=>{
+    const vals=[a,90-a,180-a,180+a,360-a];
+    h+='<tr>';
+    vals.forEach(v=>{ h+='<td class="clk" data-deg="'+v+'">'+angleHTML(v,ST.unit)+'</td>'; });
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  $('#tabA').innerHTML=h;
+}
+function buildTableB(){
+  const groups=[[0,30,45,60,90],[120,135,150,180],[210,225,240,270],[300,315,330,360]];
+  let h='<table><thead><tr><th>'+t('thDeg')+'</th><th>'+t('thRad')+'</th><th>'+t('thRed')+'</th>'
+       +'<th style="color:var(--sin)">'+t('fnSin')+'</th><th style="color:var(--cos)">'+t('fnCos')+'</th><th style="color:var(--tan)">'+t('fnTan')+'</th></tr></thead><tbody>';
+  groups.forEach((g,i)=>{
+    const sg=SG[i+1];
+    h+='<tr class="qh"><td colspan="6">'+t('quad')[i]+' · '+t('sinN')+' '+signSym(sg.sin)+', '+t('cosN')+' '+signSym(sg.cos)+', tg '+signSym(sg.tan)+'</td></tr>';
+    g.forEach(d=>{
+      h+='<tr class="clk" data-deg="'+d+'"><td>'+d+'°</td><td>'+radHTML(d)+'</td><td>'+redShort(d)+'</td>'
+        +'<td>'+valHTML(exact('sin',d))+'</td><td>'+valHTML(exact('cos',d))+'</td><td>'+valHTML(exact('tan',d))+'</td></tr>';
+    });
+  });
+  h+='</tbody></table>';
+  $('#tabB').innerHTML=h;
+}
+function markCurrent(){
+  const n=notableOf(ST.angle);
+  document.querySelectorAll('[data-deg]').forEach(el=>{
+    const on = n!==null && Number(el.getAttribute('data-deg'))===n;
+    el.classList.toggle('cur',on);
+  });
+}
+function buildQuick(){
+  const box=$('#quick'); box.innerHTML='';
+  NOT.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='chip'; b.setAttribute('data-deg',n);
+    b.textContent=angleText(n,ST.unit);
+    b.addEventListener('click',()=>{ stopPlay(); setAngle(n); });
+    box.appendChild(b);
+  });
+}
+function markChips(){
+  const n=notableOf(ST.angle);
+  document.querySelectorAll('#quick .chip').forEach(el=>{
+    el.classList.toggle('on', n!==null && Number(el.getAttribute('data-deg'))===n);
+  });
+}
+function ensureCircleVisible(){
+  const r=svg.getBoundingClientRect();
+  if(r.top<0||r.bottom>window.innerHeight) svg.scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('#tabA [data-deg], #tabB [data-deg]');
+  if(!el) return;
+  stopPlay(); setAngle(Number(el.getAttribute('data-deg'))); ensureCircleVisible();
+});
+
+/* ---------- Mini test ---------- */
+const TS={q:null,done:false,chosen:null,right:0,total:0};
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function newQuestion(){
+  const d=NOT[Math.floor(Math.random()*NOT.length)];
+  const fn=['sin','cos','tan'][Math.floor(Math.random()*3)];
+  const cor=exact(fn,d);
+  const key=v=>v.sign+v.mag;
+  const norm=v=>{ if(v.mag==='0'||v.mag==='nd') v.sign='+'; return v; };
+  const opts=[cor]; const seen=new Set([key(cor)]);
+  const add=v=>{ v=norm(v); const k=key(v); if(!seen.has(k)&&opts.length<4){ seen.add(k); opts.push(v); } };
+  const {q,ref}=quadOf(d);
+  if(cor.mag!=='0'&&cor.mag!=='nd') add({sign:cor.sign==='+'?'-':'+',mag:cor.mag});
+  const dm = fn==='tan' ? REF[90-ref].tan : (fn==='sin' ? REF[ref].cos : REF[ref].sin);
+  add({sign:cor.sign,mag:dm});
+  const pool = fn==='tan' ? ['0','√3/3','1','√3','nd'] : ['0','1/2','√2/2','√3/2','1'];
+  let guard=0;
+  while(opts.length<4 && guard++<100){
+    add({sign:Math.random()<.5?'+':'-',mag:pool[Math.floor(Math.random()*pool.length)]});
+  }
+  TS.q={d:d,fn:fn,opts:shuffle(opts),key:key(cor)};
+  TS.done=false; TS.chosen=null;
+}
+function explain(fn,d){
+  const fnN=t(fn+'N');
+  const A=angleHTML(d,ST.unit);
+  const {q,ref}=quadOf(d);
+  const val=valHTML(exact(fn,d));
+  if(d%90===0){
+    const c=valHTML(exact('cos',d)), s=valHTML(exact('sin',d));
+    let h='<p>'+t('onAxis')(A,c,s)+'</p>';
+    if(fn==='cos') h+='<p>'+t('abscissa')+': '+val+'</p>';
+    else if(fn==='sin') h+='<p>'+t('ordinate')+': '+val+'</p>';
+    else h+='<p>'+(exact('cos',d).mag==='0'?t('tanAxisND'):t('tanAxis')(c))+'</p>';
+    return h;
+  }
+  const refA=angleHTML(ref,ST.unit);
+  let h='<p><b>'+t('redIs')+'</b> '+redLine(d)+'</p>';
+  h+='<p>'+(REF[ref][fn]==='nd'?t('tanRefND')(refA):t('refVal')(fnN,refA,magHTML(REF[ref][fn])))+'</p>';
+  h+='<p>'+t('signIs')(t('quad')[q-1],fnN,signSym(SG[q][fn]))+'</p>';
+  h+='<p><b>'+t('result')(fnN,A,val)+'</b></p>';
+  return h;
+}
+function renderTest(){
+  if(!TS.q) newQuestion();
+  const Q=TS.q;
+  let h='<div class="qline">'+t('qText')(t(Q.fn+'N'),angleHTML(Q.d,ST.unit))+'</div><div class="opts">';
+  Q.opts.forEach(o=>{
+    const k=o.sign+o.mag; let cls='opt';
+    if(TS.done){ if(k===Q.key) cls+=' good'; else if(k===TS.chosen) cls+=' bad'; }
+    h+='<button class="'+cls+'" data-k="'+k+'"'+(TS.done?' disabled':'')+'>'+valHTML(o)+'</button>';
+  });
+  h+='</div>';
+  if(TS.done){
+    const okk=TS.chosen===Q.key;
+    h+='<div class="fb"><p><b>'+(okk?t('ok'):t('ko'))+'</b></p>'+explain(Q.fn,Q.d)+'</div>';
+    h+='<div class="row"><button class="btn" id="tNext">'+t('next')+'</button><button class="btn ghost" id="tSee">'+t('seeIt')+'</button></div>';
+  }
+  h+='<div class="muted">'+t('score')+': '+TS.right+' / '+TS.total+'</div>';
+  $('#testBox').innerHTML=h;
+  document.querySelectorAll('#testBox .opt').forEach(b=>b.addEventListener('click',()=>{
+    if(TS.done) return;
+    TS.chosen=b.getAttribute('data-k'); TS.done=true; TS.total++;
+    if(TS.chosen===Q.key) TS.right++;
+    renderTest();
+  }));
+  const nx=$('#tNext'); if(nx) nx.addEventListener('click',()=>{ newQuestion(); renderTest(); });
+  const se=$('#tSee'); if(se) se.addEventListener('click',()=>{ stopPlay(); setAngle(Q.d); ensureCircleVisible(); });
+}
+
+/* ---------- Estat, controls i animació ---------- */
+function setAngle(a){ ST.angle=a; render(); }
+function render(){
+  drawCircle(); drawGraph(); renderReadout(); markCurrent(); markChips();
+  const sl=$('#slider'); sl.value=Math.round(ST.angle);
+  const inp=$('#angleInput');
+  if(document.activeElement!==inp){
+    inp.value = ST.unit==='deg' ? String(Math.round(ST.angle*100)/100) : String(Math.round(ST.angle*Math.PI/180*1000)/1000);
+  }
+}
+function snap(a,forPointer){
+  a=Math.round(a);
+  if(ST.magnet){ for(const n of NOT){ if(Math.abs(a-n)<=2){ a=n; break; } } }
+  if(forPointer&&a>=360&&!ST.magnet) a=0;
+  return Math.max(0,Math.min(360,a));
+}
+let raf=0,lastTs=null,holdUntil=0;
+function updPlayBtn(){ $('#play').textContent=ST.playing?t('stop'):t('play'); }
+function stopPlay(){ ST.playing=false; cancelAnimationFrame(raf); updPlayBtn(); }
+function startPlay(){
+  if(ST.playing) return;
+  ST.playing=true; lastTs=null; holdUntil=0; updPlayBtn();
+  cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+}
+function tick(ts){
+  if(!ST.playing) return;
+  if(lastTs===null) lastTs=ts;
+  const dt=Math.min(.1,(ts-lastTs)/1000); lastTs=ts;
+  if(ts<holdUntil){ raf=requestAnimationFrame(tick); return; }
+  const a=ST.angle; let next=a+ST.speed*dt;
+  if(ST.pause){
+    const n=NOT.find(x=>x>a+1e-6&&x<=next+1e-9);
+    if(n!==undefined){ next=n; holdUntil=ts+1700; }
+  }
+  if(next>360) next-=360;
+  setAngle(next);
+  raf=requestAnimationFrame(tick);
+}
+function svgPoint(el,e){ const p=el.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(el.getScreenCTM().inverse()); }
+let dragC=false, dragG=false;
+svg.addEventListener('pointerdown',e=>{ dragC=true; svg.setPointerCapture(e.pointerId); stopPlay(); fromCircle(e); e.preventDefault(); });
+svg.addEventListener('pointermove',e=>{ if(dragC) fromCircle(e); });
+['pointerup','pointercancel'].forEach(ev=>svg.addEventListener(ev,()=>{ dragC=false; }));
+function fromCircle(e){
+  const p=svgPoint(svg,e); let a=Math.atan2(-p.y,p.x)*180/Math.PI; if(a<0) a+=360;
+  setAngle(snap(a,true));
+}
+G.addEventListener('pointerdown',e=>{ dragG=true; G.setPointerCapture(e.pointerId); stopPlay(); fromGraph(e); e.preventDefault(); });
+G.addEventListener('pointermove',e=>{ if(dragG) fromGraph(e); });
+['pointerup','pointercancel'].forEach(ev=>G.addEventListener(ev,()=>{ dragG=false; }));
+function fromGraph(e){
+  const p=svgPoint(G,e); let a=(p.x-pl)/(GW-pl-pr)*360;
+  setAngle(snap(Math.max(0,Math.min(360,a)),false));
+}
+$('#slider').addEventListener('input',e=>{ stopPlay(); setAngle(snap(Number(e.target.value),false)); });
+$('#angleInput').addEventListener('input',e=>{
+  const v=parseFloat(String(e.target.value).replace(',','.')); if(!isFinite(v)) return;
+  stopPlay();
+  let a = ST.unit==='deg' ? v : v*180/Math.PI;
+  if(a!==360) a=((a%360)+360)%360;
+  for(const n of NOT){ if(Math.abs(a-n)<0.01){ a=n; break; } }
+  setAngle(a);
+});
+$('#angleInput').addEventListener('blur',()=>render());
+$('#play').addEventListener('click',()=>{ ST.playing?stopPlay():startPlay(); });
+$('#speed').addEventListener('change',e=>{ ST.speed=Number(e.target.value); });
+$('#magnet').addEventListener('change',e=>{ ST.magnet=e.target.checked; });
+$('#pauseN').addEventListener('change',e=>{ ST.pause=e.target.checked; });
+$('#shSin').addEventListener('change',e=>{ ST.show.sin=e.target.checked; render(); });
+$('#shCos').addEventListener('change',e=>{ ST.show.cos=e.target.checked; render(); });
+$('#shTan').addEventListener('change',e=>{ ST.show.tan=e.target.checked; render(); });
+
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.getAttribute('data-i18n')); });
+  $('#uDeg').setAttribute('aria-pressed',ST.unit==='deg');
+  $('#uRad').setAttribute('aria-pressed',ST.unit==='rad');
+  $('#angleUnit').textContent=ST.unit==='deg'?'°':'rad';
+  $('#angleInput').step=ST.unit==='deg'?'1':'0.01';
+  updPlayBtn();
+  buildTicks(); buildGraphLabels(); buildQuick(); buildTableA(); buildTableB(); renderTest();
+  render();
+}
+$('#uDeg').addEventListener('click',()=>{ ST.unit='deg'; try{localStorage.setItem('tg_unit','deg');}catch(e){} applyLang(); });
+$('#uRad').addEventListener('click',()=>{ ST.unit='rad'; try{localStorage.setItem('tg_unit','rad');}catch(e){} applyLang(); });
+
+applyLang();
+})();
+</script>
+</body>
+</html>
