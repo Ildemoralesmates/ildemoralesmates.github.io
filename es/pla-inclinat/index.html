@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Cambia el ángulo del plano inclinado y mira cómo el peso se descompone en P∥ = mg·sen θ y P⊥ = mg·cos θ; la normal equilibra la componente perpendicular.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/pla-inclinat/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/pla-inclinat/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/pla-inclinat/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/pla-inclinat/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Plano inclinado: descomposición del peso">
+<meta property="og:description" content="Cambia el ángulo del plano inclinado y mira cómo el peso se descompone en P∥ = mg·sen θ y P⊥ = mg·cos θ; la normal equilibra la componente perpendicular.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/pla-inclinat/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<title>Plano inclinado: descomposición del peso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#EDF1F6; --grid:rgba(36,84,214,.09);
+  --surface:#FFFFFF; --surface2:#F3F6FA;
+  --fg:#14202E; --muted:#526174; --line:#C7D2E0;
+  --accent:#2454D6; --accent-ink:#FFFFFF;
+  --font-head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--fg); font:17px/1.5 var(--font-body);
+}
+.page{max-width:1120px;margin:0 auto;padding:20px 16px 8px}
+.back{display:inline-block;font:600 .9rem var(--font-mono);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--fg);text-decoration:underline}
+.navtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.lang{font:600 .85rem var(--font-mono);color:var(--accent);text-decoration:none;border:1.5px solid var(--line);border-radius:99px;padding:4px 12px;background:var(--surface)}
+.lang:hover{border-color:var(--accent)}
+.lang:focus-visible,.back:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.top{margin-bottom:14px}
+h1{font:700 clamp(1.5rem,4vw,2.1rem)/1.15 var(--font-head);margin:0}
+.kicker{font:600 .85rem var(--font-mono);color:var(--muted);margin:6px 0 0;text-transform:uppercase;letter-spacing:.04em}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+.sheet{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:14px}
+.stage{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:6px}
+canvas{width:100%;height:auto;display:block}
+.side{display:grid;gap:14px}
+.card{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:14px 16px}
+.ctl{margin-top:8px}
+.ctl:first-child{margin-top:0}
+.ctl .row{display:flex;justify-content:space-between;align-items:baseline;font-weight:600}
+.val{font:600 .95rem var(--font-mono);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.chk{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.98rem}
+.chk input{width:18px;height:18px;accent-color:var(--accent)}
+.btns{display:flex;gap:10px;margin-top:14px}
+.btn{font:700 1rem var(--font-body);border:2px solid var(--fg);background:var(--surface);color:var(--fg);border-radius:10px;padding:9px 18px;min-height:44px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+td{padding:4px 2px}
+td:last-child{text-align:right;font:600 .95rem var(--font-mono);font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px}
+.note{font-size:.9rem;color:var(--muted);margin:10px 0 0}
+.msg{font-weight:600;margin:10px 0 0;color:var(--fg)}
+@media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){body{font-size:16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="navtop">
+    <a class="back" href="../../">← Recursos de matemáticas</a>
+    <a class="lang" href="../../pla-inclinat/" hreflang="ca" lang="ca">Valencià</a>
+  </nav>
+  <div class="top">
+    <h1>Plano inclinado: descomposición del peso</h1>
+    <p class="kicker">Física · Dinámica</p>
+  </div>
+
+  <div class="layout">
+    <div class="sheet">
+      <div class="stage"><canvas id="pi-cv" width="900" height="540" role="img" aria-label="Bloque sobre un plano inclinado con el peso, sus componentes y la normal"></canvas></div>
+    </div>
+    <div class="side">
+      <div class="card">
+        <div class="ctl"><div class="row"><label for="pi-th">Ángulo θ</label><span class="val" id="pi-vth">30°</span></div>
+          <input type="range" id="pi-th" min="0" max="80" step="0.5" value="30"></div>
+        <div class="ctl"><div class="row"><label for="pi-m">Masa m</label><span class="val" id="pi-vm">5 kg</span></div>
+          <input type="range" id="pi-m" min="1" max="10" step="0.5" value="5"></div>
+        <div class="ctl"><div class="row"><label for="pi-mu">Coeficiente de rozamiento μ</label><span class="val" id="pi-vmu">0,00</span></div>
+          <input type="range" id="pi-mu" min="0" max="1" step="0.01" value="0"></div>
+        <div class="chk"><input type="checkbox" id="pi-comp" checked><label for="pi-comp">Muestra las componentes del peso</label></div>
+        <div class="chk"><input type="checkbox" id="pi-n" checked><label for="pi-n">Muestra la normal</label></div>
+        <div class="chk"><input type="checkbox" id="pi-fr" checked><label for="pi-fr">Muestra el rozamiento</label></div>
+        <div class="chk"><input type="checkbox" id="pi-ang" checked><label for="pi-ang">Marca los ángulos</label></div>
+        <div class="btns">
+          <button type="button" class="btn primary" id="pi-go">Soltar</button>
+          <button type="button" class="btn" id="pi-reset">Reiniciar</button>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <tr><td><span class="dot" style="background:#c0392b"></span>Peso P = mg</td><td id="pi-oP"></td></tr>
+          <tr><td><span class="dot" style="background:#d68910"></span>P∥ = mg·sen θ</td><td id="pi-oPx"></td></tr>
+          <tr><td><span class="dot" style="background:#7d3c98"></span>P⊥ = mg·cos θ</td><td id="pi-oPy"></td></tr>
+          <tr><td><span class="dot" style="background:#1e8449"></span>Normal N</td><td id="pi-oN"></td></tr>
+          <tr><td><span class="dot" style="background:#555"></span>Rozamiento Fr</td><td id="pi-oFr"></td></tr>
+          <tr><td>Aceleración a</td><td id="pi-oA"></td></tr>
+        </table>
+        <p class="msg" id="pi-msg" aria-live="polite"></p>
+        <p class="note">g = 9,8 m/s². Los vectores se dibujan con longitud proporcional a su módulo (escala adaptada a la masa).</p>
+        <p class="note"><b>Para la clase:</b> antes de mover el control, pide que prevean si N será mayor o menor que P cuando aumente el ángulo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var cv=document.getElementById('pi-cv'), ctx=cv.getContext('2d');
+  var $=function(id){return document.getElementById('pi-'+id);};
+  var g=9.8, L=480, A={x:110,y:500}, BW=64, BH=42, PXM=100;
+  var S0=400, SMIN=BW/2+4;
+  var s=S0, v=0, running=false, last=null;
+  var fmt=function(x,d){return x.toFixed(d===undefined?1:d).replace('.',',');};
+
+  var MSG={
+    pla:'Con θ = 0 todo el peso lo soporta la normal: N = P.',
+    eq:'Equilibrio: Fr = P∥ y N = P⊥. Como tan θ ≤ μ, no desliza.',
+    lliure:'Sin rozamiento: la única fuerza neta es P∥, así que a = g·sen θ (¡no depende de la masa!).',
+    llisca:'Desliza: a = g(sen θ − μ cos θ), porque Fr = μN.'
+  };
+  var BTN_GO='Soltar', BTN_PAUSE='Pausa';
+
+  function state(){
+    var th=parseFloat($('th').value)*Math.PI/180;
+    var m=parseFloat($('m').value), mu=parseFloat($('mu').value);
+    var P=m*g, Px=P*Math.sin(th), Py=P*Math.cos(th), N=Py;
+    var slides=Math.tan(th)>mu+1e-9 && th>0;
+    var Fr=slides?mu*N:Px;
+    var a=slides?g*(Math.sin(th)-mu*Math.cos(th)):0;
+    return {th:th,m:m,mu:mu,P:P,Px:Px,Py:Py,N:N,Fr:Fr,a:a,slides:slides};
+  }
+
+  function arrow(x0,y0,dx,dy,color,label,o){
+    o=o||{};
+    var len=Math.hypot(dx,dy); if(len<3) return;
+    var x1=x0+dx, y1=y0+dy, ang=Math.atan2(dy,dx), h=11;
+    ctx.save();
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=o.w||3;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1-Math.cos(ang)*h*0.6,y1-Math.sin(ang)*h*0.6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-h*Math.cos(ang-0.4),y1-h*Math.sin(ang-0.4));
+    ctx.lineTo(x1-h*Math.cos(ang+0.4),y1-h*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
+    if(label){
+      ctx.font='bold 16px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(label,x1+Math.cos(ang)*16+(o.lx||0),y1+Math.sin(ang)*16+(o.ly||0));
+    }
+    ctx.restore();
+  }
+
+  function draw(){
+    var st=state(), th=st.th, cs=Math.cos(th), sn=Math.sin(th);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    var B={x:A.x+L*cs,y:A.y}, C={x:A.x+L*cs,y:A.y-L*sn};
+    ctx.fillStyle='#e6e2d6'; ctx.strokeStyle='#8a8570'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.lineTo(C.x,C.y); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(A.x-40,A.y); ctx.lineTo(B.x+40,B.y); ctx.stroke();
+    if($('ang').checked && th>0.01){
+      ctx.strokeStyle='#2b6cb0'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(A.x,A.y,70,-th,0); ctx.stroke();
+      ctx.fillStyle='#2b6cb0'; ctx.font='bold 17px system-ui'; ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText('θ',A.x+80,A.y-Math.max(10,Math.min(th*30,25))+(th<0.3?-6:0));
+    }
+    var cx0=A.x+s*cs, cy0=A.y-s*sn;
+    ctx.save(); ctx.translate(cx0,cy0); ctx.rotate(-th);
+    ctx.fillStyle='#4a7fb5'; ctx.strokeStyle='#1f3f66'; ctx.lineWidth=2;
+    ctx.fillRect(-BW/2,-BH,BW,BH); ctx.strokeRect(-BW/2,-BH,BW,BH);
+    ctx.fillStyle='#fff'; ctx.font='bold 15px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(fmt(st.m,1).replace(',0','')+' kg',0,-BH/2);
+    ctx.restore();
+    var n={x:-sn,y:-cs}, u={x:cs,y:-sn};
+    var G={x:cx0+n.x*BH/2,y:cy0+n.y*BH/2};
+    var k=150/st.P;
+    arrow(G.x,G.y,0,st.P*k,'#c0392b','P',{w:4,ly:6});
+    if($('comp').checked && th>0.01){
+      var pxv={x:-u.x*st.Px*k,y:-u.y*st.Px*k};
+      var pyv={x:-n.x*st.Py*k,y:-n.y*st.Py*k};
+      ctx.save(); ctx.strokeStyle='#999'; ctx.setLineDash([5,5]); ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(G.x+pxv.x,G.y+pxv.y); ctx.lineTo(G.x,G.y+st.P*k);
+      ctx.moveTo(G.x+pyv.x,G.y+pyv.y); ctx.lineTo(G.x,G.y+st.P*k); ctx.stroke(); ctx.restore();
+      arrow(G.x,G.y,pxv.x,pxv.y,'#d68910','P∥',{w:3.5,lx:-8,ly:8});
+      arrow(G.x,G.y,pyv.x,pyv.y,'#7d3c98','P⊥',{w:3.5,lx:-10,ly:10});
+    }
+    if($('n').checked){ arrow(G.x,G.y,n.x*st.N*k,n.y*st.N*k,'#1e8449','N',{w:3.5,lx:-10,ly:-6}); }
+    if($('fr').checked && st.mu>0 && th>0.01){
+      arrow(G.x,G.y,u.x*st.Fr*k,u.y*st.Fr*k,'#555','Fr',{w:3,lx:8,ly:-8});
+    }
+    if($('ang').checked && th>0.01){
+      ctx.strokeStyle='#2b6cb0'; ctx.lineWidth=2; ctx.beginPath();
+      ctx.arc(G.x,G.y,42,Math.PI/2-th,Math.PI/2); ctx.stroke();
+      var am=Math.PI/2-th/2;
+      ctx.fillStyle='#2b6cb0'; ctx.font='bold 15px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('θ',G.x+Math.cos(am)*58,G.y+Math.sin(am)*58);
+    }
+    $('vth').textContent=fmt(th*180/Math.PI,1)+'°';
+    $('vm').textContent=fmt(st.m,1)+' kg';
+    $('vmu').textContent=fmt(st.mu,2);
+    $('oP').textContent=fmt(st.P)+' N';
+    $('oPx').textContent=fmt(st.Px)+' N';
+    $('oPy').textContent=fmt(st.Py)+' N';
+    $('oN').textContent=fmt(st.N)+' N';
+    $('oFr').textContent=st.mu>0?fmt(st.Fr)+' N':'—';
+    $('oA').textContent=fmt(st.a,2)+' m/s²';
+    var key;
+    if(th<0.01) key='pla';
+    else if(!st.slides) key='eq';
+    else if(st.mu===0) key='lliure';
+    else key='llisca';
+    $('msg').textContent=MSG[key];
+  }
+
+  function loop(t){
+    if(last===null) last=t;
+    var dt=Math.min((t-last)/1000,0.05); last=t;
+    if(running){
+      var st=state();
+      if(st.slides){
+        v+=st.a*dt; s-=v*dt*PXM;
+        if(s<=SMIN){ s=SMIN; v=0; running=false; $('go').textContent=BTN_GO; }
+      } else { v=0; }
+    }
+    draw(); requestAnimationFrame(loop);
+  }
+
+  $('go').addEventListener('click',function(){
+    if(running){ running=false; $('go').textContent=BTN_GO; return; }
+    if(s<=SMIN+0.5){ s=S0; v=0; }
+    running=true; $('go').textContent=BTN_PAUSE;
+  });
+  $('reset').addEventListener('click',function(){ running=false; s=S0; v=0; $('go').textContent=BTN_GO; });
+  ['th','m','mu'].forEach(function(id){ $(id).addEventListener('input',function(){ v=0; }); });
+  requestAnimationFrame(loop);
+})();
+</script>
+
+<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</body></html>
