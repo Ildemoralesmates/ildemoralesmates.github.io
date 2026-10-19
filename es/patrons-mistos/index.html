@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Patrones con cerillas</title>
+<meta name="description" content="Patrones con cerillas: construye figuras que crecen, completa la tabla, predice figuras lejanas y encuentra la expresión general en n. Iniciación al álgebra para 1.º y 2.º de ESO.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/patrons-mistos/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/patrons-mistos/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/patrons-mistos/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/patrons-mistos/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Patrones con cerillas">
+<meta property="og:description" content="Patrones con cerillas: construye figuras que crecen, completa la tabla, predice figuras lejanas y encuentra la expresión general en n. Iniciación al álgebra para 1.º y 2.º de ESO.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/patrons-mistos/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* Patrons amb mistos: escenari de paper quadriculat a l'esquerra, quadern (taula, predicció, fórmula) a la dreta */
+:root{--grid:rgba(35,80,200,.09); --head:#c8321f; --wood:#c4955a; --wood-edge:#94683a;
+  --c1:#2350c8; --c2:#c77d0a; --c3:#1d8a4e; --bad:#b3261e}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --grid:rgba(118,162,255,.09); --head:#ff5b3d; --wood:#d6a868; --wood-edge:#a87b3f;
+  --c1:#76a2ff; --c2:#f0b24a; --c3:#4cd08a; --bad:#ff8a7d }}
+.pats{display:flex;flex-wrap:wrap;gap:8px}
+.pats button{font:inherit;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.pats button:hover{border-color:var(--muted)}
+.pats button[aria-pressed="true"]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.pats button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--head);color:#fff;border-radius:4px;padding:1px 6px}
+.board{position:relative;padding:12px;background-color:var(--stage);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.board svg{display:block;width:100%;height:clamp(220px,42vh,400px)}
+.count{position:absolute;top:10px;left:14px;display:flex;align-items:baseline;gap:8px;pointer-events:none}
+.count b{font-family:var(--f-display);font-size:48px;line-height:1;font-variant-numeric:tabular-nums;color:var(--head)}
+.count span{color:var(--muted);font-weight:600}
+.figlabel{position:absolute;top:14px;right:16px;font-family:var(--f-display);font-size:22px;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper .k{font-weight:600;color:var(--muted);margin-right:2px}
+.stepper button{width:40px;height:40px;font-size:20px;font-weight:700;padding:0}
+.stepper output{min-width:2.4ch;text-align:center;font-family:var(--f-num);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:12px;border-top:1px dashed var(--line);font-size:17px;font-variant-numeric:tabular-nums;min-height:56px}
+.sum .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
+.mc{display:inline-block;min-width:1.9em;text-align:center;padding:1px 7px;border-radius:6px;font-weight:700;color:#fff}
+.mc.g0{background:var(--wood-edge)} .mc.m1{background:var(--c1)} .mc.m2{background:var(--c2)} .mc.m3{background:var(--c3)}
+.mc.plain{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.sum .eq{font-weight:700}
+.side{display:grid;gap:16px;min-width:0}
+.tw{overflow-x:auto}
+.ptab{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+.ptab th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--line)}
+.ptab td{text-align:center;padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--f-num)}
+.ptab tr.cur td{background:var(--chip);font-weight:700}
+.ptab tr.next td{color:var(--muted)}
+.ptab td.diff{color:var(--c1);font-weight:700}
+.irow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.irow input{font:inherit;font-size:17px;font-weight:600;padding:7px 9px;border-radius:7px;border:1px solid var(--line);background:var(--stage);color:var(--ink);min-width:0;flex:1 1 130px}
+.fb{font-weight:600;min-height:1.4em;margin:0}
+.card p.fb.ok{color:var(--ok)} .card p.fb.bad{color:var(--bad)}
+.sol{border-left:4px solid var(--head);padding:6px 10px;background:var(--stage);border-radius:0 8px 8px 0;display:grid;gap:4px}
+.sol[hidden]{display:none}
+.sol .f{font-family:var(--f-display);font-size:24px;line-height:1.15}
+.m-in{transform-box:fill-box;transform-origin:center}
+.m-in.anim{opacity:0;animation:drop .38s cubic-bezier(.2,.8,.3,1.2) forwards}
+@keyframes drop{from{opacity:0;transform:translateY(-18px) rotate(-8deg) scale(.9)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.m-in.anim{animation:none;opacity:1}}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Álgebra · 1.º y 2.º ESO</p>
+      <h1 data-i18n="h1">Patrones con cerillas</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Construye la figura, cuenta las cerillas y encuentra la regla que sirve para cualquier figura.</p>
+    </div>
+  </header>
+
+  <nav class="pats" id="pats" data-i18n-aria="aria_pats" aria-label="Patrón">
+    <button type="button" data-p="squares"><span data-i18n="p_squares">Fila de cuadrados</span></button>
+    <button type="button" data-p="triangles"><span data-i18n="p_triangles">Fila de triángulos</span></button>
+    <button type="button" data-p="houses"><span data-i18n="p_houses">Fila de casas</span></button>
+    <button type="button" data-p="double"><span data-i18n="p_double">Doble fila</span></button>
+    <button type="button" data-p="loose"><span data-i18n="p_loose">Cuadrados sueltos</span></button>
+    <button type="button" data-p="grid"><span data-i18n="p_grid">Cuadrícula</span> <span class="tag" data-i18n="challenge">Reto</span></button>
+  </nav>
+
+  <main class="app">
+    <section class="stage-card">
+      <div class="bar">
+        <div class="stepper">
+          <span class="k" data-i18n="figure">Figura</span>
+          <button type="button" class="btn" id="minus" aria-label="−1">−</button>
+          <output id="nOut">3</output>
+          <button type="button" class="btn" id="plus" aria-label="+1">+</button>
+        </div>
+        <button type="button" class="btn primary" id="build" data-i18n="build">Construir paso a paso</button>
+        <label class="check sp"><input type="checkbox" id="struct" checked><span data-i18n="structure">Mostrar la estructura</span></label>
+      </div>
+      <div class="board" aria-live="polite">
+        <div class="count"><b id="count">10</b><span data-i18n="matches">cerillas</span></div>
+        <div class="figlabel" id="figlabel"></div>
+        <svg id="svg" preserveAspectRatio="xMidYMid meet" role="img"></svg>
+      </div>
+      <div class="sum" id="sum"></div>
+    </section>
+
+    <aside class="side">
+      <section class="card">
+        <h2><small data-i18n="s1">1. Cuenta</small><span data-i18n="tableT">Tabla</span></h2>
+        <div class="tw"><table class="ptab" id="table"></table></div>
+      </section>
+      <section class="card">
+        <h2><small data-i18n="s2">2. Predice</small><span data-i18n="predictT">Una figura lejana</span></h2>
+        <p id="predQ"></p>
+        <div class="irow">
+          <input type="number" id="predIn" inputmode="numeric" data-i18n-aria="aria_pred" aria-label="Número de cerillas">
+          <button type="button" class="btn primary" id="predCheck" data-i18n="check">Comprobar</button>
+          <button type="button" class="btn" id="predNew" data-i18n="another">Otra</button>
+        </div>
+        <p class="fb" id="predFb"></p>
+      </section>
+      <section class="card">
+        <h2><small data-i18n="s3">3. Generaliza</small><span data-i18n="formulaT">La regla para la figura n</span></h2>
+        <p data-i18n="formulaQ">Escribe una expresión para el número de cerillas de la figura n. Por ejemplo: 4n + 2</p>
+        <div class="irow">
+          <input type="text" id="formIn" autocomplete="off" spellcheck="false" aria-label="f(n)">
+          <button type="button" class="btn primary" id="formCheck" data-i18n="check">Comprobar</button>
+        </div>
+        <p class="fb" id="formFb"></p>
+        <div><button type="button" class="btn" id="reveal" data-i18n="reveal">Mostrar la solución</button></div>
+        <div class="sol" id="sol" hidden><div class="f" id="solF"></div><p id="solE"></p></div>
+      </section>
+      <p class="note" data-i18n="foot">Flechas ← → del teclado: figura anterior o siguiente. Cada color es un bloque nuevo de cerillas.</p>
+    </aside>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+<script>
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../patrons-mistos/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+const I18N={
+ ca:{
+  title:'Patrons amb mistos', eyebrow:'Àlgebra · 1r i 2n ESO', h1:'Patrons amb mistos',
+  lede:'Construeix la figura, compta els mistos i troba la regla que serveix per a qualsevol figura.',
+  aria_pats:'Patró', aria_pred:'Nombre de mistos',
+  p_squares:'Fila de quadrats', p_triangles:'Fila de triangles', p_houses:'Fila de cases', p_double:'Doble fila', p_loose:'Quadrats solts', p_grid:'Quadrícula',
+  challenge:'Repte', figure:'Figura', build:'Construeix pas a pas', structure:"Mostra l'estructura", matches:'mistos',
+  s1:'1. Compta', s2:'2. Prediu', s3:'3. Generalitza',
+  tableT:'Taula', colN:'Figura', colV:'Mistos', colD:'Diferència',
+  predictT:'Una figura llunyana', predQ:'Quants mistos necessita la figura {N}?', check:'Comprova', another:'Una altra',
+  predOk:'Correcte! La figura {N} necessita {V} mistos.',
+  predBad:"No és això. Pista: mira la columna «Diferència». Quants mistos s'afegeixen cada vegada?",
+  predEmpty:'Escriu un nombre primer.',
+  formulaT:'La regla per a la figura n', formulaQ:'Escriu una expressió per al nombre de mistos de la figura n. Per exemple: 4n + 2',
+  formOk:'Funciona! He provat la teua expressió de n = 1 fins a n = 12 i dona sempre el resultat correcte.',
+  formBad:'Per a n = {n} la teua expressió dona {g}, però en fan falta {v}.',
+  formSyntax:'No entenc l’expressió. Usa n, nombres, +, −, ·, ² i parèntesis. Per exemple: 4n + 2',
+  reveal:'Mostra la solució', hide:'Amaga la solució', count:'Recompte',
+  foot:'Fletxes ← → del teclat: figura anterior o següent. Cada color és un bloc nou de mistos.',
+  figAria:'Figura {n} del patró, feta amb {v} mistos',
+  e_squares:'1 misto per a començar i 3 més per cada quadrat nou (dalt, dreta i baix): 1 + 3n.',
+  e_triangles:'1 misto inicial i 2 més per cada triangle: 2n + 1.',
+  e_houses:'1 paret inicial i 5 mistos per cada casa (terra, paret, sostre i dos de teulada): 5n + 1.',
+  e_double:'2 mistos verticals per a començar i 5 per cada columna nova: 5n + 2. Compara-la amb les cases: mateix «+5», diferent inici.',
+  e_loose:'Com que no comparteixen cap misto, cada quadrat en necessita 4: 4n. És l’únic patró proporcional: el doble de quadrats, el doble de mistos.',
+  e_grid:'Cada capa nova en forma de L afegeix 4, 8, 12… mistos. En total 2n(n + 1). Les diferències no són constants: no és lineal.'
+ },
+ es:{
+  title:'Patrones con cerillas', eyebrow:'Álgebra · 1.º y 2.º ESO', h1:'Patrones con cerillas',
+  lede:'Construye la figura, cuenta las cerillas y encuentra la regla que sirve para cualquier figura.',
+  aria_pats:'Patrón', aria_pred:'Número de cerillas',
+  p_squares:'Fila de cuadrados', p_triangles:'Fila de triángulos', p_houses:'Fila de casas', p_double:'Doble fila', p_loose:'Cuadrados sueltos', p_grid:'Cuadrícula',
+  challenge:'Reto', figure:'Figura', build:'Construir paso a paso', structure:'Mostrar la estructura', matches:'cerillas',
+  s1:'1. Cuenta', s2:'2. Predice', s3:'3. Generaliza',
+  tableT:'Tabla', colN:'Figura', colV:'Cerillas', colD:'Diferencia',
+  predictT:'Una figura lejana', predQ:'¿Cuántas cerillas necesita la figura {N}?', check:'Comprobar', another:'Otra',
+  predOk:'¡Correcto! La figura {N} necesita {V} cerillas.',
+  predBad:'No es eso. Pista: mira la columna «Diferencia». ¿Cuántas cerillas se añaden cada vez?',
+  predEmpty:'Escribe un número primero.',
+  formulaT:'La regla para la figura n', formulaQ:'Escribe una expresión para el número de cerillas de la figura n. Por ejemplo: 4n + 2',
+  formOk:'¡Funciona! He probado tu expresión de n = 1 hasta n = 12 y siempre da el resultado correcto.',
+  formBad:'Para n = {n} tu expresión da {g}, pero hacen falta {v}.',
+  formSyntax:'No entiendo la expresión. Usa n, números, +, −, ·, ² y paréntesis. Por ejemplo: 4n + 2',
+  reveal:'Mostrar la solución', hide:'Ocultar la solución', count:'Recuento',
+  foot:'Flechas ← → del teclado: figura anterior o siguiente. Cada color es un bloque nuevo de cerillas.',
+  figAria:'Figura {n} del patrón, hecha con {v} cerillas',
+  e_squares:'1 cerilla para empezar y 3 más por cada cuadrado nuevo (arriba, derecha y abajo): 1 + 3n.',
+  e_triangles:'1 cerilla inicial y 2 más por cada triángulo: 2n + 1.',
+  e_houses:'1 pared inicial y 5 cerillas por cada casa (suelo, pared, techo y dos de tejado): 5n + 1.',
+  e_double:'2 cerillas verticales para empezar y 5 por cada columna nueva: 5n + 2. Compárala con las casas: mismo «+5», distinto inicio.',
+  e_loose:'Como no comparten ninguna cerilla, cada cuadrado necesita 4: 4n. Es el único patrón proporcional: el doble de cuadrados, el doble de cerillas.',
+  e_grid:'Cada capa nueva en forma de L añade 4, 8, 12… cerillas. En total 2n(n + 1). Las diferencias no son constantes: no es lineal.'
+ }
+};
+
+const E=id=>document.getElementById(id);
+const H3=Math.sqrt(3)/2;
+const PAT={
+  squares:{f:n=>3*n+1, formula:'3n + 1', lin:[1,3],
+    seg(n){const s=[{a:[0,1],b:[0,0],g:0}];for(let k=1;k<=n;k++)s.push({a:[k-1,0],b:[k,0],g:k},{a:[k,0],b:[k,1],g:k},{a:[k,1],b:[k-1,1],g:k});return s;}},
+  triangles:{f:n=>2*n+1, formula:'2n + 1', lin:[1,2],
+    seg(n){const s=[{a:[0,H3],b:[0.5,0],g:0}];for(let k=1;k<=n;k++){const i=Math.floor((k-1)/2);
+      if(k%2)s.push({a:[i,H3],b:[i+1,H3],g:k},{a:[i+1,H3],b:[i+0.5,0],g:k});
+      else s.push({a:[i+0.5,0],b:[i+1.5,0],g:k},{a:[i+1.5,0],b:[i+1,H3],g:k});}return s;}},
+  houses:{f:n=>5*n+1, formula:'5n + 1', lin:[1,5],
+    seg(n){const y1=H3,y2=H3+1,s=[{a:[0,y2],b:[0,y1],g:0}];for(let k=1;k<=n;k++)
+      s.push({a:[k-1,y2],b:[k,y2],g:k},{a:[k,y2],b:[k,y1],g:k},{a:[k,y1],b:[k-1,y1],g:k},{a:[k-1,y1],b:[k-0.5,0],g:k},{a:[k-0.5,0],b:[k,y1],g:k});return s;}},
+  double:{f:n=>5*n+2, formula:'5n + 2', lin:[2,5],
+    seg(n){const s=[{a:[0,1],b:[0,0],g:0},{a:[0,2],b:[0,1],g:0}];for(let k=1;k<=n;k++)
+      s.push({a:[k-1,0],b:[k,0],g:k},{a:[k,0],b:[k,1],g:k},{a:[k-1,1],b:[k,1],g:k},{a:[k,1],b:[k,2],g:k},{a:[k,2],b:[k-1,2],g:k});return s;}},
+  loose:{f:n=>4*n, formula:'4n', lin:[0,4],
+    seg(n){const s=[];for(let k=1;k<=n;k++){const x=(k-1)*1.35;
+      s.push({a:[x,0],b:[x+1,0],g:k},{a:[x+1,0],b:[x+1,1],g:k},{a:[x+1,1],b:[x,1],g:k},{a:[x,1],b:[x,0],g:k});}return s;}},
+  grid:{f:n=>2*n*(n+1), formula:'2n(n + 1) = 2n² + 2n', lin:null,
+    seg(n){const s=[];for(let j=0;j<=n;j++)for(let i=0;i<n;i++)s.push({a:[i,j],b:[i+1,j],g:Math.max(i+1,j)});
+      for(let i=0;i<=n;i++)for(let j=0;j<n;j++)s.push({a:[i,j+1],b:[i,j],g:Math.max(i,j+1)});
+      s.sort((p,q)=>p.g-q.g);return s;}}
+};
+const NMAX=10, NMIN=1, NS='http://www.w3.org/2000/svg';
+let pid='squares', n=3, structure=true, timers=[], predN=10, solShown=false;
+const pat=()=>PAT[pid];
+const modCls=g=>g===0?'g0':'m'+(((g-1)%3)+1);
+const colorOf=g=>!structure||g===0?'var(--wood)':'var(--c'+(((g-1)%3)+1)+')';
+
+function draw(mode,prevN){
+  timers.forEach(clearTimeout); timers=[];
+  const segs=pat().seg(n), svg=E('svg'), U=100;
+  const xs=[],ys=[]; segs.forEach(s=>{xs.push(s.a[0],s.b[0]);ys.push(s.a[1],s.b[1]);});
+  let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  const w=Math.max(x1-x0,4),cx=(x0+x1)/2; x0=cx-w/2; x1=cx+w/2;
+  const h=Math.max(y1-y0,2.4),cy=(y0+y1)/2; y0=cy-h/2; y1=cy+h/2;
+  const pad=0.45;
+  svg.setAttribute('viewBox',[(x0-pad)*U,(y0-pad*1.6)*U,(x1-x0+2*pad)*U,(y1-y0+pad*2.2)*U].join(' '));
+  svg.textContent='';
+  const anim=[]; segs.forEach((s,i)=>{if(mode==='build'||(mode==='grow'&&s.g>prevN))anim.push(i);});
+  const step=anim.length?Math.min(120,3600/anim.length):0, order=new Map(anim.map((i,k)=>[i,k]));
+  segs.forEach((s,i)=>{
+    const ax=s.a[0]*U,ay=s.a[1]*U,bx=s.b[0]*U,by=s.b[1]*U,len=Math.hypot(bx-ax,by-ay),ang=Math.atan2(by-ay,bx-ax)*180/Math.PI,gap=7;
+    const g=document.createElementNS(NS,'g'); g.setAttribute('transform',`translate(${ax} ${ay}) rotate(${ang})`);
+    const inner=document.createElementNS(NS,'g'); inner.setAttribute('class','m-in');
+    const r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',gap);r.setAttribute('y',-4.5);r.setAttribute('width',len-2*gap);r.setAttribute('height',9);r.setAttribute('rx',2.5);
+    r.setAttribute('style',`fill:${colorOf(s.g)};stroke:var(--wood-edge);stroke-width:1`);
+    const hd=document.createElementNS(NS,'ellipse');
+    hd.setAttribute('cx',len-gap-6);hd.setAttribute('cy',0);hd.setAttribute('rx',10);hd.setAttribute('ry',7.5);hd.setAttribute('style','fill:var(--head)');
+    inner.append(r,hd); g.appendChild(inner); svg.appendChild(g);
+    if(order.has(i)){inner.classList.add('anim');inner.style.animationDelay=(order.get(i)*step)+'ms';}
+  });
+  const total=segs.length, already=total-anim.length, cEl=E('count');
+  svg.setAttribute('aria-label',t('figAria',{n,v:total}));
+  if(REDUCE||!anim.length) cEl.textContent=total;
+  else{cEl.textContent=already; anim.forEach((_,k)=>timers.push(setTimeout(()=>{cEl.textContent=already+k+1;},k*step+180)));}
+  renderInfo();
+}
+
+function renderInfo(){
+  const P=pat();
+  E('nOut').textContent=n; E('figlabel').textContent=t('figure')+' '+n;
+  E('minus').disabled=n<=NMIN; E('plus').disabled=n>=NMAX;
+  const cnt={}; P.seg(n).forEach(s=>{cnt[s.g]=(cnt[s.g]||0)+1;});
+  const sum=E('sum'); sum.textContent='';
+  const add=(cls,txt)=>{const e=document.createElement('span'); if(cls)e.className=cls; e.textContent=txt; sum.appendChild(e);};
+  add('k',t('count'));
+  const mods=Object.keys(cnt).map(Number).filter(g=>g>0).sort((a,b)=>a-b);
+  let first=true;
+  if(cnt[0]){add('mc '+(structure?'g0':'plain'),cnt[0]);first=false;}
+  const show=mods.length<=6?mods:[mods[0],mods[1],null,mods[mods.length-1]];
+  show.forEach(g=>{if(!first)add('','+');first=false; if(g===null)add('','…'); else add('mc '+(structure?modCls(g):'plain'),cnt[g]);});
+  add('eq', P.lin ? ' = '+(P.lin[0]?P.lin[0]+' + ':'')+P.lin[1]+'·'+n+' = '+P.f(n) : ' = '+P.f(n));
+  const tb=E('table'); tb.textContent='';
+  const hr=tb.insertRow(); [t('colN'),t('colV'),t('colD')].forEach(x=>{const th=document.createElement('th');th.textContent=x;hr.appendChild(th);});
+  for(let i=Math.max(1,n-6);i<=n+1;i++){const r=tb.insertRow(); if(i===n)r.className='cur'; if(i===n+1)r.className='next';
+    r.insertCell().textContent=i;
+    r.insertCell().textContent=i<=n?P.f(i):'?';
+    const c=r.insertCell(); c.className='diff'; c.textContent=(i>1&&i<=n)?'+'+(P.f(i)-P.f(i-1)):(i===n+1?'?':'—');}
+  $$('#pats button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===pid)));
+  E('predQ').textContent=t('predQ',{N:predN});
+  E('reveal').textContent=solShown?t('hide'):t('reveal'); E('sol').hidden=!solShown;
+  E('solF').textContent='f(n) = '+P.formula; E('solE').textContent=t('e_'+pid);
+}
+
+function newPred(){const o=[10,12,15,20,25,30,50,100];let v;do{v=o[Math.floor(Math.random()*o.length)];}while(v===predN);predN=v;E('predIn').value='';E('predFb').textContent='';renderInfo();}
+function checkPred(){
+  const fb=E('predFb'),v=E('predIn').value.trim();
+  if(v===''){fb.className='fb bad';fb.textContent=t('predEmpty');return;}
+  const ok=Number(v)===pat().f(predN);
+  fb.className='fb '+(ok?'ok':'bad'); fb.textContent=ok?t('predOk',{N:predN,V:pat().f(predN)}):t('predBad');
+}
+function parse(str){
+  let s=str.toLowerCase().replace(/\s+/g,'').replace(/[·×]/g,'*').replace(/[−–]/g,'-').replace(/²/g,'^2').replace(/³/g,'^3').replace(/,/g,'.');
+  if(!s||!/^[0-9n+\-*\/^().]+$/.test(s))return null;
+  s=s.replace(/(\d|\)|n)(?=n|\()/g,'$1*').replace(/n(?=\d)/g,'n*').replace(/\)(?=\d)/g,')*').replace(/\^/g,'**');
+  try{const fn=new Function('n','"use strict";return ('+s+');');const v=fn(2);if(typeof v!=='number'||!isFinite(v))return null;return fn;}catch(e){return null;}
+}
+function checkForm(){
+  const fb=E('formFb'),fn=parse(E('formIn').value);
+  if(!fn){fb.className='fb bad';fb.textContent=t('formSyntax');return;}
+  for(let i=1;i<=12;i++){const g=fn(i),v=pat().f(i);
+    if(!isFinite(g)||Math.abs(g-v)>1e-9){fb.className='fb bad';fb.textContent=t('formBad',{n:i,g:Math.round(g*1000)/1000,v});return;}}
+  fb.className='fb ok';fb.textContent=t('formOk');
+}
+
+$$('#pats button').forEach(b=>b.addEventListener('click',()=>{pid=b.dataset.p;n=3;solShown=false;E('formIn').value='';E('formFb').textContent='';newPred();draw('build');}));
+E('minus').addEventListener('click',()=>{if(n>NMIN){n--;draw('none');}});
+E('plus').addEventListener('click',()=>{if(n<NMAX){const p=n;n++;draw('grow',p);}});
+E('build').addEventListener('click',()=>draw('build'));
+E('struct').addEventListener('change',e=>{structure=e.target.checked;draw('none');});
+E('predCheck').addEventListener('click',checkPred); E('predNew').addEventListener('click',newPred);
+E('predIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkPred();});
+E('formCheck').addEventListener('click',checkForm); E('formIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkForm();});
+E('reveal').addEventListener('click',()=>{solShown=!solShown;renderInfo();});
+document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;
+  if(e.key==='ArrowRight'){e.preventDefault();E('plus').click();} if(e.key==='ArrowLeft'){e.preventDefault();E('minus').click();}});
+document.addEventListener('langchange',()=>{E('predFb').textContent='';E('formFb').textContent='';if(E('svg').childNodes.length)renderInfo();});
+
+initLang();applyLang();newPred();draw('build');
+</script>
+</body>
+</html>
