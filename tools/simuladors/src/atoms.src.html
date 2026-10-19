@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Models atòmics</title>
+<meta name="description" content="Simulador dels models atòmics de Thomson, Rutherford i Bohr: dispersió de partícules alfa amb força de Coulomb real i salts electrònics entre nivells.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+.tabs{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.hist{display:grid;gap:6px}
+.hrow{display:grid;grid-template-columns:4.6rem minmax(0,1fr) 3.4rem;gap:8px;align-items:center;font-size:13px}
+.hrow .tr{height:10px;border-radius:5px;background:var(--chip);overflow:hidden}
+.hrow .tr i{display:block;height:100%;background:var(--pa);opacity:.85;transition:width .2s}
+.hrow span:last-child{font-family:var(--f-num);text-align:right;color:var(--muted)}
+.model h3{margin:0 0 2px;font-family:var(--f-display);font-size:17px;font-weight:600}
+.model p{margin:0 0 6px}
+.model b.k{display:inline-block;min-width:5.5em;color:var(--ink)}
+#specCv{display:block;width:100%;height:auto;border-radius:6px;border:1px solid var(--line)}
+ol.q{margin:0;padding-left:1.2em;color:var(--muted);font-size:14px;display:grid;gap:5px}
+ol.q b{color:var(--ink);font-weight:600}
+.hide{display:none!important}
+.tbl td.reg{font-family:var(--f-body);color:var(--muted)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="stage-card" data-i18n-aria="aria.sim" aria-label="">
+      <div class="bar">
+        <div class="seg" id="tabs" role="group" data-i18n-aria="aria.tabs" aria-label="">
+          <button type="button" data-m="thomson" data-i18n="thomson"></button>
+          <button type="button" data-m="rutherford" data-i18n="rutherford"></button>
+          <button type="button" data-m="bohr" data-i18n="bohr"></button>
+        </div>
+        <button id="play" class="btn primary sp scat" type="button"></button>
+        <button id="clear" class="btn scat" type="button" data-i18n="clear"></button>
+      </div>
+      <div class="stage"><canvas id="cv" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+    </section>
+
+    <aside class="panel" data-i18n-aria="aria.ctl" aria-label="">
+      <fieldset class="scat">
+        <legend data-i18n="f.target"></legend>
+        <div class="chips" id="zchips"></div>
+        <div id="ctlScat" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset class="scat">
+        <legend data-i18n="f.shot"></legend>
+        <p class="note" data-i18n="shot.help"></p>
+      </fieldset>
+      <fieldset class="boh hide">
+        <legend data-i18n="f.level"></legend>
+        <div class="chips" id="nchips"></div>
+        <div class="chips">
+          <button class="btn" type="button" id="up" data-i18n="up"></button>
+          <button class="btn" type="button" id="down" data-i18n="down"></button>
+          <button class="btn" type="button" id="rnd" data-i18n="rnd"></button>
+        </div>
+        <p class="note" data-i18n="boh.help"></p>
+      </fieldset>
+      <fieldset class="boh hide">
+        <legend data-i18n="f.rec"></legend>
+        <button class="btn" type="button" id="clearRec" data-i18n="clearRec"></button>
+      </fieldset>
+    </aside>
+  </main>
+
+  <section class="cards">
+    <article class="card model">
+      <h2><small data-i18n="c1.s"></small><span id="mTitle"></span></h2>
+      <div id="mInfo"></div>
+    </article>
+
+    <article class="card scat">
+      <h2><small data-i18n="c2.s"></small><span data-i18n="c2.h"></span></h2>
+      <dl>
+        <dt data-i18n="c2.tot"></dt><dd id="sTot" class="hl">0</dd>
+        <dt data-i18n="c2.d10"></dt><dd id="sD10">—</dd>
+        <dt data-i18n="c2.d90"></dt><dd id="sD90">—</dd>
+        <dt data-i18n="c2.dd"></dt><dd id="sDd">—</dd>
+      </dl>
+      <div class="hist" id="hist"></div>
+      <p id="shotInfo" class="note"></p>
+      <p class="note" data-i18n="c2.note"></p>
+    </article>
+
+    <article class="card boh hide">
+      <h2><small data-i18n="c3.s"></small><span data-i18n="c3.h"></span></h2>
+      <p data-i18n-html="c3.p"></p>
+      <table class="tbl">
+        <thead><tr><th data-i18n="c3.jump"></th><th>ΔE (eV)</th><th>λ (nm)</th><th data-i18n="c3.reg"></th></tr></thead>
+        <tbody id="rec"></tbody>
+      </table>
+      <canvas id="specCv" data-i18n-aria="c3.spec" aria-label=""></canvas>
+      <p class="note" data-i18n="c3.note"></p>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c4.s"></small><span data-i18n="c4.h"></span></h2>
+      <ol class="q" data-i18n-html="c4.l"></ol>
+    </article>
+  </section>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+title:"Models atòmics",
+eyebrow:"Física i Química · 3r ESO",
+h1:"Models atòmics",
+lede:"Dispara partícules α contra l'àtom de Thomson i el de Rutherford, i fes saltar l'electró de Bohr entre nivells d'energia.",
+"aria.sim":"Simulació del model atòmic","aria.tabs":"Model atòmic","aria.cv":"Escenari de la simulació","aria.ctl":"Controls",
+thomson:"Thomson",rutherford:"Rutherford",bohr:"Bohr",
+play:"Pausa",resume:"Reprèn",clear:"Neteja",
+"f.target":"Àtom diana","f.shot":"Projectil únic","f.level":"Nivell de l'electró","f.rec":"Registre",
+"shot.help":"Fes clic sobre l'escenari per llançar una partícula α des d'aquesta alçada i mesura la seua desviació.",
+"boh.help":"Fes clic sobre una òrbita o sobre un nivell del diagrama. Si puja, absorbeix un fotó; si baixa, n'emet un.",
+up:"Excita (n+1)",down:"Desexcita (n−1)",rnd:"Salt a l'atzar",clearRec:"Esborra el registre i l'espectre",
+Z:"Càrrega nuclear Z",E:"Energia de les α (relativa)",bw:"Amplada del feix",rate:"Intensitat (α/s)",
+"c1.s":"El model",
+"c2.s":"Mesures","c2.h":"On acaben les partícules?",
+"c2.tot":"Partícules mesurades","c2.d10":"Desviades més de 10°","c2.d90":"Rebotades (més de 90°)","c2.dd":"Distància d'aproximació frontal d",
+"c2.note":"Escala no real: el nucli de veritat és unes 10 000 vegades més xicotet que l'àtom i el feix s'ha eixamplat per veure'l. La força és la de Coulomb en unitats reduïdes.",
+shot:"Últim projectil: b = {b} px → θ = {th}°",shotT:" · teòric: θ = {tt}° (tan θ/2 = d/2b)",
+"c3.s":"Dades del salt","c3.h":"Espectre de l'hidrogen",
+"c3.p":"<b>E<sub>n</sub> = −13,6/n² eV</b> i <b>λ = 1240/ΔE</b> (nm, amb ΔE en eV).",
+"c3.jump":"Salt","c3.reg":"Regió",
+"c3.spec":"Espectre visible emès","c3.note":"Cada fotó emés en el visible (380–780 nm) deixa una ratlla. Els salts a n = 2 (sèrie de Balmer) són els visibles.",
+UV:"UV",VIS:"visible",IR:"IR",
+"c4.s":"Per a la classe","c4.h":"Preguntes per pensar",
+"c4.l":"<li><b>Compara</b> Thomson i Rutherford amb el mateix feix. On es desvien més les partícules? Per què?</li><li>En Rutherford, puja Z i baixa l'energia: com canvia el nombre de <b>rebots</b>? I si dispares quasi de cara (b ≈ 0)?</li><li>Mira la distància <b>d</b>: per a quin paràmetre d'impacte b la desviació és exactament 90°?</li><li>En Bohr, quins salts emeten llum <b>visible</b>? Quins són UV i quins IR?</li><li>Calcula a mà ΔE i λ del salt 3 → 2 i comprova-ho amb la taula.</li>",
+"thomson.t":"Thomson (1904): el púding de panses",
+"thomson.d":"Càrrega positiva repartida per tota l'esfera, amb els electrons incrustats com les panses.",
+"thomson.e":"Explica que l'àtom és neutre i que es poden arrancar electrons.",
+"thomson.l":"Les α travessen quasi sense desviar-se: no explica els rebots de Geiger i Marsden (1909).",
+"rutherford.t":"Rutherford (1911): l'àtom nuclear",
+"rutherford.d":"Tota la càrrega positiva i quasi tota la massa en un nucli diminut; els electrons giren molt lluny.",
+"rutherford.e":"La majoria de les α passen, però unes poques reboten més de 90°: hi ha alguna cosa molt xicoteta i molt dura.",
+"rutherford.l":"Un electró en òrbita hauria de radiar i caure al nucli; no explica els espectres de línies.",
+"bohr.t":"Bohr (1913): nivells d'energia",
+"bohr.d":"Els electrons només poden estar en òrbites amb energies quantificades, E<sub>n</sub> = −13,6/n² eV.",
+"bohr.e":"Explica les ratlles de l'espectre de l'hidrogen: cada ratlla és un salt entre dos nivells.",
+"bohr.l":"Només funciona bé amb un electró; la mecànica quàntica el supera amb els orbitals.",
+k_d:"Idea",k_e:"Evidència",k_l:"Límit",
+lyman:"sèrie de Lyman",balmer:"sèrie de Balmer",paschen:"sèrie de Paschen",brackett:"sèrie de Brackett",pfund:"sèrie de Pfund",
+"c3.last":"Última transició",
+ion:"Ionització: 13,6 eV",level:"n = {n}"
+},
+es:{
+title:"Modelos atómicos",
+eyebrow:"Física y Química · 3.º ESO",
+h1:"Modelos atómicos",
+lede:"Dispara partículas α contra el átomo de Thomson y el de Rutherford, y haz saltar al electrón de Bohr entre niveles de energía.",
+"aria.sim":"Simulación del modelo atómico","aria.tabs":"Modelo atómico","aria.cv":"Escenario de la simulación","aria.ctl":"Controles",
+thomson:"Thomson",rutherford:"Rutherford",bohr:"Bohr",
+play:"Pausa",resume:"Reanudar",clear:"Limpiar",
+"f.target":"Átomo diana","f.shot":"Proyectil único","f.level":"Nivel del electrón","f.rec":"Registro",
+"shot.help":"Haz clic en el escenario para lanzar una partícula α desde esa altura y medir su desviación.",
+"boh.help":"Haz clic en una órbita o en un nivel del diagrama. Si sube, absorbe un fotón; si baja, emite uno.",
+up:"Excita (n+1)",down:"Desexcita (n−1)",rnd:"Salto al azar",clearRec:"Borra el registro y el espectro",
+Z:"Carga nuclear Z",E:"Energía de las α (relativa)",bw:"Anchura del haz",rate:"Intensidad (α/s)",
+"c1.s":"El modelo",
+"c2.s":"Medidas","c2.h":"¿Dónde acaban las partículas?",
+"c2.tot":"Partículas medidas","c2.d10":"Desviadas más de 10°","c2.d90":"Rebotadas (más de 90°)","c2.dd":"Distancia de aproximación frontal d",
+"c2.note":"Escala no real: el núcleo de verdad es unas 10 000 veces más pequeño que el átomo y el haz se ha ensanchado para verlo. La fuerza es la de Coulomb en unidades reducidas.",
+shot:"Último proyectil: b = {b} px → θ = {th}°",shotT:" · teórico: θ = {tt}° (tan θ/2 = d/2b)",
+"c3.s":"Datos del salto","c3.h":"Espectro del hidrógeno",
+"c3.p":"<b>E<sub>n</sub> = −13,6/n² eV</b> y <b>λ = 1240/ΔE</b> (nm, con ΔE en eV).",
+"c3.jump":"Salto","c3.reg":"Región",
+"c3.spec":"Espectro visible emitido","c3.note":"Cada fotón emitido en el visible (380–780 nm) deja una raya. Los saltos a n = 2 (serie de Balmer) son los visibles.",
+UV:"UV",VIS:"visible",IR:"IR",
+"c4.s":"Para la clase","c4.h":"Preguntas para pensar",
+"c4.l":"<li><b>Compara</b> Thomson y Rutherford con el mismo haz. ¿Dónde se desvían más las partículas? ¿Por qué?</li><li>En Rutherford, sube Z y baja la energía: ¿cómo cambia el número de <b>rebotes</b>? ¿Y si disparas casi de frente (b ≈ 0)?</li><li>Mira la distancia <b>d</b>: ¿para qué parámetro de impacto b la desviación es exactamente 90°?</li><li>En Bohr, ¿qué saltos emiten luz <b>visible</b>? ¿Cuáles son UV y cuáles IR?</li><li>Calcula a mano ΔE y λ del salto 3 → 2 y compruébalo con la tabla.</li>",
+"thomson.t":"Thomson (1904): el pudin de pasas",
+"thomson.d":"Carga positiva repartida por toda la esfera, con los electrones incrustados como las pasas.",
+"thomson.e":"Explica que el átomo es neutro y que se pueden arrancar electrones.",
+"thomson.l":"Las α lo atraviesan casi sin desviarse: no explica los rebotes de Geiger y Marsden (1909).",
+"rutherford.t":"Rutherford (1911): el átomo nuclear",
+"rutherford.d":"Toda la carga positiva y casi toda la masa en un núcleo diminuto; los electrones giran muy lejos.",
+"rutherford.e":"La mayoría de las α pasan, pero unas pocas rebotan más de 90°: hay algo muy pequeño y muy duro.",
+"rutherford.l":"Un electrón en órbita debería radiar y caer al núcleo; no explica los espectros de líneas.",
+"bohr.t":"Bohr (1913): niveles de energía",
+"bohr.d":"Los electrones solo pueden estar en órbitas con energías cuantizadas, E<sub>n</sub> = −13,6/n² eV.",
+"bohr.e":"Explica las rayas del espectro del hidrógeno: cada raya es un salto entre dos niveles.",
+"bohr.l":"Solo funciona bien con un electrón; la mecánica cuántica lo supera con los orbitales.",
+k_d:"Idea",k_e:"Evidencia",k_l:"Límite",
+lyman:"serie de Lyman",balmer:"serie de Balmer",paschen:"serie de Paschen",brackett:"serie de Brackett",pfund:"serie de Pfund",
+"c3.last":"Última transición",
+ion:"Ionización: 13,6 eV",level:"n = {n}"
+}};
+/*@COMMON_JS@*/
+
+var READY=false;
+const W=760,H=460;
+const cv=$('#cv'),cvo=makeCanvas(cv,W,H,()=>{if(READY)draw();}),ctx=cvo.ctx;
+const specCvo=makeCanvas($('#specCv'),700,64,()=>{if(READY)drawSpec();});
+let MODE='thomson',playing=!REDUCE;
+
+/* ======================= DISPERSIÓ (Thomson / Rutherford) ======================= */
+const SC={Z:79,E:1,bw:150,rate:14,cx:430,cy:230,R:150,v0:240,d79:26};
+const kOf=()=>(SC.d79*SC.v0*SC.v0/2)*(SC.Z/79);
+const vOf=()=>SC.v0*Math.sqrt(SC.E);
+const dOf=()=>2*kOf()/(vOf()*vOf());
+let parts=[],acc=0,stats,shot=null,lastShot=null,time=0;
+const BINS=[[0,10],[10,30],[30,60],[60,90],[90,180.01]];
+function resetStats(){stats={n:0,b:BINS.map(()=>0)};}
+resetStats();
+const trail=document.createElement('canvas');trail.width=W*2;trail.height=H*2;
+const trc=trail.getContext('2d');trc.scale(2,2);
+function clearTrail(){trc.clearRect(0,0,W,H);}
+function launch(y,isShot){
+  const v=vOf();
+  const p={x:-4,y,vx:v,vy:0,b:y-SC.cy,shot:!!isShot,seg:[]};
+  parts.push(p);if(isShot){shot=p;}
+  return p;
+}
+function accel(p){
+  const rx=p.x-SC.cx,ry=p.y-SC.cy,r2=rx*rx+ry*ry,r=Math.sqrt(r2),k=kOf();
+  let f;
+  if(MODE==='thomson'&&r<SC.R) f=k/(SC.R*SC.R*SC.R);
+  else{const rr=Math.max(r,1.5);f=k/(rr*rr*rr);}
+  return [f*rx,f*ry];
+}
+function stepParticle(p,dt){
+  let rem=dt;
+  while(rem>1e-6){
+    const r=Math.hypot(p.x-SC.cx,p.y-SC.cy),sp=Math.hypot(p.vx,p.vy);
+    const h=Math.min(rem,clamp(0.03*Math.max(r,4)/sp,0.0005,0.02));
+    const a0=accel(p);
+    p.x+=p.vx*h+0.5*a0[0]*h*h;p.y+=p.vy*h+0.5*a0[1]*h*h;
+    const a1=accel(p);
+    p.vx+=0.5*(a0[0]+a1[0])*h;p.vy+=0.5*(a0[1]+a1[1])*h;
+    rem-=h;
+    p.seg.push(p.x,p.y);
+  }
+}
+function finish(p){
+  const th=Math.abs(Math.atan2(p.vy,p.vx))*180/Math.PI;
+  stats.n++;
+  const i=BINS.findIndex(b=>th>=b[0]&&th<b[1]);stats.b[i<0?0:i]++;
+  if(p.shot){
+    lastShot={b:p.b,th,tt:MODE==='rutherford'?2*Math.atan(dOf()/(2*Math.abs(p.b)||1e-9))*180/Math.PI:null};
+  }
+}
+function tickScatter(dt){
+  time+=dt;
+  acc+=dt*SC.rate;
+  while(acc>=1){acc-=1;if(parts.length<500)launch(SC.cy+(Math.random()*2-1)*SC.bw,false);}
+  const tc=C().dark?'rgba(140,175,255,.55)':'rgba(35,80,200,.45)';
+  for(let i=parts.length-1;i>=0;i--){
+    const p=parts[i];p.seg.length=0;p.seg.push(p.x,p.y);
+    stepParticle(p,dt);
+    trc.strokeStyle=p.shot?(C().pb):tc;trc.lineWidth=p.shot?1.8:.9;
+    trc.beginPath();trc.moveTo(p.seg[0],p.seg[1]);
+    for(let j=2;j<p.seg.length;j+=2)trc.lineTo(p.seg[j],p.seg[j+1]);trc.stroke();
+    if(p.x>W+10||p.x<-12&&p.vx<0||p.y<-12||p.y>H+12){finish(p);parts.splice(i,1);if(p===shot)shot=null;}
+  }
+  trc.globalCompositeOperation='destination-out';trc.fillStyle='rgba(0,0,0,.012)';trc.fillRect(0,0,W,H);trc.globalCompositeOperation='source-over';
+  updateScatPanel();
+}
+function drawScatter(){
+  const c=ctx,col=C();
+  c.fillStyle=col.stage;c.fillRect(0,0,W,H);
+  /* beam */
+  c.fillStyle=col.dark?'rgba(118,162,255,.05)':'rgba(35,80,200,.045)';
+  c.fillRect(0,SC.cy-SC.bw,SC.cx,SC.bw*2);
+  c.drawImage(trail,0,0,W,H);
+  /* atom */
+  const cx=SC.cx,cy=SC.cy,R=SC.R;
+  if(MODE==='thomson'){
+    const g=c.createRadialGradient(cx,cy,0,cx,cy,R);
+    g.addColorStop(0,'rgba(214,58,74,.26)');g.addColorStop(1,'rgba(214,58,74,.10)');
+    c.fillStyle=g;c.beginPath();c.arc(cx,cy,R,0,TAU);c.fill();
+    c.strokeStyle='rgba(214,58,74,.55)';c.lineWidth=1.2;c.stroke();
+    c.fillStyle=col.dark?'rgba(255,150,160,.7)':'rgba(180,30,50,.65)';c.font='600 15px system-ui';c.textAlign='center';
+    for(let i=0;i<6;i++){const a=i/6*TAU+.4,rr=R*.82;c.fillText('+',cx+rr*Math.cos(a),cy+rr*Math.sin(a)+5);}
+    for(let i=0;i<14;i++){
+      const a=i*2.399+.3,rr=R*Math.sqrt((i+.5)/14)*.88,jx=Math.sin(time*2+i*1.7)*2.2,jy=Math.cos(time*2.3+i)*2.2;
+      c.fillStyle='#3b7ddd';c.beginPath();c.arc(cx+rr*Math.cos(a)+jx,cy+rr*Math.sin(a)+jy,4.6,0,TAU);c.fill();
+      c.fillStyle='#fff';c.fillRect(cx+rr*Math.cos(a)+jx-2.2,cy+rr*Math.sin(a)+jy-.6,4.4,1.2);
+    }
+  }else{
+    c.setLineDash([4,5]);c.strokeStyle=col.line;c.lineWidth=1;c.beginPath();c.arc(cx,cy,R,0,TAU);c.stroke();c.setLineDash([]);
+    [[.4,2],[.68,4],[.94,6]].forEach(([f,n],k)=>{
+      c.strokeStyle=col.line;c.beginPath();c.arc(cx,cy,R*f,0,TAU);c.stroke();
+      for(let i=0;i<n;i++){const a=i/n*TAU+time*(1.2-k*.35);c.fillStyle='#3b7ddd';c.beginPath();c.arc(cx+R*f*Math.cos(a),cy+R*f*Math.sin(a),4,0,TAU);c.fill();}
+    });
+    const d=dOf();
+    c.setLineDash([3,4]);c.strokeStyle=col.muted;c.lineWidth=.8;
+    c.beginPath();c.arc(cx,cy,d,0,TAU);c.stroke();
+    c.beginPath();c.moveTo(cx-R,cy-d/2);c.lineTo(cx+R,cy-d/2);c.moveTo(cx-R,cy+d/2);c.lineTo(cx+R,cy+d/2);c.stroke();c.setLineDash([]);
+    c.fillStyle=col.muted;c.font='11px system-ui';c.textAlign='left';
+    c.fillText('d',cx+d*.72+3,cy-d*.72-3);c.fillText('b = d/2 → 90°',cx-R+4,cy-d/2-4);
+    const nr=3+SC.Z/79*3.5;
+    c.fillStyle='#d63a4a';c.beginPath();c.arc(cx,cy,nr,0,TAU);c.fill();
+    c.fillStyle='#fff';c.font='700 9px system-ui';c.textAlign='center';c.fillText('+',cx,cy+3);
+  }
+  /* partícules */
+  parts.forEach(p=>{
+    c.fillStyle=p.shot?col.pb:col.pa;c.beginPath();c.arc(p.x,p.y,p.shot?4.2:2.6,0,TAU);c.fill();
+  });
+  c.fillStyle=col.muted;c.font='11px system-ui';c.textAlign='left';
+  c.fillText('α →',8,SC.cy-SC.bw-6);
+}
+function updateScatPanel(){
+  $('#sTot').textContent=stats.n;
+  const n=stats.n||1,gt10=stats.n-stats.b[0],gt90=stats.b[4];
+  $('#sD10').textContent=stats.n?fmt(gt10/n*100,1)+' %':'—';
+  $('#sD90').textContent=stats.n?fmt(gt90/n*100,2)+' %':'—';
+  $('#sDd').textContent=MODE==='rutherford'?fmt(dOf(),0)+' px':'—';
+  $$('#hist .hrow').forEach((r,i)=>{r.querySelector('i').style.width=(stats.b[i]/n*100)+'%';r.lastElementChild.textContent=stats.n?fmt(stats.b[i]/n*100,1)+'%':'—';});
+  renderShot();
+}
+function renderShot(){
+  const e=$('#shotInfo');if(!lastShot){e.textContent='';return;}
+  let s=t('shot',{b:fmt(lastShot.b,0),th:fmt(lastShot.th,1)});
+  if(MODE==='rutherford'&&lastShot.tt!=null)s+=t('shotT',{tt:fmt(lastShot.tt,1)});
+  e.textContent=s;
+}
+function buildHist(){
+  $('#hist').innerHTML=BINS.map(b=>'<div class="hrow"><span>'+Math.round(b[0])+'–'+Math.round(Math.min(180,b[1]))+'°</span><div class="tr"><i style="width:0"></i></div><span>—</span></div>').join('');
+}
+buildHist();
+const ctlHost=$('#ctlScat'),ctrls={};
+ctrls.Z=slider(ctlHost,{id:'sZ',key:'Z',min:2,max:92,step:1,val:79,on:v=>{SC.Z=v;syncChips();soft();}});
+ctrls.E=slider(ctlHost,{id:'sE',key:'E',min:.5,max:2,step:.05,val:1,fmtv:v=>fmt(v,2),on:v=>{SC.E=v;soft();}});
+ctrls.bw=slider(ctlHost,{id:'sB',key:'bw',min:40,max:200,step:5,val:150,fmtv:v=>v+' px',on:v=>{SC.bw=v;}});
+ctrls.rate=slider(ctlHost,{id:'sR',key:'rate',min:2,max:60,step:1,val:14,on:v=>{SC.rate=v;}});
+const ZS=[['Al',13],['Cu',29],['Ag',47],['Au',79],['Pb',82]];
+function buildZ(){
+  $('#zchips').innerHTML='';
+  ZS.forEach(([s,z])=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.z=z;b.textContent=s+' ('+z+')';
+    b.addEventListener('click',()=>{SC.Z=z;ctrls.Z.set(z);syncChips();soft();});$('#zchips').appendChild(b);});
+  syncChips();
+}
+function syncChips(){$$('#zchips .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.z===SC.Z)));}
+function soft(){resetStats();clearTrail();lastShot=null;}
+buildZ();
+cv.addEventListener('pointerdown',ev=>{
+  const p=cvo.pt(ev);
+  if(MODE==='bohr'){bohrClick(p);return;}
+  if(p.y<14||p.y>H-14)return;
+  launch(clamp(p.y,10,H-10),true);
+});
+
+/* ======================= BOHR ======================= */
+const NMAX=5,ECX=235,ECY=230;
+const rN=n=>30+(n-1)*40;
+const En=n=>-13.6/(n*n);
+const LY=[ECX+0,0];
+const B={n:2,r:rN(2),ang:0,tr:null,rec:[],spec:[],flash:null};
+const LV={x0:540,x1:725,yT:44,yB:420};
+const yE=e=>LV.yT+(-e)/13.6*(LV.yB-LV.yT);
+const regionOf=l=>l<380?'UV':l>780?'IR':'VIS';
+function wl2rgb(w){
+  let r=0,g=0,b=0;
+  if(w>=380&&w<440){r=(440-w)/60;b=1;}
+  else if(w<490){g=(w-440)/50;b=1;}
+  else if(w<510){g=1;b=(510-w)/20;}
+  else if(w<580){r=(w-510)/70;g=1;}
+  else if(w<645){r=1;g=(645-w)/65;}
+  else if(w<=780){r=1;}
+  const f=w<420?.3+.7*(w-380)/40:w>700?.3+.7*(780-w)/80:1;
+  return 'rgb('+Math.round(255*r*f)+','+Math.round(255*g*f)+','+Math.round(255*b*f)+')';
+}
+const photonCol=l=>regionOf(l)==='VIS'?wl2rgb(l):(regionOf(l)==='UV'?'#a56bff':'#c23b3b');
+const series=n=>({1:'lyman',2:'balmer',3:'paschen',4:'brackett',5:'pfund'}[n]);
+function goTo(n2){
+  if(B.tr||n2===B.n||n2<1||n2>NMAX)return;
+  const n1=B.n,dE=Math.abs(En(n2)-En(n1)),lam=1239.84/dE;
+  B.tr={n1,n2,abs:n2>n1,dE,lam,t:0,phi:Math.PI+(Math.random()-.5)*1.2};
+}
+function bohrClick(p){
+  if(p.x<LV.x0-30){
+    const d=Math.hypot(p.x-ECX,p.y-ECY);let best=0,bd=1e9;
+    for(let n=1;n<=NMAX;n++){const e=Math.abs(d-rN(n));if(e<bd){bd=e;best=n;}}
+    if(bd<22)goTo(best);
+  }else{
+    let best=0,bd=1e9;
+    for(let n=1;n<=NMAX;n++){const e=Math.abs(p.y-yE(En(n)));if(e<bd){bd=e;best=n;}}
+    if(bd<14&&p.x>=LV.x0-10)goTo(best);
+  }
+}
+const PH_DUR=.9,JUMP=.55;
+const smooth=u=>u*u*(3-2*u);
+function tickBohr(dt){
+  B.ang+=dt*2.4/Math.pow(B.n,1.5);
+  const tr=B.tr;
+  if(!tr){B.r=rN(B.n);return;}
+  tr.t+=dt;
+  const pre=tr.abs?PH_DUR:0;
+  if(tr.t<pre){B.r=rN(tr.n1);}
+  else if(tr.t<pre+JUMP){const u=smooth((tr.t-pre)/JUMP);B.r=lerp(rN(tr.n1),rN(tr.n2),u);B.ang+=dt*3;}
+  else{
+    B.r=rN(tr.n2);
+    if(!tr.done){
+      tr.done=true;B.n=tr.n2;
+      B.rec.unshift({n1:tr.n1,n2:tr.n2,dE:tr.dE,lam:tr.lam,abs:tr.abs});if(B.rec.length>7)B.rec.pop();
+      if(!tr.abs){B.spec.push(tr.lam);}
+      renderBohrPanel();syncN();
+    }
+    if(tr.t>pre+JUMP+(tr.abs?0.25:PH_DUR)){B.tr=null;}
+  }
+}
+function wave(c,x0,y0,x1,y1,lam,phase,len,col,dash){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,nx=-uy,ny=ux;
+  const wl=clamp(lam/9,8,80);
+  c.strokeStyle=col;c.lineWidth=2;if(dash)c.setLineDash([4,3]);
+  c.beginPath();
+  for(let s=0;s<=len;s+=2){
+    const env=Math.sin(Math.PI*s/len),a=9*env*Math.sin(TAU*s/wl-phase);
+    const px=x0+ux*s+nx*a,py=y0+uy*s+ny*a;
+    s?c.lineTo(px,py):c.moveTo(px,py);
+  }
+  c.stroke();c.setLineDash([]);
+}
+function drawBohr(){
+  const c=ctx,col=C();
+  c.fillStyle=col.stage;c.fillRect(0,0,W,H);
+  /* òrbites */
+  for(let n=1;n<=NMAX;n++){
+    c.strokeStyle=col.line;c.lineWidth=1;c.beginPath();c.arc(ECX,ECY,rN(n),0,TAU);c.stroke();
+    c.fillStyle=col.muted;c.font='11px system-ui';c.textAlign='left';c.fillText('n='+n,ECX+rN(n)*.707+4,ECY-rN(n)*.707-3);
+  }
+  c.fillStyle='#d63a4a';c.beginPath();c.arc(ECX,ECY,9,0,TAU);c.fill();
+  c.fillStyle='#fff';c.font='700 12px system-ui';c.textAlign='center';c.fillText('+',ECX,ECY+4);
+  /* electró */
+  const ex=ECX+B.r*Math.cos(B.ang),ey=ECY+B.r*Math.sin(B.ang);
+  c.fillStyle='#3b7ddd';c.beginPath();c.arc(ex,ey,7,0,TAU);c.fill();c.strokeStyle=col.panel;c.lineWidth=1.5;c.stroke();
+  c.fillStyle='#fff';c.fillRect(ex-3,ey-.7,6,1.4);
+  /* fotó */
+  const tr=B.tr;
+  if(tr){
+    const pc=photonCol(tr.lam),dash=regionOf(tr.lam)!=='VIS';
+    const dirx=Math.cos(tr.phi),diry=Math.sin(tr.phi),far=250;
+    if(tr.abs&&tr.t<PH_DUR){
+      const u=tr.t/PH_DUR,s=lerp(far,rN(tr.n1)+10,u);
+      wave(c,ECX+dirx*s,ECY+diry*s,ECX+dirx*(s-90),ECY+diry*(s-90),tr.lam,tr.t*14,90,pc,dash);
+    }
+    if(!tr.abs&&tr.t>JUMP){
+      const u=clamp((tr.t-JUMP)/PH_DUR,0,1),s=lerp(rN(tr.n2)+10,far,u);
+      wave(c,ECX+dirx*s,ECY+diry*s,ECX+dirx*(s+90),ECY+diry*(s+90),tr.lam,tr.t*14,90,pc,dash);
+    }
+  }
+  c.fillStyle=col.muted;c.font='11px system-ui';c.textAlign='left';
+  c.fillText(LANG==='ca'?'Esquema no a escala':'Esquema no a escala',10,H-10);
+  /* diagrama d'energia */
+  c.strokeStyle=col.muted;c.lineWidth=1;c.beginPath();c.moveTo(LV.x0-18,LV.yT-12);c.lineTo(LV.x0-18,LV.yB+10);c.stroke();
+  c.fillStyle=col.muted;c.font='11px system-ui';c.textAlign='right';c.fillText('E (eV)',LV.x0-24,LV.yT-18);
+  c.setLineDash([4,4]);c.beginPath();c.moveTo(LV.x0,LV.yT);c.lineTo(LV.x1,LV.yT);c.stroke();c.setLineDash([]);
+  c.textAlign='left';c.fillText(t('ion'),LV.x0+4,LV.yT-6);
+  for(let n=1;n<=NMAX;n++){
+    const y=yE(En(n)),act=(n===B.n&&!tr)||(tr&&tr.n2===n&&tr.done);
+    c.strokeStyle=act?col.pa:col.ink;c.lineWidth=act?3:1.6;c.beginPath();c.moveTo(LV.x0,y);c.lineTo(LV.x1-50,y);c.stroke();
+    const off=n===5?1:n===4?8:4;
+    c.fillStyle=col.ink;c.font='11.5px system-ui';c.textAlign='left';c.fillText('n='+n,LV.x1-44,y+off);
+    c.fillStyle=col.muted;c.textAlign='right';c.fillText(fmt(En(n),2)+'',LV.x0-22,y+off);
+  }
+  /* fletxa de transició + electró al diagrama */
+  let ey2=yE(En(B.n));
+  if(tr){
+    const pre=tr.abs?PH_DUR:0;
+    let u=0;if(tr.t>=pre)u=smooth(clamp((tr.t-pre)/JUMP,0,1));
+    ey2=lerp(yE(En(tr.n1)),yE(En(tr.n2)),u);
+    const pc=photonCol(tr.lam);
+    c.strokeStyle=pc;c.lineWidth=2.4;c.beginPath();c.moveTo(LV.x0+60,yE(En(tr.n1)));c.lineTo(LV.x0+60,yE(En(tr.n2)));c.stroke();
+    const yy=yE(En(tr.n2)),sg=yy>yE(En(tr.n1))?1:-1;
+    c.fillStyle=pc;c.beginPath();c.moveTo(LV.x0+60,yy);c.lineTo(LV.x0+54,yy-sg*7);c.lineTo(LV.x0+66,yy-sg*7);c.closePath();c.fill();
+  }
+  c.fillStyle='#3b7ddd';c.beginPath();c.arc(LV.x0+30,ey2,6.5,0,TAU);c.fill();c.strokeStyle=col.panel;c.lineWidth=1.4;c.stroke();
+}
+function syncN(){$$('#nchips .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.n===B.n)));}
+function buildN(){
+  $('#nchips').innerHTML='';
+  for(let n=1;n<=NMAX;n++){const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.n=n;b.textContent='n = '+n;b.addEventListener('click',()=>goTo(n));$('#nchips').appendChild(b);}
+  syncN();
+}
+buildN();
+$('#up').addEventListener('click',()=>goTo(B.n+1));
+$('#down').addEventListener('click',()=>goTo(B.n-1));
+$('#rnd').addEventListener('click',()=>{let n;do{n=1+Math.floor(Math.random()*NMAX);}while(n===B.n);goTo(n);});
+$('#clearRec').addEventListener('click',()=>{B.rec=[];B.spec=[];renderBohrPanel();});
+function renderBohrPanel(){
+  $('#rec').innerHTML=B.rec.map(r=>{
+    const reg=regionOf(r.lam);
+    return '<tr><td>'+(r.abs?'↑ ':'↓ ')+r.n1+' → '+r.n2+'</td><td>'+fmt(r.dE,2)+'</td><td>'+fmt(r.lam,1)+'</td><td class="reg">'+t(reg==='VIS'?'VIS':reg)+(r.abs?'':' · '+t(series(r.n2)))+'</td></tr>';
+  }).join('');
+  drawSpec();
+}
+function drawSpec(){
+  const c=specCvo.ctx,w=700,h=64,col=C();
+  c.fillStyle='#05060a';c.fillRect(0,0,w,h);
+  const x=l=>(l-380)/(780-380)*w;
+  /* línies de referència de Balmer (tènues) */
+  [[656.3,'Hα'],[486.1,'Hβ'],[434.0,'Hγ'],[410.2,'Hδ']].forEach(([l,n])=>{
+    c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=1;c.setLineDash([2,3]);c.beginPath();c.moveTo(x(l),20);c.lineTo(x(l),h);c.stroke();c.setLineDash([]);
+    c.fillStyle='rgba(255,255,255,.45)';c.font='10px system-ui';c.textAlign='center';c.fillText(n,x(l),13);
+  });
+  B.spec.forEach(l=>{if(l>=380&&l<=780){c.strokeStyle=wl2rgb(l);c.lineWidth=3;c.beginPath();c.moveTo(x(l),20);c.lineTo(x(l),h);c.stroke();}});
+  c.fillStyle='rgba(255,255,255,.6)';c.font='10px system-ui';c.textAlign='left';c.fillText('380 nm',3,h-4);c.textAlign='right';c.fillText('780 nm',w-3,h-4);
+}
+
+/* ======================= comuns ======================= */
+function renderModel(){
+  $('#mTitle').textContent=t(MODE+'.t');
+  $('#mInfo').innerHTML='<p><b class="k">'+t('k_d')+'</b> '+t(MODE+'.d')+'</p><p><b class="k">'+t('k_e')+'</b> '+t(MODE+'.e')+'</p><p><b class="k">'+t('k_l')+'</b> '+t(MODE+'.l')+'</p>';
+}
+function setMode(m){
+  MODE=m;
+  $$('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===m)));
+  const boh=m==='bohr';
+  $$('.scat').forEach(e=>e.classList.toggle('hide',boh));
+  $$('.boh').forEach(e=>e.classList.toggle('hide',!boh));
+  if(!boh){soft();parts=[];shot=null;}
+  $$('.panel fieldset:not(.hide)').forEach((f,i)=>{f.style.borderTop=i?'':'0';});
+  renderModel();renderBohrPanel();draw();
+}
+function draw(){MODE==='bohr'?drawBohr():drawScatter();}
+$$('#tabs button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
+$('#play').addEventListener('click',()=>{playing=!playing;setPlay();});
+$('#clear').addEventListener('click',()=>{soft();parts=[];shot=null;});
+function setPlay(){$('#play').textContent=playing?t('play'):t('resume');}
+document.addEventListener('langchange',()=>{setPlay();renderModel();renderBohrPanel();updateScatPanel();draw();});
+document.addEventListener('themechange',()=>{draw();drawSpec();});
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  if(MODE==='bohr')tickBohr(dt);
+  else if(playing)tickScatter(dt);
+  else time+=0;
+  if(MODE==='bohr'||playing||parts.length)draw();
+  requestAnimationFrame(frame);
+}
+READY=true;
+initLang();applyLang();
+setMode('thomson');
+requestAnimationFrame(frame);
+window.__dbg={SC,get stats(){return stats;},get parts(){return parts;},launch,goTo,get B(){return B;},setMode,dOf,kOf,get last(){return lastShot;},stepParticle,finish};
+</script>
+</body>
+</html>
