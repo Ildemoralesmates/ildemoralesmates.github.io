@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Selecció natural</title>
+<meta name="description" content="Simulador de selecció natural: una població d'escarabats amb color heretable, depredadors que veuen millor els menys camuflats, i generacions que s'adapten a l'entorn.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/seleccio-natural/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Selecció natural">
+<meta property="og:description" content="Simulador de selecció natural: una població d'escarabats amb color heretable, depredadors que veuen millor els menys camuflats, i generacions que s'adapten a l'entorn.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/seleccio-natural/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+.steps{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.steps li{display:grid;grid-template-columns:1.8rem minmax(0,1fr);gap:8px;align-items:start;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;color:var(--muted);transition:background .2s,border-color .2s}
+.steps li b{display:block;color:var(--ink);font-weight:600}
+.steps li i{display:grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--chip);font-style:normal;font-weight:700;font-size:13px;color:var(--ink)}
+.steps li.on{border-color:var(--pa);background:color-mix(in srgb,var(--pa) 10%,var(--panel))}
+.steps li.on i{background:var(--pa);color:var(--panel)}
+.cap{font-family:var(--f-num);font-size:13px}
+.pill:empty{display:none}
+.stage canvas.manual{cursor:crosshair}
+ol.q{margin:0;padding-left:1.2em;color:var(--muted);font-size:14px;display:grid;gap:5px}
+ol.q b{color:var(--ink);font-weight:600}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.legend{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="stage-card" data-i18n-aria="aria.sim" aria-label="">
+      <div class="bar">
+        <button id="next" class="btn primary" type="button" data-i18n="next"></button>
+        <button id="auto" class="btn" type="button"></button>
+        <button id="reset" class="btn" type="button" data-i18n="reset"></button>
+        <span class="pill" id="genPill"></span>
+        <span class="pill sp cap" id="capPill"></span>
+      </div>
+      <div class="stage"><canvas id="cv" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+    </section>
+
+    <aside class="panel" data-i18n-aria="aria.ctl" aria-label="">
+      <fieldset>
+        <legend data-i18n="f.env"></legend>
+        <div class="chips" id="envChips"></div>
+        <div id="ctlEnv" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="f.pred"></legend>
+        <div class="seg" id="modeSeg" role="group">
+          <button type="button" data-m="auto" data-i18n="m.auto"></button>
+          <button type="button" data-m="manual" data-i18n="m.manual"></button>
+        </div>
+        <div id="ctlPred" style="display:grid;gap:10px"></div>
+        <p class="note" id="predHelp"></p>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="f.pop"></legend>
+        <div id="ctlPop" style="display:grid;gap:10px"></div>
+      </fieldset>
+    </aside>
+  </main>
+
+  <section class="cards">
+    <article class="card">
+      <h2><small data-i18n="c1.s"></small><span data-i18n="c1.h"></span></h2>
+      <ol class="steps" id="steps">
+        <li data-s="1"><i>1</i><span><b data-i18n="st1.h"></b><span data-i18n="st1.p"></span></span></li>
+        <li data-s="2"><i>2</i><span><b data-i18n="st2.h"></b><span data-i18n="st2.p"></span></span></li>
+        <li data-s="3"><i>3</i><span><b data-i18n="st3.h"></b><span data-i18n="st3.p"></span></span></li>
+      </ol>
+      <dl>
+        <dt data-i18n="d.gen"></dt><dd id="dGen" class="hl"></dd>
+        <dt data-i18n="d.mean"></dt><dd id="dMean"></dd>
+        <dt data-i18n="d.sd"></dt><dd id="dSd"></dd>
+        <dt data-i18n="d.cap"></dt><dd id="dCap"></dd>
+        <dt data-i18n="d.sur"></dt><dd id="dSur"></dd>
+      </dl>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c2.s"></small><span data-i18n="c2.h"></span></h2>
+      <div class="plot"><canvas id="hist" data-i18n-aria="c2.aria" aria-label=""></canvas></div>
+      <div class="legend"><span><i class="sw" style="background:var(--pa)"></i><span data-i18n="lg.bg"></span></span><span><i class="sw" style="background:var(--pb)"></i><span data-i18n="lg.mean"></span></span></div>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c3.s"></small><span data-i18n="c3.h"></span></h2>
+      <div class="plot"><canvas id="evo" data-i18n-aria="c3.aria" aria-label=""></canvas></div>
+      <p class="note" data-i18n="c3.note"></p>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c4.s"></small><span data-i18n="c4.h"></span></h2>
+      <ol class="q" data-i18n-html="c4.l"></ol>
+      <p class="note" data-i18n="c4.note"></p>
+    </article>
+  </section>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+title:"Selecció natural",
+eyebrow:"Biologia i Geologia · 4t ESO",
+h1:"Selecció natural",
+lede:"Escarabats de color heretable sobre una escorça. Els ocells veuen millor els menys camuflats: mira com canvia la població al llarg de les generacions.",
+"aria.sim":"Població d'escarabats sobre l'escorça","aria.cv":"Escarabats sobre l'escorça d'un arbre","aria.ctl":"Controls",
+next:"Següent generació",auto:"Automàtic",pause:"Atura",reset:"Reinicia",
+"f.env":"Entorn","f.pred":"Depredadors","f.pop":"Població",
+"env.clean":"Bosc net (escorça clara)","env.dirty":"Bosc contaminat (escorça fosca)",
+bg:"Color de l'escorça",press:"Pressió: % capturat per generació",N:"Individus",mut:"Variació heretada (mutació)",speed:"Velocitat",
+"m.auto":"Els ocells (automàtic)","m.manual":"Fes-ho tu",
+"help.auto":"Els ocells capturen els escarabats que es veuen més: com més contrast amb l'escorça, més probable.",
+"help.manual":"Tu ets l'ocell: fes clic sobre els escarabats que veges millor fins a completar les captures.",
+gen:"Generació {g}",cap:"Captures: {a} / {k}",
+"c1.s":"El cicle","c1.h":"Tres passos de Darwin",
+"st1.h":"Variació. ","st1.p":"Els individus no són iguals: hi ha escarabats més clars i més foscos.",
+"st2.h":"Selecció. ","st2.p":"Els menys camuflats es veuen més i els ocells se'ls mengen.",
+"st3.h":"Herència. ","st3.p":"Els supervivents tenen fills que s'assemblen als pares, amb xicotetes variacions.",
+"d.gen":"Generació","d.mean":"Color mitjà (0 fosc – 1 clar)","d.sd":"Variació (desv. estàndard)","d.cap":"Color mitjà dels capturats","d.sur":"Color mitjà dels supervivents",
+"c2.s":"Població actual","c2.h":"Distribució del color","c2.aria":"Histograma del color de la població",
+"lg.bg":"color de l'escorça","lg.mean":"color mitjà",
+"c3.s":"Al llarg del temps","c3.h":"Evolució del color mitjà","c3.aria":"Gràfica del color mitjà per generació",
+"c3.note":"Línia: color mitjà. Banda: ±1 desviació. Línia discontínua: color de l'escorça en cada generació.",
+"c4.s":"Per a la classe","c4.h":"Preguntes per pensar",
+"c4.l":"<li>En bosc <b>net</b> i en bosc <b>contaminat</b>: cap a on evoluciona el color? Per què no passa d'un dia per l'altre?</li><li>Deixa que la població s'adapte i després <b>canvia l'escorça</b> de sobte (com a Manchester amb la Revolució Industrial). Quantes generacions triga a adaptar-se?</li><li>Posa la <b>variació heretada a 0</b>: pot la població fer-se més fosca si no hi ha cap escarabat més fosc? La selecció <b>actua sobre la variació que ja existeix</b>.</li><li>Amb només <b>20 individus</b> i <b>pressió 0 %</b>, el color mitjà també es mou. És selecció natural? (deriva genètica)</li><li>Mode manual: quins escarabats vas veure primer? Compara'ls amb els de la gràfica de capturats.</li>",
+"c4.note":"Model simplificat: un únic caràcter continu i heretable. En la natura, el color depén de molts gens i de l'ambient."
+},
+es:{
+title:"Selección natural",
+eyebrow:"Biología y Geología · 4.º ESO",
+h1:"Selección natural",
+lede:"Escarabajos de color heredable sobre una corteza. Los pájaros ven mejor a los menos camuflados: mira cómo cambia la población a lo largo de las generaciones.",
+"aria.sim":"Población de escarabajos sobre la corteza","aria.cv":"Escarabajos sobre la corteza de un árbol","aria.ctl":"Controles",
+next:"Siguiente generación",auto:"Automático",pause:"Detener",reset:"Reiniciar",
+"f.env":"Entorno","f.pred":"Depredadores","f.pop":"Población",
+"env.clean":"Bosque limpio (corteza clara)","env.dirty":"Bosque contaminado (corteza oscura)",
+bg:"Color de la corteza",press:"Presión: % capturado por generación",N:"Individuos",mut:"Variación heredada (mutación)",speed:"Velocidad",
+"m.auto":"Los pájaros (automático)","m.manual":"Hazlo tú",
+"help.auto":"Los pájaros capturan los escarabajos que más se ven: cuanto más contraste con la corteza, más probable.",
+"help.manual":"Tú eres el pájaro: haz clic en los escarabajos que veas mejor hasta completar las capturas.",
+gen:"Generación {g}",cap:"Capturas: {a} / {k}",
+"c1.s":"El ciclo","c1.h":"Tres pasos de Darwin",
+"st1.h":"Variación. ","st1.p":"Los individuos no son iguales: hay escarabajos más claros y más oscuros.",
+"st2.h":"Selección. ","st2.p":"Los menos camuflados se ven más y los pájaros se los comen.",
+"st3.h":"Herencia. ","st3.p":"Los supervivientes tienen hijos que se parecen a los padres, con pequeñas variaciones.",
+"d.gen":"Generación","d.mean":"Color medio (0 oscuro – 1 claro)","d.sd":"Variación (desv. estándar)","d.cap":"Color medio de los capturados","d.sur":"Color medio de los supervivientes",
+"c2.s":"Población actual","c2.h":"Distribución del color","c2.aria":"Histograma del color de la población",
+"lg.bg":"color de la corteza","lg.mean":"color medio",
+"c3.s":"A lo largo del tiempo","c3.h":"Evolución del color medio","c3.aria":"Gráfica del color medio por generación",
+"c3.note":"Línea: color medio. Banda: ±1 desviación. Línea discontinua: color de la corteza en cada generación.",
+"c4.s":"Para la clase","c4.h":"Preguntas para pensar",
+"c4.l":"<li>En bosque <b>limpio</b> y en bosque <b>contaminado</b>: ¿hacia dónde evoluciona el color? ¿Por qué no ocurre de un día para otro?</li><li>Deja que la población se adapte y después <b>cambia la corteza</b> de golpe (como en Mánchester con la Revolución Industrial). ¿Cuántas generaciones tarda en adaptarse?</li><li>Pon la <b>variación heredada a 0</b>: ¿puede la población oscurecerse si no hay ningún escarabajo más oscuro? La selección <b>actúa sobre la variación que ya existe</b>.</li><li>Con solo <b>20 individuos</b> y <b>presión 0 %</b>, el color medio también se mueve. ¿Es selección natural? (deriva genética)</li><li>Modo manual: ¿qué escarabajos viste primero? Compáralos con los de la gráfica de capturados.</li>",
+"c4.note":"Modelo simplificado: un único carácter continuo y heredable. En la naturaleza, el color depende de muchos genes y del ambiente."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+try{const s=localStorage.getItem('ilde-lang');if(s==='ca'||s==='es')LANG=s;}catch(e){}
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    LANG=b.dataset.lang; try{localStorage.setItem('ilde-lang',LANG);}catch(e){} applyLang();
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'"></label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+
+var READY=false;
+const W=760,H=420;
+const cvo=makeCanvas($('#cv'),W,H,()=>{if(READY)draw();}),ctx=cvo.ctx;
+const hio=makeCanvas($('#hist'),460,250,()=>{if(READY)drawHist();}),hc=hio.ctx;
+const evo=makeCanvas($('#evo'),460,250,()=>{if(READY)drawEvo();}),ec=evo.ctx;
+
+/* ---------- estado ---------- */
+const E={N:100,bg:.85,press:.4,mut:.03,speed:1,mode:'auto',gen:0,pop:[],phase:'idle',t:0,hist:[],sel:null,need:0,got:0,auto:false,wait:0,birds:null};
+const Lm=v=>10+80*clamp(v,0,1);
+const colOf=(v,d=0,a=1)=>'hsla(28,22%,'+clamp(Lm(v)+d,2,96)+'%,'+a+')';
+function mean(a){return a.reduce((s,x)=>s+x,0)/(a.length||1);}
+function sd(a){const m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)*(x-m))));}
+
+/* ---------- escorça (capa en caché) ---------- */
+const bark=document.createElement('canvas');bark.width=W*2;bark.height=H*2;
+const bkc=bark.getContext('2d');bkc.scale(2,2);
+let TEX=null;
+function makeTex(){
+  const rnd=(()=>{let s=12345;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};})();
+  TEX={blobs:[],furr:[]};
+  for(let i=0;i<650;i++)TEX.blobs.push({x:rnd()*W,y:rnd()*H,r:3+rnd()*13,dv:(rnd()-.5)*.14});
+  for(let i=0;i<16;i++){const pts=[];let x=rnd()*W;for(let y=-10;y<=H+10;y+=14){x+=(rnd()-.5)*9;pts.push([x,y]);}TEX.furr.push({pts,dv:-.05-rnd()*.08});}
+}
+function renderBark(){
+  if(!TEX)makeTex();
+  const c=bkc;c.fillStyle=colOf(E.bg);c.fillRect(0,0,W,H);
+  TEX.blobs.forEach(b=>{c.fillStyle=colOf(E.bg+b.dv,0,.55);c.beginPath();c.arc(b.x,b.y,b.r,0,TAU);c.fill();});
+  c.lineCap='round';
+  TEX.furr.forEach(f=>{c.strokeStyle=colOf(E.bg+f.dv,0,.7);c.lineWidth=2.4;c.beginPath();f.pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();});
+}
+
+/* ---------- población ---------- */
+function place(n){
+  const pts=[];
+  for(let i=0;i<n;i++){
+    let best=null,bd=-1;
+    for(let k=0;k<14;k++){
+      const q={x:22+Math.random()*(W-44),y:22+Math.random()*(H-44)};
+      let d=1e9;for(const p of pts){const dd=Math.hypot(p.x-q.x,p.y-q.y);if(dd<d)d=dd;if(d<bd)break;}
+      if(d>bd){bd=d;best=q;}
+      if(bd>26)break;
+    }
+    best.a=Math.random()*TAU;pts.push(best);
+  }
+  return pts;
+}
+function makePop(cs){
+  const pts=place(cs.length);
+  return cs.map((c,i)=>({c,x:pts[i].x,y:pts[i].y,a:pts[i].a,fade:1,state:'ok',d:0}));
+}
+function initPop(){
+  const cs=[];for(let i=0;i<E.N;i++)cs.push(clamp(.5+randn()*.17,0,1));
+  E.pop=makePop(cs);E.gen=0;E.phase='idle';E.t=0;E.hist=[];E.sel=null;E.need=0;E.got=0;E.wait=0;E.birds=null;
+  pushHist();
+}
+function pushHist(){const cs=E.pop.map(p=>p.c);E.hist.push({g:E.gen,m:mean(cs),s:sd(cs),bg:E.bg});}
+function quota(){return Math.min(Math.round(E.press*E.N),E.N-2);}
+
+/* ---------- ciclo ---------- */
+function startGen(){
+  if(E.phase!=='idle')return;
+  const K=quota();E.need=K;E.got=0;E.sel={cap:[],sur:[],K};
+  if(K<=0){E.phase='eat';E.t=0;E.eatTotal=0;return;}
+  if(E.mode==='manual'){E.phase='manual';return;}
+  /* muestreo ponderado sin reemplazo (Efraimidis–Spirakis) */
+  const keys=E.pop.map((p,i)=>({i,k:Math.pow(Math.random(),1/(.03+Math.pow(Math.abs(p.c-E.bg),2)))}));
+  keys.sort((a,b)=>b.k-a.k);
+  keys.slice(0,K).forEach((o,j)=>{const p=E.pop[o.i];p.state='eating';p.d=j*.035/E.speed;p.fade=1;});
+  E.phase='eat';E.t=0;E.eatTotal=K;
+  E.birds={t:0};
+}
+function eatOne(p){
+  p.state='eating';p.d=0;E.got++;
+}
+function reproduce(){
+  const cap=E.pop.filter(p=>p.state==='eating'||p.state==='dead'),sur=E.pop.filter(p=>p.state==='ok');
+  E.sel={cap:cap.map(p=>p.c),sur:sur.map(p=>p.c),K:E.sel?E.sel.K:0};
+  const cs=[];
+  for(let i=0;i<E.N;i++){const par=sur[Math.floor(Math.random()*sur.length)];cs.push(clamp(par.c+randn()*E.mut,0,1));}
+  E.pop=makePop(cs);E.pop.forEach(p=>{p.fade=0;p.state='born';});
+  E.phase='born';E.t=0;E.birds=null;
+}
+function tick(dt){
+  const sp=E.speed;
+  E.t+=dt;
+  if(E.birds)E.birds.t+=dt;
+  if(E.phase==='eat'||E.phase==='manual'){
+    let anyEating=false;
+    E.pop.forEach(p=>{
+      if(p.state==='eating'){
+        if(p.d>0)p.d-=dt;else{p.fade-=dt*2.2*sp;if(p.fade<=0){p.fade=0;p.state='dead';}}
+        anyEating=anyEating||p.state==='eating';
+      }
+    });
+    if(E.phase==='manual'&&E.got>=E.need&&!anyEating){E.phase='eat';E.t=0;}
+    else if(E.phase==='eat'&&!anyEating&&E.t>.35/sp){reproduce();}
+  }else if(E.phase==='born'){
+    E.pop.forEach(p=>{p.fade=Math.min(1,p.fade+dt*1.8*sp);});
+    if(E.t>.7/sp){E.pop.forEach(p=>{p.state='ok';p.fade=1;});E.gen++;pushHist();E.phase='idle';E.t=0;E.wait=0;renderStats();drawHist();drawEvo();}
+  }else if(E.phase==='idle'&&E.auto){
+    E.wait+=dt;if(E.wait>.55/sp)startGen();
+  }
+}
+
+/* ---------- dibujo ---------- */
+function beetle(c,x,y,a,v,al,sc){
+  c.save();c.translate(x,y);c.rotate(a);c.scale(sc,sc);c.globalAlpha=al;
+  const dk=colOf(v,-16,.9);
+  c.strokeStyle=dk;c.lineWidth=1.3;c.lineCap='round';
+  for(const dx of [-4,0,4]){c.beginPath();c.moveTo(dx,-4);c.lineTo(dx+1.5,-10);c.moveTo(dx,4);c.lineTo(dx+1.5,10);c.stroke();}
+  c.fillStyle=colOf(v);c.strokeStyle=colOf(v,-14,.9);c.lineWidth=1;
+  c.beginPath();c.ellipse(0,0,10.5,6.3,0,0,TAU);c.fill();c.stroke();
+  c.beginPath();c.arc(10,0,3.6,0,TAU);c.fill();c.stroke();
+  c.strokeStyle=colOf(v,-12,.7);c.beginPath();c.moveTo(-9,0);c.lineTo(8,0);c.stroke();
+  c.restore();
+}
+function bird(c,x,y,s,col){
+  c.save();c.translate(x,y);c.scale(s,s);c.fillStyle=col;c.beginPath();
+  c.moveTo(-26,-6);c.quadraticCurveTo(-12,-18,0,0);c.quadraticCurveTo(12,-18,26,-6);c.quadraticCurveTo(12,-3,3,6);c.lineTo(0,14);c.lineTo(-3,6);c.quadraticCurveTo(-12,-3,-26,-6);c.fill();c.restore();
+}
+function draw(){
+  const c=ctx,col=C();
+  c.drawImage(bark,0,0,W,H);
+  const manual=E.phase==='manual';
+  E.pop.forEach(p=>{
+    const al=p.state==='born'?p.fade:p.state==='eating'?Math.max(p.fade,0):1;
+    if(p.state==='dead')return;
+    beetle(c,p.x,p.y,p.a,p.c,al,1);
+    if(p.state==='eating'&&p.d<=0){
+      c.strokeStyle='rgba(214,58,74,'+(.9*p.fade)+')';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,10+(1-p.fade)*14,0,TAU);c.stroke();
+    }
+  });
+  if(E.birds&&E.phase==='eat'){
+    const u=clamp(E.birds.t/1.2,0,1.4);
+    bird(c,lerp(-40,W+60,u/1.4),lerp(40,200,Math.sin(u*2))+Math.sin(E.birds.t*14)*4,1,'rgba(20,24,40,.55)');
+  }
+  if(manual){c.fillStyle='rgba(20,24,40,.62)';rrect(c,10,H-34,250,24,6);c.fill();c.fillStyle='#fff';c.font='600 12.5px system-ui';c.textAlign='left';c.fillText(t('cap',{a:E.got,k:E.need}),20,H-17);}
+  $('#cv').classList.toggle('manual',manual);
+}
+function axes(c,w,h,m,xl,yl,yt,xt){
+  const col=C();c.strokeStyle=col.line;c.lineWidth=1;c.fillStyle=col.muted;c.font='11px ui-monospace,Menlo,monospace';
+  c.textAlign='right';yt.forEach(([v,y])=>{c.beginPath();c.moveTo(m.l,y);c.lineTo(w-m.r,y);c.stroke();c.fillText(v,m.l-5,y+4);});
+  c.textAlign='center';xt.forEach(([v,x])=>c.fillText(v,x,h-m.b+14));
+  c.strokeStyle=col.ink;c.lineWidth=1.5;c.beginPath();c.moveTo(m.l,m.t);c.lineTo(m.l,h-m.b);c.lineTo(w-m.r,h-m.b);c.stroke();
+  c.fillStyle=col.ink;c.font='12px system-ui';c.textAlign='center';c.fillText(xl,(m.l+w-m.r)/2,h-4);
+  c.save();c.translate(11,(m.t+h-m.b)/2);c.rotate(-Math.PI/2);c.fillText(yl,0,0);c.restore();
+}
+function drawHist(){
+  const c=hc,w=460,h=250,m={l:52,r:10,t:12,b:38},col=C();
+  c.fillStyle=col.panel;c.fillRect(0,0,w,h);
+  const B=20,cnt=new Array(B).fill(0);E.pop.forEach(p=>{cnt[Math.min(B-1,Math.floor(p.c*B))]++;});
+  const fr=cnt.map(x=>x/Math.max(1,E.pop.length)),ymax=Math.max(.2,Math.ceil(Math.max(...fr)*12)/10);
+  const X=v=>m.l+v*(w-m.l-m.r),Y=f=>h-m.b-f/ymax*(h-m.t-m.b);
+  axes(c,w,h,m,'color (0 = '+(LANG==='ca'?'fosc':'oscuro')+' · 1 = '+(LANG==='ca'?'clar':'claro')+')',(LANG==='ca'?'fracció':'fracción'),
+    [0,.25,.5,.75,1].map(k=>[fmt(k*ymax,2),Y(k*ymax)]),[0,.25,.5,.75,1].map(v=>[fmt(v,2),X(v)]));
+  fr.forEach((f,i)=>{c.fillStyle=colOf((i+.5)/B);c.strokeStyle=col.muted;c.lineWidth=.8;const x=X(i/B),bw=(w-m.l-m.r)/B-1;c.fillRect(x+.5,Y(f),bw,h-m.b-Y(f));c.strokeRect(x+.5,Y(f),bw,h-m.b-Y(f));});
+  c.lineWidth=2.4;c.strokeStyle=col.pa;c.beginPath();c.moveTo(X(E.bg),m.t);c.lineTo(X(E.bg),h-m.b);c.stroke();
+  const mu=mean(E.pop.map(p=>p.c));c.setLineDash([5,4]);c.strokeStyle=col.pb;c.beginPath();c.moveTo(X(mu),m.t);c.lineTo(X(mu),h-m.b);c.stroke();c.setLineDash([]);
+}
+function drawEvo(){
+  const c=ec,w=460,h=250,m={l:52,r:12,t:12,b:38},col=C();
+  c.fillStyle=col.panel;c.fillRect(0,0,w,h);
+  const gmax=Math.max(20,E.gen),X=g=>m.l+g/gmax*(w-m.l-m.r),Y=v=>h-m.b-v*(h-m.t-m.b);
+  const step=gmax<=25?5:gmax<=60?10:gmax<=150?25:50,xt=[];for(let g=0;g<=gmax;g+=step)xt.push([g,X(g)]);
+  axes(c,w,h,m,(LANG==='ca'?'generació':'generación'),'color',[0,.25,.5,.75,1].map(v=>[fmt(v,2),Y(v)]),xt);
+  const hs=E.hist;
+  c.fillStyle=col.dark?'rgba(118,162,255,.2)':'rgba(35,80,200,.14)';c.beginPath();
+  hs.forEach((p,i)=>i?c.lineTo(X(p.g),Y(clamp(p.m+p.s,0,1))):c.moveTo(X(p.g),Y(clamp(p.m+p.s,0,1))));
+  for(let i=hs.length-1;i>=0;i--)c.lineTo(X(hs[i].g),Y(clamp(hs[i].m-hs[i].s,0,1)));c.closePath();c.fill();
+  c.setLineDash([5,4]);c.strokeStyle=col.pb;c.lineWidth=2;c.beginPath();
+  hs.forEach((p,i)=>{if(i){c.lineTo(X(p.g),Y(hs[i-1].bg));}else c.moveTo(X(p.g),Y(p.bg));c.lineTo(X(p.g),Y(p.bg));});
+  c.lineTo(X(E.gen),Y(E.bg));c.stroke();c.setLineDash([]);
+  c.strokeStyle=col.pa;c.lineWidth=2.4;c.beginPath();hs.forEach((p,i)=>i?c.lineTo(X(p.g),Y(p.m)):c.moveTo(X(p.g),Y(p.m)));c.stroke();
+  const l=hs[hs.length-1];c.fillStyle=col.pa;c.beginPath();c.arc(X(l.g),Y(l.m),4,0,TAU);c.fill();
+}
+function renderStats(){
+  const cs=E.pop.map(p=>p.c);
+  $('#dGen').textContent=E.gen;$('#dMean').textContent=fmt(mean(cs),2);$('#dSd').textContent=fmt(sd(cs),3);
+  $('#dCap').textContent=E.sel&&E.sel.cap.length?fmt(mean(E.sel.cap),2)+' ('+E.sel.cap.length+')':'—';
+  $('#dSur').textContent=E.sel&&E.sel.sur.length?fmt(mean(E.sel.sur),2)+' ('+E.sel.sur.length+')':'—';
+  $('#genPill').textContent=t('gen',{g:E.gen});
+  $$('#steps li').forEach(li=>{const s=+li.dataset.s,ph=E.phase;li.classList.toggle('on',(s===1&&ph==='idle')||(s===2&&(ph==='eat'||ph==='manual'))||(s===3&&ph==='born'));});
+  $('#capPill').textContent=(E.phase==='manual'||E.phase==='eat')&&E.need?t('cap',{a:E.mode==='manual'?E.got:Math.min(E.need,E.pop.filter(p=>p.state!=='ok').length),k:E.need}):'';
+}
+
+/* ---------- interfaz ---------- */
+const sE=$('#ctlEnv'),sP=$('#ctlPred'),sN=$('#ctlPop');
+const SL={};
+SL.bg=slider(sE,{id:'sBg',key:'bg',min:0,max:1,step:.01,val:E.bg,fmtv:v=>fmt(v,2),on:v=>{E.bg=v;renderBark();draw();drawHist();syncEnv();}});
+SL.press=slider(sP,{id:'sPr',key:'press',min:0,max:70,step:1,val:40,fmtv:v=>v+' %',on:v=>{E.press=v/100;}});
+SL.N=slider(sN,{id:'sN',key:'N',min:20,max:300,step:10,val:E.N,on:v=>{E.N=v;initPop();refresh();}});
+SL.mut=slider(sN,{id:'sMu',key:'mut',min:0,max:.15,step:.005,val:E.mut,fmtv:v=>fmt(v,3),on:v=>{E.mut=v;}});
+SL.speed=slider(sN,{id:'sSp',key:'speed',min:.5,max:4,step:.25,val:1,fmtv:v=>'×'+fmt(v,2),on:v=>{E.speed=v;}});
+const ENVS=[['env.clean',.85],['env.dirty',.15]];
+function buildEnv(){
+  const h=$('#envChips');h.innerHTML='';
+  ENVS.forEach(([k,v])=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.v=v;b.textContent=t(k);
+    b.addEventListener('click',()=>{E.bg=v;SL.bg.set(v);renderBark();draw();drawHist();syncEnv();});h.appendChild(b);});
+  syncEnv();
+}
+function syncEnv(){$$('#envChips .chip').forEach(b=>b.setAttribute('aria-pressed',String(Math.abs(+b.dataset.v-E.bg)<.005)));}
+$$('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
+  if(E.phase!=='idle')return;E.mode=b.dataset.m;
+  $$('#modeSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  $('#predHelp').textContent=t('help.'+E.mode);
+}));
+$('#next').addEventListener('click',()=>startGen());
+$('#auto').addEventListener('click',()=>{E.auto=!E.auto;E.wait=0;setAuto();});
+$('#reset').addEventListener('click',()=>{initPop();refresh();});
+function setAuto(){$('#auto').textContent=E.auto?t('pause'):t('auto');$('#auto').setAttribute('aria-pressed',String(E.auto));}
+$('#cv').addEventListener('pointerdown',ev=>{
+  if(E.phase!=='manual')return;
+  const q=cvo.pt(ev);let best=null,bd=17;
+  E.pop.forEach(p=>{if(p.state!=='ok')return;const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<bd){bd=d;best=p;}});
+  if(best&&E.got<E.need)eatOne(best);
+});
+function refresh(){renderBark();renderStats();draw();drawHist();drawEvo();}
+document.addEventListener('langchange',()=>{Object.values(SL).forEach(s=>s.refresh());buildEnv();setAuto();$('#predHelp').textContent=t('help.'+E.mode);renderStats();drawHist();drawEvo();});
+document.addEventListener('themechange',()=>{draw();drawHist();drawEvo();});
+
+let last=performance.now(),sc=0;
+function frame(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  tick(dt);draw();
+  sc+=dt;if(sc>.12){sc=0;renderStats();}
+  requestAnimationFrame(frame);
+}
+initPop();
+READY=true;
+initLang();applyLang();
+$$('#modeSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.m===E.mode)));
+refresh();
+requestAnimationFrame(frame);
+window.__e={E,startGen,tick,reproduce,quota,initPop,refresh,eatOne};
+</script>
+</body>
+</html>
