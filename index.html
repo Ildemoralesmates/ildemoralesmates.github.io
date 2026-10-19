@@ -25,8 +25,8 @@
 :root {
   --bg: #f4f6fa; --surface: #ffffff; --ink: #14202e; --muted: #56677a; --line: #d5dde8;
   --grid: rgba(37, 99, 235, 0.07);
-  --c-mates: #2563eb; --c-fisica: #d9480f; --c-misc: #7c3aed; --c-curio: #0f8a5f; --c-quimica: #0e7490; --c-biologia: #4d7c0f;
-  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-misc: #efe6ff; --t-curio: #dcf5ea; --t-quimica: #d9f1f6; --t-biologia: #e8f3d6;
+  --c-mates: #2563eb; --c-fisica: #d9480f; --c-misc: #7c3aed; --c-curio: #0f8a5f; --c-quimica: #0e7490; --c-biologia: #4d7c0f; --c-geologia: #92580f;
+  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-misc: #efe6ff; --t-curio: #dcf5ea; --t-quimica: #d9f1f6; --t-biologia: #e8f3d6; --t-geologia: #f6e8d2;
   --bg-s1: #ebeeff; --bg-s2: #e4f1fb; --bg-s3: #e0f5f1; --bg-s4: #f0e9fc; --bg-s5: #fbf1dc; --bg-s6: #fde8ea;
   --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -36,8 +36,8 @@
   :root {
     --bg: #0e141c; --surface: #172130; --ink: #e8eef6; --muted: #93a4b8; --line: #2a384b;
     --grid: rgba(122, 162, 255, 0.07);
-    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-misc: #b799ff; --c-curio: #4fd3a0; --c-quimica: #5fd3e8; --c-biologia: #a3d65c;
-    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-misc: #2f2450; --t-curio: #15392e; --t-quimica: #12353d; --t-biologia: #2a3a14;
+    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-misc: #b799ff; --c-curio: #4fd3a0; --c-quimica: #5fd3e8; --c-biologia: #a3d65c; --c-geologia: #e0a85c;
+    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-misc: #2f2450; --t-curio: #15392e; --t-quimica: #12353d; --t-biologia: #2a3a14; --t-geologia: #3d2c14;
     --bg-s1: #1d2140; --bg-s2: #15293b; --bg-s3: #14312f; --bg-s4: #281f45; --bg-s5: #33291a; --bg-s6: #3a1d24;
   }
 }
@@ -149,7 +149,8 @@ const CATS = [
   { id: 'mates',  n: 'Matemàtiques', d: 'Activitats per a l\'aula de matemàtiques de l\'ESO i el Batxillerat.' },
   { id: 'fisica', n: 'Física',       d: 'Simuladors i activitats per entendre el món.' },
   { id: 'quimica', n: 'Química',      d: 'Simuladors de la matèria: de l\'àtom als gasos.' },
-  { id: 'biologia', n: 'Biologia i Geologia', d: 'Genètica, evolució i geologia.' },
+  { id: 'biologia', n: 'Biologia', d: 'Genètica i evolució.' },
+  { id: 'geologia', n: 'Geologia', d: 'Terratrèmols, interior de la Terra, isostasia i datació.' },
   { id: 'misc',   n: 'Aventures interactives per a xiquets curiosos (8 a 10 anys)', d: 'Llibres-joc per a jugar a la tablet: tria el camí, resol candaus de mates i descobreix tots els finals.' },
   { id: 'curio',  n: 'Curiositats',  d: 'Per a qui vol saber un poc més.' },
 ];
@@ -192,13 +193,14 @@ const RES = [
   { cat: 'quimica', sub: 'Reaccions · 3r i 4t ESO', href: 'ajust-reaccions/', glyph: '⚖️', t: 'Ajust de reaccions: la balança', d: 'Balança visual amb molècules: equilibra els àtoms de cada costat. Mode lliure i repte de 5 reaccions amb pistes i estrelles. Bilingüe valencià i castellà.', tag: 'Ajust de reaccions · 3r i 4t ESO' },
   { cat: 'quimica', sub: 'Dissolucions · 3r i 4t ESO', href: 'dissolucions/', glyph: '🥛', t: 'Dissolucions i concentració', d: 'Afegeix solut i mira la concentració en g/L, % en massa i mol/L i la saturació amb precipitat. Amb corba de solubilitat i repte de 5 tasques. Bilingüe valencià i castellà.', tag: 'Concentració i solubilitat · 3r i 4t ESO' },
   { cat: 'quimica', sub: 'Mescles i separació · 1r i 2n ESO', href: 'mescles-separacio/', glyph: '🧪', t: 'Mescles i separació', d: 'Filtració, decantació, destil·lació i cromatografia pas a pas, amb mescles on la tècnica funciona i on no. Bilingüe valencià i castellà.', tag: 'Tècniques de separació · 1r i 2n ESO' },
-  // Biologia i Geologia
+  // Biologia
   { cat: 'biologia', sub: 'Genètica · 4t ESO', href: 'genetica-punnett/', glyph: 'Aa', t: 'Quadres de Punnett', d: 'Tria els genotips dels progenitors i mira el quadre per a un o dos gens, amb dominància completa o incompleta. Simula centenars de descendents i comprova que les freqüències s\'acosten a les esperades. Amb mode predicció per a l\'aula. Bilingüe valencià i castellà.', tag: 'Genètica mendeliana · 4t ESO' },
   { cat: 'biologia', sub: 'Evolució · 4t ESO', href: 'seleccio-natural/', glyph: '🪲', t: 'Selecció natural', d: 'Escarabats de color heretable sobre una escorça: els ocells capturen els menys camuflats i la població evoluciona generació a generació. Pots fer d\'ocell tu. Bilingüe valencià i castellà.', tag: 'Selecció natural · 4t ESO' },
-  { cat: 'biologia', sub: 'Sismologia · Batxillerat', href: 'escala-richter/', glyph: '📈', t: 'Escala de Richter', d: 'Compara dos terratrèmols: cada punt de magnitud multiplica l\'amplitud per 10 i l\'energia per ≈32. Sismograma, equivalències en bombes i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala logarítmica · Batxillerat' },
-  { cat: 'biologia', sub: 'Geofísica · Batxillerat', href: 'ones-sismiques/', glyph: '🌍', t: 'Ones sísmiques P i S', d: 'Raigs sísmics en una Terra esfèrica amb velocitats tipus PREM: zones d\'ombra i per què sabem que el nucli extern és líquid. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Interior de la Terra · Batxillerat' },
-  { cat: 'biologia', sub: 'Datació · Batxillerat', href: 'desintegracio-radioactiva/', glyph: '☢️', t: 'Desintegració radioactiva i datació', d: 'Àtoms que es desintegren a l\'atzar, període de semidesintegració i càlcul de l\'edat d\'una mostra. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Datació radiomètrica · Batxillerat' },
-  { cat: 'biologia', sub: 'Geodinàmica · Batxillerat', href: 'isostasia/', glyph: '🏔️', t: 'Isostasia', d: 'Muntanyes amb arrels (Airy) i rebot glacial amb un mantell viscós: l\'escorça flota. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Isostasia · Batxillerat' },
+  // Geologia
+  { cat: 'geologia', sub: 'Sismologia · Batxillerat', href: 'escala-richter/', glyph: '📈', t: 'Escala de Richter', d: 'Compara dos terratrèmols: cada punt de magnitud multiplica l\'amplitud per 10 i l\'energia per ≈32. Sismograma, equivalències en bombes i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala logarítmica · Batxillerat' },
+  { cat: 'geologia', sub: 'Geofísica · Batxillerat', href: 'ones-sismiques/', glyph: '🌍', t: 'Ones sísmiques P i S', d: 'Raigs sísmics en una Terra esfèrica amb velocitats tipus PREM: zones d\'ombra i per què sabem que el nucli extern és líquid. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Interior de la Terra · Batxillerat' },
+  { cat: 'geologia', sub: 'Datació · Batxillerat', href: 'desintegracio-radioactiva/', glyph: '☢️', t: 'Desintegració radioactiva i datació', d: 'Àtoms que es desintegren a l\'atzar, període de semidesintegració i càlcul de l\'edat d\'una mostra. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Datació radiomètrica · Batxillerat' },
+  { cat: 'geologia', sub: 'Geodinàmica · Batxillerat', href: 'isostasia/', glyph: '🏔️', t: 'Isostasia', d: 'Muntanyes amb arrels (Airy) i rebot glacial amb un mantell viscós: l\'escorça flota. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Isostasia · Batxillerat' },
   // Aventures interactives per a xiquets curiosos (8 a 10 anys)
   { cat: 'misc', href: 'maquina-temps/', glyph: '⚙', t: 'La Màquina del Temps: Aventura per tres èpoques', d: 'Dinosaures, Roma i un castell medieval: tria el camí, resol candaus de mates, recull engranatges i torna a casa amb Roda l\'hàmster.', tag: 'Aventura interactiva' },
   { cat: 'misc', href: 'maquina-temps-paleolitic/', glyph: '🦣', t: 'La Màquina del Temps: Aventura al Paleolític', d: 'Tres viatges per la Prehistòria amb Roda l\'hàmster: ajuda una cria d\'elefant i un cadell de llop, resol candaus de mates i troba els 10 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
