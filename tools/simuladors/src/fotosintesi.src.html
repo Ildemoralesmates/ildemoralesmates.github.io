@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fotosíntesi i respiració cel·lular: matèria i energia</title>
+<meta name="description" content="Flux de matèria i energia entre el cloroplast i el mitocondri: fotosíntesi i respiració cel·lular, cicle dia-nit, punt de compensació i cèl·lula animal. Amb preguntes de predicció i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@STEPS_CSS@*/
+.stage canvas{display:block;width:100%;height:auto}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="stage"><canvas id="fc" role="img" data-i18n-aria="aria.stage" aria-label=""></canvas></div>
+<div class="stage" style="border-top:1px solid var(--line)"><canvas id="fch" role="img" data-i18n-aria="aria.chart" aria-label=""></canvas></div>
+<div class="lgd"><span><i style="background:#6b7280"></i>CO₂</span><span><i style="background:#3b9ae1"></i>H₂O</span><span><i style="background:#e8606a"></i>O₂</span><span><i style="background:#f2b705"></i><span data-i18n="lg_glu"></span></span><span><i style="background:#ffc400"></i><span data-i18n="lg_ph"></span></span><span><i style="background:#2fb344"></i>ATP</span><span><i style="background:#ff7a2f"></i><span data-i18n="lg_heat"></span></span></div>
+<div class="ctrlbar" id="fcl">
+<div class="seg" id="fmode" role="group" data-i18n-aria="aria.mode" aria-label=""><button type="button" data-mode="plant" data-i18n="c_plant"></button><button type="button" data-mode="animal" data-i18n="c_animal"></button></div>
+<button type="button" class="btn" id="fauto" aria-pressed="false" data-i18n="c_auto"></button>
+<button type="button" class="btn" id="fen" aria-pressed="false" data-i18n="c_energy"></button>
+</div>
+<div class="readout" id="fro" aria-live="off"></div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev"></button><button type="button" class="btn primary" id="next" data-i18n="st_next"></button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="f0.title"></h2>
+<div class="stext" id="stext" data-i18n-html="f0.text"></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart"></button></div>
+</aside>
+</div>
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+"ca":{
+"title":"Fotosíntesi i respiració cel·lular: matèria i energia",
+"lede":"Flux de matèria i energia entre el cloroplast i el mitocondri. Canvia la llum, activa el cicle dia-nit i compara una cèl·lula vegetal amb una d’animal.",
+"f0.title":"Dos orgànuls, un intercanvi",
+"f0.text":"<p>Aquesta és una <b>cèl·lula vegetal</b> amb <b>cloroplast</b> (esquerra) i <b>mitocondri</b> (dreta). Observa quines partícules entren i quines ixen de cada orgànul; la llegenda està sota el dibuix.</p><p>Els quadres de baix mostren la fotosíntesi, la respiració i la reserva de glucosa en el temps.</p>",
+"f1.title":"Fotosíntesi (cloroplast)",
+"f1.text":"<p>6 CO₂ + 6 H₂O + <b>llum</b> → C₆H₁₂O₆ + 6 O₂</p><p>La matèria inorgànica es converteix en matèria orgànica, i l’energia lluminosa es guarda com a energia química en la glucosa.</p>",
+"f1.q":"Quin d’aquests parells entra al cloroplast per fer la fotosíntesi?",
+"f1.o0":"Glucosa i O₂",
+"f1.o1":"CO₂ i H₂O",
+"f1.o2":"O₂ i H₂O",
+"f1.why":"Entren CO₂ i H₂O (reactius) i ixen glucosa i O₂ (productes). La glucosa i l’O₂ són justament el que necessita el mitocondri.",
+"f2.title":"Respiració cel·lular (mitocondri)",
+"f2.text":"<p>C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + <b>energia</b> (ATP + calor)</p><p>La glucosa s’oxida: l’energia química passa a ATP, la moneda energètica que la cèl·lula pot gastar. Una part es perd com a calor.</p>",
+"f2.q":"Compara les dues equacions. Què hi observes?",
+"f2.o0":"Els productes d’una són els reactius de l’altra",
+"f2.o1":"Són la mateixa reacció en el mateix orgànul",
+"f2.o2":"Només es diferencien en el nom",
+"f2.why":"Els productes de la fotosíntesi (glucosa i O₂) són els reactius de la respiració, i viceversa (CO₂ i H₂O). Per això la matèria pot reciclar-se.",
+"f3.title":"La matèria es recicla",
+"f3.text":"<p>Entre els dos orgànuls hi ha quatre “carrils”: glucosa i O₂ cap al mitocondri; CO₂ i H₂O de tornada al cloroplast. Els mateixos àtoms de C, H i O donen voltes.</p>",
+"f3.tq":"Segueix un àtom de carboni: del CO₂ que entra al cloroplast, on va a parar? I després del mitocondri?",
+"f3.th":"CO₂ → (fotosíntesi) → glucosa → (respiració) → CO₂ de nou. El carboni fa un cicle; la matèria és circular.",
+"f4.title":"L’energia no es recicla",
+"f4.text":"<p>Activa’s la <b>vista d’energia</b>: la llum entra (fotons), es guarda en la glucosa, es converteix en ATP i part es dissipa com a calor. L’energia <b>flueix</b> en un sol sentit i cal un aport continu del Sol.</p>",
+"f4.q":"Quina afirmació és correcta?",
+"f4.o0":"La matèria i l’energia són ambdues cícliques",
+"f4.o1":"L’energia es recicla però la matèria no",
+"f4.o2":"La matèria circula en cicle; l’energia flueix en un sentit (llum → ATP + calor)",
+"f4.why":"La matèria es reutilitza una vegada i una altra; l’energia, no: es degrada a calor. Per això els ecosistemes necessiten l’energia del Sol de manera permanent.",
+"f5.title":"De nit",
+"f5.text":"<p>Hem apagat la llum (intensitat 0 %). Mira els carrils, la reserva de glucosa i la gràfica.</p>",
+"f5.q":"Quan s’apaga la llum, què creus que passa?",
+"f5.o0":"Tot s’atura: sense llum no hi ha activitat",
+"f5.o1":"El mitocondri s’atura i el cloroplast treballa més",
+"f5.o2":"El cloroplast s’atura, però el mitocondri continua consumint glucosa i O₂",
+"f5.why":"La respiració és contínua: la cèl·lula sempre necessita ATP. Sense fotosíntesi, la planta gasta les reserves de glucosa i capta O₂ de l’exterior.",
+"f6.title":"Un dia amb molta llum",
+"f6.text":"<p>Quan la fotosíntesi supera la respiració, sobra glucosa (es guarda com a midó) i s’allibera O₂. Per això de dia les plantes “millora” l’aire… però de nit consumeixen O₂.</p><p>Prova el <b>cicle dia-nit</b>.</p>",
+"f6.tq":"Mou el control de llum: troba el punt on la fotosíntesi iguala la respiració (punt de compensació). Què passa amb la reserva de glucosa si la llum es manté per sota?",
+"f6.th":"Per sota del punt de compensació la reserva baixa i la planta consumeix més del que fabrica; si dura molt, no sobreviu.",
+"f7.title":"I si no hi ha cloroplast? Cèl·lula animal",
+"f7.text":"<p>Una cèl·lula animal només té mitocondris. La glucosa i l’O₂ han d’arribar de fora. Per això els animals depenen, directa o indirectament, de les plantes.</p>",
+"f7.q":"Si traiem el cloroplast (cèl·lula animal), d’on ve la glucosa?",
+"f7.o0":"La fabrica el mitocondri",
+"f7.o1":"De l’aire",
+"f7.o2":"Dels aliments (nutrició heteròtrofa)",
+"f7.why":"Els animals són heteròtrofs: obtenen matèria orgànica dels aliments. El mitocondri no fabrica glucosa, la <i>consumeix</i>.",
+"fq1.q":"On té lloc la fotosíntesi i on la respiració cel·lular?",
+"fq1.o0":"Fotosíntesi al mitocondri, respiració al cloroplast",
+"fq1.o1":"Les dues al cloroplast",
+"fq1.o2":"Fotosíntesi al cloroplast, respiració al mitocondri (i al citosol)",
+"fq1.o3":"Les dues al nucli",
+"fq1.e":"Fotosíntesi: cloroplast; respiració aeròbia: mitocondri.",
+"fq2.q":"Quins productes de la fotosíntesi són reactius de la respiració?",
+"fq2.o0":"CO₂ i H₂O",
+"fq2.o1":"Glucosa i O₂",
+"fq2.o2":"ATP i calor",
+"fq2.o3":"Llum i CO₂",
+"fq2.e":"La glucosa i l’O₂ que ix del cloroplast són justament els reactius de la respiració.",
+"fq3.q":"Quina afirmació sobre matèria i energia és certa?",
+"fq3.o0":"La matèria circula en cicle; l’energia flueix i es dissipa com a calor",
+"fq3.o1":"Totes dues es reciclen",
+"fq3.o2":"L’energia es recicla i la matèria no",
+"fq3.o3":"Cap de les dues es transforma",
+"fq3.e":"Per això la vida necessita un aport continu d’energia (el Sol), però no de matèria nova.",
+"fq4.q":"De nit, una planta…",
+"fq4.o0":"no fa fotosíntesi però sí respiració: consumeix O₂ i allibera CO₂",
+"fq4.o1":"no respira",
+"fq4.o2":"fa més fotosíntesi",
+"fq4.o3":"allibera O₂",
+"fq4.e":"La respiració no depen de la llum; la fotosíntesi sí.",
+"fq5.q":"Una cèl·lula animal té mitocondris però no cloroplasts. D’on obté la glucosa?",
+"fq5.o0":"La fabrica amb llum i CO₂",
+"fq5.o1":"Dels aliments que ingereix",
+"fq5.o2":"De l’aire",
+"fq5.o3":"Del nucli",
+"fq5.e":"Nutrició heteròtrofa: depenen de la matèria orgànica que fabriquen els autòtrofs.",
+"fq6.q":"Si la fotosíntesi és menor que la respiració durant molt de temps, la planta…",
+"fq6.o0":"acumula glucosa",
+"fq6.o1":"gasta les reserves i acaba debilitant-se",
+"fq6.o2":"no canvia",
+"fq6.o3":"allibera més O₂",
+"fq6.e":"Per sota del punt de compensació el balanç de glucosa és negatiu.",
+"eyebrow":"Biologia · Metabolisme cel·lular",
+"h1":"Fotosíntesi i respiració cel·lular: matèria i energia",
+"aria.chart":"Gràfica de la fotosíntesi, la respiració i la reserva de glucosa al llarg del temps",
+"aria.mode":"Tipus de cèl·lula",
+"lg_glu":"Glucosa",
+"lg_ph":"Fotons (llum)",
+"lg_heat":"Calor",
+"c_plant":"Cèl·lula vegetal",
+"c_animal":"Cèl·lula animal",
+"c_auto":"☼☾ Cicle dia-nit",
+"c_energy":"⚡ Vista d'energia",
+"c_light":"Intensitat de llum",
+"cv_ch":"Cloroplast",
+"cv_chp":"FOTOSÍNTESI",
+"cv_noch":"(sense cloroplast)",
+"cv_mi":"Mitocondri",
+"cv_mip":"RESPIRACIÓ CEL·LULAR",
+"cv_tank":"Reserva de glucosa",
+"cv_atp":"ATP (energia utilitzable)",
+"cv_heat":"calor",
+"ban_e":"ENERGIA: llum → energia química (glucosa) → ATP + calor. No es recicla.",
+"ban_m":"MATÈRIA: cicle tancat (els àtoms de C, H i O es reutilitzen)",
+"g_ph":"Fotosíntesi",
+"g_re":"Respiració",
+"g_gl":"Reserva de glucosa",
+"r_light":"Llum",
+"r_ph":"Fotosíntesi",
+"r_re":"Respiració",
+"r_res":"Reserva",
+"msg_plus":"Fotosíntesi > respiració: sobra glucosa (es guarda) i la planta <b>allibera O₂</b> i capta CO₂.",
+"msg_minus":"Respiració > fotosíntesi: la planta <b>gasta reserves</b>, capta O₂ i allibera CO₂.",
+"msg_zero":"Punt de compensació: fotosíntesi ≈ respiració (no hi ha intercanvi net de gasos).",
+"msg_animal":"Cèl·lula animal: la glucosa ve de fora (aliments) i es consumeix amb O₂ per a obtindre ATP. Allibera CO₂ i calor."
+},
+"es":{
+"title":"Fotosíntesis y respiración celular: materia y energía",
+"lede":"Flujo de materia y energía entre el cloroplasto y la mitocondria. Cambia la luz, activa el ciclo día-noche y compara una célula vegetal con una animal.",
+"f0.title":"Dos orgánulos, un intercambio",
+"f0.text":"<p>Esta es una <b>célula vegetal</b> con <b>cloroplasto</b> (izquierda) y <b>mitocondria</b> (derecha). Observa qué partículas entran y cuáles salen de cada orgánulo; la leyenda está bajo el dibujo.</p><p>La gráfica de abajo muestra la fotosíntesis, la respiración y la reserva de glucosa a lo largo del tiempo.</p>",
+"f1.title":"Fotosíntesis (cloroplasto)",
+"f1.text":"<p>6 CO₂ + 6 H₂O + <b>luz</b> → C₆H₁₂O₆ + 6 O₂</p><p>La materia inorgánica se convierte en materia orgánica, y la energía luminosa se guarda como energía química en la glucosa.</p>",
+"f1.q":"¿Cuál de estos pares entra al cloroplasto para hacer la fotosíntesis?",
+"f1.o0":"Glucosa y O₂",
+"f1.o1":"CO₂ y H₂O",
+"f1.o2":"O₂ y H₂O",
+"f1.why":"Entran CO₂ y H₂O (reactivos) y salen glucosa y O₂ (productos). La glucosa y el O₂ son justo lo que necesita la mitocondria.",
+"f2.title":"Respiración celular (mitocondria)",
+"f2.text":"<p>C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + <b>energía</b> (ATP + calor)</p><p>La glucosa se oxida: la energía química pasa a ATP, la moneda energética que la célula puede gastar. Una parte se pierde como calor.</p>",
+"f2.q":"Compara las dos ecuaciones. ¿Qué observas?",
+"f2.o0":"Los productos de una son los reactivos de la otra",
+"f2.o1":"Son la misma reacción en el mismo orgánulo",
+"f2.o2":"Solo se diferencian en el nombre",
+"f2.why":"Los productos de la fotosíntesis (glucosa y O₂) son los reactivos de la respiración, y viceversa (CO₂ y H₂O). Por eso la materia puede reciclarse.",
+"f3.title":"La materia se recicla",
+"f3.text":"<p>Entre los dos orgánulos hay cuatro “carriles”: glucosa y O₂ hacia la mitocondria; CO₂ y H₂O de vuelta al cloroplasto. Los mismos átomos de C, H y O dan vueltas.</p>",
+"f3.tq":"Sigue un átomo de carbono: del CO₂ que entra al cloroplasto, ¿adónde va a parar? ¿Y después de la mitocondria?",
+"f3.th":"CO₂ → (fotosíntesis) → glucosa → (respiración) → CO₂ otra vez. El carbono hace un ciclo; la materia es circular.",
+"f4.title":"La energía no se recicla",
+"f4.text":"<p>Se activa la <b>vista de energía</b>: la luz entra (fotones), se guarda en la glucosa, se convierte en ATP y parte se disipa como calor. La energía <b>fluye</b> en un solo sentido y hace falta un aporte continuo del Sol.</p>",
+"f4.q":"¿Qué afirmación es correcta?",
+"f4.o0":"La materia y la energía son ambas cíclicas",
+"f4.o1":"La energía se recicla pero la materia no",
+"f4.o2":"La materia circula en ciclo; la energía fluye en un sentido (luz → ATP + calor)",
+"f4.why":"La materia se reutiliza una y otra vez; la energía, no: se degrada a calor. Por eso los ecosistemas necesitan la energía del Sol de forma permanente.",
+"f5.title":"De noche",
+"f5.text":"<p>Hemos apagado la luz (intensidad 0 %). Mira los carriles, la reserva de glucosa y la gráfica.</p>",
+"f5.q":"Cuando se apaga la luz, ¿qué crees que pasa?",
+"f5.o0":"Todo se detiene: sin luz no hay actividad",
+"f5.o1":"La mitocondria se detiene y el cloroplasto trabaja más",
+"f5.o2":"El cloroplasto se detiene, pero la mitocondria sigue consumiendo glucosa y O₂",
+"f5.why":"La respiración es continua: la célula siempre necesita ATP. Sin fotosíntesis, la planta gasta las reservas de glucosa y capta O₂ del exterior.",
+"f6.title":"Un día con mucha luz",
+"f6.text":"<p>Cuando la fotosíntesis supera a la respiración, sobra glucosa (se guarda como almidón) y se libera O₂. Por eso de día las plantas “mejoran” el aire… pero de noche consumen O₂.</p><p>Prueba el <b>ciclo día-noche</b>.</p>",
+"f6.tq":"Mueve el control de luz: encuentra el punto donde la fotosíntesis iguala la respiración (punto de compensación). ¿Qué pasa con la reserva de glucosa si la luz se mantiene por debajo?",
+"f6.th":"Por debajo del punto de compensación la reserva baja y la planta consume más de lo que fabrica; si dura mucho, no sobrevive.",
+"f7.title":"¿Y si no hay cloroplasto? Célula animal",
+"f7.text":"<p>Una célula animal solo tiene mitocondrias. La glucosa y el O₂ tienen que llegar de fuera. Por eso los animales dependen, directa o indirectamente, de las plantas.</p>",
+"f7.q":"Si quitamos el cloroplasto (célula animal), ¿de dónde viene la glucosa?",
+"f7.o0":"La fabrica la mitocondria",
+"f7.o1":"Del aire",
+"f7.o2":"De los alimentos (nutrición heterótrofa)",
+"f7.why":"Los animales son heterótrofos: obtienen materia orgánica de los alimentos. La mitocondria no fabrica glucosa, la <i>consume</i>.",
+"fq1.q":"¿Dónde tiene lugar la fotosíntesis y dónde la respiración celular?",
+"fq1.o0":"Fotosíntesis en la mitocondria, respiración en el cloroplasto",
+"fq1.o1":"Las dos en el cloroplasto",
+"fq1.o2":"Fotosíntesis en el cloroplasto, respiración en la mitocondria (y el citosol)",
+"fq1.o3":"Las dos en el núcleo",
+"fq1.e":"Fotosíntesis: cloroplasto; respiración aeróbica: mitocondria.",
+"fq2.q":"¿Qué productos de la fotosíntesis son reactivos de la respiración?",
+"fq2.o0":"CO₂ y H₂O",
+"fq2.o1":"Glucosa y O₂",
+"fq2.o2":"ATP y calor",
+"fq2.o3":"Luz y CO₂",
+"fq2.e":"La glucosa y el O₂ que salen del cloroplasto son justo los reactivos de la respiración.",
+"fq3.q":"¿Qué afirmación sobre materia y energía es cierta?",
+"fq3.o0":"La materia circula en ciclo; la energía fluye y se disipa como calor",
+"fq3.o1":"Ambas se reciclan",
+"fq3.o2":"La energía se recicla y la materia no",
+"fq3.o3":"Ninguna de las dos se transforma",
+"fq3.e":"Por eso la vida necesita un aporte continuo de energía (el Sol), pero no de materia nueva.",
+"fq4.q":"De noche, una planta…",
+"fq4.o0":"no hace fotosíntesis pero sí respiración: consume O₂ y libera CO₂",
+"fq4.o1":"no respira",
+"fq4.o2":"hace más fotosíntesis",
+"fq4.o3":"libera O₂",
+"fq4.e":"La respiración no depende de la luz; la fotosíntesis sí.",
+"fq5.q":"Una célula animal tiene mitocondrias pero no cloroplastos. ¿De dónde obtiene la glucosa?",
+"fq5.o0":"La fabrica con luz y CO₂",
+"fq5.o1":"De los alimentos que ingiere",
+"fq5.o2":"Del aire",
+"fq5.o3":"Del núcleo",
+"fq5.e":"Nutrición heterótrofa: dependen de la materia orgánica que fabrican los autótrofos.",
+"fq6.q":"Si la fotosíntesis es menor que la respiración durante mucho tiempo, la planta…",
+"fq6.o0":"acumula glucosa",
+"fq6.o1":"gasta las reservas y acaba debilitándose",
+"fq6.o2":"no cambia",
+"fq6.o3":"libera más O₂",
+"fq6.e":"Por debajo del punto de compensación el balance de glucosa es negativo.",
+"eyebrow":"Biología · Metabolismo celular",
+"h1":"Fotosíntesis y respiración celular: materia y energía",
+"aria.chart":"Gráfica de la fotosíntesis, la respiración y la reserva de glucosa a lo largo del tiempo",
+"aria.mode":"Tipo de célula",
+"lg_glu":"Glucosa",
+"lg_ph":"Fotones (luz)",
+"lg_heat":"Calor",
+"c_plant":"Célula vegetal",
+"c_animal":"Célula animal",
+"c_auto":"☼☾ Ciclo día-noche",
+"c_energy":"⚡ Vista de energía",
+"c_light":"Intensidad de luz",
+"cv_ch":"Cloroplasto",
+"cv_chp":"FOTOSÍNTESIS",
+"cv_noch":"(sin cloroplasto)",
+"cv_mi":"Mitocondria",
+"cv_mip":"RESPIRACIÓN CELULAR",
+"cv_tank":"Reserva de glucosa",
+"cv_atp":"ATP (energía utilizable)",
+"cv_heat":"calor",
+"ban_e":"ENERGÍA: luz → energía química (glucosa) → ATP + calor. No se recicla.",
+"ban_m":"MATERIA: ciclo cerrado (los átomos de C, H y O se reutilizan)",
+"g_ph":"Fotosíntesis",
+"g_re":"Respiración",
+"g_gl":"Reserva de glucosa",
+"r_light":"Luz",
+"r_ph":"Fotosíntesis",
+"r_re":"Respiración",
+"r_res":"Reserva",
+"msg_plus":"Fotosíntesis > respiración: sobra glucosa (se guarda) y la planta <b>libera O₂</b> y capta CO₂.",
+"msg_minus":"Respiración > fotosíntesis: la planta <b>gasta reservas</b>, capta O₂ y libera CO₂.",
+"msg_zero":"Punto de compensación: fotosíntesis ≈ respiración (no hay intercambio neto de gases).",
+"msg_animal":"Célula animal: la glucosa viene de fuera (alimentos) y se consume con O₂ para obtener ATP. Libera CO₂ y calor."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@STEPS_JS@*/
+const STEPS=[{"id":"f0","preset":{"light":70,"mode":"plant","showE":false,"hl":null}},{"id":"f1","ask":{"n":3,"ok":1},"preset":{"light":70,"mode":"plant","showE":false,"hl":"chloro"}},{"id":"f2","ask":{"n":3,"ok":0},"preset":{"light":70,"mode":"plant","showE":false,"hl":"mito"}},{"id":"f3","think":true,"preset":{"light":70,"mode":"plant","showE":false,"hl":"matter"}},{"id":"f4","ask":{"n":3,"ok":2},"preset":{"light":70,"mode":"plant","showE":true,"hl":null}},{"id":"f5","ask":{"n":3,"ok":2},"preset":{"light":0,"mode":"plant","showE":false,"hl":null}},{"id":"f6","think":true,"preset":{"light":100,"mode":"plant","showE":false,"hl":null}},{"id":"f7","ask":{"n":3,"ok":2},"preset":{"light":0,"mode":"animal","showE":true,"hl":null}}];
+const QDATA=[{"id":"fq1","lvl":"all","type":"mc","n":4,"ans":2},{"id":"fq2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"fq3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"fq4","lvl":"all","type":"mc","n":4,"ans":0},{"id":"fq5","lvl":"all","type":"mc","n":4,"ans":1},{"id":"fq6","lvl":"all","type":"mc","n":4,"ans":1}];
+const FW=800,FH=460;
+const FS={light:70,mode:'plant',auto:false,showE:false,hl:null,G:50,tday:10,P:0,R:0};
+let fcv,fch,fsl,parts=[],acc={},hist=[],lastTs=0,histT=0,roT=0;
+const QF=1.2;
+const PATH={
+ glu:[[300,175],[500,175]],o2:[[300,208],[500,208]],co2:[[500,258],[300,258]],h2o:[[500,290],[300,290]],
+ co2in:[[4,205],[120,230]],h2oin:[[4,275],[120,262]],o2out:[[190,125],[190,6]],o2in:[[710,8],[650,150]],co2out:[[640,322],[745,445]],
+ photon:[[84,76],[165,185]],atp:[[580,318],[575,452]],heat:[[700,250],[790,215]],
+ toPool:[[255,335],[385,392]],poolMito:[[435,395],[525,312]],food:[[4,418],[350,400]]
+};
+const KIND={
+ glu:{c:'#f2b705',s:'hex',sp:70},o2:{c:'#e8606a',s:'dot',sp:70},co2:{c:'#6b7280',s:'dot',sp:70},h2o:{c:'#3b9ae1',s:'dot',sp:70},
+ co2in:{c:'#6b7280',s:'dot',sp:60},h2oin:{c:'#3b9ae1',s:'dot',sp:60},o2out:{c:'#e8606a',s:'dot',sp:60},o2in:{c:'#e8606a',s:'dot',sp:60},co2out:{c:'#6b7280',s:'dot',sp:60},
+ photon:{c:'#ffc400',s:'dia',sp:150},atp:{c:'#2fb344',s:'atp',sp:55},heat:{c:'#ff7a2f',s:'heat',sp:40},
+ toPool:{c:'#f2b705',s:'hex',sp:70},poolMito:{c:'#f2b705',s:'hex',sp:70},food:{c:'#f2b705',s:'hex',sp:90}
+};
+const MATTER={glu:1,o2:1,co2:1,h2o:1,co2in:1,h2oin:1,o2out:1,o2in:1,co2out:1,toPool:1,poolMito:1,food:1};
+function plen(p){let l=0;for(let i=1;i<p.length;i++)l+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]);return l;}
+function ppos(p,u){
+  for(let i=1;i<p.length;i++){
+    const sl=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]);
+    if(u<=sl||i===p.length-1){const f=Math.min(1,u/sl);return {x:p[i-1][0]+(p[i][0]-p[i-1][0])*f,y:p[i-1][1]+(p[i][1]-p[i-1][1])*f,nx:-(p[i][1]-p[i-1][1])/sl,ny:(p[i][0]-p[i-1][0])/sl};}
+    u-=sl;
+  }
+}
+function spawn(k){parts.push({k:k,u:0,len:plen(PATH[k]),off:(Math.random()-0.5)*14,ph:Math.random()*6});}
+function rate(k,r,dt){
+  if(r<=0)return;
+  acc[k]=(acc[k]||0)+r*dt;
+  while(acc[k]>=1){acc[k]-=1;if(parts.length<420)spawn(k);}
+}
+function updateF(dt){
+  if(FS.auto){
+    FS.tday+=dt;
+    FS.light=Math.max(0,Math.sin(2*Math.PI*FS.tday/40))*100;
+    fsl.set(FS.light);
+  }
+  const plant=FS.mode==='plant';
+  FS.P=plant?FS.light/100:0;
+  const F=plant?0:0.45;
+  FS.R=0.5*FS.G/(FS.G+15);
+  FS.G+=3*(FS.P+F-FS.R)*dt;
+  FS.G=Math.max(0,Math.min(100,FS.G));
+  const P=FS.P,R=FS.R,ri=plant?Math.min(P,R):0;
+  rate('glu',QF*ri,dt);rate('o2',6*QF*ri,dt);rate('co2',6*QF*ri,dt);rate('h2o',6*QF*ri,dt);
+  if(plant){
+    rate('photon',14*FS.light/100,dt);
+    if(P>R){const n=P-R;rate('co2in',6*QF*n,dt);rate('h2oin',6*QF*n,dt);rate('o2out',6*QF*n,dt);rate('toPool',QF*n,dt);}
+    else{const d=R-P;rate('o2in',6*QF*d,dt);rate('co2out',6*QF*d,dt);rate('poolMito',QF*d,dt);}
+  }else{
+    rate('food',QF*F,dt);rate('poolMito',QF*R,dt);rate('o2in',6*QF*R,dt);rate('co2out',6*QF*R,dt);
+  }
+  rate('atp',6*QF*R,dt);rate('heat',4*QF*R,dt);
+  for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.u+=KIND[p.k].sp*dt;if(p.u>=p.len)parts.splice(i,1);}
+  histT+=dt;
+  if(histT>0.25){histT=0;hist.push([FS.P,FS.R,FS.G/100]);if(hist.length>160)hist.shift();}
+}
+const mixc=(a,b,f)=>Math.round(a+(b-a)*f);
+const pick=(dk,a,b)=>dk?b:a;
+function drawHex(c,x,y,r){c.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i;c.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));}c.closePath();}
+function drawParts(c){
+  for(let i=0;i<parts.length;i++){
+    const p=parts[i],k=KIND[p.k],q=ppos(PATH[p.k],p.u);
+    const x=q.x+q.nx*p.off,y=q.y+q.ny*p.off;
+    const al=FS.showE?(MATTER[p.k]?0.22:1):1;
+    c.globalAlpha=al;
+    if(k.s==='dot'){c.fillStyle=k.c;c.beginPath();c.arc(x,y,4,0,6.2832);c.fill();}
+    else if(k.s==='hex'){c.fillStyle=k.c;drawHex(c,x,y,6.5);c.fill();c.strokeStyle='#a87400';c.lineWidth=1;c.stroke();}
+    else if(k.s==='dia'){c.fillStyle=k.c;c.shadowColor='#ffc400';c.shadowBlur=8;c.beginPath();c.moveTo(x,y-6);c.lineTo(x+4,y);c.lineTo(x,y+6);c.lineTo(x-4,y);c.closePath();c.fill();c.shadowBlur=0;}
+    else if(k.s==='atp'){c.fillStyle=k.c;c.fillRect(x-11,y-6,22,12);c.fillStyle='#fff';c.font='700 9px system-ui,sans-serif';c.textAlign='center';c.fillText('ATP',x,y+3);}
+    else if(k.s==='heat'){c.globalAlpha=al*(1-p.u/p.len);c.fillStyle=k.c;c.beginPath();c.arc(x,y+Math.sin(p.ph+p.u/12)*5,3,0,6.2832);c.fill();}
+  }
+  c.globalAlpha=1;
+}
+function drawChloro(c,col){
+  const plant=FS.mode==='plant';
+  c.save();
+  if(!plant){c.globalAlpha=0.5;c.setLineDash([8,6]);}
+  c.beginPath();c.ellipse(190,235,140,120,0,0,6.2832);
+  c.fillStyle=plant?'#d3ecc9':'#eceff3';c.fill();
+  c.lineWidth=(FS.hl==='chloro')?6:3;c.strokeStyle=plant?'#3f9a43':'#9aa3b2';c.stroke();
+  c.setLineDash([]);
+  if(plant){
+    [[140,215],[225,185],[245,270],[155,285]].forEach(p=>{
+      for(let i=0;i<4;i++){c.fillStyle='#2f8a3a';c.strokeStyle='#1d5f27';c.lineWidth=1;c.beginPath();c.rect(p[0]-20,p[1]-16+i*9,40,7);c.fill();c.stroke();}
+    });
+  }
+  c.restore();
+  c.fillStyle=plant?pick(col.dark,'#1d5f27','#9bdba0'):col.muted;c.font='700 15px system-ui,sans-serif';c.textAlign='center';
+  c.fillText(plant?t('cv_ch'):t('cv_noch'),190,363);
+  c.font='13px system-ui,sans-serif';
+  if(plant)c.fillText(t('cv_chp'),190,382);
+}
+function drawMito(c,col){
+  c.beginPath();c.ellipse(610,235,140,105,0,0,6.2832);
+  c.fillStyle='#fbdcc4';c.fill();
+  c.lineWidth=(FS.hl==='mito')?6:3;c.strokeStyle='#d9722b';c.stroke();
+  c.save();c.beginPath();c.ellipse(610,235,128,93,0,0,6.2832);c.clip();
+  c.strokeStyle='#e89a63';c.lineWidth=9;c.lineCap='round';
+  for(let i=0;i<6;i++){const x=520+i*34;c.beginPath();if(i%2===0){c.moveTo(x,140);c.lineTo(x,215);}else{c.moveTo(x,330);c.lineTo(x,255);}c.stroke();}
+  c.restore();
+  c.lineCap='butt';
+  c.fillStyle=pick(col.dark,'#8d4310','#ffb98a');c.font='700 15px system-ui,sans-serif';c.textAlign='center';
+  c.fillText(t('cv_mi'),610,363);
+  c.font='13px system-ui,sans-serif';
+  c.fillText(t('cv_mip'),610,382);
+}
+function drawTank(c,col){
+  const x=345,y=345,w=90,h=95;
+  c.fillStyle=col.panel;c.fillRect(x,y,w,h);
+  const gh=h*FS.G/100;
+  c.fillStyle='#f6c944';c.fillRect(x,y+h-gh,w,gh);
+  c.strokeStyle=pick(col.dark,'#8a6a10','#d9b04a');c.lineWidth=3;c.strokeRect(x,y,w,h);
+  c.fillStyle=pick(col.dark,'#6a5008','#f2d27a');c.font='600 11px system-ui,sans-serif';c.textAlign='center';
+  c.fillText(t('cv_tank'),x+w/2,y-5);
+}
+function banner(c,text,color){
+  c.font='700 13px system-ui,sans-serif';c.textAlign='center';
+  const w=c.measureText(text).width+24;
+  c.fillStyle=color;c.globalAlpha=0.92;c.fillRect(400-w/2,9,w,24);c.globalAlpha=1;
+  c.fillStyle='#fff';c.fillText(text,400,26);
+}
+function drawF(){
+  const col=C(),dk=col.dark,c=fcv.ctx,ratio=fcv.cv.width/FW;
+  c.setTransform(ratio,0,0,ratio,0,0);
+  const f=FS.light/100;
+  c.fillStyle=dk?'rgb('+mixc(12,34,f)+','+mixc(18,52,f)+','+mixc(34,84,f)+')':'rgb('+mixc(200,244,f)+','+mixc(210,249,f)+','+mixc(232,255,f)+')';
+  c.fillRect(0,0,FW,FH);
+  const plant=FS.mode==='plant';
+  c.globalAlpha=plant?1:0.25;
+  if(FS.light>5){
+    c.fillStyle='#ffd23f';c.beginPath();c.arc(52,46,22*(0.6+0.4*f),0,6.2832);c.fill();
+    c.strokeStyle='#ffc400';c.lineWidth=3;
+    for(let i=0;i<10;i++){const a=i*0.628;c.beginPath();c.moveTo(52+Math.cos(a)*29,46+Math.sin(a)*29);c.lineTo(52+Math.cos(a)*(29+8*f),46+Math.sin(a)*(29+8*f));c.stroke();}
+  }else{c.fillStyle='#f4f1c9';c.beginPath();c.arc(52,46,18,0,6.2832);c.fill();c.fillStyle=dk?'#22304f':'#c8d2e8';c.beginPath();c.arc(60,42,16,0,6.2832);c.fill();}
+  c.globalAlpha=1;
+  drawChloro(c,col);drawMito(c,col);drawTank(c,col);
+  c.font='600 11px system-ui,sans-serif';c.textAlign='center';
+  c.globalAlpha=FS.showE?0.35:1;
+  c.fillStyle=pick(dk,'#a87400','#f2c14e');c.fillText('C₆H₁₂O₆',400,165);
+  c.fillStyle=pick(dk,'#c4414b','#ff8a92');c.fillText('O₂',400,199);
+  c.fillStyle=pick(dk,'#5b6370','#aab3c2');c.fillText('CO₂',400,274);
+  c.fillStyle=pick(dk,'#2f78b8','#6fb6f0');c.fillText('H₂O',400,306);
+  c.globalAlpha=1;
+  if(FS.showE){
+    c.fillStyle='#2fb344';c.font='700 12px system-ui,sans-serif';c.textAlign='left';
+    c.fillText(t('cv_atp'),604,450);
+    c.fillStyle=pick(dk,'#e0661f','#ff9a5a');c.textAlign='center';c.fillText(t('cv_heat'),768,196);
+  }
+  drawParts(c);
+  if(FS.showE)banner(c,t('ban_e'),'#c2570f');
+  else if(FS.hl==='matter')banner(c,t('ban_m'),'#2f6fed');
+  /* gràfica */
+  const k=fch.ctx,cw=fch.cv.width/FW;
+  k.setTransform(cw,0,0,cw,0,0);
+  k.clearRect(0,0,FW,90);k.fillStyle=col.stage;k.fillRect(0,0,FW,90);
+  k.strokeStyle=col.line;k.lineWidth=1;
+  for(let g=0;g<=4;g++){k.beginPath();k.moveTo(0,10+g*17.5);k.lineTo(FW,10+g*17.5);k.stroke();}
+  const line=(idx,color)=>{k.strokeStyle=color;k.lineWidth=2.4;k.beginPath();
+    for(let i=0;i<hist.length;i++){const x=i*(FW/160),y=80-hist[i][idx]*68;if(i===0)k.moveTo(x,y);else k.lineTo(x,y);}
+    k.stroke();};
+  line(0,'#2f9a45');line(1,'#e0661f');line(2,'#d4a30f');
+  k.font='600 11px system-ui,sans-serif';k.textAlign='left';
+  k.fillStyle='#2f9a45';k.fillText(t('g_ph'),8,14);
+  k.fillStyle='#e0661f';k.fillText(t('g_re'),100,14);
+  k.fillStyle='#d4a30f';k.fillText(t('g_gl'),190,14);
+}
+function paintROf(){
+  const ro=$('#fro');if(!ro)return;
+  let msg;
+  if(FS.mode==='plant'){const net=FS.P-FS.R;msg=t(net>0.02?'msg_plus':(net<-0.02?'msg_minus':'msg_zero'));}
+  else msg=t('msg_animal');
+  ro.innerHTML='<div><b>'+t('r_light')+':</b> '+Math.round(FS.light)+' % · <b>'+t('r_ph')+':</b> '+FS.P.toFixed(2)+' · <b>'+t('r_re')+':</b> '+FS.R.toFixed(2)+' · <b>'+t('r_res')+':</b> '+Math.round(FS.G)+' %</div><div>'+msg+'</div>';
+}
+function paintCtlF(){
+  $$('#fmode button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===FS.mode)));
+  $('#fauto').setAttribute('aria-pressed',String(FS.auto));
+  $('#fen').setAttribute('aria-pressed',String(FS.showE));
+  fsl.disable(FS.mode!=='plant');
+  fsl.refresh();
+}
+function loopF(ts){
+  const dt=Math.min(0.05,(ts-lastTs)/1000||0.016);lastTs=ts;
+  updateF(dt);drawF();
+  roT+=dt;if(roT>0.25){roT=0;paintROf();if(FS.auto)paintCtlF();}
+  requestAnimationFrame(loopF);
+}
+function initF(){
+  fcv=makeCanvas($('#fc'),FW,FH);
+  fch=makeCanvas($('#fch'),FW,90);
+  fsl=slider($('#fcl'),{id:'fl',key:'c_light',min:0,max:100,step:1,val:70,fmtv:v=>Math.round(v)+' %',on:v=>{FS.light=v;FS.auto=false;paintCtlF();}});
+  $('#fcl').insertBefore(fsl.el,$('#fcl').firstChild);
+  $$('#fmode button').forEach(b=>b.addEventListener('click',()=>{FS.mode=b.dataset.mode;paintCtlF();}));
+  $('#fauto').addEventListener('click',()=>{FS.auto=!FS.auto;if(FS.auto)FS.tday=Math.asin(Math.min(1,Math.max(0,FS.light/100)))*40/(2*Math.PI);paintCtlF();});
+  $('#fen').addEventListener('click',()=>{FS.showE=!FS.showE;paintCtlF();});
+  requestAnimationFrame(loopF);
+}
+function applyPresetF(p){
+  FS.light=p.light;FS.mode=p.mode;FS.showE=p.showE;FS.hl=p.hl;FS.auto=false;
+  fsl.set(p.light);paintCtlF();
+}
+initQuiz(QDATA);
+initLang();initF();applyLang();
+document.addEventListener('langchange',()=>{paintCtlF();paintROf();});
+stepsInit(STEPS,(i)=>{applyPresetF(STEPS[i].preset);});
+</script>
+</body>
+</html>

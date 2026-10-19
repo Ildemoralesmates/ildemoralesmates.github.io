@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ósmosis y difusión: partículas y membrana semipermeable</title>
+<meta name="description" content="Simulador de partículas para entender la difusión y la ósmosis: membrana permeable, semipermeable o impermeable, concentraciones, temperatura y una célula en un medio hipotónico o hipertónico. Con preguntas y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/osmosi-difusio/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/osmosi-difusio/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/osmosi-difusio/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/osmosi-difusio/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Ósmosis y difusión: partículas y membrana semipermeable">
+<meta property="og:description" content="Simulador de partículas para entender la difusión y la ósmosis: membrana permeable, semipermeable o impermeable, concentraciones, temperatura y una célula en un medio hipotónico o hipertónico. Con preguntas y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/osmosi-difusio/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
+.sidep{display:grid;gap:8px;align-content:start}
+.stepper{display:flex;gap:5px;flex-wrap:wrap}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer}
+.stepper button.done{background:var(--chip)}
+.stepper button[aria-current=step]{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600}
+.stepper button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stepno{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sidep h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.stext{font-size:14.5px}
+.stext p{margin:.45em 0}
+.sidep .stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.sidep .stat .v{font-size:15px}
+.pred,.think{border:1px solid var(--line);border-left:4px solid var(--pa);border-radius:8px;padding:10px 12px;background:var(--stage)}
+.think{border-left-color:var(--warn)}
+.pred .eb,.think .eb{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--pa);margin-bottom:3px}
+.think .eb{color:var(--warn)}
+.pred .qtext,.think .qtext{margin:0 0 6px!important;font-size:14.5px!important;font-weight:600}
+.pred .fb{padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.think .fb{margin-top:8px;padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.linkb{font:inherit;font-size:13px;color:var(--pa);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+.stepnav{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
+.rowlinks{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.lgd i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.hintline{min-height:1.4em;margin:0;padding:6px 12px 0;font-size:13.5px;font-weight:600;color:var(--warn)}
+.ctrlbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.ctrlbar .ctl{min-width:11rem;flex:1 1 11rem}
+.ctrlbar .btn[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.readout{padding:8px 12px 12px;font-size:13.5px;display:grid;gap:6px}
+.readout .two{display:flex;flex-wrap:wrap;gap:12px 24px}
+.readout .two>div{flex:1 1 13rem}
+.meter{height:7px;background:var(--chip);border:1px solid var(--line);border-radius:4px;margin:3px 0}
+.meter i{display:block;height:100%;background:var(--pb);border-radius:3px}
+
+.stage canvas{display:block;width:100%;height:auto}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Biología · Transporte a través de la membrana</p>
+      <h1 data-i18n="h1">Ósmosis y difusión: partículas y membrana semipermeable</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Simulación de partículas: cambia las concentraciones, la membrana y la temperatura, y comprueba el flujo neto de agua. Cada paso es un experimento con una pregunta.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="stage"><canvas id="oc" role="img" data-i18n-aria="aria.stage" aria-label="Dibujo de la animación"></canvas></div>
+<div class="ctrlbar">
+<div class="seg" id="omemb" role="group" data-i18n-aria="aria.memb" aria-label="Tipo de membrana"><button type="button" data-m="semi" data-i18n="m_semi">Semipermeable (solo agua)</button><button type="button" data-m="perm" data-i18n="m_perm">Permeable (agua y solutos)</button><button type="button" data-m="imp" data-i18n="m_imp">Impermeable</button></div>
+<button type="button" class="btn" id="opause" data-i18n="pause">⏸ Pausa</button>
+<button type="button" class="btn" id="oreset" data-i18n="reset">↻ Reiniciar</button>
+</div>
+<div class="ctrlbar" id="osl"></div>
+<div class="readout" id="ro" aria-live="off"></div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="Pasos de la animación">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev">← Anterior</button><button type="button" class="btn primary" id="next" data-i18n="st_next">Siguiente →</button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="o0.title">Difusión: un colorante que se reparte</h2>
+<div class="stext" id="stext" data-i18n-html="o0.text"><p>Todas las partículas se mueven al azar por la agitación térmica. La membrana es <b>permeable</b>: deja pasar agua y solutos. Ahora los solutos (naranja) están todos a la izquierda.</p><p>La <b>difusión</b> es el desplazamiento neto de partículas desde donde hay más concentración hacia donde hay menos, <b>sin gastar energía</b>.</p></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart">Volver al inicio</button></div>
+</aside>
+</div>
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+"ca":{
+"title":"Òsmosi i difusió: partícules i membrana semipermeable",
+"lede":"Simulació de partícules: canvia les concentracions, la membrana i la temperatura, i comprova el flux net d’aigua. Cada pas és un experiment amb una pregunta.",
+"o0.title":"Difusió: un colorant que es reparteix",
+"o0.text":"<p>Totes les partícules es mouen a l’atzar per l’agitació tèrmica. La membrana és <b>permeable</b>: deixa passar aigua i soluts. Ara els soluts (taronja) estan tots a l’esquerra.</p><p>La <b>difusió</b> és el desplaçament net de partícules des d’on n’hi ha més concentració cap a on n’hi ha menys, <b>sense gastar energia</b>.</p>",
+"o0.q":"Què passarà amb la concentració de soluts a cada costat?",
+"o0.o0":"Es concentrarà encara més a l’esquerra",
+"o0.o1":"Només canviarà si fem energia",
+"o0.o2":"S’igualarà: els soluts es repartiran pels dos costats",
+"o0.why":"Cap partícula “vol” anar enlloc: es mouen a l’atzar. Però com n’hi ha més a l’esquerra, n’hi creuen més cap a la dreta que a l’inrevés. El resultat net és que les concentracions s’igualen.",
+"o1.title":"Equilibri dinàmic",
+"o1.text":"<p>Quan les concentracions són iguals, les partícules <b>no s’aturen</b>: continuen creuant en els dos sentits al mateix ritme. Per això no hi ha canvi net.</p><p>Prova de pujar la <b>temperatura</b>: tot es mou més ràpid, però l’equilibri es manté.</p>",
+"o1.tq":"Si les partícules segueixen creuant, per què la concentració no canvia?",
+"o1.th":"Perquè en creuen tantes cap a la dreta com cap a l’esquerra: el flux net és zero. És un equilibri <i>dinàmic</i>, no un estat de repos.",
+"o2.title":"Òsmosi: membrana semipermeable",
+"o2.text":"<p>Ara la membrana és <b>semipermeable</b>: l’aigua passa pels porus, però els soluts (grans) no. A l’esquerra hi ha molt de soluts; a la dreta, gairebé res.</p><p>L’òsmosi és la <b>difusió de l’aigua</b> a través d’una membrana semipermeable.</p>",
+"o2.q":"Cap a quin costat anirà l’aigua?",
+"o2.o0":"Cap al costat menys concentrat en soluts",
+"o2.o1":"No es mourà: només es poden moure els soluts",
+"o2.o2":"Cap al costat més concentrat en soluts (hipertònic)",
+"o2.why":"L’aigua va del medi <b>hipotònic</b> (més aigua lliure) cap a l’<b>hipertònic</b>. Mira com puja el nivell a l’esquerra. Es frena quan la diferència de nivell (pressió) compensa l’efecte, per això no sempre s’arriba a igualar concentracions.",
+"o3.title":"Dissolucions isotòniques",
+"o3.text":"<p>Les dues dissolucions tenen la <b>mateixa concentració</b> i la membrana és semipermeable. Observa els nivells.</p>",
+"o3.q":"Hi haurà flux net d’aigua?",
+"o3.o0":"Sí, cap a l’esquerra",
+"o3.o1":"No: l’aigua creua en els dos sentits al mateix ritme",
+"o3.o2":"Sí, cap a la dreta",
+"o3.why":"Medis isotònics: la mateixa concentració d’aigua lliure a banda i banda. L’aigua creua, però en els dos sentits per igual. Hi ha equilibri dinàmic.",
+"o4.title":"Control: membrana impermeable",
+"o4.text":"<p>Mateixes concentracions que l’experiment d’òsmosi, però amb una membrana <b>impermeable</b>.</p>",
+"o4.tq":"Què ha passat amb els nivells? Què demostra aquest control sobre el paper de la membrana?",
+"o4.th":"Els nivells no canvien: sense pas d’aigua no hi ha òsmosi. Això demostra que el fenomen depèn de la <b>permeabilitat selectiva</b> de la membrana. Un bon experiment sempre té un control.",
+"o5.title":"Una cèl·lula en un medi",
+"o5.text":"<p>L’esquerra és ara l’<b>interior d’una cèl·lula</b> (membrana plasmàtica semipermeable) i la dreta, el <b>medi extern</b>. El recuadre verd és la cèl·lula; el seu volum es mostra a sota.</p><p>Canvia els soluts del medi extern amb el control i observa.</p>",
+"o5.q":"Posem la cèl·lula en un medi amb menys soluts que el seu interior (hipotònic). Què li passa?",
+"o5.o0":"S’arruga: ix aigua",
+"o5.o1":"Res",
+"o5.o2":"S’infla: entra aigua",
+"o5.why":"En medi hipotònic entra aigua. Una cèl·lula animal pot arribar a rebentar (<b>lisi</b>); una de vegetal es torna <b>turgent</b> i la paret cel·lular ho evita.",
+"o5.tq":"Repeteix amb un medi hipertònic (soluts del medi = 28). Què li passa a un glòbul roig? I a una cèl·lula vegetal? Per què es conserva el menjar amb sal?",
+"o5.th":"Ix aigua: el glòbul roig s’arruga (crenació) i la cèl·lula vegetal pateix plasmòlisi. Amb sal o sucre en excés, els microorganismes es deshidraten i no poden créixer.",
+"oq1.q":"Quina afirmació descriu millor l’òsmosi?",
+"oq1.o0":"Moviment de soluts de més a menys concentració amb despesa d’ATP",
+"oq1.o1":"Moviment d’aigua a través d’una membrana semipermeable cap al costat amb més soluts",
+"oq1.o2":"Moviment d’aigua cap al costat amb menys soluts",
+"oq1.o3":"Moviment de soluts a través d’una membrana impermeable",
+"oq1.e":"L’aigua va cap al medi hipertònic (més soluts) i no es gasta ATP.",
+"oq2.q":"Un glòbul roig es posa en aigua destil·lada. Què li passa?",
+"oq2.o0":"Es contrau",
+"oq2.o1":"No canvia",
+"oq2.o2":"Perd soluts",
+"oq2.o3":"Rebenta (lisi): hi entra aigua",
+"oq2.e":"L’aigua destil·lada és hipotònica respecte a l’interior: hi entra aigua fins que la cèl·lula, sense paret, no ho aguanta.",
+"oq3.q":"La difusió simple d’una molècula a favor de gradient necessita ATP?",
+"oq3.o0":"Sí, sempre",
+"oq3.o1":"No: ocorre per l’agitació tèrmica de les partícules",
+"oq3.o2":"Només en cèl·lules vives",
+"oq3.o3":"Només si hi ha proteïnes",
+"oq3.e":"És un procés passiu: el moviment aleatori fa que, de mitjana, el flux net vaja de més a menys concentració.",
+"oq4.q":"Si pugem la temperatura, què passa amb la velocitat de difusió?",
+"oq4.o0":"Augmenta: les partícules es mouen més ràpid",
+"oq4.o1":"Disminueix",
+"oq4.o2":"No depèn de la temperatura",
+"oq4.o3":"Depèn només de la membrana",
+"oq4.e":"Més temperatura = més agitació tèrmica = difusió més ràpida (l’equilibri final és el mateix).",
+"oq5.q":"Per què es conserva la carn amb sal o els fruits amb sucre?",
+"oq5.o0":"La sal crea un medi hipertònic: els microorganismes perden aigua i no poden créixer",
+"oq5.o1":"La sal mata per toxicitat química",
+"oq5.o2":"El sucre els alimenta fins que exploten",
+"oq5.o3":"Perquè el medi és hipotònic",
+"oq5.e":"Per òsmosi, l’aigua ix de les cèl·lules microbianes cap al medi salat o ensucrat: es deshidraten.",
+"eyebrow":"Biologia · Transport a través de la membrana",
+"h1":"Òsmosi i difusió: partícules i membrana semipermeable",
+"aria.memb":"Tipus de membrana",
+"m_semi":"Semipermeable (només aigua)",
+"m_perm":"Permeable (aigua i soluts)",
+"m_imp":"Impermeable",
+"pause":"⏸ Pausa",
+"play":"▶ Continua",
+"reset":"↻ Reinicia",
+"sL":"Soluts a l'esquerra",
+"sR":"Soluts a la dreta",
+"sLc":"Soluts a l'interior",
+"sRc":"Soluts al medi extern",
+"sT":"Temperatura (agitació tèrmica)",
+"lblL":"Esquerra",
+"lblR":"Dreta",
+"lblLc":"Interior de la cèl·lula",
+"lblRc":"Medi extern",
+"cv_w":"aigua",
+"cv_s":"soluts (més grans)",
+"ro_s":"Soluts",
+"ro_w":"Aigua",
+"ro_c":"Concentració de soluts",
+"ro_l":"Nivell",
+"ro_v":"Volum de la cèl·lula",
+"v_big":"cèl·lula inflada (turgent)",
+"v_small":"cèl·lula arrugada (plasmòlisi / crenació)",
+"v_ok":"volum estable"
+},
+"es":{
+"title":"Ósmosis y difusión: partículas y membrana semipermeable",
+"lede":"Simulación de partículas: cambia las concentraciones, la membrana y la temperatura, y comprueba el flujo neto de agua. Cada paso es un experimento con una pregunta.",
+"o0.title":"Difusión: un colorante que se reparte",
+"o0.text":"<p>Todas las partículas se mueven al azar por la agitación térmica. La membrana es <b>permeable</b>: deja pasar agua y solutos. Ahora los solutos (naranja) están todos a la izquierda.</p><p>La <b>difusión</b> es el desplazamiento neto de partículas desde donde hay más concentración hacia donde hay menos, <b>sin gastar energía</b>.</p>",
+"o0.q":"¿Qué pasará con la concentración de solutos a cada lado?",
+"o0.o0":"Se concentrará aún más a la izquierda",
+"o0.o1":"Solo cambiará si gastamos energía",
+"o0.o2":"Se igualará: los solutos se repartirán por los dos lados",
+"o0.why":"Ninguna partícula “quiere” ir a ningún sitio: se mueven al azar. Pero como hay más a la izquierda, cruzan más hacia la derecha que al revés. El resultado neto es que las concentraciones se igualan.",
+"o1.title":"Equilibrio dinámico",
+"o1.text":"<p>Cuando las concentraciones son iguales, las partículas <b>no se paran</b>: siguen cruzando en los dos sentidos al mismo ritmo. Por eso no hay cambio neto.</p><p>Prueba a subir la <b>temperatura</b>: todo se mueve más rápido, pero el equilibrio se mantiene.</p>",
+"o1.tq":"Si las partículas siguen cruzando, ¿por qué la concentración no cambia?",
+"o1.th":"Porque cruzan tantas hacia la derecha como hacia la izquierda: el flujo neto es cero. Es un equilibrio <i>dinámico</i>, no un estado de reposo.",
+"o2.title":"Ósmosis: membrana semipermeable",
+"o2.text":"<p>Ahora la membrana es <b>semipermeable</b>: el agua pasa por los poros, pero los solutos (grandes) no. A la izquierda hay mucho soluto; a la derecha, casi nada.</p><p>La ósmosis es la <b>difusión del agua</b> a través de una membrana semipermeable.</p>",
+"o2.q":"¿Hacia qué lado irá el agua?",
+"o2.o0":"Hacia el lado menos concentrado en solutos",
+"o2.o1":"No se moverá: solo se pueden mover los solutos",
+"o2.o2":"Hacia el lado más concentrado en solutos (hipertónico)",
+"o2.why":"El agua va del medio <b>hipotónico</b> (más agua libre) hacia el <b>hipertónico</b>. Mira cómo sube el nivel a la izquierda. Se frena cuando la diferencia de nivel (presión) compensa el efecto, por eso no siempre se llega a igualar concentraciones.",
+"o3.title":"Disoluciones isotónicas",
+"o3.text":"<p>Las dos disoluciones tienen la <b>misma concentración</b> y la membrana es semipermeable. Observa los niveles.</p>",
+"o3.q":"¿Habrá flujo neto de agua?",
+"o3.o0":"Sí, hacia la izquierda",
+"o3.o1":"No: el agua cruza en los dos sentidos al mismo ritmo",
+"o3.o2":"Sí, hacia la derecha",
+"o3.why":"Medios isotónicos: la misma concentración de agua libre a ambos lados. El agua cruza, pero en los dos sentidos por igual. Hay equilibrio dinámico.",
+"o4.title":"Control: membrana impermeable",
+"o4.text":"<p>Mismas concentraciones que el experimento de ósmosis, pero con una membrana <b>impermeable</b>.</p>",
+"o4.tq":"¿Qué ha pasado con los niveles? ¿Qué demuestra este control sobre el papel de la membrana?",
+"o4.th":"Los niveles no cambian: sin paso de agua no hay ósmosis. Esto demuestra que el fenómeno depende de la <b>permeabilidad selectiva</b> de la membrana. Un buen experimento siempre tiene un control.",
+"o5.title":"Una célula en un medio",
+"o5.text":"<p>La izquierda es ahora el <b>interior de una célula</b> (membrana plasmática semipermeable) y la derecha, el <b>medio externo</b>. El recuadro verde es la célula; su volumen se muestra debajo.</p><p>Cambia el soluto del medio externo con el control y observa.</p>",
+"o5.q":"Ponemos la célula en un medio con menos solutos que su interior (hipotónico). ¿Qué le pasa?",
+"o5.o0":"Se arruga: sale agua",
+"o5.o1":"Nada",
+"o5.o2":"Se hincha: entra agua",
+"o5.why":"En medio hipotónico entra agua. Una célula animal puede llegar a reventar (<b>lisis</b>); una vegetal se vuelve <b>turgente</b> y la pared celular lo evita.",
+"o5.tq":"Repite con un medio hipertónico (solutos del medio = 28). ¿Qué le pasa a un glóbulo rojo? ¿Y a una célula vegetal? ¿Por qué se conserva la comida con sal?",
+"o5.th":"Sale agua: el glóbulo rojo se arruga (crenación) y la célula vegetal sufre plasmólisis. Con sal o azúcar en exceso, los microorganismos se deshidratan y no pueden crecer.",
+"oq1.q":"¿Qué afirmación describe mejor la ósmosis?",
+"oq1.o0":"Movimiento de solutos de más a menos concentración con gasto de ATP",
+"oq1.o1":"Movimiento de agua a través de una membrana semipermeable hacia el lado con más solutos",
+"oq1.o2":"Movimiento de agua hacia el lado con menos solutos",
+"oq1.o3":"Movimiento de solutos a través de una membrana impermeable",
+"oq1.e":"El agua va hacia el medio hipertónico (más solutos) y no se gasta ATP.",
+"oq2.q":"Un glóbulo rojo se pone en agua destilada. ¿Qué le pasa?",
+"oq2.o0":"Se contrae",
+"oq2.o1":"No cambia",
+"oq2.o2":"Pierde solutos",
+"oq2.o3":"Revienta (lisis): entra agua",
+"oq2.e":"El agua destilada es hipotónica respecto al interior: entra agua hasta que la célula, sin pared, no lo aguanta.",
+"oq3.q":"¿La difusión simple de una molécula a favor de gradiente necesita ATP?",
+"oq3.o0":"Sí, siempre",
+"oq3.o1":"No: ocurre por la agitación térmica de las partículas",
+"oq3.o2":"Solo en células vivas",
+"oq3.o3":"Solo si hay proteínas",
+"oq3.e":"Es un proceso pasivo: el movimiento aleatorio hace que, de media, el flujo neto vaya de más a menos concentración.",
+"oq4.q":"Si subimos la temperatura, ¿qué pasa con la velocidad de difusión?",
+"oq4.o0":"Aumenta: las partículas se mueven más rápido",
+"oq4.o1":"Disminuye",
+"oq4.o2":"No depende de la temperatura",
+"oq4.o3":"Depende solo de la membrana",
+"oq4.e":"Más temperatura = más agitación térmica = difusión más rápida (el equilibrio final es el mismo).",
+"oq5.q":"¿Por qué se conserva la carne con sal o la fruta con azúcar?",
+"oq5.o0":"La sal crea un medio hipertónico: los microorganismos pierden agua y no pueden crecer",
+"oq5.o1":"La sal mata por toxicidad química",
+"oq5.o2":"El azúcar los alimenta hasta que explotan",
+"oq5.o3":"Porque el medio es hipotónico",
+"oq5.e":"Por ósmosis, el agua sale de las células microbianas hacia el medio salado o azucarado: se deshidratan.",
+"eyebrow":"Biología · Transporte a través de la membrana",
+"h1":"Ósmosis y difusión: partículas y membrana semipermeable",
+"aria.memb":"Tipo de membrana",
+"m_semi":"Semipermeable (solo agua)",
+"m_perm":"Permeable (agua y solutos)",
+"m_imp":"Impermeable",
+"pause":"⏸ Pausa",
+"play":"▶ Continuar",
+"reset":"↻ Reiniciar",
+"sL":"Solutos a la izquierda",
+"sR":"Solutos a la derecha",
+"sLc":"Solutos en el interior",
+"sRc":"Solutos en el medio externo",
+"sT":"Temperatura (agitación térmica)",
+"lblL":"Izquierda",
+"lblR":"Derecha",
+"lblLc":"Interior de la célula",
+"lblRc":"Medio externo",
+"cv_w":"agua",
+"cv_s":"solutos (más grandes)",
+"ro_s":"Solutos",
+"ro_w":"Agua",
+"ro_c":"Concentración de solutos",
+"ro_l":"Nivel",
+"ro_v":"Volumen de la célula",
+"v_big":"célula hinchada (turgente)",
+"v_small":"célula arrugada (plasmólisis / crenación)",
+"v_ok":"volumen estable"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../osmosi-difusio/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
+const SI18N={
+ca:{st_prev:"← Anterior",st_next:"Següent →",st_restart:"Torna a l'inici",st_step:"Pas {a} de {b}",st_predict:"Predix abans de veure",st_think:"Pensa-hi",
+st_hint:"Mostra una pista",st_hide:"Amaga la pista",st_ok:"Correcte!",st_ko:"No exactament.","aria.steps":"Passos de l'animació","aria.stage":"Dibuix de l'animació",
+sl_cells:"Cèl·lules",sl_chrom:"Cromosomes per cèl·lula",sl_chromat:"Cromàtides per cromosoma",sl_dna:"ADN per cèl·lula",sl_chrompol:"Cromosomes per pol",sl_dnatot:"ADN total"},
+es:{st_prev:"← Anterior",st_next:"Siguiente →",st_restart:"Volver al inicio",st_step:"Paso {a} de {b}",st_predict:"Predice antes de ver",st_think:"Piénsalo",
+st_hint:"Ver una pista",st_hide:"Ocultar la pista",st_ok:"¡Correcto!",st_ko:"No exactamente.","aria.steps":"Pasos de la animación","aria.stage":"Dibujo de la animación",
+sl_cells:"Células",sl_chrom:"Cromosomas por célula",sl_chromat:"Cromátidas por cromosoma",sl_dna:"ADN por célula",sl_chrompol:"Cromosomas por polo",sl_dnatot:"ADN total"}};
+Object.assign(I18N.ca,SI18N.ca);Object.assign(I18N.es,SI18N.es);
+const SE={i:0,steps:[],ans:{},hint:{},cb:null};
+function stepsInit(steps,cb){
+  SE.steps=steps;SE.cb=cb;
+  const sp=$('#stepper');
+  steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+  $('#prev').onclick=()=>stepGo(SE.i-1);
+  $('#next').onclick=()=>stepGo(SE.i+1);
+  $('#restart').onclick=()=>{SE.ans={};SE.hint={};stepGo(0);};
+  document.addEventListener('langchange',stepRender);
+  stepGo(0);
+}
+function stepGo(i){
+  i=Math.max(0,Math.min(SE.steps.length-1,i));
+  const prev=SE.i;SE.i=i;stepRender();
+  if(SE.cb)SE.cb(i,prev);
+}
+function stepRender(){
+  const s=SE.steps[SE.i],id=s.id;
+  $$('#stepper button').forEach((b,k)=>{
+    if(k===SE.i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+    b.className=(SE.ans[SE.steps[k].id]!==undefined&&k!==SE.i)?'done':'';
+  });
+  $('#stepno').textContent=t('st_step',{a:SE.i+1,b:SE.steps.length});
+  const T=$('#stitle');T.dataset.i18n=id+'.title';T.textContent=t(id+'.title');
+  const X=$('#stext');X.dataset.i18nHtml=id+'.text';X.innerHTML=t(id+'.text');
+  const st=$('#sstats');st.innerHTML='';
+  (s.stats||[]).forEach((p,j)=>{
+    const d=document.createElement('div');d.className='stat';
+    d.innerHTML='<span class="k">'+t(p[0])+'</span><span class="v">'+(I18N.ca[id+'.sv'+j]!==undefined?t(id+'.sv'+j):p[1])+'</span>';
+    st.appendChild(d);
+  });
+  st.hidden=!(s.stats&&s.stats.length);
+  const ask=$('#sask');ask.innerHTML='';ask.hidden=!s.ask;
+  if(s.ask){
+    const a=SE.ans[id],c=document.createElement('div');c.className='pred';
+    c.innerHTML='<span class="eb">'+t('st_predict')+'</span><p class="qtext">'+t(id+'.q')+'</p>';
+    const o=document.createElement('div');o.className='opts';
+    for(let j=0;j<s.ask.n;j++){
+      const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(id+'.o'+j);
+      if(a!==undefined){b.disabled=true;if(j===s.ask.ok)b.classList.add('right');else if(j===a)b.classList.add('wrong');}
+      b.onclick=()=>{SE.ans[id]=j;stepRender();};
+      o.appendChild(b);
+    }
+    c.appendChild(o);
+    if(a!==undefined){const f=document.createElement('p');f.className='fb';f.innerHTML='<b>'+(a===s.ask.ok?t('st_ok'):t('st_ko'))+'</b> '+t(id+'.why');c.appendChild(f);}
+    ask.appendChild(c);
+  }
+  const th=$('#sthink');th.innerHTML='';th.hidden=!s.think;
+  if(s.think){
+    const c=document.createElement('div');c.className='think';
+    c.innerHTML='<span class="eb">'+t('st_think')+'</span><p class="qtext">'+t(id+'.tq')+'</p>';
+    const open=!!SE.hint[id];
+    const b=document.createElement('button');b.type='button';b.className='linkb';b.textContent=open?t('st_hide'):t('st_hint');
+    b.onclick=()=>{SE.hint[id]=!SE.hint[id];stepRender();};
+    c.appendChild(b);
+    if(open){const f=document.createElement('p');f.className='fb';f.innerHTML=t(id+'.th');c.appendChild(f);}
+    th.appendChild(c);
+  }
+  $('#prev').disabled=(SE.i===0);$('#next').disabled=(SE.i===SE.steps.length-1);
+}
+
+const STEPS=[{"id":"o0","ask":{"n":3,"ok":2},"preset":{"L":26,"R":0,"m":"perm","scene":"tank"}},{"id":"o1","think":true,"preset":{"L":15,"R":15,"m":"perm","scene":"tank"}},{"id":"o2","ask":{"n":3,"ok":2},"preset":{"L":28,"R":3,"m":"semi","scene":"tank"}},{"id":"o3","ask":{"n":3,"ok":1},"preset":{"L":18,"R":18,"m":"semi","scene":"tank"}},{"id":"o4","think":true,"preset":{"L":28,"R":3,"m":"imp","scene":"tank"}},{"id":"o5","ask":{"n":3,"ok":2},"think":true,"preset":{"L":14,"R":4,"m":"semi","scene":"cell"}}];
+const QDATA=[{"id":"oq1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"oq2","lvl":"all","type":"mc","n":4,"ans":3},{"id":"oq3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"oq4","lvl":"all","type":"mc","n":4,"ans":0},{"id":"oq5","lvl":"all","type":"mc","n":4,"ans":0}];
+const OW=800,OH=440,XL=40,XR=760,XM=400,YB=400,MAXH=345,MINH=30;
+const KS=2.5,UNITS=190,APU=(360*200)/190;
+const BASE=[2.0,1.2];
+function makeSim(){return {parts:[],memb:'semi',T:1,hL:200,hR:200,nL:[0,0],nR:[0,0],t:0};}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function simReset(sim,nsL,nsR){
+  sim.parts=[];sim.t=0;
+  [nsL,nsR].forEach((ns,side)=>{
+    const nw=UNITS-Math.round(KS*ns);
+    const x0=side?XM+6:XL+6,x1=side?XR-6:XM-6;
+    for(let i=0;i<ns+nw;i++){
+      const type=i<ns?1:0,a=rnd(0,6.283);
+      sim.parts.push({t:type,x:rnd(x0+10,x1-10),y:rnd(YB-195,YB-8),vx:Math.cos(a),vy:Math.sin(a),r:type?9:4});
+    }
+  });
+  simMeasure(sim);
+}
+function simMeasure(sim){
+  const nL=[0,0],nR=[0,0];
+  for(let i=0;i<sim.parts.length;i++){const p=sim.parts[i];(p.x<XM?nL:nR)[p.t]++;}
+  sim.nL=nL;sim.nR=nR;
+  sim.hL=Math.max(MINH,Math.min(MAXH,(nL[0]+KS*nL[1])*APU/360));
+  sim.hR=Math.max(MINH,Math.min(MAXH,(nR[0]+KS*nR[1])*APU/360));
+}
+function canPass(sim,type,y){
+  if(sim.memb==='imp')return false;
+  const d=Math.abs(((YB-y)%28+28)%28-14);
+  if(sim.memb==='semi')return type===0&&d<=4;
+  return type===0?d<=10:d<=5;
+}
+function simStep(sim,dtf){
+  simMeasure(sim);
+  const sq=Math.sqrt(sim.T),parts=sim.parts,topL=YB-sim.hL,topR=YB-sim.hR;
+  for(let i=0;i<parts.length;i++){
+    const p=parts[i];
+    p.vx+=(Math.random()-0.5)*0.35;p.vy+=(Math.random()-0.5)*0.35;
+    const kk=Math.hypot(p.vx,p.vy)||1,v=BASE[p.t]*sq;
+    p.vx=p.vx/kk*v;p.vy=p.vy/kk*v;
+    let nx=p.x+p.vx*dtf,ny=p.y+p.vy*dtf;
+    const leftNow=p.x<XM;
+    if((nx<XM)!==leftNow){
+      const hA=leftNow?sim.hL:sim.hR,hB=leftNow?sim.hR:sim.hL;
+      const dh=hB-hA,acc=dh>0?Math.max(0,1-0.35*dh/100):1;
+      if(!(canPass(sim,p.t,ny)&&Math.random()<acc)){nx=p.x;p.vx=-p.vx;}
+    }
+    const left=nx<XM,top=left?topL:topR;
+    if(left){if(nx<XL+p.r){nx=XL+p.r;p.vx=Math.abs(p.vx);}}
+    else{if(nx>XR-p.r){nx=XR-p.r;p.vx=-Math.abs(p.vx);}}
+    if(ny>YB-p.r){ny=YB-p.r;p.vy=-Math.abs(p.vy);}
+    if(ny<top+p.r){ny=top+p.r;p.vy=Math.abs(p.vy);}
+    p.x=nx;p.y=ny;
+  }
+  sim.t+=dtf/60;
+}
+
+/* --- interfície --- */
+const sim=makeSim();
+let ocv,octx,paused=false,scene='tank',nsL0=0,nsR0=0,lastTs=0,roTick=0,slL,slR,slT;
+function lblKey(side){return scene==='cell'?(side?'lblRc':'lblLc'):(side?'lblR':'lblL');}
+function concOf(n){const tot=n[0]+KS*n[1];return tot?100*KS*n[1]/tot:0;}
+function paintCtl(){
+  $$('#omemb button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===sim.memb)));
+  $('#opause').textContent=t(paused?'play':'pause');
+  [[slL,scene==='cell'?'sLc':'sL'],[slR,scene==='cell'?'sRc':'sR']].forEach(p=>{const l=p[0].el.querySelector('label');l.dataset.i18n=p[1];l.textContent=t(p[1]);});
+  slL.refresh();slR.refresh();slT.refresh();
+}
+function paintReadout(){
+  const ro=$('#ro');
+  const side=(key,n,h)=>{const c=concOf(n);
+    return '<div><b>'+t(key)+'</b><br>'+t('ro_s')+': '+n[1]+' · '+t('ro_w')+': '+n[0]+'<br>'+t('ro_c')+': <b>'+c.toFixed(0)+' %</b><div class="meter"><i style="width:'+Math.min(100,c*1.6)+'%"></i></div>'+t('ro_l')+': '+Math.round(100*h/200)+' %</div>';};
+  let extra='';
+  if(scene==='cell'){
+    const v=100*sim.hL/200;
+    extra='<div><b>'+t('ro_v')+':</b> '+v.toFixed(0)+' % → '+t(v>112?'v_big':(v<88?'v_small':'v_ok'))+'</div>';
+  }
+  ro.innerHTML='<div class="two">'+side(lblKey(0),sim.nL,sim.hL)+side(lblKey(1),sim.nR,sim.hR)+'</div>'+extra;
+}
+function doReset(){simReset(sim,nsL0,nsR0);}
+function waterColor(c,dark){
+  return dark?'rgb('+Math.round(18+c*0.9)+','+Math.round(52-c*0.2)+','+Math.round(92-c*0.6)+')':'rgb('+Math.round(205+c*0.7)+','+Math.round(232-c*0.6)+','+Math.round(250-c*1.5)+')';
+}
+function drawO(){
+  const ratio=ocv.cv.width/OW,ctx=ocv.ctx,col=C();
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.clearRect(0,0,OW,OH);
+  ctx.fillStyle=col.stage;ctx.fillRect(0,0,OW,OH);
+  [[XL,XM,sim.hL,sim.nL],[XM,XR,sim.hR,sim.nR]].forEach(s=>{
+    ctx.fillStyle=waterColor(concOf(s[3]),col.dark);ctx.fillRect(s[0],YB-s[2],s[1]-s[0],s[2]);
+    ctx.strokeStyle='#5f8fc4';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s[0],YB-s[2]);ctx.lineTo(s[1],YB-s[2]);ctx.stroke();
+  });
+  ctx.strokeStyle=col.muted;ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(XL,YB-MAXH-20);ctx.lineTo(XL,YB+2);ctx.lineTo(XR,YB+2);ctx.lineTo(XR,YB-MAXH-20);ctx.stroke();
+  if(scene==='cell'){ctx.strokeStyle='#2e9e5b';ctx.lineWidth=5;ctx.strokeRect(XL+2,YB-sim.hL,XM-XL-4,sim.hL);}
+  const gap=sim.memb==='semi'?6:(sim.memb==='perm'?13:0);
+  ctx.strokeStyle=sim.memb==='imp'?col.ink:'#a173e0';ctx.lineWidth=5;
+  for(let y0=YB;y0>YB-MAXH-20;y0-=28){
+    const c0=y0-14;ctx.beginPath();
+    if(!gap){ctx.moveTo(XM,y0);ctx.lineTo(XM,y0-28);}
+    else{ctx.moveTo(XM,y0);ctx.lineTo(XM,c0+gap);ctx.moveTo(XM,c0-gap);ctx.lineTo(XM,y0-28);}
+    ctx.stroke();
+  }
+  const ps=sim.parts;
+  for(let i=0;i<ps.length;i++){
+    const p=ps[i];ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.2832);
+    if(p.t){ctx.fillStyle='#e8913a';ctx.fill();ctx.strokeStyle='#a85f12';ctx.lineWidth=1.2;ctx.stroke();}
+    else{ctx.fillStyle='#4aa3e8';ctx.fill();}
+  }
+  ctx.fillStyle=col.ink;ctx.font='600 15px system-ui,sans-serif';ctx.textAlign='center';
+  ctx.fillText(t(lblKey(0)),(XL+XM)/2,24);ctx.fillText(t(lblKey(1)),(XM+XR)/2,24);
+  ctx.font='13px system-ui,sans-serif';ctx.textAlign='left';
+  ctx.fillStyle='#4aa3e8';ctx.beginPath();ctx.arc(XL+4,OH-14,4,0,6.2832);ctx.fill();
+  ctx.fillStyle=col.muted;ctx.fillText(t('cv_w'),XL+14,OH-9);
+  ctx.fillStyle='#e8913a';ctx.beginPath();ctx.arc(XL+80,OH-14,8,0,6.2832);ctx.fill();
+  ctx.fillStyle=col.muted;ctx.fillText(t('cv_s'),XL+93,OH-9);
+  ctx.textAlign='center';
+}
+function loopO(ts){
+  const dt=Math.min(0.05,(ts-lastTs)/1000||0.016);lastTs=ts;
+  if(!paused)simStep(sim,dt*60);
+  drawO();
+  roTick+=dt;if(roTick>0.25){roTick=0;paintReadout();}
+  requestAnimationFrame(loopO);
+}
+function applyPreset(p){
+  scene=p.scene;sim.memb=p.m;nsL0=p.L;nsR0=p.R;sim.T=1;
+  slL.set(p.L);slR.set(p.R);slT.set(1);
+  paused=false;paintCtl();doReset();paintReadout();
+}
+function initO(){
+  ocv=makeCanvas($('#oc'),OW,OH);
+  const host=$('#osl');
+  slL=slider(host,{id:'oL',key:'sL',min:0,max:30,step:1,val:0,fmtv:v=>String(v),on:v=>{nsL0=v;}});
+  slR=slider(host,{id:'oR',key:'sR',min:0,max:30,step:1,val:0,fmtv:v=>String(v),on:v=>{nsR0=v;}});
+  slT=slider(host,{id:'oT',key:'sT',min:0.3,max:3,step:0.1,val:1,fmtv:v=>'×'+v.toFixed(1),on:v=>{sim.T=v;}});
+  slL.inp.addEventListener('change',doReset);slR.inp.addEventListener('change',doReset);
+  $$('#omemb button').forEach(b=>b.addEventListener('click',()=>{sim.memb=b.dataset.m;paintCtl();}));
+  $('#opause').addEventListener('click',()=>{paused=!paused;paintCtl();});
+  $('#oreset').addEventListener('click',doReset);
+  requestAnimationFrame(loopO);
+}
+initQuiz(QDATA);
+initLang();initO();applyLang();
+document.addEventListener('langchange',()=>{paintCtl();paintReadout();});
+stepsInit(STEPS,(i)=>{applyPreset(STEPS[i].preset);});
+</script>
+</body>
+</html>

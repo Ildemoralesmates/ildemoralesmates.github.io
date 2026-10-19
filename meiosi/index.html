@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meiosi: de la cèl·lula diploide als quatre gàmetes</title>
+<meta name="description" content="Meiosi pas a pas amb 2n = 4: crossing-over, orientació a l'atzar dels parells d'homòlegs i quatre gàmetes diferents. Amb preguntes de predicció i test autocorregit.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/meiosi/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/meiosi/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/meiosi/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/meiosi/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Meiosi: de la cèl·lula diploide als quatre gàmetes">
+<meta property="og:description" content="Meiosi pas a pas amb 2n = 4: crossing-over, orientació a l'atzar dels parells d'homòlegs i quatre gàmetes diferents. Amb preguntes de predicció i test autocorregit.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/meiosi/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
+.sidep{display:grid;gap:8px;align-content:start}
+.stepper{display:flex;gap:5px;flex-wrap:wrap}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer}
+.stepper button.done{background:var(--chip)}
+.stepper button[aria-current=step]{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600}
+.stepper button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stepno{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sidep h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.stext{font-size:14.5px}
+.stext p{margin:.45em 0}
+.sidep .stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.sidep .stat .v{font-size:15px}
+.pred,.think{border:1px solid var(--line);border-left:4px solid var(--pa);border-radius:8px;padding:10px 12px;background:var(--stage)}
+.think{border-left-color:var(--warn)}
+.pred .eb,.think .eb{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--pa);margin-bottom:3px}
+.think .eb{color:var(--warn)}
+.pred .qtext,.think .qtext{margin:0 0 6px!important;font-size:14.5px!important;font-weight:600}
+.pred .fb{padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.think .fb{margin-top:8px;padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.linkb{font:inherit;font-size:13px;color:var(--pa);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+.stepnav{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
+.rowlinks{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.lgd i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.hintline{min-height:1.4em;margin:0;padding:6px 12px 0;font-size:13.5px;font-weight:600;color:var(--warn)}
+.ctrlbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.ctrlbar .ctl{min-width:11rem;flex:1 1 11rem}
+.ctrlbar .btn[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.readout{padding:8px 12px 12px;font-size:13.5px;display:grid;gap:6px}
+.readout .two{display:flex;flex-wrap:wrap;gap:12px 24px}
+.readout .two>div{flex:1 1 13rem}
+.meter{height:7px;background:var(--chip);border:1px solid var(--line);border-radius:4px;margin:3px 0}
+.meter i{display:block;height:100%;background:var(--pb);border-radius:3px}
+
+.stage svg{display:block;width:100%;height:auto}
+#msvg .cht{transition:transform .95s cubic-bezier(.45,.05,.3,1),opacity .6s}
+#msvg .cht rect,#msvg .cht path{transition:fill .8s}
+#msvg .cell{fill:var(--panel);stroke:#7d93c4;stroke-width:2.5;transition:opacity .7s}
+#msvg .nuc{fill:none;stroke:#8aa0cf;stroke-width:2;stroke-dasharray:6 5;transition:opacity .7s}
+#msvg .chi{transition:opacity .6s}
+#msvg .cl{fill:var(--ink);font:600 13px var(--f-body)}
+#msvg .spi line{stroke:var(--muted)}
+#msvg .spi circle{fill:var(--muted)}
+@keyframes mfade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){#msvg .cht{transition:none}}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Biologia · Cèl·lula i genètica</p>
+      <h1 data-i18n="h1">Meiosi: de la cèl·lula diploide als quatre gàmetes</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Cèl·lula amb 2n = 4 (dos parells d’homòlegs), amb crossing-over i orientació a l’atzar dels parells. Respon les preguntes abans de passar al pas següent.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<p class="hintline" id="mhint" aria-live="polite"></p>
+<div class="stage"><svg id="msvg" viewBox="0 0 800 420" role="img" data-i18n-aria="aria.stage" aria-label="Dibuix de l&#x27;animació"></svg></div>
+<div class="lgd"><span><i style="background:#d94b4b"></i><span data-i18n="leg_m">Origen matern</span></span><span><i style="background:#3a6fd8"></i><span data-i18n="leg_p">Origen patern</span></span><span><i style="background:#8a8aa0"></i><span data-i18n="leg_c">Cromòmer</span></span></div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="Passos de l&#x27;animació">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev">← Anterior</button><button type="button" class="btn primary" id="next" data-i18n="st_next">Següent →</button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="m0.title">Interfase: abans de començar</h2>
+<div class="stext" id="stext" data-i18n-html="m0.text"><p>La cèl·lula és <b>diploide</b>: 2n = 4 cromosomes, que formen <b>2 parells d’homòlegs</b> (un cromosoma de cada progenitor). Roig = origen matern, blau = origen patern. El parell llarg i el curt són cromosomes diferents.</p><p>Ara cada cromosoma té <b>una sola cromàtida</b> i el material genètic està descondensat dins del nucli.</p></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart">Torna a l'inici</button></div>
+</aside>
+</div>
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+"ca":{
+"title":"Meiosi: de la cèl·lula diploide als quatre gàmetes",
+"lede":"Cèl·lula amb 2n = 4 (dos parells d’homòlegs), amb crossing-over i orientació a l’atzar dels parells. Respon les preguntes abans de passar al pas següent.",
+"m0.title":"Interfase: abans de començar",
+"m0.text":"<p>La cèl·lula és <b>diploide</b>: 2n = 4 cromosomes, que formen <b>2 parells d’homòlegs</b> (un cromosoma de cada progenitor). Roig = origen matern, blau = origen patern. El parell llarg i el curt són cromosomes diferents.</p><p>Ara cada cromosoma té <b>una sola cromàtida</b> i el material genètic està descondensat dins del nucli.</p>",
+"m0.q":"Abans de dividir-se, la cèl·lula ha de preparar-se. Què creus que li passa a l’ADN?",
+"m0.o0":"Es redueix a la meitat",
+"m0.o1":"Es duplica",
+"m0.o2":"Es reparteix directament, sense canvis",
+"m0.why":"L’ADN es duplica en la fase S de la interfase: cada cromosoma passa a tindre dues cromàtides germanes idèntiques. La reducció a la meitat vindrà després, perquè hi haurà <b>una sola duplicació i dues divisions seguides</b>.",
+"m1.title":"Interfase (fase S): l’ADN es duplica",
+"m1.text":"<p>Cada cromosoma s’ha copiat: ara té <b>2 cromàtides germanes idèntiques</b> unides pel cromòmer. Seguim tenint 4 cromosomes (es compten pels cromòmers), però la quantitat d’ADN s’ha doblat: de 2C a 4C.</p>",
+"m1.tq":"Si comptem cromosomes en tenim 4. I si comptem cromàtides?",
+"m1.th":"Cada cromosoma duplicat té 2 cromàtides: 4 × 2 = 8. Compte: duplicar l’ADN no duplica el nombre de cromosomes.",
+"m2.title":"Profase I: els homòlegs s’apareguen",
+"m2.text":"<p>Els cromosomes es condensen i cada un s’aparella amb el seu homòleg (<b>sinapsi</b>), formant un <b>bivalent o tètrada</b> de 4 cromàtides. L’embolcall nuclear encara hi és.</p>",
+"m2.q":"Els homòlegs estan junts, cromàtida contra cromàtida. Què creus que pot passar entre cromàtides d’homòlegs?",
+"m2.o0":"Res: només estan prop",
+"m2.o1":"Es fusionen en un sol cromosoma",
+"m2.o2":"Intercanvien fragments d’ADN",
+"m2.why":"Es produeix el <b>crossing-over</b> (entrecreuament): cromàtides no germanes intercanvien fragments. És la primera font de variabilitat genètica.",
+"m2.sv1":"4 (2 parells)",
+"m3.title":"Profase I: crossing-over",
+"m3.text":"<p>Entre cromàtides <b>no germanes</b> d’homòlegs es creuen i s’intercanvien trossos (<b>quiasmes</b>). Fixa-t’hi en les puntes: ara hi ha cromàtides mig roges i mig blaves, que ja no són ni totalment maternes ni totalment paternes.</p><p>Al final de la profase I desapareix l’embolcall nuclear.</p>",
+"m3.tq":"Per què intercanvien fragments les cromàtides no germanes i no les germanes?",
+"m3.th":"Les germanes són còpies idèntiques: intercanviar trossos entre elles no canviaria res. Entre homòlegs, en canvi, els al·lels poden ser diferents (un de cada progenitor).",
+"m4.title":"Metafase I: els parells a l’equador",
+"m4.text":"<p>Els bivalents s’alineen al pla equatorial i el fus els agafa pels cromòmers. Cada parell s’orienta <b>a l’atzar</b>: el cromosoma matern pot quedar a l’esquerra o a la dreta, independentment de l’altre parell.</p><p><b>Prova-ho:</b> pitja sobre un parell per girar-lo.</p>",
+"m4.q":"A l’anafase I, què se separarà?",
+"m4.o0":"Les cromàtides germanes de cada cromosoma",
+"m4.o1":"Res: la cèl·lula encara no es divideix",
+"m4.o2":"Els cromosomes homòlegs de cada parell",
+"m4.why":"Se separen els <b>homòlegs sencers</b> (cadascun amb dues cromàtides). Per això la meiosi I és <b>reduccional</b>: passem de 2n a n. Les cromàtides germanes no se separen fins a l’anafase II.",
+"m5.title":"Anafase I: se separen els homòlegs",
+"m5.text":"<p>Cada cromosoma (encara amb 2 cromàtides) viatja cap a un pol; les cromàtides germanes continuen unides. A cada pol arriba <b>un cromosoma de cada parell</b>: el repartiment ja és n = 2.</p>",
+"m5.tq":"Torna a la metafase I, orienta els parells de maneres diferents i mira l’anafase. Quantes combinacions diferents poden arribar a un pol amb 2 parells? I amb 23 parells (com els humans)?",
+"m5.th":"Cada parell té 2 orientacions independents: 2 × 2 = 4 amb 2 parells; 2<sup>23</sup> ≈ 8,4 milions amb 23 parells. I sense comptar el crossing-over.",
+"m5.sv0":"1 (dividint-se)",
+"m6.title":"Telofase I i citocinesi",
+"m6.text":"<p>La cèl·lula es divideix en dues. Cada cèl·lula filla és <b>haploide</b> (n = 2 cromosomes), però cada cromosoma encara té 2 cromàtides. Hi ha una interfase breu <b>sense duplicar l’ADN</b>.</p>",
+"m6.q":"Abans de la meiosi II, el material genètic es torna a duplicar?",
+"m6.o0":"Sí, igual que abans de la meiosi I",
+"m6.o1":"Només en una de les dues cèl·lules",
+"m6.o2":"No: no hi ha fase S entre les dues divisions",
+"m6.why":"No hi ha duplicació. <b>Una sola duplicació i dues divisions</b> consecutives és el que fa que el nombre de cromosomes es reduïsca a la meitat.",
+"m7.title":"Profase II i metafase II",
+"m7.text":"<p>Cada cèl·lula comença la segona divisió, que s’assembla a una mitosi: els cromosomes s’alineen a l’equador i el fus s’orienta <b>perpendicularment</b> al de la divisió I. Observa que les cromàtides ja no són idèntiques (efecte del crossing-over).</p>",
+"m7.q":"A l’anafase II, què se separarà?",
+"m7.o0":"Els cromosomes homòlegs",
+"m7.o1":"Les cromàtides germanes",
+"m7.o2":"Les cèl·lules filles es tornen a fusionar",
+"m7.why":"Els homòlegs ja estan en cèl·lules diferents des de la meiosi I. Ara se separen les cromàtides germanes, com en una mitosi.",
+"m8.title":"Anafase II: se separen les cromàtides",
+"m8.text":"<p>Els cromòmers es divideixen i les cromàtides germanes (que ja no són idèntiques) viatgen a pols oposats. Cada cromàtida passa a ser un <b>cromosoma independent</b>.</p>",
+"m9.title":"Telofase II: quatre gàmetes haploides",
+"m9.text":"<p>Resultat: <b>4 cèl·lules haploides</b> (n = 2), cadascuna amb un cromosoma de cada parell i amb una combinació genètica diferent de les altres. Compara-les: les quatre són úniques gràcies al crossing-over i a l’orientació a l’atzar dels parells.</p>",
+"m9.tq":"Hi ha dos gàmetes iguals? Torna enrere, canvia l’orientació dels parells a la metafase I i compara’n els resultats.",
+"m9.th":"No n’hi ha cap d’igual. Amb crossing-over, les 4 cromàtides de cada parell són diferents i cada gàmeta en rep una de cada parell, sempre distinta.",
+"mq1.q":"Una cèl·lula té 2n = 8. Quants cromosomes tindrà cada gàmeta?",
+"mq1.o0":"8",
+"mq1.o1":"16",
+"mq1.o2":"4",
+"mq1.o3":"2",
+"mq1.e":"La meiosi redueix el nombre de cromosomes a la meitat: n = 4.",
+"mq2.q":"Quin d’aquests processos NO és una font de variabilitat genètica?",
+"mq2.o0":"Crossing-over",
+"mq2.o1":"Orientació a l’atzar dels parells a la metafase I",
+"mq2.o2":"Fecundació entre gàmetes diferents",
+"mq2.o3":"La duplicació de l’ADN a la fase S",
+"mq2.e":"La duplicació genera còpies idèntiques (cromàtides germanes): per si sola no crea variabilitat. Les altres tres sí.",
+"mq3.q":"Quina és la diferència fonamental entre la meiosi I i la meiosi II?",
+"mq3.o0":"A la I se separen cromàtides; a la II, homòlegs",
+"mq3.o1":"La II no té anafase",
+"mq3.o2":"A la I se separen homòlegs; a la II, cromàtides germanes",
+"mq3.o3":"Cap: són idèntiques",
+"mq3.e":"La meiosi I és reduccional (separa homòlegs, 2n → n); la II és equacional, com una mitosi (separa cromàtides).",
+"mq4.q":"Un humà té 2n = 46. Sense comptar el crossing-over, quantes combinacions diferents de gàmetes pot produir una persona?",
+"mq4.o0":"46",
+"mq4.o1":"23² = 529",
+"mq4.o2":"23",
+"mq4.o3":"2<sup>23</sup> ≈ 8,4 milions",
+"mq4.e":"Cada un dels 23 parells s’orienta de 2 maneres independents: 2<sup>23</sup> = 8 388 608.",
+"mq5.q":"A l’anafase I, un parell d’homòlegs no se separa (no-disjunció). Què passarà amb els quatre gàmetes?",
+"mq5.o0":"Seran tots normals",
+"mq5.o1":"Dos tindran un cromosoma de més i dos en tindran un de menys",
+"mq5.o2":"Tots tindran el doble de cromosomes",
+"mq5.o3":"Es produirà una mitosi",
+"mq5.e":"Els dos homòlegs van al mateix pol: dos gàmetes n+1 i dos n−1. Si un gàmeta amb un cromosoma 21 de més fecunda, resulta la síndrome de Down (trisomia 21).",
+"eyebrow":"Biologia · Cèl·lula i genètica",
+"h1":"Meiosi: de la cèl·lula diploide als quatre gàmetes",
+"leg_m":"Origen matern",
+"leg_p":"Origen patern",
+"leg_c":"Cromòmer",
+"chi":"quiasma",
+"hint4":"☝ Pitja sobre un parell de cromosomes per girar-lo (orientació a l'atzar)."
+},
+"es":{
+"title":"Meiosis: de la célula diploide a los cuatro gametos",
+"lede":"Célula con 2n = 4 (dos pares de homólogos), con crossing-over y orientación al azar de los pares. Responde las preguntas antes de pasar al paso siguiente.",
+"m0.title":"Interfase: antes de empezar",
+"m0.text":"<p>La célula es <b>diploide</b>: 2n = 4 cromosomas, que forman <b>2 pares de homólogos</b> (un cromosoma de cada progenitor). Rojo = origen materno, azul = origen paterno. El par largo y el corto son cromosomas distintos.</p><p>Ahora cada cromosoma tiene <b>una sola cromátida</b> y el material genético está descondensado dentro del núcleo.</p>",
+"m0.q":"Antes de dividirse, la célula tiene que prepararse. ¿Qué crees que le pasa al ADN?",
+"m0.o0":"Se reduce a la mitad",
+"m0.o1":"Se duplica",
+"m0.o2":"Se reparte directamente, sin cambios",
+"m0.why":"El ADN se duplica en la fase S de la interfase: cada cromosoma pasa a tener dos cromátidas hermanas idénticas. La reducción a la mitad vendrá después, porque habrá <b>una sola duplicación y dos divisiones seguidas</b>.",
+"m1.title":"Interfase (fase S): el ADN se duplica",
+"m1.text":"<p>Cada cromosoma se ha copiado: ahora tiene <b>2 cromátidas hermanas idénticas</b> unidas por el centrómero. Seguimos teniendo 4 cromosomas (se cuentan por los centrómeros), pero la cantidad de ADN se ha doblado: de 2C a 4C.</p>",
+"m1.tq":"Si contamos cromosomas hay 4. ¿Y si contamos cromátidas?",
+"m1.th":"Cada cromosoma duplicado tiene 2 cromátidas: 4 × 2 = 8. Ojo: duplicar el ADN no duplica el número de cromosomas.",
+"m2.title":"Profase I: los homólogos se emparejan",
+"m2.text":"<p>Los cromosomas se condensan y cada uno se empareja con su homólogo (<b>sinapsis</b>), formando un <b>bivalente o tétrada</b> de 4 cromátidas. La envoltura nuclear todavía está.</p>",
+"m2.q":"Los homólogos están juntos, cromátida contra cromátida. ¿Qué crees que puede pasar entre cromátidas de homólogos?",
+"m2.o0":"Nada: solo están cerca",
+"m2.o1":"Se fusionan en un solo cromosoma",
+"m2.o2":"Intercambian fragmentos de ADN",
+"m2.why":"Se produce el <b>crossing-over</b> (entrecruzamiento): cromátidas no hermanas intercambian fragmentos. Es la primera fuente de variabilidad genética.",
+"m2.sv1":"4 (2 pares)",
+"m3.title":"Profase I: crossing-over",
+"m3.text":"<p>Entre cromátidas <b>no hermanas</b> de homólogos se cruzan e intercambian trozos (<b>quiasmas</b>). Fíjate en las puntas: ahora hay cromátidas mitad rojas y mitad azules, que ya no son ni totalmente maternas ni totalmente paternas.</p><p>Al final de la profase I desaparece la envoltura nuclear.</p>",
+"m3.tq":"¿Por qué intercambian fragmentos las cromátidas no hermanas y no las hermanas?",
+"m3.th":"Las hermanas son copias idénticas: intercambiar trozos entre ellas no cambiaría nada. Entre homólogos, en cambio, los alelos pueden ser distintos (uno de cada progenitor).",
+"m4.title":"Metafase I: los pares en el ecuador",
+"m4.text":"<p>Los bivalentes se alinean en el plano ecuatorial y el huso los sujeta por los centrómeros. Cada par se orienta <b>al azar</b>: el cromosoma materno puede quedar a la izquierda o a la derecha, independientemente del otro par.</p><p><b>Pruébalo:</b> pulsa sobre un par para girarlo.</p>",
+"m4.q":"En la anafase I, ¿qué se va a separar?",
+"m4.o0":"Las cromátidas hermanas de cada cromosoma",
+"m4.o1":"Nada: la célula todavía no se divide",
+"m4.o2":"Los cromosomas homólogos de cada par",
+"m4.why":"Se separan los <b>homólogos enteros</b> (cada uno con dos cromátidas). Por eso la meiosis I es <b>reduccional</b>: pasamos de 2n a n. Las cromátidas hermanas no se separan hasta la anafase II.",
+"m5.title":"Anafase I: se separan los homólogos",
+"m5.text":"<p>Cada cromosoma (todavía con 2 cromátidas) viaja hacia un polo; las cromátidas hermanas siguen unidas. A cada polo llega <b>un cromosoma de cada par</b>: el reparto ya es n = 2.</p>",
+"m5.tq":"Vuelve a la metafase I, orienta los pares de formas distintas y mira la anafase. ¿Cuántas combinaciones distintas pueden llegar a un polo con 2 pares? ¿Y con 23 pares (como los humanos)?",
+"m5.th":"Cada par tiene 2 orientaciones independientes: 2 × 2 = 4 con 2 pares; 2<sup>23</sup> ≈ 8,4 millones con 23 pares. Y sin contar el crossing-over.",
+"m5.sv0":"1 (dividiéndose)",
+"m6.title":"Telofase I y citocinesis",
+"m6.text":"<p>La célula se divide en dos. Cada célula hija es <b>haploide</b> (n = 2 cromosomas), pero cada cromosoma todavía tiene 2 cromátidas. Hay una interfase breve <b>sin duplicar el ADN</b>.</p>",
+"m6.q":"Antes de la meiosis II, ¿el material genético se vuelve a duplicar?",
+"m6.o0":"Sí, igual que antes de la meiosis I",
+"m6.o1":"Solo en una de las dos células",
+"m6.o2":"No: no hay fase S entre las dos divisiones",
+"m6.why":"No hay duplicación. <b>Una sola duplicación y dos divisiones</b> consecutivas es lo que hace que el número de cromosomas se reduzca a la mitad.",
+"m7.title":"Profase II y metafase II",
+"m7.text":"<p>Cada célula empieza la segunda división, que se parece a una mitosis: los cromosomas se alinean en el ecuador y el huso se orienta <b>perpendicularmente</b> al de la división I. Observa que las cromátidas ya no son idénticas (efecto del crossing-over).</p>",
+"m7.q":"En la anafase II, ¿qué se va a separar?",
+"m7.o0":"Los cromosomas homólogos",
+"m7.o1":"Las cromátidas hermanas",
+"m7.o2":"Las células hijas se vuelven a fusionar",
+"m7.why":"Los homólogos ya están en células distintas desde la meiosis I. Ahora se separan las cromátidas hermanas, como en una mitosis.",
+"m8.title":"Anafase II: se separan las cromátidas",
+"m8.text":"<p>Los centrómeros se dividen y las cromátidas hermanas (que ya no son idénticas) viajan a polos opuestos. Cada cromátida pasa a ser un <b>cromosoma independiente</b>.</p>",
+"m9.title":"Telofase II: cuatro gametos haploides",
+"m9.text":"<p>Resultado: <b>4 células haploides</b> (n = 2), cada una con un cromosoma de cada par y con una combinación genética distinta de las otras. Compáralas: las cuatro son únicas gracias al crossing-over y a la orientación al azar de los pares.</p>",
+"m9.tq":"¿Hay dos gametos iguales? Vuelve atrás, cambia la orientación de los pares en la metafase I y compara los resultados.",
+"m9.th":"No hay ninguno igual. Con crossing-over, las 4 cromátidas de cada par son distintas y cada gameto recibe una de cada par, siempre distinta.",
+"mq1.q":"Una célula tiene 2n = 8. ¿Cuántos cromosomas tendrá cada gameto?",
+"mq1.o0":"8",
+"mq1.o1":"16",
+"mq1.o2":"4",
+"mq1.o3":"2",
+"mq1.e":"La meiosis reduce el número de cromosomas a la mitad: n = 4.",
+"mq2.q":"¿Cuál de estos procesos NO es una fuente de variabilidad genética?",
+"mq2.o0":"Crossing-over",
+"mq2.o1":"Orientación al azar de los pares en la metafase I",
+"mq2.o2":"Fecundación entre gametos distintos",
+"mq2.o3":"La duplicación del ADN en la fase S",
+"mq2.e":"La duplicación genera copias idénticas (cromátidas hermanas): por sí sola no crea variabilidad. Las otras tres sí.",
+"mq3.q":"¿Cuál es la diferencia fundamental entre la meiosis I y la meiosis II?",
+"mq3.o0":"En la I se separan cromátidas; en la II, homólogos",
+"mq3.o1":"La II no tiene anafase",
+"mq3.o2":"En la I se separan homólogos; en la II, cromátidas hermanas",
+"mq3.o3":"Ninguna: son idénticas",
+"mq3.e":"La meiosis I es reduccional (separa homólogos, 2n → n); la II es ecuacional, como una mitosis (separa cromátidas).",
+"mq4.q":"Un humano tiene 2n = 46. Sin contar el crossing-over, ¿cuántas combinaciones distintas de gametos puede producir una persona?",
+"mq4.o0":"46",
+"mq4.o1":"23² = 529",
+"mq4.o2":"23",
+"mq4.o3":"2<sup>23</sup> ≈ 8,4 millones",
+"mq4.e":"Cada uno de los 23 pares se orienta de 2 formas independientes: 2<sup>23</sup> = 8 388 608.",
+"mq5.q":"En la anafase I, un par de homólogos no se separa (no disyunción). ¿Qué pasará con los cuatro gametos?",
+"mq5.o0":"Serán todos normales",
+"mq5.o1":"Dos tendrán un cromosoma de más y dos tendrán uno de menos",
+"mq5.o2":"Todos tendrán el doble de cromosomas",
+"mq5.o3":"Se producirá una mitosis",
+"mq5.e":"Los dos homólogos van al mismo polo: dos gametos n+1 y dos n−1. Si un gameto con un cromosoma 21 de más fecunda, resulta el síndrome de Down (trisomía 21).",
+"eyebrow":"Biología · Célula y genética",
+"h1":"Meiosis: de la célula diploide a los cuatro gametos",
+"leg_m":"Origen materno",
+"leg_p":"Origen paterno",
+"leg_c":"Centrómero",
+"chi":"quiasma",
+"hint4":"☝ Pulsa sobre un par de cromosomas para girarlo (orientación al azar)."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/meiosi/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
+const SI18N={
+ca:{st_prev:"← Anterior",st_next:"Següent →",st_restart:"Torna a l'inici",st_step:"Pas {a} de {b}",st_predict:"Predix abans de veure",st_think:"Pensa-hi",
+st_hint:"Mostra una pista",st_hide:"Amaga la pista",st_ok:"Correcte!",st_ko:"No exactament.","aria.steps":"Passos de l'animació","aria.stage":"Dibuix de l'animació",
+sl_cells:"Cèl·lules",sl_chrom:"Cromosomes per cèl·lula",sl_chromat:"Cromàtides per cromosoma",sl_dna:"ADN per cèl·lula",sl_chrompol:"Cromosomes per pol",sl_dnatot:"ADN total"},
+es:{st_prev:"← Anterior",st_next:"Siguiente →",st_restart:"Volver al inicio",st_step:"Paso {a} de {b}",st_predict:"Predice antes de ver",st_think:"Piénsalo",
+st_hint:"Ver una pista",st_hide:"Ocultar la pista",st_ok:"¡Correcto!",st_ko:"No exactamente.","aria.steps":"Pasos de la animación","aria.stage":"Dibujo de la animación",
+sl_cells:"Células",sl_chrom:"Cromosomas por célula",sl_chromat:"Cromátidas por cromosoma",sl_dna:"ADN por célula",sl_chrompol:"Cromosomas por polo",sl_dnatot:"ADN total"}};
+Object.assign(I18N.ca,SI18N.ca);Object.assign(I18N.es,SI18N.es);
+const SE={i:0,steps:[],ans:{},hint:{},cb:null};
+function stepsInit(steps,cb){
+  SE.steps=steps;SE.cb=cb;
+  const sp=$('#stepper');
+  steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+  $('#prev').onclick=()=>stepGo(SE.i-1);
+  $('#next').onclick=()=>stepGo(SE.i+1);
+  $('#restart').onclick=()=>{SE.ans={};SE.hint={};stepGo(0);};
+  document.addEventListener('langchange',stepRender);
+  stepGo(0);
+}
+function stepGo(i){
+  i=Math.max(0,Math.min(SE.steps.length-1,i));
+  const prev=SE.i;SE.i=i;stepRender();
+  if(SE.cb)SE.cb(i,prev);
+}
+function stepRender(){
+  const s=SE.steps[SE.i],id=s.id;
+  $$('#stepper button').forEach((b,k)=>{
+    if(k===SE.i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+    b.className=(SE.ans[SE.steps[k].id]!==undefined&&k!==SE.i)?'done':'';
+  });
+  $('#stepno').textContent=t('st_step',{a:SE.i+1,b:SE.steps.length});
+  const T=$('#stitle');T.dataset.i18n=id+'.title';T.textContent=t(id+'.title');
+  const X=$('#stext');X.dataset.i18nHtml=id+'.text';X.innerHTML=t(id+'.text');
+  const st=$('#sstats');st.innerHTML='';
+  (s.stats||[]).forEach((p,j)=>{
+    const d=document.createElement('div');d.className='stat';
+    d.innerHTML='<span class="k">'+t(p[0])+'</span><span class="v">'+(I18N.ca[id+'.sv'+j]!==undefined?t(id+'.sv'+j):p[1])+'</span>';
+    st.appendChild(d);
+  });
+  st.hidden=!(s.stats&&s.stats.length);
+  const ask=$('#sask');ask.innerHTML='';ask.hidden=!s.ask;
+  if(s.ask){
+    const a=SE.ans[id],c=document.createElement('div');c.className='pred';
+    c.innerHTML='<span class="eb">'+t('st_predict')+'</span><p class="qtext">'+t(id+'.q')+'</p>';
+    const o=document.createElement('div');o.className='opts';
+    for(let j=0;j<s.ask.n;j++){
+      const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(id+'.o'+j);
+      if(a!==undefined){b.disabled=true;if(j===s.ask.ok)b.classList.add('right');else if(j===a)b.classList.add('wrong');}
+      b.onclick=()=>{SE.ans[id]=j;stepRender();};
+      o.appendChild(b);
+    }
+    c.appendChild(o);
+    if(a!==undefined){const f=document.createElement('p');f.className='fb';f.innerHTML='<b>'+(a===s.ask.ok?t('st_ok'):t('st_ko'))+'</b> '+t(id+'.why');c.appendChild(f);}
+    ask.appendChild(c);
+  }
+  const th=$('#sthink');th.innerHTML='';th.hidden=!s.think;
+  if(s.think){
+    const c=document.createElement('div');c.className='think';
+    c.innerHTML='<span class="eb">'+t('st_think')+'</span><p class="qtext">'+t(id+'.tq')+'</p>';
+    const open=!!SE.hint[id];
+    const b=document.createElement('button');b.type='button';b.className='linkb';b.textContent=open?t('st_hide'):t('st_hint');
+    b.onclick=()=>{SE.hint[id]=!SE.hint[id];stepRender();};
+    c.appendChild(b);
+    if(open){const f=document.createElement('p');f.className='fb';f.innerHTML=t(id+'.th');c.appendChild(f);}
+    th.appendChild(c);
+  }
+  $('#prev').disabled=(SE.i===0);$('#next').disabled=(SE.i===SE.steps.length-1);
+}
+
+const STEPS=[{"id":"m0","ask":{"n":3,"ok":1},"stats":[["sl_cells","1"],["sl_chrom","4"],["sl_chromat","1"],["sl_dna","2C"]]},{"id":"m1","think":true,"stats":[["sl_cells","1"],["sl_chrom","4"],["sl_chromat","2"],["sl_dna","4C"]]},{"id":"m2","ask":{"n":3,"ok":2},"stats":[["sl_cells","1"],["sl_chrom",""],["sl_chromat","2"],["sl_dna","4C"]]},{"id":"m3","think":true,"stats":[["sl_cells","1"],["sl_chrom","4"],["sl_chromat","2"],["sl_dna","4C"]]},{"id":"m4","ask":{"n":3,"ok":2},"stats":[["sl_cells","1"],["sl_chrom","4"],["sl_chromat","2"],["sl_dna","4C"]]},{"id":"m5","think":true,"stats":[["sl_cells",""],["sl_chrompol","2"],["sl_chromat","2"],["sl_dnatot","4C"]]},{"id":"m6","ask":{"n":3,"ok":2},"stats":[["sl_cells","2"],["sl_chrom","2"],["sl_chromat","2"],["sl_dna","2C"]]},{"id":"m7","ask":{"n":3,"ok":1},"stats":[["sl_cells","2"],["sl_chrom","2"],["sl_chromat","2"],["sl_dna","2C"]]},{"id":"m8","stats":[["sl_cells","2"],["sl_chrom","4"],["sl_chromat","1"],["sl_dna","2C"]]},{"id":"m9","think":true,"stats":[["sl_cells","4"],["sl_chrom","2"],["sl_chromat","1"],["sl_dna","1C"]]}];
+const QDATA=[{"id":"mq1","lvl":"all","type":"mc","n":4,"ans":2},{"id":"mq2","lvl":"all","type":"mc","n":4,"ans":3},{"id":"mq3","lvl":"all","type":"mc","n":4,"ans":2},{"id":"mq4","lvl":"all","type":"mc","n":4,"ans":3},{"id":"mq5","lvl":"all","type":"mc","n":4,"ans":1}];
+const NS='http://www.w3.org/2000/svg';
+const COL={m:'#d94b4b',p:'#3a6fd8'};
+const LEN=[72,46];
+const MS={o:[0,0]};
+let msvg,chr=[],cells={},nuc,nuc2=[],spG,chiG,chiLabel,curPh=0;
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+
+function layout(ph){
+  const o=MS.o,ch=[],cr=[];
+  for(let k=0;k<2;k++)for(let par=0;par<2;par++){
+    const s=(par===0)?(o[k]?1:-1):(o[k]?-1:1);
+    const y=k?270:150;
+    const c={x:400,y:y,rot:0,sx:1,op:1,sep:10,single:false};
+    if(ph===0||ph===1){
+      const sc=[[340,165,30],[455,150,-25],[350,265,70],[450,262,-55]][k*2+par];
+      c.x=sc[0];c.y=sc[1];c.rot=sc[2];c.sx=(ph===0)?0.45:0.5;c.op=(ph===0)?0.8:0.9;c.single=(ph===0);
+    }else if(ph===2||ph===3||ph===4){c.x=400+s*13;}
+    else if(ph===5){c.x=400+s*120;}
+    else if(ph===6){c.x=400+s*165;}
+    else if(ph===7||ph===8){const cx=400+s*165;c.x=cx+(k?40:-45);c.y=210;c.rot=90;if(ph===8)c.sep=130;}
+    else if(ph===9){c.x=400+s*165;}
+    cr.push({x:c.x,y:c.y,k:k,par:par,s:s});
+    for(let j=0;j<2;j++){
+      const dx=c.single?0:(j?c.sep/2:-c.sep/2);
+      const r=c.rot*Math.PI/180;
+      const o2={x:c.x+dx*Math.cos(r),y:c.y+dx*Math.sin(r),rot:c.rot,sx:c.sx,op:c.op};
+      if(c.single&&j===1)o2.op=0;
+      if(ph===9){const gy=j?300:120;o2.x=400+s*165+(k?30:-30);o2.y=gy;o2.rot=0;o2.sx=0.9;o2.op=1;}
+      ch.push(o2);
+    }
+  }
+  return {ch:ch,cr:cr};
+}
+function tipColor(c,ph){
+  const base=c.par?COL.p:COL.m;
+  if(ph>=3){
+    const inner=(c.par===0)?(MS.o[c.k]?0:1):(MS.o[c.k]?1:0);
+    if(c.j===inner)return c.par?COL.m:COL.p;
+  }
+  return base;
+}
+function buildSvg(){
+  msvg=$('#msvg');
+  const gc=el('g',{},msvg);
+  cells.c0=el('ellipse',{cx:400,cy:210,rx:335,ry:190,'class':'cell'},gc);
+  cells.c1=[el('ellipse',{cx:235,cy:210,rx:158,ry:176,'class':'cell'},gc),el('ellipse',{cx:565,cy:210,rx:158,ry:176,'class':'cell'},gc)];
+  cells.c2=[[235,120],[235,300],[565,120],[565,300]].map(p=>el('ellipse',{cx:p[0],cy:p[1],rx:105,ry:80,'class':'cell'},gc));
+  nuc=el('ellipse',{cx:400,cy:210,rx:150,ry:138,'class':'nuc'},msvg);
+  nuc2=[[235,120],[235,300],[565,120],[565,300]].map(p=>el('ellipse',{cx:p[0],cy:p[1],rx:78,ry:62,'class':'nuc'},msvg));
+  spG=el('g',{'class':'spi'},msvg);
+  chiG=el('g',{'class':'chi'},msvg);
+  [0,1].forEach(k=>{el('circle',{cx:400,cy:(k?270:150)+0.14*LEN[k],r:15,fill:'none',stroke:'#e0a100','stroke-width':2.5,'stroke-dasharray':'4 3'},chiG);});
+  chiLabel=el('text',{x:432,y:158,'class':'cl'},chiG);
+  const layer=el('g',{},msvg);
+  for(let k=0;k<2;k++)for(let par=0;par<2;par++)for(let j=0;j<2;j++){
+    const Ln=LEN[k];
+    const g=el('g',{'class':'cht'},layer);
+    const body=el('rect',{x:-4.5,y:-Ln/2,width:9,height:Ln,rx:4.5,stroke:'rgba(0,0,0,.35)','stroke-width':0.8},g);
+    const y0=0.14*Ln,yb=Ln/2-4.5;
+    const tip=el('path',{d:'M-4.5 '+y0+' H4.5 V'+yb+' A4.5 4.5 0 0 1 -4.5 '+yb+' Z',stroke:'rgba(0,0,0,.35)','stroke-width':0.8},g);
+    el('ellipse',{cx:0,cy:0,rx:6,ry:3.4,fill:'#8a8aa0','fill-opacity':0.75},g);
+    const obj={g,body,tip,k,par,j};
+    g.addEventListener('click',()=>{if(curPh===4){MS.o[obj.k]^=1;render(4);}});
+    chr.push(obj);
+  }
+  msvg.appendChild(chiG);
+  paintText();
+}
+function paintText(){
+  if(!chiLabel)return;
+  chiLabel.textContent=t('chi');
+  $('#mhint').textContent=(curPh===4)?t('hint4'):'';
+}
+function drawSpindle(ph,Lo){
+  while(spG.firstChild)spG.removeChild(spG.firstChild);
+  const pole=(x,y)=>el('circle',{cx:x,cy:y,r:5},spG);
+  const line=(x1,y1,x2,y2)=>el('line',{x1,y1,x2,y2,'stroke-width':1.2,'stroke-opacity':0.75},spG);
+  if(ph===4){
+    pole(70,210);pole(730,210);
+    Lo.cr.forEach(c=>{line(70,210,c.x,c.y);line(730,210,c.x,c.y);});
+  }else if(ph===5){
+    pole(70,210);pole(730,210);
+    Lo.cr.forEach(c=>{line(c.s<0?70:730,210,c.x,c.y);});
+  }else if(ph===7||ph===8){
+    [235,565].forEach(cx=>{pole(cx,48);pole(cx,372);});
+    if(ph===7){Lo.cr.forEach(c=>{const cx=400+c.s*165;line(cx,48,c.x,c.y);line(cx,372,c.x,c.y);});}
+    else{chr.forEach((c,i)=>{const p=Lo.ch[i];const cx=400+Lo.cr[Math.floor(i/2)].s*165;line(cx,c.j?372:48,p.x,p.y);});}
+  }
+  spG.style.animation=REDUCE?'none':'mfade .6s .6s both';
+}
+function render(ph){
+  curPh=ph;
+  const Lo=layout(ph);
+  chr.forEach((c,i)=>{
+    const l=Lo.ch[i];
+    c.g.style.transform='translate('+l.x.toFixed(2)+'px,'+l.y.toFixed(2)+'px) rotate('+l.rot+'deg) scale('+l.sx+',1)';
+    c.g.style.opacity=l.op;
+    c.g.style.cursor=(ph===4)?'pointer':'default';
+    c.body.style.fill=c.par?COL.p:COL.m;
+    c.tip.style.fill=tipColor(c,ph);
+  });
+  cells.c0.style.opacity=(ph<=5)?1:0;
+  cells.c1.forEach(e=>{e.style.opacity=(ph>=6&&ph<=8)?1:0;});
+  cells.c2.forEach(e=>{e.style.opacity=(ph===9)?1:0;});
+  nuc.style.opacity=(ph<=3)?1:0;
+  nuc2.forEach(e=>{e.style.opacity=(ph===9)?1:0;});
+  chiG.style.opacity=(ph===3)?1:0;
+  drawSpindle(ph,Lo);
+  paintText();
+}
+initQuiz(QDATA);
+initLang();applyLang();
+buildSvg();
+document.addEventListener('langchange',paintText);
+stepsInit(STEPS,(i)=>{if(i===0)MS.o=[0,0];render(i);});
+</script>
+</body>
+</html>

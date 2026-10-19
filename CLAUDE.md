@@ -32,6 +32,11 @@
 - Per a cada recurs nou: targeta a `index.html`, les dues URLs al `sitemap.xml`, comptador GoatCounter, enllaç de tornada a la portada i verificar amb Playwright (sense errors de JS, text estàtic = text renderitzat, mode fosc i mòbil de 390 px).
 - Les pàgines estàtiques sense JS poden seguir el flux antic de `tools/genera_es.py` (JSON de parells).
 
+# Animacions amb passos i predicció (meiosi, osmosi-difusio, fotosintesi-respiracio)
+
+- Fonts a `tools/simuladors/src/` (`meiosi.src.html`, `osmosi.src.html`, `fotosintesi.src.html`) amb el motor de passos compartit `steps.js`/`steps.css` (es crida des de `build.py` amb `/*@STEPS_JS@*/` i `/*@STEPS_CSS@*/`). Cada pas té text, pregunta de predicció (`<id>.q/.o0../.why`) i pregunta per a pensar (`<id>.tq/.th`) dins el diccionari `I18N`. Es generen amb `python3 tools/simuladors/genera.py`; no s'editen les pàgines generades.
+- Les targetes i les 6 URLs del sitemap es mantenen a mà (ja hi són).
+
 # Química interactiva (estats-materia, ajust-reaccions, dissolucions, mescles-separacio)
 
 - Pàgines generades (va + es) amb `python3 tools/quimica/publica.py`; font a `tools/quimica/` (`sims/<slug>/strings.json` amb `va`/`es`, `body.html`, `sim.js`, `sim.css`). **No s'editen a mà.** Comptador GoatCounter i `base_url` ja configurats a `tools/quimica/config.json`.

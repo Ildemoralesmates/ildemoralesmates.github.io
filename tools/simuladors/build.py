@@ -9,6 +9,8 @@ css = (S / "common.css").read_text(encoding="utf-8")
 js = (S / "common.js").read_text(encoding="utf-8")
 qcss = (S / "quiz.css").read_text(encoding="utf-8")
 qjs = (S / "quiz.js").read_text(encoding="utf-8")
+scss = (S / "steps.css").read_text(encoding="utf-8")
+sjs = (S / "steps.js").read_text(encoding="utf-8")
 LANGSW = '<div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>'
 FOOT = ('<footer class="cc">© Ilde · <a href="https://ildemoralesmates.github.io/">Recursos de matemàtiques</a> · '
         '<a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></footer>')
@@ -20,7 +22,7 @@ names = sys.argv[1:] or [p.name[:-9] for p in S.glob("*.src.html")]
 for n in names:
     s = (S / f"{n}.src.html").read_text(encoding="utf-8")
     s = s.replace("/*@COMMON_CSS@*/", css).replace("/*@COMMON_JS@*/", js)
-    s = s.replace("/*@QUIZ_CSS@*/", qcss).replace("/*@QUIZ_JS@*/", qjs).replace("<!--@LVLSW@-->", LVLSW).replace("<!--@QUIZ@-->", QUIZ)
+    s = s.replace("/*@QUIZ_CSS@*/", qcss).replace("/*@QUIZ_JS@*/", qjs).replace("/*@STEPS_CSS@*/", scss).replace("/*@STEPS_JS@*/", sjs).replace("<!--@LVLSW@-->", LVLSW).replace("<!--@QUIZ@-->", QUIZ)
     s = s.replace("<!--@LANGSW@-->", LANGSW).replace("<!--@FOOTER@-->", FOOT).replace("<!--@GC@-->", GC)
     (OUT / f"{n}.html").write_text(s, encoding="utf-8")
     print("ok", n, len(s))

@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Òsmosi i difusió: partícules i membrana semipermeable</title>
+<meta name="description" content="Simulador de partícules per a entendre la difusió i l'òsmosi: membrana permeable, semipermeable o impermeable, concentracions, temperatura i una cèl·lula en un medi hipotònic o hipertònic. Amb preguntes i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@STEPS_CSS@*/
+.stage canvas{display:block;width:100%;height:auto}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="stage"><canvas id="oc" role="img" data-i18n-aria="aria.stage" aria-label=""></canvas></div>
+<div class="ctrlbar">
+<div class="seg" id="omemb" role="group" data-i18n-aria="aria.memb" aria-label=""><button type="button" data-m="semi" data-i18n="m_semi"></button><button type="button" data-m="perm" data-i18n="m_perm"></button><button type="button" data-m="imp" data-i18n="m_imp"></button></div>
+<button type="button" class="btn" id="opause" data-i18n="pause"></button>
+<button type="button" class="btn" id="oreset" data-i18n="reset"></button>
+</div>
+<div class="ctrlbar" id="osl"></div>
+<div class="readout" id="ro" aria-live="off"></div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev"></button><button type="button" class="btn primary" id="next" data-i18n="st_next"></button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="o0.title"></h2>
+<div class="stext" id="stext" data-i18n-html="o0.text"></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart"></button></div>
+</aside>
+</div>
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+"ca":{
+"title":"Òsmosi i difusió: partícules i membrana semipermeable",
+"lede":"Simulació de partícules: canvia les concentracions, la membrana i la temperatura, i comprova el flux net d’aigua. Cada pas és un experiment amb una pregunta.",
+"o0.title":"Difusió: un colorant que es reparteix",
+"o0.text":"<p>Totes les partícules es mouen a l’atzar per l’agitació tèrmica. La membrana és <b>permeable</b>: deixa passar aigua i soluts. Ara els soluts (taronja) estan tots a l’esquerra.</p><p>La <b>difusió</b> és el desplaçament net de partícules des d’on n’hi ha més concentració cap a on n’hi ha menys, <b>sense gastar energia</b>.</p>",
+"o0.q":"Què passarà amb la concentració de soluts a cada costat?",
+"o0.o0":"Es concentrarà encara més a l’esquerra",
+"o0.o1":"Només canviarà si fem energia",
+"o0.o2":"S’igualarà: els soluts es repartiran pels dos costats",
+"o0.why":"Cap partícula “vol” anar enlloc: es mouen a l’atzar. Però com n’hi ha més a l’esquerra, n’hi creuen més cap a la dreta que a l’inrevés. El resultat net és que les concentracions s’igualen.",
+"o1.title":"Equilibri dinàmic",
+"o1.text":"<p>Quan les concentracions són iguals, les partícules <b>no s’aturen</b>: continuen creuant en els dos sentits al mateix ritme. Per això no hi ha canvi net.</p><p>Prova de pujar la <b>temperatura</b>: tot es mou més ràpid, però l’equilibri es manté.</p>",
+"o1.tq":"Si les partícules segueixen creuant, per què la concentració no canvia?",
+"o1.th":"Perquè en creuen tantes cap a la dreta com cap a l’esquerra: el flux net és zero. És un equilibri <i>dinàmic</i>, no un estat de repos.",
+"o2.title":"Òsmosi: membrana semipermeable",
+"o2.text":"<p>Ara la membrana és <b>semipermeable</b>: l’aigua passa pels porus, però els soluts (grans) no. A l’esquerra hi ha molt de soluts; a la dreta, gairebé res.</p><p>L’òsmosi és la <b>difusió de l’aigua</b> a través d’una membrana semipermeable.</p>",
+"o2.q":"Cap a quin costat anirà l’aigua?",
+"o2.o0":"Cap al costat menys concentrat en soluts",
+"o2.o1":"No es mourà: només es poden moure els soluts",
+"o2.o2":"Cap al costat més concentrat en soluts (hipertònic)",
+"o2.why":"L’aigua va del medi <b>hipotònic</b> (més aigua lliure) cap a l’<b>hipertònic</b>. Mira com puja el nivell a l’esquerra. Es frena quan la diferència de nivell (pressió) compensa l’efecte, per això no sempre s’arriba a igualar concentracions.",
+"o3.title":"Dissolucions isotòniques",
+"o3.text":"<p>Les dues dissolucions tenen la <b>mateixa concentració</b> i la membrana és semipermeable. Observa els nivells.</p>",
+"o3.q":"Hi haurà flux net d’aigua?",
+"o3.o0":"Sí, cap a l’esquerra",
+"o3.o1":"No: l’aigua creua en els dos sentits al mateix ritme",
+"o3.o2":"Sí, cap a la dreta",
+"o3.why":"Medis isotònics: la mateixa concentració d’aigua lliure a banda i banda. L’aigua creua, però en els dos sentits per igual. Hi ha equilibri dinàmic.",
+"o4.title":"Control: membrana impermeable",
+"o4.text":"<p>Mateixes concentracions que l’experiment d’òsmosi, però amb una membrana <b>impermeable</b>.</p>",
+"o4.tq":"Què ha passat amb els nivells? Què demostra aquest control sobre el paper de la membrana?",
+"o4.th":"Els nivells no canvien: sense pas d’aigua no hi ha òsmosi. Això demostra que el fenomen depèn de la <b>permeabilitat selectiva</b> de la membrana. Un bon experiment sempre té un control.",
+"o5.title":"Una cèl·lula en un medi",
+"o5.text":"<p>L’esquerra és ara l’<b>interior d’una cèl·lula</b> (membrana plasmàtica semipermeable) i la dreta, el <b>medi extern</b>. El recuadre verd és la cèl·lula; el seu volum es mostra a sota.</p><p>Canvia els soluts del medi extern amb el control i observa.</p>",
+"o5.q":"Posem la cèl·lula en un medi amb menys soluts que el seu interior (hipotònic). Què li passa?",
+"o5.o0":"S’arruga: ix aigua",
+"o5.o1":"Res",
+"o5.o2":"S’infla: entra aigua",
+"o5.why":"En medi hipotònic entra aigua. Una cèl·lula animal pot arribar a rebentar (<b>lisi</b>); una de vegetal es torna <b>turgent</b> i la paret cel·lular ho evita.",
+"o5.tq":"Repeteix amb un medi hipertònic (soluts del medi = 28). Què li passa a un glòbul roig? I a una cèl·lula vegetal? Per què es conserva el menjar amb sal?",
+"o5.th":"Ix aigua: el glòbul roig s’arruga (crenació) i la cèl·lula vegetal pateix plasmòlisi. Amb sal o sucre en excés, els microorganismes es deshidraten i no poden créixer.",
+"oq1.q":"Quina afirmació descriu millor l’òsmosi?",
+"oq1.o0":"Moviment de soluts de més a menys concentració amb despesa d’ATP",
+"oq1.o1":"Moviment d’aigua a través d’una membrana semipermeable cap al costat amb més soluts",
+"oq1.o2":"Moviment d’aigua cap al costat amb menys soluts",
+"oq1.o3":"Moviment de soluts a través d’una membrana impermeable",
+"oq1.e":"L’aigua va cap al medi hipertònic (més soluts) i no es gasta ATP.",
+"oq2.q":"Un glòbul roig es posa en aigua destil·lada. Què li passa?",
+"oq2.o0":"Es contrau",
+"oq2.o1":"No canvia",
+"oq2.o2":"Perd soluts",
+"oq2.o3":"Rebenta (lisi): hi entra aigua",
+"oq2.e":"L’aigua destil·lada és hipotònica respecte a l’interior: hi entra aigua fins que la cèl·lula, sense paret, no ho aguanta.",
+"oq3.q":"La difusió simple d’una molècula a favor de gradient necessita ATP?",
+"oq3.o0":"Sí, sempre",
+"oq3.o1":"No: ocorre per l’agitació tèrmica de les partícules",
+"oq3.o2":"Només en cèl·lules vives",
+"oq3.o3":"Només si hi ha proteïnes",
+"oq3.e":"És un procés passiu: el moviment aleatori fa que, de mitjana, el flux net vaja de més a menys concentració.",
+"oq4.q":"Si pugem la temperatura, què passa amb la velocitat de difusió?",
+"oq4.o0":"Augmenta: les partícules es mouen més ràpid",
+"oq4.o1":"Disminueix",
+"oq4.o2":"No depèn de la temperatura",
+"oq4.o3":"Depèn només de la membrana",
+"oq4.e":"Més temperatura = més agitació tèrmica = difusió més ràpida (l’equilibri final és el mateix).",
+"oq5.q":"Per què es conserva la carn amb sal o els fruits amb sucre?",
+"oq5.o0":"La sal crea un medi hipertònic: els microorganismes perden aigua i no poden créixer",
+"oq5.o1":"La sal mata per toxicitat química",
+"oq5.o2":"El sucre els alimenta fins que exploten",
+"oq5.o3":"Perquè el medi és hipotònic",
+"oq5.e":"Per òsmosi, l’aigua ix de les cèl·lules microbianes cap al medi salat o ensucrat: es deshidraten.",
+"eyebrow":"Biologia · Transport a través de la membrana",
+"h1":"Òsmosi i difusió: partícules i membrana semipermeable",
+"aria.memb":"Tipus de membrana",
+"m_semi":"Semipermeable (només aigua)",
+"m_perm":"Permeable (aigua i soluts)",
+"m_imp":"Impermeable",
+"pause":"⏸ Pausa",
+"play":"▶ Continua",
+"reset":"↻ Reinicia",
+"sL":"Soluts a l'esquerra",
+"sR":"Soluts a la dreta",
+"sLc":"Soluts a l'interior",
+"sRc":"Soluts al medi extern",
+"sT":"Temperatura (agitació tèrmica)",
+"lblL":"Esquerra",
+"lblR":"Dreta",
+"lblLc":"Interior de la cèl·lula",
+"lblRc":"Medi extern",
+"cv_w":"aigua",
+"cv_s":"soluts (més grans)",
+"ro_s":"Soluts",
+"ro_w":"Aigua",
+"ro_c":"Concentració de soluts",
+"ro_l":"Nivell",
+"ro_v":"Volum de la cèl·lula",
+"v_big":"cèl·lula inflada (turgent)",
+"v_small":"cèl·lula arrugada (plasmòlisi / crenació)",
+"v_ok":"volum estable"
+},
+"es":{
+"title":"Ósmosis y difusión: partículas y membrana semipermeable",
+"lede":"Simulación de partículas: cambia las concentraciones, la membrana y la temperatura, y comprueba el flujo neto de agua. Cada paso es un experimento con una pregunta.",
+"o0.title":"Difusión: un colorante que se reparte",
+"o0.text":"<p>Todas las partículas se mueven al azar por la agitación térmica. La membrana es <b>permeable</b>: deja pasar agua y solutos. Ahora los solutos (naranja) están todos a la izquierda.</p><p>La <b>difusión</b> es el desplazamiento neto de partículas desde donde hay más concentración hacia donde hay menos, <b>sin gastar energía</b>.</p>",
+"o0.q":"¿Qué pasará con la concentración de solutos a cada lado?",
+"o0.o0":"Se concentrará aún más a la izquierda",
+"o0.o1":"Solo cambiará si gastamos energía",
+"o0.o2":"Se igualará: los solutos se repartirán por los dos lados",
+"o0.why":"Ninguna partícula “quiere” ir a ningún sitio: se mueven al azar. Pero como hay más a la izquierda, cruzan más hacia la derecha que al revés. El resultado neto es que las concentraciones se igualan.",
+"o1.title":"Equilibrio dinámico",
+"o1.text":"<p>Cuando las concentraciones son iguales, las partículas <b>no se paran</b>: siguen cruzando en los dos sentidos al mismo ritmo. Por eso no hay cambio neto.</p><p>Prueba a subir la <b>temperatura</b>: todo se mueve más rápido, pero el equilibrio se mantiene.</p>",
+"o1.tq":"Si las partículas siguen cruzando, ¿por qué la concentración no cambia?",
+"o1.th":"Porque cruzan tantas hacia la derecha como hacia la izquierda: el flujo neto es cero. Es un equilibrio <i>dinámico</i>, no un estado de reposo.",
+"o2.title":"Ósmosis: membrana semipermeable",
+"o2.text":"<p>Ahora la membrana es <b>semipermeable</b>: el agua pasa por los poros, pero los solutos (grandes) no. A la izquierda hay mucho soluto; a la derecha, casi nada.</p><p>La ósmosis es la <b>difusión del agua</b> a través de una membrana semipermeable.</p>",
+"o2.q":"¿Hacia qué lado irá el agua?",
+"o2.o0":"Hacia el lado menos concentrado en solutos",
+"o2.o1":"No se moverá: solo se pueden mover los solutos",
+"o2.o2":"Hacia el lado más concentrado en solutos (hipertónico)",
+"o2.why":"El agua va del medio <b>hipotónico</b> (más agua libre) hacia el <b>hipertónico</b>. Mira cómo sube el nivel a la izquierda. Se frena cuando la diferencia de nivel (presión) compensa el efecto, por eso no siempre se llega a igualar concentraciones.",
+"o3.title":"Disoluciones isotónicas",
+"o3.text":"<p>Las dos disoluciones tienen la <b>misma concentración</b> y la membrana es semipermeable. Observa los niveles.</p>",
+"o3.q":"¿Habrá flujo neto de agua?",
+"o3.o0":"Sí, hacia la izquierda",
+"o3.o1":"No: el agua cruza en los dos sentidos al mismo ritmo",
+"o3.o2":"Sí, hacia la derecha",
+"o3.why":"Medios isotónicos: la misma concentración de agua libre a ambos lados. El agua cruza, pero en los dos sentidos por igual. Hay equilibrio dinámico.",
+"o4.title":"Control: membrana impermeable",
+"o4.text":"<p>Mismas concentraciones que el experimento de ósmosis, pero con una membrana <b>impermeable</b>.</p>",
+"o4.tq":"¿Qué ha pasado con los niveles? ¿Qué demuestra este control sobre el papel de la membrana?",
+"o4.th":"Los niveles no cambian: sin paso de agua no hay ósmosis. Esto demuestra que el fenómeno depende de la <b>permeabilidad selectiva</b> de la membrana. Un buen experimento siempre tiene un control.",
+"o5.title":"Una célula en un medio",
+"o5.text":"<p>La izquierda es ahora el <b>interior de una célula</b> (membrana plasmática semipermeable) y la derecha, el <b>medio externo</b>. El recuadro verde es la célula; su volumen se muestra debajo.</p><p>Cambia el soluto del medio externo con el control y observa.</p>",
+"o5.q":"Ponemos la célula en un medio con menos solutos que su interior (hipotónico). ¿Qué le pasa?",
+"o5.o0":"Se arruga: sale agua",
+"o5.o1":"Nada",
+"o5.o2":"Se hincha: entra agua",
+"o5.why":"En medio hipotónico entra agua. Una célula animal puede llegar a reventar (<b>lisis</b>); una vegetal se vuelve <b>turgente</b> y la pared celular lo evita.",
+"o5.tq":"Repite con un medio hipertónico (solutos del medio = 28). ¿Qué le pasa a un glóbulo rojo? ¿Y a una célula vegetal? ¿Por qué se conserva la comida con sal?",
+"o5.th":"Sale agua: el glóbulo rojo se arruga (crenación) y la célula vegetal sufre plasmólisis. Con sal o azúcar en exceso, los microorganismos se deshidratan y no pueden crecer.",
+"oq1.q":"¿Qué afirmación describe mejor la ósmosis?",
+"oq1.o0":"Movimiento de solutos de más a menos concentración con gasto de ATP",
+"oq1.o1":"Movimiento de agua a través de una membrana semipermeable hacia el lado con más solutos",
+"oq1.o2":"Movimiento de agua hacia el lado con menos solutos",
+"oq1.o3":"Movimiento de solutos a través de una membrana impermeable",
+"oq1.e":"El agua va hacia el medio hipertónico (más solutos) y no se gasta ATP.",
+"oq2.q":"Un glóbulo rojo se pone en agua destilada. ¿Qué le pasa?",
+"oq2.o0":"Se contrae",
+"oq2.o1":"No cambia",
+"oq2.o2":"Pierde solutos",
+"oq2.o3":"Revienta (lisis): entra agua",
+"oq2.e":"El agua destilada es hipotónica respecto al interior: entra agua hasta que la célula, sin pared, no lo aguanta.",
+"oq3.q":"¿La difusión simple de una molécula a favor de gradiente necesita ATP?",
+"oq3.o0":"Sí, siempre",
+"oq3.o1":"No: ocurre por la agitación térmica de las partículas",
+"oq3.o2":"Solo en células vivas",
+"oq3.o3":"Solo si hay proteínas",
+"oq3.e":"Es un proceso pasivo: el movimiento aleatorio hace que, de media, el flujo neto vaya de más a menos concentración.",
+"oq4.q":"Si subimos la temperatura, ¿qué pasa con la velocidad de difusión?",
+"oq4.o0":"Aumenta: las partículas se mueven más rápido",
+"oq4.o1":"Disminuye",
+"oq4.o2":"No depende de la temperatura",
+"oq4.o3":"Depende solo de la membrana",
+"oq4.e":"Más temperatura = más agitación térmica = difusión más rápida (el equilibrio final es el mismo).",
+"oq5.q":"¿Por qué se conserva la carne con sal o la fruta con azúcar?",
+"oq5.o0":"La sal crea un medio hipertónico: los microorganismos pierden agua y no pueden crecer",
+"oq5.o1":"La sal mata por toxicidad química",
+"oq5.o2":"El azúcar los alimenta hasta que explotan",
+"oq5.o3":"Porque el medio es hipotónico",
+"oq5.e":"Por ósmosis, el agua sale de las células microbianas hacia el medio salado o azucarado: se deshidratan.",
+"eyebrow":"Biología · Transporte a través de la membrana",
+"h1":"Ósmosis y difusión: partículas y membrana semipermeable",
+"aria.memb":"Tipo de membrana",
+"m_semi":"Semipermeable (solo agua)",
+"m_perm":"Permeable (agua y solutos)",
+"m_imp":"Impermeable",
+"pause":"⏸ Pausa",
+"play":"▶ Continuar",
+"reset":"↻ Reiniciar",
+"sL":"Solutos a la izquierda",
+"sR":"Solutos a la derecha",
+"sLc":"Solutos en el interior",
+"sRc":"Solutos en el medio externo",
+"sT":"Temperatura (agitación térmica)",
+"lblL":"Izquierda",
+"lblR":"Derecha",
+"lblLc":"Interior de la célula",
+"lblRc":"Medio externo",
+"cv_w":"agua",
+"cv_s":"solutos (más grandes)",
+"ro_s":"Solutos",
+"ro_w":"Agua",
+"ro_c":"Concentración de solutos",
+"ro_l":"Nivel",
+"ro_v":"Volumen de la célula",
+"v_big":"célula hinchada (turgente)",
+"v_small":"célula arrugada (plasmólisis / crenación)",
+"v_ok":"volumen estable"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@STEPS_JS@*/
+const STEPS=[{"id":"o0","ask":{"n":3,"ok":2},"preset":{"L":26,"R":0,"m":"perm","scene":"tank"}},{"id":"o1","think":true,"preset":{"L":15,"R":15,"m":"perm","scene":"tank"}},{"id":"o2","ask":{"n":3,"ok":2},"preset":{"L":28,"R":3,"m":"semi","scene":"tank"}},{"id":"o3","ask":{"n":3,"ok":1},"preset":{"L":18,"R":18,"m":"semi","scene":"tank"}},{"id":"o4","think":true,"preset":{"L":28,"R":3,"m":"imp","scene":"tank"}},{"id":"o5","ask":{"n":3,"ok":2},"think":true,"preset":{"L":14,"R":4,"m":"semi","scene":"cell"}}];
+const QDATA=[{"id":"oq1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"oq2","lvl":"all","type":"mc","n":4,"ans":3},{"id":"oq3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"oq4","lvl":"all","type":"mc","n":4,"ans":0},{"id":"oq5","lvl":"all","type":"mc","n":4,"ans":0}];
+const OW=800,OH=440,XL=40,XR=760,XM=400,YB=400,MAXH=345,MINH=30;
+const KS=2.5,UNITS=190,APU=(360*200)/190;
+const BASE=[2.0,1.2];
+function makeSim(){return {parts:[],memb:'semi',T:1,hL:200,hR:200,nL:[0,0],nR:[0,0],t:0};}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function simReset(sim,nsL,nsR){
+  sim.parts=[];sim.t=0;
+  [nsL,nsR].forEach((ns,side)=>{
+    const nw=UNITS-Math.round(KS*ns);
+    const x0=side?XM+6:XL+6,x1=side?XR-6:XM-6;
+    for(let i=0;i<ns+nw;i++){
+      const type=i<ns?1:0,a=rnd(0,6.283);
+      sim.parts.push({t:type,x:rnd(x0+10,x1-10),y:rnd(YB-195,YB-8),vx:Math.cos(a),vy:Math.sin(a),r:type?9:4});
+    }
+  });
+  simMeasure(sim);
+}
+function simMeasure(sim){
+  const nL=[0,0],nR=[0,0];
+  for(let i=0;i<sim.parts.length;i++){const p=sim.parts[i];(p.x<XM?nL:nR)[p.t]++;}
+  sim.nL=nL;sim.nR=nR;
+  sim.hL=Math.max(MINH,Math.min(MAXH,(nL[0]+KS*nL[1])*APU/360));
+  sim.hR=Math.max(MINH,Math.min(MAXH,(nR[0]+KS*nR[1])*APU/360));
+}
+function canPass(sim,type,y){
+  if(sim.memb==='imp')return false;
+  const d=Math.abs(((YB-y)%28+28)%28-14);
+  if(sim.memb==='semi')return type===0&&d<=4;
+  return type===0?d<=10:d<=5;
+}
+function simStep(sim,dtf){
+  simMeasure(sim);
+  const sq=Math.sqrt(sim.T),parts=sim.parts,topL=YB-sim.hL,topR=YB-sim.hR;
+  for(let i=0;i<parts.length;i++){
+    const p=parts[i];
+    p.vx+=(Math.random()-0.5)*0.35;p.vy+=(Math.random()-0.5)*0.35;
+    const kk=Math.hypot(p.vx,p.vy)||1,v=BASE[p.t]*sq;
+    p.vx=p.vx/kk*v;p.vy=p.vy/kk*v;
+    let nx=p.x+p.vx*dtf,ny=p.y+p.vy*dtf;
+    const leftNow=p.x<XM;
+    if((nx<XM)!==leftNow){
+      const hA=leftNow?sim.hL:sim.hR,hB=leftNow?sim.hR:sim.hL;
+      const dh=hB-hA,acc=dh>0?Math.max(0,1-0.35*dh/100):1;
+      if(!(canPass(sim,p.t,ny)&&Math.random()<acc)){nx=p.x;p.vx=-p.vx;}
+    }
+    const left=nx<XM,top=left?topL:topR;
+    if(left){if(nx<XL+p.r){nx=XL+p.r;p.vx=Math.abs(p.vx);}}
+    else{if(nx>XR-p.r){nx=XR-p.r;p.vx=-Math.abs(p.vx);}}
+    if(ny>YB-p.r){ny=YB-p.r;p.vy=-Math.abs(p.vy);}
+    if(ny<top+p.r){ny=top+p.r;p.vy=Math.abs(p.vy);}
+    p.x=nx;p.y=ny;
+  }
+  sim.t+=dtf/60;
+}
+
+/* --- interfície --- */
+const sim=makeSim();
+let ocv,octx,paused=false,scene='tank',nsL0=0,nsR0=0,lastTs=0,roTick=0,slL,slR,slT;
+function lblKey(side){return scene==='cell'?(side?'lblRc':'lblLc'):(side?'lblR':'lblL');}
+function concOf(n){const tot=n[0]+KS*n[1];return tot?100*KS*n[1]/tot:0;}
+function paintCtl(){
+  $$('#omemb button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===sim.memb)));
+  $('#opause').textContent=t(paused?'play':'pause');
+  [[slL,scene==='cell'?'sLc':'sL'],[slR,scene==='cell'?'sRc':'sR']].forEach(p=>{const l=p[0].el.querySelector('label');l.dataset.i18n=p[1];l.textContent=t(p[1]);});
+  slL.refresh();slR.refresh();slT.refresh();
+}
+function paintReadout(){
+  const ro=$('#ro');
+  const side=(key,n,h)=>{const c=concOf(n);
+    return '<div><b>'+t(key)+'</b><br>'+t('ro_s')+': '+n[1]+' · '+t('ro_w')+': '+n[0]+'<br>'+t('ro_c')+': <b>'+c.toFixed(0)+' %</b><div class="meter"><i style="width:'+Math.min(100,c*1.6)+'%"></i></div>'+t('ro_l')+': '+Math.round(100*h/200)+' %</div>';};
+  let extra='';
+  if(scene==='cell'){
+    const v=100*sim.hL/200;
+    extra='<div><b>'+t('ro_v')+':</b> '+v.toFixed(0)+' % → '+t(v>112?'v_big':(v<88?'v_small':'v_ok'))+'</div>';
+  }
+  ro.innerHTML='<div class="two">'+side(lblKey(0),sim.nL,sim.hL)+side(lblKey(1),sim.nR,sim.hR)+'</div>'+extra;
+}
+function doReset(){simReset(sim,nsL0,nsR0);}
+function waterColor(c,dark){
+  return dark?'rgb('+Math.round(18+c*0.9)+','+Math.round(52-c*0.2)+','+Math.round(92-c*0.6)+')':'rgb('+Math.round(205+c*0.7)+','+Math.round(232-c*0.6)+','+Math.round(250-c*1.5)+')';
+}
+function drawO(){
+  const ratio=ocv.cv.width/OW,ctx=ocv.ctx,col=C();
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.clearRect(0,0,OW,OH);
+  ctx.fillStyle=col.stage;ctx.fillRect(0,0,OW,OH);
+  [[XL,XM,sim.hL,sim.nL],[XM,XR,sim.hR,sim.nR]].forEach(s=>{
+    ctx.fillStyle=waterColor(concOf(s[3]),col.dark);ctx.fillRect(s[0],YB-s[2],s[1]-s[0],s[2]);
+    ctx.strokeStyle='#5f8fc4';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s[0],YB-s[2]);ctx.lineTo(s[1],YB-s[2]);ctx.stroke();
+  });
+  ctx.strokeStyle=col.muted;ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(XL,YB-MAXH-20);ctx.lineTo(XL,YB+2);ctx.lineTo(XR,YB+2);ctx.lineTo(XR,YB-MAXH-20);ctx.stroke();
+  if(scene==='cell'){ctx.strokeStyle='#2e9e5b';ctx.lineWidth=5;ctx.strokeRect(XL+2,YB-sim.hL,XM-XL-4,sim.hL);}
+  const gap=sim.memb==='semi'?6:(sim.memb==='perm'?13:0);
+  ctx.strokeStyle=sim.memb==='imp'?col.ink:'#a173e0';ctx.lineWidth=5;
+  for(let y0=YB;y0>YB-MAXH-20;y0-=28){
+    const c0=y0-14;ctx.beginPath();
+    if(!gap){ctx.moveTo(XM,y0);ctx.lineTo(XM,y0-28);}
+    else{ctx.moveTo(XM,y0);ctx.lineTo(XM,c0+gap);ctx.moveTo(XM,c0-gap);ctx.lineTo(XM,y0-28);}
+    ctx.stroke();
+  }
+  const ps=sim.parts;
+  for(let i=0;i<ps.length;i++){
+    const p=ps[i];ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.2832);
+    if(p.t){ctx.fillStyle='#e8913a';ctx.fill();ctx.strokeStyle='#a85f12';ctx.lineWidth=1.2;ctx.stroke();}
+    else{ctx.fillStyle='#4aa3e8';ctx.fill();}
+  }
+  ctx.fillStyle=col.ink;ctx.font='600 15px system-ui,sans-serif';ctx.textAlign='center';
+  ctx.fillText(t(lblKey(0)),(XL+XM)/2,24);ctx.fillText(t(lblKey(1)),(XM+XR)/2,24);
+  ctx.font='13px system-ui,sans-serif';ctx.textAlign='left';
+  ctx.fillStyle='#4aa3e8';ctx.beginPath();ctx.arc(XL+4,OH-14,4,0,6.2832);ctx.fill();
+  ctx.fillStyle=col.muted;ctx.fillText(t('cv_w'),XL+14,OH-9);
+  ctx.fillStyle='#e8913a';ctx.beginPath();ctx.arc(XL+80,OH-14,8,0,6.2832);ctx.fill();
+  ctx.fillStyle=col.muted;ctx.fillText(t('cv_s'),XL+93,OH-9);
+  ctx.textAlign='center';
+}
+function loopO(ts){
+  const dt=Math.min(0.05,(ts-lastTs)/1000||0.016);lastTs=ts;
+  if(!paused)simStep(sim,dt*60);
+  drawO();
+  roTick+=dt;if(roTick>0.25){roTick=0;paintReadout();}
+  requestAnimationFrame(loopO);
+}
+function applyPreset(p){
+  scene=p.scene;sim.memb=p.m;nsL0=p.L;nsR0=p.R;sim.T=1;
+  slL.set(p.L);slR.set(p.R);slT.set(1);
+  paused=false;paintCtl();doReset();paintReadout();
+}
+function initO(){
+  ocv=makeCanvas($('#oc'),OW,OH);
+  const host=$('#osl');
+  slL=slider(host,{id:'oL',key:'sL',min:0,max:30,step:1,val:0,fmtv:v=>String(v),on:v=>{nsL0=v;}});
+  slR=slider(host,{id:'oR',key:'sR',min:0,max:30,step:1,val:0,fmtv:v=>String(v),on:v=>{nsR0=v;}});
+  slT=slider(host,{id:'oT',key:'sT',min:0.3,max:3,step:0.1,val:1,fmtv:v=>'×'+v.toFixed(1),on:v=>{sim.T=v;}});
+  slL.inp.addEventListener('change',doReset);slR.inp.addEventListener('change',doReset);
+  $$('#omemb button').forEach(b=>b.addEventListener('click',()=>{sim.memb=b.dataset.m;paintCtl();}));
+  $('#opause').addEventListener('click',()=>{paused=!paused;paintCtl();});
+  $('#oreset').addEventListener('click',doReset);
+  requestAnimationFrame(loopO);
+}
+initQuiz(QDATA);
+initLang();initO();applyLang();
+document.addEventListener('langchange',()=>{paintCtl();paintReadout();});
+stepsInit(STEPS,(i)=>{applyPreset(STEPS[i].preset);});
+</script>
+</body>
+</html>
