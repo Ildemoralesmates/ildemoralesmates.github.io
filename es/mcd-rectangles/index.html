@@ -159,6 +159,27 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .divs .g{background:var(--ok);color:var(--panel);font-weight:700}
 .steps{font-family:var(--f-num);font-size:14px;line-height:1.7;margin:0;padding-left:1.3em}
 .steps li.on{color:var(--pa);font-weight:700}
+.tabs button{padding:7px 12px;font-size:13.5px}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
 .back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
 .back:hover{color:var(--ink);text-decoration:underline}
 .back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
@@ -186,8 +207,8 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 <p data-i18n-html="story">Tenemos un suelo rectangular y queremos ponerle <b>baldosas cuadradas iguales</b>, sin cortar ninguna y sin que quede ningún hueco. Queremos las baldosas <b>más grandes posible</b>. Prueba tamaños o deja que Euclides lo haga por ti.</p>
 <div class="row"><span class="mut" data-i18n="presets">Casos:</span><div class="chips" id="presets"></div></div>
 <div class="numin">
-<label for="ra" data-i18n="side_a">Alto</label><input type="number" id="ra" min="1" max="100" value="24">
-<label for="rb" data-i18n="side_b">Ancho</label><input type="number" id="rb" min="1" max="100" value="36">
+<label for="ra" data-i18n="side_a">Alto</label><input type="number" id="ra" min="1" max="300" value="24">
+<label for="rb" data-i18n="side_b">Ancho</label><input type="number" id="rb" min="1" max="300" value="36">
 <button class="btn" id="apply" type="button" data-i18n="apply">Usa estos números</button>
 </div>
 <div class="predict">
@@ -207,6 +228,16 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 </div>
 <div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>La idea:</b> para que las baldosas encajen, su lado tiene que <b>dividir el alto y dividir el ancho</b>: tiene que ser un <b>divisor común</b>. La baldosa más grande es el <b>máximo común divisor</b>. Para 24 × 36, mcd = 12.</div>
 <div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>¿Por qué funciona Euclides?</b> Una baldosa que embaldosa el rectángulo 24 × 36 también embaldosa el cuadrado de 24 que quitamos y, por tanto, el trozo que queda (24 × 12). Quitar cuadrados no cambia los divisores comunes, pero hace los números más pequeños. Cuando el trozo que queda es un cuadrado exacto, su lado es el mcd. En números: se divide el grande entre el pequeño y se sigue con el resto.</div>
+</section>
+
+<section class="card" id="reason">
+<h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2>
+<p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p>
+<div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div>
+<div id="rzM" class="rzp"></div>
+<div id="rzS" class="rzp" hidden></div>
+<div id="rzE" class="rzp" hidden></div>
+<div id="rzD" class="rzp" hidden></div>
 </section>
 
 <section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
@@ -274,7 +305,110 @@ ca:{
 "r6.e":"L'últim residu que no és zero és 15: mcd(45, 60) = 15.",
 "r7.q":"Tenim 48 llapis i 36 gomes i volem fer lots iguals, tants com siga possible, sense que sobre res. Quants lots podem fer?",
 "r7.o0":"12","r7.o1":"6","r7.o2":"144","r7.o3":"4",
-"r7.e":"El nombre de lots ha de dividir 48 i 36: el màxim és mcd(48, 36) = 12 (amb 4 llapis i 3 gomes cadascun)."
+"r7.e":"El nombre de lots ha de dividir 48 i 36: el màxim és mcd(48, 36) = 12 (amb 4 llapis i 3 gomes cadascun).",
+"rz_eyebrow":"Raona-ho",
+"rz_title":"Pensa abans de tocar",
+"rz_intro":"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",
+"rz_tM":"🎯 Missions","rz_tS":"Sempre, de vegades o mai?","rz_tE":"Qui té raó?","rz_tD":"Decideix",
+"alt":"Alt","ample":"Ample","to_sim":"Mostra-ho al simulador","mission":"Missió",
+"m_count":"Missions complides: {0} de {1}",
+"m_ok":"✔ Missió complida! En {0} × {1} la rajola més gran fa {2} × {2}.",
+"m_bad":"Escriu dos nombres enters entre 1 i 300.",
+"mf_g":"En {0} × {1} la rajola més gran fa {2} × {2}.",
+"m1.q":"Inventa un rectangle on la rajola més gran siga de <b>6 × 6</b>, però on cap costat mesure 6.",
+"m1_f6":"Massa fàcil: cap costat pot mesurar 6.",
+"m1.more":"Hi ha moltes solucions. Què tenen en comú? Per què 12 × 18 funciona però 12 × 24 no?",
+"m2.q":"Inventa un rectangle on la rajola més gran siga d'<b>1 × 1</b>, però on <b>cap</b> costat siga un nombre primer (ni l'1).",
+"m2_fp":"{0} és primer (o és 1). Busca dos costats que no ho siguen.",
+"m2.more":"Per què 8 × 9 funciona però 8 × 10 no? Què han de complir els dos costats?",
+"m3.q":"Inventa un rectangle que es cobrisca amb <b>exactament 12 rajoles</b> de la mida més gran possible.",
+"m3_f":"Amb la rajola més gran ({0} × {0}) en calen {1}, no 12.",
+"m3.more":"12 rajoles es poden posar en 1 × 12 o en 3 × 4 files i columnes. I en 2 × 6? Prova un rectangle de 2 × 6 rajoles i mira què passa amb la rajola més gran.",
+"m4.q":"Inventa un rectangle que <b>no siga un quadrat</b> on Euclides acabe en <b>un sol pas</b>.",
+"m4_sq":"És un quadrat: volem un rectangle que no ho siga.",
+"m4_f":"Euclides necessita {0} passos per a aquest rectangle.",
+"m4.more":"Quan acaba Euclides en un sol pas? Escriu-ho com una regla que servisca per a tots els casos.",
+"s_S":"Sempre","s_D":"De vegades","s_M":"Mai",
+"s_ok":"✔ Correcte.",
+"s_wrong":"✘ Torna-ho a pensar. {0}",
+"s_cx_ask":"Ara demostra-ho: troba un rectangle on <b>no</b> es complisca.",
+"s_cx_ok":"✔ Contraexemple trobat: en {0} × {1} la rajola més gran fa {2} × {2}.",
+"s_cx_no":"En {0} × {1} sí que es compleix (la rajola més gran fa {2} × {2}). Busca'n un on no.",
+"s_count":"Afirmacions resoltes: {0} de {1}",
+"s1.q":"«La rajola més gran sempre té el costat del costat més curt del rectangle.»",
+"s1.h":"Prova amb 24 × 36 al simulador.",
+"s1.e":"Només passa quan el costat curt divideix el llarg (12 × 24). Amb 24 × 36, una rajola de 24 deixa una franja de 12 sense cobrir.",
+"s2.q":"«Si els dos costats són parells, les rajoles de 2 × 2 quadren.»",
+"s2.h":"Si un costat és parell, quantes rajoles de 2 hi caben al llarg?",
+"s2.e":"Si els dos costats són parells, 2 els divideix tots dos: les rajoles de 2 × 2 sempre quadren. Una altra cosa és que siguen les més grans.",
+"s3.q":"«La rajola més gran pot tindre el costat més llarg que el costat curt del rectangle.»",
+"s3.h":"Pot un divisor de 24 ser més gran que 24?",
+"s3.e":"Una rajola més llarga que el costat curt no hi cap ni una vegada. En números: el mcd mai no és més gran que el menor dels dos.",
+"s4.q":"«Si dupliquem l'alt i l'ample del rectangle, la rajola més gran també es duplica.»",
+"s4.h":"Compara 12 × 18 amb 24 × 36.",
+"s4.e":"És com fer una fotocòpia al 200 %: tot el dibuix, rajoles incloses, es fa el doble. mcd(2a, 2b) = 2 · mcd(a, b).",
+"s5.q":"«Si un costat és un nombre primer, la rajola més gran és d'1 × 1.»",
+"s5.h":"Prova amb 7 × 14.",
+"s5.e":"Si un costat és primer, la rajola només pot ser d'1 o del mateix primer. Amb 7 × 14 és de 7 × 7, perquè 7 divideix 14.",
+"s5_np":"En {0} × {1} cap costat és primer, i l'afirmació parla de rectangles amb un costat primer.",
+"s6.q":"«Si els dos costats són parells, la rajola més gran és de 2 × 2.»",
+"s6.h":"Prova amb 4 × 8.",
+"s6.e":"La de 2 × 2 sempre quadra, però pot haver-n'hi de més grans: en 4 × 8 la més gran és de 4 × 4.",
+"s6_ne":"En {0} × {1} no són parells tots dos costats, i l'afirmació parla d'aquests.",
+"e_who":"Qui té raó?","e_both":"Tots dos","e_none":"Cap dels dos",
+"e_why":"Per què?","e_ok":"✔ Exacte.","e_ko":"✘ No ho és. Torna a llegir el que diu cadascú.",
+"e_ko2":"✘ Aquesta raó no explica l'error. Prova una altra.",
+"e_write":"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+"e_model_btn":"Compara amb una resposta model","e_model":"Una resposta possible:",
+"e1.ctx":"Volem enrajolar un terra de <b>24 × 36</b> amb les rajoles quadrades més grans possible.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"La rajola ha de ser de 72 × 72, perquè 72 és múltiple de 24 i de 36.",
+"e1.s1":"Ha de ser de 12 × 12.",
+"e1.w0":"El costat de la rajola ha de <b>dividir</b> 24 i 36, no ser-ne múltiple: Marta ha calculat el mcm en compte del mcd.",
+"e1.w1":"72 és massa gran perquè no és un nombre parell.",
+"e1.w2":"Pau té raó perquè 12 és el número més xicotet dels dos.",
+"e1.frame":"Marta, t'has equivocat perquè…",
+"e1.model":"Marta, una rajola de 72 × 72 és més gran que el terra i ni tan sols hi cap. La rajola ha de cabre un nombre exacte de vegades en 24 i en 36, així que el seu costat ha de dividir-los. 72 és un múltiple (el mcm), no un divisor. El divisor comú més gran és 12.",
+"e2.ctx":"Volem enrajolar <b>30 × 50</b> amb les rajoles quadrades més grans possible.",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"50 − 30 = 20, així que la rajola és de 20 × 20.",
+"e2.s1":"No acaba ací: 30 − 20 = 10, i 20 = 2 · 10. La rajola és de 10 × 10.",
+"e2.w0":"20 no divideix 30: sobraria una franja de 10. Euclides continua fins que el tros que queda és un quadrat exacte.",
+"e2.w1":"Laia té raó perquè 10 és un número més rodó.",
+"e2.w2":"Àlex té raó perquè 20 divideix 50.",
+"e2.frame":"Àlex, la rajola de 20 no funciona perquè…",
+"e2.model":"Àlex, has fet el primer pas d'Euclides però t'has parat massa prompte. Una rajola de 20 no quadra en 30: en sobra un tros de 10. Cal continuar llevant quadrats fins que el que queda siga un quadrat exacte. Això passa amb 10 × 10, que divideix 30 i 50.",
+"e3.ctx":"Volem enrajolar <b>7 × 10</b>.",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"Sí que es pot: amb rajoles d'1 × 1.",
+"e3.s1":"No es pot enrajolar: 7 és primer i no té divisors comuns amb 10.",
+"e3.w0":"L'1 divideix tots els nombres: amb rajoles d'1 × 1 sempre es pot. Que el mcd siga 1 vol dir que la rajola més gran és la d'1 × 1, no que no n'hi haja cap.",
+"e3.w1":"Joan té raó perquè els nombres primers no es poden dividir.",
+"e3.w2":"Rita té raó perquè 7 + 10 = 17 és primer.",
+"e3.frame":"Joan, sí que es pot perquè…",
+"e3.model":"Joan, el 7 i el 10 sí que tenen un divisor comú: l'1, que divideix tots els nombres. Per tant, les rajoles d'1 × 1 sempre quadren. mcd(7, 10) = 1 vol dir que no en podem posar de més grans, no que el terra no es puga enrajolar.",
+"d_ok":"✔ Ben decidit!",
+"d_bad":"Escriu nombres enters.",
+"d1.q":"L'AMPA té <b>48 llapis</b> i <b>36 gomes</b> per a fer lots iguals, sense que sobre res. Vol fer <b>tants lots com es puga</b>. Quants lots farà i què portarà cada lot?",
+"d1.l0":"Lots","d1.l1":"Llapis per lot","d1.l2":"Gomes per lot",
+"d1_left":"Amb {0} lots sobrarien llapis o gomes: {0} no divideix alhora 48 i 36.",
+"d1_small":"Amb {0} lots no sobra res, però se'n poden fer més.",
+"d1_per":"El nombre de lots és bo, però revisa què porta cada lot: 48 ÷ {0} i 36 ÷ {0}.",
+"d1.more":"I si l'AMPA volguera exactament 6 llapis per lot? Es podria fer sense que sobrara res? Per què?",
+"d2.q":"Una paret fa <b>270 cm × 210 cm</b>. A la botiga hi ha rajoles quadrades de <b>15, 20, 30 i 45 cm</b>. Quina compres per no tallar-ne cap i posar-ne les menys possibles? Quantes en caldran?",
+"d2.l0":"Rajola (cm)","d2.l1":"Rajoles necessàries",
+"d2_pick":"Tria una mida de rajola.",
+"d2_cut":"Amb rajoles de {0} cm hauries de tallar: {0} no divideix {1}.",
+"d2_15":"Les de 15 cm quadren, però en caldrien 252. Hi ha una opció millor.",
+"d2_count":"Bona rajola! Però revisa el compte: 270 ÷ 30 = 9 i 210 ÷ 30 = 7.",
+"d2.more":"Les de 15 cm també quadraven. Quina relació té 15 amb 30? Totes les rajoles que quadren, quina relació tenen amb el mcd?",
+"d3.q":"Tenim dues cintes, una de <b>120 cm</b> i una altra de <b>84 cm</b>. Volem tallar-les en trossos iguals, tan llargs com es puga, sense que sobre res. Quant farà cada tros i quants trossos tindrem en total?",
+"d3.l0":"Llargària (cm)","d3.l1":"Trossos en total",
+"d3_left":"Amb trossos de {0} cm sobraria un tros d'alguna cinta.",
+"d3_small":"Amb trossos de {0} cm no sobra res, però poden ser més llargs.",
+"d3_cnt":"La llargària és bona. Compta: 120 ÷ 12 i 84 ÷ 12.",
+"d3.more":"Aquest problema no parla de rajoles. Per què és el mateix problema que el del simulador? Què fa de «rectangle» i què fa de «rajola»?"
 },
 es:{
 "title":"Máximo común divisor con rectángulos",
@@ -334,7 +468,110 @@ es:{
 "r6.e":"El último resto que no es cero es 15: mcd(45, 60) = 15.",
 "r7.q":"Tenemos 48 lápices y 36 gomas y queremos hacer lotes iguales, tantos como sea posible, sin que sobre nada. ¿Cuántos lotes podemos hacer?",
 "r7.o0":"12","r7.o1":"6","r7.o2":"144","r7.o3":"4",
-"r7.e":"El número de lotes tiene que dividir a 48 y a 36: el máximo es mcd(48, 36) = 12 (con 4 lápices y 3 gomas cada uno)."
+"r7.e":"El número de lotes tiene que dividir a 48 y a 36: el máximo es mcd(48, 36) = 12 (con 4 lápices y 3 gomas cada uno).",
+"rz_eyebrow":"Razónalo",
+"rz_title":"Piensa antes de tocar",
+"rz_intro":"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",
+"rz_tM":"🎯 Misiones","rz_tS":"¿Siempre, a veces o nunca?","rz_tE":"¿Quién tiene razón?","rz_tD":"Decide",
+"alt":"Alto","ample":"Ancho","to_sim":"Muéstralo en el simulador","mission":"Misión",
+"m_count":"Misiones cumplidas: {0} de {1}",
+"m_ok":"✔ ¡Misión cumplida! En {0} × {1} la baldosa más grande es de {2} × {2}.",
+"m_bad":"Escribe dos números enteros entre 1 y 300.",
+"mf_g":"En {0} × {1} la baldosa más grande es de {2} × {2}.",
+"m1.q":"Inventa un rectángulo en el que la baldosa más grande sea de <b>6 × 6</b>, pero en el que ningún lado mida 6.",
+"m1_f6":"Demasiado fácil: ningún lado puede medir 6.",
+"m1.more":"Hay muchas soluciones. ¿Qué tienen en común? ¿Por qué 12 × 18 funciona pero 12 × 24 no?",
+"m2.q":"Inventa un rectángulo en el que la baldosa más grande sea de <b>1 × 1</b>, pero en el que <b>ningún</b> lado sea un número primo (ni el 1).",
+"m2_fp":"{0} es primo (o es 1). Busca dos lados que no lo sean.",
+"m2.more":"¿Por qué 8 × 9 funciona pero 8 × 10 no? ¿Qué tienen que cumplir los dos lados?",
+"m3.q":"Inventa un rectángulo que se cubra con <b>exactamente 12 baldosas</b> del tamaño más grande posible.",
+"m3_f":"Con la baldosa más grande ({0} × {0}) hacen falta {1}, no 12.",
+"m3.more":"12 baldosas se pueden poner en 1 × 12 o en 3 × 4 filas y columnas. ¿Y en 2 × 6? Prueba un rectángulo de 2 × 6 baldosas y mira qué pasa con la baldosa más grande.",
+"m4.q":"Inventa un rectángulo que <b>no sea un cuadrado</b> en el que Euclides acabe en <b>un solo paso</b>.",
+"m4_sq":"Es un cuadrado: queremos un rectángulo que no lo sea.",
+"m4_f":"Euclides necesita {0} pasos para este rectángulo.",
+"m4.more":"¿Cuándo acaba Euclides en un solo paso? Escríbelo como una regla que sirva para todos los casos.",
+"s_S":"Siempre","s_D":"A veces","s_M":"Nunca",
+"s_ok":"✔ Correcto.",
+"s_wrong":"✘ Vuelve a pensarlo. {0}",
+"s_cx_ask":"Ahora demuéstralo: encuentra un rectángulo en el que <b>no</b> se cumpla.",
+"s_cx_ok":"✔ Contraejemplo encontrado: en {0} × {1} la baldosa más grande es de {2} × {2}.",
+"s_cx_no":"En {0} × {1} sí que se cumple (baldosa de {2} × {2}). Busca uno en el que no.",
+"s_count":"Afirmaciones resueltas: {0} de {1}",
+"s1.q":"«La baldosa más grande siempre tiene el lado del lado más corto del rectángulo.»",
+"s1.h":"Prueba con 24 × 36 en el simulador.",
+"s1.e":"Solo pasa cuando el lado corto divide al largo (12 × 24). Con 24 × 36, una baldosa de 24 deja una franja de 12 sin cubrir.",
+"s2.q":"«Si los dos lados son pares, las baldosas de 2 × 2 encajan.»",
+"s2.h":"Si un lado es par, ¿cuántas baldosas de 2 caben a lo largo?",
+"s2.e":"Si los dos lados son pares, 2 los divide a los dos: las baldosas de 2 × 2 siempre encajan. Otra cosa es que sean las más grandes.",
+"s3.q":"«La baldosa más grande puede tener el lado más largo que el lado corto del rectángulo.»",
+"s3.h":"¿Puede un divisor de 24 ser mayor que 24?",
+"s3.e":"Una baldosa más larga que el lado corto no cabe ni una vez. En números: el mcd nunca es mayor que el menor de los dos.",
+"s4.q":"«Si duplicamos el alto y el ancho del rectángulo, la baldosa más grande también se duplica.»",
+"s4.h":"Compara 12 × 18 con 24 × 36.",
+"s4.e":"Es como hacer una fotocopia al 200 %: todo el dibujo, baldosas incluidas, se hace el doble. mcd(2a, 2b) = 2 · mcd(a, b).",
+"s5.q":"«Si un lado es un número primo, la baldosa más grande es de 1 × 1.»",
+"s5.h":"Prueba con 7 × 14.",
+"s5.e":"Si un lado es primo, la baldosa solo puede ser de 1 o del mismo primo. Con 7 × 14 es de 7 × 7, porque 7 divide a 14.",
+"s5_np":"En {0} × {1} ningún lado es primo, y la afirmación habla de rectángulos con un lado primo.",
+"s6.q":"«Si los dos lados son pares, la baldosa más grande es de 2 × 2.»",
+"s6.h":"Prueba con 4 × 8.",
+"s6.e":"La de 2 × 2 siempre encaja, pero puede haberlas más grandes: en 4 × 8 la más grande es de 4 × 4.",
+"s6_ne":"En {0} × {1} no son pares los dos lados, y la afirmación habla de esos.",
+"e_who":"¿Quién tiene razón?","e_both":"Los dos","e_none":"Ninguno",
+"e_why":"¿Por qué?","e_ok":"✔ Exacto.","e_ko":"✘ No es así. Vuelve a leer lo que dice cada uno.",
+"e_ko2":"✘ Esa razón no explica el error. Prueba otra.",
+"e_write":"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+"e_model_btn":"Compara con una respuesta modelo","e_model":"Una respuesta posible:",
+"e1.ctx":"Queremos embaldosar un suelo de <b>24 × 36</b> con las baldosas cuadradas más grandes posible.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"La baldosa tiene que ser de 72 × 72, porque 72 es múltiplo de 24 y de 36.",
+"e1.s1":"Tiene que ser de 12 × 12.",
+"e1.w0":"El lado de la baldosa tiene que <b>dividir</b> a 24 y a 36, no ser múltiplo: Marta ha calculado el mcm en lugar del mcd.",
+"e1.w1":"72 es demasiado grande porque no es un número par.",
+"e1.w2":"Pau tiene razón porque 12 es el número más pequeño de los dos.",
+"e1.frame":"Marta, te has equivocado porque…",
+"e1.model":"Marta, una baldosa de 72 × 72 es más grande que el suelo y ni siquiera cabe. La baldosa tiene que caber un número exacto de veces en 24 y en 36, así que su lado tiene que dividirlos. 72 es un múltiplo (el mcm), no un divisor. El divisor común más grande es 12.",
+"e2.ctx":"Queremos embaldosar <b>30 × 50</b> con las baldosas cuadradas más grandes posible.",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"50 − 30 = 20, así que la baldosa es de 20 × 20.",
+"e2.s1":"No acaba aquí: 30 − 20 = 10, y 20 = 2 · 10. La baldosa es de 10 × 10.",
+"e2.w0":"20 no divide a 30: sobraría una franja de 10. Euclides sigue hasta que el trozo que queda es un cuadrado exacto.",
+"e2.w1":"Laia tiene razón porque 10 es un número más redondo.",
+"e2.w2":"Álex tiene razón porque 20 divide a 50.",
+"e2.frame":"Álex, la baldosa de 20 no funciona porque…",
+"e2.model":"Álex, has hecho el primer paso de Euclides pero te has parado demasiado pronto. Una baldosa de 20 no encaja en 30: sobra un trozo de 10. Hay que seguir quitando cuadrados hasta que lo que queda sea un cuadrado exacto. Eso pasa con 10 × 10, que divide a 30 y a 50.",
+"e3.ctx":"Queremos embaldosar <b>7 × 10</b>.",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"Sí que se puede: con baldosas de 1 × 1.",
+"e3.s1":"No se puede embaldosar: 7 es primo y no tiene divisores comunes con 10.",
+"e3.w0":"El 1 divide a todos los números: con baldosas de 1 × 1 siempre se puede. Que el mcd sea 1 significa que la baldosa más grande es la de 1 × 1, no que no haya ninguna.",
+"e3.w1":"Joan tiene razón porque los números primos no se pueden dividir.",
+"e3.w2":"Rita tiene razón porque 7 + 10 = 17 es primo.",
+"e3.frame":"Joan, sí que se puede porque…",
+"e3.model":"Joan, el 7 y el 10 sí que tienen un divisor común: el 1, que divide a todos los números. Por tanto, las baldosas de 1 × 1 siempre encajan. mcd(7, 10) = 1 significa que no podemos poner baldosas más grandes, no que el suelo no se pueda embaldosar.",
+"d_ok":"✔ ¡Bien decidido!",
+"d_bad":"Escribe números enteros.",
+"d1.q":"El AMPA tiene <b>48 lápices</b> y <b>36 gomas</b> para hacer lotes iguales, sin que sobre nada. Quiere hacer <b>tantos lotes como se pueda</b>. ¿Cuántos lotes hará y qué llevará cada lote?",
+"d1.l0":"Lotes","d1.l1":"Lápices por lote","d1.l2":"Gomas por lote",
+"d1_left":"Con {0} lotes sobrarían lápices o gomas: {0} no divide a la vez a 48 y a 36.",
+"d1_small":"Con {0} lotes no sobra nada, pero se pueden hacer más.",
+"d1_per":"El número de lotes es bueno, pero revisa qué lleva cada lote: 48 ÷ {0} y 36 ÷ {0}.",
+"d1.more":"¿Y si el AMPA quisiera exactamente 6 lápices por lote? ¿Se podría hacer sin que sobrara nada? ¿Por qué?",
+"d2.q":"Una pared mide <b>270 cm × 210 cm</b>. En la tienda hay baldosas cuadradas de <b>15, 20, 30 y 45 cm</b>. ¿Cuál compras para no cortar ninguna y poner las menos posibles? ¿Cuántas harán falta?",
+"d2.l0":"Baldosa (cm)","d2.l1":"Baldosas necesarias",
+"d2_pick":"Elige un tamaño de baldosa.",
+"d2_cut":"Con baldosas de {0} cm tendrías que cortar: {0} no divide a {1}.",
+"d2_15":"Las de 15 cm encajan, pero harían falta 252. Hay una opción mejor.",
+"d2_count":"¡Buena baldosa! Pero revisa la cuenta: 270 ÷ 30 = 9 y 210 ÷ 30 = 7.",
+"d2.more":"Las de 15 cm también encajaban. ¿Qué relación tiene 15 con 30? Todas las baldosas que encajan, ¿qué relación tienen con el mcd?",
+"d3.q":"Tenemos dos cintas, una de <b>120 cm</b> y otra de <b>84 cm</b>. Queremos cortarlas en trozos iguales, tan largos como se pueda, sin que sobre nada. ¿Cuánto medirá cada trozo y cuántos trozos tendremos en total?",
+"d3.l0":"Longitud (cm)","d3.l1":"Trozos en total",
+"d3_left":"Con trozos de {0} cm sobraría un trozo de alguna cinta.",
+"d3_small":"Con trozos de {0} cm no sobra nada, pero pueden ser más largos.",
+"d3_cnt":"La longitud es buena. Cuenta: 120 ÷ 12 y 84 ÷ 12.",
+"d3.more":"Este problema no habla de baldosas. ¿Por qué es el mismo problema que el del simulador? ¿Qué hace de «rectángulo» y qué hace de «baldosa»?"
 }
 };
 /* ===== utilitats comunes (idioma, canvas, colors) ===== */
@@ -498,7 +735,7 @@ function euclidSquares(){
   return out;
 }
 function setup(a,b){
-  A=clamp(Math.round(a)||24,1,100);B=clamp(Math.round(b)||36,1,100);
+  A=clamp(Math.round(a)||24,1,300);B=clamp(Math.round(b)||36,1,300);
   $('#ra').value=A;$('#rb').value=B;G=gcd(A,B);
   const mn=Math.min(A,B);$('#d').max=mn;d=Math.min(d,mn);if(d<1)d=1;$('#d').value=d;
   sq=euclidSquares();shown=0;revealed=false;eplaying=false;msgFn=null;$('#msg').innerHTML='';$('#msg').className='msg';$('#guess').value='';
@@ -600,6 +837,136 @@ function loop(now){
 }
 App.hooks.push(refresh);
 document.addEventListener('themechange',draw);
+/* ===== Raona-ho ===== */
+const isPrime=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;};
+const euSteps=(a,b)=>{let w=Math.max(a,b),h=Math.min(a,b),k=0;while(h){const r=w%h;k++;w=h;h=r;}return k;};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const Mt=m=>m?tt(m.k,...(m.p||[])):'';
+function intOf(v){const x=parseNum(v);return Number.isInteger(x)?x:null;}
+function readPair(box){const a=intOf($('.pa',box).value),b=intOf($('.pb',box).value);return a&&b&&a>=1&&b>=1&&a<=300&&b<=300?[a,b]:null;}
+function pairHTML(st){return '<span class="pairin"><label>'+t('alt')+' <input type="text" inputmode="numeric" class="pa" value="'+esc(st.a)+'"></label> × <label>'+t('ample')+' <input type="text" inputmode="numeric" class="pb" value="'+esc(st.b)+'"></label></span>';}
+function keepPair(box,st){$('.pa',box).oninput=e=>{st.a=e.target.value;};$('.pb',box).oninput=e=>{st.b=e.target.value;};}
+function loadSim(a,b,tile){
+  setup(a,b);
+  if(tile){if(mode!=='tile')$$('#mode button')[0].click();d=clamp(tile,1,Math.min(A,B));$('#d').value=d;msgFn=tileMsg;refresh();}
+  $('#cv').scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});
+}
+let rzTab='M';
+$$('#rztabs button').forEach(b=>b.onclick=()=>{rzTab=b.dataset.t;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  ['M','S','E','D'].forEach(k=>{$('#rz'+k).hidden=k!==rzTab;});});
+
+/* 1. Missions inverses */
+const MS=[
+ {id:'m1',chk:(a,b,g)=>g!==6?{k:'mf_g',p:[a,b,g]}:(a===6||b===6)?{k:'m1_f6'}:null},
+ {id:'m2',chk:(a,b,g)=>g!==1?{k:'mf_g',p:[a,b,g]}:(isPrime(a)||a===1)?{k:'m2_fp',p:[a]}:(isPrime(b)||b===1)?{k:'m2_fp',p:[b]}:null},
+ {id:'m3',chk:(a,b,g)=>a*b/(g*g)!==12?{k:'m3_f',p:[g,a*b/(g*g)]}:null},
+ {id:'m4',chk:(a,b,g)=>a===b?{k:'m4_sq'}:euSteps(a,b)!==1?{k:'m4_f',p:[euSteps(a,b)]}:null}
+].map(m=>Object.assign(m,{st:{a:'',b:'',ok:false,msg:null}}));
+function renderM(){
+  const box=$('#rzM');const done=MS.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,MS.length)+'</p>'+MS.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+pairHTML(m.st)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button><button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button></div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  MS.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);keepPair(el,m.st);
+    const go=()=>{const p=readPair(el);if(!p){m.st.msg={k:'m_bad'};m.st.ok=false;renderM();return;}
+      const [a,b]=p,g=gcd(a,b),f=m.chk(a,b,g);m.st.ok=!f;m.st.msg=f||{k:'m_ok',p:[a,b,g]};renderM();};
+    $('[data-act=chk]',el).onclick=go;
+    $$('input',el).forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')go();});
+    $('[data-act=sim]',el).onclick=()=>{const p=readPair(el);if(p)loadSim(p[0],p[1]);else{m.st.msg={k:'m_bad'};renderM();}};});
+}
+
+/* 2. Sempre / De vegades / Mai */
+const SS=[
+ {id:'s1',ans:'D',cx:(a,b,g)=>g!==Math.min(a,b)?null:{k:'s_cx_no',p:[a,b,g]}},
+ {id:'s2',ans:'S'},
+ {id:'s3',ans:'M'},
+ {id:'s4',ans:'S'},
+ {id:'s5',ans:'D',cx:(a,b,g)=>!(isPrime(a)||isPrime(b))?{k:'s5_np',p:[a,b]}:g>1?null:{k:'s_cx_no',p:[a,b,g]}},
+ {id:'s6',ans:'D',cx:(a,b,g)=>(a%2||b%2)?{k:'s6_ne',p:[a,b]}:g!==2?null:{k:'s_cx_no',p:[a,b,g]}}
+].map(s=>Object.assign(s,{st:{choice:null,ok:false,a:'',b:'',cxOk:false,cxMsg:null}}));
+function renderS(){
+  const box=$('#rzS');const done=SS.filter(s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk)).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,SS.length)+'</p>'+SS.map(s=>{
+    const st=s.st,fin=st.ok&&(s.ans!=='D'||st.cxOk);
+    let h='<div class="task'+(fin?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+pairHTML(st)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin)h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  SS.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const cb=$('[data-act=cx]',el);if(cb){keepPair(el,s.st);
+      const go=()=>{const p=readPair(el);if(!p){s.st.cxMsg={k:'m_bad'};renderS();return;}
+        const [a,b]=p,g=gcd(a,b),f=s.cx(a,b,g);s.st.cxOk=!f;s.st.cxMsg=f||{k:'s_cx_ok',p:[a,b,g]};renderS();if(!f)loadSim(a,b);};
+      cb.onclick=go;$$('input',el).forEach(i=>i.onkeydown=e=>{if(e.key==='Enter')go();});}
+  });
+}
+
+/* 3. Qui té raó? (exemples erronis) */
+const ES=[{id:'e1',who:1,why:0,sim:[24,36,12]},{id:'e2',who:1,why:0,sim:[30,50,20]},{id:'e3',who:0,why:0,sim:[7,10,1]}]
+ .map(e=>Object.assign(e,{st:{who:null,why:null,txt:'',model:false},order:[0,1,2].sort(()=>Math.random()-.5)}));
+function renderE(){
+  const box=$('#rzE');
+  box.innerHTML=ES.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===e.why;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button><button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button></div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  ES.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>loadSim(...e.sim);});
+}
+
+/* 6. Decideix */
+const DS={
+ d1:{v:['','',''],msg:null,ok:false,sim:[36,48,12],
+   chk:([L,p,g])=>(48%L||36%L)?{k:'d1_left',p:[L]}:L<12?{k:'d1_small',p:[L]}:(p!==4||g!==3)?{k:'d1_per',p:[L]}:null},
+ d2:{v:['',''],msg:null,ok:false,sim:[210,270,30],tile:null,
+   chk:([T,C])=>!T?{k:'d2_pick'}:270%T?{k:'d2_cut',p:[T,270]}:210%T?{k:'d2_cut',p:[T,210]}:T===15?{k:'d2_15'}:C!==63?{k:'d2_count'}:null},
+ d3:{v:['',''],msg:null,ok:false,sim:[84,120,12],
+   chk:([L,N])=>(120%L||84%L)?{k:'d3_left',p:[L]}:L<12?{k:'d3_small',p:[L]}:N!==17?{k:'d3_cnt'}:null}
+};
+function renderD(){
+  const box=$('#rzD');
+  const inp=(id,i,lab)=>'<label class="pairin">'+t(id+'.l'+i)+' <input type="text" inputmode="numeric" data-i="'+i+'" value="'+esc(DS[id].v[i])+'"></label>';
+  box.innerHTML=['d1','d2','d3'].map(id=>{const s=DS[id];
+    let h='<div class="task'+(s.ok?' done':'')+'" data-id="'+id+'"><p class="q">'+t(id+'.q')+'</p><div class="row">';
+    if(id==='d1')h+=inp(id,0)+inp(id,1)+inp(id,2);
+    if(id==='d2')h+='<span class="pairin">'+t('d2.l0')+'</span><div class="chips">'+[15,20,30,45].map(x=>'<button class="chip" type="button" data-tile="'+x+'" aria-pressed="'+(s.tile===x)+'">'+x+' cm</button>').join('')+'</div>'+inp(id,1);
+    if(id==='d3')h+=inp(id,0)+inp(id,1);
+    h+='<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button><button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button></div>';
+    h+='<p class="msg '+(s.msg?(s.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(s.msg)+'</p>';
+    if(s.ok)h+='<p class="more">'+t(id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  ['d1','d2','d3'].forEach(id=>{const s=DS[id],el=$('.task[data-id="'+id+'"]',box);
+    $$('input',el).forEach(i=>{i.oninput=()=>{s.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter')go();};});
+    $$('[data-tile]',el).forEach(b=>b.onclick=()=>{s.tile=+b.dataset.tile;renderD();});
+    function go(){let vals;
+      if(id==='d2'){const c=intOf(s.v[1]);if(s.tile&&c===null){s.msg={k:'d_bad'};s.ok=false;renderD();return;}vals=[s.tile,c];}
+      else{vals=s.v.map(intOf);if(vals.some(x=>!x||x<1)){s.msg={k:'d_bad'};s.ok=false;renderD();return;}}
+      const f=s.chk(vals);s.ok=!f;s.msg=f||{k:'d_ok'};renderD();}
+    $('[data-act=chk]',el).onclick=go;
+    $('[data-act=sim]',el).onclick=()=>{const [a,b,tl]=s.sim;loadSim(a,b,id==='d2'&&s.tile?s.tile:id==='d1'||id==='d3'?(intOf(s.v[0])||tl):tl);};
+  });
+}
+function renderRZ(){renderM();renderS();renderE();renderD();}
+App.hooks.push(renderRZ);
 const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"num","num":10,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r6","lvl":"adv","type":"num","num":15,"tol":0},{"id":"r7","lvl":"adv","type":"mc","n":4,"ans":0}];
 initQuiz(QDATA);
 setup(24,36);
