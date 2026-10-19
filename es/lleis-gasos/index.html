@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Leyes de los gases</title>
+<meta name="description" content="Simulador cinético de gas ideal: leyes de Boyle–Mariotte, Charles y Gay-Lussac con presión medida a partir de los choques, gráficas y tabla de medidas.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/lleis-gasos/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/lleis-gasos/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/lleis-gasos/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/lleis-gasos/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Leyes de los gases">
+<meta property="og:description" content="Simulador cinético de gas ideal: leyes de Boyle–Mariotte, Charles y Gay-Lussac con presión medida a partir de los choques, gráficas y tabla de medidas.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/lleis-gasos/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+.law h3{margin:0;font-family:var(--f-display);font-size:19px;font-weight:600}
+.formula{font-family:var(--f-display);font-size:26px;font-weight:600;letter-spacing:.01em}
+.pill b{color:var(--ink)}
+.rec{display:flex;flex-wrap:wrap;gap:6px}
+#tbl td:first-child{font-family:var(--f-num)}
+.dim{opacity:.55}
+ol.q{margin:0;padding-left:1.2em;color:var(--muted);font-size:14px;display:grid;gap:5px}
+ol.q b{color:var(--ink);font-weight:600}
+.var-tag{font-size:11px;color:var(--pa);font-weight:700;margin-left:6px}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Física y Química · 2.º–3.º ESO</p>
+      <h1 data-i18n="h1">Leyes de los gases</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Un gas ideal hecho de partículas que rebotan. La presión no se impone: se mide contando los choques contra el émbolo.</p>
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="stage-card" data-i18n-aria="aria.sim" aria-label="Simulación del gas dentro de un émbolo">
+      <div class="bar">
+        <button id="play" class="btn primary" type="button"></button>
+        <button id="rec" class="btn" type="button" data-i18n="rec">Anota el punto</button>
+        <span class="pill" id="varPill"></span>
+        <span class="pill sp" id="clock"></span>
+      </div>
+      <div class="stage"><canvas id="cv" data-i18n-aria="aria.cv" aria-label="Recipiente con partículas, émbolo y manómetro"></canvas></div>
+    </section>
+
+    <aside class="panel" data-i18n-aria="aria.ctl" aria-label="Controles">
+      <fieldset>
+        <legend data-i18n="f.law">Ley</legend>
+        <div class="seg" id="modes" role="group">
+          <button type="button" data-m="boyle">Boyle</button>
+          <button type="button" data-m="charles">Charles</button>
+          <button type="button" data-m="gay">Gay-Lussac</button>
+          <button type="button" data-m="gen" data-i18n="gen">General</button>
+        </div>
+        <p class="note" id="modeHelp"></p>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="f.par">Parámetros</legend>
+        <div id="ctl" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="f.show">Mostrar</legend>
+        <label class="check"><input type="checkbox" id="colors" checked> <span data-i18n="colors">Color según la velocidad de cada partícula</span></label>
+      </fieldset>
+    </aside>
+  </main>
+
+  <section class="cards">
+    <article class="card law">
+      <h2><small data-i18n="c1.s">Ley en juego</small><span id="lawName"></span></h2>
+      <div class="formula" id="formula"></div>
+      <p id="lawText"></p>
+      <dl>
+        <dt data-i18n="d.n">Cantidad n</dt><dd id="dN"></dd>
+        <dt data-i18n="d.T">Temperatura T</dt><dd id="dT"></dd>
+        <dt data-i18n="d.V">Volumen V</dt><dd id="dV"></dd>
+        <dt data-i18n="d.Pm">P medida (choques)</dt><dd id="dPm" class="hl"></dd>
+        <dt data-i18n="d.Pt">P teórica n·R·T/V</dt><dd id="dPt"></dd>
+        <dt id="kLab"></dt><dd id="dK" class="hl"></dd>
+      </dl>
+      <p class="note" data-i18n="c1.note">Gas en 2D, unidades arbitrarias (u.a.). La P medida fluctúa: es lo que pasa de verdad con un número finito de partículas.</p>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c2.s">Gráfica</small><span id="plotName"></span></h2>
+      <div class="seg" id="plotSeg" style="display:none">
+        <button type="button" data-p="pv" aria-pressed="true">P – V</button>
+        <button type="button" data-p="pinv">P – 1/V</button>
+      </div>
+      <div class="plot"><canvas id="plot" data-i18n-aria="c2.aria" aria-label="Gráfica de la ley con los puntos medidos"></canvas></div>
+      <p class="note" data-i18n="c2.note">Línea: predicción teórica. Punto azul: estado actual. Puntos naranjas: medidas anotadas.</p>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c3.s">Tabla de medidas</small><span data-i18n="c3.h">Anota y comprueba</span></h2>
+      <p class="note" data-i18n="c3.p">Cambia la variable, espera un par de segundos a que la presión se estabilice y anota el punto. La última columna debería ser (casi) constante.</p>
+      <table class="tbl"><thead id="thead"></thead><tbody id="tbl"></tbody></table>
+      <div class="rec"><button class="btn" type="button" id="rec2" data-i18n="rec">Anota el punto</button><button class="btn" type="button" id="clearT" data-i18n="clearT">Borra la tabla</button></div>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c4.s">Para la clase</small><span data-i18n="c4.h">Preguntas para pensar</span></h2>
+      <ol class="q" data-i18n-html="c4.l"><li><b>Boyle:</b> anota 5 puntos y mira la columna P·V. ¿Cuánto varía? ¿De dónde viene la dispersión?</li><li>Duplica la temperatura a volumen constante. ¿Qué le pasa a la <b>velocidad</b> de las partículas? ¿Y a la presión?</li><li><b>Charles:</b> baja T hacia 100 K. ¿Hasta qué volumen llegarías a 0 K? ¿Por qué eso es imposible en un gas real?</li><li>¿Por qué hay que expresar T en <b>kelvin</b> y no en °C para que V/T sea constante?</li><li>Añade partículas (n) con T y V constantes. ¿Qué ley estás descubriendo?</li></ol>
+    </article>
+  </section>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+title:"Lleis dels gasos",
+eyebrow:"Física i Química · 2n–3r ESO",
+h1:"Lleis dels gasos",
+lede:"Un gas ideal fet de partícules que reboten. La pressió no s'hi posa: es mesura comptant els xocs contra l'èmbol.",
+"aria.sim":"Simulació del gas dins d'un èmbol","aria.cv":"Recipient amb partícules, èmbol i manòmetre","aria.ctl":"Controls",
+play:"Pausa",resume:"Reprèn",rec:"Anota el punt",clearT:"Esborra la taula",
+"f.law":"Llei","f.par":"Paràmetres","f.show":"Mostra",gen:"General",
+colors:"Color segons la velocitat de cada partícula",
+sT:"Temperatura T",sV:"Volum V",sn:"Quantitat n",sP:"Pressió constant P",
+"help.boyle":"Variable: el volum. T i n es mantenen constants i es mesura la pressió.",
+"help.charles":"Variable: la temperatura. L'èmbol és lliure: el volum s'ajusta perquè P siga constant.",
+"help.gay":"Variable: la temperatura. L'èmbol està bloquejat (V constant) i es mesura la pressió.",
+"help.gen":"Tot és lliure: canvia n, T i V i mira com respon P.",
+var:"Variable: {v}",limit:"Volum al límit: ajusta la pressió P",
+"c1.s":"Llei en joc",
+"boyle.n":"Llei de Boyle–Mariotte","charles.n":"Llei de Charles","gay.n":"Llei de Gay-Lussac","gen.n":"Equació d'estat",
+"boyle.f":"P · V = constant","charles.f":"V / T = constant","gay.f":"P / T = constant","gen.f":"P · V = n · R · T",
+"boyle.t":"A T i n constants, si el volum es redueix a la meitat les partícules xoquen amb la paret el doble de sovint: la pressió es dobla.",
+"charles.t":"A P i n constants, més temperatura vol dir partícules més ràpides; perquè la pressió no augmente, el volum ha de créixer. Extrapolant, V → 0 quan T → 0 K.",
+"gay.t":"A V i n constants, més temperatura vol dir partícules més ràpides, que xoquen més sovint i amb més força: la pressió creix.",
+"gen.t":"Les tres lleis i la de la quantitat de gas en una sola equació. Amb temperatures sempre en kelvin.",
+"d.n":"Quantitat n","d.T":"Temperatura T","d.V":"Volum V","d.Pm":"P mesurada (xocs)","d.Pt":"P teòrica n·R·T/V",
+"k.boyle":"P · V","k.charles":"V / T","k.gay":"P / T","k.gen":"P·V / (n·T) = R",
+"c1.note":"Gas en 2D, unitats arbitràries (u.a.). La P mesurada fluctua: és el que passa de veritat amb un nombre finit de partícules.",
+"c2.s":"Gràfica","c2.aria":"Gràfica de la llei amb els punts mesurats",
+"c2.note":"Línia: predicció teòrica. Punt blau: estat actual. Punts taronja: mesures anotades.",
+"c3.s":"Taula de mesures","c3.h":"Anota i comprova",
+"c3.p":"Canvia la variable, espera un parell de segons a que la pressió s'estabilitze i anota el punt. La darrera columna hauria de ser (quasi) constant.",
+"c4.s":"Per a la classe","c4.h":"Preguntes per pensar",
+"c4.l":"<li><b>Boyle:</b> anota 5 punts i mira la columna P·V. Quant varia? D'on ve la dispersió?</li><li>Dobla la temperatura a volum constant. Què li passa a la <b>velocitat</b> de les partícules? I a la pressió?</li><li><b>Charles:</b> baixa T cap a 100 K. Fins a quin volum arribaries a 0 K? Per què això és impossible en un gas real?</li><li>Per què cal expressar T en <b>kelvin</b> i no en °C perquè V/T siga constant?</li><li>Afig partícules (n) amb T i V constants. Quina llei estàs descobrint?</li>"
+},
+es:{
+title:"Leyes de los gases",
+eyebrow:"Física y Química · 2.º–3.º ESO",
+h1:"Leyes de los gases",
+lede:"Un gas ideal hecho de partículas que rebotan. La presión no se impone: se mide contando los choques contra el émbolo.",
+"aria.sim":"Simulación del gas dentro de un émbolo","aria.cv":"Recipiente con partículas, émbolo y manómetro","aria.ctl":"Controles",
+play:"Pausa",resume:"Reanudar",rec:"Anota el punto",clearT:"Borra la tabla",
+"f.law":"Ley","f.par":"Parámetros","f.show":"Mostrar",gen:"General",
+colors:"Color según la velocidad de cada partícula",
+sT:"Temperatura T",sV:"Volumen V",sn:"Cantidad n",sP:"Presión constante P",
+"help.boyle":"Variable: el volumen. T y n se mantienen constantes y se mide la presión.",
+"help.charles":"Variable: la temperatura. El émbolo es libre: el volumen se ajusta para que P sea constante.",
+"help.gay":"Variable: la temperatura. El émbolo está bloqueado (V constante) y se mide la presión.",
+"help.gen":"Todo es libre: cambia n, T y V y mira cómo responde P.",
+var:"Variable: {v}",limit:"Volumen en el límite: ajusta la presión P",
+"c1.s":"Ley en juego",
+"boyle.n":"Ley de Boyle–Mariotte","charles.n":"Ley de Charles","gay.n":"Ley de Gay-Lussac","gen.n":"Ecuación de estado",
+"boyle.f":"P · V = constante","charles.f":"V / T = constante","gay.f":"P / T = constante","gen.f":"P · V = n · R · T",
+"boyle.t":"A T y n constantes, si el volumen se reduce a la mitad las partículas chocan con la pared el doble de veces: la presión se duplica.",
+"charles.t":"A P y n constantes, más temperatura significa partículas más rápidas; para que la presión no aumente, el volumen debe crecer. Extrapolando, V → 0 cuando T → 0 K.",
+"gay.t":"A V y n constantes, más temperatura significa partículas más rápidas, que chocan más a menudo y con más fuerza: la presión crece.",
+"gen.t":"Las tres leyes y la de la cantidad de gas en una sola ecuación. Con las temperaturas siempre en kelvin.",
+"d.n":"Cantidad n","d.T":"Temperatura T","d.V":"Volumen V","d.Pm":"P medida (choques)","d.Pt":"P teórica n·R·T/V",
+"k.boyle":"P · V","k.charles":"V / T","k.gay":"P / T","k.gen":"P·V / (n·T) = R",
+"c1.note":"Gas en 2D, unidades arbitrarias (u.a.). La P medida fluctúa: es lo que pasa de verdad con un número finito de partículas.",
+"c2.s":"Gráfica","c2.aria":"Gráfica de la ley con los puntos medidos",
+"c2.note":"Línea: predicción teórica. Punto azul: estado actual. Puntos naranjas: medidas anotadas.",
+"c3.s":"Tabla de medidas","c3.h":"Anota y comprueba",
+"c3.p":"Cambia la variable, espera un par de segundos a que la presión se estabilice y anota el punto. La última columna debería ser (casi) constante.",
+"c4.s":"Para la clase","c4.h":"Preguntas para pensar",
+"c4.l":"<li><b>Boyle:</b> anota 5 puntos y mira la columna P·V. ¿Cuánto varía? ¿De dónde viene la dispersión?</li><li>Duplica la temperatura a volumen constante. ¿Qué le pasa a la <b>velocidad</b> de las partículas? ¿Y a la presión?</li><li><b>Charles:</b> baja T hacia 100 K. ¿Hasta qué volumen llegarías a 0 K? ¿Por qué eso es imposible en un gas real?</li><li>¿Por qué hay que expresar T en <b>kelvin</b> y no en °C para que V/T sea constante?</li><li>Añade partículas (n) con T y V constantes. ¿Qué ley estás descubriendo?</li>"
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../lleis-gasos/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+
+var READY=false;
+const W=760,H=400;
+const cvo=makeCanvas($('#cv'),W,H,()=>{if(READY)draw();}),ctx=cvo.ctx;
+const plo=makeCanvas($('#plot'),460,320,()=>{if(READY)drawPlot();}),pc=plo.ctx;
+
+/* ============ modelo ============ */
+const KS=48;                 // k_B·T = KS·T  (masa 1, unidades px, s)
+const RR=0.48;               // R efectivo en u.a. con n = N/10 y V = área/1000
+const X0=30,Y0=64,HC=220,LMIN=100,LMAX=520;
+const G={mode:'boyle',T:300,Ts:300,n:6,Lx:300,Lxt:300,Pc:14.4,parts:[],Pm:14.4,imp:0,acc:0,var:'V',recs:[],plot:'pv',colors:true,playing:!REDUCE,time:0};
+const V_of=L=>L*HC/1000, L_of=V=>V*1000/HC;
+const nPart=()=>G.n*10;
+function newPart(){
+  const s=Math.sqrt(KS*G.Ts),x=X0+6+Math.random()*(G.Lx-12);
+  return {x,y:Y0+6+Math.random()*(HC-12),vx:randn()*s,vy:randn()*s};
+}
+function syncN(){
+  while(G.parts.length<nPart())G.parts.push(newPart());
+  if(G.parts.length>nPart())G.parts.length=nPart();
+}
+function step(dt){
+  G.time+=dt;
+  /* temperatura de consigna: suavizada */
+  G.T=G.Ts;
+  /* objetivo del émbolo */
+  if(G.mode==='charles'){const L=L_of(G.n*RR*G.T/G.Pc);G.clamped=L<LMIN||L>LMAX;G.Lxt=clamp(L,LMIN,LMAX);}else G.clamped=false;
+  const dL=clamp(G.Lxt-G.Lx,-170*dt,170*dt);G.Lx+=dL;const vp=dL/dt;
+  const px=X0+G.Lx,r=4;let imp=0;
+  for(const p of G.parts){
+    p.x+=p.vx*dt;p.y+=p.vy*dt;
+    if(p.x<X0+r){p.x=X0+r;p.vx=Math.abs(p.vx);}
+    if(p.y<Y0+r){p.y=Y0+r;p.vy=Math.abs(p.vy);}
+    if(p.y>Y0+HC-r){p.y=Y0+HC-r;p.vy=-Math.abs(p.vy);}
+    if(p.x>px-r){p.x=px-r;if(p.vx>vp){imp+=2*(p.vx-vp);p.vx=2*vp-p.vx;}}
+  }
+  /* termostat (Berendsen) per components: sense col·lisions entre partícules, vx i vy no s'intercanvien energia */
+  let kx=0,ky=0;for(const p of G.parts){kx+=p.vx*p.vx;ky+=p.vy*p.vy;}
+  const Nn=Math.max(1,G.parts.length),Tcx=kx/(KS*Nn),Tcy=ky/(KS*Nn);
+  const lx=Math.sqrt(Math.max(.2,1+(dt/.25)*(G.T/Math.max(Tcx,1)-1))),ly=Math.sqrt(Math.max(.2,1+(dt/.25)*(G.T/Math.max(Tcy,1)-1)));
+  for(const p of G.parts){p.vx*=lx;p.vy*=ly;}
+  const Tc=(Tcx+Tcy)/2;
+  const inst=imp/(dt*HC);
+  G.Pm+=(inst-G.Pm)*(1-Math.exp(-dt/1.0));
+  G.Tc=Tc;
+}
+const Vcur=()=>V_of(G.Lx);
+const Pth=()=>G.n*RR*G.T/Vcur();
+
+/* ============ dibujo ============ */
+function draw(){
+  const c=ctx,col=C();
+  c.fillStyle=col.stage;c.fillRect(0,0,W,H);
+  const px=X0+G.Lx;
+  /* calentador */
+  const u=clamp((G.T-100)/500,0,1);
+  const hr=Math.round(lerp(90,255,u)),hg=Math.round(lerp(150,90,u)),hb=Math.round(lerp(255,40,u));
+  const gr=c.createLinearGradient(0,Y0+HC,0,Y0+HC+26);gr.addColorStop(0,'rgba('+hr+','+hg+','+hb+',.85)');gr.addColorStop(1,'rgba('+hr+','+hg+','+hb+',0)');
+  c.fillStyle=gr;c.fillRect(X0,Y0+HC+2,G.Lx,26);
+  c.strokeStyle='rgb('+hr+','+hg+','+hb+')';c.lineWidth=3;c.beginPath();
+  for(let x=X0+6;x<px-4;x+=10){c.lineTo(x,Y0+HC+10+(Math.round((x-X0)/10)%2?5:-1));}
+  c.stroke();
+  /* recipiente */
+  c.fillStyle=col.panel;c.fillRect(X0,Y0,G.Lx,HC);
+  c.strokeStyle=col.ink;c.lineWidth=3;c.beginPath();c.moveTo(px,Y0);c.lineTo(X0,Y0);c.lineTo(X0,Y0+HC);c.lineTo(px,Y0+HC);c.stroke();
+  /* émbolo */
+  c.fillStyle=col.muted;c.fillRect(px-2,Y0-6,9,HC+12);
+  c.fillRect(px+7,Y0+HC/2-3,40,6);c.fillStyle=col.ink;rrect(c,px+47,Y0+HC/2-14,9,28,3);c.fill();
+  /* partículas */
+  const s=Math.sqrt(KS*G.Ts);
+  for(const p of G.parts){
+    if(G.colors){const v=Math.hypot(p.vx,p.vy)/(2.2*s);c.fillStyle='hsl('+Math.round(220*(1-clamp(v,0,1)))+',78%,'+(col.dark?62:50)+'%)';}
+    else c.fillStyle=col.pa;
+    c.beginPath();c.arc(p.x,p.y,4,0,TAU);c.fill();
+  }
+  /* manómetro */
+  const gx=692,gy=130,gr0=50,Pmax=60,fr=clamp(G.Pm/Pmax,0,1);
+  c.lineWidth=7;c.strokeStyle=col.line;c.beginPath();c.arc(gx,gy,gr0,Math.PI,TAU);c.stroke();
+  c.strokeStyle=col.pa;c.beginPath();c.arc(gx,gy,gr0,Math.PI,Math.PI+fr*Math.PI);c.stroke();
+  c.lineWidth=1;c.strokeStyle=col.muted;
+  for(let i=0;i<=6;i++){const a=Math.PI+i/6*Math.PI;c.beginPath();c.moveTo(gx+(gr0-12)*Math.cos(a),gy+(gr0-12)*Math.sin(a));c.lineTo(gx+(gr0-18)*Math.cos(a),gy+(gr0-18)*Math.sin(a));c.stroke();}
+  const a=Math.PI+fr*Math.PI;c.strokeStyle=col.ink;c.lineWidth=2.2;c.beginPath();c.moveTo(gx,gy);c.lineTo(gx+(gr0-14)*Math.cos(a),gy+(gr0-14)*Math.sin(a));c.stroke();
+  c.fillStyle=col.ink;c.beginPath();c.arc(gx,gy,4,0,TAU);c.fill();
+  c.textAlign='center';c.font='600 14px ui-monospace,Menlo,monospace';c.fillText('P = '+fmt(G.Pm,1),gx,gy+24);
+  c.font='11px system-ui';c.fillStyle=col.muted;c.fillText('u.a.',gx,gy+38);
+  /* termómetro */
+  const tx=700,ty0=250,ty1=380;
+  c.strokeStyle=col.muted;c.lineWidth=1.5;rrect(c,tx-6,ty0,12,ty1-ty0,6);c.stroke();
+  const th=(ty1-ty0-6)*clamp(G.T/650,0,1);
+  c.fillStyle='rgb('+hr+','+hg+','+hb+')';rrect(c,tx-3,ty1-3-th,6,th,3);c.fill();
+  c.fillStyle=col.ink;c.font='600 13px ui-monospace,Menlo,monospace';c.textAlign='right';c.fillText(Math.round(G.T)+' K',tx-14,ty0+20);
+  c.fillStyle=col.muted;c.font='11px system-ui';c.fillText(fmt(G.T-273.15,0)+' °C',tx-14,ty0+36);
+  /* cotas */
+  c.strokeStyle=col.muted;c.lineWidth=1;c.beginPath();c.moveTo(X0,Y0-18);c.lineTo(px,Y0-18);c.moveTo(X0,Y0-23);c.lineTo(X0,Y0-13);c.moveTo(px,Y0-23);c.lineTo(px,Y0-13);c.stroke();
+  c.fillStyle=col.ink;c.textAlign='center';c.font='600 13px ui-monospace,Menlo,monospace';c.fillText('V = '+fmt(Vcur(),1)+' u.a.',(X0+px)/2,Y0-26);
+  c.fillStyle=col.muted;c.font='11px system-ui';c.textAlign='left';c.fillText('n = '+G.n+' mol',X0,H-10);
+}
+function drawPlot(){
+  const c=pc,W2=460,H2=320,col=C(),m={l:52,r:14,t:16,b:40};
+  c.fillStyle=col.panel;c.fillRect(0,0,W2,H2);
+  const md=G.mode,law=(md==='gen')?'boyle':md;
+  let xs,ys,xl,yl,xf,curve,pts,live,xmin=0;
+  const n=G.n,T=G.T,Vc=Vcur();
+  if(law==='boyle'){
+    const inv=G.plot==='pinv';
+    const Pmax=Math.max(10,1.15*n*RR*T/22);
+    xs=inv?[0,50]:[0,130];ys=[0,Pmax];xl=inv?'1000 / V':'V (u.a.)';yl='P (u.a.)';
+    const f=V=>n*RR*T/V;
+    if(inv){curve=[[0,0],[50,n*RR*T*50/1000]];}else{curve=[];for(let V=22;V<=125;V+=1.5)curve.push([V,f(V)]);}
+    pts=G.recs.map(r=>[inv?1000/r.V:r.V,r.P]);live=[inv?1000/Vc:Vc,G.Pm];
+  }else if(law==='charles'){
+    xs=[0,650];ys=[0,130];xl='T (K)';yl='V (u.a.)';
+    curve=[[0,0],[650,n*RR*650/G.Pc]];pts=G.recs.map(r=>[r.T,r.V]);live=[T,Vc];
+  }else{
+    xs=[0,650];ys=[0,Math.max(10,1.15*n*RR*650/Vc)];xl='T (K)';yl='P (u.a.)';
+    curve=[[0,0],[650,n*RR*650/Vc]];pts=G.recs.map(r=>[r.T,r.P]);live=[T,G.Pm];
+  }
+  const X=x=>m.l+(x-xs[0])/(xs[1]-xs[0])*(W2-m.l-m.r),Y=y=>H2-m.b-(y-ys[0])/(ys[1]-ys[0])*(H2-m.t-m.b);
+  /* ejes y rejilla */
+  c.strokeStyle=col.line;c.lineWidth=1;c.fillStyle=col.muted;c.font='11px ui-monospace,Menlo,monospace';
+  const tick=(a,b)=>{const raw=(b-a)/5,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,s=f<1.5?1:f<3?2:f<7?5:10;return s*p;};
+  const tx=tick(xs[0],xs[1]),ty=tick(ys[0],ys[1]);
+  c.textAlign='center';for(let x=xs[0];x<=xs[1]+1e-9;x+=tx){c.beginPath();c.moveTo(X(x),m.t);c.lineTo(X(x),H2-m.b);c.stroke();c.fillText(Math.round(x*10)/10,X(x),H2-m.b+14);}
+  c.textAlign='right';for(let y=ys[0];y<=ys[1]+1e-9;y+=ty){c.beginPath();c.moveTo(m.l,Y(y));c.lineTo(W2-m.r,Y(y));c.stroke();c.fillText(Math.round(y*10)/10,m.l-6,Y(y)+4);}
+  c.strokeStyle=col.ink;c.lineWidth=1.6;c.beginPath();c.moveTo(m.l,m.t);c.lineTo(m.l,H2-m.b);c.lineTo(W2-m.r,H2-m.b);c.stroke();
+  c.fillStyle=col.ink;c.font='12px system-ui';c.textAlign='center';c.fillText(xl,(m.l+W2-m.r)/2,H2-6);
+  c.save();c.translate(13,(m.t+H2-m.b)/2);c.rotate(-Math.PI/2);c.fillText(yl,0,0);c.restore();
+  /* curva teórica */
+  c.save();c.beginPath();c.rect(m.l,m.t,W2-m.l-m.r,H2-m.t-m.b);c.clip();
+  c.strokeStyle=col.muted;c.lineWidth=2;c.beginPath();curve.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));c.stroke();
+  pts.forEach(p=>{c.fillStyle=col.pb;c.beginPath();c.arc(X(p[0]),Y(p[1]),5,0,TAU);c.fill();});
+  c.fillStyle=col.pa;c.strokeStyle=col.panel;c.lineWidth=2;c.beginPath();c.arc(X(live[0]),Y(live[1]),6.5,0,TAU);c.fill();c.stroke();
+  c.restore();
+}
+/* ============ interfaz ============ */
+const host=$('#ctl'),S={};
+S.T=slider(host,{id:'sT',key:'sT',min:100,max:600,step:5,val:300,fmtv:v=>v+' K',on:v=>{G.Ts=v;}});
+S.V=slider(host,{id:'sV',key:'sV',min:22,max:114,step:1,val:60,fmtv:v=>fmt(v,0)+' u.a.',on:v=>{G.Lxt=L_of(v);}});
+S.n=slider(host,{id:'sn',key:'sn',min:2,max:15,step:1,val:6,fmtv:v=>v+' mol',on:v=>{G.n=v;syncN();}});
+S.P=slider(host,{id:'sP',key:'sP',min:6,max:40,step:.5,val:14.4,fmtv:v=>fmt(v,1)+' u.a.',on:v=>{G.Pc=v;}});
+const VARS={boyle:'V',charles:'T',gay:'T',gen:''};
+function setMode(m){
+  G.mode=m;G.recs=[];
+  if(m==='charles'){G.Pc=clamp(G.n*RR*G.Ts/Vcur(),6,40);S.P.set(G.Pc);}
+  $$('#modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===m)));
+  S.V.disable(m==='charles');S.P.el.style.display=m==='charles'?'':'none';
+  if(m!=='charles'){S.V.set(clamp(Math.round(Vcur()),22,114));G.Lxt=L_of(+S.V.inp.value);}
+  $('#plotSeg').style.display=(m==='boyle'||m==='gen')?'':'none';
+  renderStatic();
+}
+function renderStatic(){
+  const m=G.mode;
+  $('#modeHelp').textContent=t('help.'+m);
+  $('#lawName').textContent=t(m+'.n');$('#formula').textContent=t(m+'.f');$('#lawText').textContent=t(m+'.t');
+  $('#kLab').textContent=t('k.'+m);
+  const vn={boyle:'V',charles:'T',gay:'T',gen:'n, T, V'}[m];$('#varPill').innerHTML=t('var',{v:'<b>'+vn+'</b>'});
+  const head={boyle:['V','P','P·V'],charles:['T (K)','V','V/T'],gay:['T (K)','P','P/T'],gen:['n','T (K)','V','P','P·V/(n·T)']}[m];
+  $('#thead').innerHTML='<tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>';
+  $('#plotName').textContent=({boyle:'P – V',charles:'V – T',gay:'P – T',gen:'P – V'})[m];
+  $('#play').textContent=G.playing?t('play'):t('resume');
+  renderTable();
+}
+function renderTable(){
+  const m=G.mode;
+  $('#tbl').innerHTML=G.recs.slice(-8).reverse().map(r=>{
+    const f=(x,d)=>fmt(x,d);
+    const cells={boyle:[f(r.V,1),f(r.P,1),f(r.P*r.V,0)],charles:[f(r.T,0),f(r.V,1),f(r.V/r.T,4)],gay:[f(r.T,0),f(r.P,1),f(r.P/r.T,4)],gen:[r.n,f(r.T,0),f(r.V,1),f(r.P,1),f(r.P*r.V/(r.n*r.T),3)]}[m];
+    return '<tr>'+cells.map(x=>'<td>'+x+'</td>').join('')+'</tr>';
+  }).join('');
+}
+function renderLive(){
+  const V=Vcur(),P=G.Pm;
+  $('#dN').textContent=G.n+' mol';$('#dT').textContent=Math.round(G.T)+' K ('+fmt(G.T-273.15,0)+' °C)';
+  $('#dV').textContent=fmt(V,1)+' u.a.';$('#dPm').textContent=fmt(P,1)+' u.a.';$('#dPt').textContent=fmt(Pth(),1)+' u.a.';
+  const k={boyle:P*V,charles:V/G.T,gay:P/G.T,gen:P*V/(G.n*G.T)}[G.mode];
+  $('#dK').textContent=fmt(k,G.mode==='boyle'?0:G.mode==='gen'?3:4);
+  $('#clock').textContent=G.clamped?t('limit'):t('d.Pm')+': '+fmt(P,1);
+}
+function record(){
+  G.recs.push({n:G.n,T:G.T,V:Vcur(),P:G.Pm});if(G.recs.length>40)G.recs.shift();renderTable();
+}
+$('#rec').addEventListener('click',record);$('#rec2').addEventListener('click',record);
+$('#clearT').addEventListener('click',()=>{G.recs=[];renderTable();});
+$('#play').addEventListener('click',()=>{G.playing=!G.playing;$('#play').textContent=G.playing?t('play'):t('resume');});
+$$('#modes button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
+$$('#plotSeg button').forEach(b=>b.addEventListener('click',()=>{G.plot=b.dataset.p;$$('#plotSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));drawPlot();}));
+$('#colors').addEventListener('change',e=>{G.colors=e.target.checked;});
+document.addEventListener('langchange',()=>{Object.values(S).forEach(s=>s.refresh());renderStatic();});
+document.addEventListener('themechange',()=>{draw();drawPlot();});
+
+let last=performance.now(),pl=0;
+function frame(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  if(G.playing&&dt>0){step(dt);}
+  draw();
+  pl+=dt;if(pl>.1){pl=0;drawPlot();renderLive();}
+  requestAnimationFrame(frame);
+}
+syncN();
+G.Lxt=G.Lx=L_of(60);
+READY=true;
+initLang();applyLang();
+setMode('boyle');
+requestAnimationFrame(frame);
+window.__g={G,step,Vcur,Pth,setMode,S,record};
+</script>
+</body>
+</html>

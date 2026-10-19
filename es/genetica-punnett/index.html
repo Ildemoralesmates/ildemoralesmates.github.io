@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuadros de Punnett</title>
+<meta name="description" content="Simulador de genética mendeliana: cuadros de Punnett para uno y dos genes, dominancia completa e incompleta, y simulación de descendientes.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/genetica-punnett/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/genetica-punnett/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/genetica-punnett/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/genetica-punnett/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Cuadros de Punnett">
+<meta property="og:description" content="Simulador de genética mendeliana: cuadros de Punnett para uno y dos genes, dominancia completa e incompleta, y simulación de descendientes.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/genetica-punnett/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+.pun{display:grid;gap:6px;padding:14px;overflow-x:auto}
+.gh{display:grid;place-items:center;min-height:34px;padding:4px 6px;border-radius:8px;background:var(--chip);border:1px solid var(--line);font-family:var(--f-num);font-weight:700;font-size:14px;transition:background .12s,border-color .12s}
+.gh.corner{background:transparent;border-color:transparent;font:600 11px var(--f-body);color:var(--muted);text-align:center;letter-spacing:.04em}
+.gh.hl{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.gh small{display:block;font:500 10px var(--f-body);opacity:.75;margin-top:1px}
+.cell{--tint:#999;position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:84px;padding:6px 3px;border-radius:9px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--tint) 20%,var(--panel));color:var(--ink);font:inherit;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.cell:hover,.cell:focus-visible{box-shadow:0 0 0 2px var(--pa);z-index:1}
+.cell .gt{font-family:var(--f-num);font-weight:700;font-size:15px;letter-spacing:.02em}
+.cell svg{width:34px;height:40px;display:block}
+.cell.nopic{min-height:54px}
+.cell.nopic svg{display:none}
+.cell.hid{background:var(--stage);border-style:dashed}
+.cell.hid .gt,.cell.hid svg{opacity:0}
+.cell.hid::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font:700 22px var(--f-display);color:var(--muted)}
+.pop{animation:pop .28s ease-out}
+@keyframes pop{from{transform:scale(.85);opacity:.3}to{transform:none;opacity:1}}
+.prow{display:grid;grid-template-columns:5.2rem 1fr;gap:4px 8px;align-items:center}
+.prow>span{font-size:13px;color:var(--muted)}
+.sels{display:flex;gap:6px;flex-wrap:wrap}
+.org{display:inline-block;vertical-align:middle}
+.bars{display:grid;gap:8px}
+.brow{display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 10px;align-items:center}
+.brow svg{width:28px;height:34px}
+.brow .lab{font-size:13.5px;display:flex;justify-content:space-between;gap:8px}
+.brow .lab span:last-child{font-family:var(--f-num);font-size:12.5px;color:var(--muted);white-space:nowrap}
+.track{position:relative;height:12px;border-radius:6px;background:var(--chip);overflow:visible}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:6px;background:var(--pa);opacity:.85;transition:width .25s}
+.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.strip{display:flex;flex-wrap:wrap;gap:2px;min-height:40px}
+.strip svg{width:22px;height:27px}
+.strip svg:last-child{animation:pop .3s ease-out}
+.ratio{font-family:var(--f-display);font-size:26px;font-weight:600;letter-spacing:.02em}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+ol.q{margin:0;padding-left:1.2em;color:var(--muted);font-size:14px;display:grid;gap:5px}
+ol.q b{color:var(--ink);font-weight:600}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Genética · 4.º ESO</p>
+      <h1 data-i18n="h1">Cuadros de Punnett</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Elige los genotipos de los progenitores y mira cómo se combinan los gametos, qué proporciones se esperan y qué ocurre en una descendencia real.</p>
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="stage-card" data-i18n-aria="aria.grid" aria-label="Cuadro de Punnett">
+      <div class="bar">
+        <span class="pill" id="crossLabel"></span>
+        <button id="revealAll" class="btn sp" type="button"></button>
+      </div>
+      <div class="pun" id="pun"></div>
+    </section>
+
+    <aside class="panel" data-i18n-aria="aria.ctl" aria-label="Controles">
+      <fieldset>
+        <legend data-i18n="f.sit">Situación</legend>
+        <select id="scen" data-i18n-aria="f.sit" aria-label="Situación"></select>
+        <div class="seg" role="group" id="ngSeg">
+          <button type="button" data-ng="1" data-i18n="ng1">1 gen (monohíbrido)</button>
+          <button type="button" data-ng="2" data-i18n="ng2">2 genes (dihíbrido)</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="f.par">Progenitores</legend>
+        <div class="prow"><span data-i18n="par1">Progenitor 1 (♀)</span><div class="sels" id="sel1"></div></div>
+        <div class="prow"><span data-i18n="par2">Progenitor 2 (♂)</span><div class="sels" id="sel2"></div></div>
+        <div class="chips" id="presets"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="f.show">Mostrar</legend>
+        <label class="check"><input type="checkbox" id="pics" checked> <span data-i18n="pics">Mostrar los dibujos de los fenotipos</span></label>
+        <label class="check"><input type="checkbox" id="predict"> <span data-i18n="predict">Modo predicción: oculta el cuadro para que el alumnado lo complete</span></label>
+      </fieldset>
+    </aside>
+  </main>
+
+  <section class="cards">
+    <article class="card">
+      <h2><small data-i18n="c1.s">Proporciones esperadas</small><span data-i18n="c1.h">Genotipos y fenotipos</span></h2>
+      <div class="ratio" id="ratio"></div>
+      <div class="bars" id="phTable"></div>
+      <dl id="gtList"></dl>
+      <p data-i18n-html="c1.p">Cada casilla del cuadro tiene la <b>misma probabilidad</b>. Las proporciones salen de contar casillas.</p>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c2.s">Simulación</small><span data-i18n="c2.h">Una descendencia real</span></h2>
+      <p data-i18n-html="c2.p">Cada descendiente recibe un gameto al azar de cada progenitor. <b>Fíjate</b> en cómo las frecuencias se acercan a las esperadas cuando hay muchos.</p>
+      <div class="btns">
+        <button class="btn primary" type="button" data-add="1">+1</button>
+        <button class="btn" type="button" data-add="10">+10</button>
+        <button class="btn" type="button" data-add="100">+100</button>
+        <button class="btn" type="button" data-add="1000">+1000</button>
+        <button class="btn" type="button" id="simReset" data-i18n="reset">Reiniciar</button>
+      </div>
+      <div class="bars" id="simBars"></div>
+      <dl>
+        <dt data-i18n="c2.n">Descendientes</dt><dd id="simN" class="hl">0</dd>
+        <dt data-i18n="c2.dev">Desviación máxima respecto a lo esperado</dt><dd id="simDev">—</dd>
+      </dl>
+      <div class="strip" id="strip" data-i18n-aria="c2.strip" aria-label="Últimos descendientes"></div>
+      <p class="note" data-i18n="c2.note">Con pocos datos manda el azar: 3:1 no significa que de cada 4 salgan exactamente 3.</p>
+    </article>
+
+    <article class="card">
+      <h2><small data-i18n="c3.s">Para la clase</small><span data-i18n="c3.h">Preguntas para pensar</span></h2>
+      <ol class="q" data-i18n-html="c3.l"><li><b>Predice antes de mirar:</b> activa el modo predicción, completa el cuadro en la pizarra y después revélalo.</li><li>¿Qué cruces dan <b>100 %</b> de descendientes iguales? ¿Cuáles dan <b>3:1</b>? ¿Y <b>1:1</b>?</li><li>Un individuo de fenotipo dominante: ¿cómo sabes si es <b>AA</b> o <b>Aa</b>? Diseña un cruce que lo resuelva (cruce de prueba).</li><li>En el dondiego de noche, ¿por qué el cruce de dos plantas rosas da <b>1:2:1</b> y no 3:1?</li></ol>
+    </article>
+  </section>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+title:"Quadres de Punnett",
+eyebrow:"Genètica · 4t ESO",
+h1:"Quadres de Punnett",
+lede:"Tria els genotips dels progenitors i mira com es combinen els gàmetes, quines proporcions s'esperen i què passa en una descendència real.",
+"aria.grid":"Quadre de Punnett","aria.ctl":"Controls",
+"f.sit":"Situació","f.par":"Progenitors","f.show":"Mostra",
+ng1:"1 gen (monohíbrid)",ng2:"2 gens (dihíbrid)",
+par1:"Progenitor 1 (♀)",par2:"Progenitor 2 (♂)",
+pics:"Mostra els dibuixos dels fenotips",
+predict:"Mode predicció: amaga el quadre perquè l'alumnat el complete",
+reset:"Reinicia",revealAll:"Revela-ho tot",hideAll:"Torna a amagar",
+corner:"♀ ↓  ♂ →",
+gam:"gàmetes",
+cross:"{a} × {b}",
+"sc.pea":"Pèsols de Mendel","sc.flower":"Dondiego de nit (dominància incompleta)","sc.zorb":"Criatures inventades (Zorbs)",
+"pea.g1":"Color de la llavor","pea.g2":"Forma de la llavor",
+"pea.g1.D":"groga","pea.g1.R":"verda","pea.g2.D":"llisa","pea.g2.R":"rugosa",
+"flower.g1":"Color de la flor","flower.g2":"Alçada de la planta",
+"flower.g1.D":"vermella","flower.g1.H":"rosa","flower.g1.R":"blanca","flower.g2.D":"alta","flower.g2.R":"baixa",
+"zorb.g1":"Color de la pell","zorb.g2":"Antenes",
+"zorb.g1.D":"blava","zorb.g1.R":"taronja","zorb.g2.D":"amb antenes","zorb.g2.R":"sense antenes",
+"c1.s":"Proporcions esperades","c1.h":"Genotips i fenotips",
+"c1.p":"Cada casella del quadre té la <b>mateixa probabilitat</b>. Les proporcions s'obtenen comptant caselles.",
+"c1.ph":"Fenotip","c1.gt":"Genotips",
+"c2.s":"Simulació","c2.h":"Una descendència real",
+"c2.p":"Cada descendent rep un gàmeta a l'atzar de cada progenitor. <b>Fixa't</b> com les freqüències s'acosten a les esperades quan n'hi ha molts.",
+"c2.n":"Descendents","c2.dev":"Desviació màxima respecte a l'esperat","c2.strip":"Últims descendents",
+"c2.note":"Amb poques dades, l'atzar mana: 3:1 no vol dir que de cada 4 n'isquen exactament 3.",
+"esp":"esp.",pp:"punts",
+"c3.s":"Per a la classe","c3.h":"Preguntes per pensar",
+"c3.l":"<li><b>Prediu abans de mirar:</b> activa el mode predicció, completa el quadre en una pissarra i després revela-ho.</li><li>Quins creuaments donen <b>100 %</b> de descendents iguals? Quins donen <b>3:1</b>? I <b>1:1</b>?</li><li>Un individu de fenotip dominant: com saps si és <b>AA</b> o <b>Aa</b>? Dissenya un creuament que ho resolga (creuament prova).</li><li>Al dondiego de nit, per què el creuament de dues plantes roses dóna <b>1:2:1</b> i no 3:1?</li>"
+},
+es:{
+title:"Cuadros de Punnett",
+eyebrow:"Genética · 4.º ESO",
+h1:"Cuadros de Punnett",
+lede:"Elige los genotipos de los progenitores y mira cómo se combinan los gametos, qué proporciones se esperan y qué ocurre en una descendencia real.",
+"aria.grid":"Cuadro de Punnett","aria.ctl":"Controles",
+"f.sit":"Situación","f.par":"Progenitores","f.show":"Mostrar",
+ng1:"1 gen (monohíbrido)",ng2:"2 genes (dihíbrido)",
+par1:"Progenitor 1 (♀)",par2:"Progenitor 2 (♂)",
+pics:"Mostrar los dibujos de los fenotipos",
+predict:"Modo predicción: oculta el cuadro para que el alumnado lo complete",
+reset:"Reiniciar",revealAll:"Revelarlo todo",hideAll:"Volver a ocultar",
+corner:"♀ ↓  ♂ →",
+gam:"gametos",
+cross:"{a} × {b}",
+"sc.pea":"Guisantes de Mendel","sc.flower":"Dondiego de noche (dominancia incompleta)","sc.zorb":"Criaturas inventadas (Zorbs)",
+"pea.g1":"Color de la semilla","pea.g2":"Forma de la semilla",
+"pea.g1.D":"amarilla","pea.g1.R":"verde","pea.g2.D":"lisa","pea.g2.R":"rugosa",
+"flower.g1":"Color de la flor","flower.g2":"Altura de la planta",
+"flower.g1.D":"roja","flower.g1.H":"rosa","flower.g1.R":"blanca","flower.g2.D":"alta","flower.g2.R":"baja",
+"zorb.g1":"Color de la piel","zorb.g2":"Antenas",
+"zorb.g1.D":"azul","zorb.g1.R":"naranja","zorb.g2.D":"con antenas","zorb.g2.R":"sin antenas",
+"c1.s":"Proporciones esperadas","c1.h":"Genotipos y fenotipos",
+"c1.p":"Cada casilla del cuadro tiene la <b>misma probabilidad</b>. Las proporciones salen de contar casillas.",
+"c1.ph":"Fenotipo","c1.gt":"Genotipos",
+"c2.s":"Simulación","c2.h":"Una descendencia real",
+"c2.p":"Cada descendiente recibe un gameto al azar de cada progenitor. <b>Fíjate</b> en cómo las frecuencias se acercan a las esperadas cuando hay muchos.",
+"c2.n":"Descendientes","c2.dev":"Desviación máxima respecto a lo esperado","c2.strip":"Últimos descendientes",
+"c2.note":"Con pocos datos manda el azar: 3:1 no significa que de cada 4 salgan exactamente 3.",
+"esp":"esp.",pp:"puntos",
+"c3.s":"Para la clase","c3.h":"Preguntas para pensar",
+"c3.l":"<li><b>Predice antes de mirar:</b> activa el modo predicción, completa el cuadro en la pizarra y después revélalo.</li><li>¿Qué cruces dan <b>100 %</b> de descendientes iguales? ¿Cuáles dan <b>3:1</b>? ¿Y <b>1:1</b>?</li><li>Un individuo de fenotipo dominante: ¿cómo sabes si es <b>AA</b> o <b>Aa</b>? Diseña un cruce que lo resuelva (cruce de prueba).</li><li>En el dondiego de noche, ¿por qué el cruce de dos plantas rosas da <b>1:2:1</b> y no 3:1?</li>"
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../genetica-punnett/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+
+/* ================== datos de les situacions ================== */
+const SCEN=[
+ {id:'pea',inc:false,tint:{1:{D:'#e6c230',R:'#5fae45'},2:{D:'#c9a56a',R:'#a58a55'}}},
+ {id:'flower',inc:true,tint:{1:{D:'#d63a4a',H:'#f08fb0',R:'#aeb6c4'},2:{D:'#6aa84f',R:'#6aa84f'}}},
+ {id:'zorb',inc:false,tint:{1:{D:'#3b7ddd',R:'#f09a2a'},2:{D:'#888',R:'#888'}}}
+];
+const WRINK=(()=>{let d='';for(let i=0;i<=48;i++){const a=i/48*TAU,r=13.5+1.9*Math.sin(7*a)+1.2*Math.sin(11*a+1);d+=(i?'L':'M')+(20+r*Math.cos(a)).toFixed(1)+' '+(20+r*Math.sin(a)).toFixed(1);}return d+'Z';})();
+function org(sc,keys){
+  const s=SCEN[sc],k1=keys[0],k2=keys[1]||'D';
+  if(s.id==='pea'){
+    const col=s.tint[1][k1];
+    return k2==='D'
+      ?'<svg viewBox="0 0 40 40" class="org"><circle cx="20" cy="20" r="14" fill="'+col+'" stroke="#0004" stroke-width="1.2"/><ellipse cx="15" cy="14" rx="4.5" ry="3" fill="#fff6" /></svg>'
+      :'<svg viewBox="0 0 40 40" class="org"><path d="'+WRINK+'" fill="'+col+'" stroke="#0004" stroke-width="1.2"/><path d="M12 18q4 3 8 0t8 2M13 25q4-2 7 1t7-1" stroke="#0003" fill="none" stroke-width="1"/></svg>';
+  }
+  if(s.id==='flower'){
+    const col=s.tint[1][k1],hy=k2==='D'?11:27;
+    const stroke=k1==='R'?'#8d94a3':'#0003';
+    let p='';for(let i=0;i<5;i++){const a=i/5*TAU-Math.PI/2;p+='<circle cx="'+(20+6.4*Math.cos(a)).toFixed(1)+'" cy="'+(hy+6.4*Math.sin(a)).toFixed(1)+'" r="5.2" fill="'+col+'" stroke="'+stroke+'" stroke-width=".9"/>';}
+    return '<svg viewBox="0 0 40 48" class="org"><path d="M20 '+hy+'V46" stroke="#4f8a3a" stroke-width="2.4"/><path d="M20 40q-8-1-9-6 7 0 9 6zM20 36q7-1 9-6-7 0-9 6z" fill="#5fae45"/>'+p+'<circle cx="20" cy="'+hy+'" r="3.4" fill="#f2c230" stroke="#0003" stroke-width=".8"/></svg>';
+  }
+  const col=s.tint[1][k1];
+  return '<svg viewBox="0 0 40 48" class="org">'+(k2==='D'?'<path d="M14 22L9 8M26 22l5-14" stroke="#555" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="7" r="2.6" fill="#d6334a"/><circle cx="31" cy="7" r="2.6" fill="#d6334a"/>':'')+
+    '<ellipse cx="20" cy="31" rx="15" ry="13" fill="'+col+'" stroke="#0004" stroke-width="1.2"/><circle cx="14.5" cy="27" r="3.6" fill="#fff"/><circle cx="25.5" cy="27" r="3.6" fill="#fff"/><circle cx="15.3" cy="27.4" r="1.7" fill="#222"/><circle cx="24.7" cy="27.4" r="1.7" fill="#222"/><path d="M14 36q6 4 12 0" stroke="#222" fill="none" stroke-width="1.6" stroke-linecap="round"/></svg>';
+}
+
+/* ================== genètica ================== */
+const S={sc:0,ng:1,p1:['Aa','Bb'],p2:['Aa','Bb'],predict:false,pics:true,revealed:new Set(),all:true,obs:{},N:0,last:[]};
+const LET=['A','B'];
+function gametes(par){
+  let g=[''];
+  for(let i=0;i<S.ng;i++){const als=[...new Set(par[i].split(''))],n=[];g.forEach(p=>als.forEach(a=>n.push(p+a)));g=n;}
+  return g;
+}
+const pairOf=(a,b)=>(a<b?a+b:b+a);
+function combine(g1,g2){let r='';for(let i=0;i<S.ng;i++)r+=pairOf(g1[i],g2[i]);return r;}
+function phKeys(gt){
+  const k=[];
+  for(let i=0;i<S.ng;i++){
+    const pr=gt.slice(2*i,2*i+2),nu=[...pr].filter(c=>c===c.toUpperCase()).length;
+    k.push(SCEN[S.sc].inc&&i===0?(nu===2?'D':nu===1?'H':'R'):(nu>0?'D':'R'));
+  }
+  return k;
+}
+const phLabel=k=>k.map((x,i)=>t(SCEN[S.sc].id+'.g'+(i+1)+'.'+x)).join(', ');
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const frac=(n,d)=>{const g=gcd(n,d);return g===d?String(n/g):(n/g)+'/'+(d/g);};
+const keyOf=k=>k.join('|');
+
+function model(){
+  const G1=gametes(S.p1),G2=gametes(S.p2),cells=[];
+  G1.forEach((a,r)=>G2.forEach((b,c)=>{const gt=combine(a,b);cells.push({r,c,gt,k:phKeys(gt)});}));
+  const ph=new Map(),gtm=new Map();
+  cells.forEach(x=>{const kk=keyOf(x.k);if(!ph.has(kk))ph.set(kk,{k:x.k,n:0});ph.get(kk).n++;gtm.set(x.gt,(gtm.get(x.gt)||0)+1);});
+  const order=['D','H','R'];
+  const list=[...ph.values()].sort((a,b)=>{for(let i=0;i<S.ng;i++){const d=order.indexOf(a.k[i])-order.indexOf(b.k[i]);if(d)return d;}return 0;});
+  return {G1,G2,cells,ph:list,gt:gtm,T:cells.length};
+}
+let M=null;
+
+/* ================== pintat ================== */
+const ids=n=>document.getElementById(n);
+function buildSelectors(){
+  ['p1','p2'].forEach((p,pi)=>{
+    const host=ids('sel'+(pi+1));host.innerHTML='';
+    for(let i=0;i<S.ng;i++){
+      const L=LET[i],sel=document.createElement('select');
+      sel.setAttribute('aria-label',t('par'+(pi+1))+' · '+t(SCEN[S.sc].id+'.g'+(i+1)));
+      [L+L,L+L.toLowerCase(),L.toLowerCase()+L.toLowerCase()].forEach(g=>{
+        const o=document.createElement('option');o.value=g;
+        const nu=[...g].filter(c=>c===c.toUpperCase()).length;
+        const key=SCEN[S.sc].inc&&i===0?(nu===2?'D':nu===1?'H':'R'):(nu>0?'D':'R');
+        o.textContent=g+' · '+t(SCEN[S.sc].id+'.g'+(i+1)+'.'+key);sel.appendChild(o);
+      });
+      sel.value=S[p][i];
+      sel.addEventListener('change',()=>{S[p][i]=sel.value;refresh(true);});
+      host.appendChild(sel);
+    }
+  });
+}
+function buildPresets(){
+  const mono=[['Aa','Aa'],['AA','aa'],['Aa','aa'],['AA','Aa'],['aa','aa']];
+  const di=[['AaBb','AaBb'],['AABB','aabb'],['AaBb','aabb'],['AABb','aaBb'],['AAbb','aaBB']];
+  const host=ids('presets');host.innerHTML='';
+  (S.ng===1?mono:di).forEach(([a,b])=>{
+    const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=a+' × '+b;
+    c.addEventListener('click',()=>{for(let i=0;i<S.ng;i++){S.p1[i]=a.slice(2*i,2*i+2);S.p2[i]=b.slice(2*i,2*i+2);}buildSelectors();refresh(true);});
+    host.appendChild(c);
+  });
+}
+function hidden(i){return S.predict&&!S.all&&!S.revealed.has(i);}
+function renderGrid(){
+  const {G1,G2,cells}=M,sc=S.sc,nc=G2.length;
+  const el=ids('pun');
+  el.style.gridTemplateColumns='minmax(46px,auto) repeat('+nc+',minmax(0,1fr))';
+  let h='<div class="gh corner">'+t('corner')+'</div>';
+  G2.forEach((g,c)=>{h+='<div class="gh" data-hc="'+c+'">'+g+'<small>♂ '+t('gam')+'</small></div>';});
+  G1.forEach((g,r)=>{
+    h+='<div class="gh" data-hr="'+r+'">'+g+'<small>♀</small></div>';
+    G2.forEach((_,c)=>{
+      const i=r*nc+c,x=cells[i],tint=SCEN[sc].tint[1][x.k[0]];
+      h+='<button type="button" class="cell'+(S.pics?'':' nopic')+(hidden(i)?' hid':'')+'" data-i="'+i+'" data-r="'+r+'" data-c="'+c+'" style="--tint:'+tint+'" title="'+x.gt+' · '+phLabel(x.k)+'">'+
+         '<span class="gt">'+x.gt+'</span>'+org(sc,x.k)+'</button>';
+    });
+  });
+  el.innerHTML=h;
+  $$('.cell',el).forEach(b=>{
+    const hl=on=>{$$('[data-hr="'+b.dataset.r+'"],[data-hc="'+b.dataset.c+'"]',el).forEach(e=>e.classList.toggle('hl',on));};
+    b.addEventListener('mouseenter',()=>hl(true));b.addEventListener('mouseleave',()=>hl(false));
+    b.addEventListener('focus',()=>hl(true));b.addEventListener('blur',()=>hl(false));
+    b.addEventListener('click',()=>{
+      if(!hidden(+b.dataset.i))return;
+      S.revealed.add(+b.dataset.i);b.classList.remove('hid');b.classList.add('pop');
+      if(S.revealed.size===M.cells.length)S.all=true;
+      renderResults();updateReveal();
+    });
+  });
+  ids('crossLabel').textContent=t('cross',{a:S.p1.slice(0,S.ng).join(''),b:S.p2.slice(0,S.ng).join('')});
+  updateReveal();
+}
+function updateReveal(){
+  const b=ids('revealAll');b.style.display=S.predict?'':'none';
+  b.textContent=S.all?t('hideAll'):t('revealAll');
+}
+function bars(host,rows,total,withObs){
+  host.innerHTML=rows.map(r=>{
+    const exp=r.exp*100,obs=withObs?(total?r.obs/total*100:0):exp;
+    return '<div class="brow">'+org(S.sc,r.k)+'<div><div class="lab"><span>'+phLabel(r.k)+'</span><span>'+
+      (withObs?fmt(obs,1)+' % · '+t('esp')+' '+fmt(exp,1)+' %':(r.q?frac(r.n,M.T):'?'))+'</span></div>'+
+      '<div class="track"><div class="fill" style="width:'+(withObs?obs:(r.q?exp:0))+'%;background:'+SCEN[S.sc].tint[1][r.k[0]]+'"></div>'+
+      (withObs?'<div class="tick" style="left:calc('+exp+'% - 1px)"></div>':'')+'</div></div></div>';
+  }).join('');
+}
+function renderResults(){
+  const known=!S.predict||S.all;
+  const rows=M.ph.map(p=>({k:p.k,n:p.n,exp:p.n/M.T,q:known}));
+  bars(ids('phTable'),rows,0,false);
+  const g=gcd2(M.ph.map(p=>p.n));
+  ids('ratio').textContent=known?M.ph.map(p=>p.n/g).join(' : '):'? : ?';
+  ids('gtList').innerHTML=known?[...M.gt.entries()].sort((a,b)=>a[0]<b[0]?-1:1).map(([gt,n])=>'<dt>'+gt+'</dt><dd>'+frac(n,M.T)+'</dd>').join(''):'<dt>?</dt><dd>?</dd>';
+}
+const gcd2=a=>a.reduce((x,y)=>gcd(x,y));
+function renderSim(){
+  const rows=M.ph.map(p=>({k:p.k,exp:p.n/M.T,obs:S.obs[keyOf(p.k)]||0}));
+  bars(ids('simBars'),rows,S.N,true);
+  ids('simN').textContent=S.N;
+  let dev=0;rows.forEach(r=>{dev=Math.max(dev,Math.abs((S.N?r.obs/S.N:0)-r.exp)*100);});
+  ids('simDev').textContent=S.N?fmt(dev,1)+' '+t('pp'):'—';
+  ids('strip').innerHTML=S.last.map(k=>org(S.sc,k)).join('');
+}
+function addOffspring(n){
+  const {G1,G2}=M;
+  for(let i=0;i<n;i++){
+    const a=G1[Math.floor(Math.random()*G1.length)],b=G2[Math.floor(Math.random()*G2.length)];
+    const k=phKeys(combine(a,b)),kk=keyOf(k);
+    S.obs[kk]=(S.obs[kk]||0)+1;S.N++;
+    S.last.push(k);if(S.last.length>40)S.last.shift();
+  }
+  renderSim();
+}
+function resetSim(){S.obs={};S.N=0;S.last=[];}
+function refresh(resetAll){
+  M=model();
+  if(resetAll){S.revealed=new Set();S.all=!S.predict;resetSim();}
+  renderGrid();renderResults();renderSim();
+}
+
+/* ================== eventos ================== */
+function buildScen(){
+  const s=ids('scen');s.innerHTML='';
+  SCEN.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t('sc.'+x.id);s.appendChild(o);});
+  s.value=S.sc;
+}
+ids('scen').addEventListener('change',e=>{S.sc=+e.target.value;buildSelectors();refresh(true);});
+$$('#ngSeg button').forEach(b=>b.addEventListener('click',()=>{
+  S.ng=+b.dataset.ng;
+  $$('#ngSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  const def=S.ng===1?['Aa','Bb']:['Aa','Bb'];S.p1=S.p1.map((v,i)=>v||def[i]);S.p2=S.p2.map((v,i)=>v||def[i]);
+  buildSelectors();buildPresets();refresh(true);
+}));
+ids('pics').addEventListener('change',e=>{S.pics=e.target.checked;renderGrid();});
+ids('predict').addEventListener('change',e=>{S.predict=e.target.checked;S.revealed=new Set();S.all=!S.predict;renderGrid();renderResults();});
+ids('revealAll').addEventListener('click',()=>{
+  if(S.all){S.all=false;S.revealed=new Set();}else{S.all=true;}
+  renderGrid();renderResults();
+});
+$$('[data-add]').forEach(b=>b.addEventListener('click',()=>addOffspring(+b.dataset.add)));
+ids('simReset').addEventListener('click',()=>{resetSim();renderSim();});
+document.addEventListener('langchange',()=>{buildScen();buildSelectors();buildPresets();if(M){renderGrid();renderResults();renderSim();}});
+
+initLang();
+buildScen();buildSelectors();buildPresets();
+$$('#ngSeg button').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.ng===S.ng)));
+applyLang();
+refresh(true);
+</script>
+</body>
+</html>
