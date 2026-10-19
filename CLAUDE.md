@@ -7,6 +7,7 @@
   - `niv`: llista de nivells entre `Primària`, `1r ESO`, `2n ESO`, `3r ESO`, `4t ESO`, `Batxillerat`. Si s'omet o és `[]`, el recurs és general i apareix en tots els nivells d'ESO i Batxillerat (no en Primària).
   - `bloc`: només per als recursos de mates, un dels blocs del currículum: `Numèric`, `Algebraic`, `Funcions`, `Espacial i geometria`.
   - `tipus`: llista entre `Simulador`, `Full de treball`, `Línia del temps`, `Joc`, `Aventura`.
+  - El buscador de la portada indexa `t`, `d`, `tag`, `sub`, nom de categoria, `niv`, `bloc` i `tipus` (sense accents ni majúscules): convé que el text de la targeta continga els mots que un company buscaria.
   - Si cal un valor nou, afegir-lo també a les constants `NIVELLS`, `BLOCS` o `TIPUS` del script de la portada; si no, el filtre no el mostrarà.
 
 # Versions en castellà (`es/`)

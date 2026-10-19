@@ -65,7 +65,19 @@ h1 em { font-style: normal; color: var(--c-mates); }
 .lede { color: var(--muted); font-size: 1.1rem; max-width: 38rem; margin: 0; }
 
 /* Filtres */
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.75rem 0 0.9rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.9rem; }
+.search { position: relative; max-width: 30rem; margin: 1.75rem 0 0.9rem; }
+.search input {
+  width: 100%; font: inherit; font-size: 1rem; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 999px; padding: 0.6rem 2.6rem 0.6rem 2.6rem; appearance: none;
+}
+.search input::placeholder { color: var(--muted); }
+.search input::-webkit-search-cancel-button { display: none; }
+.search .ico { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 1rem; }
+.search .clear { position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; line-height: 1; }
+.search .clear[hidden] { display: none; }
+.search .clear:hover { color: var(--ink); }
+.search input:focus-visible { outline-offset: 2px; }
 .filters { display: grid; gap: 0.55rem; margin: 0 0 0.9rem; }
 .fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; }
 .flabel { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); min-width: 6.5rem; }
@@ -142,6 +154,11 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
     <p class="lede">Activitats interactives per a l'alumnat. Tria una categoria o entra directament en un recurs: cada pàgina funciona sola, al mòbil i a l'ordinador.</p>
   </header>
 
+  <div class="search" role="search">
+    <span class="ico" aria-hidden="true">⌕</span>
+    <input id="q" type="search" placeholder="Busca un recurs: Pitàgores, matrius, gasos…" aria-label="Busca un recurs" autocomplete="off" spellcheck="false">
+    <button class="clear" id="qclear" type="button" aria-label="Esborra la cerca" hidden>×</button>
+  </div>
   <nav class="chips" id="chips" aria-label="Categories"></nav>
   <div class="filters" id="filters"></div>
   <p class="status" id="status" aria-live="polite"></p>
@@ -231,18 +248,24 @@ const GROUPS = [
   { g: 'bloc',  label: 'Bloc de mates',     vals: BLOCS },
   { g: 'tipus', label: 'Tipus de recurs',   vals: TIPUS },
 ];
-const F = { cat: 'tot', niv: '', bloc: '', tipus: '' };
+const F = { cat: 'tot', niv: '', bloc: '', tipus: '', q: '' };
+// Cerca: sense accents ni majúscules; totes les paraules han d'aparéixer (títol, descripció, etiqueta, subcategoria, nivell, bloc, tipus).
+const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const catName = Object.fromEntries(CATS.map((c) => [c.id, c.n]));
+RES.forEach((r) => { r._s = norm([r.t, r.d, r.tag, r.sub || '', catName[r.cat], (r.niv || []).join(' '), r.bloc || '', (r.tipus || []).join(' ')].join(' ')); });
+const words = () => norm(F.q).split(/\s+/).filter(Boolean);
 
 function match(r, g, v) {
   if (!v || v === 'tot') return true;
   if (g === 'cat') return r.cat === v;
+  if (g === 'q') return words().every((w) => r._s.includes(w));
   if (g === 'niv') return (r.niv || []).length ? r.niv.includes(v) : v !== 'Primària'; // sense `niv` = ESO i Batxillerat
   if (g === 'bloc') return r.bloc === v;
   if (g === 'tipus') return (r.tipus || []).includes(v);
   return true;
 }
 // Recursos que passen tots els filtres actius, tret del grup `skip` (per als comptadors de cada xip).
-const pass = (r, skip) => ['cat', 'niv', 'bloc', 'tipus'].every((g) => g === skip || match(r, g, F[g]));
+const pass = (r, skip) => ['cat', 'niv', 'bloc', 'tipus', 'q'].every((g) => g === skip || match(r, g, F[g]));
 const countFor = (g, v) => RES.filter((r) => pass(r, g) && match(r, g, v)).length;
 
 const chip = (g, v, label, n, extra = '', cls = '') => {
@@ -265,7 +288,7 @@ function renderFilters() {
 }
 function renderStatus() {
   const n = RES.filter((r) => pass(r)).length;
-  const active = F.cat !== 'tot' || F.niv || F.bloc || F.tipus;
+  const active = F.cat !== 'tot' || F.niv || F.bloc || F.tipus || F.q.trim();
   $('#status').innerHTML = `<span>${active ? `Mostrant ${n} de ${RES.length} recursos` : `${RES.length} recursos`}</span>` +
     (active ? '<button class="reset" id="reset" type="button">Neteja els filtres</button>' : '');
 }
@@ -279,7 +302,7 @@ function card(r) {
     <div class="tag"><span>${r.tag}</span><span class="go">Obri →</span></div></a>`;
 }
 function renderSections() {
-  const filtered = F.niv || F.bloc || F.tipus;
+  const filtered = F.niv || F.bloc || F.tipus || F.q.trim();
   const list = CATS.filter((c) => F.cat === 'tot' || F.cat === c.id);
   let html = list.map((c) => {
     const all = RES.filter((r) => r.cat === c.id);
@@ -309,18 +332,23 @@ function renderSections() {
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   const ok = { cat: ['tot', ...CATS.map((c) => c.id)], niv: NIVELLS, bloc: BLOCS, tipus: TIPUS };
-  for (const g of Object.keys(F)) { const v = p.get(g); F[g] = v && ok[g].includes(v) ? v : (g === 'cat' ? 'tot' : ''); }
+  for (const g of Object.keys(ok)) { const v = p.get(g); F[g] = v && ok[g].includes(v) ? v : (g === 'cat' ? 'tot' : ''); }
+  F.q = (p.get('q') || '').slice(0, 80);
 }
 function writeHash() {
   const p = new URLSearchParams();
-  for (const g of Object.keys(F)) if (F[g] && F[g] !== 'tot') p.set(g, F[g]);
+  for (const g of Object.keys(F)) if (F[g] && F[g] !== 'tot' && (g !== 'q' || F.q.trim())) p.set(g, F[g]);
   const h = p.toString();
   history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : ''));
 }
-function render() { renderChips(); renderFilters(); renderStatus(); renderSections(); writeHash(); }
+function syncSearch() {
+  const i = $('#q'); if (i.value !== F.q) i.value = F.q;
+  $('#qclear').hidden = !F.q;
+}
+function render() { syncSearch(); renderChips(); renderFilters(); renderStatus(); renderSections(); writeHash(); }
 
 document.addEventListener('click', (e) => {
-  if (e.target.closest('#reset')) { Object.assign(F, { cat: 'tot', niv: '', bloc: '', tipus: '' }); render(); return; }
+  if (e.target.closest('#reset')) { Object.assign(F, { cat: 'tot', niv: '', bloc: '', tipus: '', q: '' }); render(); return; }
   const b = e.target.closest('.chip[data-g]'); if (!b || b.disabled) return;
   const { g, v } = b.dataset;
   F[g] = g === 'cat' ? v : (F[g] === v ? '' : v);
@@ -328,6 +356,9 @@ document.addEventListener('click', (e) => {
   const again = document.querySelector(`.chip[data-g="${g}"][data-v="${v}"]`);
   if (again) again.focus({ preventScroll: true });
 });
+$('#q').addEventListener('input', (e) => { F.q = e.target.value.slice(0, 80); render(); });
+$('#q').addEventListener('keydown', (e) => { if (e.key === 'Escape' && F.q) { F.q = ''; render(); } });
+$('#qclear').addEventListener('click', () => { F.q = ''; render(); $('#q').focus(); });
 window.addEventListener('hashchange', () => { readHash(); render(); });
 readHash(); render();
 </script>
