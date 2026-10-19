@@ -25,3 +25,8 @@
 - Les fonts viuen a `tools/simuladors/src/` i les pàgines es generen amb `python3 tools/simuladors/genera.py` (afegir el nou recurs al `MAP` de `genera.py`). Mai s'editen les pàgines generades a mà.
 - Per a cada recurs nou: targeta a `index.html`, les dues URLs al `sitemap.xml`, comptador GoatCounter, enllaç de tornada a la portada i verificar amb Playwright (sense errors de JS, text estàtic = text renderitzat, mode fosc i mòbil de 390 px).
 - Les pàgines estàtiques sense JS poden seguir el flux antic de `tools/genera_es.py` (JSON de parells).
+
+# Química interactiva (estats-materia, ajust-reaccions, dissolucions, mescles-separacio)
+
+- Pàgines generades (va + es) amb `python3 tools/quimica/publica.py`; font a `tools/quimica/` (`sims/<slug>/strings.json` amb `va`/`es`, `body.html`, `sim.js`, `sim.css`). **No s'editen a mà.** Comptador GoatCounter i `base_url` ja configurats a `tools/quimica/config.json`.
+- Les targetes i les 8 URLs del sitemap es mantenen a mà (ja hi són); `tools/genera_es.py` no els toca.

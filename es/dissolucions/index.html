@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Disoluciones y concentración · Soluto, saturación y reto</title>
+<meta name="description" content="Simulador interactivo de disoluciones para ESO: añade soluto, calcula la concentración (g/L, % en masa, mol/L), observa la saturación y la solubilidad según la temperatura, con un reto de 5 tareas.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/dissolucions/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/dissolucions/"><link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/dissolucions/"><link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/dissolucions/">
+<meta property="og:type" content="website"><meta property="og:title" content="Disoluciones y concentración · Soluto, saturación y reto"><meta property="og:description" content="Simulador interactivo de disoluciones para ESO: añade soluto, calcula la concentración (g/L, % en masa, mol/L), observa la saturación y la solubilidad según la temperatura, con un reto de 5 tareas."><meta property="og:url" content="https://ildemoralesmates.github.io/es/dissolucions/"><meta property="og:locale" content="es_ES">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "LearningResource", "name": "Disoluciones y concentración · Soluto, saturación y reto", "description": "Simulador interactivo de disoluciones para ESO: añade soluto, calcula la concentración (g/L, % en masa, mol/L), observa la saturación y la solubilidad según la temperatura, con un reto de 5 tareas.", "inLanguage": "es", "educationalLevel": "ESO", "learningResourceType": "Interactive simulation", "url": "https://ildemoralesmates.github.io/es/dissolucions/"}</script>
+<style>:root{--bg:#f4f6fa;--card:#ffffff;--ink:#1b2333;--mut:#5d687d;--line:#dde2ec;--acc:#2f6fed;--acc2:#e8590c;--ok:#1b9a55;--ko:#d6336c;--chip:#eaf0fd;--cv:#f0f3f9;--shadow:0 1px 3px rgba(20,30,60,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f131b;--card:#171d29;--ink:#e9edf5;--mut:#9aa7bf;--line:#2a3347;--acc:#6ea0ff;--acc2:#ff9a52;--ok:#4cd08a;--ko:#ff7aa8;--chip:#1f2a40;--cv:#111722;--shadow:none}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 16px 40px}
+.top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.crumbs{font-size:.88rem;margin-bottom:4px}
+.crumbs a{color:var(--acc);text-decoration:none}
+.crumbs a:hover{text-decoration:underline}
+h1{font-size:1.55rem;margin:0 0 2px;line-height:1.2}
+h2{font-size:1.15rem;margin:0 0 10px}
+h3{font-size:1rem;margin:14px 0 6px}
+.sub{margin:0;color:var(--mut);max-width:62ch}
+.mut{color:var(--mut);font-size:.9rem}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card)}
+.seg button,.seg a{border:0;background:transparent;color:var(--ink);padding:6px 14px;font:inherit;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-block}
+.seg button[aria-pressed="true"],.seg a[aria-current="true"]{background:var(--acc);color:#fff}
+.seg button:disabled{opacity:.45;cursor:default}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridW{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridW{grid-template-columns:1fr}}
+canvas{width:100%;height:auto;display:block;border-radius:10px;background:var(--cv)}
+.ctrl{margin:6px 0 10px}
+.ctrl label{display:block;font-size:.95rem;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+select,input[type=text],input[type=number]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+select{max-width:100%}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.btn{background:var(--acc);color:#fff;border:1px solid var(--acc);border-radius:8px;padding:7px 14px;font:inherit;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.sm{padding:4px 10px;font-size:.9rem}
+.chip{background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font:inherit;font-size:.88rem;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
+.stat{background:var(--cv);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.stat .k{display:block;font-size:.8rem;color:var(--mut)}
+.stat .v{display:block;font-size:1.15rem;font-weight:600}
+.idea{border-left:4px solid var(--acc);background:var(--chip);padding:8px 12px;border-radius:0 10px 10px 0;margin:10px 0}
+.idea.ok{border-left-color:var(--ok)}
+.idea.ko{border-left-color:var(--ko)}
+.note{color:var(--mut);font-size:.88rem;margin:8px 0 0}
+.fb{margin-top:8px;font-size:.95rem}
+.tag{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:.78rem;color:var(--mut)}
+footer{color:var(--mut);font-size:.82rem;text-align:center;margin-top:20px}
+/* índex */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+a.simcard{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+a.simcard:hover{border-color:var(--acc);transform:translateY(-2px)}
+a.simcard .ic{font-size:2rem;line-height:1}
+a.simcard h2{margin:8px 0 4px}
+a.simcard p{margin:0 0 8px;color:var(--mut);font-size:.93rem}
+@media (prefers-reduced-motion:reduce){a.simcard{transition:none}}
+.topbar{justify-content:space-between;margin-top:0}
+.chalinfo{font-size:.95rem}
+#solWrap{display:flex;gap:6px;align-items:center;min-width:0;max-width:100%}
+#solWrap select{min-width:0}
+.calc div{padding:4px 0;border-top:1px solid var(--line);font-size:.95rem;line-height:1.5}
+.calc div:first-child{border-top:0}
+.calc b{color:var(--acc2)}
+input:disabled{opacity:.5}
+.ctrl.locked label::after{content:" 🔒";font-size:.8em}
+.ctrl input[type=number]{padding:5px 8px}
+.stats .v{font-variant-numeric:tabular-nums}
+</style></head>
+<body><div class="wrap">
+<header class="top">
+<div><nav class="crumbs"><a href="../../">← Aprendre jugant · Química</a></nav><h1>Disoluciones y concentración</h1><p class="sub">Añade soluto al agua y observa cómo cambian la concentración y la saturación. Después, ponte a prueba con el reto.</p></div>
+<div class="ctrls"><div class="seg" role="group" aria-label="Idioma"><a href="../../dissolucions/" hreflang="ca" lang="ca">Valencià</a><a href="#" hreflang="es" lang="es" aria-current="true">Castellano</a></div></div>
+</header>
+<section class="card">
+<div class="row topbar">
+  <div class="seg" role="group" aria-label="Mode">
+    <button id="modeExp" aria-pressed="true">Explora</button>
+    <button id="modeChal" aria-pressed="false">Reto</button>
+  </div>
+  <span id="solWrap"><label for="solSel">Soluto:</label> <select id="solSel"></select></span>
+  <span id="chalInfo" class="chalinfo" hidden><b id="chalProg"></b> · <span id="chalHints"></span> · <span id="chalPts"></span></span>
+</div>
+
+<div id="taskBox" class="idea" hidden>
+  <b id="taskTitle"></b>
+  <p id="taskText" style="margin:4px 0 8px"></p>
+  <div class="row">
+    <button class="btn" id="btnCheck">Comprobar</button>
+    <button class="btn ghost sm" id="btnHint">Pista</button>
+    <button class="btn" id="btnNext" hidden>Siguiente reto →</button>
+  </div>
+  <div id="taskFb" class="fb" role="status" aria-live="polite"></div>
+  <div id="hintBox" class="note" hidden></div>
+</div>
+<div id="endCard" class="idea ok" hidden>
+  <h2 id="endTitle" style="margin:0 0 4px"></h2>
+  <p id="endText" style="margin:0 0 8px"></p>
+  <button class="btn" id="btnRestart">Empezar el reto de nuevo</button>
+</div>
+
+<div class="gridW">
+  <div>
+    <canvas id="beaker" role="img" aria-label="Disoluciones y concentración"></canvas>
+    <div class="ctrl"><label for="vol">Volumen de la disolución: <b id="volOut"></b></label>
+      <input type="range" id="vol" min="50" max="500" step="10" value="250"></div>
+    <div class="ctrl"><label for="temp">Temperatura: <b id="tempOut"></b></label>
+      <input type="range" id="temp" min="0" max="100" step="1" value="20"></div>
+    <div class="ctrl"><label for="mass">Soluto añadido: <b id="massOut"></b></label>
+      <input type="range" id="mass" min="0" max="500" step="0.5" value="0">
+      <div class="row">
+        <input type="number" id="massNum" min="0" max="3000" step="0.1" value="0" aria-label="Soluto añadido (g)" style="width:100px"> <span class="mut">g</span>
+        <button class="btn ghost sm" id="bSub1">−1 g</button>
+        <button class="btn ghost sm" id="bAdd1">+1 g</button>
+        <button class="btn ghost sm" id="bAdd10">+10 g</button>
+        <button class="btn ghost sm" id="bEmpty">Vaciar</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h2>Vista ampliada: partículas de soluto</h2>
+    <canvas id="lens" role="img" aria-label="Vista ampliada: partículas de soluto"></canvas>
+    <p class="note" style="margin-top:4px">Más puntos = disolución más concentrada.</p>
+    <h2 style="margin-top:12px">Solubilidad según la temperatura</h2>
+    <canvas id="solc" role="img" aria-label="Solubilidad según la temperatura"></canvas>
+    <p class="note" id="solInfo" style="margin-top:4px"></p>
+  </div>
+</div>
+
+<div id="satMsg" class="idea" role="status" aria-live="polite"></div>
+<div class="stats">
+  <div class="stat"><span class="k">Concentración en masa</span><span class="v" id="rG"></span></div>
+  <div class="stat"><span class="k">Porcentaje en masa</span><span class="v" id="rP"></span></div>
+  <div class="stat"><span class="k">Concentración molar</span><span class="v" id="rM"></span></div>
+</div>
+<h3>El cálculo</h3>
+<div class="calc mono">
+  <div id="cG"></div><div id="cP"></div><div id="cM"></div>
+</div>
+<p class="note">El volumen indicado es el de la disolución (como en un matraz aforado). Se considera que 1 mL de agua pesa 1 g y que el soluto disuelto ocupa un volumen aproximado, de modo que hay algo menos de agua que el volumen indicado. Las solubilidades son valores aproximados de tablas (g de soluto por 100 g de agua); el sulfato de cobre(II) se da para la sal anhidra.</p>
+</section>
+
+<footer>Hecho para el aula · Un único archivo por animación, funciona sin conexión.</footer>
+</div>
+<script>const LANG="es";const T={"title": "Disoluciones y concentración · Soluto, saturación y reto", "h1": "Disoluciones y concentración", "sub": "Añade soluto al agua y observa cómo cambian la concentración y la saturación. Después, ponte a prueba con el reto.", "description": "Simulador interactivo de disoluciones para ESO: añade soluto, calcula la concentración (g/L, % en masa, mol/L), observa la saturación y la solubilidad según la temperatura, con un reto de 5 tareas.", "card_text": "Añade soluto, observa la saturación y calcula la concentración en g/L, % y mol/L. Incluye un reto de 5 tareas.", "level": "3.º–4.º ESO", "mode_explore": "Explora", "mode_challenge": "Reto", "lbl_solute": "Soluto", "sol_nacl": "Sal común (NaCl)", "sol_sugar": "Azúcar (sacarosa)", "sol_kno3": "Nitrato de potasio (KNO₃)", "sol_cuso4": "Sulfato de cobre(II) anhidro (CuSO₄)", "lbl_volume": "Volumen de la disolución", "lbl_temp": "Temperatura", "lbl_mass": "Soluto añadido", "btn_add1": "+1 g", "btn_add10": "+10 g", "btn_sub1": "−1 g", "btn_empty": "Vaciar", "lens_title": "Vista ampliada: partículas de soluto", "lens_note": "Más puntos = disolución más concentrada.", "sol_title": "Solubilidad según la temperatura", "sol_y": "g de soluto por 100 g de agua", "sol_x": "Temperatura (°C)", "leg_unsat": "No saturada", "leg_sat": "Saturada + precipitado", "r_gL": "Concentración en masa", "r_pct": "Porcentaje en masa", "r_mol": "Concentración molar", "calc_title": "El cálculo", "calc_gL": "c = m / V = {0} g / {1} L = <b>{2} g/L<\/b>", "calc_pct": "% = m<sub>soluto<\/sub> / (m<sub>soluto<\/sub> + m<sub>agua<\/sub>) · 100 = {0} / ({0} + {1}) · 100 = <b>{2} %<\/b>", "calc_mol": "n = m / M<sub>m<\/sub> = {0} g / {1} g/mol = {2} mol → c = n / V = {2} / {3} = <b>{4} mol/L<\/b>", "sat_none": "Todavía no hay soluto añadido.", "sat_unsat": "No saturada: todavía caben {0} g más de soluto.", "sat_just": "Saturada: justo en el límite de solubilidad.", "sat_prec": "Saturada con precipitado: sobran {0} g sin disolver (no cuentan para la concentración).", "sol_info": "Solubilidad a {0} °C: {1} g por cada 100 g de agua (valores aproximados).", "note": "El volumen indicado es el de la disolución (como en un matraz aforado). Se considera que 1 mL de agua pesa 1 g y que el soluto disuelto ocupa un volumen aproximado, de modo que hay algo menos de agua que el volumen indicado. Las solubilidades son valores aproximados de tablas (g de soluto por 100 g de agua); el sulfato de cobre(II) se da para la sal anhidra.", "chal_progress": "Reto {0} de {1}", "chal_hints": "Pistas usadas: {0}", "chal_points": "Puntos: {0} / {1}", "task_title": "Reto {0}", "btn_check": "Comprobar", "btn_hint": "Pista", "btn_next": "Siguiente reto →", "btn_restart": "Empezar el reto de nuevo", "task_1": "Prepara 250 mL de disolución de sal (NaCl) con una concentración de 40 g/L.", "task_2": "Prepara 400 mL de disolución de azúcar al 20 % en masa. Pista: el azúcar ocupa volumen, así que la masa de agua es menor de 400 g.", "task_3": "Prepara 500 mL de disolución de sal (NaCl) 0,5 mol/L. Dato: M<sub>m<\/sub>(NaCl) = 58,44 g/mol.", "task_4": "El KNO₃ es muy sensible a la temperatura. Para 200 mL de disolución a 60 °C, encuentra la masa máxima de KNO₃ que se puede disolver (disolución justo saturada, con una tolerancia de ±3 g).", "task_5": "Tienes 150 g de KNO₃ disueltos en 200 mL de disolución a 80 °C. Enfría lentamente: ¿a qué temperatura aparecen los primeros cristales? Deja la temperatura justo por debajo de ese punto.", "tip1_1": "Usa la concentración en masa: c = m / V. Cuidado: el volumen tiene que ir en litros.", "tip2_1": "m = c · V = 40 g/L · 0,250 L = 10 g.", "tip1_2": "El porcentaje en masa es m(soluto) / m(disolución) · 100. Como el azúcar ocupa volumen, no hay 400 g de agua: fíjate en el % que muestra el simulador y ajusta la masa.", "tip2_2": "Prueba con unos 85–90 g: el agua son unos 400 − 0,63 · m gramos y hace falta que m / (m + agua) = 0,20.", "tip1_3": "Calcula primero los moles (n = c · V) y después pásalos a gramos con la masa molar.", "tip2_3": "n = 0,5 mol/L · 0,5 L = 0,25 mol → m = 0,25 · 58,44 ≈ 14,6 g.", "tip1_4": "Añade soluto poco a poco hasta que empiece a quedar en el fondo. Fíjate en la curva de solubilidad.", "tip2_4": "A 60 °C la solubilidad del KNO₃ es de unos 110 g por cada 100 g de agua; en 200 mL de disolución caben unos 153 g.", "tip1_5": "Baja la temperatura poco a poco: la solubilidad disminuye y el exceso de soluto cristaliza.", "tip2_5": "Busca el punto donde la curva de solubilidad da unos 107 g por cada 100 g de agua (el soluto ocupa volumen, por eso no son 75 g).", "fb_now": "Ahora tienes {0}; el objetivo es {1}.", "fb_t4_low": "Todavía no está saturada: puedes añadir más soluto.", "fb_t4_high": "Te has pasado: ya sobra soluto sin disolver. Quita un poco.", "fb_t4_zero": "Añade soluto y observa cuándo la disolución deja de admitir más.", "fb_t5_none": "Todo el soluto sigue disuelto: baja todavía más la temperatura.", "fb_t5_many": "Ya hay demasiados cristales ({0} g). Sube un poco la temperatura hasta que solo aparezca una pequeña cantidad.", "fb_ok": "¡Correcto! Estrellas ganadas: {0} de 3.", "ok_1": "m = c · V = 40 g/L · 0,25 L = 10 g de sal.", "ok_2": "El 20 % significa 20 g de soluto por cada 100 g de disolución. Como el azúcar ocupa volumen, hacen falta unos 86 g (no 100 g): el agua es menos de 400 g.", "ok_3": "n = 0,5 mol/L · 0,5 L = 0,25 mol, y 0,25 mol · 58,44 g/mol ≈ 14,6 g de sal.", "ok_4": "A 60 °C, en 200 mL de disolución se disuelven unos 153 g de KNO₃ (unos 110 g por cada 100 g de agua).", "ok_5": "La solubilidad del KNO₃ baja al enfriar: hacia los 59 °C ya solo caben 150 g en 200 mL y el resto cristaliza.", "end_title": "¡Reto completado!", "end_text": "Has resuelto los 5 retos con {0} pistas. Puntuación: {1} / {2}."};</script><script>/* Utilitats comunes (T i LANG els injecta build.py abans d'aquest fitxer) */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+function t(k,...a){let s=T[k];if(s===undefined)return k;a.forEach((v,i)=>{s=s.split('{'+i+'}').join(v);});return s;}
+function fmt(x,d=2){return Number(x).toLocaleString(LANG==='va'?'ca-ES':'es-ES',{maximumFractionDigits:d});}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function lerp(a,b,u){return a+(b-a)*u;}
+function ease(u){u=clamp(u,0,1);return u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;}
+function gcd(a,b){return b?gcd(b,a%b):Math.abs(a);}
+
+/* Fórmula en HTML: H2O -> H<sub>2</sub>O */
+function fm(s){return s.replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>');}
+
+/* Colors del tema (es refresquen si canvia el mode clar/fosc) */
+const C={};
+function refreshTheme(){const cs=getComputedStyle(document.documentElement);
+  ['bg','card','ink','mut','line','acc','acc2','ok','ko','chip','cv'].forEach(n=>{C[n]=cs.getPropertyValue('--'+n).trim();});}
+refreshTheme();
+if(window.matchMedia){const mq=matchMedia('(prefers-color-scheme: dark)');
+  (mq.addEventListener?mq.addEventListener.bind(mq,'change'):mq.addListener.bind(mq))(refreshTheme);}
+
+/* Canvas amb unitats lògiques w×h, nítid en pantalles denses */
+function setupCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);
+  c.width=Math.round(w*d);c.height=Math.round(h*d);
+  c.style.aspectRatio=w+' / '+h;
+  const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);
+  c.lw=w;c.lh=h;return x;}
+
+/* Coordenades del ratolí/dit en unitats lògiques */
+function canvasPos(c,ev){const r=c.getBoundingClientRect();
+  const p=ev.touches?ev.touches[0]:ev;
+  return {x:(p.clientX-r.left)*c.lw/r.width,y:(p.clientY-r.top)*c.lh/r.height};}
+
+/* Text amb subíndexs: dibuixa "Fe2O3" a (x,y); align: left|center|right */
+function drawFormula(ctx,s,x,y,size,align,color){
+  size=size||16;const sub=Math.round(size*.68);
+  const parts=[];const re=/([A-Za-z\)\(·→+\-−]+|\d+)/g;let m,prev='';
+  while((m=re.exec(s))){const tok=m[0];
+    const isSub=/^\d+$/.test(tok)&&/[A-Za-z\)]$/.test(prev);
+    parts.push({tok,isSub});prev=tok;}
+  let w=0;parts.forEach(p=>{ctx.font=(p.isSub?sub:size)+'px system-ui,sans-serif';p.w=ctx.measureText(p.tok).width;w+=p.w;});
+  let cx=align==='center'?x-w/2:align==='right'?x-w:x;
+  ctx.fillStyle=color||C.ink;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  parts.forEach(p=>{ctx.font=(p.isSub?sub:size)+'px system-ui,sans-serif';
+    ctx.fillText(p.tok,cx,y+(p.isSub?size*.22:0));cx+=p.w;});
+  return w;}
+
+/* Rectangle arrodonit */
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+/* Bucle d'animació amb dt limitat */
+function loop(fn){let last=performance.now();
+  function f(now){const dt=Math.min((now-last)/1000,.05);last=now;fn(dt,now/1000);requestAnimationFrame(f);}
+  requestAnimationFrame(f);}
+
+/* Preferència de moviment reduït */
+const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+</script><script>(()=>{
+/* ---------- dades: solubilitat (g de solut / 100 g d'aigua) a 0,20,40,60,80,100 °C (aprox.) ---------- */
+const TEMPS=[0,20,40,60,80,100];
+const SOL={
+  nacl: {M:58.44, vs:.37, tab:[35.7,35.9,36.4,37.1,38.0,39.2], dot:'#6c757d', grain:'#ffffff'},
+  sugar:{M:342.3, vs:.63, tab:[179,204,238,287,362,487],        dot:'#f08c00', grain:'#fff8e6'},
+  kno3: {M:101.1, vs:.40, tab:[13.3,31.6,63.9,110,169,246],     dot:'#9c36b5', grain:'#ffffff'},
+  cuso4:{M:159.61,vs:.03, tab:[14.3,20.7,28.5,40,55,75.4],      dot:'#1c7ed6', grain:'#d6e6f7', tint:[30,110,255]}
+};
+function sol100(key,T){const tab=SOL[key].tab;T=clamp(T,0,100);const i=Math.min(4,Math.floor(T/20));
+  return lerp(tab[i],tab[i+1],(T-TEMPS[i])/20);}
+const TASKS=[
+  {id:1,sol:'nacl', V:250,T:20,m:0,  lock:{sol:1,V:1,T:1}, kind:'gL',  target:40, tol:.03},
+  {id:2,sol:'sugar',V:400,T:20,m:0,  lock:{sol:1,V:1,T:1}, kind:'pct', target:20, tolAbs:.4},
+  {id:3,sol:'nacl', V:500,T:20,m:0,  lock:{sol:1,V:1,T:1}, kind:'mol', target:.5, tol:.04},
+  {id:4,sol:'kno3', V:200,T:60,m:0,  lock:{sol:1,V:1,T:1}, kind:'max'},
+  {id:5,sol:'kno3', V:200,T:80,m:150,lock:{sol:1,V:1,mass:1}, kind:'cryst'}
+];
+
+/* ---------- estat ---------- */
+const st={sol:'nacl',V:250,T:20,m:0};
+let dispD=0,mode='explore',lock={};
+const chal={idx:0,solved:[0,0,0,0,0],hints:[0,0,0,0,0]};
+let grains=[],dots=[];
+
+const $b=$('#beaker'),cb=setupCanvas($b,440,480);
+const $l=$('#lens'),cl=setupCanvas($l,460,220);
+const $s=$('#solc'),cs=setupCanvas($s,460,240);
+const el={vol:$('#vol'),temp:$('#temp'),mass:$('#mass'),num:$('#massNum'),sel:$('#solSel')};
+
+function derive(){
+  const S=SOL[st.sol],s=sol100(st.sol,st.T);
+  const cap=s*st.V/(100+s*S.vs);           /* massa màxima dissolta en V mL de dissolució */
+  const dis=Math.min(st.m,cap),und=Math.max(0,st.m-cap);
+  const L=st.V/1000,Vw=st.V-dis*S.vs;       /* massa d'aigua (g) */
+  const cL=dis/L,pct=dis/(dis+Vw)*100,n=dis/S.M,mol=n/L;
+  let state='none';
+  if(st.m>0.0005)state=st.m<cap-0.05?'unsat':st.m<=cap+0.05?'just':'prec';
+  return{S,s,cap,dis,und,L,Vw,cL,pct,n,mol,state};
+}
+
+/* ---------- interfície: textos i controls ---------- */
+function refresh(){
+  const d=derive();
+  $('#volOut').textContent=st.V+' mL';
+  $('#tempOut').textContent=st.T+' °C';
+  $('#massOut').textContent=fmt(st.m,1)+' g';
+  el.vol.value=st.V;el.temp.value=st.T;el.mass.value=Math.min(st.m,+el.mass.max);
+  if(document.activeElement!==el.num)el.num.value=st.m;
+  $('#rG').textContent=fmt(d.cL,1)+' g/L';
+  $('#rP').textContent=fmt(d.pct,2)+' %';
+  $('#rM').textContent=fmt(d.mol,3)+' mol/L';
+  $('#cG').innerHTML=t('calc_gL',fmt(d.dis,2),fmt(d.L,3),fmt(d.cL,1));
+  $('#cP').innerHTML=t('calc_pct',fmt(d.dis,2),fmt(d.Vw,1),fmt(d.pct,2));
+  $('#cM').innerHTML=t('calc_mol',fmt(d.dis,2),fmt(d.S.M,2),fmt(d.n,3),fmt(d.L,3),fmt(d.mol,3));
+  const sm=$('#satMsg');
+  const msgs={none:[t('sat_none'),''],unsat:[t('sat_unsat',fmt(d.cap-st.m,1)),''],just:[t('sat_just'),'ok'],prec:[t('sat_prec',fmt(d.und,1)),'ko']};
+  sm.className='idea '+msgs[d.state][1];sm.textContent=msgs[d.state][0];
+  $('#solInfo').textContent=t('sol_info',st.T,fmt(d.s,1));
+  applyLock();
+}
+function applyLock(){
+  const L=lock;
+  el.sel.disabled=!!L.sol;el.vol.disabled=!!L.V;el.temp.disabled=!!L.T;
+  [el.mass,el.num,$('#bSub1'),$('#bAdd1'),$('#bAdd10'),$('#bEmpty')].forEach(e=>{e.disabled=!!L.mass;});
+  $('#solWrap').hidden=false;
+  el.vol.closest('.ctrl').classList.toggle('locked',!!L.V);
+  el.temp.closest('.ctrl').classList.toggle('locked',!!L.T);
+  el.mass.closest('.ctrl').classList.toggle('locked',!!L.mass);
+}
+function setMass(v,spawn){
+  v=Math.round(clamp(+v||0,0,3000)*10)/10;
+  const dl=v-st.m;
+  if(spawn!==false&&dl>0.2)spawnGrains(dl);
+  st.m=v;refresh();
+}
+function buildSelect(){
+  el.sel.innerHTML=Object.keys(SOL).map(k=>`<option value="${k}">${t('sol_'+k)}</option>`).join('');
+  el.sel.value=st.sol;
+}
+el.sel.onchange=()=>{st.sol=el.sel.value;refresh();};
+el.vol.oninput=()=>{st.V=+el.vol.value;refresh();};
+el.temp.oninput=()=>{st.T=+el.temp.value;refresh();};
+el.mass.oninput=()=>setMass(el.mass.value);
+el.num.oninput=()=>{if(el.num.value!=='')setMass(el.num.value);};
+el.num.onblur=()=>{el.num.value=st.m;};
+$('#bAdd1').onclick=()=>setMass(st.m+1);
+$('#bAdd10').onclick=()=>setMass(st.m+10);
+$('#bSub1').onclick=()=>setMass(st.m-1);
+$('#bEmpty').onclick=()=>{setMass(0,false);};
+
+/* ---------- repte ---------- */
+const stars=i=>Math.max(1,3-chal.hints[i]);
+const totalStars=()=>chal.solved.reduce((a,s,i)=>a+(s?stars(i):0),0);
+function setMode(m){
+  mode=m;
+  $('#modeExp').setAttribute('aria-pressed',m==='explore');
+  $('#modeChal').setAttribute('aria-pressed',m==='chal');
+  $('#chalInfo').hidden=m!=='chal';
+  $('#taskBox').hidden=m!=='chal';
+  $('#endCard').hidden=true;
+  grains=[];
+  if(m==='chal'){applyTask(chal.idx);}
+  else{lock={};st.sol='nacl';st.V=250;st.T=20;st.m=0;dispD=0;el.sel.value=st.sol;refresh();}
+}
+function applyTask(i){
+  const T=TASKS[i];chal.idx=i;lock=T.lock;
+  st.sol=T.sol;st.V=T.V;st.T=T.T;st.m=T.m;el.sel.value=st.sol;
+  dispD=T.m?derive().dis:0;grains=[];
+  $('#taskTitle').textContent=t('task_title',i+1);
+  $('#taskText').innerHTML=t('task_'+T.id);
+  $('#taskFb').textContent='';$('#taskFb').className='fb';
+  $('#hintBox').hidden=true;$('#btnNext').hidden=true;
+  $('#btnCheck').disabled=false;$('#btnHint').hidden=false;
+  refresh();updateChal();
+}
+function updateChal(){
+  const n=TASKS.length,h=chal.hints.reduce((a,b)=>a+b,0);
+  $('#chalProg').textContent=t('chal_progress',chal.idx+1,n);
+  $('#chalHints').textContent=t('chal_hints',h);
+  $('#chalPts').textContent=t('chal_points',totalStars(),n*3);
+  const all=chal.solved.every(Boolean);
+  $('#endCard').hidden=!all;
+  if(all){$('#endTitle').textContent=t('end_title');$('#endText').textContent=t('end_text',h,totalStars(),n*3);}
+}
+function check(){
+  const T=TASKS[chal.idx],d=derive(),fb=$('#taskFb');
+  let ok=false,msg='';
+  if(T.kind==='gL'){ok=Math.abs(d.cL-T.target)/T.target<=T.tol;msg=t('fb_now',fmt(d.cL,1)+' g/L',fmt(T.target,0)+' g/L');}
+  else if(T.kind==='pct'){ok=Math.abs(d.pct-T.target)<=T.tolAbs;msg=t('fb_now',fmt(d.pct,1)+' %',fmt(T.target,0)+' %');}
+  else if(T.kind==='mol'){ok=Math.abs(d.mol-T.target)/T.target<=T.tol;msg=t('fb_now',fmt(d.mol,3)+' mol/L',fmt(T.target,1)+' mol/L');}
+  else if(T.kind==='max'){
+    if(st.m<=0)msg=t('fb_t4_zero');
+    else if(Math.abs(st.m-d.cap)<=3)ok=true;
+    else msg=st.m<d.cap?t('fb_t4_low'):t('fb_t4_high');
+  }else if(T.kind==='cryst'){
+    if(d.und<=0.05)msg=t('fb_t5_none');
+    else if(d.und<=10)ok=true;
+    else msg=t('fb_t5_many',fmt(d.und,1));
+  }
+  if(ok){
+    chal.solved[chal.idx]=1;
+    msg=t('fb_ok',stars(chal.idx))+' '+t('ok_'+T.id);
+    $('#btnNext').hidden=chal.idx>=TASKS.length-1;
+    $('#btnHint').hidden=true;
+  }
+  fb.className='fb '+(ok?'okfb':'');fb.textContent=msg;
+  if(ok)fb.style.color='var(--ok)';else fb.style.color='var(--ko)';
+  updateChal();
+}
+function hint(){
+  const i=chal.idx;if(chal.hints[i]<2)chal.hints[i]++;
+  const hb=$('#hintBox');hb.hidden=false;
+  hb.textContent=t('tip1_'+TASKS[i].id)+(chal.hints[i]>=2?' '+t('tip2_'+TASKS[i].id):'');
+  updateChal();
+}
+$('#modeExp').onclick=()=>setMode('explore');
+$('#modeChal').onclick=()=>setMode('chal');
+$('#btnCheck').onclick=check;
+$('#btnHint').onclick=hint;
+$('#btnNext').onclick=()=>applyTask(chal.idx+1);
+$('#btnRestart').onclick=()=>{chal.idx=0;chal.solved=[0,0,0,0,0];chal.hints=[0,0,0,0,0];$('#endCard').hidden=true;applyTask(0);};
+
+/* ---------- dibuix del got ---------- */
+const BXL=70,BXR=350,BTOP=56,BBOT=416,K=.58,CX=(BXL+BXR)/2;
+const spk=[];for(let i=0;i<260;i++)spk.push({x:Math.random(),y:Math.random()});
+function spawnGrains(dl){
+  const n=clamp(Math.ceil(dl/2),3,16);
+  for(let i=0;i<n;i++)grains.push({x:CX+(Math.random()-.5)*80,y:26+Math.random()*24,vy:0});
+}
+function tColor(T){const u=clamp(T/100,0,1);const a=[84,150,240],b=[240,70,60];return `rgb(${a.map((v,i)=>Math.round(lerp(v,b[i],u))).join(',')})`;}
+function beakerPath(c){const r=20;c.beginPath();c.moveTo(BXL,BTOP);c.lineTo(BXL,BBOT-r);c.arcTo(BXL,BBOT,BXL+r,BBOT,r);
+  c.lineTo(BXR-r,BBOT);c.arcTo(BXR,BBOT,BXR,BBOT-r,r);c.lineTo(BXR,BTOP);}
+function drawBeaker(now,dt,d){
+  const c=cb;c.clearRect(0,0,440,480);
+  const lvl=BBOT-st.V*K;
+  /* placa */
+  c.fillStyle=tColor(st.T);c.globalAlpha=.85;rr(c,46,428,328,16,6);c.fill();c.globalAlpha=1;
+  c.fillStyle=C.mut;rr(c,60,444,300,10,4);c.fill();
+  /* aigua */
+  c.save();beakerPath(c);c.lineTo(BXL,BTOP);c.closePath();c.clip();
+  const tint=d.S.tint;
+  c.fillStyle='rgba(116,192,252,.36)';c.fillRect(BXL,lvl,BXR-BXL,BBOT-lvl);
+  if(tint){const a=clamp((dispD/d.L)/260,0,.8)*.9;c.fillStyle=`rgba(${tint[0]},${tint[1]},${tint[2]},${a})`;c.fillRect(BXL,lvl,BXR-BXL,BBOT-lvl);}
+  c.fillStyle='rgba(255,255,255,.55)';c.fillRect(BXL,lvl,BXR-BXL,2.5);
+  /* pila de cristalls */
+  const u=Math.max(0,st.m-dispD);let pileH=0;
+  if(u>0.04){
+    const w=clamp(30+22*Math.sqrt(u),0,BXR-BXL-14),h=clamp(3+5*Math.sqrt(u),0,130);pileH=h;
+    const y0=BBOT-2;
+    c.beginPath();c.moveTo(CX-w/2,y0);c.bezierCurveTo(CX-w*.3,y0,CX-w*.16,y0-h,CX,y0-h);
+    c.bezierCurveTo(CX+w*.16,y0-h,CX+w*.3,y0,CX+w/2,y0);c.closePath();
+    c.fillStyle=d.S.grain;c.fill();c.lineWidth=1.3;c.strokeStyle=C.mut;c.stroke();
+    c.fillStyle='rgba(0,0,0,.28)';
+    const nsp=Math.min(spk.length,Math.floor(u*5+10));
+    for(let i=0;i<nsp;i++){const p=spk[i];c.fillRect(CX+(p.x-.5)*w*.78*(1-p.y*.8),y0-6-p.y*h*.78,2.6,2.6);}
+  }
+  /* grans que cauen */
+  c.fillStyle=d.S.grain;c.strokeStyle=C.mut;c.lineWidth=1;
+  grains=grains.filter(g=>g.y<BBOT-8-pileH);
+  grains.forEach(g=>{g.vy+=900*dt*(g.y>lvl?.25:1);g.vy=Math.min(g.vy,g.y>lvl?160:700);g.y+=g.vy*dt;c.fillRect(g.x,g.y,5,5);c.strokeRect(g.x,g.y,5,5);});
+  c.restore();
+  /* vapor */
+  if(st.T>=70){c.strokeStyle=C.mut;c.lineWidth=2.5;c.lineCap='round';
+    for(let k=0;k<3;k++){const x0=BXL+60+k*80,al=(st.T-65)/60;c.globalAlpha=clamp(al,0,.45);
+      c.beginPath();for(let q=0;q<=20;q++){const yy=lvl-q*3,xx=x0+Math.sin(now*2+k+q*.35)*6*(q/20+.3);q?c.lineTo(xx,yy):c.moveTo(xx,yy);}c.stroke();}
+    c.globalAlpha=1;}
+  /* graduació */
+  c.fillStyle=C.mut;c.strokeStyle=C.mut;c.lineWidth=1.5;c.font='12px system-ui,sans-serif';c.textAlign='left';c.textBaseline='middle';
+  for(let ml=100;ml<=600;ml+=100){const y=BBOT-ml*K;c.beginPath();c.moveTo(BXL,y);c.lineTo(BXL+18,y);c.stroke();c.fillText(ml,BXL+22,y);}
+  for(let ml=50;ml<600;ml+=100){const y=BBOT-ml*K;c.beginPath();c.moveTo(BXL,y);c.lineTo(BXL+10,y);c.stroke();}
+  /* got */
+  c.strokeStyle=C.mut;c.lineWidth=4;c.lineJoin='round';c.lineCap='round';beakerPath(c);c.stroke();
+  c.beginPath();c.moveTo(BXL-10,BTOP-2);c.lineTo(BXL,BTOP);c.moveTo(BXR+10,BTOP-2);c.lineTo(BXR,BTOP);c.stroke();
+  /* etiqueta de nivell */
+  c.fillStyle=C.ink;c.font='bold 14px system-ui,sans-serif';c.textAlign='left';c.textBaseline='middle';
+  c.strokeStyle=C.ink;c.lineWidth=1.5;c.beginPath();c.moveTo(BXR+2,lvl);c.lineTo(BXR+14,lvl);c.stroke();
+  c.fillText(st.V+' mL',BXR+18,lvl);
+}
+
+/* ---------- vista ampliada ---------- */
+function drawLens(dt,d){
+  const c=cl,W=460,H=220;c.clearRect(0,0,W,H);
+  const tint=d.S.tint;
+  c.fillStyle='rgba(116,192,252,.28)';rr(c,2,2,W-4,H-4,12);c.fill();
+  if(tint){const a=clamp((dispD/d.L)/260,0,.8)*.8;c.fillStyle=`rgba(${tint[0]},${tint[1]},${tint[2]},${a})`;rr(c,2,2,W-4,H-4,12);c.fill();}
+  c.strokeStyle=C.line;c.lineWidth=2;rr(c,2,2,W-4,H-4,12);c.stroke();
+  const molD=(dispD/d.L)/d.S.M,target=Math.min(360,Math.round(molD*45));
+  for(let k=0;k<4;k++){
+    if(dots.length<target)dots.push({x:12+Math.random()*(W-24),y:12+Math.random()*(H-24),a:Math.random()*6.28});
+    else if(dots.length>target)dots.pop();
+  }
+  c.fillStyle=d.S.dot;c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=1;
+  dots.forEach(p=>{p.a+=(Math.random()-.5)*2.4*Math.sqrt(dt)*3;
+    const sp=(20+st.T*.45)*dt;p.x+=Math.cos(p.a)*sp;p.y+=Math.sin(p.a)*sp;
+    if(p.x<9){p.x=9;p.a=Math.PI-p.a;}if(p.x>W-9){p.x=W-9;p.a=Math.PI-p.a;}
+    if(p.y<9){p.y=9;p.a=-p.a;}if(p.y>H-9){p.y=H-9;p.a=-p.a;}
+    c.beginPath();c.arc(p.x,p.y,4.6,0,6.2832);c.fill();c.stroke();});
+  c.font='bold 14px system-ui,sans-serif';const lab=fmt(molD,2)+' mol/L',lw=c.measureText(lab).width;
+  c.fillStyle=C.card;c.globalAlpha=.9;rr(c,8,8,lw+16,24,8);c.fill();c.globalAlpha=1;
+  c.fillStyle=C.ink;c.textAlign='left';c.textBaseline='middle';c.fillText(lab,16,20);
+}
+
+/* ---------- corba de solubilitat ---------- */
+function niceMax(v){const p=Math.pow(10,Math.floor(Math.log10(v)));for(const k of [1,1.5,2,2.5,3,4,5,6,8,10])if(k*p>=v)return k*p;return v;}
+function drawSolub(d){
+  const c=cs,W=460,H=240,ml=56,mr=14,mt=14,mb=58;
+  c.clearRect(0,0,W,H);
+  const tab=d.S.tab,ymax=niceMax(Math.max(...tab)*1.08);
+  const X=T=>ml+T/100*(W-ml-mr),Y=v=>mt+(1-v/ymax)*(H-mt-mb);
+  /* zones */
+  const pts=[];for(let T=0;T<=100;T+=2)pts.push([T,sol100(st.sol,T)]);
+  c.beginPath();c.moveTo(X(0),Y(0));pts.forEach(p=>c.lineTo(X(p[0]),Y(p[1])));c.lineTo(X(100),Y(0));c.closePath();
+  c.fillStyle='rgba(27,154,85,.14)';c.fill();
+  c.beginPath();c.moveTo(X(0),Y(ymax));pts.forEach(p=>c.lineTo(X(p[0]),Y(p[1])));c.lineTo(X(100),Y(ymax));c.closePath();
+  c.fillStyle='rgba(232,89,12,.13)';c.fill();
+  /* graella */
+  c.font='12px system-ui,sans-serif';c.lineWidth=1;c.strokeStyle=C.line;c.fillStyle=C.mut;
+  c.textAlign='right';c.textBaseline='middle';
+  for(let i=0;i<=5;i++){const v=ymax*i/5,y=Y(v);c.beginPath();c.moveTo(ml,y);c.lineTo(W-mr,y);c.stroke();c.fillText(fmt(v,v<10?1:0),ml-6,y);}
+  c.textAlign='center';c.textBaseline='top';
+  for(let T=0;T<=100;T+=20){c.beginPath();c.moveTo(X(T),mt);c.lineTo(X(T),H-mb);c.stroke();c.fillText(T,X(T),H-mb+5);}
+  c.strokeStyle=C.mut;c.lineWidth=1.8;c.beginPath();c.moveTo(ml,mt);c.lineTo(ml,H-mb);c.lineTo(W-mr,H-mb);c.stroke();
+  /* corba */
+  c.beginPath();pts.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));
+  c.strokeStyle=C.acc;c.lineWidth=3.2;c.lineJoin='round';c.stroke();
+  /* marcador */
+  const v=st.m/d.Vw*100,clip=v>ymax,vy=Math.min(v,ymax),mx=X(st.T),my=Y(vy);
+  const below=v<=sol100(st.sol,st.T)+0.05;
+  if(st.m>0){
+    c.setLineDash([3,4]);c.strokeStyle=C.ink;c.globalAlpha=.5;c.lineWidth=1.2;
+    c.beginPath();c.moveTo(mx,my);c.lineTo(mx,H-mb);c.moveTo(mx,my);c.lineTo(ml,my);c.stroke();c.setLineDash([]);c.globalAlpha=1;
+    c.beginPath();c.arc(mx,my,8,0,6.2832);c.fillStyle=below?'#1b9a55':'#e8590c';c.fill();c.lineWidth=3;c.strokeStyle=C.card;c.stroke();
+    if(clip){c.fillStyle=C.ink;c.font='bold 12px system-ui,sans-serif';c.textAlign='left';c.textBaseline='bottom';c.fillText('▲ '+fmt(v,0),mx+10,my+14);}
+  }else{
+    c.beginPath();c.arc(mx,Y(0),5,0,6.2832);c.fillStyle=C.mut;c.fill();
+  }
+  /* eixos i llegenda */
+  c.fillStyle=C.ink;c.font='12px system-ui,sans-serif';c.textAlign='center';c.textBaseline='alphabetic';
+  c.fillText(t('sol_x'),(ml+W-mr)/2,H-mb+34);
+  c.save();c.translate(13,(mt+H-mb)/2);c.rotate(-Math.PI/2);c.fillText(t('sol_y'),0,0);c.restore();
+  c.textAlign='left';c.textBaseline='middle';
+  c.fillStyle='rgba(27,154,85,.55)';c.fillRect(ml,H-12,12,12);c.fillStyle=C.mut;c.fillText(t('leg_unsat'),ml+17,H-6);
+  const x2=ml+150;c.fillStyle='rgba(232,89,12,.55)';c.fillRect(x2,H-12,12,12);c.fillStyle=C.mut;c.fillText(t('leg_sat'),x2+17,H-6);
+}
+
+/* ---------- bucle ---------- */
+buildSelect();setMode('explore');
+loop((dt,now)=>{
+  const d=derive();
+  const diff=d.dis-dispD;dispD+=diff*Math.min(1,dt*2.4);if(Math.abs(d.dis-dispD)<0.004)dispD=d.dis;
+  drawBeaker(now,dt,d);drawLens(dt,d);drawSolub(d);
+});
+})();
+</script><script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body></html>
