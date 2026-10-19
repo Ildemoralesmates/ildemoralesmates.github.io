@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ones sísmiques P i S · Interior de la Terra</title>
+<meta name="description" content="Ones sísmiques P i S: traça de raigs en una Terra esfèrica amb velocitats tipus PREM, zones d'ombra i com deduïm el nucli líquid. Amb test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="gridW">
+<div>
+<canvas id="earth"></canvas>
+<div class="legend">
+<span><i style="background:#9b7653"></i><span data-i18n="leg_crust"></span></span>
+<span><i style="background:#f2b36a"></i><span data-i18n="leg_mantle"></span></span>
+<span><i style="background:#f7d98a"></i><span data-i18n="leg_oc"></span></span>
+<span><i style="background:#fff3c4"></i><span data-i18n="leg_ic"></span></span>
+<span><i style="background:#1d4ed8"></i>P</span>
+<span><i style="background:#c2185b"></i>S</span>
+</div>
+</div>
+<div>
+<div class="row"><button class="btn primary" id="go" data-i18n="go"></button><button class="btn" id="pp"></button></div>
+<div class="ctrl"><label for="sp"><span data-i18n="speed"></span>: <b id="spv"></b></label><input type="range" id="sp" min="0" max="4" step="1" value="2"></div>
+<div class="row">
+<label class="chk"><input type="checkbox" id="showP" checked><span data-i18n="showP"></span></label>
+<label class="chk"><input type="checkbox" id="showS" checked><span data-i18n="showS"></span></label>
+<label class="chk"><input type="checkbox" id="showSh" checked><span data-i18n="showSh"></span></label>
+</div>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="clock"></span><span class="v" id="clock"></span></div>
+<div class="stat"><span class="k" data-i18n="st_p"></span><span class="v" id="stP"></span></div>
+<div class="stat"><span class="k" data-i18n="st_s"></span><span class="v" id="stS"></span></div>
+</div>
+<h3 data-i18n="one_title"></h3>
+<div class="row">
+<label class="chk"><input type="radio" name="wv" value="1" checked>P</label>
+<label class="chk"><input type="radio" name="wv" value="2">S</label>
+</div>
+<div class="ctrl"><label for="ang"><span data-i18n="ang"></span>: <b id="angv"></b>°</label><input type="range" id="ang" min="0" max="45" step="0.05" value="10"></div>
+<div id="oneinfo" class="idea"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="adv_box"></div>
+<p class="note" data-i18n="note"></p>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Ones sísmiques P i S · Interior de la Terra",
+"h1":"Ones P i S: radiografia de la Terra",
+"sim_title":"Trajectòries dels raigs sísmics",
+"leg_crust":"Escorça",
+"leg_mantle":"Mantell",
+"leg_oc":"Nucli extern (líquid)",
+"leg_ic":"Nucli intern (sòlid)",
+"go":"▶ Llança les ones",
+"pause":"⏸ Pausa",
+"resume":"▶ Continua",
+"speed":"Velocitat (× temps real)",
+"showP":"Ones P",
+"showS":"Ones S",
+"showSh":"Zones d’ombra",
+"clock":"Temps des del sisme",
+"st_p":"Ombra de les P",
+"st_s":"Ombra de les S",
+"one_title":"Segueix un raig",
+"ang":"Angle d’eixida (respecte a la vertical)",
+"one_surf":"Torna a la superfície a una distància angular <b>Δ = {0}°</b> i triga <b>{1}</b>.",
+"one_core":"Aquest raig P travessa el nucli: ix a <b>Δ = {0}°</b> després de <b>{1}</b>.",
+"one_liq":"L’ona S <b>no pot entrar</b> al nucli extern líquid: el raig s’acaba a la frontera del nucli (≈ 2891 km).",
+"one_ref":"Aquest raig es reflecteix totalment en una discontinuïtat; no el seguim (no arriba a la superfície com a ona directa).",
+"one_adv":" Paràmetre del raig p = {0} s/° ; punt de gir a {1} km de profunditat.",
+"idea_basic":"<b>Què veus:</b> les ones <b>P</b> (blau, compressives) travessen sòlids i líquids; les <b>S</b> (magenta, transversals) només sòlids. En entrar al nucli les P baixen de velocitat i es desvien: apareix una <b>zona d’ombra</b>. Les S s’aturen al nucli extern: és <b>líquid</b>. (Oldham 1906: hi ha un nucli · Gutenberg 1914: és a ≈ 2900 km · Lehmann 1936: hi ha un nucli intern sòlid.)",
+"adv_box":"<b>Model:</b> raigs en una Terra esfèrica estratificada amb velocitats tipus PREM. La llei de Snell esfèrica diu que <b>p = r·sin i / v</b> és constant al llarg del raig. El raig gira on r/v = p (sin i = 1). Si v baixa en una discontinuïtat (mantell → nucli, 13,7 → 8,1 km/s) el raig s’aproxima a la normal i apareix l’ombra. El càlcul és numèric (pas de 8 km), no un dibuix.",
+"note":"Nota: els llibres clàssics donen una ombra de les P entre ≈104° i ≈142° (models antics i ones difractades). Amb models moderns tipus PREM la P directa desapareix ja prop de 98°; per això les xifres de dalt són les que calcula el programa. Ignorem les reflexions i els raigs gairebé rasants al nucli intern (molt dèbils).",
+"eyebrow":"Geologia · Ciències de la Terra",
+"lede":"Segueix els raigs sísmics per dins del planeta i descobreix per què sabem que el nucli extern és líquid.",
+"w1.q":"Quina ona <b>no</b> pot travessar un líquid?",
+"w1.e":"Les S són transversals i els líquids no suporten esforços de cisallament.",
+"w1.o0":"Les ones P",
+"w1.o1":"Les ones S",
+"w1.o2":"Les dues",
+"w1.o3":"Cap de les dues",
+"w2.q":"Les ones S deixen d’arribar més enllà de ≈103° de l’epicentre. Què en deduïm?",
+"w2.e":"Les S arriben fins on el mantell sòlid les deixa i s’aturen en entrar al nucli extern líquid.",
+"w2.o0":"Que la Terra és buida",
+"w2.o1":"Que el nucli extern és líquid",
+"w2.o2":"Que el mantell és líquid",
+"w2.o3":"Que les S són més lentes i es perden",
+"w3.q":"Quina ona arriba primer a un sismògraf?",
+"w3.e":"P = «primària»: v<sub>P</sub> ≈ 1,7·v<sub>S</sub> al mantell.",
+"w3.o0":"La P, perquè és més ràpida",
+"w3.o1":"La S, perquè és més energètica",
+"w3.o2":"Arriben a la vegada",
+"w4.q":"Segons la simulació, la zona d’ombra de les ones P és aproximadament…",
+"w4.e":"Després de ≈100° les P que no entren al nucli ja no arriben; les que el travessen ixen més enllà de ≈143°.",
+"w4.o0":"de 0° a 30°",
+"w4.o1":"de ≈100° a ≈143°",
+"w4.o2":"de ≈143° a 180°",
+"w4.o3":"de 60° a 90°",
+"w5.q":"Per l’escorça, v<sub>P</sub> = 8 km/s i v<sub>S</sub> = 4,5 km/s. Si l’endarreriment S–P és de 40 s, a quina distància és el focus?",
+"w5.e":"d·(1/4,5 − 1/8) = 40 → d ≈ 411 km.",
+"w5.u":"km",
+"w6.q":"Per què es desvia cap a la normal un raig P en entrar al nucli?",
+"w6.e":"Snell: sin i₁/v₁ = sin i₂/v₂; si v₂ < v₁ llavors i₂ < i₁.",
+"w6.o0":"Perquè la velocitat disminueix (13,7 → 8,1 km/s)",
+"w6.o1":"Perquè la velocitat augmenta",
+"w6.o2":"Perquè el nucli és més fred",
+"w6.o3":"Perquè s’hi reflecteix totalment",
+"w7.q":"Què es conserva al llarg d’un raig en una Terra amb simetria esfèrica?",
+"w7.e":"És la llei de Snell esfèrica: com que r canvia, i no es conserva però p sí.",
+"w7.o0":"L’angle d’incidència i",
+"w7.o1":"La velocitat v",
+"w7.o2":"El paràmetre p = r·sin i / v",
+"w7.o3":"La distància al centre r"
+},
+es:{
+"title":"Ondas sísmicas P y S · Interior de la Tierra",
+"h1":"Ondas P y S: radiografía de la Tierra",
+"sim_title":"Trayectorias de los rayos sísmicos",
+"leg_crust":"Corteza",
+"leg_mantle":"Manto",
+"leg_oc":"Núcleo externo (líquido)",
+"leg_ic":"Núcleo interno (sólido)",
+"go":"▶ Lanzar las ondas",
+"pause":"⏸ Pausa",
+"resume":"▶ Continuar",
+"speed":"Velocidad (× tiempo real)",
+"showP":"Ondas P",
+"showS":"Ondas S",
+"showSh":"Zonas de sombra",
+"clock":"Tiempo desde el sismo",
+"st_p":"Sombra de las P",
+"st_s":"Sombra de las S",
+"one_title":"Sigue un rayo",
+"ang":"Ángulo de salida (respecto a la vertical)",
+"one_surf":"Vuelve a la superficie a una distancia angular <b>Δ = {0}°</b> y tarda <b>{1}</b>.",
+"one_core":"Este rayo P atraviesa el núcleo: sale a <b>Δ = {0}°</b> tras <b>{1}</b>.",
+"one_liq":"La onda S <b>no puede entrar</b> en el núcleo externo líquido: el rayo termina en la frontera del núcleo (≈ 2891 km).",
+"one_ref":"Este rayo se refleja totalmente en una discontinuidad; no lo seguimos (no llega a la superficie como onda directa).",
+"one_adv":" Parámetro del rayo p = {0} s/° ; punto de giro a {1} km de profundidad.",
+"idea_basic":"<b>Qué ves:</b> las ondas <b>P</b> (azul, compresivas) atraviesan sólidos y líquidos; las <b>S</b> (magenta, transversales) solo sólidos. Al entrar en el núcleo las P bajan de velocidad y se desvían: aparece una <b>zona de sombra</b>. Las S se detienen en el núcleo externo: es <b>líquido</b>. (Oldham 1906: hay un núcleo · Gutenberg 1914: está a ≈ 2900 km · Lehmann 1936: hay un núcleo interno sólido.)",
+"adv_box":"<b>Modelo:</b> rayos en una Tierra esférica estratificada con velocidades tipo PREM. La ley de Snell esférica dice que <b>p = r·sin i / v</b> es constante a lo largo del rayo. El rayo gira donde r/v = p (sin i = 1). Si v baja en una discontinuidad (manto → núcleo, 13,7 → 8,1 km/s) el rayo se acerca a la normal y aparece la sombra. El cálculo es numérico (paso de 8 km), no un dibujo.",
+"note":"Nota: los libros clásicos dan una sombra de las P entre ≈104° y ≈142° (modelos antiguos y ondas difractadas). Con modelos modernos tipo PREM la P directa desaparece ya cerca de 98°; por eso las cifras de arriba son las que calcula el programa. Ignoramos las reflexiones y los rayos casi rasantes en el núcleo interno (muy débiles).",
+"eyebrow":"Geología · Ciencias de la Tierra",
+"lede":"Sigue los rayos sísmicos por dentro del planeta y descubre por qué sabemos que el núcleo externo es líquido.",
+"w1.q":"¿Qué onda <b>no</b> puede atravesar un líquido?",
+"w1.e":"Las S son transversales y los líquidos no soportan esfuerzos cortantes.",
+"w1.o0":"Las ondas P",
+"w1.o1":"Las ondas S",
+"w1.o2":"Ambas",
+"w1.o3":"Ninguna de las dos",
+"w2.q":"Las ondas S dejan de llegar más allá de ≈103° del epicentro. ¿Qué deducimos?",
+"w2.e":"Las S llegan hasta donde el manto sólido las deja y se detienen al entrar en el núcleo externo líquido.",
+"w2.o0":"Que la Tierra es hueca",
+"w2.o1":"Que el núcleo externo es líquido",
+"w2.o2":"Que el manto es líquido",
+"w2.o3":"Que las S son más lentas y se pierden",
+"w3.q":"¿Qué onda llega primero a un sismógrafo?",
+"w3.e":"P = «primaria»: v<sub>P</sub> ≈ 1,7·v<sub>S</sub> en el manto.",
+"w3.o0":"La P, porque es más rápida",
+"w3.o1":"La S, porque es más energética",
+"w3.o2":"Llegan a la vez",
+"w4.q":"Según la simulación, la zona de sombra de las ondas P es aproximadamente…",
+"w4.e":"Pasados ≈100° las P que no entran en el núcleo ya no llegan; las que lo atraviesan salen más allá de ≈143°.",
+"w4.o0":"de 0° a 30°",
+"w4.o1":"de ≈100° a ≈143°",
+"w4.o2":"de ≈143° a 180°",
+"w4.o3":"de 60° a 90°",
+"w5.q":"Por la corteza, v<sub>P</sub> = 8 km/s y v<sub>S</sub> = 4,5 km/s. Si el retardo S–P es de 40 s, ¿a qué distancia está el foco?",
+"w5.e":"d·(1/4,5 − 1/8) = 40 → d ≈ 411 km.",
+"w5.u":"km",
+"w6.q":"¿Por qué se desvía hacia la normal un rayo P al entrar en el núcleo?",
+"w6.e":"Snell: sin i₁/v₁ = sin i₂/v₂; si v₂ < v₁ entonces i₂ < i₁.",
+"w6.o0":"Porque la velocidad disminuye (13,7 → 8,1 km/s)",
+"w6.o1":"Porque la velocidad aumenta",
+"w6.o2":"Porque el núcleo es más frío",
+"w6.o3":"Porque se refleja totalmente",
+"w7.q":"¿Qué se conserva a lo largo de un rayo en una Tierra con simetría esférica?",
+"w7.e":"Es la ley de Snell esférica: como r cambia, i no se conserva pero p sí.",
+"w7.o0":"El ángulo de incidencia i",
+"w7.o1":"La velocidad v",
+"w7.o2":"El parámetro p = r·sin i / v",
+"w7.o3":"La distancia al centro r"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Trazado de rayos en una Tierra esférica (modelo tipo PREM simplificado) ===== */
+const R_E=6371;
+/* [profundidad km, vP km/s, vS km/s]; profundidades repetidas = discontinuidades */
+const EARTH=[[0,5.8,3.2],[15,5.8,3.2],[15,6.8,3.9],[24.4,6.8,3.9],[24.4,8.11,4.49],[220,8.56,4.64],[400,8.91,4.77],[400,9.13,4.93],[600,10.16,5.51],[670,10.27,5.57],[670,10.75,5.95],[771,11.07,6.24]];
+/* manto inferior, núcleo externo e interno: polinomios de PREM (Dziewonski & Anderson 1981), x = r/R */
+for(let d=871;d<2741;d+=100){const x=(R_E-d)/R_E;EARTH.push([d,24.952-40.4673*x+51.4832*x*x-26.6419*x*x*x,11.1671-13.7818*x+17.4575*x*x-9.2777*x*x*x]);}
+EARTH.push([2741,13.68,7.27],[2891,13.72,7.26],[2891,8.06,0]);
+for(let d=2991;d<5150;d+=100){const x=(R_E-d)/R_E;EARTH.push([d,11.0487-4.0362*x+4.8023*x*x-13.5732*x*x*x,0]);}
+EARTH.push([5150,10.36,0],[5150,11.03,3.5]);
+for(let d=5250;d<6371;d+=200){const x=(R_E-d)/R_E;EARTH.push([d,11.2622-6.364*x*x,3.6678-4.4475*x*x]);}
+EARTH.push([6371,11.26,3.67]);
+function velAt(r,k){
+  const d=Math.min(Math.max(R_E-r,0),R_E);
+  for(let i=0;i<EARTH.length-1;i++){const a=EARTH[i],b=EARTH[i+1];
+    if(b[0]>a[0]&&d>=a[0]&&d<=b[0]){return a[k]+(b[k]-a[k])*(d-a[0])/(b[0]-a[0]);}}
+  return EARTH[EARTH.length-1][k];
+}
+/* k=1 onda P, k=2 onda S; i0deg = ángulo de salida respecto a la vertical */
+function traceRay(k,i0deg){
+  const R=R_E,ds=8,i0=i0deg*Math.PI/180;
+  const p=R*Math.sin(i0)/velAt(R,k);            /* parámetro del rayo (s/rad), constante */
+  let r=R-1e-6,phi=0,tm=0,dir=1,flips=0,core=false,ended='lost',minr=R,vPrev=velAt(r,k);
+  const PH=[0],RR=[R],TT=[0];
+  for(let n=1;n<=9000;n++){
+    const v=velAt(r,k);
+    if(v<0.001){ended='liquid';break;}
+    let s=p*v/r;
+    if(s>=0.99999){
+      if(Math.abs(v-vPrev)/vPrev>0.04){ended='reflected';break;}  /* reflexión total en una discontinuidad: no la seguimos */
+      if(dir===1){dir=-1;flips++;if(flips>60){ended='trapped';break;}}   /* punto de giro: el rayo vuelve hacia arriba */
+      s=0.99999;
+    }
+    const c=Math.sqrt(1-s*s);
+    r-=dir*ds*c;phi+=ds*s/Math.max(r,1);tm+=ds/v;vPrev=v;
+    if(r<minr)minr=r;
+    if(r<3480)core=true;
+    if(r>=R){r=R;PH.push(phi);RR.push(r);TT.push(tm);ended='surface';break;}
+    if(r<ds){phi+=Math.PI;r=ds;dir=-1;}            /* rayo que pasa por el centro */
+    if(n%3===0){PH.push(phi);RR.push(r);TT.push(tm);}
+  }
+  if(ended!=='surface'){PH.push(phi);RR.push(r);TT.push(tm);}
+  return {phi:PH,r:RR,t:TT,ended,core,p,T:tm,delta:phi*180/Math.PI,turn:R-minr};
+}
+
+/* ===== Ondas P y S e interior de la Tierra ===== */
+
+/* --- rayos precalculados --- */
+const ANGLES=[];for(let a=0;a<=20;a+=0.5)ANGLES.push(a);ANGLES.push(13.4,13.95);for(let a=21.5;a<=45;a+=1.5)ANGLES.push(a);ANGLES.sort((x,y)=>x-y);
+const weak=x=>x.core&&x.turn>5150&&x.turn<5250;
+const foldD=d=>d>180?360-d:d;
+const mkFan=k=>ANGLES.map(a=>Object.assign({a},traceRay(k,a))).filter(x=>(x.ended==='surface'&&x.delta<360&&!weak(x))||(k===2&&x.ended==='liquid'));
+const FAN={1:mkFan(1),2:mkFan(2)};
+let pMantleMax=0,pCoreMin=999,sMax=0;
+for(let a=13.3;a<=14.6;a+=0.02){const x=traceRay(1,a);if(x.ended==='surface'&&!x.core)pMantleMax=Math.max(pMantleMax,x.delta);const y=traceRay(2,a);if(y.ended==='surface')sMax=Math.max(sMax,y.delta);}
+for(let a=0.5;a<=13.35;a+=0.1){const x=traceRay(1,a);if(x.ended==='surface'&&x.core&&x.delta<360&&!weak(x))pCoreMin=Math.min(pCoreMin,foldD(x.delta));}
+const TMAX=Math.max(...[1,2].flatMap(k=>FAN[k].map(x=>x.T)));
+const SPEEDS=[30,60,120,240,480];
+
+/* --- dibujo --- */
+const ctx=fitCanvas($('#earth'),700,700);
+const CX=350,CY=350,RP=300,K=RP/R_E;
+const pos=(r,phi,mir)=>{const x=CX+r*K*Math.sin(phi),y=CY-r*K*Math.cos(phi);return [mir?2*CX-x:x,y];};
+const idxAt=(arr,T)=>{let lo=0,hi=arr.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(arr[m]<=T)lo=m;else hi=m-1;}return lo;};
+function mmss(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function layer(r,col){ctx.beginPath();ctx.arc(CX,CY,r*K,0,2*Math.PI);ctx.fillStyle=col;ctx.fill();}
+function drawRay(ray,T,color,lw,alpha,mir,dotR){
+  if(T<=0)return;
+  const i=idxAt(ray.t,T),n=ray.t.length;
+  ctx.beginPath();
+  for(let j=0;j<=i;j++){const [x,y]=pos(ray.r[j],ray.phi[j],mir);j?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  let hx,hy;
+  if(i<n-1){const f=(T-ray.t[i])/(ray.t[i+1]-ray.t[i]);[hx,hy]=pos(ray.r[i]+(ray.r[i+1]-ray.r[i])*f,ray.phi[i]+(ray.phi[i+1]-ray.phi[i])*f,mir);ctx.lineTo(hx,hy);}
+  else{[hx,hy]=pos(ray.r[n-1],ray.phi[n-1],mir);}
+  ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.globalAlpha=alpha;ctx.stroke();ctx.globalAlpha=1;
+  if(i<n-1){ctx.beginPath();ctx.arc(hx,hy,dotR,0,2*Math.PI);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke();}
+  else if(ray.ended==='surface'){ctx.beginPath();ctx.arc(hx,hy,dotR,0,2*Math.PI);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke();}
+  else if(ray.ended==='liquid'){ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(hx-4,hy-4);ctx.lineTo(hx+4,hy+4);ctx.moveTo(hx+4,hy-4);ctx.lineTo(hx-4,hy+4);ctx.stroke();}
+}
+function arcBand(d1,d2,rad,col){
+  ctx.strokeStyle=col;ctx.lineWidth=6;ctx.globalAlpha=.55;
+  const a1=-Math.PI/2+d1*Math.PI/180,a2=-Math.PI/2+d2*Math.PI/180;
+  ctx.beginPath();ctx.arc(CX,CY,rad,a1,a2);ctx.stroke();
+  ctx.beginPath();ctx.arc(CX,CY,rad,Math.PI-a2,Math.PI-a1);ctx.stroke();
+  ctx.globalAlpha=1;
+}
+let T=0,playing=true,last=performance.now(),custom=null;
+const cP='#1d4ed8',cS='#c2185b';
+function visible(x){return App.level==='adv'||x.a%1===0||x.a>20||x.a===13.4||x.a===13.95;}
+function draw(){
+  ctx.fillStyle=css('--cv');ctx.fillRect(0,0,700,700);
+  layer(R_E,'#9b7653');layer(R_E-35,'#f2b36a');layer(3480,'#f7d98a');layer(1221.5,'#fff3c4');
+  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=1;[3480,1221.5].forEach(r=>{ctx.beginPath();ctx.arc(CX,CY,r*K,0,2*Math.PI);ctx.stroke();});
+  /* marcas de distancia angular */
+  ctx.fillStyle=css('--mut');ctx.font='11px system-ui';ctx.textAlign='center';
+  for(let d=0;d<=180;d+=30){const th=-Math.PI/2+d*Math.PI/180;ctx.fillText(d+'°',CX+(RP+36)*Math.cos(th),CY+(RP+36)*Math.sin(th)+4);}
+  if($('#showSh').checked){arcBand(pMantleMax,pCoreMin,RP+9,cP);arcBand(sMax,180,RP+17,cS);}
+  [1,2].forEach(k=>{
+    if(!$(k===1?'#showP':'#showS').checked)return;
+    FAN[k].filter(visible).forEach(x=>[false,true].forEach(m=>drawRay(x,T,k===1?cP:cS,1.1,.55,m,3.2)));
+  });
+  if(custom){drawRay(custom,T,css('--ink'),2.6,1,false,5);}
+  ctx.beginPath();ctx.arc(CX,CY-RP,7,0,2*Math.PI);ctx.fillStyle='#ffd43b';ctx.fill();ctx.strokeStyle='#333';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.textAlign='left';
+  $('#clock').textContent=mmss(Math.min(T,TMAX))+' min';
+}
+function loop(now){
+  const dt=Math.min((now-last)/1000,0.1);last=now;
+  if(playing&&T<TMAX+25)T+=dt*SPEEDS[+$('#sp').value];
+  draw();requestAnimationFrame(loop);
+}
+
+/* --- controles --- */
+function updOne(){
+  const k=+document.querySelector('input[name=wv]:checked').value,a=+$('#ang').value;
+  $('#angv').textContent=nf(a,2);
+  custom=traceRay(k,a);
+  let msg;
+  if(custom.ended==='surface'&&custom.delta<360)msg=t(custom.core?'one_core':'one_surf',nf(foldD(custom.delta),1),mmss(custom.T)+' min');
+  else if(custom.ended==='liquid')msg=t('one_liq');
+  else msg=t('one_ref');
+  if(App.level==='adv'&&k)msg+=tt('one_adv',nf(custom.p*Math.PI/180,2),nf(custom.turn,0));
+  $('#oneinfo').innerHTML=msg;
+}
+function updTexts(){
+  $('#spv').textContent='×'+SPEEDS[+$('#sp').value];
+  $('#pp').textContent=t(playing?'pause':'resume');
+  $('#stP').textContent='≈ '+nf(pMantleMax,0)+'° – '+nf(pCoreMin,0)+'°';
+  $('#stS').textContent='> '+nf(sMax,0)+'°';
+  updOne();
+}
+$('#go').onclick=()=>{T=0;playing=true;updTexts();};
+$('#pp').onclick=()=>{playing=!playing;updTexts();};
+$('#sp').oninput=updTexts;
+$('#ang').oninput=updOne;
+$$('input[name=wv]').forEach(r=>r.onchange=updOne);
+App.hooks.push(updTexts);
+requestAnimationFrame(loop);
+
+/* --- preguntas --- */
+
+const QDATA=[{"id":"w1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"w2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"w3","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"w4","lvl":"all","type":"mc","n":4,"ans":1},{"id":"w5","lvl":"adv","type":"num","num":411.4285714285715,"tol":0.02,"u":1},{"id":"w6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"w7","lvl":"adv","type":"mc","n":4,"ans":2}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

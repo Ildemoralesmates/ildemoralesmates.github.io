@@ -15,12 +15,16 @@ R=Path(__file__).resolve().parent
 OUT=R/'.build'; REPO=R.parent.parent
 BASE='https://ildemoralesmates.github.io'
 subprocess.run([sys.executable,str(R/'build.py')],check=True,cwd=R,stdout=subprocess.DEVNULL)
-MAP={'punnett':'genetica-punnett','atoms':'models-atomics','gasos':'lleis-gasos','seleccio':'seleccio-natural'}
+MAP={'punnett':'genetica-punnett','atoms':'models-atomics','gasos':'lleis-gasos','seleccio':'seleccio-natural','richter':'escala-richter','ones':'ones-sismiques','decay':'desintegracio-radioactiva','isostasia':'isostasia'}
 DESC={'ca':{'gasos':"Simulador cinètic de gas ideal: lleis de Boyle–Mariotte, Charles i Gay-Lussac amb pressió mesurada a partir dels xocs, gràfiques i taula de mesures."},
  'es':{'punnett':"Simulador de genética mendeliana: cuadros de Punnett para uno y dos genes, dominancia completa e incompleta, y simulación de descendientes.",
  'atoms':"Simulador de los modelos atómicos de Thomson, Rutherford y Bohr: dispersión de partículas alfa con fuerza de Coulomb real y saltos electrónicos entre niveles.",
  'gasos':"Simulador cinético de gas ideal: leyes de Boyle–Mariotte, Charles y Gay-Lussac con presión medida a partir de los choques, gráficas y tabla de medidas.",
- 'seleccio':"Simulador de selección natural: una población de escarabajos con color heredable, depredadores que ven mejor a los menos camuflados, y generaciones que se adaptan al entorno."}}
+ 'seleccio':"Simulador de selección natural: una población de escarabajos con color heredable, depredadores que ven mejor a los menos camuflados, y generaciones que se adaptan al entorno.",
+ 'richter':"Escala de Richter: compara dos terremotos y comprueba cómo cada punto de magnitud multiplica la amplitud por 10 y la energía por ≈32. Con sismograma, equivalencias y test autocorregido.",
+ 'ones':"Ondas sísmicas P y S: trazado de rayos en una Tierra esférica con velocidades tipo PREM, zonas de sombra y cómo deducimos el núcleo líquido. Con test autocorregido.",
+ 'decay':"Desintegración radiactiva y datación radiométrica: átomos que se desintegran al azar, periodo de semidesintegración y cálculo de la edad de una muestra. Con test autocorregido.",
+ 'isostasia':"Isostasia: montañas con raíces (modelo de Airy) y rebote glaciar con un manto viscoso. Simulación interactiva con test autocorregido."}}
 FOOT={'ca':('Recursos de matemàtiques','deed.ca','Les imatges i materials de tercers conserven la seua pròpia llicència.'),
       'es':('Recursos de matemáticas','deed.es','Las imágenes y materiales de terceros conservan su propia licencia.')}
 BACK_CSS=".back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}\n.back:hover{color:var(--ink);text-decoration:underline}\n.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}\n"

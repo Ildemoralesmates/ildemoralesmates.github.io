@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ondas sísmicas P y S · Interior de la Tierra</title>
+<meta name="description" content="Ondas sísmicas P y S: trazado de rayos en una Tierra esférica con velocidades tipo PREM, zonas de sombra y cómo deducimos el núcleo líquido. Con test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/ones-sismiques/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/ones-sismiques/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/ones-sismiques/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/ones-sismiques/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Ondas sísmicas P y S · Interior de la Tierra">
+<meta property="og:description" content="Ondas sísmicas P y S: trazado de rayos en una Tierra esférica con velocidades tipo PREM, zonas de sombra y cómo deducimos el núcleo líquido. Con test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/ones-sismiques/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Geología · Ciencias de la Tierra</p>
+      <h1 data-i18n="h1">Ondas P y S: radiografía de la Tierra</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Sigue los rayos sísmicos por dentro del planeta y descubre por qué sabemos que el núcleo externo es líquido.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Trayectorias de los rayos sísmicos</h2>
+<div class="gridW">
+<div>
+<canvas id="earth"></canvas>
+<div class="legend">
+<span><i style="background:#9b7653"></i><span data-i18n="leg_crust">Corteza</span></span>
+<span><i style="background:#f2b36a"></i><span data-i18n="leg_mantle">Manto</span></span>
+<span><i style="background:#f7d98a"></i><span data-i18n="leg_oc">Núcleo externo (líquido)</span></span>
+<span><i style="background:#fff3c4"></i><span data-i18n="leg_ic">Núcleo interno (sólido)</span></span>
+<span><i style="background:#1d4ed8"></i>P</span>
+<span><i style="background:#c2185b"></i>S</span>
+</div>
+</div>
+<div>
+<div class="row"><button class="btn primary" id="go" data-i18n="go">▶ Lanzar las ondas</button><button class="btn" id="pp"></button></div>
+<div class="ctrl"><label for="sp"><span data-i18n="speed">Velocidad (× tiempo real)</span>: <b id="spv"></b></label><input type="range" id="sp" min="0" max="4" step="1" value="2"></div>
+<div class="row">
+<label class="chk"><input type="checkbox" id="showP" checked><span data-i18n="showP">Ondas P</span></label>
+<label class="chk"><input type="checkbox" id="showS" checked><span data-i18n="showS">Ondas S</span></label>
+<label class="chk"><input type="checkbox" id="showSh" checked><span data-i18n="showSh">Zonas de sombra</span></label>
+</div>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="clock">Tiempo desde el sismo</span><span class="v" id="clock"></span></div>
+<div class="stat"><span class="k" data-i18n="st_p">Sombra de las P</span><span class="v" id="stP"></span></div>
+<div class="stat"><span class="k" data-i18n="st_s">Sombra de las S</span><span class="v" id="stS"></span></div>
+</div>
+<h3 data-i18n="one_title">Sigue un rayo</h3>
+<div class="row">
+<label class="chk"><input type="radio" name="wv" value="1" checked>P</label>
+<label class="chk"><input type="radio" name="wv" value="2">S</label>
+</div>
+<div class="ctrl"><label for="ang"><span data-i18n="ang">Ángulo de salida (respecto a la vertical)</span>: <b id="angv"></b>°</label><input type="range" id="ang" min="0" max="45" step="0.05" value="10"></div>
+<div id="oneinfo" class="idea"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Qué ves:</b> las ondas <b>P</b> (azul, compresivas) atraviesan sólidos y líquidos; las <b>S</b> (magenta, transversales) solo sólidos. Al entrar en el núcleo las P bajan de velocidad y se desvían: aparece una <b>zona de sombra</b>. Las S se detienen en el núcleo externo: es <b>líquido</b>. (Oldham 1906: hay un núcleo · Gutenberg 1914: está a ≈ 2900 km · Lehmann 1936: hay un núcleo interno sólido.)</div>
+<div class="idea" data-lvl="adv" data-i18n-html="adv_box"><b>Modelo:</b> rayos en una Tierra esférica estratificada con velocidades tipo PREM. La ley de Snell esférica dice que <b>p = r·sin i / v</b> es constante a lo largo del rayo. El rayo gira donde r/v = p (sin i = 1). Si v baja en una discontinuidad (manto → núcleo, 13,7 → 8,1 km/s) el rayo se acerca a la normal y aparece la sombra. El cálculo es numérico (paso de 8 km), no un dibujo.</div>
+<p class="note" data-i18n="note">Nota: los libros clásicos dan una sombra de las P entre ≈104° y ≈142° (modelos antiguos y ondas difractadas). Con modelos modernos tipo PREM la P directa desaparece ya cerca de 98°; por eso las cifras de arriba son las que calcula el programa. Ignoramos las reflexiones y los rayos casi rasantes en el núcleo interno (muy débiles).</p>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Ones sísmiques P i S · Interior de la Terra",
+"h1":"Ones P i S: radiografia de la Terra",
+"sim_title":"Trajectòries dels raigs sísmics",
+"leg_crust":"Escorça",
+"leg_mantle":"Mantell",
+"leg_oc":"Nucli extern (líquid)",
+"leg_ic":"Nucli intern (sòlid)",
+"go":"▶ Llança les ones",
+"pause":"⏸ Pausa",
+"resume":"▶ Continua",
+"speed":"Velocitat (× temps real)",
+"showP":"Ones P",
+"showS":"Ones S",
+"showSh":"Zones d’ombra",
+"clock":"Temps des del sisme",
+"st_p":"Ombra de les P",
+"st_s":"Ombra de les S",
+"one_title":"Segueix un raig",
+"ang":"Angle d’eixida (respecte a la vertical)",
+"one_surf":"Torna a la superfície a una distància angular <b>Δ = {0}°</b> i triga <b>{1}</b>.",
+"one_core":"Aquest raig P travessa el nucli: ix a <b>Δ = {0}°</b> després de <b>{1}</b>.",
+"one_liq":"L’ona S <b>no pot entrar</b> al nucli extern líquid: el raig s’acaba a la frontera del nucli (≈ 2891 km).",
+"one_ref":"Aquest raig es reflecteix totalment en una discontinuïtat; no el seguim (no arriba a la superfície com a ona directa).",
+"one_adv":" Paràmetre del raig p = {0} s/° ; punt de gir a {1} km de profunditat.",
+"idea_basic":"<b>Què veus:</b> les ones <b>P</b> (blau, compressives) travessen sòlids i líquids; les <b>S</b> (magenta, transversals) només sòlids. En entrar al nucli les P baixen de velocitat i es desvien: apareix una <b>zona d’ombra</b>. Les S s’aturen al nucli extern: és <b>líquid</b>. (Oldham 1906: hi ha un nucli · Gutenberg 1914: és a ≈ 2900 km · Lehmann 1936: hi ha un nucli intern sòlid.)",
+"adv_box":"<b>Model:</b> raigs en una Terra esfèrica estratificada amb velocitats tipus PREM. La llei de Snell esfèrica diu que <b>p = r·sin i / v</b> és constant al llarg del raig. El raig gira on r/v = p (sin i = 1). Si v baixa en una discontinuïtat (mantell → nucli, 13,7 → 8,1 km/s) el raig s’aproxima a la normal i apareix l’ombra. El càlcul és numèric (pas de 8 km), no un dibuix.",
+"note":"Nota: els llibres clàssics donen una ombra de les P entre ≈104° i ≈142° (models antics i ones difractades). Amb models moderns tipus PREM la P directa desapareix ja prop de 98°; per això les xifres de dalt són les que calcula el programa. Ignorem les reflexions i els raigs gairebé rasants al nucli intern (molt dèbils).",
+"eyebrow":"Geologia · Ciències de la Terra",
+"lede":"Segueix els raigs sísmics per dins del planeta i descobreix per què sabem que el nucli extern és líquid.",
+"w1.q":"Quina ona <b>no</b> pot travessar un líquid?",
+"w1.e":"Les S són transversals i els líquids no suporten esforços de cisallament.",
+"w1.o0":"Les ones P",
+"w1.o1":"Les ones S",
+"w1.o2":"Les dues",
+"w1.o3":"Cap de les dues",
+"w2.q":"Les ones S deixen d’arribar més enllà de ≈103° de l’epicentre. Què en deduïm?",
+"w2.e":"Les S arriben fins on el mantell sòlid les deixa i s’aturen en entrar al nucli extern líquid.",
+"w2.o0":"Que la Terra és buida",
+"w2.o1":"Que el nucli extern és líquid",
+"w2.o2":"Que el mantell és líquid",
+"w2.o3":"Que les S són més lentes i es perden",
+"w3.q":"Quina ona arriba primer a un sismògraf?",
+"w3.e":"P = «primària»: v<sub>P</sub> ≈ 1,7·v<sub>S</sub> al mantell.",
+"w3.o0":"La P, perquè és més ràpida",
+"w3.o1":"La S, perquè és més energètica",
+"w3.o2":"Arriben a la vegada",
+"w4.q":"Segons la simulació, la zona d’ombra de les ones P és aproximadament…",
+"w4.e":"Després de ≈100° les P que no entren al nucli ja no arriben; les que el travessen ixen més enllà de ≈143°.",
+"w4.o0":"de 0° a 30°",
+"w4.o1":"de ≈100° a ≈143°",
+"w4.o2":"de ≈143° a 180°",
+"w4.o3":"de 60° a 90°",
+"w5.q":"Per l’escorça, v<sub>P</sub> = 8 km/s i v<sub>S</sub> = 4,5 km/s. Si l’endarreriment S–P és de 40 s, a quina distància és el focus?",
+"w5.e":"d·(1/4,5 − 1/8) = 40 → d ≈ 411 km.",
+"w5.u":"km",
+"w6.q":"Per què es desvia cap a la normal un raig P en entrar al nucli?",
+"w6.e":"Snell: sin i₁/v₁ = sin i₂/v₂; si v₂ < v₁ llavors i₂ < i₁.",
+"w6.o0":"Perquè la velocitat disminueix (13,7 → 8,1 km/s)",
+"w6.o1":"Perquè la velocitat augmenta",
+"w6.o2":"Perquè el nucli és més fred",
+"w6.o3":"Perquè s’hi reflecteix totalment",
+"w7.q":"Què es conserva al llarg d’un raig en una Terra amb simetria esfèrica?",
+"w7.e":"És la llei de Snell esfèrica: com que r canvia, i no es conserva però p sí.",
+"w7.o0":"L’angle d’incidència i",
+"w7.o1":"La velocitat v",
+"w7.o2":"El paràmetre p = r·sin i / v",
+"w7.o3":"La distància al centre r"
+},
+es:{
+"title":"Ondas sísmicas P y S · Interior de la Tierra",
+"h1":"Ondas P y S: radiografía de la Tierra",
+"sim_title":"Trayectorias de los rayos sísmicos",
+"leg_crust":"Corteza",
+"leg_mantle":"Manto",
+"leg_oc":"Núcleo externo (líquido)",
+"leg_ic":"Núcleo interno (sólido)",
+"go":"▶ Lanzar las ondas",
+"pause":"⏸ Pausa",
+"resume":"▶ Continuar",
+"speed":"Velocidad (× tiempo real)",
+"showP":"Ondas P",
+"showS":"Ondas S",
+"showSh":"Zonas de sombra",
+"clock":"Tiempo desde el sismo",
+"st_p":"Sombra de las P",
+"st_s":"Sombra de las S",
+"one_title":"Sigue un rayo",
+"ang":"Ángulo de salida (respecto a la vertical)",
+"one_surf":"Vuelve a la superficie a una distancia angular <b>Δ = {0}°</b> y tarda <b>{1}</b>.",
+"one_core":"Este rayo P atraviesa el núcleo: sale a <b>Δ = {0}°</b> tras <b>{1}</b>.",
+"one_liq":"La onda S <b>no puede entrar</b> en el núcleo externo líquido: el rayo termina en la frontera del núcleo (≈ 2891 km).",
+"one_ref":"Este rayo se refleja totalmente en una discontinuidad; no lo seguimos (no llega a la superficie como onda directa).",
+"one_adv":" Parámetro del rayo p = {0} s/° ; punto de giro a {1} km de profundidad.",
+"idea_basic":"<b>Qué ves:</b> las ondas <b>P</b> (azul, compresivas) atraviesan sólidos y líquidos; las <b>S</b> (magenta, transversales) solo sólidos. Al entrar en el núcleo las P bajan de velocidad y se desvían: aparece una <b>zona de sombra</b>. Las S se detienen en el núcleo externo: es <b>líquido</b>. (Oldham 1906: hay un núcleo · Gutenberg 1914: está a ≈ 2900 km · Lehmann 1936: hay un núcleo interno sólido.)",
+"adv_box":"<b>Modelo:</b> rayos en una Tierra esférica estratificada con velocidades tipo PREM. La ley de Snell esférica dice que <b>p = r·sin i / v</b> es constante a lo largo del rayo. El rayo gira donde r/v = p (sin i = 1). Si v baja en una discontinuidad (manto → núcleo, 13,7 → 8,1 km/s) el rayo se acerca a la normal y aparece la sombra. El cálculo es numérico (paso de 8 km), no un dibujo.",
+"note":"Nota: los libros clásicos dan una sombra de las P entre ≈104° y ≈142° (modelos antiguos y ondas difractadas). Con modelos modernos tipo PREM la P directa desaparece ya cerca de 98°; por eso las cifras de arriba son las que calcula el programa. Ignoramos las reflexiones y los rayos casi rasantes en el núcleo interno (muy débiles).",
+"eyebrow":"Geología · Ciencias de la Tierra",
+"lede":"Sigue los rayos sísmicos por dentro del planeta y descubre por qué sabemos que el núcleo externo es líquido.",
+"w1.q":"¿Qué onda <b>no</b> puede atravesar un líquido?",
+"w1.e":"Las S son transversales y los líquidos no soportan esfuerzos cortantes.",
+"w1.o0":"Las ondas P",
+"w1.o1":"Las ondas S",
+"w1.o2":"Ambas",
+"w1.o3":"Ninguna de las dos",
+"w2.q":"Las ondas S dejan de llegar más allá de ≈103° del epicentro. ¿Qué deducimos?",
+"w2.e":"Las S llegan hasta donde el manto sólido las deja y se detienen al entrar en el núcleo externo líquido.",
+"w2.o0":"Que la Tierra es hueca",
+"w2.o1":"Que el núcleo externo es líquido",
+"w2.o2":"Que el manto es líquido",
+"w2.o3":"Que las S son más lentas y se pierden",
+"w3.q":"¿Qué onda llega primero a un sismógrafo?",
+"w3.e":"P = «primaria»: v<sub>P</sub> ≈ 1,7·v<sub>S</sub> en el manto.",
+"w3.o0":"La P, porque es más rápida",
+"w3.o1":"La S, porque es más energética",
+"w3.o2":"Llegan a la vez",
+"w4.q":"Según la simulación, la zona de sombra de las ondas P es aproximadamente…",
+"w4.e":"Pasados ≈100° las P que no entran en el núcleo ya no llegan; las que lo atraviesan salen más allá de ≈143°.",
+"w4.o0":"de 0° a 30°",
+"w4.o1":"de ≈100° a ≈143°",
+"w4.o2":"de ≈143° a 180°",
+"w4.o3":"de 60° a 90°",
+"w5.q":"Por la corteza, v<sub>P</sub> = 8 km/s y v<sub>S</sub> = 4,5 km/s. Si el retardo S–P es de 40 s, ¿a qué distancia está el foco?",
+"w5.e":"d·(1/4,5 − 1/8) = 40 → d ≈ 411 km.",
+"w5.u":"km",
+"w6.q":"¿Por qué se desvía hacia la normal un rayo P al entrar en el núcleo?",
+"w6.e":"Snell: sin i₁/v₁ = sin i₂/v₂; si v₂ < v₁ entonces i₂ < i₁.",
+"w6.o0":"Porque la velocidad disminuye (13,7 → 8,1 km/s)",
+"w6.o1":"Porque la velocidad aumenta",
+"w6.o2":"Porque el núcleo es más frío",
+"w6.o3":"Porque se refleja totalmente",
+"w7.q":"¿Qué se conserva a lo largo de un rayo en una Tierra con simetría esférica?",
+"w7.e":"Es la ley de Snell esférica: como r cambia, i no se conserva pero p sí.",
+"w7.o0":"El ángulo de incidencia i",
+"w7.o1":"La velocidad v",
+"w7.o2":"El parámetro p = r·sin i / v",
+"w7.o3":"La distancia al centro r"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../ones-sismiques/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Trazado de rayos en una Tierra esférica (modelo tipo PREM simplificado) ===== */
+const R_E=6371;
+/* [profundidad km, vP km/s, vS km/s]; profundidades repetidas = discontinuidades */
+const EARTH=[[0,5.8,3.2],[15,5.8,3.2],[15,6.8,3.9],[24.4,6.8,3.9],[24.4,8.11,4.49],[220,8.56,4.64],[400,8.91,4.77],[400,9.13,4.93],[600,10.16,5.51],[670,10.27,5.57],[670,10.75,5.95],[771,11.07,6.24]];
+/* manto inferior, núcleo externo e interno: polinomios de PREM (Dziewonski & Anderson 1981), x = r/R */
+for(let d=871;d<2741;d+=100){const x=(R_E-d)/R_E;EARTH.push([d,24.952-40.4673*x+51.4832*x*x-26.6419*x*x*x,11.1671-13.7818*x+17.4575*x*x-9.2777*x*x*x]);}
+EARTH.push([2741,13.68,7.27],[2891,13.72,7.26],[2891,8.06,0]);
+for(let d=2991;d<5150;d+=100){const x=(R_E-d)/R_E;EARTH.push([d,11.0487-4.0362*x+4.8023*x*x-13.5732*x*x*x,0]);}
+EARTH.push([5150,10.36,0],[5150,11.03,3.5]);
+for(let d=5250;d<6371;d+=200){const x=(R_E-d)/R_E;EARTH.push([d,11.2622-6.364*x*x,3.6678-4.4475*x*x]);}
+EARTH.push([6371,11.26,3.67]);
+function velAt(r,k){
+  const d=Math.min(Math.max(R_E-r,0),R_E);
+  for(let i=0;i<EARTH.length-1;i++){const a=EARTH[i],b=EARTH[i+1];
+    if(b[0]>a[0]&&d>=a[0]&&d<=b[0]){return a[k]+(b[k]-a[k])*(d-a[0])/(b[0]-a[0]);}}
+  return EARTH[EARTH.length-1][k];
+}
+/* k=1 onda P, k=2 onda S; i0deg = ángulo de salida respecto a la vertical */
+function traceRay(k,i0deg){
+  const R=R_E,ds=8,i0=i0deg*Math.PI/180;
+  const p=R*Math.sin(i0)/velAt(R,k);            /* parámetro del rayo (s/rad), constante */
+  let r=R-1e-6,phi=0,tm=0,dir=1,flips=0,core=false,ended='lost',minr=R,vPrev=velAt(r,k);
+  const PH=[0],RR=[R],TT=[0];
+  for(let n=1;n<=9000;n++){
+    const v=velAt(r,k);
+    if(v<0.001){ended='liquid';break;}
+    let s=p*v/r;
+    if(s>=0.99999){
+      if(Math.abs(v-vPrev)/vPrev>0.04){ended='reflected';break;}  /* reflexión total en una discontinuidad: no la seguimos */
+      if(dir===1){dir=-1;flips++;if(flips>60){ended='trapped';break;}}   /* punto de giro: el rayo vuelve hacia arriba */
+      s=0.99999;
+    }
+    const c=Math.sqrt(1-s*s);
+    r-=dir*ds*c;phi+=ds*s/Math.max(r,1);tm+=ds/v;vPrev=v;
+    if(r<minr)minr=r;
+    if(r<3480)core=true;
+    if(r>=R){r=R;PH.push(phi);RR.push(r);TT.push(tm);ended='surface';break;}
+    if(r<ds){phi+=Math.PI;r=ds;dir=-1;}            /* rayo que pasa por el centro */
+    if(n%3===0){PH.push(phi);RR.push(r);TT.push(tm);}
+  }
+  if(ended!=='surface'){PH.push(phi);RR.push(r);TT.push(tm);}
+  return {phi:PH,r:RR,t:TT,ended,core,p,T:tm,delta:phi*180/Math.PI,turn:R-minr};
+}
+
+/* ===== Ondas P y S e interior de la Tierra ===== */
+
+/* --- rayos precalculados --- */
+const ANGLES=[];for(let a=0;a<=20;a+=0.5)ANGLES.push(a);ANGLES.push(13.4,13.95);for(let a=21.5;a<=45;a+=1.5)ANGLES.push(a);ANGLES.sort((x,y)=>x-y);
+const weak=x=>x.core&&x.turn>5150&&x.turn<5250;
+const foldD=d=>d>180?360-d:d;
+const mkFan=k=>ANGLES.map(a=>Object.assign({a},traceRay(k,a))).filter(x=>(x.ended==='surface'&&x.delta<360&&!weak(x))||(k===2&&x.ended==='liquid'));
+const FAN={1:mkFan(1),2:mkFan(2)};
+let pMantleMax=0,pCoreMin=999,sMax=0;
+for(let a=13.3;a<=14.6;a+=0.02){const x=traceRay(1,a);if(x.ended==='surface'&&!x.core)pMantleMax=Math.max(pMantleMax,x.delta);const y=traceRay(2,a);if(y.ended==='surface')sMax=Math.max(sMax,y.delta);}
+for(let a=0.5;a<=13.35;a+=0.1){const x=traceRay(1,a);if(x.ended==='surface'&&x.core&&x.delta<360&&!weak(x))pCoreMin=Math.min(pCoreMin,foldD(x.delta));}
+const TMAX=Math.max(...[1,2].flatMap(k=>FAN[k].map(x=>x.T)));
+const SPEEDS=[30,60,120,240,480];
+
+/* --- dibujo --- */
+const ctx=fitCanvas($('#earth'),700,700);
+const CX=350,CY=350,RP=300,K=RP/R_E;
+const pos=(r,phi,mir)=>{const x=CX+r*K*Math.sin(phi),y=CY-r*K*Math.cos(phi);return [mir?2*CX-x:x,y];};
+const idxAt=(arr,T)=>{let lo=0,hi=arr.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(arr[m]<=T)lo=m;else hi=m-1;}return lo;};
+function mmss(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function layer(r,col){ctx.beginPath();ctx.arc(CX,CY,r*K,0,2*Math.PI);ctx.fillStyle=col;ctx.fill();}
+function drawRay(ray,T,color,lw,alpha,mir,dotR){
+  if(T<=0)return;
+  const i=idxAt(ray.t,T),n=ray.t.length;
+  ctx.beginPath();
+  for(let j=0;j<=i;j++){const [x,y]=pos(ray.r[j],ray.phi[j],mir);j?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  let hx,hy;
+  if(i<n-1){const f=(T-ray.t[i])/(ray.t[i+1]-ray.t[i]);[hx,hy]=pos(ray.r[i]+(ray.r[i+1]-ray.r[i])*f,ray.phi[i]+(ray.phi[i+1]-ray.phi[i])*f,mir);ctx.lineTo(hx,hy);}
+  else{[hx,hy]=pos(ray.r[n-1],ray.phi[n-1],mir);}
+  ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.globalAlpha=alpha;ctx.stroke();ctx.globalAlpha=1;
+  if(i<n-1){ctx.beginPath();ctx.arc(hx,hy,dotR,0,2*Math.PI);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke();}
+  else if(ray.ended==='surface'){ctx.beginPath();ctx.arc(hx,hy,dotR,0,2*Math.PI);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke();}
+  else if(ray.ended==='liquid'){ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(hx-4,hy-4);ctx.lineTo(hx+4,hy+4);ctx.moveTo(hx+4,hy-4);ctx.lineTo(hx-4,hy+4);ctx.stroke();}
+}
+function arcBand(d1,d2,rad,col){
+  ctx.strokeStyle=col;ctx.lineWidth=6;ctx.globalAlpha=.55;
+  const a1=-Math.PI/2+d1*Math.PI/180,a2=-Math.PI/2+d2*Math.PI/180;
+  ctx.beginPath();ctx.arc(CX,CY,rad,a1,a2);ctx.stroke();
+  ctx.beginPath();ctx.arc(CX,CY,rad,Math.PI-a2,Math.PI-a1);ctx.stroke();
+  ctx.globalAlpha=1;
+}
+let T=0,playing=true,last=performance.now(),custom=null;
+const cP='#1d4ed8',cS='#c2185b';
+function visible(x){return App.level==='adv'||x.a%1===0||x.a>20||x.a===13.4||x.a===13.95;}
+function draw(){
+  ctx.fillStyle=css('--cv');ctx.fillRect(0,0,700,700);
+  layer(R_E,'#9b7653');layer(R_E-35,'#f2b36a');layer(3480,'#f7d98a');layer(1221.5,'#fff3c4');
+  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=1;[3480,1221.5].forEach(r=>{ctx.beginPath();ctx.arc(CX,CY,r*K,0,2*Math.PI);ctx.stroke();});
+  /* marcas de distancia angular */
+  ctx.fillStyle=css('--mut');ctx.font='11px system-ui';ctx.textAlign='center';
+  for(let d=0;d<=180;d+=30){const th=-Math.PI/2+d*Math.PI/180;ctx.fillText(d+'°',CX+(RP+36)*Math.cos(th),CY+(RP+36)*Math.sin(th)+4);}
+  if($('#showSh').checked){arcBand(pMantleMax,pCoreMin,RP+9,cP);arcBand(sMax,180,RP+17,cS);}
+  [1,2].forEach(k=>{
+    if(!$(k===1?'#showP':'#showS').checked)return;
+    FAN[k].filter(visible).forEach(x=>[false,true].forEach(m=>drawRay(x,T,k===1?cP:cS,1.1,.55,m,3.2)));
+  });
+  if(custom){drawRay(custom,T,css('--ink'),2.6,1,false,5);}
+  ctx.beginPath();ctx.arc(CX,CY-RP,7,0,2*Math.PI);ctx.fillStyle='#ffd43b';ctx.fill();ctx.strokeStyle='#333';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.textAlign='left';
+  $('#clock').textContent=mmss(Math.min(T,TMAX))+' min';
+}
+function loop(now){
+  const dt=Math.min((now-last)/1000,0.1);last=now;
+  if(playing&&T<TMAX+25)T+=dt*SPEEDS[+$('#sp').value];
+  draw();requestAnimationFrame(loop);
+}
+
+/* --- controles --- */
+function updOne(){
+  const k=+document.querySelector('input[name=wv]:checked').value,a=+$('#ang').value;
+  $('#angv').textContent=nf(a,2);
+  custom=traceRay(k,a);
+  let msg;
+  if(custom.ended==='surface'&&custom.delta<360)msg=t(custom.core?'one_core':'one_surf',nf(foldD(custom.delta),1),mmss(custom.T)+' min');
+  else if(custom.ended==='liquid')msg=t('one_liq');
+  else msg=t('one_ref');
+  if(App.level==='adv'&&k)msg+=tt('one_adv',nf(custom.p*Math.PI/180,2),nf(custom.turn,0));
+  $('#oneinfo').innerHTML=msg;
+}
+function updTexts(){
+  $('#spv').textContent='×'+SPEEDS[+$('#sp').value];
+  $('#pp').textContent=t(playing?'pause':'resume');
+  $('#stP').textContent='≈ '+nf(pMantleMax,0)+'° – '+nf(pCoreMin,0)+'°';
+  $('#stS').textContent='> '+nf(sMax,0)+'°';
+  updOne();
+}
+$('#go').onclick=()=>{T=0;playing=true;updTexts();};
+$('#pp').onclick=()=>{playing=!playing;updTexts();};
+$('#sp').oninput=updTexts;
+$('#ang').oninput=updOne;
+$$('input[name=wv]').forEach(r=>r.onchange=updOne);
+App.hooks.push(updTexts);
+requestAnimationFrame(loop);
+
+/* --- preguntas --- */
+
+const QDATA=[{"id":"w1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"w2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"w3","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"w4","lvl":"all","type":"mc","n":4,"ans":1},{"id":"w5","lvl":"adv","type":"num","num":411.4285714285715,"tol":0.02,"u":1},{"id":"w6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"w7","lvl":"adv","type":"mc","n":4,"ans":2}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

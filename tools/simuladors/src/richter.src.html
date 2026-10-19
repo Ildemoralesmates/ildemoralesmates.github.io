@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Escala de Richter · Energia i logaritmes</title>
+<meta name="description" content="Escala de Richter: compara dos terratrèmols i comprova com cada punt de magnitud multiplica l'amplitud per 10 i l'energia per ≈32. Amb sismograma, equivalències i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="grid2">
+<div class="ctrl"><label for="mA"><span data-i18n="mA"></span>: <b id="mAv"></b></label>
+<input type="range" id="mA" min="1" max="9.5" step="0.1" value="5">
+<select id="preA" aria-label="A"></select></div>
+<div class="ctrl"><label for="mB"><span data-i18n="mB"></span>: <b id="mBv"></b></label>
+<input type="range" id="mB" min="1" max="9.5" step="0.1" value="7">
+<select id="preB" aria-label="B"></select></div>
+</div>
+<div class="row"><button class="btn primary" id="shake" data-i18n="shake"></button><span class="mut" data-i18n="seis_note"></span></div>
+<div class="gridS">
+<canvas id="seis"></canvas>
+<div><canvas id="sq"></canvas><p class="note" data-i18n="sq_note"></p></div>
+</div>
+<div id="cmp" class="idea"></div>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="st_amp"></span><span class="v" id="sAmp"></span></div>
+<div class="stat"><span class="k" data-i18n="st_en"></span><span class="v" id="sEn"></span></div>
+<div class="stat" data-lvl="adv"><span class="k">E<sub>A</sub></span><span class="v" id="sEA"></span></div>
+<div class="stat" data-lvl="adv"><span class="k">E<sub>B</sub></span><span class="v" id="sEB"></span></div>
+<div class="stat"><span class="k" data-i18n="st_hiro"></span><span class="v"><span id="sHA"></span> · <span id="sHB"></span></span></div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="adv_box"></div><div id="advcalc" class="mono"></div></div>
+<p class="note" data-i18n-html="note_mw"></p>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Escala de Richter · Energia i logaritmes",
+"h1":"Escala de Richter: cada grau, un món",
+"sim_title":"Comparador de terratrèmols",
+"mA":"Terratrèmol A · magnitud",
+"mB":"Terratrèmol B · magnitud",
+"shake":"⚡ Terratrèmol!",
+"seis_note":"Els dos sismogrames comparteixen la mateixa escala vertical: si la diferència creix, el més feble quasi desapareix.",
+"sq_note":"Àrea dels quadrats ∝ energia alliberada.",
+"custom":"— terratrèmol real —",
+"cmp":"El terratrèmol <b>{0}</b> té una amplitud <b>{2}</b> vegades més gran i allibera <b>{3}</b> vegades més energia que el {1}.",
+"same":"Tenen la mateixa magnitud: mateixa amplitud i mateixa energia.",
+"st_amp":"Amplitud (cap a l’altre)",
+"st_en":"Energia (cap a l’altre)",
+"st_hiro":"Bombes d’Hiroshima equivalents (A · B)",
+"idea_basic":"<b>La idea:</b> cada punt de magnitud <b>multiplica per 10</b> l’amplitud de l’ona i per <b>uns 32</b> l’energia alliberada. Un 7 no és «un poc més» que un 6: és un altre món.",
+"adv_box":"<b>Model:</b> amplitud A ∝ 10<sup>M</sup> ⇒ A<sub>B</sub>/A<sub>A</sub> = 10<sup>ΔM</sup>. Energia (Gutenberg–Richter): log<sub>10</sub> E = 1,5·M + 4,8 (E en J) ⇒ E<sub>B</sub>/E<sub>A</sub> = 10<sup>1,5·ΔM</sup> ≈ 31,6<sup>ΔM</sup>.",
+"advcalc":"ΔM = {0} → amplitud ×10<sup>{0}</sup> = {1} ; energia ×10<sup>1,5·{0}</sup> = {2}",
+"note_mw":"Nota: avui s’usa la magnitud de moment (M<sub>w</sub>), que manté la lògica logarítmica de Richter (M<sub>L</sub>) però no se satura amb els grans terratrèmols. La relació d’energia és una aproximació empírica; 1 Hiroshima ≈ 6,3·10<sup>13</sup> J.",
+"eyebrow":"Geologia · Ciències de la Terra",
+"lede":"Compara dos terratrèmols i descobreix per què una escala logarítmica ho canvia tot.",
+"r1.q":"Un terratrèmol de magnitud 7 comparat amb un de magnitud 6 té una amplitud d’ona…",
+"r1.e":"L’amplitud creix com 10<sup>ΔM</sup>; amb ΔM = 1 resulta ×10.",
+"r1.o0":"2 vegades més gran",
+"r1.o1":"10 vegades més gran",
+"r1.o2":"32 vegades més gran",
+"r1.o3":"100 vegades més gran",
+"r2.q":"I quanta més energia allibera aproximadament?",
+"r2.e":"E ∝ 10<sup>1,5·M</sup>, així que ΔM = 1 dóna 10<sup>1,5</sup> ≈ 31,6.",
+"r2.o0":"10 vegades més",
+"r2.o1":"Unes 32 vegades més",
+"r2.o2":"100 vegades més",
+"r2.o3":"1000 vegades més",
+"r3.q":"Quants terratrèmols de magnitud 5 caldrien (aprox.) per igualar l’energia d’un de magnitud 7?",
+"r3.e":"ΔM = 2 → 10<sup>1,5·2</sup> = 10<sup>3</sup> = 1000.",
+"r3.o0":"10",
+"r3.o1":"100",
+"r3.o2":"1000",
+"r3.o3":"10 000",
+"r4.q":"Quantes vegades més energia allibera un terratrèmol de magnitud 8 que un de magnitud 6?",
+"r4.e":"10<sup>1,5·2</sup> = 1000.",
+"r5.q":"Energia alliberada per un terratrèmol de magnitud 5, amb log E = 1,5·M + 4,8.",
+"r5.e":"log E = 12,3 → E ≈ 2·10<sup>12</sup> J.",
+"r5.u":"J (escriu 2e12 per a 2·10¹²)",
+"r6.q":"Un terratrèmol allibera 1 000 000 de vegades més energia que un altre. Quantes unitats de magnitud més té?",
+"r6.e":"log(10<sup>6</sup>) = 1,5·ΔM → ΔM = 6/1,5 = 4.",
+"r6.u":"unitats de magnitud"
+},
+es:{
+"title":"Escala de Richter · Energía y logaritmos",
+"h1":"Escala de Richter: cada grado, un mundo",
+"sim_title":"Comparador de terremotos",
+"mA":"Terremoto A · magnitud",
+"mB":"Terremoto B · magnitud",
+"shake":"⚡ ¡Terremoto!",
+"seis_note":"Los dos sismogramas comparten la misma escala vertical: si la diferencia crece, el más débil casi desaparece.",
+"sq_note":"Área de los cuadrados ∝ energía liberada.",
+"custom":"— terremoto real —",
+"cmp":"El terremoto <b>{0}</b> tiene una amplitud <b>{2}</b> veces mayor y libera <b>{3}</b> veces más energía que el {1}.",
+"same":"Tienen la misma magnitud: misma amplitud y misma energía.",
+"st_amp":"Amplitud (respecto al otro)",
+"st_en":"Energía (respecto al otro)",
+"st_hiro":"Bombas de Hiroshima equivalentes (A · B)",
+"idea_basic":"<b>La idea:</b> cada punto de magnitud <b>multiplica por 10</b> la amplitud de la onda y por <b>unos 32</b> la energía liberada. Un 7 no es «un poco más» que un 6: es otro mundo.",
+"adv_box":"<b>Modelo:</b> amplitud A ∝ 10<sup>M</sup> ⇒ A<sub>B</sub>/A<sub>A</sub> = 10<sup>ΔM</sup>. Energía (Gutenberg–Richter): log<sub>10</sub> E = 1,5·M + 4,8 (E en J) ⇒ E<sub>B</sub>/E<sub>A</sub> = 10<sup>1,5·ΔM</sup> ≈ 31,6<sup>ΔM</sup>.",
+"advcalc":"ΔM = {0} → amplitud ×10<sup>{0}</sup> = {1} ; energía ×10<sup>1,5·{0}</sup> = {2}",
+"note_mw":"Nota: hoy se usa la magnitud de momento (M<sub>w</sub>), que mantiene la lógica logarítmica de Richter (M<sub>L</sub>) pero no se satura con los grandes terremotos. La relación de energía es una aproximación empírica; 1 Hiroshima ≈ 6,3·10<sup>13</sup> J.",
+"eyebrow":"Geología · Ciencias de la Tierra",
+"lede":"Compara dos terremotos y descubre por qué una escala logarítmica lo cambia todo.",
+"r1.q":"Un terremoto de magnitud 7 comparado con uno de magnitud 6 tiene una amplitud de onda…",
+"r1.e":"La amplitud crece como 10<sup>ΔM</sup>; con ΔM = 1 resulta ×10.",
+"r1.o0":"2 veces mayor",
+"r1.o1":"10 veces mayor",
+"r1.o2":"32 veces mayor",
+"r1.o3":"100 veces mayor",
+"r2.q":"¿Y cuánta más energía libera aproximadamente?",
+"r2.e":"E ∝ 10<sup>1,5·M</sup>, así que ΔM = 1 da 10<sup>1,5</sup> ≈ 31,6.",
+"r2.o0":"10 veces más",
+"r2.o1":"Unas 32 veces más",
+"r2.o2":"100 veces más",
+"r2.o3":"1000 veces más",
+"r3.q":"¿Cuántos terremotos de magnitud 5 harían falta (aprox.) para igualar la energía de uno de magnitud 7?",
+"r3.e":"ΔM = 2 → 10<sup>1,5·2</sup> = 10<sup>3</sup> = 1000.",
+"r3.o0":"10",
+"r3.o1":"100",
+"r3.o2":"1000",
+"r3.o3":"10 000",
+"r4.q":"¿Cuántas veces más energía libera un terremoto de magnitud 8 que uno de magnitud 6?",
+"r4.e":"10<sup>1,5·2</sup> = 1000.",
+"r5.q":"Energía liberada por un terremoto de magnitud 5, con log E = 1,5·M + 4,8.",
+"r5.e":"log E = 12,3 → E ≈ 2·10<sup>12</sup> J.",
+"r5.u":"J (escribe 2e12 para 2·10¹²)",
+"r6.q":"Un terremoto libera 1 000 000 de veces más energía que otro. ¿Cuántas unidades de magnitud más tiene?",
+"r6.e":"log(10<sup>6</sup>) = 1,5·ΔM → ΔM = 6/1,5 = 4.",
+"r6.u":"unidades de magnitud"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Escala de Richter ===== */
+
+const REAL=[
+ {n:{va:`Lorca 2011`,es:`Lorca 2011`},m:5.1},
+ {n:{va:`L’Aquila 2009`,es:`L’Aquila 2009`},m:6.3},
+ {n:{va:`Haití 2010`,es:`Haití 2010`},m:7.0},
+ {n:{va:`Turquia–Síria 2023`,es:`Turquía–Siria 2023`},m:7.8},
+ {n:{va:`Tohoku (Japó) 2011`,es:`Tohoku (Japón) 2011`},m:9.1},
+ {n:{va:`Xile 1960`,es:`Chile 1960`},m:9.5}
+];
+const HIRO=6.28e13;
+const E=m=>Math.pow(10,1.5*m+4.8);
+const mA=$('#mA'),mB=$('#mB'),sc=fitCanvas($('#seis'),900,340),sq=fitCanvas($('#sq'),300,283);
+
+function fillPresets(){['preA','preB'].forEach(id=>{const s=$('#'+id);const cur=s.value;
+  s.innerHTML='<option value="">'+t('custom')+'</option>'+REAL.map((r,i)=>'<option value="'+i+'">'+L(r.n)+' · '+nf(r.m,1)+'</option>').join('');s.value=cur;});}
+['A','B'].forEach(k=>{const s=$('#pre'+k),m=k==='A'?mA:mB;
+  s.onchange=()=>{if(s.value!==''){m.value=REAL[+s.value].m;upd();}};
+  m.addEventListener('input',()=>{s.value='';upd();});});
+
+function upd(){
+  const a=+mA.value,b=+mB.value;
+  $('#mAv').textContent=nf(a,1);$('#mBv').textContent=nf(b,1);
+  const d=Math.round(Math.abs(b-a)*10)/10,strong=b>=a?'B':'A',weak=b>=a?'A':'B';
+  const amp=Math.pow(10,d),en=Math.pow(10,1.5*d);
+  $('#cmp').innerHTML=d<0.05?t('same'):tt('cmp',strong,weak,fmtN(amp),fmtN(en));
+  $('#sAmp').innerHTML='×'+fmtN(amp);$('#sEn').innerHTML='×'+fmtN(en);
+  $('#sEA').innerHTML=fmtN(E(a))+' J';$('#sEB').innerHTML=fmtN(E(b))+' J';
+  $('#sHA').innerHTML=fmtN(E(a)/HIRO);$('#sHB').innerHTML=fmtN(E(b)/HIRO);
+  $('#advcalc').innerHTML=tt('advcalc',nf(d,1),fmtN(amp),fmtN(en));
+}
+App.hooks.push(()=>{fillPresets();upd();});
+
+/* --- animación --- */
+let t0=-99,head=0;const NS=450,bA=new Float32Array(NS),bB=new Float32Array(NS);
+$('#shake').onclick=()=>{t0=performance.now()/1000;};
+const env=tt=>tt<0.2?0:tt<1.0?0.22:tt<1.4?0.22+0.78*(tt-1.0)/0.4:Math.exp(-(tt-1.4)/2.2);
+
+function trace(buf,cy,amp,color){
+  sc.beginPath();
+  for(let i=0;i<NS;i++){const v=buf[(head+i)%NS];const x=i*900/(NS-1);const y=cy-v*amp-(Math.random()-.5)*1.2;i?sc.lineTo(x,y):sc.moveTo(x,y);}
+  sc.strokeStyle=color;sc.lineWidth=1.6;sc.stroke();
+}
+function draw(e){
+  const a=+mA.value,b=+mB.value,mx=Math.max(a,b),ink=css('--ink'),mut=css('--mut'),c1=css('--acc'),c2=css('--acc2'),cv=css('--cv');
+  sc.fillStyle=cv;sc.fillRect(0,0,900,340);
+  [85,255].forEach(y=>{sc.strokeStyle=mut;sc.globalAlpha=.3;sc.beginPath();sc.moveTo(0,y);sc.lineTo(900,y);sc.stroke();sc.globalAlpha=1;});
+  trace(bA,85,62*Math.pow(10,a-mx),c1);trace(bB,255,62*Math.pow(10,b-mx),c2);
+  sc.fillStyle=ink;sc.font='bold 15px system-ui';
+  sc.fillText('A · M '+nf(a,1),10,22);sc.fillText('B · M '+nf(b,1),10,192);
+  /* cuadrados de energía */
+  sq.fillStyle=cv;sq.fillRect(0,0,300,283);
+  const d=Math.abs(b-a),big=130,small=big*Math.pow(10,-0.75*d);
+  const sA=a>=b?big:small,sB=b>=a?big:small,j=e*3;
+  sq.fillStyle=c1;sq.fillRect(10+(Math.random()-.5)*j,255-sA+(Math.random()-.5)*j,sA,sA);
+  sq.fillStyle=c2;sq.fillRect(160+(Math.random()-.5)*j,255-sB+(Math.random()-.5)*j,sB,sB);
+  sq.fillStyle=ink;sq.font='bold 15px system-ui';sq.fillText('A',10,277);sq.fillText('B',160,277);
+}
+function loop(){
+  const now=performance.now()/1000,e=env(now-t0);
+  bA[head]=e*(0.6*Math.sin(now*43)+0.35*Math.sin(now*97+1)+0.55*(Math.random()-.5));
+  bB[head]=e*(0.6*Math.sin(now*39+2)+0.35*Math.sin(now*89)+0.55*(Math.random()-.5));
+  head=(head+1)%NS;draw(e);requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* --- preguntas --- */
+
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r3","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r4","lvl":"adv","type":"num","num":1000,"tol":0.01},{"id":"r5","lvl":"adv","type":"num","num":1995262314968.8828,"tol":0.05,"sci":true,"u":1},{"id":"r6","lvl":"adv","type":"num","num":4,"tol":0.001,"u":1}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

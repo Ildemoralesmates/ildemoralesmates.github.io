@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desintegració radioactiva i datació</title>
+<meta name="description" content="Desintegració radioactiva i datació radiomètrica: àtoms que es desintegren a l'atzar, període de semidesintegració i càlcul de l'edat d'una mostra. Amb test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="row">
+<label class="chk"><span data-i18n="iso"></span> <select id="iso"></select></label>
+<label class="chk"><span data-i18n="natoms"></span> <select id="nat"><option>25</option><option>100</option><option selected>400</option><option>1600</option></select></label>
+<button class="btn primary" id="go" data-i18n="go"></button>
+<button class="btn" id="pp"></button>
+</div>
+<div class="ctrl"><label for="sp"><span data-i18n="speed"></span>: <b id="spv"></b></label><input type="range" id="sp" min="0.1" max="2" step="0.05" value="0.5"></div>
+<div class="grid2">
+<div><canvas id="atoms"></canvas>
+<div class="legend"><span><i style="background:var(--acc)"></i><span id="lgP"></span></span><span><i style="background:var(--acc2)"></i><span id="lgD"></span></span></div></div>
+<div><canvas id="chart"></canvas>
+<div class="row" data-lvl="adv"><label class="chk"><input type="checkbox" id="logy"><span data-i18n="logy"></span></label></div></div>
+</div>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="st_t"></span><span class="v" id="stT"></span></div>
+<div class="stat"><span class="k" data-i18n="st_par"></span><span class="v" id="stPar"></span></div>
+<div class="stat"><span class="k" data-i18n="st_teo"></span><span class="v" id="stTeo"></span></div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="adv_box"></div><div id="advcalc" class="mono"></div></div>
+</section>
+
+<section class="card">
+<h2 data-i18n="dat_title"></h2>
+<p data-i18n="dat_intro"></p>
+<div class="ctrl"><label for="fr"><span data-i18n="dat_f"></span>: <b id="frv"></b> %</label><input type="range" id="fr" min="0.1" max="100" step="0.1" value="25"></div>
+<div id="datres" class="idea"></div>
+<div id="datadv" class="mono" data-lvl="adv"></div>
+<div id="ladder" class="ladder"></div>
+<p class="note" id="datnote"></p>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Desintegració radioactiva i datació",
+"h1":"Desintegració radioactiva: el rellotge de les roques",
+"sim_title":"Una mostra d’àtoms",
+"iso":"Isòtop:",
+"natoms":"Nombre d’àtoms:",
+"go":"↺ Torna a començar",
+"pause":"⏸ Pausa",
+"resume":"▶ Continua",
+"speed":"Velocitat (períodes de semidesintegració per segon)",
+"logy":"Escala logarítmica a l’eix vertical",
+"st_t":"Temps transcorregut",
+"st_par":"Àtoms pare que queden (simulació)",
+"st_teo":"Previsió teòrica",
+"parent":"Pare",
+"daughter":"Fill",
+"idea_basic":"<b>La idea:</b> en cada període de semidesintegració (T<sub>½</sub>) <b>la mitat</b> dels àtoms pare es transforma en fills: 100 % → 50 % → 25 % → 12,5 %… Cap àtom «sap» quan li toca; amb pocs àtoms la corba oscil·la, amb molts s’ajusta a la teoria.",
+"adv_box":"<b>Model:</b> N(t) = N<sub>0</sub>·e<sup>−λt</sup> = N<sub>0</sub>·2<sup>−t/T½</sup>, amb λ = ln 2 / T<sub>½</sub>. Probabilitat de desintegrar-se en dt: λ·dt. Vida mitjana τ = 1/λ = T<sub>½</sub>/ln 2 ≈ 1,443·T<sub>½</sub>. En escala semilogarítmica la corba és una <b>recta</b> de pendent −λ.",
+"advcalc":"λ = ln 2 / {0} = {1} per any ; τ = {2}",
+"dat_title":"Datar una mostra",
+"dat_intro":"Has mesurat quant d’isòtop pare queda en una mostra (respecte al que tenia en origen). Mou el control i calcula l’edat amb l’isòtop triat dalt.",
+"dat_f":"Pare que queda",
+"dat_res":"Han passat <b>{0}</b> períodes de semidesintegració → edat ≈ <b>{1}</b>.",
+"dat_adv":"t = T½·log₂(N₀/N) = {0} × log₂(100/{1}) ; relació fill/pare D/P = {2}",
+"dat_note_ok":"Rang útil per a aquest isòtop: edats d’uns 0,5 a 8 períodes de semidesintegració.",
+"dat_note_few":"Queda tan poc pare que la mesura és molt poc fiable: cal un isòtop amb un T<sub>½</sub> més gran.",
+"dat_note_new":"Ha passat tan poc temps que gairebé no hi ha fills: cal un isòtop amb un T<sub>½</sub> més curt.",
+"lad_row":"{0} T½ · {1}",
+"eyebrow":"Geologia · Ciències de la Terra",
+"lede":"Cada àtom es desintegra a l’atzar, però el conjunt segueix una llei exacta. Així datem fòssils i roques.",
+"d1.q":"Després de 3 períodes de semidesintegració, quina fracció de l’isòtop pare queda?",
+"d1.e":"(1/2)<sup>3</sup> = 1/8 = 12,5 %.",
+"d1.o0":"1/3",
+"d1.o1":"1/6",
+"d1.o2":"1/8",
+"d1.o3":"1/9",
+"d2.q":"Un os conté el 25 % del C-14 original (T<sub>½</sub> = 5730 anys). Quina edat té?",
+"d2.e":"25 % = 2 períodes → 2 × 5730 = 11 460 anys.",
+"d2.o0":"5730 anys",
+"d2.o1":"11 460 anys",
+"d2.o2":"17 190 anys",
+"d2.o3":"22 920 anys",
+"d3.q":"Tens 4 àtoms i passa un període de semidesintegració. Segur que en queden exactament 2?",
+"d3.e":"Cada àtom té un 50 % de probabilitat; amb pocs àtoms hi ha molta dispersió (prova-ho amb 25 àtoms a la simulació).",
+"d3.o0":"Sí, sempre",
+"d3.o1":"No: és el valor més probable, però pot variar. La llei és estadística",
+"d3.o2":"No, en queden sempre 3",
+"d4.q":"Per què no es pot datar un dinosaure de 65 milions d’anys amb C-14?",
+"d4.e":"65·10<sup>6</sup> / 5730 ≈ 11 000 períodes: la fracció que queda és pràcticament 0. Per a això s’usen isòtops de T<sub>½</sub> molt llarg (U-238, K-40).",
+"d4.o0":"Perquè el C-14 només existeix en plantes",
+"d4.o1":"Perquè ha passat tant de temps (milers de T<sub>½</sub>) que no en queda res mesurable",
+"d4.o2":"Perquè el C-14 es desintegra massa lentament",
+"d5.q":"Un os conté el 12 % del C-14 original. Calcula’n l’edat (T<sub>½</sub> = 5730 anys).",
+"d5.e":"t = 5730·log₂(100/12) ≈ 17 500 anys.",
+"d5.u":"anys",
+"d6.q":"Calcula la constant de desintegració λ del C-14.",
+"d6.e":"λ = ln 2 / 5730 ≈ 1,21·10<sup>−4</sup> any<sup>−1</sup>.",
+"d6.u":"any⁻¹ (escriu 1.2e-4 per a 1,2·10⁻⁴)",
+"d7.q":"Quin és el nombre enter mínim de períodes de semidesintegració perquè quede menys de l’1 % de l’isòtop pare?",
+"d7.e":"2<sup>−6</sup> = 1,56 % (encara no) i 2<sup>−7</sup> = 0,78 % → 7.",
+"d7.u":"períodes"
+},
+es:{
+"title":"Desintegración radiactiva y datación",
+"h1":"Desintegración radiactiva: el reloj de las rocas",
+"sim_title":"Una muestra de átomos",
+"iso":"Isótopo:",
+"natoms":"Número de átomos:",
+"go":"↺ Volver a empezar",
+"pause":"⏸ Pausa",
+"resume":"▶ Continuar",
+"speed":"Velocidad (periodos de semidesintegración por segundo)",
+"logy":"Escala logarítmica en el eje vertical",
+"st_t":"Tiempo transcurrido",
+"st_par":"Átomos padre que quedan (simulación)",
+"st_teo":"Previsión teórica",
+"parent":"Padre",
+"daughter":"Hijo",
+"idea_basic":"<b>La idea:</b> en cada periodo de semidesintegración (T<sub>½</sub>) <b>la mitad</b> de los átomos padre se transforma en hijos: 100 % → 50 % → 25 % → 12,5 %… Ningún átomo «sabe» cuándo le toca; con pocos átomos la curva oscila, con muchos se ajusta a la teoría.",
+"adv_box":"<b>Modelo:</b> N(t) = N<sub>0</sub>·e<sup>−λt</sup> = N<sub>0</sub>·2<sup>−t/T½</sup>, con λ = ln 2 / T<sub>½</sub>. Probabilidad de desintegrarse en dt: λ·dt. Vida media τ = 1/λ = T<sub>½</sub>/ln 2 ≈ 1,443·T<sub>½</sub>. En escala semilogarítmica la curva es una <b>recta</b> de pendiente −λ.",
+"advcalc":"λ = ln 2 / {0} = {1} por año ; τ = {2}",
+"dat_title":"Datar una muestra",
+"dat_intro":"Has medido cuánto isótopo padre queda en una muestra (respecto al que tenía en origen). Mueve el control y calcula la edad con el isótopo elegido arriba.",
+"dat_f":"Padre que queda",
+"dat_res":"Han pasado <b>{0}</b> periodos de semidesintegración → edad ≈ <b>{1}</b>.",
+"dat_adv":"t = T½·log₂(N₀/N) = {0} × log₂(100/{1}) ; relación hijo/padre D/P = {2}",
+"dat_note_ok":"Rango útil para este isótopo: edades de unos 0,5 a 8 periodos de semidesintegración.",
+"dat_note_few":"Queda tan poco padre que la medida es muy poco fiable: hace falta un isótopo con T<sub>½</sub> mayor.",
+"dat_note_new":"Ha pasado tan poco tiempo que casi no hay hijos: hace falta un isótopo con T<sub>½</sub> más corto.",
+"lad_row":"{0} T½ · {1}",
+"eyebrow":"Geología · Ciencias de la Tierra",
+"lede":"Cada átomo se desintegra al azar, pero el conjunto sigue una ley exacta. Así datamos fósiles y rocas.",
+"d1.q":"Tras 3 periodos de semidesintegración, ¿qué fracción del isótopo padre queda?",
+"d1.e":"(1/2)<sup>3</sup> = 1/8 = 12,5 %.",
+"d1.o0":"1/3",
+"d1.o1":"1/6",
+"d1.o2":"1/8",
+"d1.o3":"1/9",
+"d2.q":"Un hueso contiene el 25 % del C-14 original (T<sub>½</sub> = 5730 años). ¿Qué edad tiene?",
+"d2.e":"25 % = 2 periodos → 2 × 5730 = 11 460 años.",
+"d2.o0":"5730 años",
+"d2.o1":"11 460 años",
+"d2.o2":"17 190 años",
+"d2.o3":"22 920 años",
+"d3.q":"Tienes 4 átomos y pasa un periodo de semidesintegración. ¿Seguro que quedan exactamente 2?",
+"d3.e":"Cada átomo tiene un 50 % de probabilidad; con pocos átomos hay mucha dispersión (pruébalo con 25 átomos en la simulación).",
+"d3.o0":"Sí, siempre",
+"d3.o1":"No: es el valor más probable, pero puede variar. La ley es estadística",
+"d3.o2":"No, quedan siempre 3",
+"d4.q":"¿Por qué no se puede datar un dinosaurio de 65 millones de años con C-14?",
+"d4.e":"65·10<sup>6</sup> / 5730 ≈ 11 000 periodos: la fracción que queda es prácticamente 0. Para eso se usan isótopos de T<sub>½</sub> muy largo (U-238, K-40).",
+"d4.o0":"Porque el C-14 solo existe en plantas",
+"d4.o1":"Porque ha pasado tanto tiempo (miles de T<sub>½</sub>) que no queda nada medible",
+"d4.o2":"Porque el C-14 se desintegra demasiado despacio",
+"d5.q":"Un hueso contiene el 12 % del C-14 original. Calcula su edad (T<sub>½</sub> = 5730 años).",
+"d5.e":"t = 5730·log₂(100/12) ≈ 17 500 años.",
+"d5.u":"años",
+"d6.q":"Calcula la constante de desintegración λ del C-14.",
+"d6.e":"λ = ln 2 / 5730 ≈ 1,21·10<sup>−4</sup> año<sup>−1</sup>.",
+"d6.u":"año⁻¹ (escribe 1.2e-4 para 1,2·10⁻⁴)",
+"d7.q":"¿Cuál es el número entero mínimo de periodos de semidesintegración para que quede menos del 1 % del isótopo padre?",
+"d7.e":"2<sup>−6</sup> = 1,56 % (todavía no) y 2<sup>−7</sup> = 0,78 % → 7.",
+"d7.u":"periodos"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/* ===== Desintegración radiactiva y datación ===== */
+
+const ISO=[
+ {n:`C-14`,d:`N-14`,T:5730},
+ {n:`K-40`,d:`Ar-40`,T:1.248e9},
+ {n:`U-238`,d:`Pb-206`,T:4.468e9},
+ {n:`I-131`,d:`Xe-131`,T:8.02/365.25}
+];
+function fmtTime(y){
+  const a=Math.abs(y),es=LANG==='es';
+  if(a<0.083)return nf(y*365.25,1)+(es?' días':' dies');
+  if(a<1000)return nf(y,a<10?2:0)+(es?' años':' anys');
+  if(a<1e6)return nf(y,0)+(es?' años':' anys');
+  if(a<1e9)return nf(y/1e6,1)+' Ma';
+  return nf(y/1e9,2)+' Ga';
+}
+const isoSel=$('#iso'),natSel=$('#nat'),spR=$('#sp');
+ISO.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=x.n+' → '+x.d;isoSel.appendChild(o);});
+isoSel.value=0;
+const cvA=$('#atoms'),cvC=$('#chart');
+const ca=fitCanvas(cvA,520,520),cc=fitCanvas(cvC,560,520);
+let N=400,alive,flash,tHL=0,hist=[],playing=true,last=performance.now();
+const TXMAX=6;
+function reset(){
+  N=+natSel.value;alive=new Uint8Array(N).fill(1);flash=new Float32Array(N);tHL=0;hist=[[0,1]];playing=true;full();
+}
+const iso=()=>ISO[+isoSel.value];
+function step(dt){
+  const p=1-Math.pow(2,-dt);let n=0;
+  for(let i=0;i<N;i++){if(alive[i]){if(Math.random()<p){alive[i]=0;flash[i]=1;}else n++;}if(flash[i]>0)flash[i]=Math.max(0,flash[i]-dt*6);}
+  tHL+=dt;hist.push([tHL,n/N]);return n;
+}
+function drawAtoms(){
+  const cv=css('--cv');ca.fillStyle=cv;ca.fillRect(0,0,520,520);
+  const cols=Math.ceil(Math.sqrt(N)),cell=520/cols,r=cell*0.36,c1=css('--acc'),c2=css('--acc2');
+  for(let i=0;i<N;i++){
+    const x=(i%cols+.5)*cell,y=(Math.floor(i/cols)+.5)*cell;
+    ca.beginPath();ca.arc(x,y,r*(alive[i]?1:.85),0,2*Math.PI);ca.fillStyle=alive[i]?c1:c2;ca.globalAlpha=alive[i]?1:.8;ca.fill();ca.globalAlpha=1;
+    if(flash[i]>0){ca.beginPath();ca.arc(x,y,r*(1+flash[i]*1.4),0,2*Math.PI);ca.strokeStyle='#fff';ca.lineWidth=2;ca.globalAlpha=flash[i];ca.stroke();ca.globalAlpha=1;}
+  }
+}
+function drawChart(){
+  const W=560,H=520,l=56,rr=14,tp=18,b=70,pw=W-l-rr,ph=H-tp-b,logy=$('#logy').checked&&App.level==='adv';
+  const ink=css('--ink'),mut=css('--mut'),c1=css('--acc'),c2=css('--acc2');
+  cc.fillStyle=css('--cv');cc.fillRect(0,0,W,H);
+  const X=t=>l+pw*t/TXMAX;
+  const Y=f=>logy?tp+ph*(1-(Math.log10(Math.max(f,0.001))+3)/3):tp+ph*(1-f);
+  cc.font='12px system-ui';cc.textAlign='right';cc.strokeStyle=mut;cc.fillStyle=ink;
+  (logy?[1,.1,.01,.001]:[1,.5,.25,.125,0]).forEach(f=>{
+    cc.globalAlpha=.25;cc.beginPath();cc.moveTo(l,Y(f));cc.lineTo(l+pw,Y(f));cc.stroke();cc.globalAlpha=1;
+    cc.fillText(nf(f*100,f<.01?1:f<.2&&f>0?1:0)+' %',l-6,Y(f)+4);});
+  cc.textAlign='center';
+  for(let k=0;k<=TXMAX;k++){
+    cc.globalAlpha=.25;cc.beginPath();cc.moveTo(X(k),tp);cc.lineTo(X(k),tp+ph);cc.stroke();cc.globalAlpha=1;
+    cc.textAlign=k===TXMAX?'right':'center';
+    cc.fillText(k+' T½',X(k),tp+ph+16);cc.fillStyle=mut;cc.fillText(fmtTime(k*iso().T),X(k),tp+ph+32);cc.fillStyle=ink;
+  }
+  cc.fillStyle=mut;cc.fillText(t('st_t')+' →',l+pw/2,H-10);cc.fillStyle=ink;
+  /* teoría */
+  cc.setLineDash([6,4]);cc.strokeStyle=ink;cc.lineWidth=1.6;cc.beginPath();
+  for(let i=0;i<=120;i++){const tt=TXMAX*i/120,f=Math.pow(2,-tt);i?cc.lineTo(X(tt),Y(f)):cc.moveTo(X(tt),Y(f));}
+  cc.stroke();cc.setLineDash([]);
+  /* simulación */
+  cc.strokeStyle=c1;cc.lineWidth=2.4;cc.beginPath();let started=false;
+  hist.forEach(([tt,f])=>{if(logy&&f<=0)return;started?cc.lineTo(X(tt),Y(f)):cc.moveTo(X(tt),Y(f));started=true;});cc.stroke();
+  if(!logy){cc.strokeStyle=c2;cc.lineWidth=2;cc.beginPath();hist.forEach(([tt,f],i)=>{i?cc.lineTo(X(tt),Y(1-f)):cc.moveTo(X(tt),Y(1-f));});cc.stroke();}
+  cc.textAlign='left';cc.fillStyle=ink;cc.fillText('- - '+(LANG==='es'?'teoría':'teoria'),l+8,tp+14);
+  cc.fillStyle=c1;cc.fillText('— '+t('parent'),l+8,tp+30);if(!logy){cc.fillStyle=c2;cc.fillText('— '+t('daughter'),l+8,tp+46);}
+}
+function upd(){
+  const is=iso();
+  $('#lgP').textContent=t('parent')+' ('+is.n+')';$('#lgD').textContent=t('daughter')+' ('+is.d+')';
+  $('#spv').textContent=nf(+spR.value,2)+' T½/s';
+  $('#pp').textContent=t(playing?'pause':'resume');
+  const left=alive?alive.reduce((a,b)=>a+b,0):N;
+  $('#stT').textContent=nf(tHL,2)+' T½ = '+fmtTime(tHL*is.T);
+  $('#stPar').textContent=left+' / '+N+' ('+nf(100*left/N,1)+' %)';
+  $('#stTeo').textContent=nf(100*Math.pow(2,-tHL),1)+' %';
+  const lam=Math.LN2/is.T;
+  $('#advcalc').innerHTML=tt('advcalc',fmtTime(is.T),lam.toExponential(3).replace('e',' · 10^'),fmtTime(is.T/Math.LN2));
+}
+function full(){upd();updDat();}
+function updDat(){
+  const is=iso(),f=+$('#fr').value,n=Math.log2(100/f),age=n*is.T;
+  $('#frv').textContent=nf(f,1);
+  $('#datres').innerHTML=tt('dat_res',nf(n,2),fmtTime(age));
+  $('#datadv').innerHTML=tt('dat_adv',fmtTime(is.T),nf(f,1),nf((100-f)/f,2));
+  $('#datnote').innerHTML=t(n>8?'dat_note_few':n<0.5?'dat_note_new':'dat_note_ok');
+  const lad=$('#ladder');lad.innerHTML='';
+  for(let k=0;k<=9;k++){
+    const row=document.createElement('div');row.className='lr'+(Math.abs(n-k)<0.5?' on':'');
+    row.innerHTML='<span>'+tt('lad_row',k,fmtTime(k*is.T))+'</span><div class="bar2" style="width:'+Math.max(100/Math.pow(2,k),0.6)+'%"></div>';
+    lad.appendChild(row);
+  }
+}
+function loop(now){
+  const dt=Math.min((now-last)/1000,0.1);last=now;
+  if(playing&&tHL<TXMAX){step(Math.min(dt*(+spR.value),TXMAX-tHL));upd();}
+  drawAtoms();drawChart();requestAnimationFrame(loop);
+}
+$('#go').onclick=reset;
+$('#pp').onclick=()=>{playing=!playing;upd();};
+isoSel.onchange=()=>{reset();};
+natSel.onchange=reset;
+spR.oninput=upd;$('#fr').oninput=updDat;$('#logy').onchange=()=>{};
+App.hooks.push(full);
+reset();requestAnimationFrame(loop);
+
+/* --- preguntas --- */
+
+const QDATA=[{"id":"d1","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"d2","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"d3","lvl":"all","type":"mc","n":3,"ans":1},{"id":"d4","lvl":"basic","type":"mc","n":3,"ans":1},{"id":"d5","lvl":"adv","type":"num","num":17527.460838276947,"tol":0.02,"u":1},{"id":"d6","lvl":"adv","type":"num","num":0.00012096809433855938,"tol":0.02,"sci":true,"u":1},{"id":"d7","lvl":"adv","type":"num","num":7,"tol":0.001,"u":1}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

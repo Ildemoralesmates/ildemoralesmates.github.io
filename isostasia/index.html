@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Isostasia · Arrels de muntanyes i rebot glacial</title>
+<meta name="description" content="Isostasia: muntanyes amb arrels (model d'Airy) i rebot glacial amb un mantell viscós. Simulació interactiva amb test autocorregit.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/isostasia/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/isostasia/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/isostasia/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/isostasia/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Isostasia · Arrels de muntanyes i rebot glacial">
+<meta property="og:description" content="Isostasia: muntanyes amb arrels (model d'Airy) i rebot glacial amb un mantell viscós. Simulació interactiva amb test autocorregit.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/isostasia/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Geologia · Ciències de la Terra</p>
+      <h1 data-i18n="h1">Isostasia: l’escorça flota</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivell de la pàgina"><button type="button" data-level="basic" data-i18n="lvl_basic">Bàsic</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avançat</button></div>
+      <p class="lede" data-i18n="lede">Muntanyes amb arrels, glaç que enfonsa el terreny i terra que rebota quan el glaç es fon.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Blocs d’escorça flotant sobre el mantell</h2>
+<div class="row"><div class="seg" role="group"><button data-mode="airy" data-i18n="mode_airy">Muntanyes i arrels</button><button data-mode="ice" data-i18n="mode_ice">Glaç i rebot</button></div></div>
+<div class="gridW">
+<div><canvas id="iso"></canvas></div>
+<div>
+<div id="airyc">
+<div class="ctrl"><label for="H"><span data-i18n="H">Altura de la muntanya (en equilibri)</span>: <b id="Hv"></b> km</label><input type="range" id="H" min="0" max="9" step="0.1" value="0"></div>
+<div class="row"><button class="chip" id="pTibet" data-i18n="p_tibet">Altiplà tibetà (5 km)</button><button class="chip" id="pFlat" data-i18n="p_flat">Plana (0 km)</button><button class="btn" id="ero" data-i18n="ero">Erosiona 1 km de roca</button></div>
+</div>
+<div id="icec" hidden>
+<div class="ctrl"><label for="I"><span data-i18n="I">Gruix del glaç</span>: <b id="Iv"></b> km</label><input type="range" id="I" min="0" max="4" step="0.1" value="0"></div>
+<div class="row"><button class="btn primary" id="glac" data-i18n="glac">❄ Glaciació (3 km de gel)</button><button class="btn" id="melt" data-i18n="melt">☀ Desglaç</button></div>
+</div>
+<div data-lvl="adv">
+<div class="ctrl"><label for="rc">ρ<sub>c</sub> (<span data-i18n="crust">escorça</span>): <b id="rcv"></b> g/cm³</label><input type="range" id="rc" min="2.6" max="3.0" step="0.05" value="2.7"></div>
+<div class="ctrl"><label for="rm">ρ<sub>m</sub> (<span data-i18n="mantle">mantell</span>): <b id="rmv"></b> g/cm³</label><input type="range" id="rm" min="3.2" max="3.4" step="0.05" value="3.3"></div>
+<div class="ctrl" id="tauc"><label for="tau">τ (<span data-i18n="tau">temps de relaxació del mantell</span>): <b id="tauv"></b> ka</label><input type="range" id="tau" min="1" max="10" step="0.5" value="4"></div>
+</div>
+<div class="stats">
+<div class="stat" data-m="airy"><span class="k" data-i18n="st_h">Alçada actual del cim</span><span class="v" id="sH"></span></div>
+<div class="stat" data-m="airy"><span class="k" data-i18n="st_moho">Profunditat del Moho</span><span class="v" id="sM"></span></div>
+<div class="stat" data-m="airy"><span class="k" data-i18n="st_root">Arrel (sota la referència)</span><span class="v" id="sR"></span></div>
+<div class="stat" data-m="ice"><span class="k" data-i18n="st_sink">Enfonsament de l’escorça</span><span class="v" id="sS"></span></div>
+<div class="stat" data-m="ice"><span class="k" data-i18n="st_rate">Velocitat vertical</span><span class="v" id="sRate"></span></div>
+<div class="stat" data-m="ice"><span class="k" data-i18n="st_time">Temps</span><span class="v" id="sTime"></span></div>
+<div class="stat" data-lvl="adv"><span class="k" data-i18n="st_dp">Diferència de pressió a 120 km (dreta − esquerra)</span><span class="v" id="sDP"></span></div>
+</div>
+</div>
+</div>
+<div class="idea" data-lvl="basic"><span id="ideab"></span></div>
+<div class="idea" data-lvl="adv"><div id="advb"></div><div id="advcalc" class="mono"></div></div>
+<p class="note" data-i18n-html="note">Nota: model simplificat (blocs rígids i densitats uniformes, T<sub>0</sub> = 35 km, profunditat de compensació 120 km). En escales de milers d’anys el mantell es comporta com un fluid molt viscós. Un any = 1 s a la simulació de glaç: 1 s ≡ 1 ka (mil anys).</p>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" style="color:inherit">CC BY-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Isostasia · Arrels de muntanyes i rebot glacial",
+"h1":"Isostasia: l’escorça flota",
+"sim_title":"Blocs d’escorça flotant sobre el mantell",
+"mode_airy":"Muntanyes i arrels",
+"mode_ice":"Glaç i rebot",
+"H":"Altura de la muntanya (en equilibri)",
+"I":"Gruix del glaç",
+"tau":"temps de relaxació del mantell",
+"crust":"escorça",
+"mantle":"mantell",
+"p_tibet":"Altiplà tibetà (5 km)",
+"p_flat":"Plana (0 km)",
+"ero":"Erosiona 1 km de roca",
+"glac":"❄ Glaciació (3 km de gel)",
+"melt":"☀ Desglaç",
+"st_h":"Alçada actual del cim",
+"st_moho":"Profunditat del Moho",
+"st_root":"Arrel (sota la referència)",
+"st_sink":"Enfonsament de l’escorça",
+"st_rate":"Velocitat vertical",
+"st_time":"Temps",
+"st_dp":"Diferència de pressió a 120 km (dreta − esquerra)",
+"lbl_ref":"Referència",
+"lbl_act":"El teu bloc",
+"lbl_sea":"nivell de referència (0 km)",
+"lbl_comp":"nivell de compensació (−120 km)",
+"lbl_mantle":"MANTELL (viscós)",
+"lbl_ice":"glaç",
+"lbl_moho":"Moho a {0} km",
+"lbl_flow":"flux del mantell",
+"idea_airy":"<b>La idea:</b> l’escorça (ρ ≈ 2,7 g/cm³) flota sobre el mantell, més dens (ρ ≈ 3,3), com un iceberg. Per sostenir una muntanya fa falta una <b>arrel</b> profunda: unes <b>4,5 vegades</b> la seua altura. Mou el control: primer s’amuntega escorça i després el bloc s’ajusta fins a l’equilibri.",
+"idea_ice":"<b>La idea:</b> el glaç pesa, així que l’escorça s’enfonsa a poc a poc dins el mantell viscós (uns 28 % del gruix del glaç). Quan el glaç es fon el terreny <b>rebota</b>. A Escandinàvia encara puja fins a ≈ 1 cm per any.",
+"adv_airy":"<b>Model d’Airy:</b> a la profunditat de compensació les columnes pesen igual: ρ<sub>c</sub>·T + ρ<sub>m</sub>·(h − T + D) = constant. Resulta h = (ρ<sub>m</sub> − ρ<sub>c</sub>)·(T − T<sub>0</sub>)/ρ<sub>m</sub> i una arrel r = ρ<sub>c</sub>·H/(ρ<sub>m</sub> − ρ<sub>c</sub>). Erosionar e de roca només abaixa el cim ≈ e·(ρ<sub>m</sub> − ρ<sub>c</sub>)/ρ<sub>m</sub>.",
+"adv_ice":"<b>Càrrega de glaç:</b> h = [(ρ<sub>m</sub> − ρ<sub>c</sub>)(T − T<sub>0</sub>) − ρ<sub>i</sub>·I]/ρ<sub>m</sub>, amb ρ<sub>i</sub> = 0,917 g/cm³. Enfonsament en equilibri s = ρ<sub>i</sub>·I/ρ<sub>m</sub>. El mantell flueix: dh/dt = (h<sub>eq</sub> − h)/τ.",
+"advcalc_airy":"r/H = ρc/(ρm−ρc) = {0} ; H = {1} km → r = {2} km",
+"advcalc_ice":"s/I = ρi/ρm = {0} ; I = {1} km → s = {2} km",
+"note":"Nota: model simplificat (blocs rígids i densitats uniformes, T<sub>0</sub> = 35 km, profunditat de compensació 120 km). En escales de milers d’anys el mantell es comporta com un fluid molt viscós. Un any = 1 s a la simulació de glaç: 1 s ≡ 1 ka (mil anys).",
+"eyebrow":"Geologia · Ciències de la Terra",
+"lede":"Muntanyes amb arrels, glaç que enfonsa el terreny i terra que rebota quan el glaç es fon.",
+"i1.q":"Què és igual en columnes diferents d’escorça en equilibri isostàtic?",
+"i1.e":"Si les pressions fossen diferents el mantell fluiria (fletxa roja) fins igualar-les.",
+"i1.o0":"L’alçada de la superfície",
+"i1.o1":"El gruix de l’escorça",
+"i1.o2":"La massa (pressió) de la columna fins al nivell de compensació",
+"i1.o3":"La temperatura",
+"i2.q":"Per què les grans muntanyes tenen «arrels» profundes?",
+"i2.e":"Com més massa per damunt, més volum submergit cal per compensar-la (Arquimedes).",
+"i2.o0":"Perquè l’escorça és menys densa que el mantell i flota, com un iceberg",
+"i2.o1":"Perquè el mantell és més lleuger que l’escorça",
+"i2.o2":"Perquè les arrels són de fusió de roca",
+"i3.q":"Què passa quan l’erosió desgasta una serralada?",
+"i3.e":"Es lleva pes, així que l’escorça flota més amunt. Prova el botó «Erosiona».",
+"i3.o0":"El que queda s’enfonsa",
+"i3.o1":"El que queda <b>puja</b> en part (rebot isostàtic)",
+"i3.o2":"No passa res",
+"i4.q":"Per què Escandinàvia encara puja uns mil·límetres cada any?",
+"i4.e":"El mantell és viscós i triga milers d’anys a recuperar l’equilibri.",
+"i4.o0":"Per rebot postglacial: el glaç es va fondre fa uns 10 000 anys",
+"i4.o1":"Perquè s’acosta a Amèrica",
+"i4.o2":"Per l’erosió del mar",
+"i5.q":"Una muntanya s’eleva 4 km sobre la plana. Amb ρ<sub>c</sub> = 2,7 i ρ<sub>m</sub> = 3,3 g/cm³, quina arrel (Airy) té?",
+"i5.e":"r = ρ<sub>c</sub>·H/(ρ<sub>m</sub> − ρ<sub>c</sub>) = 2,7·4/0,6 = 18 km.",
+"i5.u":"km",
+"i6.q":"Una capa de glaç de 2 km (ρ = 0,917 g/cm³) s’assenta sobre l’escorça. Quant s’enfonsa en equilibri? (ρ<sub>m</sub> = 3,3)",
+"i6.e":"s = ρ<sub>i</sub>·I/ρ<sub>m</sub> = 0,917·2/3,3 ≈ 0,56 km.",
+"i6.u":"km",
+"i7.q":"Quants km de roca cal erosionar perquè el cim d’una muntanya baixe 1 km un cop restablert l’equilibri? (ρ<sub>c</sub> = 2,7; ρ<sub>m</sub> = 3,3)",
+"i7.e":"Δh = e·(ρ<sub>m</sub> − ρ<sub>c</sub>)/ρ<sub>m</sub> = e·0,18 → e = 1/0,18 ≈ 5,5 km.",
+"i7.u":"km de roca"
+},
+es:{
+"title":"Isostasia · Raíces de montañas y rebote glaciar",
+"h1":"Isostasia: la corteza flota",
+"sim_title":"Bloques de corteza flotando sobre el manto",
+"mode_airy":"Montañas y raíces",
+"mode_ice":"Hielo y rebote",
+"H":"Altura de la montaña (en equilibrio)",
+"I":"Grosor del hielo",
+"tau":"tiempo de relajación del manto",
+"crust":"corteza",
+"mantle":"manto",
+"p_tibet":"Altiplano tibetano (5 km)",
+"p_flat":"Llanura (0 km)",
+"ero":"Erosionar 1 km de roca",
+"glac":"❄ Glaciación (3 km de hielo)",
+"melt":"☀ Deshielo",
+"st_h":"Altura actual de la cima",
+"st_moho":"Profundidad del Moho",
+"st_root":"Raíz (bajo la referencia)",
+"st_sink":"Hundimiento de la corteza",
+"st_rate":"Velocidad vertical",
+"st_time":"Tiempo",
+"st_dp":"Diferencia de presión a 120 km (derecha − izquierda)",
+"lbl_ref":"Referencia",
+"lbl_act":"Tu bloque",
+"lbl_sea":"nivel de referencia (0 km)",
+"lbl_comp":"nivel de compensación (−120 km)",
+"lbl_mantle":"MANTO (viscoso)",
+"lbl_ice":"hielo",
+"lbl_moho":"Moho a {0} km",
+"lbl_flow":"flujo del manto",
+"idea_airy":"<b>La idea:</b> la corteza (ρ ≈ 2,7 g/cm³) flota sobre el manto, más denso (ρ ≈ 3,3), como un iceberg. Para sostener una montaña hace falta una <b>raíz</b> profunda: unas <b>4,5 veces</b> su altura. Mueve el control: primero se amontona corteza y luego el bloque se ajusta hasta el equilibrio.",
+"idea_ice":"<b>La idea:</b> el hielo pesa, así que la corteza se hunde poco a poco en el manto viscoso (un 28 % del grosor del hielo). Cuando el hielo se funde el terreno <b>rebota</b>. En Escandinavia todavía sube hasta ≈ 1 cm por año.",
+"adv_airy":"<b>Modelo de Airy:</b> a la profundidad de compensación las columnas pesan lo mismo: ρ<sub>c</sub>·T + ρ<sub>m</sub>·(h − T + D) = constante. Resulta h = (ρ<sub>m</sub> − ρ<sub>c</sub>)·(T − T<sub>0</sub>)/ρ<sub>m</sub> y una raíz r = ρ<sub>c</sub>·H/(ρ<sub>m</sub> − ρ<sub>c</sub>). Erosionar e de roca solo baja la cima ≈ e·(ρ<sub>m</sub> − ρ<sub>c</sub>)/ρ<sub>m</sub>.",
+"adv_ice":"<b>Carga de hielo:</b> h = [(ρ<sub>m</sub> − ρ<sub>c</sub>)(T − T<sub>0</sub>) − ρ<sub>i</sub>·I]/ρ<sub>m</sub>, con ρ<sub>i</sub> = 0,917 g/cm³. Hundimiento en equilibrio s = ρ<sub>i</sub>·I/ρ<sub>m</sub>. El manto fluye: dh/dt = (h<sub>eq</sub> − h)/τ.",
+"advcalc_airy":"r/H = ρc/(ρm−ρc) = {0} ; H = {1} km → r = {2} km",
+"advcalc_ice":"s/I = ρi/ρm = {0} ; I = {1} km → s = {2} km",
+"note":"Nota: modelo simplificado (bloques rígidos y densidades uniformes, T<sub>0</sub> = 35 km, profundidad de compensación 120 km). En escalas de miles de años el manto se comporta como un fluido muy viscoso. En la simulación de hielo 1 s ≡ 1 ka (mil años).",
+"eyebrow":"Geología · Ciencias de la Tierra",
+"lede":"Montañas con raíces, hielo que hunde el terreno y tierra que rebota cuando el hielo se funde.",
+"i1.q":"¿Qué es igual en columnas distintas de corteza en equilibrio isostático?",
+"i1.e":"Si las presiones fueran distintas el manto fluiría (flecha roja) hasta igualarlas.",
+"i1.o0":"La altura de la superficie",
+"i1.o1":"El grosor de la corteza",
+"i1.o2":"La masa (presión) de la columna hasta el nivel de compensación",
+"i1.o3":"La temperatura",
+"i2.q":"¿Por qué las grandes montañas tienen «raíces» profundas?",
+"i2.e":"Cuanta más masa por encima, más volumen sumergido hace falta para compensarla (Arquímedes).",
+"i2.o0":"Porque la corteza es menos densa que el manto y flota, como un iceberg",
+"i2.o1":"Porque el manto es más ligero que la corteza",
+"i2.o2":"Porque las raíces son de roca fundida",
+"i3.q":"¿Qué pasa cuando la erosión desgasta una cordillera?",
+"i3.e":"Se quita peso, así que la corteza flota más arriba. Prueba el botón «Erosionar».",
+"i3.o0":"Lo que queda se hunde",
+"i3.o1":"Lo que queda <b>sube</b> en parte (rebote isostático)",
+"i3.o2":"No pasa nada",
+"i4.q":"¿Por qué Escandinavia todavía sube unos milímetros cada año?",
+"i4.e":"El manto es viscoso y tarda miles de años en recuperar el equilibrio.",
+"i4.o0":"Por rebote postglacial: el hielo se fundió hace unos 10 000 años",
+"i4.o1":"Porque se acerca a América",
+"i4.o2":"Por la erosión del mar",
+"i5.q":"Una montaña se eleva 4 km sobre la llanura. Con ρ<sub>c</sub> = 2,7 y ρ<sub>m</sub> = 3,3 g/cm³, ¿qué raíz (Airy) tiene?",
+"i5.e":"r = ρ<sub>c</sub>·H/(ρ<sub>m</sub> − ρ<sub>c</sub>) = 2,7·4/0,6 = 18 km.",
+"i5.u":"km",
+"i6.q":"Una capa de hielo de 2 km (ρ = 0,917 g/cm³) se asienta sobre la corteza. ¿Cuánto se hunde en equilibrio? (ρ<sub>m</sub> = 3,3)",
+"i6.e":"s = ρ<sub>i</sub>·I/ρ<sub>m</sub> = 0,917·2/3,3 ≈ 0,56 km.",
+"i6.u":"km",
+"i7.q":"¿Cuántos km de roca hay que erosionar para que la cima de una montaña baje 1 km una vez restablecido el equilibrio? (ρ<sub>c</sub> = 2,7; ρ<sub>m</sub> = 3,3)",
+"i7.e":"Δh = e·(ρ<sub>m</sub> − ρ<sub>c</sub>)/ρ<sub>m</sub> = e·0,18 → e = 1/0,18 ≈ 5,5 km.",
+"i7.u":"km de roca"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/isostasia/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Isostasia: Airy (arrels) y rebote glaciar ===== */
+
+const T0=35,D=120,RI=0.917,MPA=9.81;
+let mode='airy',T=35,Ttar=35,h=0,I=0,Itar=0,tsim=0,rate=0,last=performance.now();
+const cx=fitCanvas($('#iso'),700,600);
+const rcI=$('#rc'),rmI=$('#rm'),tauI=$('#tau'),HI=$('#H'),II=$('#I');
+const rc=()=>+rcI.value,rm=()=>+rmI.value;
+const yv=e=>24+(28-e)*3.7;
+const heqF=()=>((rm()-rc())*(T-T0)-RI*I)/rm();
+
+function setTar(){Ttar=T0+(+HI.value)*rm()/(rm()-rc());}
+function resetState(){T=T0;Ttar=T0;h=0;I=0;Itar=0;tsim=0;rate=0;HI.value=0;II.value=0;}
+function updMode(){
+  $$('[data-mode]').forEach(b=>{if(b.tagName==='BUTTON')b.setAttribute('aria-pressed',b.dataset.mode===mode);});
+  $('#airyc').hidden=mode!=='airy';$('#icec').hidden=mode!=='ice';
+  $$('.stat[data-m]').forEach(e=>{e.hidden=e.dataset.m!==mode;});
+  $('#tauc').hidden=mode!=='ice';
+  $('#ideab').innerHTML=t(mode==='airy'?'idea_airy':'idea_ice');
+  $('#advb').innerHTML=t(mode==='airy'?'adv_airy':'adv_ice');
+  readouts();
+}
+function readouts(){
+  $('#Hv').textContent=nf(+HI.value,1);$('#Iv').textContent=nf(+II.value,1);
+  $('#rcv').textContent=nf(rc(),2);$('#rmv').textContent=nf(rm(),2);$('#tauv').textContent=nf(+tauI.value,1);
+  const k=rc()/(rm()-rc());
+  $('#advcalc').innerHTML=mode==='airy'?tt('advcalc_airy',nf(k,2),nf(+HI.value,1),nf(k*(+HI.value),1)):tt('advcalc_ice',nf(RI/rm(),3),nf(+II.value,1),nf(RI*(+II.value)/rm(),2));
+}
+$$('[data-mode]').forEach(b=>{if(b.tagName==='BUTTON')b.onclick=()=>{mode=b.dataset.mode;resetState();updMode();};});
+HI.oninput=()=>{setTar();readouts();};
+II.oninput=()=>{Itar=+II.value;readouts();};
+[rcI,rmI,tauI].forEach(e=>e.oninput=()=>{if(mode==='airy')setTar();readouts();});
+$('#pTibet').onclick=()=>{HI.value=5;HI.oninput();};
+$('#pFlat').onclick=()=>{HI.value=0;HI.oninput();};
+$('#ero').onclick=()=>{const e=Math.min(1,T-T0);if(e<=0)return;T-=e;h-=e;Ttar=T;HI.value=Math.max(0,Math.round(heqF()*10)/10);readouts();};
+$('#glac').onclick=()=>{II.value=3;II.oninput();};
+$('#melt').onclick=()=>{II.value=0;II.oninput();};
+
+function step(dt){
+  const dT=Math.sign(Ttar-T)*Math.min(Math.abs(Ttar-T),25*dt);T+=dT;h+=dT;
+  const dI=Math.sign(Itar-I)*Math.min(Math.abs(Itar-I),2.5*dt);I+=dI;
+  const tau=mode==='ice'?+tauI.value:0.7;
+  const heq=heqF(),dh=(heq-h)*(1-Math.exp(-dt/tau));
+  h+=dh;rate=(heq-h)/tau;   /* km por ka (ice) */
+  if(mode==='ice')tsim+=dt;
+}
+function colMass(Tt,hh,II){return rc()*Tt+RI*II+rm()*(hh-Tt+D);}
+function block(x,w,top,bot,fill){
+  cx.fillStyle=fill;cx.fillRect(x,yv(top),w,yv(bot)-yv(top));
+  cx.strokeStyle='rgba(0,0,0,.45)';cx.lineWidth=1.5;cx.strokeRect(x,yv(top),w,yv(bot)-yv(top));
+}
+function draw(){
+  const ink=css('--ink'),mut=css('--mut');
+  cx.fillStyle=css('--cv');cx.fillRect(0,0,700,600);
+  const zf=-T0*(rm()-rc())/rm();                      /* superficie libre del manto */
+  cx.fillStyle='#f2b36a';cx.fillRect(0,yv(zf),700,600-yv(zf));
+  cx.fillStyle='rgba(120,70,20,.75)';cx.font='bold 13px system-ui';cx.textAlign='center';cx.fillText(t('lbl_mantle'),350,yv(-95));
+  /* líneas de referencia */
+  cx.setLineDash([6,5]);cx.strokeStyle=mut;cx.lineWidth=1;
+  [[0,t('lbl_sea')],[-D,t('lbl_comp')]].forEach(([e,lab])=>{cx.beginPath();cx.moveTo(0,yv(e));cx.lineTo(700,yv(e));cx.stroke();});
+  cx.setLineDash([]);cx.textAlign='left';cx.fillStyle=mut;cx.font='12px system-ui';
+  cx.fillText(t('lbl_sea'),268,yv(0)-4);cx.fillText(t('lbl_comp'),6,yv(-D)-4);
+  /* regla de km */
+  cx.textAlign='right';for(let e=-100;e<=20;e+=20){cx.fillText((e>0?'+':'')+e,696,yv(e)+4);}
+  /* bloques */
+  const xL=90,xR=400,w=160;
+  block(xL,w,0,-T0,'#b08a62');
+  const topA=h,botA=h-T;
+  block(xR,w,topA,botA,'#b08a62');
+  if(I>0.02){cx.fillStyle='#f4fbff';cx.fillRect(xR,yv(h+I),w,yv(h)-yv(h+I));cx.strokeStyle='#8ab';cx.lineWidth=1.5;cx.strokeRect(xR,yv(h+I),w,yv(h)-yv(h+I));
+    cx.fillStyle='#456';cx.textAlign='center';cx.font='12px system-ui';if(yv(h)-yv(h+I)>16)cx.fillText(t('lbl_ice'),xR+w/2,yv(h+I/2)+4);}
+  if(h>3.5&&I<0.02){cx.fillStyle='#fff';cx.fillRect(xR,yv(h),w,Math.min(6,yv(h-1.5)-yv(h)));}
+  /* etiquetas */
+  cx.fillStyle='#fff';cx.font='bold 13px system-ui';cx.textAlign='center';
+  cx.fillText('ρ = '+nf(rc(),2),xL+w/2,yv(-T0/2)+4);cx.fillText('ρ = '+nf(rc(),2),xR+w/2,yv((topA+botA)/2)+4);
+  cx.fillStyle=ink;cx.font='bold 14px system-ui';
+  cx.fillText(t('lbl_ref'),xL+w/2,yv(0)-12-(0));cx.fillText(t('lbl_act'),xR+w/2,yv(Math.max(topA+I,0))-12);
+  /* Moho del bloque activo */
+  const moho=T-h;
+  cx.textAlign='left';cx.font='12px system-ui';cx.fillStyle=ink;
+  cx.fillText(tt('lbl_moho',nf(moho,1)),xR+w+8,yv(botA)+4);
+  cx.fillText(tt('lbl_moho',nf(T0,1)),xL+w+8,yv(-T0)+4);
+  cx.strokeStyle=ink;cx.lineWidth=1;cx.beginPath();cx.moveTo(xR+w,yv(botA));cx.lineTo(xR+w+6,yv(botA));cx.stroke();
+  /* flujo del manto por diferencia de presión */
+  const dm=colMass(T,h,I)-colMass(T0,0,0),dp=dm*MPA;
+  const thick=Math.min(30,Math.abs(dm)*0.6);
+  if(thick>1.2){
+    const y=yv(-80),x1=330,x0=270,dirL=dm>0;
+    cx.fillStyle='rgba(193,18,31,.8)';
+    cx.beginPath();
+    if(dirL){cx.moveTo(x1,y-thick/2);cx.lineTo(x0+14,y-thick/2);cx.lineTo(x0+14,y-thick);cx.lineTo(x0-6,y);cx.lineTo(x0+14,y+thick);cx.lineTo(x0+14,y+thick/2);cx.lineTo(x1,y+thick/2);}
+    else{cx.moveTo(x0,y-thick/2);cx.lineTo(x1-14,y-thick/2);cx.lineTo(x1-14,y-thick);cx.lineTo(x1+6,y);cx.lineTo(x1-14,y+thick);cx.lineTo(x1-14,y+thick/2);cx.lineTo(x0,y+thick/2);}
+    cx.closePath();cx.fill();
+    cx.fillStyle='rgba(120,20,20,.9)';cx.font='11px system-ui';cx.textAlign='center';cx.fillText(t('lbl_flow'),300,y+thick+14);
+  }
+  cx.textAlign='left';
+  /* lecturas */
+  if(mode==='airy'){
+    $('#sH').textContent=nf(h,1)+' km';$('#sM').textContent=nf(moho,1)+' km';$('#sR').textContent=nf(Math.max(moho-T0,0),1)+' km';
+  }else{
+    const sink=Math.max(-h,0);
+    $('#sS').textContent=nf(sink,2)+' km';
+    $('#sRate').textContent=(rate>=0?'↑ ':'↓ ')+nf(Math.abs(rate)*1000,1)+' mm/'+(LANG==='es'?'año':'any');
+    $('#sTime').textContent=nf(tsim,1)+' ka';
+  }
+  $('#sDP').textContent=nf(dp,0)+' MPa';
+}
+function loop(now){const dt=Math.min((now-last)/1000,0.1);last=now;step(dt);draw();requestAnimationFrame(loop);}
+App.hooks.push(()=>{updMode();});
+requestAnimationFrame(loop);
+
+/* --- preguntas --- */
+
+const QDATA=[{"id":"i1","lvl":"all","type":"mc","n":4,"ans":2},{"id":"i2","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"i3","lvl":"basic","type":"mc","n":3,"ans":1},{"id":"i4","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"i5","lvl":"adv","type":"num","num":18.000000000000004,"tol":0.02,"u":1},{"id":"i6","lvl":"adv","type":"num","num":0.5557575757575758,"tol":0.03,"u":1},{"id":"i7","lvl":"adv","type":"num","num":5.5,"tol":0.02,"u":1}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

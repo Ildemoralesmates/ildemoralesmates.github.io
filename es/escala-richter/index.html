@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Escala de Richter · Energía y logaritmos</title>
+<meta name="description" content="Escala de Richter: compara dos terremotos y comprueba cómo cada punto de magnitud multiplica la amplitud por 10 y la energía por ≈32. Con sismograma, equivalencias y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/escala-richter/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/escala-richter/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/escala-richter/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/escala-richter/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Escala de Richter · Energía y logaritmos">
+<meta property="og:description" content="Escala de Richter: compara dos terremotos y comprueba cómo cada punto de magnitud multiplica la amplitud por 10 y la energía por ≈32. Con sismograma, equivalencias y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/escala-richter/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Geología · Ciencias de la Tierra</p>
+      <h1 data-i18n="h1">Escala de Richter: cada grado, un mundo</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Compara dos terremotos y descubre por qué una escala logarítmica lo cambia todo.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Comparador de terremotos</h2>
+<div class="grid2">
+<div class="ctrl"><label for="mA"><span data-i18n="mA">Terremoto A · magnitud</span>: <b id="mAv"></b></label>
+<input type="range" id="mA" min="1" max="9.5" step="0.1" value="5">
+<select id="preA" aria-label="A"></select></div>
+<div class="ctrl"><label for="mB"><span data-i18n="mB">Terremoto B · magnitud</span>: <b id="mBv"></b></label>
+<input type="range" id="mB" min="1" max="9.5" step="0.1" value="7">
+<select id="preB" aria-label="B"></select></div>
+</div>
+<div class="row"><button class="btn primary" id="shake" data-i18n="shake">⚡ ¡Terremoto!</button><span class="mut" data-i18n="seis_note">Los dos sismogramas comparten la misma escala vertical: si la diferencia crece, el más débil casi desaparece.</span></div>
+<div class="gridS">
+<canvas id="seis"></canvas>
+<div><canvas id="sq"></canvas><p class="note" data-i18n="sq_note">Área de los cuadrados ∝ energía liberada.</p></div>
+</div>
+<div id="cmp" class="idea"></div>
+<div class="stats">
+<div class="stat"><span class="k" data-i18n="st_amp">Amplitud (respecto al otro)</span><span class="v" id="sAmp"></span></div>
+<div class="stat"><span class="k" data-i18n="st_en">Energía (respecto al otro)</span><span class="v" id="sEn"></span></div>
+<div class="stat" data-lvl="adv"><span class="k">E<sub>A</sub></span><span class="v" id="sEA"></span></div>
+<div class="stat" data-lvl="adv"><span class="k">E<sub>B</sub></span><span class="v" id="sEB"></span></div>
+<div class="stat"><span class="k" data-i18n="st_hiro">Bombas de Hiroshima equivalentes (A · B)</span><span class="v"><span id="sHA"></span> · <span id="sHB"></span></span></div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>La idea:</b> cada punto de magnitud <b>multiplica por 10</b> la amplitud de la onda y por <b>unos 32</b> la energía liberada. Un 7 no es «un poco más» que un 6: es otro mundo.</div>
+<div class="idea" data-lvl="adv"><div data-i18n-html="adv_box"><b>Modelo:</b> amplitud A ∝ 10<sup>M</sup> ⇒ A<sub>B</sub>/A<sub>A</sub> = 10<sup>ΔM</sup>. Energía (Gutenberg–Richter): log<sub>10</sub> E = 1,5·M + 4,8 (E en J) ⇒ E<sub>B</sub>/E<sub>A</sub> = 10<sup>1,5·ΔM</sup> ≈ 31,6<sup>ΔM</sup>.</div><div id="advcalc" class="mono"></div></div>
+<p class="note" data-i18n-html="note_mw">Nota: hoy se usa la magnitud de momento (M<sub>w</sub>), que mantiene la lógica logarítmica de Richter (M<sub>L</sub>) pero no se satura con los grandes terremotos. La relación de energía es una aproximación empírica; 1 Hiroshima ≈ 6,3·10<sup>13</sup> J.</p>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Escala de Richter · Energia i logaritmes",
+"h1":"Escala de Richter: cada grau, un món",
+"sim_title":"Comparador de terratrèmols",
+"mA":"Terratrèmol A · magnitud",
+"mB":"Terratrèmol B · magnitud",
+"shake":"⚡ Terratrèmol!",
+"seis_note":"Els dos sismogrames comparteixen la mateixa escala vertical: si la diferència creix, el més feble quasi desapareix.",
+"sq_note":"Àrea dels quadrats ∝ energia alliberada.",
+"custom":"— terratrèmol real —",
+"cmp":"El terratrèmol <b>{0}</b> té una amplitud <b>{2}</b> vegades més gran i allibera <b>{3}</b> vegades més energia que el {1}.",
+"same":"Tenen la mateixa magnitud: mateixa amplitud i mateixa energia.",
+"st_amp":"Amplitud (cap a l’altre)",
+"st_en":"Energia (cap a l’altre)",
+"st_hiro":"Bombes d’Hiroshima equivalents (A · B)",
+"idea_basic":"<b>La idea:</b> cada punt de magnitud <b>multiplica per 10</b> l’amplitud de l’ona i per <b>uns 32</b> l’energia alliberada. Un 7 no és «un poc més» que un 6: és un altre món.",
+"adv_box":"<b>Model:</b> amplitud A ∝ 10<sup>M</sup> ⇒ A<sub>B</sub>/A<sub>A</sub> = 10<sup>ΔM</sup>. Energia (Gutenberg–Richter): log<sub>10</sub> E = 1,5·M + 4,8 (E en J) ⇒ E<sub>B</sub>/E<sub>A</sub> = 10<sup>1,5·ΔM</sup> ≈ 31,6<sup>ΔM</sup>.",
+"advcalc":"ΔM = {0} → amplitud ×10<sup>{0}</sup> = {1} ; energia ×10<sup>1,5·{0}</sup> = {2}",
+"note_mw":"Nota: avui s’usa la magnitud de moment (M<sub>w</sub>), que manté la lògica logarítmica de Richter (M<sub>L</sub>) però no se satura amb els grans terratrèmols. La relació d’energia és una aproximació empírica; 1 Hiroshima ≈ 6,3·10<sup>13</sup> J.",
+"eyebrow":"Geologia · Ciències de la Terra",
+"lede":"Compara dos terratrèmols i descobreix per què una escala logarítmica ho canvia tot.",
+"r1.q":"Un terratrèmol de magnitud 7 comparat amb un de magnitud 6 té una amplitud d’ona…",
+"r1.e":"L’amplitud creix com 10<sup>ΔM</sup>; amb ΔM = 1 resulta ×10.",
+"r1.o0":"2 vegades més gran",
+"r1.o1":"10 vegades més gran",
+"r1.o2":"32 vegades més gran",
+"r1.o3":"100 vegades més gran",
+"r2.q":"I quanta més energia allibera aproximadament?",
+"r2.e":"E ∝ 10<sup>1,5·M</sup>, així que ΔM = 1 dóna 10<sup>1,5</sup> ≈ 31,6.",
+"r2.o0":"10 vegades més",
+"r2.o1":"Unes 32 vegades més",
+"r2.o2":"100 vegades més",
+"r2.o3":"1000 vegades més",
+"r3.q":"Quants terratrèmols de magnitud 5 caldrien (aprox.) per igualar l’energia d’un de magnitud 7?",
+"r3.e":"ΔM = 2 → 10<sup>1,5·2</sup> = 10<sup>3</sup> = 1000.",
+"r3.o0":"10",
+"r3.o1":"100",
+"r3.o2":"1000",
+"r3.o3":"10 000",
+"r4.q":"Quantes vegades més energia allibera un terratrèmol de magnitud 8 que un de magnitud 6?",
+"r4.e":"10<sup>1,5·2</sup> = 1000.",
+"r5.q":"Energia alliberada per un terratrèmol de magnitud 5, amb log E = 1,5·M + 4,8.",
+"r5.e":"log E = 12,3 → E ≈ 2·10<sup>12</sup> J.",
+"r5.u":"J (escriu 2e12 per a 2·10¹²)",
+"r6.q":"Un terratrèmol allibera 1 000 000 de vegades més energia que un altre. Quantes unitats de magnitud més té?",
+"r6.e":"log(10<sup>6</sup>) = 1,5·ΔM → ΔM = 6/1,5 = 4.",
+"r6.u":"unitats de magnitud"
+},
+es:{
+"title":"Escala de Richter · Energía y logaritmos",
+"h1":"Escala de Richter: cada grado, un mundo",
+"sim_title":"Comparador de terremotos",
+"mA":"Terremoto A · magnitud",
+"mB":"Terremoto B · magnitud",
+"shake":"⚡ ¡Terremoto!",
+"seis_note":"Los dos sismogramas comparten la misma escala vertical: si la diferencia crece, el más débil casi desaparece.",
+"sq_note":"Área de los cuadrados ∝ energía liberada.",
+"custom":"— terremoto real —",
+"cmp":"El terremoto <b>{0}</b> tiene una amplitud <b>{2}</b> veces mayor y libera <b>{3}</b> veces más energía que el {1}.",
+"same":"Tienen la misma magnitud: misma amplitud y misma energía.",
+"st_amp":"Amplitud (respecto al otro)",
+"st_en":"Energía (respecto al otro)",
+"st_hiro":"Bombas de Hiroshima equivalentes (A · B)",
+"idea_basic":"<b>La idea:</b> cada punto de magnitud <b>multiplica por 10</b> la amplitud de la onda y por <b>unos 32</b> la energía liberada. Un 7 no es «un poco más» que un 6: es otro mundo.",
+"adv_box":"<b>Modelo:</b> amplitud A ∝ 10<sup>M</sup> ⇒ A<sub>B</sub>/A<sub>A</sub> = 10<sup>ΔM</sup>. Energía (Gutenberg–Richter): log<sub>10</sub> E = 1,5·M + 4,8 (E en J) ⇒ E<sub>B</sub>/E<sub>A</sub> = 10<sup>1,5·ΔM</sup> ≈ 31,6<sup>ΔM</sup>.",
+"advcalc":"ΔM = {0} → amplitud ×10<sup>{0}</sup> = {1} ; energía ×10<sup>1,5·{0}</sup> = {2}",
+"note_mw":"Nota: hoy se usa la magnitud de momento (M<sub>w</sub>), que mantiene la lógica logarítmica de Richter (M<sub>L</sub>) pero no se satura con los grandes terremotos. La relación de energía es una aproximación empírica; 1 Hiroshima ≈ 6,3·10<sup>13</sup> J.",
+"eyebrow":"Geología · Ciencias de la Tierra",
+"lede":"Compara dos terremotos y descubre por qué una escala logarítmica lo cambia todo.",
+"r1.q":"Un terremoto de magnitud 7 comparado con uno de magnitud 6 tiene una amplitud de onda…",
+"r1.e":"La amplitud crece como 10<sup>ΔM</sup>; con ΔM = 1 resulta ×10.",
+"r1.o0":"2 veces mayor",
+"r1.o1":"10 veces mayor",
+"r1.o2":"32 veces mayor",
+"r1.o3":"100 veces mayor",
+"r2.q":"¿Y cuánta más energía libera aproximadamente?",
+"r2.e":"E ∝ 10<sup>1,5·M</sup>, así que ΔM = 1 da 10<sup>1,5</sup> ≈ 31,6.",
+"r2.o0":"10 veces más",
+"r2.o1":"Unas 32 veces más",
+"r2.o2":"100 veces más",
+"r2.o3":"1000 veces más",
+"r3.q":"¿Cuántos terremotos de magnitud 5 harían falta (aprox.) para igualar la energía de uno de magnitud 7?",
+"r3.e":"ΔM = 2 → 10<sup>1,5·2</sup> = 10<sup>3</sup> = 1000.",
+"r3.o0":"10",
+"r3.o1":"100",
+"r3.o2":"1000",
+"r3.o3":"10 000",
+"r4.q":"¿Cuántas veces más energía libera un terremoto de magnitud 8 que uno de magnitud 6?",
+"r4.e":"10<sup>1,5·2</sup> = 1000.",
+"r5.q":"Energía liberada por un terremoto de magnitud 5, con log E = 1,5·M + 4,8.",
+"r5.e":"log E = 12,3 → E ≈ 2·10<sup>12</sup> J.",
+"r5.u":"J (escribe 2e12 para 2·10¹²)",
+"r6.q":"Un terremoto libera 1 000 000 de veces más energía que otro. ¿Cuántas unidades de magnitud más tiene?",
+"r6.e":"log(10<sup>6</sup>) = 1,5·ΔM → ΔM = 6/1,5 = 4.",
+"r6.u":"unidades de magnitud"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../escala-richter/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Escala de Richter ===== */
+
+const REAL=[
+ {n:{va:`Lorca 2011`,es:`Lorca 2011`},m:5.1},
+ {n:{va:`L’Aquila 2009`,es:`L’Aquila 2009`},m:6.3},
+ {n:{va:`Haití 2010`,es:`Haití 2010`},m:7.0},
+ {n:{va:`Turquia–Síria 2023`,es:`Turquía–Siria 2023`},m:7.8},
+ {n:{va:`Tohoku (Japó) 2011`,es:`Tohoku (Japón) 2011`},m:9.1},
+ {n:{va:`Xile 1960`,es:`Chile 1960`},m:9.5}
+];
+const HIRO=6.28e13;
+const E=m=>Math.pow(10,1.5*m+4.8);
+const mA=$('#mA'),mB=$('#mB'),sc=fitCanvas($('#seis'),900,340),sq=fitCanvas($('#sq'),300,283);
+
+function fillPresets(){['preA','preB'].forEach(id=>{const s=$('#'+id);const cur=s.value;
+  s.innerHTML='<option value="">'+t('custom')+'</option>'+REAL.map((r,i)=>'<option value="'+i+'">'+L(r.n)+' · '+nf(r.m,1)+'</option>').join('');s.value=cur;});}
+['A','B'].forEach(k=>{const s=$('#pre'+k),m=k==='A'?mA:mB;
+  s.onchange=()=>{if(s.value!==''){m.value=REAL[+s.value].m;upd();}};
+  m.addEventListener('input',()=>{s.value='';upd();});});
+
+function upd(){
+  const a=+mA.value,b=+mB.value;
+  $('#mAv').textContent=nf(a,1);$('#mBv').textContent=nf(b,1);
+  const d=Math.round(Math.abs(b-a)*10)/10,strong=b>=a?'B':'A',weak=b>=a?'A':'B';
+  const amp=Math.pow(10,d),en=Math.pow(10,1.5*d);
+  $('#cmp').innerHTML=d<0.05?t('same'):tt('cmp',strong,weak,fmtN(amp),fmtN(en));
+  $('#sAmp').innerHTML='×'+fmtN(amp);$('#sEn').innerHTML='×'+fmtN(en);
+  $('#sEA').innerHTML=fmtN(E(a))+' J';$('#sEB').innerHTML=fmtN(E(b))+' J';
+  $('#sHA').innerHTML=fmtN(E(a)/HIRO);$('#sHB').innerHTML=fmtN(E(b)/HIRO);
+  $('#advcalc').innerHTML=tt('advcalc',nf(d,1),fmtN(amp),fmtN(en));
+}
+App.hooks.push(()=>{fillPresets();upd();});
+
+/* --- animación --- */
+let t0=-99,head=0;const NS=450,bA=new Float32Array(NS),bB=new Float32Array(NS);
+$('#shake').onclick=()=>{t0=performance.now()/1000;};
+const env=tt=>tt<0.2?0:tt<1.0?0.22:tt<1.4?0.22+0.78*(tt-1.0)/0.4:Math.exp(-(tt-1.4)/2.2);
+
+function trace(buf,cy,amp,color){
+  sc.beginPath();
+  for(let i=0;i<NS;i++){const v=buf[(head+i)%NS];const x=i*900/(NS-1);const y=cy-v*amp-(Math.random()-.5)*1.2;i?sc.lineTo(x,y):sc.moveTo(x,y);}
+  sc.strokeStyle=color;sc.lineWidth=1.6;sc.stroke();
+}
+function draw(e){
+  const a=+mA.value,b=+mB.value,mx=Math.max(a,b),ink=css('--ink'),mut=css('--mut'),c1=css('--acc'),c2=css('--acc2'),cv=css('--cv');
+  sc.fillStyle=cv;sc.fillRect(0,0,900,340);
+  [85,255].forEach(y=>{sc.strokeStyle=mut;sc.globalAlpha=.3;sc.beginPath();sc.moveTo(0,y);sc.lineTo(900,y);sc.stroke();sc.globalAlpha=1;});
+  trace(bA,85,62*Math.pow(10,a-mx),c1);trace(bB,255,62*Math.pow(10,b-mx),c2);
+  sc.fillStyle=ink;sc.font='bold 15px system-ui';
+  sc.fillText('A · M '+nf(a,1),10,22);sc.fillText('B · M '+nf(b,1),10,192);
+  /* cuadrados de energía */
+  sq.fillStyle=cv;sq.fillRect(0,0,300,283);
+  const d=Math.abs(b-a),big=130,small=big*Math.pow(10,-0.75*d);
+  const sA=a>=b?big:small,sB=b>=a?big:small,j=e*3;
+  sq.fillStyle=c1;sq.fillRect(10+(Math.random()-.5)*j,255-sA+(Math.random()-.5)*j,sA,sA);
+  sq.fillStyle=c2;sq.fillRect(160+(Math.random()-.5)*j,255-sB+(Math.random()-.5)*j,sB,sB);
+  sq.fillStyle=ink;sq.font='bold 15px system-ui';sq.fillText('A',10,277);sq.fillText('B',160,277);
+}
+function loop(){
+  const now=performance.now()/1000,e=env(now-t0);
+  bA[head]=e*(0.6*Math.sin(now*43)+0.35*Math.sin(now*97+1)+0.55*(Math.random()-.5));
+  bB[head]=e*(0.6*Math.sin(now*39+2)+0.35*Math.sin(now*89)+0.55*(Math.random()-.5));
+  head=(head+1)%NS;draw(e);requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* --- preguntas --- */
+
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r3","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r4","lvl":"adv","type":"num","num":1000,"tol":0.01},{"id":"r5","lvl":"adv","type":"num","num":1995262314968.8828,"tol":0.05,"sci":true,"u":1},{"id":"r6","lvl":"adv","type":"num","num":4,"tol":0.001,"u":1}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>
