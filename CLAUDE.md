@@ -30,6 +30,7 @@
 - El text es redacta **una sola vegada** per idioma, dins un diccionari `I18N = {ca:{…}, es:{…}}` de la font; no es dupliquen parells en JSON a banda.
 - Les fonts viuen a `tools/simuladors/src/` i les pàgines es generen amb `python3 tools/simuladors/genera.py` (afegir el nou recurs al `MAP` de `genera.py`). Mai s'editen les pàgines generades a mà.
 - Per a cada recurs nou: targeta a `index.html`, les dues URLs al `sitemap.xml`, comptador GoatCounter, enllaç de tornada a la portada i verificar amb Playwright (sense errors de JS, text estàtic = text renderitzat, mode fosc i mòbil de 390 px).
+- **Maquetació:** el dibuix (canvas) a l'esquerra i els números, missatges i càlculs en un panell a la dreta, perquè es vegen alhora sense fer scroll en un portàtil de 1366 × 768 o a la pissarra digital. Patró de referència: `.simgrid` / `.side` de `tools/simuladors/src/rectangles.src.html` (columnes `minmax(0,1.45fr) minmax(15rem,1fr)`; per davall de 820 px el panell passa baix del dibuix).
 - Les pàgines estàtiques sense JS poden seguir el flux antic de `tools/genera_es.py` (JSON de parells).
 
 # Animacions amb passos i predicció (meiosi, osmosi-difusio, fotosintesi-respiracio)
