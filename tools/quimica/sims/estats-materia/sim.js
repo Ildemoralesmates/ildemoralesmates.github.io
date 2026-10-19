@@ -2,7 +2,10 @@
 /* ---------- dades (aproximades, per a 100 g) ---------- */
 const SUBS={
   water:  {mp:0,   bp:100, cs:2.09,cl:4.18,cg:2.01,Lf:334,Lv:2260,Tmin:-30, Tmax:130,col:'#4dabf7',sc:'#1971c2'},
-  ethanol:{mp:-114,bp:78,  cs:1.6, cl:2.44,cg:1.43,Lf:108,Lv:841, Tmin:-140,Tmax:100,col:'#69db7c',sc:'#2b8a3e'}
+  ethanol:{mp:-114,bp:78,  cs:1.6, cl:2.44,cg:1.43,Lf:108,Lv:841, Tmin:-140,Tmax:100,col:'#69db7c',sc:'#2b8a3e'},
+  acetone:{mp:-95, bp:56,  cs:1.6, cl:2.17,cg:1.30,Lf:98, Lv:501, Tmin:-120,Tmax:80, col:'#b197fc',sc:'#6741d9'},
+  nitrogen:{mp:-210,bp:-196,cs:1.9,cl:2.04,cg:1.04,Lf:26, Lv:199, Tmin:-230,Tmax:-170,col:'#74c0fc',sc:'#1864ab'},
+  iron:   {mp:1538,bp:2862,cs:0.45,cl:0.82,cg:0.57,Lf:247,Lv:6090,Tmin:20,  Tmax:3000,col:'#f08c4a',sc:'#9c4a12'}
 };
 const MASS=100; /* g */
 const PHC=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444'];
@@ -116,6 +119,7 @@ function step(dt){
 }
 
 /* ---------- dibuix: recipient, partícules, termòmetre ---------- */
+function nice(sp){const c=[5,10,20,50,100,200,500,1000];return c.find(x=>sp/x<=7)||1000;}
 function tColor(T){const u=clamp((T-S.Tmin)/(S.Tmax-S.Tmin),0,1);
   const c0=[51,154,240],c1=[240,62,62];return `rgb(${c0.map((v,i)=>Math.round(lerp(v,c1[i],u))).join(',')})`;}
 
@@ -162,7 +166,7 @@ function drawBox(now){
   const col=tColor(cur.T);c.fillStyle=col;
   c.beginPath();c.arc(tx,bot+22,15,0,6.2832);c.fill();
   c.fillRect(tx-4,bot-u*h,8,u*h+10);
-  const span=S.Tmax-S.Tmin,stp=span>200?50:20;
+  const span=S.Tmax-S.Tmin,stp=nice(span);
   c.fillStyle=C.mut;c.strokeStyle=C.mut;c.lineWidth=1.5;c.font='11px system-ui,sans-serif';c.textAlign='left';c.textBaseline='middle';
   for(let T=Math.ceil(S.Tmin/stp)*stp;T<=S.Tmax;T+=stp){const y=bot-(T-S.Tmin)/span*h;
     c.beginPath();c.moveTo(tx+9,y);c.lineTo(tx+15,y);c.stroke();c.fillText(T,tx+18,y);}
@@ -176,7 +180,7 @@ const gx=e=>ML+e/Etot*(GW-ML-MR), gy=T=>MT+(1-(T-S.Tmin)/(S.Tmax-S.Tmin))*(GH-MT
 function curvePts(){return [[0,S.Tmin],[B[1],S.mp],[B[2],S.mp],[B[3],S.bp],[B[4],S.bp],[Etot,S.Tmax]];}
 function drawGraph(){
   const c=gctx;c.clearRect(0,0,GW,GH);
-  const span=S.Tmax-S.Tmin,tstp=span>200?50:20;
+  const span=S.Tmax-S.Tmin,tstp=nice(span);
   const xs=[10,20,25,50,100].find(s=>Etot/s<=8)||100;
   c.font='12px system-ui,sans-serif';c.lineWidth=1;
   /* graella i eixos */
