@@ -17,3 +17,11 @@
 - La font és `tools/simuladors/src/` (`*.src.html` + `common.css`/`common.js`); cada simulador du un diccionari `I18N` amb `ca` i `es`.
 - Després de canviar una font: `python3 tools/simuladors/genera.py` (cal Playwright). Escriu les dues versions amb el text també en l'HTML estàtic, `canonical` i `hreflang`.
 - El sitemap d'aquestes 8 URLs es manté a mà (ja hi són). `tools/genera_es.py` no els toca.
+
+# Regla general per a TOTS els recursos interactius nous (simuladors i animacions)
+
+- Sempre bilingües: valencià (`/<slug>/`) i castellà (`/es/<slug>/`), amb **URL pròpia per idioma**, text escrit també en l'HTML estàtic (no només omplit per JS), `canonical`, `hreflang` ca/es/x-default i les dues URLs al `sitemap.xml`. Un selector que només canvia el text dins la pàgina no posiciona en Google.
+- El text es redacta **una sola vegada** per idioma, dins un diccionari `I18N = {ca:{…}, es:{…}}` de la font; no es dupliquen parells en JSON a banda.
+- Les fonts viuen a `tools/simuladors/src/` i les pàgines es generen amb `python3 tools/simuladors/genera.py` (afegir el nou recurs al `MAP` de `genera.py`). Mai s'editen les pàgines generades a mà.
+- Per a cada recurs nou: targeta a `index.html`, les dues URLs al `sitemap.xml`, comptador GoatCounter, enllaç de tornada a la portada i verificar amb Playwright (sense errors de JS, text estàtic = text renderitzat, mode fosc i mòbil de 390 px).
+- Les pàgines estàtiques sense JS poden seguir el flux antic de `tools/genera_es.py` (JSON de parells).
