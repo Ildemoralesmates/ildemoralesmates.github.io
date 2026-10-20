@@ -49,7 +49,7 @@
 <div class="op op2"><div class="head"><b data-i18n="second"></b><select id="t2" aria-label="2"><option value="-1" data-i18n="down"></option><option value="1" data-i18n="up"></option></select><output id="p2v"></output></div><input type="range" id="p2" min="5" max="90" step="5" value="20" data-i18n-aria="aria.p2" aria-label=""></div>
 </div>
 <div class="numin"><label for="guess" data-i18n="guess_q"></label><input type="text" inputmode="decimal" id="guess" autocomplete="off"><span>€</span>
-<button class="btn primary" id="go" type="button" data-i18n="go"></button><button class="btn" id="again" type="button" data-i18n="again"></button></div>
+<button class="btn primary" id="go" type="button"></button><button class="btn" id="again" type="button" data-i18n="again"></button></div>
 <div class="simgrid">
 <div class="simcv"><canvas id="cv"></canvas></div>
 <div class="side">
@@ -166,7 +166,7 @@ ca:{
 "down":"rebaixa","up":"pujada",
 "aria.p1":"Percentatge del primer canvi","aria.p2":"Percentatge del segon canvi",
 "guess_q":"La teua predicció: quant pagaràs al final?",
-"go":"▶ Passa per caixa","again":"Torna a començar",
+"go":"▶ Passa per caixa","go1":"▶ Aplica el 1r canvi","go2":"▶ Aplica el 2n canvi","go3":"▶ Compara amb sumar","again":"Torna a començar",
 "l_start":"Preu inicial","l_after1":"Després del 1r","l_after2":"Preu final","l_naive":"Si sumàrem %",
 "l_lost":"Aquest {0} % ja no hi era",
 "t_line1":"{0} {1} {2} % de {3} = <span class=\"a\">{4}</span> → {5}",
@@ -301,7 +301,7 @@ es:{
 "down":"rebaja","up":"subida",
 "aria.p1":"Porcentaje del primer cambio","aria.p2":"Porcentaje del segundo cambio",
 "guess_q":"Tu predicción: ¿cuánto pagarás al final?",
-"go":"▶ Pasa por caja","again":"Volver a empezar",
+"go":"▶ Pasa por caja","go1":"▶ Aplica el 1.er cambio","go2":"▶ Aplica el 2.º cambio","go3":"▶ Compara con sumar","again":"Volver a empezar",
 "l_start":"Precio inicial","l_after1":"Tras el 1.º","l_after2":"Precio final","l_naive":"Si sumáramos %",
 "l_lost":"Este {0} % ya no estaba",
 "t_line1":"{0} {1} {2} % de {3} = <span class=\"a\">{4}</span> → {5}",
@@ -366,7 +366,10 @@ function read(reset){
 }
 ['t1','t2','p1','p2'].forEach(id=>$('#'+id).addEventListener('input',()=>read(true)));
 $('#price').addEventListener('input',()=>read(true));
-$('#go').onclick=()=>{const g=parseNum($('#guess').value);guess=$('#guess').value.trim()!==''&&Number.isFinite(g)?g:null;phase=0;target=3;msgFn=null;$('#msg').innerHTML='';};
+$('#go').onclick=()=>{if(target>=3)return;
+  if(target===0){const g=parseNum($('#guess').value);guess=$('#guess').value.trim()!==''&&Number.isFinite(g)?g:null;phase=0;msgFn=null;$('#msg').innerHTML='';}
+  target=Math.min(3,Math.round(target)+1);};
+function setGo(){const b=$('#go');b.textContent=t(['go1','go2','go3','go3'][Math.round(target)]);b.disabled=target>=3;}
 $('#again').onclick=()=>{$('#guess').value='';guess=null;read(true);};
 function vals(){const m1=1+s1*p1/100,m2=1+s2*p2/100,v1=P*m1,v2=v1*m2,naive=P*(1+(s1*p1+s2*p2)/100);
   return {m1,m2,v1,v2,naive,tot:(m1*m2-1)*100,naiveTot:s1*p1+s2*p2};}
@@ -381,6 +384,7 @@ function texts(){
   $('#ticket').innerHTML=phase>=2.99?h:h.split('<br>').slice(0,phase>=1.99?2:phase>=0.99?1:0).join('<br>');
   $('#mult').innerHTML=tt('m_line',fx(V.m1,2).replace(/0$/,''),fx(V.m2,2).replace(/0$/,''),fx(V.m1*V.m2,4).replace(/0+$/,'').replace(/,$/,''),tt('m_pay',pct(V.m1*V.m2*100)));
   if(msgFn)msgFn();
+  setGo();
 }
 function finish(){
   const V=vals();
