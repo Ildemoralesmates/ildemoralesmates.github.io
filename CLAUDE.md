@@ -45,3 +45,10 @@
 
 - Pàgines generades (va + es) amb `python3 tools/quimica/publica.py`; font a `tools/quimica/` (`sims/<slug>/strings.json` amb `va`/`es`, `body.html`, `sim.js`, `sim.css`). **No s'editen a mà.** Comptador GoatCounter i `base_url` ja configurats a `tools/quimica/config.json`.
 - Les targetes i les 8 URLs del sitemap es mantenen a mà (ja hi són); `tools/genera_es.py` no els toca.
+
+# Secció «Raona-ho» (activitats de raonament dins l'animació)
+
+- Motor compartit: `tools/simuladors/src/raona.js` + `raona.css` (es criden des de `build.py` amb `/*@RAONA_JS@*/`, `/*@RAONA_CSS@*/` i `<!--@RAONA@-->`; el marcat va després de la targeta del simulador). Ja el fan servir engranatges, zoom, potències, arrel i rebaixes (`rectangles.src.html` du la mateixa idea escrita a mà).
+- Cada animació només aporta contingut: `RZ.init({F, sim, M, S, E, D})` abans de `const QDATA` i les cadenes al seu `I18N` (ca i es). Quatre pestanyes: **M** missions inverses (`chk(v)` torna `null` o `{k,p}`), **S** sempre/de vegades/mai (`ans` `S|D|M`; si és `D` demana contraexemple amb `f`+`cx`), **E** qui té raó (`who` 0/1/2/3 i la raó correcta sempre és `w0`; ordre barrejat en pantalla), **D** decideix (camps `f`, opcions `chips`).
+- Claus per tasca `<id>`: `.q`, `.more`, `.h`/`.e` (S), `.ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model` (E), `.l0..` (camps de D). Els textos comuns (títols, «Missió», «Mostra-ho al simulador»…) els posa el motor; no es repeteixen.
+- Cada tasca amb botó «Mostra-ho al simulador» ha de carregar el cas al dibuix (`sim`). Regles de contingut: respostes úniques o rangs comprovables per codi, errors típics reals d'1r ESO, una pregunta `.more` que obligue a generalitzar. Es prova amb Playwright: cada tasca bé i mal, ca i es, sense claus sense traduir.

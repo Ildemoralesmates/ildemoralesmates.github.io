@@ -148,6 +148,38 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .ladder .lr.on{color:var(--ink);font-weight:600}
 .ladder .lr.on .bar2{opacity:1;background:var(--pb)}
 
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
 .ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:10px 18px}
 .op{display:grid;gap:4px}
 .op .head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
@@ -192,12 +224,19 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 </div>
 <div class="numin"><label for="guess" data-i18n="guess_q">La teua predicció: quant pagaràs al final?</label><input type="text" inputmode="decimal" id="guess" autocomplete="off"><span>€</span>
 <button class="btn primary" id="go" type="button" data-i18n="go">▶ Passa per caixa</button><button class="btn" id="again" type="button" data-i18n="again">Torna a començar</button></div>
-<canvas id="cv"></canvas>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas></div>
+<div class="side">
 <p class="msg" id="msg" aria-live="polite"></p>
 <div class="ticket" id="ticket"></div>
+<div class="ticket" id="mult" data-lvl="adv"></div>
+</div>
+</div>
 <div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>La idea:</b> la segona rebaixa és un 20 % de 80 €, no de 100 €: només 16 €. Per això la rebaixa total és del 36 %, no del 40 %. Al dibuix, el racó ratllat és «el 20 % del 20 %» = 4 %: si sumem els percentatges, el comptem dues vegades.</div>
-<div class="idea" data-lvl="adv"><div data-i18n-html="idea_adv"><b>Amb multiplicadors:</b> rebaixar un 20 % és multiplicar per 0,8; pujar un 20 %, per 1,2. Els canvis encadenats es <b>multipliquen</b>: 0,8 · 0,8 = 0,64 → pagues el 64 %, rebaixa del 36 %. I com que l'ordre de la multiplicació no importa, tant fa quin descompte s'aplica primer.</div><div class="ticket" id="mult" style="margin-top:8px"></div></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Amb multiplicadors:</b> rebaixar un 20 % és multiplicar per 0,8; pujar un 20 %, per 1,2. Els canvis encadenats es <b>multipliquen</b>: 0,8 · 0,8 = 0,64 → pagues el 64 %, rebaixa del 36 %. I com que l'ordre de la multiplicació no importa, tant fa quin descompte s'aplica primer.</div>
 </section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
 
 <section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
   </main>
@@ -207,6 +246,88 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 <script>
 const I18N={
 ca:{
+"rng":"Escriu percentatges entre 5 i 90, de 5 en 5 (com a les barres del simulador).",
+"l_each":"Cada rebaixa","l_x":"x","l_r1":"1a rebaixa","l_r2":"2a rebaixa","l_up":"Pujada","l_down":"Rebaixa",
+"s_cx_no":"Amb +{0} % i −{1} % un preu de 100 € queda en {2}: sí que és més alt. Busca'n uns on no.",
+"m1.q":"Troba una rebaixa que, aplicada <b>dues vegades seguides</b>, faça una rebaixa total del <b>36 %</b>.",
+"m1_f":"Dues rebaixes del {0} % fan una rebaixa total del {1} %.",
+"m1_ok":"✔ Missió complida! Dues rebaixes del 20 %: 100 · 0,80 · 0,80 = 64 €, un 36 % menys.",
+"m1.more":"No és el 18 %, que seria la meitat de 36. Per què no? Què passa quan la segona rebaixa es fa sobre un preu ja rebaixat?",
+"m2.q":"Puja un preu un x % i, després, rebaixa'l el mateix x %. Quin x deixa un preu de 100 € en <b>91 €</b>?",
+"m2_f":"Amb +{0} % i −{0} % un preu de 100 € queda en {1}.",
+"m2_ok":"✔ Missió complida! 100 · 1,30 · 0,70 = 91 €.",
+"m2.more":"Sempre queda per davall de 100. Per què? Escriu (1 + x)(1 − x) i mira què val.",
+"m3.q":"Troba dues rebaixes (1a i 2a) que, seguides, facen una rebaixa total del <b>40 %</b>.",
+"m3_f":"Rebaixes del {0} % i {1} % seguides fan una rebaixa total del {2} %.",
+"m3_ok":"✔ Missió complida! {0} · {1} = 0,60: una rebaixa total del 40 %.",
+"m3.more":"Hi ha dues solucions (una és l'altra a l'inrevés). Per què l'ordre no importa? Què té a veure amb 0,80 · 0,75?",
+"m4.q":"Troba una <b>pujada</b> i una <b>rebaixa</b> (percentatges diferents) que deixen el preu <b>igual</b> que al principi.",
+"m4_f":"Amb +{0} % i −{1} % un preu de 100 € queda en {2}.",
+"m4_ok":"✔ Missió complida! 100 · 1,25 · 0,80 = 100 €.",
+"m4.more":"Per què cal rebaixar menys (20 %) que el que s'ha pujat (25 %)? Sobre quin preu es fa cada percentatge?",
+"s1.q":"«Dues rebaixes seguides del 20 % equivalen a una rebaixa del 40 %.»",
+"s1.h":"Prova-ho amb 100 €: 20 % i 20 % al simulador.",
+"s1.e":"100 → 80 → 64: és una rebaixa del 36 %, no del 40 %. La segona rebaixa es calcula sobre un preu ja rebaixat.",
+"s2.q":"«Dues rebaixes seguides fan una rebaixa total menor que la suma dels dos percentatges.»",
+"s2.h":"Prova 10 % i 30 %; després, 20 % i 20 %.",
+"s2.e":"(1 − a)(1 − b) = 1 − a − b + ab: el terme ab recupera una part. La rebaixa total és a + b − ab, sempre menor que a + b.",
+"s3.q":"«Si un preu puja un 20 % i després baixa un 20 %, torna al preu d'abans.»",
+"s3.h":"Prova-ho amb 100 €.",
+"s3.e":"100 → 120 → 96. El 20 % de la rebaixa es calcula sobre 120 (són 24 €), que és més que els 20 € que va pujar. En factors: 1,20 · 0,80 = 0,96.",
+"s4.q":"«L'ordre de dues rebaixes no canvia el preu final.»",
+"s4.h":"Compara −10 % i després −30 % amb −30 % i després −10 %.",
+"s4.e":"Cada rebaixa multiplica el preu (0,90 · 0,70 = 0,70 · 0,90): la multiplicació no depén de l'ordre, així que el preu final és el mateix.",
+"s5.q":"«Una pujada seguida d'una rebaixa deixa el preu més alt que el d'abans.»",
+"s5.h":"Prova +10 % i −5 %; després, +20 % i −20 %.",
+"s5.e":"Depén dels percentatges: +10 % i −5 % el deixen més alt (1,10 · 0,95 = 1,045), però +20 % i −20 % el deixen més baix (1,20 · 0,80 = 0,96).",
+"s5.cx":"✔ Contraexemple trobat: +{0} % i −{1} % deixen 100 € en {2}, que no és més alt.",
+"s6.q":"«La rebaixa total de dues rebaixes seguides és sempre més gran que cadascuna per separat.»",
+"s6.h":"Prova 10 % i 30 % i mira la rebaixa total.",
+"s6.e":"Cada rebaixa nova encara redueix més el preu: (1 − a)(1 − b) és més petit que 1 − a i que 1 − b. Per això el total sempre supera cadascuna.",
+"e1.ctx":"Un abric costa <b>100 €</b>. Té una rebaixa del <b>30 %</b> i, després, una altra del <b>20 %</b>. Quina és la rebaixa total?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Un 50 %: 30 + 20 = 50, així que queda en 50 €.",
+"e1.s1":"Un 44 %: queda en 56 €.",
+"e1.w0":"La segona rebaixa es calcula sobre el preu que ja està rebaixat (70 €), no sobre els 100 €: el 20 % de 70 són 14 €, no 20 €.",
+"e1.w1":"Perquè els percentatges mai es poden aplicar dues vegades.",
+"e1.w2":"Perquè 30 + 20 no és 50.",
+"e1.frame":"Marta, la rebaixa total no és del 50 % perquè…",
+"e1.model":"Marta, la segona rebaixa no es fa sobre els 100 € inicials, sinó sobre els 70 € que queden després de la primera: el 20 % de 70 són 14 €, no 20 €. El preu final és 100 · 0,70 · 0,80 = 56 €, una rebaixa total del 44 %.",
+"e2.ctx":"Un joc costa <b>60 €</b>. El preu <b>puja un 10 %</b> i, després, <b>baixa un 10 %</b>. Quant val ara?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"59,40 €.",
+"e2.s1":"60 €: +10 % i −10 % es compensen.",
+"e2.w0":"La rebaixa del 10 % es calcula sobre 66 € (el preu ja pujat): són 6,60 €, no 6 €. Per això queda en 59,40 €.",
+"e2.w1":"Perquè els augments i les rebaixes mai es poden combinar.",
+"e2.w2":"Perquè 60 no es pot multiplicar per 1,1.",
+"e2.frame":"Rita, el preu no torna als 60 € perquè…",
+"e2.model":"Rita, +10 % i −10 % no es compensen perquè els dos percentatges es calculen sobre quantitats diferents: el 10 % de 60 són 6 €, però el 10 % de 66 són 6,60 €. 60 · 1,10 · 0,90 = 59,40 €.",
+"e3.ctx":"Dues rebaixes seguides, del <b>20 %</b> i del <b>15 %</b>. Quina és la rebaixa total?",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"35 %: 20 + 15.",
+"e3.s1":"5 %: 20 − 15.",
+"e3.w0":"Cap dels dos: les rebaixes no se sumen ni es resten, es multipliquen els factors. 0,80 · 0,85 = 0,68: la rebaixa total és del 32 %.",
+"e3.w1":"La rebaixa total és la suma o la resta, segons quina siga més gran.",
+"e3.w2":"No es pot saber sense conéixer el preu inicial.",
+"e3.frame":"Àlex i Laia, la rebaixa total no és ni 35 % ni 5 % perquè…",
+"e3.model":"Àlex, 20 + 15 = 35 només valdria si les dues rebaixes foren sobre el preu inicial. Laia, restar-les no té sentit. Partint de 100 €: 100 · 0,80 = 80 i 80 · 0,85 = 68. La rebaixa total és del 32 %, i no depén del preu inicial.",
+"d1.q":"Una botiga anuncia: «20 % de rebaixa + 20 % més a la caixa». Una jaqueta costa <b>80 €</b>. Quant pagues i quina és la rebaixa total?",
+"d1.l0":"Preu final (€)","d1.l1":"Rebaixa total (%)",
+"d1_naive":"Això seria una rebaixa del 40 %: però la segona rebaixa es calcula sobre el preu ja rebaixat (64 €).",
+"d1_pay":"Revisa el preu: 80 · 0,80 · 0,80.",
+"d1_tot":"El preu està bé. Ara compara'l amb els 80 € inicials: quin percentatge se n'ha rebaixat?",
+"d1.more":"I si la segona rebaixa fóra del 30 % en compte del 20 %? Calcula-ho abans de comprovar-ho al simulador.",
+"d2.q":"Dues botigues venen el mateix televisor de <b>500 €</b>. <b>A:</b> 30 % de rebaixa. <b>B:</b> 20 % de rebaixa i, a la caixa, un 10 % més. Quina és més barata i amb quina diferència?",
+"d2.lc":"Més barata:",
+"d2.l0":"Diferència (€)",
+"d2_pick":"B no és la més barata: A deixa el televisor en 500 · 0,70 i B en 500 · 0,80 · 0,90.",
+"d2_diff":"Bona botiga. Ara calcula els dos preus i resta'ls.",
+"d2.more":"Per què «20 % + 10 %» no és el mateix que «30 %»? Quina rebaixa del primer pas necessitaria B per a empatar?",
+"d3.q":"Un preu <b>puja un 50 %</b>. Quin percentatge l'has de <b>rebaixar després</b> per a tornar al preu inicial?",
+"d3.lc":"Rebaixa (%):",
+"d3_no":"No és el {0} %. El preu nou és 1,5 vegades l'inicial: busca el factor que, multiplicat per 1,5, dona 1.",
+"d3_ok":"✔ Ben decidit! 1,5 · (1 − 1/3) = 1: cal rebaixar un terç, el 33,3 %. Menys que el 50 %, perquè es fa sobre un preu més alt.",
+"d3.more":"I si el preu haguera pujat un 100 % (el doble)? Quina rebaixa el torna al preu inicial?",
 "title":"Rebaixes encadenades: 20 % + 20 % no és 40 %",
 "eyebrow":"Matemàtiques · 1r ESO · Percentatges",
 "h1":"Rebaixes encadenades: on és el 4 % que falta?",
@@ -260,6 +381,88 @@ ca:{
 "r7.e":"0,7 · 0,8 = 0,56 → pagues el 56 %: rebaixa del 44 % (no del 50 %)."
 },
 es:{
+"rng":"Escribe porcentajes entre 5 y 90, de 5 en 5 (como en las barras del simulador).",
+"l_each":"Cada rebaja","l_x":"x","l_r1":"1.ª rebaja","l_r2":"2.ª rebaja","l_up":"Subida","l_down":"Rebaja",
+"s_cx_no":"Con +{0} % y −{1} % un precio de 100 € queda en {2}: sí es más alto. Busca unos en los que no.",
+"m1.q":"Encuentra una rebaja que, aplicada <b>dos veces seguidas</b>, haga una rebaja total del <b>36 %</b>.",
+"m1_f":"Dos rebajas del {0} % hacen una rebaja total del {1} %.",
+"m1_ok":"✔ ¡Misión cumplida! Dos rebajas del 20 %: 100 · 0,80 · 0,80 = 64 €, un 36 % menos.",
+"m1.more":"No es el 18 %, que sería la mitad de 36. ¿Por qué no? ¿Qué pasa cuando la segunda rebaja se hace sobre un precio ya rebajado?",
+"m2.q":"Sube un precio un x % y, después, rebájalo el mismo x %. ¿Qué x deja un precio de 100 € en <b>91 €</b>?",
+"m2_f":"Con +{0} % y −{0} % un precio de 100 € queda en {1}.",
+"m2_ok":"✔ ¡Misión cumplida! 100 · 1,30 · 0,70 = 91 €.",
+"m2.more":"Siempre queda por debajo de 100. ¿Por qué? Escribe (1 + x)(1 − x) y mira cuánto vale.",
+"m3.q":"Encuentra dos rebajas (1.ª y 2.ª) que, seguidas, hagan una rebaja total del <b>40 %</b>.",
+"m3_f":"Rebajas del {0} % y {1} % seguidas hacen una rebaja total del {2} %.",
+"m3_ok":"✔ ¡Misión cumplida! {0} · {1} = 0,60: una rebaja total del 40 %.",
+"m3.more":"Hay dos soluciones (una es la otra al revés). ¿Por qué el orden no importa? ¿Qué tiene que ver con 0,80 · 0,75?",
+"m4.q":"Encuentra una <b>subida</b> y una <b>rebaja</b> (porcentajes distintos) que dejen el precio <b>igual</b> que al principio.",
+"m4_f":"Con +{0} % y −{1} % un precio de 100 € queda en {2}.",
+"m4_ok":"✔ ¡Misión cumplida! 100 · 1,25 · 0,80 = 100 €.",
+"m4.more":"¿Por qué hay que rebajar menos (20 %) de lo que se ha subido (25 %)? ¿Sobre qué precio se hace cada porcentaje?",
+"s1.q":"«Dos rebajas seguidas del 20 % equivalen a una rebaja del 40 %.»",
+"s1.h":"Pruébalo con 100 €: 20 % y 20 % en el simulador.",
+"s1.e":"100 → 80 → 64: es una rebaja del 36 %, no del 40 %. La segunda rebaja se calcula sobre un precio ya rebajado.",
+"s2.q":"«Dos rebajas seguidas hacen una rebaja total menor que la suma de los dos porcentajes.»",
+"s2.h":"Prueba 10 % y 30 %; después, 20 % y 20 %.",
+"s2.e":"(1 − a)(1 − b) = 1 − a − b + ab: el término ab recupera una parte. La rebaja total es a + b − ab, siempre menor que a + b.",
+"s3.q":"«Si un precio sube un 20 % y después baja un 20 %, vuelve al precio de antes.»",
+"s3.h":"Pruébalo con 100 €.",
+"s3.e":"100 → 120 → 96. El 20 % de la rebaja se calcula sobre 120 (son 24 €), que es más que los 20 € que subió. En factores: 1,20 · 0,80 = 0,96.",
+"s4.q":"«El orden de dos rebajas no cambia el precio final.»",
+"s4.h":"Compara −10 % y después −30 % con −30 % y después −10 %.",
+"s4.e":"Cada rebaja multiplica el precio (0,90 · 0,70 = 0,70 · 0,90): la multiplicación no depende del orden, así que el precio final es el mismo.",
+"s5.q":"«Una subida seguida de una rebaja deja el precio más alto que el de antes.»",
+"s5.h":"Prueba +10 % y −5 %; después, +20 % y −20 %.",
+"s5.e":"Depende de los porcentajes: +10 % y −5 % lo dejan más alto (1,10 · 0,95 = 1,045), pero +20 % y −20 % lo dejan más bajo (1,20 · 0,80 = 0,96).",
+"s5.cx":"✔ Contraejemplo encontrado: +{0} % y −{1} % dejan 100 € en {2}, que no es más alto.",
+"s6.q":"«La rebaja total de dos rebajas seguidas es siempre mayor que cada una por separado.»",
+"s6.h":"Prueba 10 % y 30 % y mira la rebaja total.",
+"s6.e":"Cada rebaja nueva reduce aún más el precio: (1 − a)(1 − b) es menor que 1 − a y que 1 − b. Por eso el total siempre supera a cada una.",
+"e1.ctx":"Un abrigo cuesta <b>100 €</b>. Tiene una rebaja del <b>30 %</b> y, después, otra del <b>20 %</b>. ¿Cuál es la rebaja total?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Un 50 %: 30 + 20 = 50, así que queda en 50 €.",
+"e1.s1":"Un 44 %: queda en 56 €.",
+"e1.w0":"La segunda rebaja se calcula sobre el precio que ya está rebajado (70 €), no sobre los 100 €: el 20 % de 70 son 14 €, no 20 €.",
+"e1.w1":"Porque los porcentajes nunca se pueden aplicar dos veces.",
+"e1.w2":"Porque 30 + 20 no es 50.",
+"e1.frame":"Marta, la rebaja total no es del 50 % porque…",
+"e1.model":"Marta, la segunda rebaja no se hace sobre los 100 € iniciales, sino sobre los 70 € que quedan tras la primera: el 20 % de 70 son 14 €, no 20 €. El precio final es 100 · 0,70 · 0,80 = 56 €, una rebaja total del 44 %.",
+"e2.ctx":"Un juego cuesta <b>60 €</b>. El precio <b>sube un 10 %</b> y, después, <b>baja un 10 %</b>. ¿Cuánto vale ahora?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"59,40 €.",
+"e2.s1":"60 €: +10 % y −10 % se compensan.",
+"e2.w0":"La rebaja del 10 % se calcula sobre 66 € (el precio ya subido): son 6,60 €, no 6 €. Por eso queda en 59,40 €.",
+"e2.w1":"Porque los aumentos y las rebajas nunca se pueden combinar.",
+"e2.w2":"Porque 60 no se puede multiplicar por 1,1.",
+"e2.frame":"Rita, el precio no vuelve a los 60 € porque…",
+"e2.model":"Rita, +10 % y −10 % no se compensan porque los dos porcentajes se calculan sobre cantidades distintas: el 10 % de 60 son 6 €, pero el 10 % de 66 son 6,60 €. 60 · 1,10 · 0,90 = 59,40 €.",
+"e3.ctx":"Dos rebajas seguidas, del <b>20 %</b> y del <b>15 %</b>. ¿Cuál es la rebaja total?",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"35 %: 20 + 15.",
+"e3.s1":"5 %: 20 − 15.",
+"e3.w0":"Ninguno: las rebajas no se suman ni se restan, se multiplican los factores. 0,80 · 0,85 = 0,68: la rebaja total es del 32 %.",
+"e3.w1":"La rebaja total es la suma o la resta, según cuál sea mayor.",
+"e3.w2":"No se puede saber sin conocer el precio inicial.",
+"e3.frame":"Álex y Laia, la rebaja total no es ni 35 % ni 5 % porque…",
+"e3.model":"Álex, 20 + 15 = 35 solo valdría si las dos rebajas fueran sobre el precio inicial. Laia, restarlas no tiene sentido. Partiendo de 100 €: 100 · 0,80 = 80 y 80 · 0,85 = 68. La rebaja total es del 32 %, y no depende del precio inicial.",
+"d1.q":"Una tienda anuncia: «20 % de rebaja + 20 % más en caja». Una chaqueta cuesta <b>80 €</b>. ¿Cuánto pagas y cuál es la rebaja total?",
+"d1.l0":"Precio final (€)","d1.l1":"Rebaja total (%)",
+"d1_naive":"Eso sería una rebaja del 40 %: pero la segunda rebaja se calcula sobre el precio ya rebajado (64 €).",
+"d1_pay":"Revisa el precio: 80 · 0,80 · 0,80.",
+"d1_tot":"El precio está bien. Ahora compáralo con los 80 € iniciales: ¿qué porcentaje se ha rebajado?",
+"d1.more":"¿Y si la segunda rebaja fuera del 30 % en vez del 20 %? Calcúlalo antes de comprobarlo en el simulador.",
+"d2.q":"Dos tiendas venden el mismo televisor de <b>500 €</b>. <b>A:</b> 30 % de rebaja. <b>B:</b> 20 % de rebaja y, en caja, un 10 % más. ¿Cuál es más barata y con qué diferencia?",
+"d2.lc":"Más barata:",
+"d2.l0":"Diferencia (€)",
+"d2_pick":"B no es la más barata: A deja el televisor en 500 · 0,70 y B en 500 · 0,80 · 0,90.",
+"d2_diff":"Buena tienda. Ahora calcula los dos precios y réstalos.",
+"d2.more":"¿Por qué «20 % + 10 %» no es lo mismo que «30 %»? ¿Qué rebaja en el primer paso necesitaría B para empatar?",
+"d3.q":"Un precio <b>sube un 50 %</b>. ¿Qué porcentaje tienes que <b>rebajarlo después</b> para volver al precio inicial?",
+"d3.lc":"Rebaja (%):",
+"d3_no":"No es el {0} %. El precio nuevo es 1,5 veces el inicial: busca el factor que, multiplicado por 1,5, da 1.",
+"d3_ok":"✔ ¡Bien decidido! 1,5 · (1 − 1/3) = 1: hay que rebajar un tercio, el 33,3 %. Menos que el 50 %, porque se hace sobre un precio más alto.",
+"d3.more":"¿Y si el precio hubiera subido un 100 % (el doble)? ¿Qué rebaja lo devuelve al precio inicial?",
 "title":"Rebajas encadenadas: 20 % + 20 % no es 40 %",
 "eyebrow":"Matemáticas · 1.º ESO · Porcentajes",
 "h1":"Rebajas encadenadas: ¿dónde está el 4 % que falta?",
@@ -453,6 +656,146 @@ function initQuiz(qs){
   document.addEventListener('langchange',applyLevel);
 }
 
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
 /* ===== Rebaixes encadenades ===== */
 const W=900,H=440,cx=fitCanvas($('#cv'),W,H);
 const PRE=[[-1,20,-1,20],[-1,50,-1,50],[-1,30,-1,10],[-1,10,-1,30],[-1,30,-1,20],[1,20,-1,20],[-1,20,1,20],[1,10,-1,10]];
@@ -556,6 +899,43 @@ function loop(){
 }
 App.hooks.push(()=>{read(false);});
 document.addEventListener('themechange',draw);
+/* ===== Raona-ho ===== */
+const v5=x=>Number.isInteger(x)&&x>=5&&x<=90&&x%5===0;
+const ck=f=>v=>v.every(v5)?f(...v):{k:'rng'};
+const tot=(a,b)=>100*(1-(1-a/100)*(1-b/100));
+const fin=(a,b)=>100*(1+a/100)*(1-b/100);
+function load(a,b,c,d,price){guess=null;$('#guess').value='';$('#t1').value=a;$('#p1').value=b;$('#t2').value=c;$('#p2').value=d;$('#price').value=price;
+  read(true);phase=3;target=3;finish();RZ.show($('#cv'));}
+RZ.init({
+ sim:v=>load(...v),
+ M:[
+  {id:'m1',f:[{l:'l_each',u:'%'}],sim:([a])=>load(-1,a,-1,a,100),ok:()=>({k:'m1_ok'}),
+   chk:ck(a=>a===20?null:{k:'m1_f',p:[a,pct(tot(a,a))]})},
+  {id:'m2',f:[{l:'l_x',u:'%'}],sim:([x])=>load(1,x,-1,x,100),ok:()=>({k:'m2_ok'}),
+   chk:ck(x=>x===30?null:{k:'m2_f',p:()=>[x,eur(fin(x,x))]})},
+  {id:'m3',f:[{l:'l_r1',u:'%'},{l:'l_r2',u:'%'}],sim:([a,b])=>load(-1,a,-1,b,100),ok:([a,b])=>({k:'m3_ok',p:[fx((100-a)/100,2),fx((100-b)/100,2)]}),
+   chk:ck((a,b)=>Math.abs((1-a/100)*(1-b/100)-0.6)<1e-9?null:{k:'m3_f',p:[a,b,pct(tot(a,b))]})},
+  {id:'m4',f:[{l:'l_up',u:'%'},{l:'l_down',u:'%'}],sim:([a,b])=>load(1,a,-1,b,100),ok:()=>({k:'m4_ok'}),
+   chk:ck((a,b)=>Math.abs(fin(a,b)-100)<1e-9?null:{k:'m4_f',p:()=>[a,b,eur(fin(a,b))]})}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load(-1,20,-1,20,100)},{id:'s2',ans:'S',sim:()=>load(-1,10,-1,30,100)},{id:'s3',ans:'M',sim:()=>load(1,20,-1,20,100)},
+  {id:'s4',ans:'S',sim:()=>load(-1,30,-1,10,100)},
+  {id:'s5',ans:'D',f:[{l:'l_up',u:'%'},{l:'l_down',u:'%'}],cxsim:([a,b])=>load(1,a,-1,b,100),
+   cxok:([a,b])=>({k:'s5.cx',p:()=>[a,b,eur(fin(a,b))]}),
+   cx:ck((a,b)=>fin(a,b)<=100+1e-9?null:{k:'s_cx_no',p:()=>[a,b,eur(fin(a,b))]})},
+  {id:'s6',ans:'S',sim:()=>load(-1,10,-1,30,100)}
+ ],
+ E:[{id:'e1',who:1,args:[-1,30,-1,20,100]},{id:'e2',who:0,args:[1,10,-1,10,60]},{id:'e3',who:3,args:[-1,20,-1,15,100]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'€'},{l:'d1.l1',u:'%'}],sim:()=>load(-1,20,-1,20,80),
+   chk:([pay,tt2])=>Math.abs(pay-51.2)>0.011?(Math.abs(pay-48)<0.011?{k:'d1_naive'}:{k:'d1_pay'}):Math.abs(tt2-36)>0.01?{k:'d1_tot'}:null},
+  {id:'d2',chips:{vals:[1,2],fmt:x=>x===1?'A':'B'},f:[{l:'d2.l0',u:'€'}],sim:()=>load(-1,20,-1,10,500),
+   chk:([p,d])=>p!==1?{k:'d2_pick'}:Math.abs(d-10)>0.011?{k:'d2_diff'}:null},
+  {id:'d3',chips:{vals:[50,40,33.3,25]},sim:null,ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p!==33.3?{k:'d3_no',p:()=>[pct(p)]}:null}
+ ]
+});
 const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r2","lvl":"all","type":"num","num":36,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":1},{"id":"r7","lvl":"adv","type":"num","num":44,"tol":0,"u":1}];
 initQuiz(QDATA);
 read(true);

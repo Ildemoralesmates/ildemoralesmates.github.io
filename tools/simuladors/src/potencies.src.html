@@ -9,6 +9,7 @@
 <style>
 /*@COMMON_CSS@*/
 /*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
 .tabs{font-size:15px}
 .tabs button{padding:8px 16px;font-size:14.5px}
 .msg{min-height:1.5em;font-size:14.5px;margin:0}
@@ -18,8 +19,8 @@
 .pred .chip[aria-pressed=true]{background:var(--pb);border-color:var(--pb)}
 .stat .v{word-break:break-word}
 .stat .v sup{font-size:.65em}
-.boardwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
-@media (max-width:820px){.boardwrap{grid-template-columns:1fr}}
+.boardwrap,.gridW{display:grid;grid-template-columns:minmax(0,.85fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.boardwrap,.gridW{grid-template-columns:1fr}}
 </style>
 <!--@GC@-->
 </head>
@@ -51,14 +52,16 @@
 </div>
 <div class="boardwrap">
 <canvas id="board"></canvas>
-<div class="stats" style="grid-template-columns:1fr">
+<div class="side">
+<div class="stats">
 <div class="stat"><span class="k" data-i18n="w_sq"></span><span class="v" id="wSq"></span></div>
 <div class="stat"><span class="k" data-i18n="w_this"></span><span class="v" id="wThis"></span></div>
 <div class="stat"><span class="k" data-i18n="w_total"></span><span class="v" id="wTot"></span></div>
 <div class="stat"><span class="k" data-i18n="w_mass"></span><span class="v" id="wMass"></span></div>
 </div>
-</div>
 <p class="msg" id="wMsg" aria-live="polite"></p>
+</div>
+</div>
 <h3 data-i18n="w_bar_t"></h3>
 <p class="note" data-i18n="w_bar_n"></p>
 <div class="row"><button class="btn" id="wOut" type="button" data-i18n="cam_out"></button><button class="btn" id="wIn" type="button" data-i18n="cam_in"></button><label class="chk"><input type="checkbox" id="wAuto"> <span data-i18n="cam_auto"></span></label></div>
@@ -80,18 +83,22 @@
 </div>
 <div class="gridW">
 <canvas id="pCv"></canvas>
-<div class="stats" style="grid-template-columns:1fr">
+<div class="side">
+<div class="stats">
 <div class="stat"><span class="k" data-i18n="p_folds"></span><span class="v" id="pN"></span></div>
 <div class="stat"><span class="k" data-i18n="p_layers"></span><span class="v" id="pL"></span></div>
 <div class="stat"><span class="k" data-i18n="p_thick"></span><span class="v" id="pT"></span></div>
 <div class="stat"><span class="k" data-i18n="p_screens"></span><span class="v" id="pS"></span></div>
 </div>
-</div>
 <p class="msg" id="pMsg" aria-live="polite"></p>
+</div>
+</div>
 <div class="idea" data-lvl="basic" data-i18n-html="p_idea"></div>
 <div class="idea" data-lvl="adv" data-i18n-html="p_idea_adv"></div>
 <p class="note" data-i18n="p_note"></p>
 </section>
+
+<!--@RAONA@-->
 
 <!--@QUIZ@-->
   </main>
@@ -101,6 +108,92 @@
 <script>
 const I18N={
 ca:{
+"rngW":"Escriu un nombre enter de caselles entre 1 i 64.",
+"rngP":"Escriu un nombre enter de plecs entre 1 i 42.",
+"l_sq":"Casella","l_sq2":"Caselles","l_fold":"Plecs","f_b":"Base","f_m":"Exponent menor","f_n":"Exponent major",
+"s_cx_no":"Amb base {0}: {0}<sup>{1}</sup> = {3} i {0}<sup>{2}</sup> = {4}. Sí que es compleix. Busca'n un on no.",
+"m1.q":"Troba la <b>primera casella</b> del tauler on hi ha <b>més de 1.000 grans</b> (en eixa casella sola).",
+"m1_lo":"A la casella {0} hi ha {1} grans: encara no passa de 1.000.",
+"m1_hi":"A la casella {0} ja passa de 1.000 grans, però n'hi ha una abans.",
+"m1_ok":"✔ Missió complida! A la casella {0} hi ha 2<sup>{1}</sup> = {2} grans.",
+"m1.more":"Quina és la primera potència de 2 que passa de 1.000? I de 1.000.000? Fixa't que 2<sup>10</sup> és prop de 1.000.",
+"m2.q":"Quants plecs cal fer perquè el full (0,1 mm) siga <b>més alt que una persona de 1,7 m</b>?",
+"m2_lo":"Amb {0} plecs el full fa {1}: encara no arriba a 1,7 m.",
+"m2_hi":"Amb {0} plecs ja passa de 1,7 m, però amb menys plecs també.",
+"m2_ok":"✔ Missió complida! Amb {0} plecs el full fa {1}.",
+"m2.more":"Amb 14 plecs són 1,64 m i amb un plec més ja passem els 3 m. Què té a veure amb el doble?",
+"m3.q":"Escriu un nombre de plecs que faça el full <b>més alt que l'Everest (8.849 m)</b> però <b>més baix que l'estació espacial (408 km)</b>.",
+"m3_lo":"Amb {0} plecs el full fa {1}: no arriba a l'Everest.",
+"m3_hi":"Amb {0} plecs el full fa {1}: passa de l'estació espacial.",
+"m3_ok":"✔ Missió complida! Amb {0} plecs el full fa {1}: més que l'Everest i menys que l'estació espacial.",
+"m3.more":"Quants nombres de plecs serveixen? Entre quins dos han d'estar? Pensa que cada plec multiplica per 2.",
+"m4.q":"Quantes caselles cal omplir perquè el <b>total de grans</b> passe d'<b>1 milió</b> però <b>no passe dels 1.000 milions</b>?",
+"m4_lo":"Amb {0} caselles hi ha {1} grans en total: no arriba a un milió.",
+"m4_hi":"Amb {0} caselles hi ha {1} grans en total: passa dels 1.000 milions.",
+"m4_ok":"✔ Missió complida! Amb {0} caselles hi ha {1} grans en total.",
+"m4.more":"Quants nombres de caselles serveixen? Per què entre un milió i mil milions només hi ha una desena de caselles?",
+"s1.q":"«Cada vegada que plegues el full, el gruix augmenta en 0,1 mm.»",
+"s1.h":"Compara el gruix amb 3 plecs i amb 4.",
+"s1.e":"No s'hi sumen 0,1 mm: el gruix es duplica. 0,1 · 0,2 · 0,4 · 0,8 · 1,6 mm… Per això creix cada vegada més de pressa.",
+"s2.q":"«A cada casella hi ha el doble de grans que a l'anterior.»",
+"s2.h":"Mira les caselles 5 i 6.",
+"s2.e":"Sempre: 1, 2, 4, 8, 16… A la casella n hi ha 2<sup>n−1</sup> grans, que és el doble de 2<sup>n−2</sup>.",
+"s3.q":"«A la casella 10 hi ha més grans que a les nou caselles anteriors juntes.»",
+"s3.h":"Suma 1 + 2 + 4 + … + 256 i compara amb la casella 10.",
+"s3.e":"A la casella 10 hi ha 512 i les nou anteriors sumen 511. Sempre passa: cada casella té 1 gra més que totes les anteriors juntes (1 + 2 + … + 2<sup>n−1</sup> = 2<sup>n</sup> − 1).",
+"s4.q":"«Plegar un full n vegades multiplica el seu gruix per n.»",
+"s4.h":"Prova amb 10 plecs: el gruix es multiplica per 10 o per més?",
+"s4.e":"Es multiplica per 2<sup>n</sup>: amb 10 plecs per 1.024 i amb 20 per més d'un milió. n és l'exponent, no el factor.",
+"s5.q":"«Si dues potències tenen la mateixa base, és més gran la que té l'exponent més gran.»",
+"s5.h":"Prova amb base 2 i, després, amb altres bases petites.",
+"s5.e":"Amb bases majors que 1 sí (2<sup>3</sup> &lt; 2<sup>5</sup>), però amb base 1 no: 1<sup>3</sup> = 1<sup>5</sup> = 1.",
+"s5_bad":"Escriu una base entre 1 i 10 i dos exponents enters entre 0 i 10, el primer menor que el segon.",
+"s5.cx":"✔ Contraexemple trobat: {0}<sup>{1}</sup> = {0}<sup>{2}</sup>. Amb base 1 totes les potències valen 1.",
+"s6.q":"«2<sup>10</sup> és aproximadament 1.000 i, per això, 2<sup>20</sup> és aproximadament 1.000.000.»",
+"s6.h":"2<sup>20</sup> = 2<sup>10</sup> · 2<sup>10</sup>. Quant val 1.000 · 1.000?",
+"s6.e":"Sí: 2<sup>10</sup> = 1.024 ≈ 10<sup>3</sup>, i 2<sup>20</sup> = (2<sup>10</sup>)² ≈ (10<sup>3</sup>)² = 10<sup>6</sup> (en realitat, 1.048.576). Cada 10 plecs, el gruix es multiplica per prop de 1.000.",
+"e1.ctx":"Plegar un full de 0,1 mm de gruix <b>42 vegades</b>: quin gruix tindrà?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"42 × 0,1 mm = 4,2 mm: no arriba ni a un dit.",
+"e1.s1":"2<sup>42</sup> × 0,1 mm: més de 400.000 km, més que fins a la Lluna.",
+"e1.w0":"Cada plec duplica el gruix, no hi suma 0,1 mm: després de n plecs hi ha 2<sup>n</sup> capes, no n capes.",
+"e1.w1":"Perquè 42 és un nombre massa gran per a multiplicar.",
+"e1.w2":"Perquè Marta s'ha oblidat de convertir els mil·límetres a metres.",
+"e1.frame":"Marta, plegar 42 vegades no dona 4,2 mm perquè…",
+"e1.model":"Marta, cada plec no suma 0,1 mm: multiplica el gruix per 2. Després d'1 plec hi ha 2 capes, després de 2 plecs, 4; després de 3, 8… Després de 42 plecs hi ha 2<sup>42</sup> capes (uns 4,4 bilions) i el gruix passa dels 400.000 km, més que la distància a la Lluna.",
+"e2.ctx":"Al tauler d'escacs hi ha 64 caselles i es posa 1 gra a la primera, 2 a la segona, 4 a la tercera… Quants grans hi ha a la <b>casella 64</b>?",
+"e2.n0":"Laia","e2.n1":"Àlex",
+"e2.s0":"2<sup>63</sup> grans: un 2 multiplicat per ell mateix 63 vegades.",
+"e2.s1":"64 × 2 = 128 grans.",
+"e2.w0":"Àlex confon 2<sup>63</sup> amb 63 · 2: una potència repeteix la <b>multiplicació</b> (2 · 2 · … · 2, amb 63 factors), no la suma.",
+"e2.w1":"Perquè la casella 64 mai no es pot omplir.",
+"e2.w2":"Perquè 128 és un nombre parell.",
+"e2.frame":"Àlex, a la casella 64 no hi ha 128 grans perquè…",
+"e2.model":"Àlex, 2<sup>63</sup> no és 63 · 2: és 2 · 2 · 2 · … amb 63 factors. Per això creix tan de pressa: a la casella 8 ja hi ha 128 grans (2<sup>7</sup>) i a la 64 en queden més de 9 trilions (≈ 9,2 · 10<sup>18</sup>).",
+"e3.ctx":"Quant val <b>2<sup>5</sup></b>?",
+"e3.n0":"Joan","e3.n1":"Rita",
+"e3.s0":"10, perquè 2 · 5 = 10.",
+"e3.s1":"25, perquè és 5 al quadrat.",
+"e3.w0":"2<sup>5</sup> és 2 · 2 · 2 · 2 · 2 = 32: l'exponent diu quantes vegades es multiplica la base per ella mateixa.",
+"e3.w1":"Un dels dos ha de tindre raó, perquè només hi ha dues maneres de fer-ho.",
+"e3.w2":"2<sup>5</sup> no es pot calcular sense calculadora.",
+"e3.frame":"Joan i Rita, 2<sup>5</sup> no és ni 10 ni 25 perquè…",
+"e3.model":"Joan, 2<sup>5</sup> no és 2 · 5: l'exponent no multiplica, sinó que diu quantes vegades apareix la base com a factor. Rita, 5<sup>2</sup> = 25, però ací la base és 2 i l'exponent és 5. 2<sup>5</sup> = 2 · 2 · 2 · 2 · 2 = 32 (és el que hi ha a la casella 6).",
+"d1.q":"Algú et proposa: el primer dia et dona <b>1 cèntim</b>, el segon <b>2</b>, el tercer <b>4</b>… el doble cada dia. En quin dia has acumulat per primera vegada <b>més d'1 milió d'euros</b> en total? (Ajuda: 1 gra del tauler = 1 cèntim.)",
+"d1.l0":"Dia",
+"d1_lo":"El dia {0} portes {1} €: encara no arribes a 1.000.000 €.",
+"d1_hi":"El dia {0} portes {1} € i ja ho has passat, però n'hi ha un dia abans.",
+"d1.more":"Quant portes el dia 30? Si l'altra opció fóra 1.000 € cada dia, quina triaries?",
+"d2.q":"El graner del rei només té <b>1 tona</b> de blat (1 gra pesa 0,04 g, com a la simulació). Si omple les caselles des de la primera, fins a quina casella pot arribar sense passar-se?",
+"d2.l0":"Caselles omplides",
+"d2_lo":"Amb {0} caselles només gastes {1} de blat: en pots omplir més.",
+"d2_hi":"Amb {0} caselles et calen {1}: passa d'1 tona.",
+"d2.more":"Cada casella nova gasta més blat que totes les anteriors juntes. Què passa amb la tona si afegim només una casella més?",
+"d3.q":"Després de <b>20 plecs</b>, quantes vegades més gruixut és el full que al principi?",
+"d3.lc":"Vegades més gruixut:",
+"d3_no":"No és {0}. Recorda que cada plec multiplica per 2 i que 2<sup>10</sup> és prop de 1.000.",
+"d3_ok":"✔ Ben decidit! 2<sup>20</sup> = 1.048.576: el full passa de 0,1 mm a uns 105 m.",
+"d3.more":"I després de 30 plecs? Fes servir que 2<sup>30</sup> = 2<sup>10</sup> · 2<sup>10</sup> · 2<sup>10</sup>.",
 "title":"Potències: blat als escacs i paper fins a la Lluna",
 "eyebrow":"Matemàtiques · 1r ESO · Potències",
 "h1":"Potències que se n'ixen de la pantalla",
@@ -163,6 +256,92 @@ ca:{
 "r7.e":"1 m = 1000 mm = 10 000 vegades 0,1 mm. 2<sup>13</sup> = 8192 no arriba; 2<sup>14</sup> = 16 384 sí: 14 plecs."
 },
 es:{
+"rngW":"Escribe un número entero de casillas entre 1 y 64.",
+"rngP":"Escribe un número entero de dobleces entre 1 y 42.",
+"l_sq":"Casilla","l_sq2":"Casillas","l_fold":"Dobleces","f_b":"Base","f_m":"Exponente menor","f_n":"Exponente mayor",
+"s_cx_no":"Con base {0}: {0}<sup>{1}</sup> = {3} y {0}<sup>{2}</sup> = {4}. Sí se cumple. Busca uno en el que no.",
+"m1.q":"Encuentra la <b>primera casilla</b> del tablero en la que hay <b>más de 1.000 granos</b> (en esa casilla sola).",
+"m1_lo":"En la casilla {0} hay {1} granos: todavía no pasa de 1.000.",
+"m1_hi":"En la casilla {0} ya pasa de 1.000 granos, pero hay una antes.",
+"m1_ok":"✔ ¡Misión cumplida! En la casilla {0} hay 2<sup>{1}</sup> = {2} granos.",
+"m1.more":"¿Cuál es la primera potencia de 2 que pasa de 1.000? ¿Y de 1.000.000? Fíjate en que 2<sup>10</sup> está cerca de 1.000.",
+"m2.q":"¿Cuántos dobleces hay que hacer para que la hoja (0,1 mm) sea <b>más alta que una persona de 1,7 m</b>?",
+"m2_lo":"Con {0} dobleces la hoja mide {1}: todavía no llega a 1,7 m.",
+"m2_hi":"Con {0} dobleces ya pasa de 1,7 m, pero con menos dobleces también.",
+"m2_ok":"✔ ¡Misión cumplida! Con {0} dobleces la hoja mide {1}.",
+"m2.more":"Con 14 dobleces son 1,64 m y con uno más ya pasamos de 3 m. ¿Qué tiene que ver con el doble?",
+"m3.q":"Escribe un número de dobleces que haga la hoja <b>más alta que el Everest (8.849 m)</b> pero <b>más baja que la estación espacial (408 km)</b>.",
+"m3_lo":"Con {0} dobleces la hoja mide {1}: no llega al Everest.",
+"m3_hi":"Con {0} dobleces la hoja mide {1}: pasa de la estación espacial.",
+"m3_ok":"✔ ¡Misión cumplida! Con {0} dobleces la hoja mide {1}: más que el Everest y menos que la estación espacial.",
+"m3.more":"¿Cuántos números de dobleces sirven? ¿Entre qué dos tienen que estar? Piensa que cada doblez multiplica por 2.",
+"m4.q":"¿Cuántas casillas hay que llenar para que el <b>total de granos</b> pase de <b>1 millón</b> pero <b>no pase de 1.000 millones</b>?",
+"m4_lo":"Con {0} casillas hay {1} granos en total: no llega a un millón.",
+"m4_hi":"Con {0} casillas hay {1} granos en total: pasa de los 1.000 millones.",
+"m4_ok":"✔ ¡Misión cumplida! Con {0} casillas hay {1} granos en total.",
+"m4.more":"¿Cuántos números de casillas sirven? ¿Por qué entre un millón y mil millones solo hay una decena de casillas?",
+"s1.q":"«Cada vez que doblas la hoja, el grosor aumenta en 0,1 mm.»",
+"s1.h":"Compara el grosor con 3 dobleces y con 4.",
+"s1.e":"No se suman 0,1 mm: el grosor se duplica. 0,1 · 0,2 · 0,4 · 0,8 · 1,6 mm… Por eso crece cada vez más deprisa.",
+"s2.q":"«En cada casilla hay el doble de granos que en la anterior.»",
+"s2.h":"Mira las casillas 5 y 6.",
+"s2.e":"Siempre: 1, 2, 4, 8, 16… En la casilla n hay 2<sup>n−1</sup> granos, que es el doble de 2<sup>n−2</sup>.",
+"s3.q":"«En la casilla 10 hay más granos que en las nueve casillas anteriores juntas.»",
+"s3.h":"Suma 1 + 2 + 4 + … + 256 y compara con la casilla 10.",
+"s3.e":"En la casilla 10 hay 512 y las nueve anteriores suman 511. Siempre pasa: cada casilla tiene 1 grano más que todas las anteriores juntas (1 + 2 + … + 2<sup>n−1</sup> = 2<sup>n</sup> − 1).",
+"s4.q":"«Doblar una hoja n veces multiplica su grosor por n.»",
+"s4.h":"Prueba con 10 dobleces: ¿el grosor se multiplica por 10 o por más?",
+"s4.e":"Se multiplica por 2<sup>n</sup>: con 10 dobleces por 1.024 y con 20 por más de un millón. n es el exponente, no el factor.",
+"s5.q":"«Si dos potencias tienen la misma base, es mayor la que tiene el exponente mayor.»",
+"s5.h":"Prueba con base 2 y, después, con otras bases pequeñas.",
+"s5.e":"Con bases mayores que 1 sí (2<sup>3</sup> &lt; 2<sup>5</sup>), pero con base 1 no: 1<sup>3</sup> = 1<sup>5</sup> = 1.",
+"s5_bad":"Escribe una base entre 1 y 10 y dos exponentes enteros entre 0 y 10, el primero menor que el segundo.",
+"s5.cx":"✔ Contraejemplo encontrado: {0}<sup>{1}</sup> = {0}<sup>{2}</sup>. Con base 1 todas las potencias valen 1.",
+"s6.q":"«2<sup>10</sup> es aproximadamente 1.000 y, por eso, 2<sup>20</sup> es aproximadamente 1.000.000.»",
+"s6.h":"2<sup>20</sup> = 2<sup>10</sup> · 2<sup>10</sup>. ¿Cuánto vale 1.000 · 1.000?",
+"s6.e":"Sí: 2<sup>10</sup> = 1.024 ≈ 10<sup>3</sup>, y 2<sup>20</sup> = (2<sup>10</sup>)² ≈ (10<sup>3</sup>)² = 10<sup>6</sup> (en realidad, 1.048.576). Cada 10 dobleces, el grosor se multiplica por casi 1.000.",
+"e1.ctx":"Doblar una hoja de 0,1 mm de grosor <b>42 veces</b>: ¿qué grosor tendrá?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"42 × 0,1 mm = 4,2 mm: no llega ni a un dedo.",
+"e1.s1":"2<sup>42</sup> × 0,1 mm: más de 400.000 km, más que hasta la Luna.",
+"e1.w0":"Cada doblez duplica el grosor, no le suma 0,1 mm: tras n dobleces hay 2<sup>n</sup> capas, no n capas.",
+"e1.w1":"Porque 42 es un número demasiado grande para multiplicar.",
+"e1.w2":"Porque Marta se ha olvidado de convertir los milímetros a metros.",
+"e1.frame":"Marta, doblar 42 veces no da 4,2 mm porque…",
+"e1.model":"Marta, cada doblez no suma 0,1 mm: multiplica el grosor por 2. Tras 1 doblez hay 2 capas, tras 2 dobleces, 4; tras 3, 8… Tras 42 dobleces hay 2<sup>42</sup> capas (unos 4,4 billones) y el grosor pasa de los 400.000 km, más que la distancia a la Luna.",
+"e2.ctx":"En el tablero de ajedrez hay 64 casillas y se pone 1 grano en la primera, 2 en la segunda, 4 en la tercera… ¿Cuántos granos hay en la <b>casilla 64</b>?",
+"e2.n0":"Laia","e2.n1":"Álex",
+"e2.s0":"2<sup>63</sup> granos: un 2 multiplicado por sí mismo 63 veces.",
+"e2.s1":"64 × 2 = 128 granos.",
+"e2.w0":"Álex confunde 2<sup>63</sup> con 63 · 2: una potencia repite la <b>multiplicación</b> (2 · 2 · … · 2, con 63 factores), no la suma.",
+"e2.w1":"Porque la casilla 64 nunca se puede llenar.",
+"e2.w2":"Porque 128 es un número par.",
+"e2.frame":"Álex, en la casilla 64 no hay 128 granos porque…",
+"e2.model":"Álex, 2<sup>63</sup> no es 63 · 2: es 2 · 2 · 2 · … con 63 factores. Por eso crece tan deprisa: en la casilla 8 ya hay 128 granos (2<sup>7</sup>) y en la 64 quedan más de 9 trillones (≈ 9,2 · 10<sup>18</sup>).",
+"e3.ctx":"¿Cuánto vale <b>2<sup>5</sup></b>?",
+"e3.n0":"Joan","e3.n1":"Rita",
+"e3.s0":"10, porque 2 · 5 = 10.",
+"e3.s1":"25, porque es 5 al cuadrado.",
+"e3.w0":"2<sup>5</sup> es 2 · 2 · 2 · 2 · 2 = 32: el exponente dice cuántas veces se multiplica la base por sí misma.",
+"e3.w1":"Uno de los dos tiene que tener razón, porque solo hay dos maneras de hacerlo.",
+"e3.w2":"2<sup>5</sup> no se puede calcular sin calculadora.",
+"e3.frame":"Joan y Rita, 2<sup>5</sup> no es ni 10 ni 25 porque…",
+"e3.model":"Joan, 2<sup>5</sup> no es 2 · 5: el exponente no multiplica, sino que dice cuántas veces aparece la base como factor. Rita, 5<sup>2</sup> = 25, pero aquí la base es 2 y el exponente es 5. 2<sup>5</sup> = 2 · 2 · 2 · 2 · 2 = 32 (es lo que hay en la casilla 6).",
+"d1.q":"Alguien te propone: el primer día te da <b>1 céntimo</b>, el segundo <b>2</b>, el tercero <b>4</b>… el doble cada día. ¿En qué día has acumulado por primera vez <b>más de 1 millón de euros</b> en total? (Ayuda: 1 grano del tablero = 1 céntimo.)",
+"d1.l0":"Día",
+"d1_lo":"El día {0} llevas {1} €: todavía no llegas a 1.000.000 €.",
+"d1_hi":"El día {0} llevas {1} € y ya lo has pasado, pero hay un día antes.",
+"d1.more":"¿Cuánto llevas el día 30? Si la otra opción fuera 1.000 € cada día, ¿cuál elegirías?",
+"d2.q":"El granero del rey solo tiene <b>1 tonelada</b> de trigo (1 grano pesa 0,04 g, como en la simulación). Si llena las casillas desde la primera, ¿hasta qué casilla puede llegar sin pasarse?",
+"d2.l0":"Casillas llenas",
+"d2_lo":"Con {0} casillas solo gastas {1} de trigo: puedes llenar más.",
+"d2_hi":"Con {0} casillas necesitas {1}: pasa de 1 tonelada.",
+"d2.more":"Cada casilla nueva gasta más trigo que todas las anteriores juntas. ¿Qué pasa con la tonelada si añadimos solo una casilla más?",
+"d3.q":"Tras <b>20 dobleces</b>, ¿cuántas veces más gruesa es la hoja que al principio?",
+"d3.lc":"Veces más gruesa:",
+"d3_no":"No es {0}. Recuerda que cada doblez multiplica por 2 y que 2<sup>10</sup> está cerca de 1.000.",
+"d3_ok":"✔ ¡Bien decidido! 2<sup>20</sup> = 1.048.576: la hoja pasa de 0,1 mm a unos 105 m.",
+"d3.more":"¿Y tras 30 dobleces? Usa que 2<sup>30</sup> = 2<sup>10</sup> · 2<sup>10</sup> · 2<sup>10</sup>.",
 "title":"Potencias: trigo en el ajedrez y papel hasta la Luna",
 "eyebrow":"Matemáticas · 1.º ESO · Potencias",
 "h1":"Potencias que se salen de la pantalla",
@@ -227,6 +406,7 @@ es:{
 };
 /*@COMMON_JS@*/
 /*@QUIZ_JS@*/
+/*@RAONA_JS@*/
 /* ===== Potències ===== */
 const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
 const supN=n=>String(n).split('').map(d=>SUP[+d]).join('');
@@ -373,6 +553,43 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 App.hooks.push(()=>{wUpd();pUpd();});
+/* ===== Raona-ho ===== */
+const inW=n=>Number.isInteger(n)&&n>=1&&n<=64, inP=n=>Number.isInteger(n)&&n>=1&&n<=42;
+const totBig=n=>(2n**BigInt(n)-1n).toLocaleString(LANG==='es'?'es-ES':'ca-ES').replace(/[. ]/g,'\u00a0');
+const massTxt=g=>g<1000?tt('t_g',nfs(g,g<10?2:0)):g<1e6?tt('t_kg',nfs(g/1000,1)):tt('t_t',g<1e12?nfs(g/1e6,g<1e9?1:0):sci(g/1e6,1));
+const thick=n=>0.0001*Math.pow(2,n);
+const euro=c=>nfs(c/100,2);
+function loadW(n){$('#tabs button[data-tab=wheat]').click();wPlaying=false;wn=clamp(n,0,64);$('#wAuto').checked=true;camW.auto=true;wUpd();RZ.show($('#board'));}
+function loadP(n){$('#tabs button[data-tab=paper]').click();pPlaying=false;pn=clamp(n,0,42);$('#pAuto').checked=true;camP.auto=true;pUpd();RZ.show($('#pCv'));}
+const ckW=f=>([n])=>inW(n)?f(n):{k:'rngW'}, ckP=f=>([n])=>inP(n)?f(n):{k:'rngP'};
+RZ.init({
+ sim:v=>v[0]==='w'?loadW(v[1]):loadP(v[1]),
+ M:[
+  {id:'m1',f:[{l:'l_sq'}],sim:([n])=>loadW(n),ok:([n])=>({k:'m1_ok',p:()=>[n,n-1,big(n-1)]}),
+   chk:ckW(n=>n<11?{k:'m1_lo',p:()=>[n,big(n-1)]}:n>11?{k:'m1_hi',p:[n]}:null)},
+  {id:'m2',f:[{l:'l_fold'}],sim:([n])=>loadP(n),ok:([n])=>({k:'m2_ok',p:()=>[n,len(thick(n))]}),
+   chk:ckP(n=>n<15?{k:'m2_lo',p:()=>[n,len(thick(n))]}:n>15?{k:'m2_hi',p:[n]}:null)},
+  {id:'m3',f:[{l:'l_fold'}],sim:([n])=>loadP(n),ok:([n])=>({k:'m3_ok',p:()=>[n,len(thick(n))]}),
+   chk:ckP(n=>thick(n)<=8849?{k:'m3_lo',p:()=>[n,len(thick(n))]}:thick(n)>=4.08e5?{k:'m3_hi',p:()=>[n,len(thick(n))]}:null)},
+  {id:'m4',f:[{l:'l_sq2'}],sim:([n])=>loadW(n),ok:([n])=>({k:'m4_ok',p:()=>[n,totBig(n)]}),
+   chk:ckW(n=>(Math.pow(2,n)-1)<=1e6?{k:'m4_lo',p:()=>[n,totBig(n)]}:(Math.pow(2,n)-1)>=1e9?{k:'m4_hi',p:()=>[n,totBig(n)]}:null)}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>loadP(4)},{id:'s2',ans:'S',sim:()=>loadW(6)},{id:'s3',ans:'S',sim:()=>loadW(10)},{id:'s4',ans:'M',sim:()=>loadP(10)},
+  {id:'s5',ans:'D',f:[{l:'f_b'},{l:'f_m'},{l:'f_n'}],cxsim:null,cxok:([b,m,n])=>({k:'s5.cx',p:[b,m,n]}),
+   cx:([b,m,n])=>(![b,m,n].every(Number.isInteger)||b<1||b>10||m<0||n>10||m>=n)?{k:'s5_bad'}:(Math.pow(b,m)<Math.pow(b,n))?{k:'s_cx_no',p:[b,m,n,Math.pow(b,m),Math.pow(b,n)]}:null},
+  {id:'s6',ans:'S',sim:()=>loadP(20)}
+ ],
+ E:[{id:'e1',who:1,args:['p',42]},{id:'e2',who:0,args:['w',64]},{id:'e3',who:3,args:['w',6]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0'}],sim:([n])=>loadW(inW(n)?n:20),
+   chk:ckW(n=>n<27?{k:'d1_lo',p:()=>[n,euro(Math.pow(2,n)-1)]}:n>27?{k:'d1_hi',p:()=>[n,euro(Math.pow(2,n)-1)]}:null)},
+  {id:'d2',f:[{l:'d2.l0'}],sim:([n])=>loadW(inW(n)?n:20),
+   chk:ckW(n=>{const g=(Math.pow(2,n)-1)*0.04;return n<24?{k:'d2_lo',p:()=>[n,massTxt(g)]}:n>24?{k:'d2_hi',p:()=>[n,massTxt(g)]}:null;})},
+  {id:'d3',chips:{vals:[20,400,10000,1000000],fmt:x=>nfs(x,0)},sim:()=>loadP(20),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p!==1000000?{k:'d3_no',p:()=>[nfs(p,0)]}:null}
+ ]
+});
 const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":2},{"id":"r2","lvl":"all","type":"mc","n":3,"ans":0},{"id":"r3","lvl":"all","type":"num","num":3.2,"tol":0.001,"u":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"r7","lvl":"adv","type":"num","num":14,"tol":0,"u":1}];
 initQuiz(QDATA);
 initLang();applyLang();

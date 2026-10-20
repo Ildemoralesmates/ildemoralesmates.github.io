@@ -9,6 +9,7 @@
 <style>
 /*@COMMON_CSS@*/
 /*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
 .formula{font-family:var(--f-num);font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:var(--ink)}
 .formula .s{color:var(--pa);font-weight:700}.formula .lo{color:var(--ok);font-weight:700}.formula .hi{color:var(--pb);font-weight:700}
 .areactl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
@@ -48,11 +49,18 @@
 <button class="btn" id="plus" type="button" aria-label="+1">+1</button>
 <output id="areav" for="area"></output>
 </div>
-<canvas id="cv"></canvas>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas></div>
+<div class="side">
 <div class="formula" id="formula" aria-live="polite"></div>
+<div class="tenths" id="tenths" data-lvl="adv"></div>
+</div>
+</div>
 <div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
-<div class="idea" data-lvl="adv"><div data-i18n-html="idea_adv"></div><div class="tenths" id="tenths"></div></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
 </section>
+
+<!--@RAONA@-->
 
 <section class="card">
 <h2><small data-i18n="ch_eyebrow"></small><span data-i18n="ch_title"></span></h2>
@@ -73,6 +81,91 @@
 <script>
 const I18N={
 ca:{
+"rng":"Escriu una àrea entera entre 1 i 150.",
+"l_area":"Àrea",
+"s_cx_no":"Amb àrea {0} sí que es compleix. Busca'n una on no.",
+"m1.q":"Inventa una àrea el costat de la qual (√) estiga <b>entre 9 i 10</b>.",
+"m1_f":"√{0} ≈ {1}: no està entre 9 i 10.",
+"m1_ok":"✔ Missió complida! √{0} ≈ {1}, entre 9 i 10.",
+"m1.more":"Quines àrees serveixen, de la més xicoteta a la més gran? Pensa en 9² i 10².",
+"m2.q":"Troba una àrea que <b>no siga quadrat perfecte</b> però que estiga <b>a només 1</b> d'un quadrat perfecte.",
+"m2_p":"{0} és un quadrat perfecte: busca'n una que no ho siga.",
+"m2_f":"{0} està a {1} del quadrat perfecte més pròxim ({2}): en volem una a només 1.",
+"m2_ok":"✔ Missió complida! {0} és a només 1 de {1}.",
+"m2.more":"Per a cada quadrat perfecte n² hi ha dues àrees així. Quines? Escriu-ho amb n.",
+"m3.q":"Troba l'àrea el costat de la qual estiga <b>entre 6,5 i 6,6</b>.",
+"m3_lo":"√{0} ≈ {1}: és més xicotet que 6,5.",
+"m3_hi":"√{0} ≈ {1}: és més gran que 6,6.",
+"m3_ok":"✔ Missió complida! √{0} ≈ {1}, entre 6,5 i 6,6.",
+"m3.more":"Hi ha una altra àrea que servisca? Per què només n'hi ha una?",
+"m4.q":"Troba una àrea amb √ <b>entre 11 i 12</b>, però <b>més a prop de 12 que d'11</b>.",
+"m4_out":"√{0} ≈ {1}: no està entre 11 i 12.",
+"m4_near":"√{0} ≈ {1}: està entre 11 i 12, però més a prop d'11.",
+"m4_ok":"✔ Missió complida! √{0} ≈ {1}: entre 11 i 12 i més a prop de 12.",
+"m4.more":"Quina és la més xicoteta que serveix? Fixa't que 11,5² = 132,25 i no 132,5, que seria el punt mitjà entre 121 i 144.",
+"s1.q":"«L'arrel quadrada d'un nombre és sempre més xicoteta que el nombre.»",
+"s1.h":"Prova amb àrees grans i, després, amb l'àrea 1.",
+"s1.e":"Només falla per a l'1: √1 = 1. (I amb decimals també: √0,25 = 0,5, que és més gran que 0,25.)",
+"s2.q":"«Si l'àrea és un quadrat perfecte, el costat és un nombre enter.»",
+"s2.h":"Prova 49, 64 i 100.",
+"s2.e":"Sí, és la definició: un quadrat perfecte és el quadrat d'un enter, i el seu costat és eixe enter.",
+"s3.q":"«Si l'àrea no és un quadrat perfecte, el costat és un decimal exacte, com 7,07.»",
+"s3.h":"Multiplica 7,07 per ell mateix. Dona exactament 50?",
+"s3.e":"7,07² = 49,9849, no 50. √50 = 7,0710678… no s'acaba mai ni es repeteix: cap decimal exacte, per llarg que siga, multiplicat per ell mateix dona 50.",
+"s4.q":"«Si l'àrea es multiplica per 4, el costat es multiplica per 2.»",
+"s4.h":"Compara el costat de l'àrea 25 amb el de l'àrea 100.",
+"s4.e":"Un quadrat de costat doble té àrea quàdruple. Al revés: √(4·A) = 2·√A.",
+"s5.q":"«Si l'àrea es duplica, el costat també es duplica.»",
+"s5.h":"Compara el costat de l'àrea 25 amb el de l'àrea 50.",
+"s5.e":"No: duplicar el costat quadruplica l'àrea. Duplicar l'àrea fa créixer el costat només un 41 % (×√2 ≈ 1,41).",
+"s6.q":"«Un nombre que acaba en 4 és un quadrat perfecte.»",
+"s6.h":"Prova 64 i 144, i després 14 o 24.",
+"s6.e":"A vegades: 4, 64 i 144 acaben en 4 i ho són; 14, 24 o 34 no. Els quadrats perfectes només acaben en 0, 1, 4, 5, 6 o 9, però acabar així no ho assegura.",
+"e1.ctx":"Volem saber quant val <b>√50</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"√50 = 25, perquè 25 · 2 = 50.",
+"e1.s1":"√50 és un poc més de 7, perquè 7 · 7 = 49.",
+"e1.w0":"Marta ha buscat la meitat de 50, però l'arrel és un nombre que multiplicat per <b>ell mateix</b> dona 50: 25 · 25 = 625.",
+"e1.w1":"Perquè 25 és un quadrat perfecte i 50 no.",
+"e1.w2":"Perquè l'arrel mai no pot ser un nombre natural.",
+"e1.frame":"Marta, √50 no és 25 perquè…",
+"e1.model":"Marta, √50 és el costat d'un quadrat d'àrea 50, no la meitat de 50. Un quadrat de costat 25 tindria àrea 625. El costat que busquem ha de multiplicar-se per ell mateix per a donar 50: 7 · 7 = 49 i 8 · 8 = 64, així que està entre 7 i 8 (≈ 7,07).",
+"e2.ctx":"Volem saber quant val <b>√(9 + 16)</b>.",
+"e2.n0":"Rita","e2.n1":"Joan",
+"e2.s0":"√25 = 5, perquè 9 + 16 = 25.",
+"e2.s1":"√9 + √16 = 3 + 4 = 7.",
+"e2.w0":"Joan suposa que √(a + b) = √a + √b, però no és cert: 9 + 16 = 25 i un quadrat de 25 té costat 5; 7 · 7 = 49.",
+"e2.w1":"Perquè 3 + 4 no és 7.",
+"e2.w2":"Perquè dins d'una arrel no es poden fer sumes.",
+"e2.frame":"Joan, √(9 + 16) no és 7 perquè…",
+"e2.model":"Joan, l'arrel no es reparteix en una suma. Dins de l'arrel hi ha 9 + 16 = 25, i un quadrat d'àrea 25 té costat 5. Si fora 7, l'àrea seria 7 · 7 = 49. √9 + √16 = 7 és un altre càlcul, i no val el mateix.",
+"e3.ctx":"Entre quins dos nombres enters està <b>√30</b>?",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"Entre 29 i 31, perquè 30 està entre 29 i 31.",
+"e3.s1":"Entre 15 i 16, perquè 30 ÷ 2 = 15.",
+"e3.w0":"√30 és el costat d'un quadrat d'àrea 30: cal buscar els quadrats perfectes veïns, 5² = 25 i 6² = 36. Com que 25 &lt; 30 &lt; 36, √30 està entre 5 i 6.",
+"e3.w1":"Algú de tots dos ha de tindre raó, perquè 30 està pròxim a 29, 31 i 15.",
+"e3.w2":"Això només es pot saber amb una calculadora.",
+"e3.frame":"Àlex i Laia, √30 està entre 5 i 6 perquè…",
+"e3.model":"Àlex, has situat el 30 en compte de l'arrel. Laia, has calculat la meitat. √30 és el costat d'un quadrat d'àrea 30: 5² = 25 i 6² = 36, i 30 està enmig, així que √30 està entre 5 i 6 (≈ 5,48).",
+"d1.q":"Un jardí quadrat té <b>50 m²</b>. Vols tancar-lo amb una tanca que es ven en metres sencers. Quant mesura el costat (amb un decimal) i quants metres de tanca compres, arrodonint cap amunt?",
+"d1.l0":"Costat (m)","d1.l1":"Tanca (m)",
+"d1_s":"Revisa el costat: 7,0² = 49 i 7,1² = 50,41. Quin s'acosta més a 50?",
+"d1_lo":"Amb {0} m no arribes a tancar-lo: el perímetre és 4 · 7,07 ≈ 28,28 m.",
+"d1_int":"La tanca es ven en metres sencers: has d'arrodonir cap amunt fins a un nombre enter.",
+"d1_hi":"Et sobra tanca: el perímetre és 4 · 7,07 ≈ 28,28 m i arrodonit cap amunt, 29 m.",
+"d1.more":"I si el jardí fóra de 100 m²? Quant sobraria o faltaria sense haver d'arrodonir?",
+"d2.q":"Tens <b>90 rajoles</b> quadrades d'1 × 1 i vols fer amb elles el <b>quadrat més gran possible</b>. Quant mesura el costat i quantes rajoles et sobren?",
+"d2.l0":"Costat","d2.l1":"Rajoles que sobren",
+"d2_big":"Un quadrat de costat {0} necessita {1} rajoles: no en tens tantes (en tens 90).",
+"d2_small":"Amb costat {0} gastes {1} i en sobren {2}, però en pots fer un de més gran.",
+"d2_left":"Revisa les que sobren: 90 menys les que gastes.",
+"d2.more":"I si tinguéreu 150 rajoles? I 100? Què té a veure amb √90 ≈ 9,5?",
+"d3.q":"Un quadrat té una àrea de <b>130 m²</b>. Quin d'aquests és el seu costat aproximat (arrodonit a les dècimes)?",
+"d3.lc":"Costat:",
+"d3_no":"{0}² = {1}, no 130. Prova amb un altre.",
+"d3_ok":"✔ Ben decidit! 11,4² = 129,96, molt prop de 130 (11,5² = 132,25 se'n passa).",
+"d3.more":"Per què no pot ser 11,3? Compara'n el quadrat amb 130.",
 "title":"Arrel quadrada: el costat d'un quadrat",
 "eyebrow":"Matemàtiques · 1r ESO · Potències i arrels",
 "h1":"L'arrel quadrada és el costat",
@@ -117,6 +210,91 @@ ca:{
 "r7.e":"11² = 121 ≤ 130 &lt; 144 = 12². L'arrel entera és 11 i el residu, 130 − 121 = 9."
 },
 es:{
+"rng":"Escribe un área entera entre 1 y 150.",
+"l_area":"Área",
+"s_cx_no":"Con área {0} sí se cumple. Busca una en la que no.",
+"m1.q":"Inventa un área cuyo lado (√) esté <b>entre 9 y 10</b>.",
+"m1_f":"√{0} ≈ {1}: no está entre 9 y 10.",
+"m1_ok":"✔ ¡Misión cumplida! √{0} ≈ {1}, entre 9 y 10.",
+"m1.more":"¿Qué áreas sirven, de la más pequeña a la más grande? Piensa en 9² y 10².",
+"m2.q":"Encuentra un área que <b>no sea cuadrado perfecto</b> pero que esté <b>a solo 1</b> de un cuadrado perfecto.",
+"m2_p":"{0} es un cuadrado perfecto: busca una que no lo sea.",
+"m2_f":"{0} está a {1} del cuadrado perfecto más cercano ({2}): queremos una a solo 1.",
+"m2_ok":"✔ ¡Misión cumplida! {0} está a solo 1 de {1}.",
+"m2.more":"Para cada cuadrado perfecto n² hay dos áreas así. ¿Cuáles? Escríbelo con n.",
+"m3.q":"Encuentra el área cuyo lado esté <b>entre 6,5 y 6,6</b>.",
+"m3_lo":"√{0} ≈ {1}: es menor que 6,5.",
+"m3_hi":"√{0} ≈ {1}: es mayor que 6,6.",
+"m3_ok":"✔ ¡Misión cumplida! √{0} ≈ {1}, entre 6,5 y 6,6.",
+"m3.more":"¿Hay otra área que sirva? ¿Por qué solo hay una?",
+"m4.q":"Encuentra un área con √ <b>entre 11 y 12</b>, pero <b>más cerca de 12 que de 11</b>.",
+"m4_out":"√{0} ≈ {1}: no está entre 11 y 12.",
+"m4_near":"√{0} ≈ {1}: está entre 11 y 12, pero más cerca de 11.",
+"m4_ok":"✔ ¡Misión cumplida! √{0} ≈ {1}: entre 11 y 12 y más cerca de 12.",
+"m4.more":"¿Cuál es la más pequeña que sirve? Fíjate en que 11,5² = 132,25 y no 132,5, que sería el punto medio entre 121 y 144.",
+"s1.q":"«La raíz cuadrada de un número es siempre más pequeña que el número.»",
+"s1.h":"Prueba con áreas grandes y, después, con el área 1.",
+"s1.e":"Solo falla para el 1: √1 = 1. (Y con decimales también: √0,25 = 0,5, que es mayor que 0,25.)",
+"s2.q":"«Si el área es un cuadrado perfecto, el lado es un número entero.»",
+"s2.h":"Prueba 49, 64 y 100.",
+"s2.e":"Sí, es la definición: un cuadrado perfecto es el cuadrado de un entero, y su lado es ese entero.",
+"s3.q":"«Si el área no es un cuadrado perfecto, el lado es un decimal exacto, como 7,07.»",
+"s3.h":"Multiplica 7,07 por sí mismo. ¿Da exactamente 50?",
+"s3.e":"7,07² = 49,9849, no 50. √50 = 7,0710678… no se acaba nunca ni se repite: ningún decimal exacto, por largo que sea, multiplicado por sí mismo da 50.",
+"s4.q":"«Si el área se multiplica por 4, el lado se multiplica por 2.»",
+"s4.h":"Compara el lado del área 25 con el del área 100.",
+"s4.e":"Un cuadrado de lado doble tiene área cuádruple. Al revés: √(4·A) = 2·√A.",
+"s5.q":"«Si el área se duplica, el lado también se duplica.»",
+"s5.h":"Compara el lado del área 25 con el del área 50.",
+"s5.e":"No: duplicar el lado cuadruplica el área. Duplicar el área hace crecer el lado solo un 41 % (×√2 ≈ 1,41).",
+"s6.q":"«Un número que acaba en 4 es un cuadrado perfecto.»",
+"s6.h":"Prueba 64 y 144, y después 14 o 24.",
+"s6.e":"A veces: 4, 64 y 144 acaban en 4 y lo son; 14, 24 o 34 no. Los cuadrados perfectos solo acaban en 0, 1, 4, 5, 6 o 9, pero acabar así no lo asegura.",
+"e1.ctx":"Queremos saber cuánto vale <b>√50</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"√50 = 25, porque 25 · 2 = 50.",
+"e1.s1":"√50 es un poco más de 7, porque 7 · 7 = 49.",
+"e1.w0":"Marta ha buscado la mitad de 50, pero la raíz es un número que multiplicado por <b>sí mismo</b> da 50: 25 · 25 = 625.",
+"e1.w1":"Porque 25 es un cuadrado perfecto y 50 no.",
+"e1.w2":"Porque la raíz nunca puede ser un número natural.",
+"e1.frame":"Marta, √50 no es 25 porque…",
+"e1.model":"Marta, √50 es el lado de un cuadrado de área 50, no la mitad de 50. Un cuadrado de lado 25 tendría área 625. El lado que buscamos tiene que multiplicarse por sí mismo para dar 50: 7 · 7 = 49 y 8 · 8 = 64, así que está entre 7 y 8 (≈ 7,07).",
+"e2.ctx":"Queremos saber cuánto vale <b>√(9 + 16)</b>.",
+"e2.n0":"Rita","e2.n1":"Joan",
+"e2.s0":"√25 = 5, porque 9 + 16 = 25.",
+"e2.s1":"√9 + √16 = 3 + 4 = 7.",
+"e2.w0":"Joan supone que √(a + b) = √a + √b, pero no es cierto: 9 + 16 = 25 y un cuadrado de 25 tiene lado 5; 7 · 7 = 49.",
+"e2.w1":"Porque 3 + 4 no es 7.",
+"e2.w2":"Porque dentro de una raíz no se pueden hacer sumas.",
+"e2.frame":"Joan, √(9 + 16) no es 7 porque…",
+"e2.model":"Joan, la raíz no se reparte en una suma. Dentro de la raíz hay 9 + 16 = 25, y un cuadrado de área 25 tiene lado 5. Si fuera 7, el área sería 7 · 7 = 49. √9 + √16 = 7 es otro cálculo, y no vale lo mismo.",
+"e3.ctx":"¿Entre qué dos números enteros está <b>√30</b>?",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"Entre 29 y 31, porque 30 está entre 29 y 31.",
+"e3.s1":"Entre 15 y 16, porque 30 ÷ 2 = 15.",
+"e3.w0":"√30 es el lado de un cuadrado de área 30: hay que buscar los cuadrados perfectos vecinos, 5² = 25 y 6² = 36. Como 25 &lt; 30 &lt; 36, √30 está entre 5 y 6.",
+"e3.w1":"Alguno de los dos tiene que tener razón, porque 30 está cerca de 29, 31 y 15.",
+"e3.w2":"Eso solo se puede saber con una calculadora.",
+"e3.frame":"Álex y Laia, √30 está entre 5 y 6 porque…",
+"e3.model":"Álex, has situado el 30 en lugar de la raíz. Laia, has calculado la mitad. √30 es el lado de un cuadrado de área 30: 5² = 25 y 6² = 36, y 30 está en medio, así que √30 está entre 5 y 6 (≈ 5,48).",
+"d1.q":"Un jardín cuadrado tiene <b>50 m²</b>. Quieres cerrarlo con una valla que se vende en metros enteros. ¿Cuánto mide el lado (con un decimal) y cuántos metros de valla compras, redondeando hacia arriba?",
+"d1.l0":"Lado (m)","d1.l1":"Valla (m)",
+"d1_s":"Revisa el lado: 7,0² = 49 y 7,1² = 50,41. ¿Cuál se acerca más a 50?",
+"d1_lo":"Con {0} m no llegas a cerrarlo: el perímetro es 4 · 7,07 ≈ 28,28 m.",
+"d1_int":"La valla se vende en metros enteros: tienes que redondear hacia arriba hasta un número entero.",
+"d1_hi":"Te sobra valla: el perímetro es 4 · 7,07 ≈ 28,28 m y redondeado hacia arriba, 29 m.",
+"d1.more":"¿Y si el jardín fuera de 100 m²? ¿Cuánto sobraría o faltaría sin tener que redondear?",
+"d2.q":"Tienes <b>90 baldosas</b> cuadradas de 1 × 1 y quieres hacer con ellas el <b>cuadrado más grande posible</b>. ¿Cuánto mide el lado y cuántas baldosas te sobran?",
+"d2.l0":"Lado","d2.l1":"Baldosas que sobran",
+"d2_big":"Un cuadrado de lado {0} necesita {1} baldosas: no tienes tantas (tienes 90).",
+"d2_small":"Con lado {0} gastas {1} y sobran {2}, pero puedes hacer uno más grande.",
+"d2_left":"Revisa las que sobran: 90 menos las que gastas.",
+"d2.more":"¿Y si tuvieras 150 baldosas? ¿Y 100? ¿Qué tiene que ver con √90 ≈ 9,5?",
+"d3.q":"Un cuadrado tiene un área de <b>130 m²</b>. ¿Cuál de estos es su lado aproximado (redondeado a las décimas)?",
+"d3.lc":"Lado:",
+"d3_no":"{0}² = {1}, no 130. Prueba con otro.",
+"d3_ok":"✔ ¡Bien decidido! 11,4² = 129,96, muy cerca de 130 (11,5² = 132,25 se pasa).",
+"d3.more":"¿Por qué no puede ser 11,3? Compara su cuadrado con 130.",
 "title":"Raíz cuadrada: el lado de un cuadrado",
 "eyebrow":"Matemáticas · 1.º ESO · Potencias y raíces",
 "h1":"La raíz cuadrada es el lado",
@@ -163,6 +341,7 @@ es:{
 };
 /*@COMMON_JS@*/
 /*@QUIZ_JS@*/
+/*@RAONA_JS@*/
 /* ===== Arrel quadrada ===== */
 const W=900,H=470,cx=fitCanvas($('#cv'),W,H),G=13;
 let A=50,shown=50;
@@ -248,6 +427,39 @@ $('#cnext').onclick=newCh;
 ['clo','chi'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')$('#ccheck').click();}));
 App.hooks.push(()=>{upd();chq();if(cFn)cFn();});
 document.addEventListener('themechange',draw);
+/* ===== Raona-ho ===== */
+const inA=a=>Number.isInteger(a)&&a>=1&&a<=150;
+const ck=f=>([a])=>inA(a)?f(a):{k:'rng'};
+const sq=a=>nf(Math.sqrt(a),2);
+const near=a=>{const n=isq(a);return (a-n*n<=(n+1)*(n+1)-a)?n*n:(n+1)*(n+1);};
+const load=a=>{setA(a);RZ.show($('#cv'));};
+RZ.init({
+ F:{a:{l:'l_area'}},
+ sim:([a])=>load(a),
+ M:[
+  {id:'m1',f:['a'],ok:([a])=>({k:'m1_ok',p:()=>[a,sq(a)]}),chk:ck(a=>(a>81&&a<100)?null:{k:'m1_f',p:()=>[a,sq(a)]})},
+  {id:'m2',f:['a'],ok:([a])=>({k:'m2_ok',p:[a,near(a)]}),
+   chk:ck(a=>isq(a)**2===a?{k:'m2_p',p:[a]}:Math.abs(a-near(a))!==1?{k:'m2_f',p:[a,Math.abs(a-near(a)),near(a)]}:null)},
+  {id:'m3',f:['a'],ok:([a])=>({k:'m3_ok',p:()=>[a,sq(a)]}),
+   chk:ck(a=>Math.sqrt(a)<=6.5?{k:'m3_lo',p:()=>[a,sq(a)]}:Math.sqrt(a)>=6.6?{k:'m3_hi',p:()=>[a,sq(a)]}:null)},
+  {id:'m4',f:['a'],ok:([a])=>({k:'m4_ok',p:()=>[a,sq(a)]}),
+   chk:ck(a=>(a<=121||a>=144)?{k:'m4_out',p:()=>[a,sq(a)]}:Math.sqrt(a)<=11.5?{k:'m4_near',p:()=>[a,sq(a)]}:null)}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:['a'],cx:ck(a=>a===1?null:{k:'s_cx_no',p:[a]})},
+  {id:'s2',ans:'S',sim:()=>load(64)},{id:'s3',ans:'M',sim:()=>load(50)},{id:'s4',ans:'S',sim:()=>load(100)},{id:'s5',ans:'M',sim:()=>load(50)},
+  {id:'s6',ans:'D',f:['a'],cx:ck(a=>(a%10===4&&isq(a)**2!==a)?null:{k:'s_cx_no',p:[a]})}
+ ],
+ E:[{id:'e1',who:1,args:[50]},{id:'e2',who:0,args:[25]},{id:'e3',who:3,args:[30]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'m'},{l:'d1.l1',u:'m'}],sim:()=>load(50),
+   chk:([c,v])=>Math.abs(c-Math.sqrt(50))>0.05?{k:'d1_s'}:v<28.28?{k:'d1_lo',p:[v]}:v>29?{k:'d1_hi'}:v!==29?{k:'d1_int'}:null},
+  {id:'d2',f:[{l:'d2.l0'},{l:'d2.l1'}],sim:()=>load(90),
+   chk:([c,r])=>c*c>90?{k:'d2_big',p:[c,c*c]}:c<9?{k:'d2_small',p:[c,c*c,90-c*c]}:r!==9?{k:'d2_left'}:null},
+  {id:'d3',chips:{vals:[11,11.4,12,65]},sim:()=>load(130),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p!==11.4?{k:'d3_no',p:()=>[nf(p,1),nf(p*p,2)]}:null}
+ ]
+});
 const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":9,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"r6","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"r7","lvl":"adv","type":"num","num":11,"tol":0}];
 initQuiz(QDATA);
 setA(50);newCh();
