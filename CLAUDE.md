@@ -9,6 +9,9 @@
   - `tipus`: llista entre `Simulador`, `Full de treball`, `Línia del temps`, `Joc`, `Aventura`.
   - El buscador de la portada indexa `t`, `d`, `tag`, `sub`, nom de categoria, `niv`, `bloc` i `tipus` (sense accents ni majúscules): convé que el text de la targeta continga els mots que un company buscaria.
   - Si cal un valor nou, afegir-lo també a les constants `NIVELLS`, `BLOCS` o `TIPUS` del script de la portada; si no, el filtre no el mostrarà.
+  - `ic`: nom de la icona de la targeta, una clau de l'objecte `IC` del script de la portada (icones de línia, `viewBox` 24, trac 2). Cada recurs en du una de pròpia; si falta, la targeta mostra el `glyph`. Per a una icona nova, afegir-ne el contingut SVG a `IC`.
+- La portada té una pestanya per matèria (`CATS`), cadascuna amb el seu color (`--c-<id>`, `--t-<id>`, també en mode fosc) i la seua icona: Matemàtiques, Física, Química, Biologia, Geologia, Cultura (`id: 'curio'`) i Contes (`id: 'misc'`; aventures per a xiquets). Els ids no es canvien per no trencar enllaços (`#cat=misc`). Una matèria nova necessita color, icona i entrada a `CATS`.
+- Els subtítols (`sub`) només es mostren quan agrupen més d'una targeta dins de la matèria.
 
 # Versions en castellà (`es/`)
 

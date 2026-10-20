@@ -25,9 +25,11 @@
 :root {
   --bg: #f4f6fa; --surface: #ffffff; --ink: #14202e; --muted: #56677a; --line: #d5dde8;
   --grid: rgba(37, 99, 235, 0.07);
-  --c-mates: #2563eb; --c-fisica: #d9480f; --c-misc: #7c3aed; --c-curio: #0f8a5f; --c-quimica: #0e7490; --c-biologia: #4d7c0f; --c-geologia: #92580f;
-  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-misc: #efe6ff; --t-curio: #dcf5ea; --t-quimica: #d9f1f6; --t-biologia: #e8f3d6; --t-geologia: #f6e8d2;
-  --bg-s1: #ebeeff; --bg-s2: #e4f1fb; --bg-s3: #e0f5f1; --bg-s4: #f0e9fc; --bg-s5: #fbf1dc; --bg-s6: #fde8ea;
+  /* Un color per matèria: --c (traç, text), --t (rajola de la icona) */
+  --c-mates: #2563eb; --c-fisica: #d9480f; --c-quimica: #0e7490; --c-biologia: #4d7c0f; --c-geologia: #92580f; --c-curio: #7c3aed; --c-misc: #be185d;
+  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-quimica: #d9f1f6; --t-biologia: #e8f3d6; --t-geologia: #f6e8d2; --t-curio: #efe6ff; --t-misc: #fde2ee;
+  /* Pestanya activa: fons i color del text */
+  --sel-mix: 88%; --on: #ffffff;
   --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -36,9 +38,9 @@
   :root {
     --bg: #0e141c; --surface: #172130; --ink: #e8eef6; --muted: #93a4b8; --line: #2a384b;
     --grid: rgba(122, 162, 255, 0.07);
-    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-misc: #b799ff; --c-curio: #4fd3a0; --c-quimica: #5fd3e8; --c-biologia: #a3d65c; --c-geologia: #e0a85c;
-    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-misc: #2f2450; --t-curio: #15392e; --t-quimica: #12353d; --t-biologia: #2a3a14; --t-geologia: #3d2c14;
-    --bg-s1: #1d2140; --bg-s2: #15293b; --bg-s3: #14312f; --bg-s4: #281f45; --bg-s5: #33291a; --bg-s6: #3a1d24;
+    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-quimica: #5fd3e8; --c-biologia: #a3d65c; --c-geologia: #e0a85c; --c-curio: #b799ff; --c-misc: #f472b6;
+    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-quimica: #12353d; --t-biologia: #2a3a14; --t-geologia: #3d2c14; --t-curio: #2f2450; --t-misc: #4a1d36;
+    --sel-mix: 100%; --on: #0e141c;
   }
 }
 * { box-sizing: border-box; }
@@ -51,95 +53,130 @@ body {
   padding-inline: 16px;
 }
 .wrap { max-width: 68rem; margin-inline: auto; }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+:focus-visible { outline: 3px solid var(--c-mates); outline-offset: 3px; }
 
-/* Capçalera */
-.hero { padding: 3.5rem 0 1.5rem; position: relative; }
+/* Capçalera: títol a l'esquerra, cercador a la dreta */
+.hero { padding: 2.2rem 0 1.25rem; position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.1rem 2rem; }
 .hero .deco {
-  position: absolute; right: 0; top: 1.5rem; font-family: var(--f-display); font-weight: 800;
-  font-size: clamp(5rem, 18vw, 11rem); line-height: 1; color: var(--c-mates); opacity: 0.09;
+  position: absolute; right: 0; top: 0.5rem; font-family: var(--f-display); font-weight: 800;
+  font-size: clamp(4rem, 14vw, 8rem); line-height: 1; color: var(--c-mates); opacity: 0.09;
   letter-spacing: -0.04em; pointer-events: none; user-select: none; white-space: nowrap;
 }
-.kicker { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-mates); margin: 0 0 0.75rem; }
-h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.2rem, 7vw, 4.2rem); line-height: 1; letter-spacing: -0.02em; margin: 0 0 1rem; max-width: 14ch; text-wrap: balance; }
+.hero-text { position: relative; min-width: 0; }
+.kicker { font-family: var(--f-mono); font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-mates); margin: 0 0 0.5rem; }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2rem, 6vw, 3.1rem); line-height: 1; letter-spacing: -0.02em; margin: 0 0 0.6rem; text-wrap: balance; }
 h1 em { font-style: normal; color: var(--c-mates); }
-.lede { color: var(--muted); font-size: 1.1rem; max-width: 38rem; margin: 0; }
-
-/* Filtres */
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.9rem; }
-.search { position: relative; max-width: 30rem; margin: 1.75rem 0 0.9rem; }
+.lede { color: var(--muted); font-size: 1rem; max-width: 36rem; margin: 0; }
+.search { position: relative; flex: 0 1 22rem; width: 22rem; max-width: 100%; margin: 0; }
 .search input {
   width: 100%; font: inherit; font-size: 1rem; color: var(--ink); background: var(--surface);
-  border: 1.5px solid var(--line); border-radius: 999px; padding: 0.6rem 2.6rem 0.6rem 2.6rem; appearance: none;
+  border: 1.5px solid var(--line); border-radius: 12px; padding: 0.7rem 2.6rem 0.7rem 2.6rem; min-height: 3rem; appearance: none;
 }
 .search input::placeholder { color: var(--muted); }
 .search input::-webkit-search-cancel-button { display: none; }
-.search .ico { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 1rem; }
-.search .clear { position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; line-height: 1; }
+.search .ico { position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; display: grid; }
+.search .ico svg { width: 1.1rem; height: 1.1rem; }
+.search .clear { position: absolute; right: 0.35rem; top: 50%; transform: translateY(-50%); width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; line-height: 1; }
 .search .clear[hidden] { display: none; }
 .search .clear:hover { color: var(--ink); }
 .search input:focus-visible { outline-offset: 2px; }
-.filters { display: grid; gap: 0.55rem; margin: 0 0 0.9rem; }
-.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; }
-.flabel { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); min-width: 6.5rem; }
-.chip.sm { font-size: 0.85rem; padding: 0.3rem 0.75rem; }
-.chip:disabled { opacity: 0.4; cursor: not-allowed; }
-.status { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.9rem; color: var(--muted); font-size: 0.9rem; margin: 0 0 1.6rem; min-height: 1.5rem; }
-.reset { font: inherit; background: none; border: 0; padding: 0; color: var(--c-mates); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 700; }
-.chip {
-  font: inherit; font-weight: 700; font-size: 0.92rem; cursor: pointer;
-  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
-  border-radius: 999px; padding: 0.45rem 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem;
+
+/* Pestanyes de matèria */
+.tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.9rem; position: relative; }
+.tab {
+  font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; color: var(--ink);
+  display: inline-flex; align-items: center; gap: 0.45rem; min-height: 3rem; padding: 0 0.7rem 0 0.6rem;
+  background: var(--surface); border: 1.5px solid color-mix(in srgb, var(--c) 55%, var(--surface)); border-radius: 12px;
 }
-.chip .dot { width: 0.65rem; height: 0.65rem; border-radius: 50%; background: var(--c, var(--ink)); }
-.chip .n { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
+.tab svg { width: 1.25rem; height: 1.25rem; flex: none; color: var(--c); }
+.tab .n { font-family: var(--f-mono); font-size: 0.74rem; font-weight: 500; padding: 0.1rem 0.4rem; border-radius: 999px; background: var(--t); color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
+.tab.zero { opacity: 0.55; }
+.tab[aria-selected="true"] { background: color-mix(in srgb, var(--c) var(--sel-mix), #000); border-color: transparent; color: var(--on); }
+.tab[aria-selected="true"] svg { color: var(--on); }
+.tab[aria-selected="true"] .n { background: rgba(255, 255, 255, 0.24); color: var(--on); }
+@media (prefers-color-scheme: dark) { .tab[aria-selected="true"] .n { background: rgba(14, 20, 28, 0.18); } }
+
+/* Filtres */
+.filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin: 0 0 0.5rem; }
+.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; }
+.flabel { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 0.2rem; }
+.chip {
+  font: inherit; font-weight: 700; font-size: 0.88rem; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 999px; padding: 0 0.95rem; min-height: 2.4rem; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.chip .n { font-family: var(--f-mono); font-size: 0.74rem; font-weight: 500; color: var(--muted); }
 .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .chip[aria-pressed="true"] .n { color: inherit; opacity: 0.75; }
-:focus-visible { outline: 3px solid var(--c-mates); outline-offset: 3px; }
+.chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.morebtn {
+  font: inherit; font-weight: 700; font-size: 0.88rem; cursor: pointer; color: var(--muted); background: none;
+  border: 0; min-height: 2.4rem; padding: 0 0.4rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 8px; white-space: nowrap;
+}
+.morebtn svg { width: 1.15rem; height: 1.15rem; }
+.morebtn:hover { color: var(--ink); }
+.morebtn .n { font-family: var(--f-mono); font-size: 0.74rem; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 0 0.4rem; }
+.morebtn .chev { font-size: 0.8rem; transition: transform .15s ease; }
+.morebtn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.more { display: grid; gap: 0.5rem; margin: 0 0 0.5rem; }
+.more[hidden] { display: none; }
+.more .flabel { min-width: 7.5rem; }
+.status { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.9rem; color: var(--muted); font-size: 0.88rem; margin: 0.6rem 0 1rem; min-height: 1.4rem; }
+.status b { color: var(--ink); }
+.status .cdesc { flex: 1 1 18rem; }
+.reset { font: inherit; background: none; border: 0; padding: 0; color: var(--c-mates); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 700; }
 
-/* Seccions */
-.sec { margin-bottom: 2.75rem; }
-.sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.25rem 0.9rem; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--c); }
-.sec h2 { font-family: var(--f-display); font-weight: 800; font-size: 1.7rem; margin: 0; line-height: 1.1; color: var(--c); }
-.sec .sub { color: var(--muted); font-size: 0.95rem; margin: 0; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1rem; }
-
+/* Targetes compactes */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 0.9rem; }
+.subh { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.5rem 0 0.6rem; font-weight: 500; }
+.sr + .subh { margin-top: 0.2rem; }
+.subh span { color: color-mix(in srgb, var(--c) 80%, var(--ink)); margin-left: 0.4rem; }
 .card {
-  display: grid; grid-template-columns: 4.2rem 1fr; gap: 0.2rem 1rem; align-items: start;
-  text-decoration: none; color: inherit; background: var(--cb, var(--surface));
-  border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 14px;
-  padding: 1.1rem 1.2rem 1.1rem 1rem;
+  display: flex; flex-direction: column; gap: 0.6rem; min-height: 8.5rem;
+  text-decoration: none; color: inherit;
+  background: color-mix(in srgb, var(--c) 7%, var(--surface));
+  border: 1.5px solid color-mix(in srgb, var(--c) 55%, var(--surface)); border-radius: 12px;
+  padding: 0.9rem 1rem;
 }
-.glyph {
-  grid-row: span 3; width: 4.2rem; height: 4.2rem; border-radius: 12px; background: var(--t);
-  color: var(--c); display: grid; place-items: center;
-  font-family: var(--f-display); font-weight: 800; font-size: 2.4rem; line-height: 1;
-}
-.card h3 { font-family: var(--f-display); font-weight: 800; font-size: 1.2rem; line-height: 1.15; margin: 0.1rem 0 0; }
-.card p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.4; }
-.card .tag { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c); margin-top: 0.55rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+.card-head { display: flex; align-items: center; gap: 0.75rem; }
+.card .ico { flex: none; width: 2.5rem; height: 2.5rem; border-radius: 10px; background: var(--t); color: var(--c); display: grid; place-items: center; }
+.card .ico svg { width: 1.4rem; height: 1.4rem; }
+.card .ico.glyph { font-family: var(--f-display); font-weight: 800; font-size: 1.1rem; line-height: 1; }
+.card h3 { font-family: var(--f-display); font-weight: 800; font-size: 0.95rem; line-height: 1.2; margin: 0; min-width: 0; }
+.card p { margin: 0; color: var(--muted); font-size: 0.82rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card .tag { margin-top: auto; font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in srgb, var(--c) 80%, var(--ink)); display: flex; justify-content: space-between; gap: 0.5rem; }
+.card .tag b { font-weight: 500; opacity: 0.8; }
 .card .go { white-space: nowrap; }
 .card:hover, .card:focus-visible { border-color: var(--c); }
 .card:hover h3, .card:focus-visible h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
-.subh { font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0.7rem; font-weight: 500; }
-.subh:first-of-type { margin-top: 0.4rem; }
-.subh span { color: var(--c); margin-left: 0.4rem; }
-.glyph.long { font-size: 1.5rem; letter-spacing: -0.03em; }
 .soon {
   border: 2px dashed var(--line); border-radius: 14px; padding: 1.4rem; color: var(--muted);
   display: flex; align-items: center; gap: 1rem; background: transparent;
 }
-.soon b { font-family: var(--f-display); font-size: 1.6rem; color: var(--c); opacity: 0.6; }
+.soon b { font-family: var(--f-display); font-size: 1.6rem; color: var(--c, var(--c-mates)); opacity: 0.6; }
 @media (prefers-reduced-motion: no-preference) {
   .card { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
   .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -14px rgba(20, 32, 46, 0.45); }
 }
-footer { border-top: 1px solid var(--line); padding: 1.5rem 0 3rem; color: var(--muted); font-size: 0.85rem; }
+footer { border-top: 1px solid var(--line); margin-top: 2.5rem; padding: 1.5rem 0 3rem; color: var(--muted); font-size: 0.85rem; }
 footer p { margin: 0 0 0.4rem; max-width: 46rem; }
-@media (max-width: 520px) {
-  .flabel { min-width: 100%; }
-  .hero { padding-top: 2.2rem; }
-  .card { grid-template-columns: 3.4rem 1fr; }
-  .glyph { width: 3.4rem; height: 3.4rem; font-size: 1.9rem; }
+
+@media (pointer: coarse) { .chip { min-height: 2.75rem; } .morebtn { min-height: 2.75rem; } }
+@media (max-width: 700px) {
+  .hero { padding-top: 1.6rem; }
+  .search { flex-basis: 100%; width: 100%; }
+  /* Pestanyes i nivells: una sola fila amb desplaçament horitzontal */
+  .tabs, .filters .fgroup { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar, .filters .fgroup::-webkit-scrollbar { display: none; }
+  .tab, .chip, .flabel { flex: none; }
+  .tabs { padding-block: 2px; }
+  .filters { flex-wrap: nowrap; justify-content: flex-start; gap: 0; }
+  .filters .fgroup { flex: 1 1 auto; min-width: 0; padding-right: 8px; }
+  .morebtn { flex: none; padding: 0 0.3rem 0 0.6rem; }
+  .morebtn .mtxt, .filters .flabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .more .flabel { min-width: 100%; }
+  .more .fgroup { flex-wrap: wrap; }
 }
 </style>
 <script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -149,20 +186,23 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
 <div class="wrap">
   <header class="hero">
     <div class="deco" aria-hidden="true">π∑∫</div>
-    <p class="kicker">Ilde Morales · Mates, ciències i cultura</p>
-    <h1>Aprendre <em>jugant</em></h1>
-    <p class="lede">Activitats interactives per a l'alumnat. Tria una categoria o entra directament en un recurs: cada pàgina funciona sola, al mòbil i a l'ordinador.</p>
+    <div class="hero-text">
+      <p class="kicker">Ilde Morales · Mates, ciències i cultura</p>
+      <h1>Aprendre <em>jugant</em></h1>
+      <p class="lede">Activitats interactives per a l'alumnat. Tria una matèria o entra directament en un recurs: cada pàgina funciona sola, al mòbil i a l'ordinador.</p>
+    </div>
+    <div class="search" role="search">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+      <input id="q" type="search" placeholder="Busca: Pitàgores, gasos, Kepler…" aria-label="Busca un recurs" autocomplete="off" spellcheck="false">
+      <button class="clear" id="qclear" type="button" aria-label="Esborra la cerca" hidden>×</button>
+    </div>
   </header>
 
-  <div class="search" role="search">
-    <span class="ico" aria-hidden="true">⌕</span>
-    <input id="q" type="search" placeholder="Busca un recurs: Pitàgores, matrius, gasos…" aria-label="Busca un recurs" autocomplete="off" spellcheck="false">
-    <button class="clear" id="qclear" type="button" aria-label="Esborra la cerca" hidden>×</button>
-  </div>
-  <nav class="chips" id="chips" aria-label="Categories"></nav>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Matèries"></div>
   <div class="filters" id="filters"></div>
+  <div class="more" id="more" hidden></div>
   <p class="status" id="status" aria-live="polite"></p>
-  <main id="app"></main>
+  <main id="app" role="tabpanel"></main>
 
   <footer>
     <p>Les fotografies de «Vint fites» i de l'Atles provenen de Wikimedia Commons; cada imatge indica autoria i llicència.</p>
@@ -172,82 +212,151 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
 
 <script>
 const BASE = '/';
+// Icones de línia (viewBox 24). Cada recurs porta `ic` amb el nom d'una; si no en porta, la targeta mostra el seu `glyph`.
+const IC = {
+  atom: '<circle cx="12" cy="12" r="1.5"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>',
+  bars: '<rect x="3" y="5" width="18" height="5" rx="1"/><path d="M9 5v5M15 5v5"/><rect x="3" y="14" width="18" height="5" rx="1"/><path d="M12 14v5"/>',
+  bird: '<path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/>',
+  book: '<path d="M12 6c-2-1.5-5-2-9-2v14c4 0 7 .5 9 2 2-1.5 5-2 9-2V4c-4 0-7 .5-9 2z"/><path d="M12 6v14"/>',
+  bug: '<ellipse cx="12" cy="14" rx="5" ry="6.5"/><path d="M12 7.5V21M9 7a3 3 0 0 1 6 0M3 10l4 2M21 10l-4 2M3 18l4-2M21 18l-4-2"/>',
+  calculator: '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h4"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  coaster: '<path d="M2 18C4 7 7 7 9 14s5 3 7-4 4-5 6-2"/><path d="M2 21h20"/>',
+  cube: '<path d="M12 3 4 7.5v9L12 21l8-4.5v-9z"/><path d="M12 12 4 7.5M12 12l8-4.5M12 12v9"/>',
+  decay: '<path d="M3 3v18h18"/><path d="M6 6c2 8 6 10 14 11"/>',
+  diag: '<path d="M13 5h6v6M11 19H5v-6M19 5 5 19"/>',
+  dna: '<path d="M7 3c0 7 10 7 10 18"/><path d="M17 3c0 7-10 7-10 18"/><path d="M8.5 7h7M8.5 17h7M10 12h4"/>',
+  drop: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M9.5 15a2.5 2.5 0 0 0 2.5 2.5"/>',
+  flask: '<path d="M9 3h6"/><path d="M10 3v6L4.8 18.2A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.8L14 9V3"/><path d="M7.5 15h9"/>',
+  funnel: '<path d="M4 4h16l-6 8v7l-4 2v-9z"/>',
+  gauge: '<path d="M4 18a9 9 0 1 1 16 0"/><path d="M12 14l4-5"/><circle cx="12" cy="14" r="1.2"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  gem: '<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/><path d="M12 3 8 9l4 12 4-12-4-6z"/>',
+  glass: '<path d="M5 4h14l-1.5 16a1 1 0 0 1-1 .9h-9a1 1 0 0 1-1-.9z"/><path d="M6 10h12"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  grid: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
+  hash: '<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',
+  hourglass: '<path d="M6 3h12M6 21h12"/><path d="M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/>',
+  landmark: '<path d="M3 21h18"/><path d="M5 18h14"/><path d="M6 18v-7M10 18v-7M14 18v-7M18 18v-7"/><path d="M12 3 3 8h18z"/>',
+  layers: '<path d="m12 2.5 9.5 5.5-9.5 5.5L2.5 8z"/><path d="m2.5 12 9.5 5.5 9.5-5.5"/><path d="m2.5 16 9.5 5.5 9.5-5.5"/>',
+  line: '<path d="M3 3v18h18"/><path d="M3 21 20 6"/>',
+  lines: '<path d="M3 3v18h18"/><path d="M6 17 20 6M6 8l14 9"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v2"/>',
+  map: '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  mountain: '<path d="m8 3 4 8 5-5 5 15H2z"/>',
+  network: '<circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M11 7.3 6 16.7M13 7.3l5 9.4M7.5 19h9"/>',
+  orbit: '<ellipse cx="12" cy="12" rx="10.5" ry="4.5" transform="rotate(-30 12 12)"/><circle cx="12" cy="12" r="2.6"/><circle cx="21" cy="6.8" r="1.4"/>',
+  parabola: '<path d="M4 3c1 10 4 16 8 16s7-6 8-16"/><path d="M2 21h20"/>',
+  paw: '<circle cx="6" cy="10" r="2"/><circle cx="10" cy="5.5" r="2"/><circle cx="14.5" cy="5.5" r="2"/><circle cx="18.5" cy="10" r="2"/><path d="M12 12c-3 0-6 3-5 6 .8 2.4 3 2 5 2s4.2.4 5-2c1-3-2-6-5-6z"/>',
+  percent: '<circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/><path d="M19 5 5 19"/>',
+  pi: '<path d="M4 7h16"/><path d="M9 7l-1 12"/><path d="M15 7v9a3 3 0 0 0 3 3"/>',
+  power: '<path d="m3 19 8-8M11 19 3 11"/><path d="M15 5a2.5 2.5 0 1 1 5 0c0 1.6-5 2.6-5 6h5"/>',
+  pulse: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  radical: '<path d="M3 13h3l3 7 5-16h7"/>',
+  ramp: '<path d="M3 20h18L3 6z"/><rect x="8.2" y="7.1" width="4" height="4" rx=".6" transform="rotate(38 10.2 9.1)"/>',
+  rings: '<circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="9"/>',
+  rocket: '<path d="M12 2c3.5 2 5 6 5 10l-2 4H9l-2-4c0-4 1.5-8 5-10z"/><circle cx="12" cy="9.5" r="1.8"/><path d="M7 13l-3 3 3 1M17 13l3 3-3 1M12 17v4"/>',
+  rotate: '<path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.9 1 6.7 2.7L21 8"/><path d="M21 3v5h-5"/>',
+  scale: '<path d="M12 3v18M7 21h10M5 7h14"/><path d="m5 7-3 7a3 3 0 0 0 6 0z"/><path d="m19 7-3 7a3 3 0 0 0 6 0z"/>',
+  scan: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
+  sheet: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>',
+  shot: '<path d="M3 19C6 5 16 5 21 19"/><circle cx="12" cy="8.5" r="1.8"/>',
+  sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  split: '<circle cx="7.2" cy="12" r="4.7"/><circle cx="16.8" cy="12" r="4.7"/><path d="M7.2 12h.01M16.8 12h.01"/>',
+  sprout: '<path d="M12 21V11"/><path d="M12 11C12 7 9 5 4 5c0 4 3 6 8 6z"/><path d="M12 15c0-3.5 2.5-6 8-6 0 3.5-2.5 6-8 6z"/>',
+  steps: '<rect x="3" y="16" width="5" height="5"/><rect x="8" y="16" width="5" height="5"/><rect x="13" y="16" width="5" height="5"/><rect x="3" y="11" width="5" height="5"/><rect x="8" y="11" width="5" height="5"/><rect x="3" y="6" width="5" height="5"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  swap: '<path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"/>',
+  thales: '<path d="M12 3 3 20h18z"/><path d="M7.5 11.5h9"/>',
+  thermo: '<path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/><path d="M12 9v7"/>',
+  tiles: '<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M9 5v14M15 5v14M3 12h18"/>',
+  timeline: '<path d="M3 12h18"/><path d="M6 12V8M12 12v4M18 12V8"/><circle cx="6" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="18" cy="6" r="2"/>',
+  triright: '<path d="M4 6v14h14z"/><path d="M4 16h4v4"/>',
+  unitcircle: '<circle cx="12" cy="12" r="9"/><path d="M12 12l6.4-6.4"/><path d="M18.4 5.6V12"/><path d="M12 12h9"/>',
+  waves: '<path d="M2 8q2.5-4 5 0t5 0 5 0 5 0"/><path d="M2 16q2.5-4 5 0t5 0 5 0 5 0"/>',
+  zap: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  zoomin: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6M8 11h6"/>'
+};
+const svg = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${IC[n] || ''}</svg>`;
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+// Cada matèria té un color (--c-<id>) i una icona. Els ids no canvien (curio = Cultura, misc = Contes) per no trencar enllaços.
 const CATS = [
-  { id: 'mates',  n: 'Matemàtiques', d: 'Activitats per a l\'aula de matemàtiques de l\'ESO i el Batxillerat.' },
-  { id: 'fisica', n: 'Física',       d: 'Simuladors i activitats per entendre el món.' },
-  { id: 'quimica', n: 'Química',      d: 'Simuladors de la matèria: de l\'àtom als gasos.' },
-  { id: 'biologia', n: 'Biologia', d: 'Genètica, evolució, cèl·lula i metabolisme.' },
-  { id: 'geologia', n: 'Geologia', d: 'Terratrèmols, interior de la Terra, isostasia, datació, processos externs i temps geològic.' },
-  { id: 'misc',   n: 'Aventures interactives per a xiquets curiosos (8 a 10 anys)', d: 'Llibres-joc per a jugar a la tablet: tria el camí, resol candaus de mates i descobreix tots els finals.' },
-  { id: 'curio',  n: 'Curiositats',  d: 'Per a qui vol saber un poc més.' },
+  { id: 'mates',    n: 'Matemàtiques', ic: 'pi',       d: 'Activitats per a l\'aula de matemàtiques de l\'ESO i el Batxillerat.' },
+  { id: 'fisica',   n: 'Física',       ic: 'zap',      d: 'Simuladors i activitats per entendre el món.' },
+  { id: 'quimica',  n: 'Química',      ic: 'flask',    d: 'Simuladors de la matèria: de l\'àtom als gasos.' },
+  { id: 'biologia', n: 'Biologia',     ic: 'sprout',   d: 'Genètica, evolució, cèl·lula i metabolisme.' },
+  { id: 'geologia', n: 'Geologia',     ic: 'gem',      d: 'Terratrèmols, interior de la Terra, isostasia, datació, processos externs i temps geològic.' },
+  { id: 'curio',    n: 'Cultura',      ic: 'landmark', d: 'Per a qui vol saber un poc més.' },
+  { id: 'misc',     n: 'Contes',       ic: 'book',     d: 'Aventures interactives per a xiquets curiosos (8 a 10 anys): llibres-joc per a jugar a la tablet; tria el camí, resol candaus de mates i descobreix tots els finals.' },
 ];
 const RES = [
   // Matemàtiques · Història i nombres
-  { cat: 'mates', sub: 'Història i nombres', href: 'fites-matematiques/', niv: [], tipus: ['Línia del temps'], glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
-  { cat: 'mates', sub: 'Història i nombres', href: 'eratostenes/', niv: ['1r ESO', '2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
+  { cat: 'mates', sub: 'Història i nombres', href: 'fites-matematiques/', ic: 'timeline', niv: [], tipus: ['Línia del temps'], glyph: 'π', t: 'Vint fites matemàtiques', d: 'Línia del temps interactiva amb un problema detonant per a cada fita, des de l\'os d\'Ishango fins als algorismes.', tag: 'Història de les mates' },
+  { cat: 'mates', sub: 'Història i nombres', href: 'eratostenes/', ic: 'hash', niv: ['1r ESO', '2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '7', t: 'Criba d\'Eratòstenes', d: 'Tacha els múltiplos dels primers primers i descobreix tots els primos menors que 500.', tag: 'Nombres primers' },
   // Matemàtiques · Càlcul i aritmètica
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'calcul-mental/', niv: ['1r ESO', '2n ESO', '3r ESO', '4t ESO'], bloc: 'Numèric', tipus: ['Full de treball'], glyph: '×', t: 'Generador de càlcul mental', d: 'Fitxes per imprimir de taules, combinades, enters, fraccions, decimals, potències i percentatges. Tres nivells, versions diferents i solucionari amb passos.', tag: 'Fulls imprimibles · ESO' },
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'engranatges-mcm/', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⚙', t: 'Engranatges i mínim comú múltiple', d: 'Dues rodes dentades amb una marca: quan tornen a coincidir? Prediu-ho i comprova-ho. Múltiples comuns, mcm i factors primers, amb casos predefinits i test autocorregit. Bilingüe valencià i castellà.', tag: 'Divisibilitat · mcm · 1r ESO' },
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'mcd-rectangles/', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '▦', t: 'Màxim comú divisor amb rajoles', d: 'Enrajola un rectangle amb els quadrats més grans possible i mira l\'algorisme d\'Euclides retallant quadrats. Divisors comuns i mcd, amb predicció i test autocorregit. Bilingüe valencià i castellà.', tag: 'Divisibilitat · mcd · Euclides · 1r ESO' },
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'zoom-recta-decimals/', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador', 'Joc'], glyph: '0,1', t: 'Zoom infinit a la recta', d: 'Fes zoom a la recta numèrica: entre 0,1 i 0,2 apareixen deu marques, i després deu més. Compara i ordena nombres decimals (0,15 o 0,2?) amb un repte. Bilingüe valencià i castellà.', tag: 'Nombres decimals · recta numèrica · 1r ESO' },
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'potencies-escacs-paper/', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '2ⁿ', t: 'Potències: blat als escacs i paper fins a la Lluna', d: 'El gra de blat que es duplica en cada casella del tauler i el full plegat 42 vegades que arriba a la Lluna. Creixement exponencial amb una barra que se n\'ix de la pantalla. Bilingüe valencià i castellà.', tag: 'Potències · creixement exponencial · 1r ESO' },
-  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'arrel-quadrada-area/', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador', 'Joc'], glyph: '√', t: 'L\'arrel quadrada és el costat', d: 'Canvia l\'àrea d\'un quadrat i mira com s\'ajusta el costat: per què √50 està entre 7 i 8. Quadrats perfectes, arrel entera i dècimes, amb repte i test autocorregit. Bilingüe valencià i castellà.', tag: 'Arrel quadrada · quadrats perfectes · 1r ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'calcul-mental/', ic: 'calculator', niv: ['1r ESO', '2n ESO', '3r ESO', '4t ESO'], bloc: 'Numèric', tipus: ['Full de treball'], glyph: '×', t: 'Generador de càlcul mental', d: 'Fitxes per imprimir de taules, combinades, enters, fraccions, decimals, potències i percentatges. Tres nivells, versions diferents i solucionari amb passos.', tag: 'Fulls imprimibles · ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'engranatges-mcm/', ic: 'gear', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⚙', t: 'Engranatges i mínim comú múltiple', d: 'Dues rodes dentades amb una marca: quan tornen a coincidir? Prediu-ho i comprova-ho. Múltiples comuns, mcm i factors primers, amb casos predefinits i test autocorregit. Bilingüe valencià i castellà.', tag: 'Divisibilitat · mcm · 1r ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'mcd-rectangles/', ic: 'tiles', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '▦', t: 'Màxim comú divisor amb rajoles', d: 'Enrajola un rectangle amb els quadrats més grans possible i mira l\'algorisme d\'Euclides retallant quadrats. Divisors comuns i mcd, amb predicció i test autocorregit. Bilingüe valencià i castellà.', tag: 'Divisibilitat · mcd · Euclides · 1r ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'zoom-recta-decimals/', ic: 'zoomin', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador', 'Joc'], glyph: '0,1', t: 'Zoom infinit a la recta', d: 'Fes zoom a la recta numèrica: entre 0,1 i 0,2 apareixen deu marques, i després deu més. Compara i ordena nombres decimals (0,15 o 0,2?) amb un repte. Bilingüe valencià i castellà.', tag: 'Nombres decimals · recta numèrica · 1r ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'potencies-escacs-paper/', ic: 'power', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '2ⁿ', t: 'Potències: blat als escacs i paper fins a la Lluna', d: 'El gra de blat que es duplica en cada casella del tauler i el full plegat 42 vegades que arriba a la Lluna. Creixement exponencial amb una barra que se n\'ix de la pantalla. Bilingüe valencià i castellà.', tag: 'Potències · creixement exponencial · 1r ESO' },
+  { cat: 'mates', sub: 'Càlcul i aritmètica', href: 'arrel-quadrada-area/', ic: 'radical', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador', 'Joc'], glyph: '√', t: 'L\'arrel quadrada és el costat', d: 'Canvia l\'àrea d\'un quadrat i mira com s\'ajusta el costat: per què √50 està entre 7 i 8. Quadrats perfectes, arrel entera i dècimes, amb repte i test autocorregit. Bilingüe valencià i castellà.', tag: 'Arrel quadrada · quadrats perfectes · 1r ESO' },
   // Matemàtiques · Geometria i àlgebra
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'pitagores/', niv: ['2n ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: 'c²', t: 'Pitàgores per àrees', d: 'Quatre triangles iguals es recol·loquen dins d\'un mateix quadrat: els espais lliures canvien de forma, però no d\'àrea.', tag: 'Teorema de Pitàgores · 2n ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'patrons-mistos/', niv: ['1r ESO', '2n ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '3n+1', t: 'Patrons amb mistos', d: 'Figures de mistos que creixen: compta, omple la taula, prediu la figura 100 i troba l\'expressió general en n. Generalització i iniciació a l\'àlgebra. Bilingüe valencià i castellà.', tag: 'Patrons i generalització · 1r ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-balanca/', niv: ['2n ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '⚖', t: 'Equacions com a balança', d: 'Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.', tag: 'Equacions · 2n ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-segon-grau/', niv: ['3r ESO', '4t ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: 'x²', t: 'Equacions de segon grau', d: 'Tir a cistella, salts d\'animals, coets de falla... Mira el discriminant, les solucions i la paràbola, i quines tenen sentit.', tag: 'Equacions · 3r i 4t ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'thales/', niv: ['2n ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: '∥', t: 'Thales i semblança', d: 'Arrossega els vèrtexs del triangle i comprova que els quocients de la paral·lela DE segueixen coincidint.', tag: 'Semblança · 2n ESO' },
-  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'trigonometria/', niv: ['4t ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: 'sin', t: 'Circumferència goniomètrica', d: 'Mou un punt per la circumferència i mira com canvien sinus, cosinus i tangent. Angles notables amb valors exactes, gràfica i test.', tag: 'Trigonometria · 4t ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'pitagores/', ic: 'triright', niv: ['2n ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: 'c²', t: 'Pitàgores per àrees', d: 'Quatre triangles iguals es recol·loquen dins d\'un mateix quadrat: els espais lliures canvien de forma, però no d\'àrea.', tag: 'Teorema de Pitàgores · 2n ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'patrons-mistos/', ic: 'steps', niv: ['1r ESO', '2n ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '3n+1', t: 'Patrons amb mistos', d: 'Figures de mistos que creixen: compta, omple la taula, prediu la figura 100 i troba l\'expressió general en n. Generalització i iniciació a l\'àlgebra. Bilingüe valencià i castellà.', tag: 'Patrons i generalització · 1r ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-balanca/', ic: 'scale', niv: ['2n ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '⚖', t: 'Equacions com a balança', d: 'Aïlla la x fent la mateixa operació als dos costats. Prova de fer-ho només a un i mira què passa.', tag: 'Equacions · 2n ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'equacions-segon-grau/', ic: 'parabola', niv: ['3r ESO', '4t ESO'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: 'x²', t: 'Equacions de segon grau', d: 'Tir a cistella, salts d\'animals, coets de falla... Mira el discriminant, les solucions i la paràbola, i quines tenen sentit.', tag: 'Equacions · 3r i 4t ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'thales/', ic: 'thales', niv: ['2n ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: '∥', t: 'Thales i semblança', d: 'Arrossega els vèrtexs del triangle i comprova que els quocients de la paral·lela DE segueixen coincidint.', tag: 'Semblança · 2n ESO' },
+  { cat: 'mates', sub: 'Geometria i àlgebra', href: 'trigonometria/', ic: 'unitcircle', niv: ['4t ESO'], bloc: 'Espacial i geometria', tipus: ['Simulador'], glyph: 'sin', t: 'Circumferència goniomètrica', d: 'Mou un punt per la circumferència i mira com canvien sinus, cosinus i tangent. Angles notables amb valors exactes, gràfica i test.', tag: 'Trigonometria · 4t ESO' },
   // Matemàtiques · Fraccions i proporcionalitat
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'fraccions-barres/', niv: ['2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '½', t: 'Fraccions amb barres', d: 'Fraccions equivalents, comparació i suma amb barres de la mateixa longitud, per veure-ho a ull.', tag: 'Fraccions · 2n ESO' },
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'proporcionalitat/', niv: ['2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '∝', t: 'Proporcionalitat directa', d: 'Puja el valor de x i mira com es construeixen la taula i la gràfica. Compara una situació proporcional amb una que no ho és.', tag: 'Proporcionalitat · 2n ESO' },
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'rectes-tarifes/', niv: ['2n ESO', '4t ESO'], bloc: 'Funcions', tipus: ['Simulador'], glyph: 'mx+n', t: 'Rectes i tarifes', d: 'Escriu el pendent i l\'ordenada en l\'origen d\'una situació real i mira la taula i la recta. Compara fins a quatre tarifes i descobreix quan convé cadascuna.', tag: 'Funció afí · 2n i 4t ESO' },
-  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'rebaixes-encadenades/', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '%', t: 'Rebaixes encadenades', d: 'Un 20 % i després un altre 20 % de rebaixa no és un 40 %: model d\'àrea i barres de preu per a veure on és el 4 % que falta. Percentatges, pujades i baixades. Bilingüe valencià i castellà.', tag: 'Percentatges · descomptes · 1r ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'fraccions-barres/', ic: 'bars', niv: ['2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '½', t: 'Fraccions amb barres', d: 'Fraccions equivalents, comparació i suma amb barres de la mateixa longitud, per veure-ho a ull.', tag: 'Fraccions · 2n ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'proporcionalitat/', ic: 'line', niv: ['2n ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '∝', t: 'Proporcionalitat directa', d: 'Puja el valor de x i mira com es construeixen la taula i la gràfica. Compara una situació proporcional amb una que no ho és.', tag: 'Proporcionalitat · 2n ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'rectes-tarifes/', ic: 'lines', niv: ['2n ESO', '4t ESO'], bloc: 'Funcions', tipus: ['Simulador'], glyph: 'mx+n', t: 'Rectes i tarifes', d: 'Escriu el pendent i l\'ordenada en l\'origen d\'una situació real i mira la taula i la recta. Compara fins a quatre tarifes i descobreix quan convé cadascuna.', tag: 'Funció afí · 2n i 4t ESO' },
+  { cat: 'mates', sub: 'Fraccions i proporcionalitat', href: 'rebaixes-encadenades/', ic: 'percent', niv: ['1r ESO'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '%', t: 'Rebaixes encadenades', d: 'Un 20 % i després un altre 20 % de rebaixa no és un 40 %: model d\'àrea i barres de preu per a veure on és el 4 % que falta. Percentatges, pujades i baixades. Bilingüe valencià i castellà.', tag: 'Percentatges · descomptes · 1r ESO' },
   // Matemàtiques · Matrius
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matrius-activitats/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Full de treball'], glyph: '✎', t: 'Les matrius no viuen només al llibre', d: 'Full de treball amb tres activitats basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.', tag: 'Full de treball' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'graus-separacio/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⬡', t: 'Graus de separació', d: 'Setze alumnes i les seues amistats: les potències de la matriu compten els camins entre dues persones.', tag: 'Potències de matrius' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matriu-rotacio/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '↻', t: 'La matriu de rotació en acció', d: 'Gira una figura multiplicant cada punt per la mateixa matriu i observa què passa amb els números.', tag: 'Rotacions' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'autovectors/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: 'λ', t: 'Com deforma l\'espai una matriu', d: 'La quadrícula es transforma punt a punt. Descobreix els autovectors: les direccions que no giren.', tag: 'Transformacions lineals' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'detector-vores/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '◧', t: 'Detector de vores', d: 'Un kernel llisca per una imatge xicoteta de 5×5 i, pas a pas, apareixen els contorns.', tag: 'Convolució' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'convolucio-12x12/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⊛', t: 'Convolució en acció', d: 'Una imatge de 12×12, un kernel i tres filtres: vores, difuminat i enfocar. El resultat es forma píxel a píxel.', tag: 'Convolució' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'filtre-matrius/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '▦', t: 'El filtre que tu dissenyes', d: 'Inventa un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
-  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'cifra-hill/', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '🔐', t: 'Xifrat amb matrius', d: 'La cifra de Hill: xifra amb una matriu 2×2 i desxifra amb la seua inversa.', tag: 'Criptografia · Batxillerat' },
-  { cat: 'mates', sub: 'Sistemes i espai · Batxillerat', href: 'sistemes-3x3/', niv: ['Batxillerat'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '3×3', t: 'Sistemes 3×3 i plans', d: 'Discuteix un sistema amb Rouché-Frobenius pas a pas, també amb paràmetre, i mira en 3D com es tallen els tres plans.', tag: 'Sistemes · 2n Batxillerat' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matrius-activitats/', ic: 'sheet', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Full de treball'], glyph: '✎', t: 'Les matrius no viuen només al llibre', d: 'Full de treball amb tres activitats basades en aplicacions reals: xarxes socials, edició de fotos i rotacions. Amb solucions.', tag: 'Full de treball' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'graus-separacio/', ic: 'network', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⬡', t: 'Graus de separació', d: 'Setze alumnes i les seues amistats: les potències de la matriu compten els camins entre dues persones.', tag: 'Potències de matrius' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'matriu-rotacio/', ic: 'rotate', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '↻', t: 'La matriu de rotació en acció', d: 'Gira una figura multiplicant cada punt per la mateixa matriu i observa què passa amb els números.', tag: 'Rotacions' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'autovectors/', ic: 'diag', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: 'λ', t: 'Com deforma l\'espai una matriu', d: 'La quadrícula es transforma punt a punt. Descobreix els autovectors: les direccions que no giren.', tag: 'Transformacions lineals' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'detector-vores/', ic: 'scan', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '◧', t: 'Detector de vores', d: 'Un kernel llisca per una imatge xicoteta de 5×5 i, pas a pas, apareixen els contorns.', tag: 'Convolució' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'convolucio-12x12/', ic: 'grid', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '⊛', t: 'Convolució en acció', d: 'Una imatge de 12×12, un kernel i tres filtres: vores, difuminat i enfocar. El resultat es forma píxel a píxel.', tag: 'Convolució' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'filtre-matrius/', ic: 'sliders', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '▦', t: 'El filtre que tu dissenyes', d: 'Inventa un filtre de 3×3 i veges com canvia una imatge de veritat. Pots pujar la teua foto.', tag: 'Matrius · Imatge' },
+  { cat: 'mates', sub: 'Matrius · Batxillerat', href: 'cifra-hill/', ic: 'lock', niv: ['Batxillerat'], bloc: 'Numèric', tipus: ['Simulador'], glyph: '🔐', t: 'Xifrat amb matrius', d: 'La cifra de Hill: xifra amb una matriu 2×2 i desxifra amb la seua inversa.', tag: 'Criptografia · Batxillerat' },
+  { cat: 'mates', sub: 'Sistemes i espai · Batxillerat', href: 'sistemes-3x3/', ic: 'cube', niv: ['Batxillerat'], bloc: 'Algebraic', tipus: ['Simulador'], glyph: '3×3', t: 'Sistemes 3×3 i plans', d: 'Discuteix un sistema amb Rouché-Frobenius pas a pas, també amb paràmetre, i mira en 3D com es tallen els tres plans.', tag: 'Sistemes · 2n Batxillerat' },
   // Física
-  { cat: 'fisica', href: 'tir-parabolic/', niv: ['4t ESO', 'Batxillerat'], tipus: ['Simulador'], glyph: '↗', t: 'Tir parabòlic', d: 'Canvia velocitat, angle i gravetat (Terra, Lluna, Mart, Júpiter) i compara dues trajectòries.', tag: 'Cinemàtica' },
-  { cat: 'fisica', href: 'escala-univers/', niv: ['3r ESO'], tipus: ['Simulador'], glyph: '10ⁿ', t: 'Escala de l\'univers', d: 'De l\'àtom a la galàxia, multiplicant per 10 cada vegada. Potències i notació científica en acció.', tag: 'Ordres de magnitud · 3r ESO' },
-  { cat: 'fisica', sub: 'Gravitació · Batxillerat', href: 'lleis-kepler/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: 'T²', t: 'Lleis de Kepler', d: 'Canvia el semieix, l\'excentricitat i la massa de l\'estrela: comprova r + r′ = 2a, les àrees iguals en temps iguals i la relació T²/a³ amb dos planetes.', tag: 'Gravitació · Batxillerat' },
-  { cat: 'fisica', href: 'pla-inclinat/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: '∠', t: 'Pla inclinat', d: 'Canvia l\'angle i mira com el pes es descompon en P∥ i P⊥, amb la normal i el fregament. Deixa anar el bloc i comprova a = g·sin θ.', tag: 'Dinàmica · 4t ESO' },
-  { cat: 'fisica', href: 'muntanya-russa/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: 'Ep', t: 'La muntanya russa de l\'energia', d: 'Deixa anar la vagoneta i compara Ep i Ec amb barres i gràfica. Canvia massa, gravetat, fregament, altura d\'eixida i forma de la pista. Amb preguntes i humor, en valencià i castellà.', tag: 'Energia mecànica · 4t ESO' },
+  { cat: 'fisica', href: 'tir-parabolic/', ic: 'shot', niv: ['4t ESO', 'Batxillerat'], tipus: ['Simulador'], glyph: '↗', t: 'Tir parabòlic', d: 'Canvia velocitat, angle i gravetat (Terra, Lluna, Mart, Júpiter) i compara dues trajectòries.', tag: 'Cinemàtica' },
+  { cat: 'fisica', href: 'escala-univers/', ic: 'rings', niv: ['3r ESO'], tipus: ['Simulador'], glyph: '10ⁿ', t: 'Escala de l\'univers', d: 'De l\'àtom a la galàxia, multiplicant per 10 cada vegada. Potències i notació científica en acció.', tag: 'Ordres de magnitud · 3r ESO' },
+  { cat: 'fisica', sub: 'Gravitació · Batxillerat', href: 'lleis-kepler/', ic: 'orbit', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: 'T²', t: 'Lleis de Kepler', d: 'Canvia el semieix, l\'excentricitat i la massa de l\'estrela: comprova r + r′ = 2a, les àrees iguals en temps iguals i la relació T²/a³ amb dos planetes.', tag: 'Gravitació · Batxillerat' },
+  { cat: 'fisica', href: 'pla-inclinat/', ic: 'ramp', niv: ['4t ESO'], tipus: ['Simulador'], glyph: '∠', t: 'Pla inclinat', d: 'Canvia l\'angle i mira com el pes es descompon en P∥ i P⊥, amb la normal i el fregament. Deixa anar el bloc i comprova a = g·sin θ.', tag: 'Dinàmica · 4t ESO' },
+  { cat: 'fisica', href: 'muntanya-russa/', ic: 'coaster', niv: ['4t ESO'], tipus: ['Simulador'], glyph: 'Ep', t: 'La muntanya russa de l\'energia', d: 'Deixa anar la vagoneta i compara Ep i Ec amb barres i gràfica. Canvia massa, gravetat, fregament, altura d\'eixida i forma de la pista. Amb preguntes i humor, en valencià i castellà.', tag: 'Energia mecànica · 4t ESO' },
   // Química
-  { cat: 'quimica', sub: 'Estructura de la matèria · 3r ESO', href: 'models-atomics/', niv: ['3r ESO'], tipus: ['Simulador'], glyph: '⚛', t: 'Models atòmics: Thomson, Rutherford i Bohr', d: 'Dispara partícules α contra l\'àtom de Thomson i el de Rutherford (força de Coulomb real) i mesura les desviacions. Després fes saltar l\'electró de Bohr entre nivells i construeix l\'espectre de l\'hidrogen. Bilingüe valencià i castellà.', tag: 'Models atòmics · 3r ESO' },
-  { cat: 'quimica', sub: 'Gasos · 2n i 3r ESO', href: 'lleis-gasos/', niv: ['2n ESO', '3r ESO'], tipus: ['Simulador'], glyph: 'PV', t: 'Lleis dels gasos', d: 'Un gas ideal fet de partícules que reboten: la pressió es mesura comptant els xocs contra l\'èmbol. Comprova Boyle, Charles i Gay-Lussac, anota punts a la taula i mira la gràfica. Bilingüe valencià i castellà.', tag: 'Gasos · 2n i 3r ESO' },
-  { cat: 'quimica', sub: 'Estats de la matèria · 2n i 3r ESO', href: 'estats-materia/', niv: ['2n ESO', '3r ESO'], tipus: ['Simulador'], glyph: '🧊', t: 'Estats de la matèria i teoria cineticomolecular', d: 'Partícules amb control de temperatura, canvis de fase i gràfica de calfament en paral·lel (aigua o etanol). Bilingüe valencià i castellà.', tag: 'Canvis d\'estat · 2n i 3r ESO' },
-  { cat: 'quimica', sub: 'Reaccions · 3r i 4t ESO', href: 'ajust-reaccions/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador', 'Joc'], glyph: '⚖️', t: 'Ajust de reaccions: la balança', d: 'Balança visual amb molècules: equilibra els àtoms de cada costat. Mode lliure i repte de 5 reaccions amb pistes i estrelles. Bilingüe valencià i castellà.', tag: 'Ajust de reaccions · 3r i 4t ESO' },
-  { cat: 'quimica', sub: 'Dissolucions · 3r i 4t ESO', href: 'dissolucions/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador', 'Joc'], glyph: '🥛', t: 'Dissolucions i concentració', d: 'Afegeix solut i mira la concentració en g/L, % en massa i mol/L i la saturació amb precipitat. Amb corba de solubilitat i repte de 5 tasques. Bilingüe valencià i castellà.', tag: 'Concentració i solubilitat · 3r i 4t ESO' },
-  { cat: 'quimica', sub: 'Mescles i separació · 1r i 2n ESO', href: 'mescles-separacio/', niv: ['1r ESO', '2n ESO'], tipus: ['Simulador'], glyph: '🧪', t: 'Mescles i separació', d: 'Filtració, decantació, destil·lació i cromatografia pas a pas, amb mescles on la tècnica funciona i on no. Bilingüe valencià i castellà.', tag: 'Tècniques de separació · 1r i 2n ESO' },
+  { cat: 'quimica', sub: 'Estructura de la matèria · 3r ESO', href: 'models-atomics/', ic: 'atom', niv: ['3r ESO'], tipus: ['Simulador'], glyph: '⚛', t: 'Models atòmics: Thomson, Rutherford i Bohr', d: 'Dispara partícules α contra l\'àtom de Thomson i el de Rutherford (força de Coulomb real) i mesura les desviacions. Després fes saltar l\'electró de Bohr entre nivells i construeix l\'espectre de l\'hidrogen. Bilingüe valencià i castellà.', tag: 'Models atòmics · 3r ESO' },
+  { cat: 'quimica', sub: 'Gasos · 2n i 3r ESO', href: 'lleis-gasos/', ic: 'gauge', niv: ['2n ESO', '3r ESO'], tipus: ['Simulador'], glyph: 'PV', t: 'Lleis dels gasos', d: 'Un gas ideal fet de partícules que reboten: la pressió es mesura comptant els xocs contra l\'èmbol. Comprova Boyle, Charles i Gay-Lussac, anota punts a la taula i mira la gràfica. Bilingüe valencià i castellà.', tag: 'Gasos · 2n i 3r ESO' },
+  { cat: 'quimica', sub: 'Estats de la matèria · 2n i 3r ESO', href: 'estats-materia/', ic: 'thermo', niv: ['2n ESO', '3r ESO'], tipus: ['Simulador'], glyph: '🧊', t: 'Estats de la matèria i teoria cineticomolecular', d: 'Partícules amb control de temperatura, canvis de fase i gràfica de calfament en paral·lel (aigua o etanol). Bilingüe valencià i castellà.', tag: 'Canvis d\'estat · 2n i 3r ESO' },
+  { cat: 'quimica', sub: 'Reaccions · 3r i 4t ESO', href: 'ajust-reaccions/', ic: 'swap', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador', 'Joc'], glyph: '⚖️', t: 'Ajust de reaccions: la balança', d: 'Balança visual amb molècules: equilibra els àtoms de cada costat. Mode lliure i repte de 5 reaccions amb pistes i estrelles. Bilingüe valencià i castellà.', tag: 'Ajust de reaccions · 3r i 4t ESO' },
+  { cat: 'quimica', sub: 'Dissolucions · 3r i 4t ESO', href: 'dissolucions/', ic: 'glass', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador', 'Joc'], glyph: '🥛', t: 'Dissolucions i concentració', d: 'Afegeix solut i mira la concentració en g/L, % en massa i mol/L i la saturació amb precipitat. Amb corba de solubilitat i repte de 5 tasques. Bilingüe valencià i castellà.', tag: 'Concentració i solubilitat · 3r i 4t ESO' },
+  { cat: 'quimica', sub: 'Mescles i separació · 1r i 2n ESO', href: 'mescles-separacio/', ic: 'funnel', niv: ['1r ESO', '2n ESO'], tipus: ['Simulador'], glyph: '🧪', t: 'Mescles i separació', d: 'Filtració, decantació, destil·lació i cromatografia pas a pas, amb mescles on la tècnica funciona i on no. Bilingüe valencià i castellà.', tag: 'Tècniques de separació · 1r i 2n ESO' },
   // Biologia
-  { cat: 'biologia', sub: 'Genètica · 4t ESO', href: 'genetica-punnett/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: 'Aa', t: 'Quadres de Punnett', d: 'Tria els genotips dels progenitors i mira el quadre per a un o dos gens, amb dominància completa o incompleta. Simula centenars de descendents i comprova que les freqüències s\'acosten a les esperades. Amb mode predicció per a l\'aula. Bilingüe valencià i castellà.', tag: 'Genètica mendeliana · 4t ESO' },
-  { cat: 'biologia', sub: 'Evolució · 4t ESO', href: 'seleccio-natural/', niv: ['4t ESO'], tipus: ['Simulador'], glyph: '🪲', t: 'Selecció natural', d: 'Escarabats de color heretable sobre una escorça: els ocells capturen els menys camuflats i la població evoluciona generació a generació. Pots fer d\'ocell tu. Bilingüe valencià i castellà.', tag: 'Selecció natural · 4t ESO' },
-  { cat: 'biologia', sub: 'Cèl·lula i genètica · 3r-4t ESO', href: 'meiosi/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador'], glyph: '🧬', t: 'Meiosi pas a pas', d: 'Una cèl·lula amb 2n = 4 arriba a quatre gàmetes diferents: crossing-over, orientació a l\'atzar dels parells d\'homòlegs i dues divisions. Amb preguntes de predicció i test autocorregit. Bilingüe valencià i castellà.', tag: 'Meiosi · gàmetes · 3r-4t ESO' },
-  { cat: 'biologia', sub: 'Cèl·lula i transport · 3r-4t ESO', href: 'osmosi-difusio/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador'], glyph: '💧', t: 'Òsmosi i difusió', d: 'Partícules, membrana permeable, semipermeable o impermeable, concentracions i temperatura. Experiments guiats amb una pregunta cada un i una cèl·lula en medi hipotònic o hipertònic. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Òsmosi · difusió · membrana · 3r-4t ESO' },
-  { cat: 'biologia', sub: 'Metabolisme cel·lular · 3r-4t ESO', href: 'fotosintesi-respiracio/', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador'], glyph: '🌿', t: 'Fotosíntesi i respiració cel·lular', d: 'Flux de matèria (cicle) i d\'energia (flux) entre cloroplast i mitocondri, amb cicle dia-nit, punt de compensació i cèl·lula animal. Amb preguntes de predicció i test autocorregit. Bilingüe valencià i castellà.', tag: 'Fotosíntesi · respiració · 3r-4t ESO' },
+  { cat: 'biologia', sub: 'Genètica · 4t ESO', href: 'genetica-punnett/', ic: 'dna', niv: ['4t ESO'], tipus: ['Simulador'], glyph: 'Aa', t: 'Quadres de Punnett', d: 'Tria els genotips dels progenitors i mira el quadre per a un o dos gens, amb dominància completa o incompleta. Simula centenars de descendents i comprova que les freqüències s\'acosten a les esperades. Amb mode predicció per a l\'aula. Bilingüe valencià i castellà.', tag: 'Genètica mendeliana · 4t ESO' },
+  { cat: 'biologia', sub: 'Evolució · 4t ESO', href: 'seleccio-natural/', ic: 'bug', niv: ['4t ESO'], tipus: ['Simulador'], glyph: '🪲', t: 'Selecció natural', d: 'Escarabats de color heretable sobre una escorça: els ocells capturen els menys camuflats i la població evoluciona generació a generació. Pots fer d\'ocell tu. Bilingüe valencià i castellà.', tag: 'Selecció natural · 4t ESO' },
+  { cat: 'biologia', sub: 'Cèl·lula i genètica · 3r-4t ESO', href: 'meiosi/', ic: 'split', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador'], glyph: '🧬', t: 'Meiosi pas a pas', d: 'Una cèl·lula amb 2n = 4 arriba a quatre gàmetes diferents: crossing-over, orientació a l\'atzar dels parells d\'homòlegs i dues divisions. Amb preguntes de predicció i test autocorregit. Bilingüe valencià i castellà.', tag: 'Meiosi · gàmetes · 3r-4t ESO' },
+  { cat: 'biologia', sub: 'Cèl·lula i transport · 3r-4t ESO', href: 'osmosi-difusio/', ic: 'drop', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador'], glyph: '💧', t: 'Òsmosi i difusió', d: 'Partícules, membrana permeable, semipermeable o impermeable, concentracions i temperatura. Experiments guiats amb una pregunta cada un i una cèl·lula en medi hipotònic o hipertònic. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Òsmosi · difusió · membrana · 3r-4t ESO' },
+  { cat: 'biologia', sub: 'Metabolisme cel·lular · 3r-4t ESO', href: 'fotosintesi-respiracio/', ic: 'sun', niv: ['3r ESO', '4t ESO'], tipus: ['Simulador'], glyph: '🌿', t: 'Fotosíntesi i respiració cel·lular', d: 'Flux de matèria (cicle) i d\'energia (flux) entre cloroplast i mitocondri, amb cicle dia-nit, punt de compensació i cèl·lula animal. Amb preguntes de predicció i test autocorregit. Bilingüe valencià i castellà.', tag: 'Fotosíntesi · respiració · 3r-4t ESO' },
   // Geologia
-  { cat: 'geologia', sub: 'Sismologia · Batxillerat', href: 'escala-richter/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '📈', t: 'Escala de Richter', d: 'Compara dos terratrèmols: cada punt de magnitud multiplica l\'amplitud per 10 i l\'energia per ≈32. Sismograma, equivalències en bombes i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala logarítmica · Batxillerat' },
-  { cat: 'geologia', sub: 'Geofísica · Batxillerat', href: 'ones-sismiques/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '🌍', t: 'Ones sísmiques P i S', d: 'Raigs sísmics en una Terra esfèrica amb velocitats tipus PREM: zones d\'ombra i per què sabem que el nucli extern és líquid. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Interior de la Terra · Batxillerat' },
-  { cat: 'geologia', sub: 'Datació · Batxillerat', href: 'desintegracio-radioactiva/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '☢️', t: 'Desintegració radioactiva i datació', d: 'Àtoms que es desintegren a l\'atzar, període de semidesintegració i càlcul de l\'edat d\'una mostra. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Datació radiomètrica · Batxillerat' },
-  { cat: 'geologia', sub: 'Geodinàmica · Batxillerat', href: 'isostasia/', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '🏔️', t: 'Isostasia', d: 'Muntanyes amb arrels (Airy) i rebot glacial amb un mantell viscós: l\'escorça flota. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Isostasia · Batxillerat' },
-  { cat: 'geologia', sub: 'Processos externs · 4t ESO i Batxillerat', href: 'meandres/', niv: ['4t ESO','Batxillerat'], tipus: ['Simulador'], glyph: '🌊', t: 'Meandres d\'un riu', d: 'Erosió a la vora externa, sedimentació a la interna, tall del meandre i llac en mitja lluna. Amb preguntes per a raonar i test autocorregit. Bilingüe valencià i castellà.', tag: 'Procesos externs · Erosió · Sedimentació' },
-  { cat: 'geologia', sub: 'Estratigrafia · 4t ESO i Batxillerat', href: 'estratigrafia/', niv: ['4t ESO','Batxillerat'], tipus: ['Simulador'], glyph: '🪨', t: 'Estratigrafia: ordena els successos d\'un tall', d: 'Superposició, dics, falles i discordàncies: ordena del més antic al més recent amb comprovació automàtica. Amb preguntes per a raonar i test autocorregit. Bilingüe valencià i castellà.', tag: 'Edat relativa · Principis estratigràfics' },
-  { cat: 'geologia', sub: 'Temps geològic · 4t ESO i Batxillerat', href: 'temps-geologic-un-any/', niv: ['4t ESO','Batxillerat'], tipus: ['Simulador','Línia del temps'], glyph: '⏳', t: 'El temps geològic en un any', d: 'Els 4.540 milions d\'anys de la Terra comprimits en un calendari: quan apareix Homo sapiens? Amb convertidor d\'escala, preguntes per a raonar i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala de temps · Història de la Terra' },
+  { cat: 'geologia', sub: 'Sismologia · Batxillerat', href: 'escala-richter/', ic: 'pulse', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '📈', t: 'Escala de Richter', d: 'Compara dos terratrèmols: cada punt de magnitud multiplica l\'amplitud per 10 i l\'energia per ≈32. Sismograma, equivalències en bombes i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala logarítmica · Batxillerat' },
+  { cat: 'geologia', sub: 'Geofísica · Batxillerat', href: 'ones-sismiques/', ic: 'globe', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '🌍', t: 'Ones sísmiques P i S', d: 'Raigs sísmics en una Terra esfèrica amb velocitats tipus PREM: zones d\'ombra i per què sabem que el nucli extern és líquid. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Interior de la Terra · Batxillerat' },
+  { cat: 'geologia', sub: 'Datació · Batxillerat', href: 'desintegracio-radioactiva/', ic: 'decay', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '☢️', t: 'Desintegració radioactiva i datació', d: 'Àtoms que es desintegren a l\'atzar, període de semidesintegració i càlcul de l\'edat d\'una mostra. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Datació radiomètrica · Batxillerat' },
+  { cat: 'geologia', sub: 'Geodinàmica · Batxillerat', href: 'isostasia/', ic: 'mountain', niv: ['Batxillerat'], tipus: ['Simulador'], glyph: '🏔️', t: 'Isostasia', d: 'Muntanyes amb arrels (Airy) i rebot glacial amb un mantell viscós: l\'escorça flota. Amb test autocorregit. Bilingüe valencià i castellà.', tag: 'Isostasia · Batxillerat' },
+  { cat: 'geologia', sub: 'Processos externs · 4t ESO i Batxillerat', href: 'meandres/', ic: 'waves', niv: ['4t ESO','Batxillerat'], tipus: ['Simulador'], glyph: '🌊', t: 'Meandres d\'un riu', d: 'Erosió a la vora externa, sedimentació a la interna, tall del meandre i llac en mitja lluna. Amb preguntes per a raonar i test autocorregit. Bilingüe valencià i castellà.', tag: 'Procesos externs · Erosió · Sedimentació' },
+  { cat: 'geologia', sub: 'Estratigrafia · 4t ESO i Batxillerat', href: 'estratigrafia/', ic: 'layers', niv: ['4t ESO','Batxillerat'], tipus: ['Simulador'], glyph: '🪨', t: 'Estratigrafia: ordena els successos d\'un tall', d: 'Superposició, dics, falles i discordàncies: ordena del més antic al més recent amb comprovació automàtica. Amb preguntes per a raonar i test autocorregit. Bilingüe valencià i castellà.', tag: 'Edat relativa · Principis estratigràfics' },
+  { cat: 'geologia', sub: 'Temps geològic · 4t ESO i Batxillerat', href: 'temps-geologic-un-any/', ic: 'hourglass', niv: ['4t ESO','Batxillerat'], tipus: ['Simulador','Línia del temps'], glyph: '⏳', t: 'El temps geològic en un any', d: 'Els 4.540 milions d\'anys de la Terra comprimits en un calendari: quan apareix Homo sapiens? Amb convertidor d\'escala, preguntes per a raonar i test autocorregit. Bilingüe valencià i castellà.', tag: 'Escala de temps · Història de la Terra' },
   // Aventures interactives per a xiquets curiosos (8 a 10 anys)
-  { cat: 'misc', href: 'maquina-temps/', niv: ['Primària'], tipus: ['Aventura'], glyph: '⚙', t: 'La Màquina del Temps: Aventura per tres èpoques', d: 'Dinosaures, Roma i un castell medieval: tria el camí, resol candaus de mates, recull engranatges i torna a casa amb Roda l\'hàmster.', tag: 'Aventura interactiva' },
-  { cat: 'misc', href: 'maquina-temps-paleolitic/', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦣', t: 'La Màquina del Temps: Aventura al Paleolític', d: 'Tres viatges per la Prehistòria amb Roda l\'hàmster: ajuda una cria d\'elefant i un cadell de llop, resol candaus de mates i troba els 10 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
-  { cat: 'misc', href: 'maquina-temps-engranatges/', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦜', t: 'La Màquina del Temps: Els tres engranatges perduts', d: 'Valentia romana, el paper de Xàtiva i la Llotja de la Seda: tria el camí, resol candaus de mates i troba els 8 finals amb el lloro Cronet.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
-  { cat: 'misc', href: 'ultima-senyal/', niv: ['Primària'], tipus: ['Aventura'], glyph: '🚀', t: 'L\'Última Senyal: Una aventura en l\'espai', d: 'Tres planetes, tres cristalls i un missatge misteriós: tria el camí, resol candaus de mates i ajuda les criatures amb la lluerna Lumi. Bilingüe VAL/CAS, 9 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
+  { cat: 'misc', href: 'maquina-temps/', ic: 'clock', niv: ['Primària'], tipus: ['Aventura'], glyph: '⚙', t: 'La Màquina del Temps: Aventura per tres èpoques', d: 'Dinosaures, Roma i un castell medieval: tria el camí, resol candaus de mates, recull engranatges i torna a casa amb Roda l\'hàmster.', tag: 'Aventura interactiva' },
+  { cat: 'misc', href: 'maquina-temps-paleolitic/', ic: 'paw', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦣', t: 'La Màquina del Temps: Aventura al Paleolític', d: 'Tres viatges per la Prehistòria amb Roda l\'hàmster: ajuda una cria d\'elefant i un cadell de llop, resol candaus de mates i troba els 10 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
+  { cat: 'misc', href: 'maquina-temps-engranatges/', ic: 'bird', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦜', t: 'La Màquina del Temps: Els tres engranatges perduts', d: 'Valentia romana, el paper de Xàtiva i la Llotja de la Seda: tria el camí, resol candaus de mates i troba els 8 finals amb el lloro Cronet.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
+  { cat: 'misc', href: 'ultima-senyal/', ic: 'rocket', niv: ['Primària'], tipus: ['Aventura'], glyph: '🚀', t: 'L\'Última Senyal: Una aventura en l\'espai', d: 'Tres planetes, tres cristalls i un missatge misteriós: tria el camí, resol candaus de mates i ajuda les criatures amb la lluerna Lumi. Bilingüe VAL/CAS, 9 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
   // Curiositats
-  { cat: 'curio', href: 'atles-art-rupestre/', niv: [], tipus: ['Línia del temps', 'Joc'], glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
+  { cat: 'curio', href: 'atles-art-rupestre/', ic: 'map', niv: [], tipus: ['Línia del temps', 'Joc'], glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
 ];
 const $ = (s) => document.querySelector(s);
 
@@ -261,15 +370,18 @@ const GROUPS = [
   { g: 'bloc',  label: 'Bloc de mates',     vals: BLOCS },
   { g: 'tipus', label: 'Tipus de recurs',   vals: TIPUS },
 ];
-const F = { cat: 'tot', niv: '', bloc: '', tipus: '', q: '' };
-// Cerca: sense accents ni majúscules; totes les paraules han d'aparéixer (títol, descripció, etiqueta, subcategoria, nivell, bloc, tipus).
-const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-const catName = Object.fromEntries(CATS.map((c) => [c.id, c.n]));
-RES.forEach((r) => { r._s = norm([r.t, r.d, r.tag, r.sub || '', catName[r.cat], (r.niv || []).join(' '), r.bloc || '', (r.tipus || []).join(' ')].join(' ')); });
+const DEFAULT_CAT = 'mates';
+const F = { cat: DEFAULT_CAT, niv: '', bloc: '', tipus: '', q: '' };
+let moreOpen = false;
+// Cerca: sense accents ni majúscules; totes les paraules han d'aparéixer (títol, descripció, etiqueta, subcategoria, matèria, nivell, bloc, tipus).
+const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const cat = Object.fromEntries(CATS.map((c) => [c.id, c]));
+RES.forEach((r) => { r._s = norm([r.t, r.d, r.tag, r.sub || '', cat[r.cat].n, (r.niv || []).join(' '), r.bloc || '', (r.tipus || []).join(' ')].join(' ')); });
 const words = () => norm(F.q).split(/\s+/).filter(Boolean);
+const searching = () => !!F.q.trim();
 
 function match(r, g, v) {
-  if (!v || v === 'tot') return true;
+  if (!v) return true;
   if (g === 'cat') return r.cat === v;
   if (g === 'q') return words().every((w) => r._s.includes(w));
   if (g === 'niv') return (r.niv || []).length ? r.niv.includes(v) : v !== 'Primària'; // sense `niv` = ESO i Batxillerat
@@ -277,80 +389,103 @@ function match(r, g, v) {
   if (g === 'tipus') return (r.tipus || []).includes(v);
   return true;
 }
-// Recursos que passen tots els filtres actius, tret del grup `skip` (per als comptadors de cada xip).
-const pass = (r, skip) => ['cat', 'niv', 'bloc', 'tipus', 'q'].every((g) => g === skip || match(r, g, F[g]));
+// Recursos que passen tots els filtres actius, tret del grup `skip` (per als comptadors). Mentre es cerca, la matèria s'ignora: es cerca a totes.
+const pass = (r, skip) => ['cat', 'niv', 'bloc', 'tipus', 'q'].every((g) => g === skip || (g === 'cat' && searching()) || match(r, g, F[g]));
 const countFor = (g, v) => RES.filter((r) => pass(r, g) && match(r, g, v)).length;
 
-const chip = (g, v, label, n, extra = '', cls = '') => {
+const chip = (g, v, label, n) => {
   const on = F[g] === v;
   const dis = !on && n === 0 ? ' disabled' : '';
-  return `<button class="chip${cls}" data-g="${g}" data-v="${v}" aria-pressed="${on}"${dis}${extra ? ` style="${extra}"` : ''}>${extra ? '<span class="dot"></span>' : ''}${label} <span class="n">${n}</span></button>`;
+  return `<button class="chip" data-g="${g}" data-v="${v}" aria-pressed="${on}"${dis}>${label} <span class="n">${n}</span></button>`;
 };
 
-function renderChips() {
-  $('#chips').innerHTML =
-    chip('cat', 'tot', 'Tot', countFor('cat', 'tot')) +
-    CATS.map((c) => chip('cat', c.id, c.n, countFor('cat', c.id), `--c:var(--c-${c.id})`)).join('');
+function renderTabs() {
+  const s = searching();
+  $('#tabs').innerHTML = CATS.map((c, i) => {
+    const n = countFor('cat', c.id);
+    const on = !s && F.cat === c.id;
+    const tab0 = s ? i === 0 : on; // fil de tabulació: només una pestanya
+    return `<button class="tab${n === 0 && !on ? ' zero' : ''}" role="tab" id="tab-${c.id}" data-cat="${c.id}" aria-selected="${on}" tabindex="${tab0 ? 0 : -1}" style="--c:var(--c-${c.id});--t:var(--t-${c.id})">${svg(c.ic)}<span>${c.n}</span><span class="n">${n}</span></button>`;
+  }).join('');
+  const sel = $('#tabs .tab[aria-selected="true"]'), box = $('#tabs');
+  if (sel && box.scrollWidth > box.clientWidth) box.scrollLeft = sel.offsetLeft - (box.clientWidth - sel.offsetWidth) / 2;
+}
+function groupHTML({ g, label, vals }) {
+  const chips = vals.map((v) => [v, countFor(g, v)]);
+  if (!F[g] && chips.every(([, n]) => n === 0)) return '';
+  return `<div class="fgroup" role="group" aria-labelledby="fl-${g}"><span class="flabel" id="fl-${g}">${label}</span>${chips.map(([v, n]) => chip(g, v, v, n)).join('')}</div>`;
 }
 function renderFilters() {
-  $('#filters').innerHTML = GROUPS.map(({ g, label, vals }) => {
-    const chips = vals.map((v) => [v, countFor(g, v)]);
-    if (!F[g] && chips.every(([, n]) => n === 0)) return '';
-    return `<div class="fgroup" role="group" aria-labelledby="fl-${g}"><span class="flabel" id="fl-${g}">${label}</span>${chips.map(([v, n]) => chip(g, v, v, n, '', ' sm')).join('')}</div>`;
-  }).join('');
+  const [niv, ...extra] = GROUPS;
+  const extraHTML = extra.map(groupHTML).join('');
+  const active = (F.bloc ? 1 : 0) + (F.tipus ? 1 : 0);
+  $('#filters').innerHTML = groupHTML(niv) +
+    (extraHTML ? `<button class="morebtn" id="morebtn" type="button" aria-expanded="${moreOpen}" aria-controls="more">${svg('sliders')}<span class="mtxt">Més filtres</span>${active ? `<span class="n">${active}</span>` : ''}<span class="chev" aria-hidden="true">▾</span></button>` : '');
+  const more = $('#more');
+  more.innerHTML = extraHTML;
+  more.hidden = !(extraHTML && moreOpen);
 }
 function renderStatus() {
+  const s = searching();
   const n = RES.filter((r) => pass(r)).length;
-  const active = F.cat !== 'tot' || F.niv || F.bloc || F.tipus || F.q.trim();
-  $('#status').innerHTML = `<span>${active ? `Mostrant ${n} de ${RES.length} recursos` : `${RES.length} recursos`}</span>` +
-    (active ? '<button class="reset" id="reset" type="button">Neteja els filtres</button>' : '');
+  const active = s || F.niv || F.bloc || F.tipus;
+  let html;
+  if (s) {
+    html = `<span><b>${n}</b> ${n === 1 ? 'resultat' : 'resultats'} a totes les matèries</span>`;
+  } else {
+    const total = RES.filter((r) => r.cat === F.cat).length;
+    html = `<span><b>${cat[F.cat].n}</b> · ${active ? `Mostrant ${n} de ${total}` : total} recursos</span><span class="cdesc">${cat[F.cat].d}</span>`;
+  }
+  if (active) html += '<button class="reset" id="reset" type="button">Neteja els filtres</button>';
+  $('#status').innerHTML = html;
 }
 
-const SUBBG = { 'Història i nombres': 1, 'Càlcul i aritmètica': 5, 'Geometria i àlgebra': 2, 'Fraccions i proporcionalitat': 3, 'Matrius · Batxillerat': 4, 'Sistemes i espai · Batxillerat': 6, 'Gravitació · Batxillerat': 4, 'Estructura de la matèria · 3r ESO': 2, 'Gasos · 2n i 3r ESO': 3, 'Genètica · 4t ESO': 5, 'Evolució · 4t ESO': 1 };
-function card(r) {
-  const cb = SUBBG[r.sub] ? `;--cb:var(--bg-s${SUBBG[r.sub]})` : '';
-  return `<a class="card" href="${BASE}${r.href}" style="--c:var(--c-${r.cat});--t:var(--t-${r.cat})${cb}">
-    <div class="glyph${r.glyph.length > 2 ? ' long' : ''}" aria-hidden="true">${r.glyph}</div>
-    <h3>${r.t}</h3><p>${r.d}</p>
-    <div class="tag"><span>${r.tag}</span><span class="go">Obri →</span></div></a>`;
+function card(r, showCat) {
+  const icon = IC[r.ic] ? `<span class="ico" aria-hidden="true">${svg(r.ic)}</span>` : `<span class="ico glyph" aria-hidden="true">${r.glyph || ''}</span>`;
+  return `<a class="card" href="${BASE}${r.href}" title="${esc(r.d)}" style="--c:var(--c-${r.cat});--t:var(--t-${r.cat})">
+    <div class="card-head">${icon}<h3>${r.t}</h3></div>
+    <p>${r.d}</p>
+    <div class="tag"><span>${showCat ? `<b>${cat[r.cat].n}</b> · ` : ''}${r.tag}</span><span class="go">Obri →</span></div></a>`;
 }
+const EMPTY = '<div class="soon"><b aria-hidden="true">∅</b><span>Cap recurs amb esta combinació de filtres. Prova de llevar-ne algun.</span></div>';
 function renderSections() {
-  const filtered = F.niv || F.bloc || F.tipus || F.q.trim();
-  const list = CATS.filter((c) => F.cat === 'tot' || F.cat === c.id);
-  let html = list.map((c) => {
-    const all = RES.filter((r) => r.cat === c.id);
-    const items = all.filter((r) => pass(r));
-    if (filtered && !items.length) return '';
-    let body;
+  const app = $('#app');
+  const items = RES.filter((r) => pass(r));
+  let html;
+  if (searching()) {
+    app.removeAttribute('aria-labelledby'); app.setAttribute('aria-label', 'Resultats de la cerca');
+    html = items.length ? `<h2 class="sr">Resultats de la cerca</h2><div class="grid">${items.map((r) => card(r, true)).join('')}</div>` : EMPTY;
+  } else {
+    app.removeAttribute('aria-label'); app.setAttribute('aria-labelledby', 'tab-' + F.cat);
+    const all = RES.filter((r) => r.cat === F.cat);
     if (!items.length) {
-      body = `<div class="soon" style="--c:var(--c-${c.id})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
+      html = all.length ? EMPTY : `<div class="soon" style="--c:var(--c-${F.cat})"><b aria-hidden="true">…</b><span>Aviat hi haurà recursos ací.</span></div>`;
     } else {
-      const allSubs = new Set(all.map((r) => r.sub || ''));
       const subs = [...new Set(items.map((r) => r.sub || ''))];
-      body = subs.map((sb) => {
-        const g = items.filter((r) => (r.sub || '') === sb);
-        const head = allSubs.size > 1 && sb ? `<h3 class="subh">${sb} <span>${g.length}</span></h3>` : '';
-        return `${head}<div class="grid">${g.map(card).join('')}</div>`;
-      }).join('');
+      const grouped = subs.length < items.length; // només hi ha subtítols quan agrupen més d'una targeta (si cada recurs en té un de propi, sobren: l'etiqueta de la targeta ja diu tema i nivell)
+      html = `<h2 class="sr">${cat[F.cat].n}</h2>` + (!grouped
+        ? `<div class="grid">${items.map((r) => card(r)).join('')}</div>`
+        : subs.map((sb) => {
+            const g = items.filter((r) => (r.sub || '') === sb);
+            const head = sb ? `<h3 class="subh" style="--c:var(--c-${F.cat})">${sb} <span>${g.length}</span></h3>` : '';
+            return `${head}<div class="grid">${g.map((r) => card(r)).join('')}</div>`;
+          }).join(''));
     }
-    return `<section class="sec" style="--c:var(--c-${c.id})" aria-labelledby="h-${c.id}">
-      <div class="sec-head"><h2 id="h-${c.id}">${c.n}</h2><p class="sub">${c.d}</p></div>
-      ${body}</section>`;
-  }).join('');
-  if (!html) html = '<div class="soon" style="--c:var(--c-mates)"><b aria-hidden="true">∅</b><span>Cap recurs amb esta combinació de filtres. Prova de llevar-ne algun.</span></div>';
-  $('#app').innerHTML = html;
+  }
+  app.innerHTML = html;
 }
 
-// L'estat dels filtres viu en el hash (#niv=4t%20ESO&tipus=Simulador) perquè es puga compartir l'enllaç.
+// L'estat dels filtres viu en el hash (#cat=quimica&niv=4t%20ESO) perquè es puga compartir l'enllaç.
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
-  const ok = { cat: ['tot', ...CATS.map((c) => c.id)], niv: NIVELLS, bloc: BLOCS, tipus: TIPUS };
-  for (const g of Object.keys(ok)) { const v = p.get(g); F[g] = v && ok[g].includes(v) ? v : (g === 'cat' ? 'tot' : ''); }
+  const ok = { cat: CATS.map((c) => c.id), niv: NIVELLS, bloc: BLOCS, tipus: TIPUS };
+  for (const g of Object.keys(ok)) { const v = p.get(g); F[g] = v && ok[g].includes(v) ? v : (g === 'cat' ? DEFAULT_CAT : ''); }
   F.q = (p.get('q') || '').slice(0, 80);
+  if (F.bloc || F.tipus) moreOpen = true;
 }
 function writeHash() {
   const p = new URLSearchParams();
-  for (const g of Object.keys(F)) if (F[g] && F[g] !== 'tot' && (g !== 'q' || F.q.trim())) p.set(g, F[g]);
+  for (const g of Object.keys(F)) if (F[g] && !(g === 'cat' && F.cat === DEFAULT_CAT) && (g !== 'q' || F.q.trim())) p.set(g, F[g]);
   const h = p.toString();
   history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : ''));
 }
@@ -358,16 +493,34 @@ function syncSearch() {
   const i = $('#q'); if (i.value !== F.q) i.value = F.q;
   $('#qclear').hidden = !F.q;
 }
-function render() { syncSearch(); renderChips(); renderFilters(); renderStatus(); renderSections(); writeHash(); }
+function render() { syncSearch(); renderTabs(); renderFilters(); renderStatus(); renderSections(); writeHash(); }
+function selectCat(id, focus) {
+  F.cat = id; F.q = ''; if (id !== 'mates') F.bloc = '';
+  render();
+  if (focus) $('#tab-' + id).focus({ preventScroll: true });
+}
 
 document.addEventListener('click', (e) => {
-  if (e.target.closest('#reset')) { Object.assign(F, { cat: 'tot', niv: '', bloc: '', tipus: '', q: '' }); render(); return; }
+  if (e.target.closest('#reset')) { Object.assign(F, { niv: '', bloc: '', tipus: '', q: '' }); render(); return; }
+  if (e.target.closest('#morebtn')) { moreOpen = !moreOpen; render(); $('#morebtn').focus({ preventScroll: true }); return; }
+  const t = e.target.closest('.tab[data-cat]');
+  if (t) { selectCat(t.dataset.cat, true); return; }
   const b = e.target.closest('.chip[data-g]'); if (!b || b.disabled) return;
   const { g, v } = b.dataset;
-  F[g] = g === 'cat' ? v : (F[g] === v ? '' : v);
+  F[g] = F[g] === v ? '' : v;
   render();
   const again = document.querySelector(`.chip[data-g="${g}"][data-v="${v}"]`);
   if (again) again.focus({ preventScroll: true });
+});
+$('#tabs').addEventListener('keydown', (e) => {
+  const cur = e.target.closest('.tab'); if (!cur) return;
+  const ids = CATS.map((c) => c.id); let i = ids.indexOf(cur.dataset.cat);
+  if (e.key === 'ArrowRight') i = (i + 1) % ids.length;
+  else if (e.key === 'ArrowLeft') i = (i - 1 + ids.length) % ids.length;
+  else if (e.key === 'Home') i = 0;
+  else if (e.key === 'End') i = ids.length - 1;
+  else return;
+  e.preventDefault(); selectCat(ids[i], true);
 });
 $('#q').addEventListener('input', (e) => { F.q = e.target.value.slice(0, 80); render(); });
 $('#q').addEventListener('keydown', (e) => { if (e.key === 'Escape' && F.q) { F.q = ''; render(); } });
