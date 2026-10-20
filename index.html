@@ -129,9 +129,14 @@ h1 em { font-style: normal; color: var(--c-mates); }
 
 /* Targetes compactes */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 0.9rem; }
-.subh { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.5rem 0 0.6rem; font-weight: 500; }
-.sr + .subh { margin-top: 0.2rem; }
-.subh span { color: color-mix(in srgb, var(--c) 80%, var(--ink)); margin-left: 0.4rem; }
+.subh {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.9rem; margin: 2rem 0 0.9rem; padding: 0.5rem 1rem 0.45rem;
+  background: color-mix(in srgb, var(--c) 12%, var(--surface)); border-bottom: 2px solid var(--c); border-radius: 10px 10px 0 0;
+  font-family: var(--f-display); font-weight: 800; font-size: 1.5rem; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink);
+}
+.sr + .subh { margin-top: 0.3rem; }
+.subh .st { min-width: 0; }
+.subh .sn { margin-left: auto; font-family: var(--f-mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--c) 80%, var(--ink)); white-space: nowrap; }
 .card {
   display: flex; flex-direction: column; gap: 0.6rem; min-height: 8.5rem;
   text-decoration: none; color: inherit;
@@ -165,6 +170,7 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
 @media (pointer: coarse) { .chip { min-height: 2.75rem; } .morebtn { min-height: 2.75rem; } }
 @media (max-width: 700px) {
   .hero { padding-top: 1.6rem; }
+  .subh { font-size: 1.25rem; padding: 0.45rem 0.8rem 0.4rem; margin-top: 1.6rem; }
   .search { flex-basis: 100%; width: 100%; }
   /* Pestanyes i nivells: una sola fila amb desplaçament horitzontal */
   .tabs, .filters .fgroup { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
@@ -467,7 +473,7 @@ function renderSections() {
         ? `<div class="grid">${items.map((r) => card(r)).join('')}</div>`
         : subs.map((sb) => {
             const g = items.filter((r) => (r.sub || '') === sb);
-            const head = sb ? `<h3 class="subh" style="--c:var(--c-${F.cat})">${sb} <span>${g.length}</span></h3>` : '';
+            const head = sb ? `<h3 class="subh" style="--c:var(--c-${F.cat})"><span class="st">${sb}</span><span class="sn">${g.length} ${g.length === 1 ? 'recurs' : 'recursos'}</span></h3>` : '';
             return `${head}<div class="grid">${g.map((r) => card(r)).join('')}</div>`;
           }).join(''));
     }
