@@ -19,8 +19,8 @@ RAONA = ('<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow"></
          '<button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD"></button></div>'
          '<div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>')
 LANGSW = '<div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>'
-FOOT = ('<footer class="cc">© Ilde · <a href="https://ildemoralesmates.github.io/">Recursos de matemàtiques</a> · '
-        '<a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></footer>')
+FOOT = ('<footer class="cc">© Ilde Morales · <a href="https://ildemoralesmates.github.io/">Recursos de matemàtiques</a> · '
+        '<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></footer>')
 LVLSW = '<div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label=""><button type="button" data-level="basic" data-i18n="lvl_basic"></button><button type="button" data-level="adv" data-i18n="lvl_adv"></button></div>'
 QUIZ = ('<section class="card quizc" data-i18n-aria="aria.quiz" aria-label=""><h2><small data-i18n="quiz_eyebrow"></small><span data-i18n="quiz_title"></span></h2>'
         '<p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz"></button></div></section>')

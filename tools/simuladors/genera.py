@@ -47,7 +47,7 @@ FOOT={'ca':('Recursos de matemàtiques','deed.ca','Les imatges i materials de te
 BACK_CSS=".back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}\n.back:hover{color:var(--ink);text-decoration:underline}\n.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}\n"
 def foot(l):
     n,d,x=FOOT[l]
-    return (f'<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,\'Segoe UI\',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="{BASE}/" style="color:inherit">{n}</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/{d}" style="color:inherit">CC BY-SA 4.0</a> · {x}</footer>')
+    return (f'<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,\'Segoe UI\',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="{BASE}/" style="color:inherit">{n}</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/{d}" style="color:inherit">CC BY-NC-SA 4.0</a> · {x}</footer>')
 def prerender(s,I,l):
     d=I[l]; g=lambda k: d.get(k, I['ca'].get(k,k))
     out=s
@@ -73,7 +73,7 @@ with sync_playwright() as p:
             s=re.sub(r'<title>.*?</title>',f'<title>{html.escape(title)}</title>',s,count=1)
             s=re.sub(r'(<meta name="description" content=")[^"]*"',lambda m:m.group(1)+desc+'"',s,count=1)
             meta=(f'<link rel="canonical" href="{url}">\n<link rel="alternate" hreflang="ca" href="{BASE}/{slug}/">\n<link rel="alternate" hreflang="es" href="{BASE}/es/{slug}/">\n<link rel="alternate" hreflang="x-default" href="{BASE}/{slug}/">\n'
-                  f'<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/{lic}">\n'
+                  f'<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/{lic}">\n'
                   f'<meta property="og:type" content="website">\n<meta property="og:locale" content="{"ca_ES" if l=="ca" else "es_ES"}">\n<meta property="og:locale:alternate" content="{"es_ES" if l=="ca" else "ca_ES"}">\n<meta property="og:site_name" content="{FOOT[l][0]}">\n'
                   f'<meta property="og:title" content="{html.escape(title)}">\n<meta property="og:description" content="{desc}">\n<meta property="og:url" content="{url}">\n'
                   f'<meta property="og:image" content="{BASE}/og-image.png">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n')

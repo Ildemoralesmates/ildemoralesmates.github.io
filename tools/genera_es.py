@@ -37,7 +37,7 @@ def estructurals(s, slug):
         (f'<link rel="canonical" href="{url_va}">', f'<link rel="canonical" href="{url_es}">'),
         (f'<meta property="og:url" content="{url_va}">', f'<meta property="og:url" content="{url_es}">'),
         ('<meta property="og:locale" content="ca_ES">', '<meta property="og:locale" content="es_ES">'),
-        ("creativecommons.org/licenses/by-sa/4.0/deed.ca", "creativecommons.org/licenses/by-sa/4.0/deed.es"),
+        ("creativecommons.org/licenses/by-nc-sa/4.0/deed.ca", "creativecommons.org/licenses/by-nc-sa/4.0/deed.es"),
         # selector d'idioma: ara apunta a l'original
         (f'<a class="lang" href="../es/{slug}/" hreflang="es" lang="es">Castellano</a>',
          f'<a class="lang" href="../../{slug}/" hreflang="ca" lang="ca">Valencià</a>'),
