@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MRU i MRUA: gràfiques sincronitzades — simulador interactiu</title>
+<meta name="description" content="Un mòbil, tres gràfiques: mou un cotxe amb MRU o MRUA i mira com es dibuixen alhora x–t, v–t i a–t. Tangent, àrea sota v–t, segon mòbil i punt de trobada. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@RAONA_CSS@*/
+:root{--gx:var(--pa);--gv:var(--ok);--ga:#7c3aed}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ga:#b794f6}}
+.stage svg{display:block;width:100%;height:auto}
+.stage svg text{font-family:var(--f-num);font-size:10px;fill:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.swatch{width:14px;height:3px;display:inline-block;border-radius:2px}
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls .span{grid-column:1/-1}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:4px 18px}
+.cmp{grid-column:1/-1;display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;border-top:1px dashed var(--line);padding-top:6px}
+.cmp.show{display:grid}
+@media (max-width:620px){.cmp{grid-template-columns:1fr}}
+.cmp output{color:var(--pb)}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+.vals dd.b,.vals dt.b{color:var(--pb)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 600 352" role="img" data-i18n-aria="aria.svg" aria-label=""></svg></div>
+<div class="legend">
+<span><span class="swatch" style="background:var(--gx)"></span><span data-i18n="lg_x"></span></span>
+<span><span class="swatch" style="background:var(--gv)"></span><span data-i18n="lg_v"></span></span>
+<span><span class="swatch" style="background:var(--ga)"></span><span data-i18n="lg_acc"></span></span>
+<span data-i18n="lg_ab"></span>
+</div>
+<div class="ctls">
+<div class="btns"><button class="btn primary" id="btnPlay" type="button"></button><button class="btn" id="btnReset" type="button" data-i18n="reset"></button>
+<select id="speed" aria-label="Velocitat"><option value="0.5" data-i18n="sp_slow"></option><option value="1" selected data-i18n="sp_norm"></option><option value="2" data-i18n="sp_fast"></option></select></div>
+<div class="chips span" id="presets"></div>
+<div class="ctl"><label for="xa" data-i18n="l_x0"></label><output id="xaL"></output><input type="range" id="xa" min="-50" max="100" step="1" value="0"></div>
+<div class="ctl"><label for="va" data-i18n="l_v0"></label><output id="vaL"></output><input type="range" id="va" min="-20" max="20" step="1" value="5"></div>
+<div class="ctl"><label for="aa" data-i18n="l_a"></label><output id="aaL"></output><input type="range" id="aa" min="-5" max="5" step="0.5" value="0"></div>
+<div class="cmp" id="cmpBlock">
+<div class="ctl"><label for="xb" data-i18n="l_x0b"></label><output id="xbL"></output><input type="range" id="xb" min="-50" max="100" step="1" value="60"></div>
+<div class="ctl"><label for="vb" data-i18n="l_v0b"></label><output id="vbL"></output><input type="range" id="vb" min="-20" max="20" step="1" value="-3"></div>
+<div class="ctl"><label for="ab" data-i18n="l_ab"></label><output id="abL"></output><input type="range" id="ab" min="-5" max="5" step="0.5" value="0"></div>
+</div>
+<div class="ctl span"><label for="tsl" data-i18n="l_t"></label><output id="tslL"></output><input type="range" id="tsl" min="0" max="10" step="0.1" value="0"></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="cmp"><span data-i18n="c_cmp"></span></label>
+<label class="check"><input type="checkbox" id="dots" checked><span data-i18n="c_dots"></span></label>
+<label class="check"><input type="checkbox" id="tan"><span data-i18n="c_tan"></span></label>
+<label class="check"><input type="checkbox" id="area"><span data-i18n="c_area"></span></label>
+</div>
+</div>
+</div>
+<div class="side">
+<p class="sh" data-i18n="s_live"></p>
+<dl class="vals" id="readout"></dl>
+<p class="sh" data-i18n="s_res"></p>
+<dl class="vals" id="results"></dl>
+<p class="note" data-i18n="note"></p>
+</div>
+</div>
+</section>
+
+<!--@RAONA@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"MRU i MRUA: gràfiques sincronitzades — simulador interactiu",
+"eyebrow":"Cinemàtica · 2n i 4t ESO",
+"h1":"🚗 MRU i MRUA: gràfiques sincronitzades",
+"lede":"Un mòbil, tres gràfiques. Mou-lo i mira com x, v i a es dibuixen alhora; arrossega el temps i comprova pendents i àrees.",
+"aria.svg":"Mòbil sobre una recta amb les gràfiques posició–temps, velocitat–temps i acceleració–temps sincronitzades",
+"lg_x":"posició x","lg_v":"velocitat v (gràfica i fletxa)","lg_acc":"acceleració a (gràfica i fletxa)","lg_ab":"Mòbil A: traç continu · Mòbil B: traç discontinu",
+"pre_mru":"MRU","pre_start":"MRUA: des del repòs","pre_brake":"MRUA: frenada",
+"l_x0":"Posició inicial x₀","l_v0":"Velocitat inicial v₀","l_a":"Acceleració a",
+"l_x0b":"x₀ (B)","l_v0b":"v₀ (B)","l_ab":"a (B)","l_t":"Temps t",
+"sp_slow":"Càmera lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Ràpid (2×)",
+"c_cmp":"Afegeix un segon mòbil B","c_dots":"Marca la posició cada segon","c_tan":"Tangent a x–t (pendent = v)","c_area":"Ombreja l’àrea sota v–t (= Δx)",
+"launch":"▶ Reproduir","pause":"⏸ Pausa","resume":"▶ Continua","reset":"↺ Reiniciar",
+"s_live":"En directe","s_res":"Resultats del mòbil A (0–10 s)",
+"note":"Convenció: x positiva cap a la dreta. Les fletxes de v i a es dibuixen sobre el cotxe; els resultats són els de les fórmules x = x₀ + v₀·t + ½·a·t² i v = v₀ + a·t.",
+"mv_rest":"En repòs","mv_mru":"MRU (v constant)","mv_acc":"MRUA: accelera","mv_dec":"MRUA: frena","mv_turn":"MRUA: v = 0 un instant",
+"r_xf":"Posició x(10 s)","r_dx":"Desplaçament Δx","r_vf":"Velocitat v(10 s)","r_vm":"Velocitat mitjana","r_meet":"A i B es troben","r_nomeet":"No es troben entre 0 i 10 s","r_always":"Sempre junts","r_gap":"Distància A–B","r_type":"Moviment",
+"ann_tan":"pendent = v = {0} m/s","ann_area":"àrea = Δx = {0} m",
+"rng":"Escriu valors dins del rang del simulador: x₀ de −50 a 100 m, v de −20 a 20 m/s, a de −5 a 5 m/s² i t de 0 a 10 s.",
+"l_v0f":"v₀","l_af":"a","l_tf":"t","l_xf":"Δx",
+"m1.q":"El mòbil A surt de x₀ = 0 amb MRU (a = 0). Quina <b>velocitat</b> (m/s) cal perquè als 10 s estiga a x = 60 m?",
+"m1_f":"Amb v = {0} m/s, als 10 s el mòbil és a x = {1} m: no és 60 m.",
+"m1_ok":"✔ Missió complida! v = 60 m / 10 s = 6 m/s. Mira la gràfica x–t: una recta de pendent 6.",
+"m1.more":"Si el mòbil isquera de x₀ = 20 m i volguérem arribar també a 60 m als 10 s, quina velocitat caldria? Què canvia a la gràfica x–t?",
+"m2.q":"El mòbil A surt de x₀ = 20 m amb v₀ = 2 m/s i accelera. Quina <b>acceleració</b> (m/s²) el porta a x = 140 m als 10 s?",
+"m2_f":"Amb a = {0} m/s², als 10 s el mòbil és a x = {1} m: no és 140 m.",
+"m2_ok":"✔ Missió complida! x = 20 + 2·10 + ½·2·10² = 140 m. La gràfica x–t és una paràbola i la v–t una recta que puja.",
+"m2.more":"Quina velocitat tindrà el mòbil quan arribe a x = 140 m (als 10 s)? Calcula-ho amb v = v₀ + a·t i comprova-ho a la gràfica v–t.",
+"m3.q":"Un cotxe va a v₀ = 20 m/s (x₀ = 0) i frena amb acceleració constant. Quina <b>acceleració</b> (m/s²) fa que s’ature just als 10 s?",
+"m3_pos":"Amb a = {0} m/s² el cotxe no frena: la velocitat no baixa. Cal una acceleració negativa.",
+"m3_f":"Amb a = {0} m/s², als 10 s la velocitat és {1} m/s: no s’ha aturat just ara.",
+"m3_ok":"✔ Missió complida! v = 20 − 2·10 = 0. La gràfica v–t baixa fins a tocar l’eix just als 10 s.",
+"m3.more":"Quina distància ha recorregut fins a parar? Calcula-la amb les fórmules i comprova que coincideix amb l’àrea del triangle sota v–t.",
+"m4.q":"A surt de x = 0 amb v = 6 m/s i B de x = 60 m amb v = −4 m/s (tots dos MRU). En quin <b>instant</b> (s) es troben?",
+"m4_f":"En t = {0} s, A és a x = {1} m i B a x = {2} m: no coincideixen.",
+"m4_ok":"✔ Missió complida! Es troben a t = 6 s, a x = 36 m: 6·t = 60 − 4·t.",
+"m4.more":"Si B isquera de x = 60 m amb v = −3 m/s en lloc de −4, es trobarien abans o després? Prediu-ho i comprova-ho.",
+"s1.q":"Si la velocitat és zero en un instant, l’acceleració també és zero en aquest instant.",
+"s1.h":"Pensa en un cotxe que arrenca d’un semàfor.",
+"s1.e":"A vegades. Que v = 0 no vol dir que a = 0: l’acceleració és la rapidesa amb què canvia v. Quan arrenca des del repòs, v = 0 però a ≠ 0.",
+"s1_cx_no":"Amb v₀ = {0} m/s i a = {1} m/s², no es compleix el que busquem: necessites v₀ = 0 i a ≠ 0.",
+"s1_cx":"✔ Amb v₀ = {0} m/s i a = {1} m/s², la velocitat és zero a t = 0 però l’acceleració no.",
+"s2.q":"En un MRU la velocitat és constant i l’acceleració és zero.",
+"s2.h":"Mira la gràfica v–t d’un MRU.",
+"s2.e":"Sempre. És justament el que defineix un MRU: v no canvia, per tant a = Δv/Δt = 0.",
+"s3.q":"Si l’acceleració és negativa, el mòbil va frenant.",
+"s3.h":"Pensa en el signe de la velocitat: i si el mòbil va cap a l’esquerra?",
+"s3.e":"A vegades. Frena només si v i a tenen signes oposats; si tenen el mateix signe, accelera (cap a un costat o cap a l’altre).",
+"s3_cx_no":"Amb v₀ = {0} m/s i a = {1} m/s² el mòbil sí que frena (o no es dóna el cas). Busca v₀ i a tots dos negatius.",
+"s3_cx":"✔ Amb v₀ = {0} m/s i a = {1} m/s², v i a són negatius: el mòbil va cada vegada més ràpid cap a l’esquerra.",
+"s4.q":"En un MRUA (a ≠ 0) la gràfica x–t és una recta.",
+"s4.h":"Mira la forma de la gràfica x–t i compara-la amb la d’un MRU.",
+"s4.e":"Mai. Amb a ≠ 0, x = x₀ + v₀·t + ½·a·t² és una paràbola; la recta és pròpia del MRU.",
+"s5.q":"En un MRUA, el mòbil recorre la mateixa distància cada segon.",
+"s5.h":"Mira com se separen els punts marcats cada segon sobre la carretera.",
+"s5.e":"Mai. Si la velocitat canvia, cada segon recorre una distància diferent. Des del repòs: 1, 3, 5, 7… (en proporció).",
+"s6.q":"L’àrea (amb signe) sota la gràfica v–t entre 0 i t és el desplaçament Δx.",
+"s6.h":"Activa «Ombreja l’àrea sota v–t» i compara-la amb Δx.",
+"s6.e":"Sempre. Àrea sota v–t = Δx. Si v és negativa, l’àrea compta com a negativa: el mòbil va cap enrere.",
+"e1.ctx":"Un cotxe arrenca del repòs amb a = 2 m/s². Es discuteix quanta distància recorre en 4 s.",
+"e1.n0":"Clara","e1.n1":"Marc",
+"e1.s0":"2 m/s² · 4 s = 8 m.",
+"e1.s1":"x = ½·a·t² = ½ · 2 · 4² = 16 m.",
+"e1.w0":"Parteix del repòs: la velocitat va de 0 a 8 m/s, de mitjana 4 m/s, i en 4 s recorre 16 m. L’acceleració no és una velocitat: multiplicar-la per t no dóna una distància.",
+"e1.w1":"Perquè en un MRUA sempre s’ha de dividir per 2 la distància del MRU.",
+"e1.w2":"Perquè 2 m/s² és la velocitat final i la distància és velocitat per temps.",
+"e1.frame":"Clara, 2 m/s² · 4 s no dóna una distància perquè…",
+"e1.model":"Clara, a·t = 2 · 4 = 8 són m/s: és la velocitat als 4 s, no una distància. Com la velocitat creix de 0 a 8 m/s, la mitjana és 4 m/s i la distància és 4 · 4 = 16 m = ½·a·t². A la gràfica v–t és l’àrea del triangle.",
+"e2.ctx":"Un mòbil té v = −6 m/s i a = −2 m/s². Es discuteix si va frenant o accelerant.",
+"e2.n0":"Aina","e2.n1":"Marc",
+"e2.s0":"Frena, perquè l’acceleració és negativa.",
+"e2.s1":"Accelera: v i a tenen el mateix signe, així que la rapidesa augmenta.",
+"e2.w0":"Va cap a l’esquerra (v < 0) i a també empeny cap a l’esquerra (a < 0): cada segon v és més negativa, és a dir, va més ràpid. Frena només quan v i a tenen signes oposats.",
+"e2.w1":"Perquè un signe negatiu sempre vol dir que el valor baixa, i per tant va més a poc a poc.",
+"e2.w2":"Perquè una acceleració negativa només es pot donar quan el mòbil va cap enrere.",
+"e2.frame":"Aina, el signe de a no diu per si sol si frena perquè…",
+"e2.model":"Aina, per saber si frena cal comparar el signe de a amb el de v. Ací v = −6 i a = −2: a t = 3 s, v = −6 − 2·3 = −12 m/s. La rapidesa passa de 6 a 12 m/s: accelera, cap a l’esquerra. Frenaria si v = −6 i a = +2.",
+"e3.ctx":"Un mòbil té acceleració zero en tot moment. Es discuteix què es pot dir del seu moviment.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"Està parat.",
+"e3.s1":"Es mou amb una velocitat constant que no és zero.",
+"e3.w0":"a = 0 només vol dir que la velocitat no canvia: pot ser zero (parat) o un valor constant (MRU). Les dues afirmacions són possibles, però cap no és certa sempre.",
+"e3.w1":"Perquè si no hi ha acceleració el mòbil no pot moure’s.",
+"e3.w2":"Perquè sense acceleració el mòbil acaba sempre parant-se pel fregament.",
+"e3.frame":"Pau i Clara, amb a = 0 el mòbil pot estar parat o anar a velocitat constant perquè…",
+"e3.model":"Cap dels dos té raó del tot. a = 0 vol dir que v no canvia, però el valor de v pot ser qualsevol: zero (A, parat) o 5 m/s (B, MRU). Les dues gràfiques v–t són rectes horitzontals; només canvia l’altura.",
+"d1.q":"Un cotxe va a 15 m/s i s’ha d’aturar just als 10 s. Tria l’<b>acceleració</b> i calcula la <b>distància</b> que recorre fins que s’atura.",
+"d1.lc":"Acceleració:","d1.l0":"Δx",
+"d1_a":"Amb a = {0} m/s², als 10 s va a {1} m/s: no s’atura just als 10 s.",
+"d1_x":"Mira-ho al simulador: Δx = v₀·t + ½·a·t² amb t = 10 s, o l’àrea del triangle sota v–t.",
+"d1_ok":"✔ Ben decidit! a = −1,5 m/s² i Δx = 150 − 75 = 75 m: l’àrea del triangle de base 10 s i altura 15 m/s.",
+"d1.more":"Si tardara 5 s a parar (en lloc de 10) amb la mateixa velocitat inicial, la distància de frenada seria el doble, la meitat o una altra? Prediu-ho i comprova-ho.",
+"d2.q":"Un camió va a 20 m/s i està 40 m per davant d’un cotxe. Tria la <b>velocitat del cotxe</b> perquè l’agafe abans de 10 s i digues <b>quan</b> estan a la mateixa posició.",
+"d2.lc":"Velocitat del cotxe:","d2.l0":"t",
+"d2_v":"Amb {0} m/s, als 10 s el cotxe és a x = {1} m i el camió a x = {2} m: encara no l’ha agafat.",
+"d2_t":"Mira-ho al simulador: es troben quan x_cotxe = x_camió, és a dir, {0}·t = 40 + 20·t.",
+"d2_ok":"✔ Ben decidit! S’ajunten quan v·t = 40 + 20·t, o sia t = 40/(v − 20): 8 s amb 25 m/s i 4 s amb 30 m/s.",
+"d2.more":"Quina és la velocitat mínima que només l’agafa als 10 s justos? Prova-la al simulador.",
+"d3.q":"Un motorista arrenca del repòs i vol estar a 50 m als 10 s. Quina <b>acceleració</b> (m/s²) necessita i quina <b>velocitat</b> (m/s) tindrà en eixe moment?",
+"d3.l0":"a","d3.l1":"v",
+"d3_a":"Amb a = {0} m/s², als 10 s és a x = {1} m, no a 50 m.",
+"d3_v":"Revisa la velocitat final: v = v₀ + a·t.",
+"d3_ok":"✔ Ben decidit! 50 = ½·a·10² → a = 1 m/s²; v = 0 + 1·10 = 10 m/s.",
+"d3.more":"I si volguera arribar a 50 m en només 5 s? Quina acceleració caldria i quina velocitat final? Compara-ho amb el cas anterior."
+},
+es:{
+"title":"MRU y MRUA: gráficas sincronizadas — simulador interactivo",
+"eyebrow":"Cinemática · 2.º y 4.º ESO",
+"h1":"🚗 MRU y MRUA: gráficas sincronizadas",
+"lede":"Un móvil, tres gráficas. Muévelo y mira cómo x, v y a se dibujan a la vez; arrastra el tiempo y comprueba pendientes y áreas.",
+"aria.svg":"Móvil sobre una recta con las gráficas posición–tiempo, velocidad–tiempo y aceleración–tiempo sincronizadas",
+"lg_x":"posición x","lg_v":"velocidad v (gráfica y flecha)","lg_acc":"aceleración a (gráfica y flecha)","lg_ab":"Móvil A: trazo continuo · Móvil B: trazo discontinuo",
+"pre_mru":"MRU","pre_start":"MRUA: desde el reposo","pre_brake":"MRUA: frenada",
+"l_x0":"Posición inicial x₀","l_v0":"Velocidad inicial v₀","l_a":"Aceleración a",
+"l_x0b":"x₀ (B)","l_v0b":"v₀ (B)","l_ab":"a (B)","l_t":"Tiempo t",
+"sp_slow":"Cámara lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Rápido (2×)",
+"c_cmp":"Añade un segundo móvil B","c_dots":"Marca la posición cada segundo","c_tan":"Tangente a x–t (pendiente = v)","c_area":"Sombrea el área bajo v–t (= Δx)",
+"launch":"▶ Reproducir","pause":"⏸ Pausa","resume":"▶ Continuar","reset":"↺ Reiniciar",
+"s_live":"En directo","s_res":"Resultados del móvil A (0–10 s)",
+"note":"Convención: x positiva hacia la derecha. Las flechas de v y a se dibujan sobre el coche; los resultados son los de las fórmulas x = x₀ + v₀·t + ½·a·t² y v = v₀ + a·t.",
+"mv_rest":"En reposo","mv_mru":"MRU (v constante)","mv_acc":"MRUA: acelera","mv_dec":"MRUA: frena","mv_turn":"MRUA: v = 0 un instante",
+"r_xf":"Posición x(10 s)","r_dx":"Desplazamiento Δx","r_vf":"Velocidad v(10 s)","r_vm":"Velocidad media","r_meet":"A y B se encuentran","r_nomeet":"No se encuentran entre 0 y 10 s","r_always":"Siempre juntos","r_gap":"Distancia A–B","r_type":"Movimiento",
+"ann_tan":"pendiente = v = {0} m/s","ann_area":"área = Δx = {0} m",
+"rng":"Escribe valores dentro del rango del simulador: x₀ de −50 a 100 m, v de −20 a 20 m/s, a de −5 a 5 m/s² y t de 0 a 10 s.",
+"l_v0f":"v₀","l_af":"a","l_tf":"t","l_xf":"Δx",
+"m1.q":"El móvil A sale de x₀ = 0 con MRU (a = 0). ¿Qué <b>velocidad</b> (m/s) hace falta para que a los 10 s esté en x = 60 m?",
+"m1_f":"Con v = {0} m/s, a los 10 s el móvil está en x = {1} m: no son 60 m.",
+"m1_ok":"✔ ¡Misión cumplida! v = 60 m / 10 s = 6 m/s. Mira la gráfica x–t: una recta de pendiente 6.",
+"m1.more":"Si el móvil saliera de x₀ = 20 m y quisiéramos llegar también a 60 m a los 10 s, ¿qué velocidad haría falta? ¿Qué cambia en la gráfica x–t?",
+"m2.q":"El móvil A sale de x₀ = 20 m con v₀ = 2 m/s y acelera. ¿Qué <b>aceleración</b> (m/s²) lo lleva a x = 140 m a los 10 s?",
+"m2_f":"Con a = {0} m/s², a los 10 s el móvil está en x = {1} m: no son 140 m.",
+"m2_ok":"✔ ¡Misión cumplida! x = 20 + 2·10 + ½·2·10² = 140 m. La gráfica x–t es una parábola y la v–t una recta que sube.",
+"m2.more":"¿Qué velocidad tendrá el móvil cuando llegue a x = 140 m (a los 10 s)? Calcúlala con v = v₀ + a·t y compruébalo en la gráfica v–t.",
+"m3.q":"Un coche va a v₀ = 20 m/s (x₀ = 0) y frena con aceleración constante. ¿Qué <b>aceleración</b> (m/s²) hace que se detenga justo a los 10 s?",
+"m3_pos":"Con a = {0} m/s² el coche no frena: la velocidad no baja. Hace falta una aceleración negativa.",
+"m3_f":"Con a = {0} m/s², a los 10 s la velocidad es {1} m/s: no se ha detenido justo ahora.",
+"m3_ok":"✔ ¡Misión cumplida! v = 20 − 2·10 = 0. La gráfica v–t baja hasta tocar el eje justo a los 10 s.",
+"m3.more":"¿Qué distancia ha recorrido hasta parar? Calcúlala con las fórmulas y comprueba que coincide con el área del triángulo bajo v–t.",
+"m4.q":"A sale de x = 0 con v = 6 m/s y B de x = 60 m con v = −4 m/s (los dos MRU). ¿En qué <b>instante</b> (s) se encuentran?",
+"m4_f":"En t = {0} s, A está en x = {1} m y B en x = {2} m: no coinciden.",
+"m4_ok":"✔ ¡Misión cumplida! Se encuentran en t = 6 s, en x = 36 m: 6·t = 60 − 4·t.",
+"m4.more":"Si B saliera de x = 60 m con v = −3 m/s en lugar de −4, ¿se encontrarían antes o después? Predícelo y compruébalo.",
+"s1.q":"Si la velocidad es cero en un instante, la aceleración también es cero en ese instante.",
+"s1.h":"Piensa en un coche que arranca en un semáforo.",
+"s1.e":"A veces. Que v = 0 no quiere decir que a = 0: la aceleración es la rapidez con que cambia v. Cuando arranca desde el reposo, v = 0 pero a ≠ 0.",
+"s1_cx_no":"Con v₀ = {0} m/s y a = {1} m/s², no se cumple lo que buscamos: necesitas v₀ = 0 y a ≠ 0.",
+"s1_cx":"✔ Con v₀ = {0} m/s y a = {1} m/s², la velocidad es cero en t = 0 pero la aceleración no.",
+"s2.q":"En un MRU la velocidad es constante y la aceleración es cero.",
+"s2.h":"Mira la gráfica v–t de un MRU.",
+"s2.e":"Siempre. Es justo lo que define un MRU: v no cambia, por tanto a = Δv/Δt = 0.",
+"s3.q":"Si la aceleración es negativa, el móvil va frenando.",
+"s3.h":"Piensa en el signo de la velocidad: ¿y si el móvil va hacia la izquierda?",
+"s3.e":"A veces. Frena solo si v y a tienen signos opuestos; si tienen el mismo signo, acelera (hacia un lado o hacia el otro).",
+"s3_cx_no":"Con v₀ = {0} m/s y a = {1} m/s² el móvil sí que frena (o no se da el caso). Busca v₀ y a los dos negativos.",
+"s3_cx":"✔ Con v₀ = {0} m/s y a = {1} m/s², v y a son negativas: el móvil va cada vez más rápido hacia la izquierda.",
+"s4.q":"En un MRUA (a ≠ 0) la gráfica x–t es una recta.",
+"s4.h":"Mira la forma de la gráfica x–t y compárala con la de un MRU.",
+"s4.e":"Nunca. Con a ≠ 0, x = x₀ + v₀·t + ½·a·t² es una parábola; la recta es propia del MRU.",
+"s5.q":"En un MRUA, el móvil recorre la misma distancia cada segundo.",
+"s5.h":"Mira cómo se separan los puntos marcados cada segundo sobre la carretera.",
+"s5.e":"Nunca. Si la velocidad cambia, cada segundo recorre una distancia distinta. Desde el reposo: 1, 3, 5, 7… (en proporción).",
+"s6.q":"El área (con signo) bajo la gráfica v–t entre 0 y t es el desplazamiento Δx.",
+"s6.h":"Activa «Sombrea el área bajo v–t» y compárala con Δx.",
+"s6.e":"Siempre. Área bajo v–t = Δx. Si v es negativa, el área cuenta como negativa: el móvil va hacia atrás.",
+"e1.ctx":"Un coche arranca del reposo con a = 2 m/s². Se discute cuánta distancia recorre en 4 s.",
+"e1.n0":"Clara","e1.n1":"Marc",
+"e1.s0":"2 m/s² · 4 s = 8 m.",
+"e1.s1":"x = ½·a·t² = ½ · 2 · 4² = 16 m.",
+"e1.w0":"Parte del reposo: la velocidad va de 0 a 8 m/s, de media 4 m/s, y en 4 s recorre 16 m. La aceleración no es una velocidad: multiplicarla por t no da una distancia.",
+"e1.w1":"Porque en un MRUA siempre hay que dividir entre 2 la distancia del MRU.",
+"e1.w2":"Porque 2 m/s² es la velocidad final y la distancia es velocidad por tiempo.",
+"e1.frame":"Clara, 2 m/s² · 4 s no da una distancia porque…",
+"e1.model":"Clara, a·t = 2 · 4 = 8 son m/s: es la velocidad a los 4 s, no una distancia. Como la velocidad crece de 0 a 8 m/s, la media es 4 m/s y la distancia es 4 · 4 = 16 m = ½·a·t². En la gráfica v–t es el área del triángulo.",
+"e2.ctx":"Un móvil tiene v = −6 m/s y a = −2 m/s². Se discute si va frenando o acelerando.",
+"e2.n0":"Aina","e2.n1":"Marc",
+"e2.s0":"Frena, porque la aceleración es negativa.",
+"e2.s1":"Acelera: v y a tienen el mismo signo, así que la rapidez aumenta.",
+"e2.w0":"Va hacia la izquierda (v < 0) y a también empuja hacia la izquierda (a < 0): cada segundo v es más negativa, es decir, va más rápido. Frena solo cuando v y a tienen signos opuestos.",
+"e2.w1":"Porque un signo negativo siempre quiere decir que el valor baja, y por tanto va más despacio.",
+"e2.w2":"Porque una aceleración negativa solo se puede dar cuando el móvil va hacia atrás.",
+"e2.frame":"Aina, el signo de a no dice por sí solo si frena porque…",
+"e2.model":"Aina, para saber si frena hay que comparar el signo de a con el de v. Aquí v = −6 y a = −2: en t = 3 s, v = −6 − 2·3 = −12 m/s. La rapidez pasa de 6 a 12 m/s: acelera, hacia la izquierda. Frenaría si v = −6 y a = +2.",
+"e3.ctx":"Un móvil tiene aceleración cero en todo momento. Se discute qué se puede decir de su movimiento.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"Está parado.",
+"e3.s1":"Se mueve con una velocidad constante que no es cero.",
+"e3.w0":"a = 0 solo quiere decir que la velocidad no cambia: puede ser cero (parado) o un valor constante (MRU). Las dos afirmaciones son posibles, pero ninguna es cierta siempre.",
+"e3.w1":"Porque si no hay aceleración el móvil no puede moverse.",
+"e3.w2":"Porque sin aceleración el móvil acaba siempre parándose por el rozamiento.",
+"e3.frame":"Pau y Clara, con a = 0 el móvil puede estar parado o ir a velocidad constante porque…",
+"e3.model":"Ninguno de los dos tiene razón del todo. a = 0 quiere decir que v no cambia, pero el valor de v puede ser cualquiera: cero (A, parado) o 5 m/s (B, MRU). Las dos gráficas v–t son rectas horizontales; solo cambia la altura.",
+"d1.q":"Un coche va a 15 m/s y tiene que detenerse justo a los 10 s. Elige la <b>aceleración</b> y calcula la <b>distancia</b> que recorre hasta que se detiene.",
+"d1.lc":"Aceleración:","d1.l0":"Δx",
+"d1_a":"Con a = {0} m/s², a los 10 s va a {1} m/s: no se detiene justo a los 10 s.",
+"d1_x":"Míralo en el simulador: Δx = v₀·t + ½·a·t² con t = 10 s, o el área del triángulo bajo v–t.",
+"d1_ok":"✔ ¡Bien decidido! a = −1,5 m/s² y Δx = 150 − 75 = 75 m: el área del triángulo de base 10 s y altura 15 m/s.",
+"d1.more":"Si tardara 5 s en parar (en lugar de 10) con la misma velocidad inicial, ¿la distancia de frenada sería el doble, la mitad u otra? Predícelo y compruébalo.",
+"d2.q":"Un camión va a 20 m/s y está 40 m por delante de un coche. Elige la <b>velocidad del coche</b> para que lo alcance antes de 10 s y di <b>cuándo</b> están en la misma posición.",
+"d2.lc":"Velocidad del coche:","d2.l0":"t",
+"d2_v":"Con {0} m/s, a los 10 s el coche está en x = {1} m y el camión en x = {2} m: todavía no lo ha alcanzado.",
+"d2_t":"Míralo en el simulador: se encuentran cuando x_coche = x_camión, es decir, {0}·t = 40 + 20·t.",
+"d2_ok":"✔ ¡Bien decidido! Se juntan cuando v·t = 40 + 20·t, o sea t = 40/(v − 20): 8 s con 25 m/s y 4 s con 30 m/s.",
+"d2.more":"¿Cuál es la velocidad mínima que solo lo alcanza a los 10 s justos? Pruébala en el simulador.",
+"d3.q":"Un motorista arranca del reposo y quiere estar a 50 m a los 10 s. ¿Qué <b>aceleración</b> (m/s²) necesita y qué <b>velocidad</b> (m/s) tendrá en ese momento?",
+"d3.l0":"a","d3.l1":"v",
+"d3_a":"Con a = {0} m/s², a los 10 s está en x = {1} m, no en 50 m.",
+"d3_v":"Revisa la velocidad final: v = v₀ + a·t.",
+"d3_ok":"✔ ¡Bien decidido! 50 = ½·a·10² → a = 1 m/s²; v = 0 + 1·10 = 10 m/s.",
+"d3.more":"¿Y si quisiera llegar a 50 m en solo 5 s? ¿Qué aceleración haría falta y qué velocidad final? Compáralo con el caso anterior."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){
+/* ===== MRU i MRUA: gràfiques sincronitzades ===== */
+const VW=600,VH=352,L=46,R=24,PW=VW-L-R,T=10;
+const svg=$('#svg');
+const xaEl=$('#xa'),vaEl=$('#va'),aaEl=$('#aa'),xbEl=$('#xb'),vbEl=$('#vb'),abEl=$('#ab'),tEl=$('#tsl');
+const cmpEl=$('#cmp'),tanEl=$('#tan'),areaEl=$('#area'),dotsEl=$('#dots'),speedEl=$('#speed');
+const btnPlay=$('#btnPlay'),btnReset=$('#btnReset'),cmpBlock=$('#cmpBlock'),readout=$('#readout'),results=$('#results');
+const X=(p,s)=>p.x+p.v*s+.5*p.a*s*s, V=(p,s)=>p.v+p.a*s;
+const pA=()=>({x:+xaEl.value,v:+vaEl.value,a:+aaEl.value});
+const pB=()=>cmpEl.checked?{x:+xbEl.value,v:+vbEl.value,a:+abEl.value}:null;
+let tcur=0,playing=false,last=null;
+const PAN=[{k:'x',y0:124,h:54,u:'x (m)',c:'var(--gx)'},{k:'v',y0:196,h:54,u:'v (m/s)',c:'var(--gv)'},{k:'a',y0:268,h:54,u:'a (m/s²)',c:'var(--ga)'}];
+const LANE={A:46,B:80},AXY=92;
+function nice(span,n){const rough=span/n,mag=Math.pow(10,Math.floor(Math.log10(rough))),norm=rough/mag;return (norm<1.5?1:norm<3.5?2:norm<7.5?5:10)*mag;}
+function rngOf(vals,minSpan){
+  let lo=Math.min(0,...vals),hi=Math.max(0,...vals);
+  if(hi-lo<minSpan){const c=(hi+lo)/2;lo=Math.min(lo,c-minSpan/2);hi=Math.max(hi,c+minSpan/2);}
+  const p=(hi-lo)*.08; if(hi>0)hi+=p; if(lo<0)lo-=p; return [lo,hi];
+}
+const tl=g=>Math.abs(g)<1e-9?'0':String(+g.toFixed(2)).replace('.',',');
+const mapT=s=>L+s/T*PW;
+const f1=n=>n.toFixed(1);
+function car(cx,base,color){
+  return '<g transform="translate('+f1(cx)+','+base+')"><rect x="-13" y="-13" width="26" height="9" rx="2" fill="'+color+'"/><rect x="-7" y="-19" width="13" height="7" rx="2" fill="'+color+'"/><circle cx="-8" cy="-3" r="3.2" fill="var(--ink)"/><circle cx="8" cy="-3" r="3.2" fill="var(--ink)"/></g>';
+}
+function arrow(x,y,len,color){
+  if(Math.abs(len)<1.5)return '';
+  const d=len>0?1:-1,x2=x+len;
+  return '<line x1="'+f1(x)+'" y1="'+y+'" x2="'+f1(x2)+'" y2="'+y+'" stroke="'+color+'" stroke-width="2.4"/><polygon points="'+f1(x2)+','+y+' '+f1(x2-d*6)+','+(y-3.5)+' '+f1(x2-d*6)+','+(y+3.5)+'" fill="'+color+'"/>';
+}
+function meetings(A,B){
+  const qa=.5*(A.a-B.a),qb=A.v-B.v,qc=A.x-B.x,out=[];
+  if(Math.abs(qa)<1e-9){
+    if(Math.abs(qb)<1e-9)return Math.abs(qc)<1e-9?'always':out;
+    out.push(-qc/qb);
+  }else{
+    const d=qb*qb-4*qa*qc;
+    if(d>=0){const s=Math.sqrt(d);out.push((-qb-s)/(2*qa),(-qb+s)/(2*qa));}
+  }
+  return out.filter(s=>s>=-1e-9&&s<=T+1e-9).map(s=>({t:Math.max(0,s),x:X(A,Math.max(0,s))})).sort((p,q)=>p.t-q.t);
+}
+function moveType(A,s){
+  const v=V(A,s);
+  if(A.a===0)return t(A.v===0?'mv_rest':'mv_mru');
+  if(Math.abs(v)<1e-9)return t('mv_turn');
+  return t(v*A.a>0?'mv_acc':'mv_dec');
+}
+function draw(){
+  const A=pA(),B=pB(),s=tcur;
+  const xs=[],vs=[],as=[A.a];if(B)as.push(B.a);
+  for(let i=0;i<=40;i++){const q=i*T/40;xs.push(X(A,q));vs.push(V(A,q));if(B){xs.push(X(B,q));vs.push(V(B,q));}}
+  const R3={x:rngOf(xs,10),v:rngOf(vs,4),a:rngOf(as,2)};
+  const mapY=(k,val)=>{const P=PAN.find(p=>p.k===k),[lo,hi]=R3[k];return P.y0+P.h-(val-lo)/(hi-lo)*P.h;};
+  const rx=R3.x,mapX=val=>L+(val-rx[0])/(rx[1]-rx[0])*PW;
+  let o='<defs>'+PAN.map(P=>'<clipPath id="c'+P.k+'"><rect x="'+L+'" y="'+P.y0+'" width="'+PW+'" height="'+P.h+'"/></clipPath>').join('')+'</defs>';
+  /* carretera i eix de posicions */
+  const lane=(p,base,color)=>{
+    let q='<line x1="'+L+'" y1="'+base+'" x2="'+(L+PW)+'" y2="'+base+'" stroke="var(--line)" stroke-width="5" stroke-linecap="round"/>';
+    if(dotsEl.checked)for(let k=0;k<=Math.floor(s+1e-9);k++)q+='<circle cx="'+f1(mapX(X(p,k)))+'" cy="'+base+'" r="3" fill="'+color+'" opacity=".75"/>';
+    const cx=mapX(X(p,s));
+    q+=car(cx,base-3,color);
+    q+=arrow(cx,base-26,V(p,s)*3,'var(--gv)')+arrow(cx,base-33,p.a*10,'var(--ga)');
+    return q;
+  };
+  o+=lane(A,LANE.A,'var(--pa)');
+  if(B)o+=lane(B,LANE.B,'var(--pb)');
+  const sx=nice(rx[1]-rx[0],6);
+  for(let g=Math.ceil(rx[0]/sx)*sx;g<=rx[1]+1e-9;g+=sx){const gx=mapX(g);
+    o+='<line x1="'+f1(gx)+'" y1="'+AXY+'" x2="'+f1(gx)+'" y2="'+(AXY+4)+'" stroke="var(--muted)"/><text x="'+f1(gx)+'" y="'+(AXY+15)+'" text-anchor="middle">'+tl(g)+'</text>';}
+  o+='<text x="'+(L-6)+'" y="'+(AXY+15)+'" text-anchor="end">x (m)</text>';
+  /* tres gràfiques */
+  PAN.forEach((P,idx)=>{
+    const [lo,hi]=R3[P.k];
+    o+='<rect x="'+L+'" y="'+P.y0+'" width="'+PW+'" height="'+P.h+'" fill="var(--stage)"/><rect x="'+L+'" y="'+P.y0+'" width="'+PW+'" height="'+P.h+'" fill="'+P.c+'" fill-opacity=".13" stroke="'+P.c+'" stroke-opacity=".6"/>';
+    for(let g=0;g<=T;g++){const gx=mapT(g);o+='<line x1="'+f1(gx)+'" y1="'+P.y0+'" x2="'+f1(gx)+'" y2="'+(P.y0+P.h)+'" stroke="var(--line)" opacity="'+(g%2?'.35':'.8')+'"/>';}
+    const st=nice(hi-lo,3);
+    for(let g=Math.ceil(lo/st-1e-9)*st;g<=hi+1e-9;g+=st){const gy=mapY(P.k,g);
+      o+='<line x1="'+L+'" y1="'+f1(gy)+'" x2="'+(L+PW)+'" y2="'+f1(gy)+'" stroke="'+(Math.abs(g)<1e-9?'var(--muted)':'var(--line)')+'" opacity="'+(Math.abs(g)<1e-9?'.9':'.7')+'"/><text x="'+(L-5)+'" y="'+f1(gy+3)+'" text-anchor="end">'+tl(g)+'</text>';}
+    o+='<text x="'+(L+3)+'" y="'+(P.y0-4)+'" style="font-weight:700;fill:'+P.c+'">'+P.u+'</text>';
+    if(idx===2){for(let g=0;g<=T;g+=2)o+='<text x="'+f1(mapT(g))+'" y="'+(P.y0+P.h+13)+'" text-anchor="middle">'+g+'</text>';
+      o+='<text x="'+(L+PW)+'" y="'+(P.y0+P.h+25)+'" text-anchor="end">t (s)</text>';}
+  });
+  const curve=(p,dash)=>{
+    const da=dash?' stroke-dasharray="7 4"':'';
+    const fx=[];for(let i=0;i<=60;i++){const q=i*T/60;fx.push(f1(mapT(q))+','+f1(mapY('x',X(p,q))));}
+    const fv=f1(mapT(0))+','+f1(mapY('v',V(p,0)))+' '+f1(mapT(T))+','+f1(mapY('v',V(p,T)));
+    const fa=f1(mapT(0))+','+f1(mapY('a',p.a))+' '+f1(mapT(T))+','+f1(mapY('a',p.a));
+    return '<g clip-path="url(#cx)"><polyline fill="none" stroke="var(--gx)" stroke-width="2.6"'+da+' points="'+fx.join(' ')+'"/></g>'+
+      '<polyline fill="none" stroke="var(--gv)" stroke-width="2.6"'+da+' points="'+fv+'"/><polyline fill="none" stroke="var(--ga)" stroke-width="2.6"'+da+' points="'+fa+'"/>';
+  };
+  /* àrea sota v–t i tangent (mòbil A) */
+  if(areaEl.checked){
+    const z=mapY('v',0);let pts=f1(mapT(0))+','+f1(z);
+    const N=Math.max(2,Math.round(s*6));for(let i=0;i<=N;i++){const q=s*i/N;pts+=' '+f1(mapT(q))+','+f1(mapY('v',V(A,q)));}
+    pts+=' '+f1(mapT(s))+','+f1(z);
+    o+='<polygon points="'+pts+'" fill="var(--gv)" fill-opacity=".3" stroke="none" clip-path="url(#cv)"/>';
+    o+='<text x="'+(L+PW-4)+'" y="'+(PAN[1].y0+11)+'" text-anchor="end" style="fill:var(--gv);font-weight:700">'+t('ann_area',{0:fmt(X(A,s)-A.x,1)})+'</text>';
+  }
+  o+=curve(A,false);if(B)o+=curve(B,true);
+  if(tanEl.checked){
+    const ypm=PAN[0].h/(R3.x[1]-R3.x[0]),xps=PW/T,dx=PW*.16,cxp=mapT(s),cyp=mapY('x',X(A,s)),sl=-A.v*ypm/xps;
+    o+='<line clip-path="url(#cx)" x1="'+f1(cxp-dx)+'" y1="'+f1(cyp-sl*dx)+'" x2="'+f1(cxp+dx)+'" y2="'+f1(cyp+sl*dx)+'" stroke="var(--warn)" stroke-width="2.2"/>';
+    o+='<text x="'+(L+PW-4)+'" y="'+(PAN[0].y0+11)+'" text-anchor="end" style="fill:var(--warn);font-weight:700">'+t('ann_tan',{0:fmt(A.v+A.a*s,1)})+'</text>';
+  }
+  /* cursor de temps i punts */
+  const cxp=mapT(s);
+  o+='<line x1="'+f1(cxp)+'" y1="'+(PAN[0].y0-2)+'" x2="'+f1(cxp)+'" y2="'+(PAN[2].y0+PAN[2].h)+'" stroke="var(--ink)" stroke-dasharray="3 3" opacity=".7"/>';
+  const dot=(k,val,color,hol)=>'<circle cx="'+f1(cxp)+'" cy="'+f1(mapY(k,val))+'" r="4.2" fill="'+(hol?'var(--panel)':color)+'" stroke="'+(hol?color:'var(--panel)')+'" stroke-width="'+(hol?2.2:1.5)+'"/>';
+  o+=dot('x',X(A,s),'var(--gx)')+dot('v',V(A,s),'var(--gv)')+dot('a',A.a,'var(--ga)');
+  if(B)o+=dot('x',X(B,s),'var(--gx)',1)+dot('v',V(B,s),'var(--gv)',1)+dot('a',B.a,'var(--ga)',1);
+  svg.innerHTML=o;
+}
+function panels(){
+  const A=pA(),B=pB(),s=tcur;
+  const row=(k,v,c)=>'<dt'+(c?' class="'+c+'"':'')+'>'+k+'</dt><dd'+(c?' class="'+c+'"':'')+'>'+v+'</dd>';
+  let h=row('t',fmt(s,1)+' s')+row('x',fmt(X(A,s))+' m')+row('v',fmt(V(A,s))+' m/s')+row('a',fmt(A.a)+' m/s²')+row('Δx',fmt(X(A,s)-A.x)+' m')+row(t('r_type'),moveType(A,s));
+  if(B)h+=row('x (B)',fmt(X(B,s))+' m','b')+row('v (B)',fmt(V(B,s))+' m/s','b')+row(t('r_gap'),fmt(Math.abs(X(A,s)-X(B,s)))+' m');
+  readout.innerHTML=h;
+  let r=row(t('r_xf'),fmt(X(A,T))+' m')+row(t('r_dx'),'<b>'+fmt(X(A,T)-A.x)+' m</b>')+row(t('r_vf'),fmt(V(A,T))+' m/s')+row(t('r_vm'),fmt((X(A,T)-A.x)/T)+' m/s');
+  if(B){const m=meetings(A,B);
+    r+=row(t('r_meet'),m==='always'?t('r_always'):m.length?m.map(q=>'t = '+fmt(q.t)+' s · x = '+fmt(q.x,1)+' m').join('<br>'):t('r_nomeet'),'hl');}
+  results.innerHTML=r;
+}
+function labels(){
+  $('#xaL').textContent=xaEl.value+' m';$('#vaL').textContent=vaEl.value+' m/s';$('#aaL').textContent=fmt(+aaEl.value,1)+' m/s²';
+  $('#xbL').textContent=xbEl.value+' m';$('#vbL').textContent=vbEl.value+' m/s';$('#abL').textContent=fmt(+abEl.value,1)+' m/s²';
+  $('#tslL').textContent=fmt(tcur,1)+' s';tEl.value=tcur;
+}
+function setPlay(){const k=playing?'pause':(tcur>0&&tcur<T?'resume':'launch');if(btnPlay.textContent!==t(k))btnPlay.textContent=t(k);}
+function refresh(){labels();draw();panels();setPlay();}
+function tick(ts){
+  if(!playing)return;
+  if(last===null)last=ts;
+  tcur+=(ts-last)/1000*(+speedEl.value);last=ts;
+  if(tcur>=T){tcur=T;playing=false;last=null;}
+  refresh();
+  if(playing)requestAnimationFrame(tick);
+}
+function play(){
+  if(playing){playing=false;last=null;setPlay();return;}
+  if(tcur>=T)tcur=0;
+  playing=true;last=null;setPlay();requestAnimationFrame(tick);
+}
+[xaEl,vaEl,aaEl,xbEl,vbEl,abEl,tanEl,areaEl,dotsEl].forEach(e=>e.addEventListener('input',refresh));
+cmpEl.addEventListener('change',()=>{cmpBlock.classList.toggle('show',cmpEl.checked);refresh();});
+tEl.addEventListener('input',()=>{tcur=+tEl.value;playing=false;last=null;refresh();});
+btnPlay.addEventListener('click',play);
+btnReset.addEventListener('click',()=>{playing=false;last=null;tcur=0;refresh();});
+[['pre_mru',0,5,0],['pre_start',0,0,2],['pre_brake',0,20,-2]].forEach(([k,x,v,a])=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n=k;
+  b.addEventListener('click',()=>{xaEl.value=x;vaEl.value=v;aaEl.value=a;refresh();});$('#presets').appendChild(b);
+});
+App.hooks.push(refresh);
+
+/* ===== Raona-ho ===== */
+const dv=(x,d)=>x===undefined?d:x;
+function load(o){
+  o=o||{};
+  xaEl.value=dv(o.x,0);vaEl.value=dv(o.v,5);aaEl.value=dv(o.a,0);
+  if(o.b){cmpEl.checked=true;xbEl.value=dv(o.b.x,60);vbEl.value=dv(o.b.v,-3);abEl.value=dv(o.b.a,0);}else cmpEl.checked=false;
+  cmpBlock.classList.toggle('show',cmpEl.checked);
+  tanEl.checked=!!o.tan;areaEl.checked=!!o.area;dotsEl.checked=o.dots!==false;
+  speedEl.value=o.slow?'0.5':'1';
+  playing=false;last=null;tcur=clamp(dv(o.t,0),0,T);
+  refresh();
+  if(o.run)play();
+  RZ.show($('#svg'));
+}
+const P=(x,v,a)=>({x,v,a});
+const inX=x=>x>=-50&&x<=100,inV=v=>v>=-20&&v<=20,inAc=a=>a>=-5&&a<=5,inT=s=>s>=0&&s<=T;
+const AF={l:'l_af',u:'m/s²'},VF={l:'l_v0f',u:'m/s'};
+RZ.init({
+ sim:()=>load(),
+ M:[
+  {id:'m1',f:[{l:'l_v0f',u:'m/s'}],sim:([v])=>load({v:clamp(v,-20,20)}),ok:()=>({k:'m1_ok'}),
+   chk:([v])=>!inV(v)?{k:'rng'}:Math.abs(v-6)<1e-6?null:{k:'m1_f',p:[v,fmt(X(P(0,v,0),T),1)]}},
+  {id:'m2',f:[AF],sim:([a])=>load({x:20,v:2,a:clamp(a,-5,5)}),ok:()=>({k:'m2_ok'}),
+   chk:([a])=>!inAc(a)?{k:'rng'}:Math.abs(a-2)<1e-6?null:{k:'m2_f',p:[a,fmt(X(P(20,2,a),T),1)]}},
+  {id:'m3',f:[AF],sim:([a])=>load({v:20,a:clamp(a,-5,5),area:true}),ok:()=>({k:'m3_ok'}),
+   chk:([a])=>!inAc(a)?{k:'rng'}:Math.abs(a+2)<1e-6?null:a>=0?{k:'m3_pos',p:[a]}:{k:'m3_f',p:[a,fmt(V(P(0,20,a),T),1)]}},
+  {id:'m4',f:[{l:'l_tf',u:'s'}],sim:([s])=>load({x:0,v:6,b:{x:60,v:-4},t:clamp(s,0,T)}),ok:()=>({k:'m4_ok'}),
+   chk:([s])=>!inT(s)?{k:'rng'}:Math.abs(s-6)<.05?null:{k:'m4_f',p:[s,fmt(X(P(0,6,0),s),1),fmt(X(P(60,-4,0),s),1)]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[VF,AF],cxsim:([v,a])=>load({v,a}),
+   cxok:([v,a])=>({k:'s1_cx',p:[v,a]}),
+   cx:([v,a])=>!inV(v)||!inAc(a)?{k:'rng'}:(v===0&&a!==0)?null:{k:'s1_cx_no',p:[v,a]}},
+  {id:'s2',ans:'S',sim:()=>load({v:8,a:0})},
+  {id:'s3',ans:'D',f:[VF,AF],cxsim:([v,a])=>load({x:60,v,a}),
+   cxok:([v,a])=>({k:'s3_cx',p:[v,a]}),
+   cx:([v,a])=>!inV(v)||!inAc(a)?{k:'rng'}:(v<0&&a<0)?null:{k:'s3_cx_no',p:[v,a]}},
+  {id:'s4',ans:'M',sim:()=>load({v:0,a:2})},
+  {id:'s5',ans:'M',sim:()=>load({v:0,a:2,dots:true,t:6})},
+  {id:'s6',ans:'S',sim:()=>load({v:4,a:1,area:true,t:6})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({v:0,a:2,t:4,area:true})},
+  {id:'e2',who:1,sim:()=>load({x:50,v:-6,a:-2,t:3})},
+  {id:'e3',who:3,sim:()=>load({x:0,v:0,a:0,b:{x:0,v:5,a:0}})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[-3,-1.5,-1,1.5],fmt:x=>fmt(x,1)+' m/s²'},f:[{l:'d1.l0',u:'m'}],
+   sim:(args)=>load({v:15,a:Number.isFinite(args[0])?args[0]:0,area:true}),ok:()=>({k:'d1_ok'}),
+   chk:([p,x])=>p!==-1.5?{k:'d1_a',p:[fmt(p,1),fmt(V(P(0,15,p),T),1)]}:Math.abs(x-75)>.5?{k:'d1_x'}:null},
+  {id:'d2',chips:{vals:[20,22,25,30],fmt:x=>x+' m/s'},f:[{l:'d2.l0',u:'s'}],
+   sim:(args)=>load({x:0,v:Number.isFinite(args[0])?args[0]:25,b:{x:40,v:20}}),ok:()=>({k:'d2_ok'}),
+   chk:([p,s])=>p<=24?{k:'d2_v',p:[p,fmt(X(P(0,p,0),T),1),fmt(X(P(40,20,0),T),1)]}:Math.abs(s-40/(p-20))<.06?null:{k:'d2_t',p:[p]}},
+  {id:'d3',f:[{l:'d3.l0',u:'m/s²'},{l:'d3.l1',u:'m/s'}],sim:([a])=>load({x:0,v:0,a:Number.isFinite(a)?clamp(a,-5,5):0}),ok:()=>({k:'d3_ok'}),
+   chk:([a,v])=>!inAc(a)||!inV(v)?{k:'rng'}:Math.abs(a-1)>1e-6?{k:'d3_a',p:[a,fmt(X(P(0,0,a),T),1)]}:Math.abs(v-10)>.05?{k:'d3_v'}:null}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+refresh();
+})();
+</script>
+</body>
+</html>

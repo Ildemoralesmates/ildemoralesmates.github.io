@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Partícula en un camp magnètic — simulador interactiu</title>
+<meta name="description" content="Una càrrega que entra en un camp magnètic uniforme gira: canvia la partícula (protó, electró, alfa, positró), la velocitat, el camp B i l’angle, i mira el radi, el període i l’hèlix. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@RAONA_CSS@*/
+.stage svg{display:block;width:100%;height:auto}
+.stage svg text{font-family:var(--f-num);font-size:10px;fill:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.swatch{width:14px;height:3px;display:inline-block;border-radius:2px}
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls .span{grid-column:1/-1}
+.ctl select{grid-column:1/-1;width:100%}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:4px 18px}
+.cmp{grid-column:1/-1;display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;border-top:1px dashed var(--line);padding-top:6px}
+.cmp.show{display:grid}
+@media (max-width:620px){.cmp{grid-template-columns:1fr}}
+.cmp output{color:var(--pb)}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+.vals dd.b,.vals dt.b{color:var(--pb)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 600 300" role="img" data-i18n-aria="aria.svg" aria-label=""></svg></div>
+<div class="legend">
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="lg_a"></span></span>
+<span><span class="swatch" style="background:var(--pb)"></span><span data-i18n="lg_b"></span></span>
+<span><span class="swatch" style="background:var(--ok)"></span><span data-i18n="lg_v"></span></span>
+<span><span class="swatch" style="background:var(--warn)"></span><span data-i18n="lg_f"></span></span>
+</div>
+<div class="ctls">
+<div class="btns"><button class="btn primary" id="btnPlay" type="button"></button><button class="btn" id="btnReset" type="button" data-i18n="reset"></button>
+<select id="speed" aria-label="Velocitat"><option value="0.5" data-i18n="sp_slow"></option><option value="1" selected data-i18n="sp_norm"></option><option value="2" data-i18n="sp_fast"></option></select></div>
+<div class="ctl span"><label for="ph" data-i18n="l_ph"></label><output id="phL"></output><input type="range" id="ph" min="0" max="3" step="0.01" value="0"></div>
+<div class="ctl"><label for="partA" data-i18n="l_part"></label><select id="partA">
+<option value="0" selected data-i18n="pn_p"></option><option value="1" data-i18n="pn_e"></option><option value="2" data-i18n="pn_a"></option><option value="3" data-i18n="pn_pos"></option></select></div>
+<div class="ctl"><label for="va" data-i18n="l_v"></label><output id="vaL"></output><input type="range" id="va" min="1" max="50" step="1" value="20"></div>
+<div class="ctl"><label for="bf" data-i18n="l_B"></label><output id="bfL"></output><input type="range" id="bf" min="0.05" max="2" step="0.05" value="0.5"></div>
+<div class="ctl"><label for="al" data-i18n="l_al"></label><output id="alL"></output><input type="range" id="al" min="0" max="90" step="5" value="90"></div>
+<div class="ctl"><label data-i18n="l_dir"></label><div class="seg" id="dirsw" role="group" style="grid-column:1/-1"><button type="button" data-d="in" aria-pressed="true" data-i18n="dir_in"></button><button type="button" data-d="out" aria-pressed="false" data-i18n="dir_out"></button></div></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="cmp"><span data-i18n="c_cmp"></span></label>
+<label class="check"><input type="checkbox" id="vec" checked><span data-i18n="c_vec"></span></label>
+<label class="check"><input type="checkbox" id="lock"><span data-i18n="c_lock"></span></label>
+</div>
+<div class="cmp" id="cmpBlock">
+<div class="ctl"><label for="partB" data-i18n="l_partb"></label><select id="partB">
+<option value="0" data-i18n="pn_p"></option><option value="1" selected data-i18n="pn_e"></option><option value="2" data-i18n="pn_a"></option><option value="3" data-i18n="pn_pos"></option></select></div>
+<div class="ctl"><label for="vb" data-i18n="l_vb"></label><output id="vbL"></output><input type="range" id="vb" min="1" max="50" step="1" value="20"></div>
+</div>
+</div>
+</div>
+<div class="side">
+<p class="sh" data-i18n="s_live"></p>
+<dl class="vals" id="readout"></dl>
+<p class="sh" data-i18n="s_res"></p>
+<dl class="vals" id="results"></dl>
+<p class="note" data-i18n="note"></p>
+</div>
+</div>
+</section>
+
+<!--@RAONA@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Partícula en un camp magnètic — simulador interactiu",
+"eyebrow":"Camp magnètic · Batxillerat",
+"h1":"🧲 Partícula carregada en un camp magnètic",
+"lede":"Una càrrega que entra en un camp B uniforme no va en línia recta: gira. Canvia la partícula, la velocitat, el camp i l’angle, i mira el radi, el període i l’hèlix.",
+"aria.svg":"Vista superior de la trajectòria circular de la partícula carregada amb els vectors velocitat i força, i vista lateral de l’hèlix",
+"lg_a":"partícula A","lg_b":"partícula B","lg_v":"velocitat v","lg_f":"força F = q·v×B",
+"l_ph":"Voltes de la partícula A","l_part":"Partícula A","l_v":"Velocitat v","l_B":"Camp magnètic B","l_al":"Angle α entre v i B","l_dir":"Sentit de B",
+"pn_p":"Protó (+e)","pn_e":"Electró (−e)","pn_a":"Partícula α (+2e)","pn_pos":"Positró (+e)",
+"dir_in":"⊗ cap a dins","dir_out":"⊙ cap a fora",
+"c_cmp":"Compara amb una partícula B","c_vec":"Mostra els vectors v i F","c_lock":"Fixa l’escala del dibuix",
+"l_partb":"Partícula B","l_vb":"Velocitat v (B)",
+"sp_slow":"Càmera lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Ràpid (2×)",
+"launch":"▶ Reproduir","pause":"⏸ Pausa","resume":"▶ Continua","reset":"↺ Reiniciar",
+"v_top":"Vista superior (⊥ B)","v_side":"Vista lateral (B →)",
+"s_live":"En directe","s_res":"Resultats",
+"rd_turns":"Voltes de A","rd_t":"Temps real","rd_z":"Avanç al llarg de B","rd_v":"|v| (constant)","rd_vp":"v⊥ (perpendicular a B)","rd_vz":"v∥ (paral·lela a B)",
+"r_r":"Radi r","r_T":"Període T","r_f":"Freqüència f","r_p":"Pas de l’hèlix","r_F":"Força F = |q|·v⊥·B","r_rB":"Radi r (B)","r_TB":"Període T (B)","r_none":"v ∥ B: no hi ha força, la partícula va recta",
+"note":"L’escala del dibuix s’adapta a cada cas (la barra indica la longitud real; «Fixa l’escala» la congela per a comparar). L’animació fa unes quantes voltes en pocs segons: el període real és el del panell. A la vista lateral només es dibuixa A.",
+"rng":"Escriu valors dins del rang del simulador (v de 1 a 50 ·10⁵ m/s, B de 0,05 a 2 T, α de 0° a 90°).",
+"l_rf":"r","l_Bf":"B","l_Tf":"T","l_kf":"r_α / r_p","l_alf":"α","l_ff":"f",
+"pl_0":"el protó","pl_1":"la partícula α","pl_2":"el positró",
+"m1.q":"Un protó entra perpendicularment a un camp B = 0,5 T amb v = 2·10⁶ m/s. Calcula el <b>radi</b> de la trajectòria (en cm).",
+"m1_hi":"{0} cm és massa gran. Revisa r = m·v/(|q|·B) amb les unitats al SI.",
+"m1_lo":"{0} cm és massa xicotet. Revisa r = m·v/(|q|·B) amb les unitats al SI.",
+"m1_ok":"✔ Missió complida! r = (1,67·10⁻²⁷ · 2·10⁶)/(1,6·10⁻¹⁹ · 0,5) ≈ 4,2 cm.",
+"m1.more":"Si dupliquem la velocitat, el radi es duplica, es redueix a la meitat o fa una altra cosa? Prediu-ho i comprova-ho al simulador.",
+"m2.q":"Quin <b>camp B</b> (T) cal perquè un protó de v = 10⁶ m/s descriga una circumferència de radi 1 cm?",
+"m2_hi":"B = {0} T és massa gran: el radi seria menor d’1 cm. Recorda que r = m·v/(|q|·B).",
+"m2_lo":"B = {0} T és massa xicotet: el radi seria major d’1 cm. Recorda que r = m·v/(|q|·B).",
+"m2_ok":"✔ Missió complida! B = m·v/(|q|·r) ≈ 1,04 T.",
+"m2.more":"I si volguérem la mateixa circumferència amb un electró (mateixa v)? Caldria un camp més gran o més xicotet? Calcula-ho.",
+"m3.q":"Quin és el <b>període</b> T (en ns) d’un protó en un camp B = 1 T?",
+"m3_f":"{0} ns no coincideix amb T = 2π·m/(|q|·B). Revisa els càlculs i les unitats (1 ns = 10⁻⁹ s).",
+"m3_ok":"✔ Missió complida! T = 2π·1,67·10⁻²⁷/(1,6·10⁻¹⁹·1) ≈ 65,6 ns.",
+"m3.more":"Canvia la velocitat del protó al simulador: canvia el període? Per què? Fixa’t en el radi.",
+"m4.q":"Una partícula α i un protó entren amb la mateixa velocitat al mateix camp B. El radi de l’α és quantes <b>vegades</b> el del protó?",
+"m4_f":"{0} no és la relació correcta. Recorda que r = m·v/(|q|·B) i que l’α té ≈ 4 vegades la massa del protó i el doble de càrrega.",
+"m4_ok":"✔ Missió complida! r_α/r_p = (m_α/m_p)/(q_α/q_p) ≈ 3,97/2 ≈ 2.",
+"m4.more":"Un deuteró (1 protó + 1 neutró) té càrrega +e i massa ≈ 2·m_p. Quin radi tindria respecte de l’α? Per què?",
+"s1.q":"El camp magnètic fa treball sobre la partícula i en va augmentant l’energia cinètica.",
+"s1.h":"Mira l’angle entre la velocitat i la força.",
+"s1.e":"Mai. La força magnètica és sempre perpendicular a v: no fa treball (W = F·d·cos 90° = 0), de manera que |v| i l’energia cinètica es mantenen.",
+"s2.q":"Una partícula carregada que entra en un camp magnètic uniforme sempre es desvia.",
+"s2.h":"Recorda que F = q·v·B·sin α.",
+"s2.e":"A vegades. Es desvia si v té component perpendicular a B; si v és paral·lela a B (α = 0°) la força és zero i segueix recta.",
+"s2_cx_no":"Amb α = {0}° encara hi ha desviació. Busca un angle entre v i B que anul·le la força.",
+"s2_cx":"✔ Amb α = {0}° la velocitat és paral·lela a B: F = q·v·B·sin α = 0 i la partícula segueix recta.",
+"s3.q":"Si dupliquem el camp B, el radi de la circumferència es redueix a la meitat.",
+"s3.h":"Mira r = m·v/(|q|·B) i prova B = 0,5 T i B = 1 T.",
+"s3.e":"Sempre. r és inversament proporcional a B: amb la resta igual, doble B vol dir la meitat de radi.",
+"s4.q":"El període d’una volta no depèn de la velocitat de la partícula.",
+"s4.h":"Compara dues partícules iguals amb velocitats diferents: tarden el mateix en la volta?",
+"s4.e":"Sempre. T = 2π·m/(|q|·B) no inclou v: amb més velocitat el radi és major, però la volta és més llarga en la mateixa proporció.",
+"s5.q":"Dues partícules de càrregues de signe oposat giren en el mateix sentit dins del mateix camp.",
+"s5.h":"Compara un electró amb un positró: cap a on corben?",
+"s5.e":"Mai. El sentit de gir depén del signe de q (F = q·v×B): les càrregues oposades giren en sentits contraris.",
+"s6.q":"Si v forma amb B un angle α (0° < α < 90°), la trajectòria és una hèlix.",
+"s6.h":"Mira la vista lateral amb α = 40°.",
+"s6.e":"Sempre. La component v⊥ fa girar la partícula i la component v∥ la fa avançar: gir + avanç = hèlix.",
+"e1.ctx":"Una partícula carregada gira en un camp magnètic uniforme. Es discuteix què passa amb el mòdul de la seua velocitat.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"Com la força magnètica sempre empeny la partícula, cada volta va més ràpida.",
+"e1.s1":"El mòdul de v no canvia: la força només en canvia la direcció.",
+"e1.w0":"La força és perpendicular a la velocitat, per tant no fa treball (W = F·d·cos 90° = 0): l’energia cinètica i |v| es mantenen; només gira la direcció de v.",
+"e1.w1":"Perquè la força magnètica és tan xicoteta que no s’aprecia.",
+"e1.w2":"Perquè una força només canvia la velocitat si la partícula té molta massa.",
+"e1.frame":"Pau, la partícula no s’accelera en mòdul perquè…",
+"e1.model":"Pau, l’acceleració que veus és centrípeta: canvia la direcció de v però no el mòdul. F ⟂ v, així que no fa treball i l’energia cinètica és constant. Si el camp fóra capaç d’accelerar la partícula, el radi r = m·v/(|q|·B) creixeria a cada volta, i no veus això.",
+"e2.ctx":"Un protó i un electró entren amb la mateixa velocitat en el mateix camp B. Es discuteix com són les seues circumferències.",
+"e2.n0":"Marc","e2.n1":"Clara",
+"e2.s0":"L’electró fa un cercle més gran perquè és més lleuger i es mou més.",
+"e2.s1":"L’electró fa un cercle unes 1800 vegades més xicotet, perquè r = m·v/(|q|·B) i la seua massa és molt menor.",
+"e2.w0":"Amb la mateixa v, B i |q|, el radi és proporcional a la massa; la massa de l’electró és ≈ 1836 vegades menor que la del protó.",
+"e2.w1":"Perquè els electrons, per ser més lleugers, sempre són més ràpids.",
+"e2.w2":"Perquè la càrrega de l’electró és molt menor que la del protó.",
+"e2.frame":"Marc, l’electró fa un cercle més xicotet perquè…",
+"e2.model":"Marc, ací la velocitat és la mateixa; el que canvia és la massa. r = m·v/(|q|·B): amb |q| igual (e) i la mateixa v i B, r és proporcional a m. Com m_e ≈ m_p/1836, el radi de l’electró és unes 1836 vegades més xicotet (i gira en sentit contrari).",
+"e3.ctx":"Una partícula fa una circumferència en un camp B. Es discuteix què passa si en dupliquem la velocitat.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"El radi no canvia, però gira més de pressa.",
+"e3.s1":"El radi es redueix a la meitat.",
+"e3.w0":"r = m·v/(|q|·B) és proporcional a v: el radi es duplica. El període T = 2π·m/(|q|·B) no depèn de v: tarda el mateix en una circumferència doble.",
+"e3.w1":"Perquè, com més velocitat, més força i més corba la trajectòria.",
+"e3.w2":"Perquè el radi depén només del camp B i de la càrrega.",
+"e3.frame":"Pau i Clara, en duplicar v passa que…",
+"e3.model":"Cap dels dos té raó. r ∝ v: el radi es duplica (no es manté ni es redueix). T no depèn de v: la volta dura el mateix; per això el mòbil va el doble de ràpid però recorre una circumferència de doble longitud.",
+"d1.q":"Un protó de v = 2·10⁶ m/s ha de fer una circumferència de radi com a màxim 5 cm. Tria el <b>camp B més xicotet</b> que ho aconsegueix i digues el <b>radi</b> (cm) resultant.",
+"d1.lc":"Camp B:","d1.l0":"r",
+"d1_B1":"Amb B = {0} T el radi és {1} cm: passa de 5 cm.",
+"d1_B2":"Amb {0} T sí que serveix, però no és el camp més xicotet que ho aconsegueix.",
+"d1_r":"Mira-ho al simulador: r = m·v/(|q|·B) amb aquest camp.",
+"d1_ok":"✔ Ben decidit! Amb B = 0,5 T el radi és 4,18 cm (amb 0,2 T, 10,4 cm: no val).",
+"d1.more":"Si el protó anara el doble de ràpid, quin seria el camp més xicotet que mantindria el radi per davall de 5 cm?",
+"d2.q":"Un protó, una partícula α i un positró entren amb v = 2·10⁶ m/s en un camp B = 0,5 T. Tria la que fa la <b>circumferència més gran</b> i digues el seu <b>radi</b> (cm).",
+"d2.lc":"Partícula:","d2.l0":"r",
+"d2_p":"{0} fa una circumferència de {1} cm, però n’hi ha una de més gran.",
+"d2_r":"Mira-ho al simulador: r = m·v/(|q|·B) per a la partícula α.",
+"d2_ok":"✔ Ben decidit! L’α (m ≈ 4·m_p, q = 2e) té el radi més gran: ≈ 8,3 cm.",
+"d2.more":"Ordena de major a menor els radis del protó, l’α i el positró. Quin factor n’explica l’ordre?",
+"d3.q":"Un cicló per a protons usa un camp B = 1 T. Quina <b>freqüència</b> (MHz) ha de tenir el camp elèctric perquè s’acorde amb la volta del protó?",
+"d3.l0":"f",
+"d3_f":"{0} MHz no coincideix amb f = |q|·B/(2π·m) = 1/T.",
+"d3_ok":"✔ Ben decidit! f = 1/T ≈ 1/(65,6 ns) ≈ 15,2 MHz, independent de la velocitat del protó.",
+"d3.more":"Per què els ciclotrons poden usar sempre la mateixa freqüència encara que el protó vaja guanyant velocitat? Mira el radi i el període."
+},
+es:{
+"title":"Partícula en un campo magnético — simulador interactivo",
+"eyebrow":"Campo magnético · Bachillerato",
+"h1":"🧲 Partícula cargada en un campo magnético",
+"lede":"Una carga que entra en un campo B uniforme no va en línea recta: gira. Cambia la partícula, la velocidad, el campo y el ángulo, y mira el radio, el periodo y la hélice.",
+"aria.svg":"Vista superior de la trayectoria circular de la partícula cargada con los vectores velocidad y fuerza, y vista lateral de la hélice",
+"lg_a":"partícula A","lg_b":"partícula B","lg_v":"velocidad v","lg_f":"fuerza F = q·v×B",
+"l_ph":"Vueltas de la partícula A","l_part":"Partícula A","l_v":"Velocidad v","l_B":"Campo magnético B","l_al":"Ángulo α entre v y B","l_dir":"Sentido de B",
+"pn_p":"Protón (+e)","pn_e":"Electrón (−e)","pn_a":"Partícula α (+2e)","pn_pos":"Positrón (+e)",
+"dir_in":"⊗ hacia dentro","dir_out":"⊙ hacia fuera",
+"c_cmp":"Compara con una partícula B","c_vec":"Muestra los vectores v y F","c_lock":"Fija la escala del dibujo",
+"l_partb":"Partícula B","l_vb":"Velocidad v (B)",
+"sp_slow":"Cámara lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Rápido (2×)",
+"launch":"▶ Reproducir","pause":"⏸ Pausa","resume":"▶ Continuar","reset":"↺ Reiniciar",
+"v_top":"Vista superior (⊥ B)","v_side":"Vista lateral (B →)",
+"s_live":"En directo","s_res":"Resultados",
+"rd_turns":"Vueltas de A","rd_t":"Tiempo real","rd_z":"Avance a lo largo de B","rd_v":"|v| (constante)","rd_vp":"v⊥ (perpendicular a B)","rd_vz":"v∥ (paralela a B)",
+"r_r":"Radio r","r_T":"Periodo T","r_f":"Frecuencia f","r_p":"Paso de la hélice","r_F":"Fuerza F = |q|·v⊥·B","r_rB":"Radio r (B)","r_TB":"Periodo T (B)","r_none":"v ∥ B: no hay fuerza, la partícula va recta",
+"note":"La escala del dibujo se adapta a cada caso (la barra indica la longitud real; «Fija la escala» la congela para comparar). La animación da unas cuantas vueltas en pocos segundos: el periodo real es el del panel. En la vista lateral solo se dibuja A.",
+"rng":"Escribe valores dentro del rango del simulador (v de 1 a 50 ·10⁵ m/s, B de 0,05 a 2 T, α de 0° a 90°).",
+"l_rf":"r","l_Bf":"B","l_Tf":"T","l_kf":"r_α / r_p","l_alf":"α","l_ff":"f",
+"pl_0":"el protón","pl_1":"la partícula α","pl_2":"el positrón",
+"m1.q":"Un protón entra perpendicularmente a un campo B = 0,5 T con v = 2·10⁶ m/s. Calcula el <b>radio</b> de la trayectoria (en cm).",
+"m1_hi":"{0} cm es demasiado grande. Revisa r = m·v/(|q|·B) con las unidades en el SI.",
+"m1_lo":"{0} cm es demasiado pequeño. Revisa r = m·v/(|q|·B) con las unidades en el SI.",
+"m1_ok":"✔ ¡Misión cumplida! r = (1,67·10⁻²⁷ · 2·10⁶)/(1,6·10⁻¹⁹ · 0,5) ≈ 4,2 cm.",
+"m1.more":"Si duplicamos la velocidad, ¿el radio se duplica, se reduce a la mitad o hace otra cosa? Predícelo y compruébalo en el simulador.",
+"m2.q":"¿Qué <b>campo B</b> (T) hace falta para que un protón de v = 10⁶ m/s describa una circunferencia de radio 1 cm?",
+"m2_hi":"B = {0} T es demasiado grande: el radio sería menor de 1 cm. Recuerda que r = m·v/(|q|·B).",
+"m2_lo":"B = {0} T es demasiado pequeño: el radio sería mayor de 1 cm. Recuerda que r = m·v/(|q|·B).",
+"m2_ok":"✔ ¡Misión cumplida! B = m·v/(|q|·r) ≈ 1,04 T.",
+"m2.more":"¿Y si quisiéramos la misma circunferencia con un electrón (misma v)? ¿Haría falta un campo mayor o menor? Calcúlalo.",
+"m3.q":"¿Cuál es el <b>periodo</b> T (en ns) de un protón en un campo B = 1 T?",
+"m3_f":"{0} ns no coincide con T = 2π·m/(|q|·B). Revisa los cálculos y las unidades (1 ns = 10⁻⁹ s).",
+"m3_ok":"✔ ¡Misión cumplida! T = 2π·1,67·10⁻²⁷/(1,6·10⁻¹⁹·1) ≈ 65,6 ns.",
+"m3.more":"Cambia la velocidad del protón en el simulador: ¿cambia el periodo? ¿Por qué? Fíjate en el radio.",
+"m4.q":"Una partícula α y un protón entran con la misma velocidad en el mismo campo B. El radio de la α es cuántas <b>veces</b> el del protón?",
+"m4_f":"{0} no es la relación correcta. Recuerda que r = m·v/(|q|·B) y que la α tiene ≈ 4 veces la masa del protón y el doble de carga.",
+"m4_ok":"✔ ¡Misión cumplida! r_α/r_p = (m_α/m_p)/(q_α/q_p) ≈ 3,97/2 ≈ 2.",
+"m4.more":"Un deuterón (1 protón + 1 neutrón) tiene carga +e y masa ≈ 2·m_p. ¿Qué radio tendría respecto de la α? ¿Por qué?",
+"s1.q":"El campo magnético hace trabajo sobre la partícula y le va aumentando la energía cinética.",
+"s1.h":"Mira el ángulo entre la velocidad y la fuerza.",
+"s1.e":"Nunca. La fuerza magnética es siempre perpendicular a v: no hace trabajo (W = F·d·cos 90° = 0), de modo que |v| y la energía cinética se mantienen.",
+"s2.q":"Una partícula cargada que entra en un campo magnético uniforme siempre se desvía.",
+"s2.h":"Recuerda que F = q·v·B·sen α.",
+"s2.e":"A veces. Se desvía si v tiene componente perpendicular a B; si v es paralela a B (α = 0°) la fuerza es cero y sigue recta.",
+"s2_cx_no":"Con α = {0}° todavía hay desviación. Busca un ángulo entre v y B que anule la fuerza.",
+"s2_cx":"✔ Con α = {0}° la velocidad es paralela a B: F = q·v·B·sen α = 0 y la partícula sigue recta.",
+"s3.q":"Si duplicamos el campo B, el radio de la circunferencia se reduce a la mitad.",
+"s3.h":"Mira r = m·v/(|q|·B) y prueba B = 0,5 T y B = 1 T.",
+"s3.e":"Siempre. r es inversamente proporcional a B: con el resto igual, doble B significa la mitad de radio.",
+"s4.q":"El periodo de una vuelta no depende de la velocidad de la partícula.",
+"s4.h":"Compara dos partículas iguales con velocidades distintas: ¿tardan lo mismo en la vuelta?",
+"s4.e":"Siempre. T = 2π·m/(|q|·B) no incluye v: con más velocidad el radio es mayor, pero la vuelta es más larga en la misma proporción.",
+"s5.q":"Dos partículas de cargas de signo opuesto giran en el mismo sentido dentro del mismo campo.",
+"s5.h":"Compara un electrón con un positrón: ¿hacia dónde se curvan?",
+"s5.e":"Nunca. El sentido de giro depende del signo de q (F = q·v×B): las cargas opuestas giran en sentidos contrarios.",
+"s6.q":"Si v forma con B un ángulo α (0° < α < 90°), la trayectoria es una hélice.",
+"s6.h":"Mira la vista lateral con α = 40°.",
+"s6.e":"Siempre. La componente v⊥ hace girar la partícula y la componente v∥ la hace avanzar: giro + avance = hélice.",
+"e1.ctx":"Una partícula cargada gira en un campo magnético uniforme. Se discute qué pasa con el módulo de su velocidad.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"Como la fuerza magnética siempre empuja a la partícula, en cada vuelta va más rápida.",
+"e1.s1":"El módulo de v no cambia: la fuerza solo le cambia la dirección.",
+"e1.w0":"La fuerza es perpendicular a la velocidad, por tanto no hace trabajo (W = F·d·cos 90° = 0): la energía cinética y |v| se mantienen; solo gira la dirección de v.",
+"e1.w1":"Porque la fuerza magnética es tan pequeña que no se aprecia.",
+"e1.w2":"Porque una fuerza solo cambia la velocidad si la partícula tiene mucha masa.",
+"e1.frame":"Pau, la partícula no se acelera en módulo porque…",
+"e1.model":"Pau, la aceleración que ves es centrípeta: cambia la dirección de v pero no el módulo. F ⟂ v, así que no hace trabajo y la energía cinética es constante. Si el campo pudiera acelerar la partícula, el radio r = m·v/(|q|·B) crecería en cada vuelta, y no ves eso.",
+"e2.ctx":"Un protón y un electrón entran con la misma velocidad en el mismo campo B. Se discute cómo son sus circunferencias.",
+"e2.n0":"Marc","e2.n1":"Clara",
+"e2.s0":"El electrón hace un círculo más grande porque es más ligero y se mueve más.",
+"e2.s1":"El electrón hace un círculo unas 1800 veces más pequeño, porque r = m·v/(|q|·B) y su masa es mucho menor.",
+"e2.w0":"Con la misma v, B y |q|, el radio es proporcional a la masa; la masa del electrón es ≈ 1836 veces menor que la del protón.",
+"e2.w1":"Porque los electrones, por ser más ligeros, siempre son más rápidos.",
+"e2.w2":"Porque la carga del electrón es mucho menor que la del protón.",
+"e2.frame":"Marc, el electrón hace un círculo más pequeño porque…",
+"e2.model":"Marc, aquí la velocidad es la misma; lo que cambia es la masa. r = m·v/(|q|·B): con |q| igual (e) y la misma v y B, r es proporcional a m. Como m_e ≈ m_p/1836, el radio del electrón es unas 1836 veces más pequeño (y gira en sentido contrario).",
+"e3.ctx":"Una partícula hace una circunferencia en un campo B. Se discute qué pasa si duplicamos su velocidad.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"El radio no cambia, pero gira más deprisa.",
+"e3.s1":"El radio se reduce a la mitad.",
+"e3.w0":"r = m·v/(|q|·B) es proporcional a v: el radio se duplica. El periodo T = 2π·m/(|q|·B) no depende de v: tarda lo mismo en una circunferencia doble.",
+"e3.w1":"Porque, cuanta más velocidad, más fuerza y más curva la trayectoria.",
+"e3.w2":"Porque el radio depende solo del campo B y de la carga.",
+"e3.frame":"Pau y Clara, al duplicar v ocurre que…",
+"e3.model":"Ninguno de los dos tiene razón. r ∝ v: el radio se duplica (ni se mantiene ni se reduce). T no depende de v: la vuelta dura lo mismo; por eso el móvil va el doble de rápido pero recorre una circunferencia de doble longitud.",
+"d1.q":"Un protón de v = 2·10⁶ m/s tiene que hacer una circunferencia de radio como máximo 5 cm. Elige el <b>campo B más pequeño</b> que lo consigue y di el <b>radio</b> (cm) resultante.",
+"d1.lc":"Campo B:","d1.l0":"r",
+"d1_B1":"Con B = {0} T el radio es {1} cm: se pasa de 5 cm.",
+"d1_B2":"Con {0} T sí que sirve, pero no es el campo más pequeño que lo consigue.",
+"d1_r":"Míralo en el simulador: r = m·v/(|q|·B) con ese campo.",
+"d1_ok":"✔ ¡Bien decidido! Con B = 0,5 T el radio es 4,18 cm (con 0,2 T, 10,4 cm: no vale).",
+"d1.more":"Si el protón fuera el doble de rápido, ¿cuál sería el campo más pequeño que mantendría el radio por debajo de 5 cm?",
+"d2.q":"Un protón, una partícula α y un positrón entran con v = 2·10⁶ m/s en un campo B = 0,5 T. Elige la que hace la <b>circunferencia más grande</b> y di su <b>radio</b> (cm).",
+"d2.lc":"Partícula:","d2.l0":"r",
+"d2_p":"{0} hace una circunferencia de {1} cm, pero hay una más grande.",
+"d2_r":"Míralo en el simulador: r = m·v/(|q|·B) para la partícula α.",
+"d2_ok":"✔ ¡Bien decidido! La α (m ≈ 4·m_p, q = 2e) tiene el radio más grande: ≈ 8,3 cm.",
+"d2.more":"Ordena de mayor a menor los radios del protón, la α y el positrón. ¿Qué factor explica el orden?",
+"d3.q":"Un ciclotrón para protones usa un campo B = 1 T. ¿Qué <b>frecuencia</b> (MHz) debe tener el campo eléctrico para que coincida con la vuelta del protón?",
+"d3.l0":"f",
+"d3_f":"{0} MHz no coincide con f = |q|·B/(2π·m) = 1/T.",
+"d3_ok":"✔ ¡Bien decidido! f = 1/T ≈ 1/(65,6 ns) ≈ 15,2 MHz, independiente de la velocidad del protón.",
+"d3.more":"¿Por qué los ciclotrones pueden usar siempre la misma frecuencia aunque el protón vaya ganando velocidad? Mira el radio y el periodo."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){
+/* ===== Partícula carregada en un camp magnètic ===== */
+const svg=$('#svg');
+const E=1.602e-19,PART=[{q:1,m:1.6726e-27},{q:-1,m:9.109e-31},{q:2,m:6.6447e-27},{q:1,m:9.109e-31}];
+const partA=$('#partA'),partB=$('#partB'),vaEl=$('#va'),vbEl=$('#vb'),bfEl=$('#bf'),alEl=$('#al'),phEl=$('#ph');
+const cmpEl=$('#cmp'),vecEl=$('#vec'),lockEl=$('#lock'),speedEl=$('#speed'),btnPlay=$('#btnPlay'),btnReset=$('#btnReset'),cmpBlock=$('#cmpBlock');
+const readout=$('#readout'),results=$('#results');
+let dirIn=true,turns=0,playing=false,last=null,lk=null,lastView=null;
+const f1=n=>n.toFixed(1);
+function orbit(pi,vU,B,alDeg,dIn){
+  const P=PART[pi],q=Math.abs(P.q)*E,v=vU*1e5,al=alDeg*Math.PI/180;
+  const vp=v*Math.sin(al),vz=alDeg>=90?0:v*Math.cos(al);
+  const om=q*B/P.m,T=2*Math.PI/om;
+  return {v,vp,vz,om,T,r:P.m*vp/(q*B),pitch:vz*T,F:q*vp*B,sgn:(P.q>0?1:-1)*(dIn?1:-1),pi};
+}
+const oA=()=>orbit(+partA.value,+vaEl.value,+bfEl.value,+alEl.value,dirIn);
+const oB=()=>cmpEl.checked?orbit(+partB.value,+vbEl.value,+bfEl.value,+alEl.value,dirIn):null;
+function fmtLen(x){const a=Math.abs(x);if(a===0)return '0 m';if(a>=1)return fmt(x,2)+' m';if(a>=1e-2)return fmt(x*100,2)+' cm';if(a>=1e-3)return fmt(x*1e3,2)+' mm';if(a>=1e-6)return fmt(x*1e6,2)+' µm';return fmt(x*1e9,2)+' nm';}
+function fmtTime(x){const a=Math.abs(x);if(a===0)return '0 s';if(a>=1)return fmt(x,2)+' s';if(a>=1e-3)return fmt(x*1e3,2)+' ms';if(a>=1e-6)return fmt(x*1e6,2)+' µs';if(a>=1e-9)return fmt(x*1e9,2)+' ns';return fmt(x*1e12,2)+' ps';}
+function fmtFreq(x){if(x>=1e9)return fmt(x/1e9,2)+' GHz';if(x>=1e6)return fmt(x/1e6,2)+' MHz';if(x>=1e3)return fmt(x/1e3,2)+' kHz';return fmt(x,2)+' Hz';}
+const nice125=x=>{const mag=Math.pow(10,Math.floor(Math.log10(x))),m=x/mag;return (m<2?1:m<5?2:5)*mag;};
+const posOf=(o,tn)=>{const th=2*Math.PI*tn;return [o.r*Math.sin(th),o.sgn*o.r*(1-Math.cos(th))];};
+function computeView(A,B){
+  let xmin=-A.r,xmax=A.r,ymin=Math.min(0,2*A.sgn*A.r),ymax=Math.max(0,2*A.sgn*A.r);
+  if(B){xmin=Math.min(xmin,-B.r);xmax=Math.max(xmax,B.r);ymin=Math.min(ymin,0,2*B.sgn*B.r);ymax=Math.max(ymax,0,2*B.sgn*B.r);}
+  const w=xmax-xmin,h=ymax-ymin,size=Math.max(w,h);
+  if(size<1e-30)return {s:1,cx:0,cy:0,none:true};
+  return {s:Math.min(240/Math.max(w,size*.01),225/Math.max(h,size*.01)),cx:(xmin+xmax)/2,cy:(ymin+ymax)/2,none:false};
+}
+const symCache={};
+function symbols(){
+  const k=dirIn?'in':'out';if(symCache[k])return symCache[k];
+  let s='';
+  for(let x=24;x<=290;x+=28)for(let y=40;y<=280;y+=28){
+    s+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="none" stroke="var(--muted)" opacity=".35"/>'+
+      (dirIn?'<path d="M'+(x-3)+','+(y-3)+'L'+(x+3)+','+(y+3)+'M'+(x+3)+','+(y-3)+'L'+(x-3)+','+(y+3)+'" stroke="var(--muted)" opacity=".35"/>':'<circle cx="'+x+'" cy="'+y+'" r="1.4" fill="var(--muted)" opacity=".4"/>');
+  }
+  return symCache[k]=s;
+}
+function arrowPx(x,y,dx,dy,len,color){
+  const x2=x+dx*len,y2=y+dy*len,px=-dy,py=dx;
+  return '<line x1="'+f1(x)+'" y1="'+f1(y)+'" x2="'+f1(x2)+'" y2="'+f1(y2)+'" stroke="'+color+'" stroke-width="2.4"/><polygon points="'+f1(x2)+','+f1(y2)+' '+f1(x2-dx*7+px*3.5)+','+f1(y2-dy*7+py*3.5)+' '+f1(x2-dx*7-px*3.5)+','+f1(y2-dy*7-py*3.5)+'" fill="'+color+'"/>';
+}
+function draw(){
+  const A=oA(),B=oB();
+  let V=computeView(A,B);
+  if(lockEl.checked&&lk)V=lk;
+  lastView=V;
+  const PX=(wx,wy)=>[154+(wx-V.cx)*V.s,155-(wy-V.cy)*V.s];
+  let o='<defs><clipPath id="ctop"><rect x="8" y="22" width="292" height="270"/></clipPath><clipPath id="clat"><rect x="316" y="22" width="276" height="270"/></clipPath></defs>';
+  o+='<text x="10" y="14" style="font-weight:700">'+t('v_top')+'</text><text x="318" y="14" style="font-weight:700">'+t('v_side')+'</text>';
+  o+='<rect x="8" y="22" width="292" height="270" rx="6" fill="var(--stage)" stroke="var(--line)"/><rect x="316" y="22" width="276" height="270" rx="6" fill="var(--stage)" stroke="var(--line)"/>';
+  o+='<g clip-path="url(#ctop)">'+symbols();
+  const orb=(O,color,tn,glyph,vec)=>{
+    let q='';
+    const [cxp,cyp]=PX(0,O.sgn*O.r),[ox,oy]=PX(0,0);
+    if(O.r>0){
+      q+='<circle cx="'+f1(cxp)+'" cy="'+f1(cyp)+'" r="'+f1(O.r*V.s)+'" fill="none" stroke="'+color+'" stroke-dasharray="3 5" opacity=".4"/>';
+      const fr=Math.min(tn,1),n=Math.max(2,Math.ceil(fr*90)),pts=[];
+      for(let i=0;i<=n;i++){const [wx,wy]=posOf(O,fr*i/n);pts.push(PX(wx,wy).map(f1).join(','));}
+      q+='<polyline fill="none" stroke="'+color+'" stroke-width="2.4" points="'+pts.join(' ')+'"/>';
+    }
+    const [wx,wy]=posOf(O,tn),[px,py]=PX(wx,wy),th=2*Math.PI*tn;
+    q+='<path d="M'+f1(ox-4)+','+f1(oy)+'L'+f1(ox+4)+','+f1(oy)+'M'+f1(ox)+','+f1(oy-4)+'L'+f1(ox)+','+f1(oy+4)+'" stroke="var(--muted)"/>';
+    if(vec&&vecEl.checked&&O.r>0){
+      const vx=Math.cos(th),vy=-O.sgn*Math.sin(th),fx=-Math.sin(th),fy=-O.sgn*Math.cos(th);
+      q+=arrowPx(px,py,vx,vy,40,'var(--ok)')+arrowPx(px,py,fx,fy,32,'var(--warn)');
+    }
+    q+='<circle cx="'+f1(px)+'" cy="'+f1(py)+'" r="7.5" fill="'+color+'" stroke="var(--panel)" stroke-width="1.5"/><text x="'+f1(px)+'" y="'+f1(py+3.5)+'" text-anchor="middle" style="fill:var(--panel);font-weight:700;font-size:11px">'+glyph+'</text>';
+    return q;
+  };
+  if(!V.none){
+    const [ccx,ccy]=PX(0,A.sgn*A.r),[ppx,ppy]=PX(...posOf(A,turns));
+    if(A.r>0)o+='<line x1="'+f1(ccx)+'" y1="'+f1(ccy)+'" x2="'+f1(ppx)+'" y2="'+f1(ppy)+'" stroke="var(--pa)" stroke-dasharray="2 3" opacity=".7"/><circle cx="'+f1(ccx)+'" cy="'+f1(ccy)+'" r="2" fill="var(--pa)"/>';
+  }
+  o+=orb(A,'var(--pa)',turns,PART[A.pi].q>0?'+':'−',true);
+  if(B){const tB=turns*A.T/B.T;o+=orb(B,'var(--pb)',tB,PART[B.pi].q>0?'+':'−',false);}
+  o+='</g>';
+  /* barra d'escala */
+  if(!V.none){
+    const Lm=nice125(80/V.s),Lp=Lm*V.s;
+    o+='<line x1="18" y1="282" x2="'+f1(18+Lp)+'" y2="282" stroke="var(--ink)" stroke-width="2"/><path d="M18,278V286M'+f1(18+Lp)+',278V286" stroke="var(--ink)"/><text x="'+f1(18+Lp/2)+'" y="274" text-anchor="middle" style="fill:var(--ink)">'+fmtLen(Lm)+'</text>';
+    if(A.r>0)o+='<text x="296" y="36" text-anchor="end" style="fill:var(--pa);font-weight:700">r = '+fmtLen(A.r)+'</text>';
+  }
+  /* vista lateral: hèlix de A (z cap a la dreta, B →) */
+  const zpx=tn=>A.pitch>0?336+tn/3*236:454;
+  const ypx=tn=>155-A.r*V.s*Math.sin(2*Math.PI*tn);
+  o+='<g clip-path="url(#clat)">';
+  o+='<line x1="336" y1="155" x2="586" y2="155" stroke="var(--line)"/>';
+  const gp=[];for(let i=0;i<=300;i++){const tn=3*i/300;gp.push(f1(zpx(tn))+','+f1(ypx(tn)));}
+  o+='<polyline fill="none" stroke="var(--pa)" stroke-dasharray="3 5" opacity=".4" points="'+gp.join(' ')+'"/>';
+  const n2=Math.max(2,Math.ceil(turns*100)),tp=[];for(let i=0;i<=n2;i++){const tn=turns*i/n2;tp.push(f1(zpx(tn))+','+f1(ypx(tn)));}
+  o+='<polyline fill="none" stroke="var(--pa)" stroke-width="2.4" points="'+tp.join(' ')+'"/>';
+  o+='<circle cx="'+f1(zpx(turns))+'" cy="'+f1(ypx(turns))+'" r="7" fill="var(--pa)" stroke="var(--panel)" stroke-width="1.5"/>';
+  o+='</g>';
+  o+=arrowPx(336,282,1,0,248,'var(--muted)').replace('stroke-width="2.4"','stroke-width="1.4"')+'<text x="574" y="274" style="fill:var(--ink);font-weight:700">B</text>';
+  if(A.pitch>0&&A.r>0)o+='<text x="586" y="36" text-anchor="end" style="fill:var(--pa);font-weight:700">p = '+fmtLen(A.pitch)+'</text>';
+  svg.innerHTML=o;
+}
+function panels(){
+  const A=oA(),B=oB();
+  const row=(k,v,c)=>'<dt'+(c?' class="'+c+'"':'')+'>'+k+'</dt><dd'+(c?' class="'+c+'"':'')+'>'+v+'</dd>';
+  const tr=turns*A.T;
+  readout.innerHTML=row(t('rd_turns'),fmt(turns,2))+row(t('rd_t'),fmtTime(tr))+row(t('rd_z'),fmtLen(A.vz*tr))+row(t('rd_v'),fmtN(A.v)+' m/s')+row(t('rd_vp'),fmtN(A.vp)+' m/s')+row(t('rd_vz'),fmtN(A.vz)+' m/s');
+  let r=row(t('r_r'),'<b>'+fmtLen(A.r)+'</b>')+row(t('r_T'),fmtTime(A.T))+row(t('r_f'),fmtFreq(1/A.T))+(A.pitch>0&&A.r>0?row(t('r_p'),fmtLen(A.pitch)):'')+row(t('r_F'),fmtN(A.F)+' N');
+  if(A.r===0)r+=row('—',t('r_none'));
+  if(B)r+=row(t('r_rB'),fmtLen(B.r),'b')+row(t('r_TB'),fmtTime(B.T),'b');
+  results.innerHTML=r;
+}
+function labels(){
+  $('#vaL').textContent=fmt(+vaEl.value/10,1)+'·10⁶ m/s';$('#vbL').textContent=fmt(+vbEl.value/10,1)+'·10⁶ m/s';
+  $('#bfL').textContent=fmt(+bfEl.value,2)+' T';$('#alL').textContent=alEl.value+'°';
+  $('#phL').textContent=fmt(turns,2);phEl.value=turns;
+  $$('#dirsw button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.d==='in')===dirIn)));
+}
+function setPlay(){const k=playing?'pause':(turns>0&&turns<3?'resume':'launch');if(btnPlay.textContent!==t(k))btnPlay.textContent=t(k);}
+function refresh(){labels();draw();panels();setPlay();}
+function tick(ts){
+  if(!playing)return;
+  if(last===null)last=ts;
+  turns+=(ts-last)/1000*.4*(+speedEl.value);last=ts;
+  if(turns>=3){turns=3;playing=false;last=null;}
+  refresh();
+  if(playing)requestAnimationFrame(tick);
+}
+function play(){
+  if(playing){playing=false;last=null;setPlay();return;}
+  if(turns>=3)turns=0;
+  playing=true;last=null;setPlay();requestAnimationFrame(tick);
+}
+[partA,partB,vaEl,vbEl,bfEl,alEl,vecEl].forEach(e=>e.addEventListener('input',refresh));
+cmpEl.addEventListener('change',()=>{cmpBlock.classList.toggle('show',cmpEl.checked);refresh();});
+lockEl.addEventListener('change',()=>{lk=lockEl.checked?lastView:null;refresh();});
+phEl.addEventListener('input',()=>{turns=+phEl.value;playing=false;last=null;refresh();});
+$$('#dirsw button').forEach(b=>b.addEventListener('click',()=>{dirIn=b.dataset.d==='in';refresh();}));
+btnPlay.addEventListener('click',play);
+btnReset.addEventListener('click',()=>{playing=false;last=null;turns=0;refresh();});
+App.hooks.push(refresh);
+
+/* ===== Raona-ho ===== */
+const dv=(x,d)=>x===undefined?d:x;
+function load(o){
+  o=o||{};
+  partA.value=String(dv(o.p,0));vaEl.value=dv(o.v,20);bfEl.value=dv(o.B,0.5);alEl.value=dv(o.al,90);dirIn=o.dir!=='out';
+  if(o.c){cmpEl.checked=true;partB.value=String(dv(o.c.p,1));vbEl.value=dv(o.c.v,20);}else cmpEl.checked=false;
+  cmpBlock.classList.toggle('show',cmpEl.checked);
+  lockEl.checked=false;lk=null;vecEl.checked=true;
+  speedEl.value=o.slow?'0.5':'1';
+  playing=false;last=null;turns=clamp(dv(o.ph,0),0,3);
+  refresh();
+  if(o.run)play();
+  RZ.show($('#svg'));
+}
+const ob=(pi,v,B,al)=>orbit(pi,v,B,al===undefined?90:al,true);
+const PIDX=[0,2,3],cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const R0=ob(0,20,.5).r*100,T0=ob(0,20,1).T*1e9,B0=PART[0].m*1e6/(E*0.01),K0=ob(2,20,.5).r/ob(0,20,.5).r,RA0=ob(2,20,.5).r*100,F0=1/ob(0,20,1).T/1e6;
+RZ.init({
+ sim:()=>load(),
+ M:[
+  {id:'m1',f:[{l:'l_rf',u:'cm'}],sim:()=>load({p:0,v:20,B:.5}),ok:()=>({k:'m1_ok'}),
+   chk:([r])=>Math.abs(r-R0)<=.1?null:{k:r>R0?'m1_hi':'m1_lo',p:[fmt(r,2)]}},
+  {id:'m2',f:[{l:'l_Bf',u:'T'}],sim:([B])=>load({p:0,v:10,B:clamp(B,.05,2)}),ok:()=>({k:'m2_ok'}),
+   chk:([B])=>Math.abs(B-B0)<=.03?null:{k:B>B0?'m2_hi':'m2_lo',p:[fmt(B,2)]}},
+  {id:'m3',f:[{l:'l_Tf',u:'ns'}],sim:()=>load({p:0,v:20,B:1}),ok:()=>({k:'m3_ok'}),
+   chk:([T])=>Math.abs(T-T0)<=.7?null:{k:'m3_f',p:[fmt(T,1)]}},
+  {id:'m4',f:[{l:'l_kf'}],sim:()=>load({p:2,v:20,B:.5,c:{p:0,v:20}}),ok:()=>({k:'m4_ok'}),
+   chk:([k])=>k>=1.9&&k<=2.1?null:{k:'m4_f',p:[fmt(k,2)]}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load({run:true})},
+  {id:'s2',ans:'D',f:[{l:'l_alf',u:'°'}],cxsim:([al])=>load({al:clamp(al,0,90)}),
+   cxok:([al])=>({k:'s2_cx',p:[al]}),
+   cx:([al])=>!(al>=0&&al<=90)?{k:'rng'}:al===0?null:{k:'s2_cx_no',p:[al]}},
+  {id:'s3',ans:'S',sim:()=>load({B:.5})},
+  {id:'s4',ans:'S',sim:()=>load({p:0,v:10,c:{p:0,v:20}})},
+  {id:'s5',ans:'M',sim:()=>load({p:3,v:20,c:{p:1,v:20}})},
+  {id:'s6',ans:'S',sim:()=>load({al:40})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({run:true})},
+  {id:'e2',who:1,sim:()=>load({p:0,v:20,c:{p:1,v:20}})},
+  {id:'e3',who:3,sim:()=>load({p:0,v:10,c:{p:0,v:20}})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[.1,.2,.5,1],fmt:x=>fmt(x,1)+' T'},f:[{l:'d1.l0',u:'cm'}],
+   sim:(a)=>load({p:0,v:20,B:Number.isFinite(a[0])?a[0]:.5}),ok:()=>({k:'d1_ok'}),
+   chk:([p,r])=>p<.5-1e-9?{k:'d1_B1',p:[fmt(p,1),fmt(ob(0,20,p).r*100,1)]}:p>.5+1e-9?{k:'d1_B2',p:[fmt(p,1)]}:Math.abs(r-R0)>.1?{k:'d1_r'}:null},
+  {id:'d2',chips:{vals:[0,1,2],fmt:x=>cap(t('pl_'+x))},f:[{l:'d2.l0',u:'cm'}],
+   sim:(a)=>load({p:Number.isFinite(a[0])?PIDX[a[0]]:0,v:20,B:.5}),ok:()=>({k:'d2_ok'}),
+   chk:([p,r])=>p!==1?{k:'d2_p',p:[cap(t('pl_'+p)),fmt(ob(PIDX[p],20,.5).r*100,2)]}:Math.abs(r-RA0)>.15?{k:'d2_r'}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'MHz'}],sim:()=>load({p:0,v:20,B:1}),ok:()=>({k:'d3_ok'}),
+   chk:([f])=>Math.abs(f-F0)<=.3?null:{k:'d3_f',p:[fmt(f,2)]}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+refresh();
+})();
+</script>
+</body>
+</html>
