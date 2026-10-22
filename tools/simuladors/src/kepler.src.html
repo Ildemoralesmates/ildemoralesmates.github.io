@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lleis de Kepler</title>
+<meta name="description" content="Simulador interactiu de les tres lleis de Kepler: òrbites el·líptiques, àrees iguals en temps iguals i la relació T²/a³. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@RAONA_CSS@*/
+:root{--sun:#d79700;--orbit:#7d879d;--secA:rgba(35,80,200,.09);--secB:rgba(35,80,200,.19);--secNow:rgba(35,80,200,.42);--secEdge:rgba(35,80,200,.28)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--sun:#ffc93a;--orbit:#6f7b95;--secA:rgba(118,162,255,.08);--secB:rgba(118,162,255,.17);--secNow:rgba(118,162,255,.40);--secEdge:rgba(118,162,255,.25)}}
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:1100px){.ctls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls fieldset{border:1px solid var(--line);border-radius:8px;padding:8px 10px 10px;align-content:start}
+.ctls fieldset:first-child{border-top:1px solid var(--line)}
+.ctls legend{float:none;width:auto;padding:0 4px}
+.ctls legend .sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:6px 18px;padding:0 4px}
+.kc{display:grid;grid-template-columns:minmax(0,1fr) 4.6rem 2.4rem;align-items:center;gap:3px 8px}
+.kc label{grid-column:1/-1;font-size:13px}
+.kc input[type=range]{width:100%;accent-color:var(--pa);margin:0}
+.kc input[type=number]{width:100%;font-family:var(--f-num);font-size:12.5px;padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:var(--stage);color:var(--ink)}
+.kc .unit{font-size:12px;color:var(--muted)}
+.kc.b input[type=range]{accent-color:var(--pb)}
+.off{opacity:.45}
+.simcv .bar{padding:0;border:0}
+.legend{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.dot.a{background:var(--pa)} .dot.b{background:var(--pb);margin-left:8px}
+.clock{margin-left:auto;font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.side h3{margin:2px 0 0;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.side dl{font-size:13.5px;gap:3px 10px}
+.side .tbl{font-size:13px}
+.tbl tr.b td{color:var(--pb)}
+.plot canvas{aspect-ratio:560/300}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="bar">
+<button id="play" class="btn primary" type="button" data-i18n="pause"></button>
+<button id="reset" class="btn" type="button" data-i18n="reset"></button>
+<span class="legend"><i class="dot a"></i><span data-i18n="plA"></span><span id="legB"><i class="dot b"></i><span data-i18n="plB"></span></span></span>
+<span class="clock" id="clock"></span>
+</div>
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="ctls">
+<fieldset><legend><span class="sw" style="background:var(--pa)"></span><span data-i18n="plA"></span></legend>
+<div class="chips" id="presets"></div>
+<div id="ctlA" style="display:grid;gap:8px"></div></fieldset>
+<fieldset><legend><span class="sw" style="background:var(--pb)"></span><span data-i18n="fsB"></span></legend>
+<label class="check"><input type="checkbox" id="showB" checked><span data-i18n="showB"></span></label>
+<div id="ctlB" style="display:grid;gap:8px"></div></fieldset>
+<fieldset><legend data-i18n="fsS"></legend>
+<div id="ctlS" style="display:grid;gap:8px"></div></fieldset>
+<div class="checks">
+<label class="check"><input type="checkbox" id="l1" checked><span data-i18n="c_l1"></span></label>
+<label class="check"><input type="checkbox" id="l2" checked><span data-i18n="c_l2"></span></label>
+<label class="check"><input type="checkbox" id="vel" checked><span data-i18n="c_vel"></span></label>
+</div>
+</div>
+</div>
+<div class="side">
+<h3 data-i18n="h_l1"></h3>
+<dl>
+<dt data-i18n="o_r"></dt><dd id="o-r"></dd>
+<dt data-i18n="o_r2"></dt><dd id="o-r2"></dd>
+<dt data-i18n="o_sum"></dt><dd id="o-sum" class="hl"></dd>
+<dt data-i18n="o_2a"></dt><dd id="o-2a"></dd>
+<dt data-i18n="o_rp"></dt><dd id="o-rp"></dd>
+<dt data-i18n="o_ra"></dt><dd id="o-ra"></dd>
+</dl>
+<h3 data-i18n="h_l2"></h3>
+<dl>
+<dt data-i18n="o_dt"></dt><dd id="o-dt"></dd>
+<dt data-i18n="o_area"></dt><dd id="o-area"></dd>
+<dt data-i18n="o_v"></dt><dd id="o-v" class="hl"></dd>
+<dt data-i18n="o_vp"></dt><dd id="o-vp"></dd>
+<dt data-i18n="o_va"></dt><dd id="o-va"></dd>
+<dt data-i18n-html="o_ratio"></dt><dd id="o-ratio"></dd>
+</dl>
+<h3 data-i18n="h_l3"></h3>
+<table class="tbl">
+<thead><tr><th></th><th data-i18n="th_a"></th><th data-i18n="th_T"></th><th data-i18n="th_k"></th></tr></thead>
+<tbody>
+<tr><td data-i18n="plA"></td><td id="t-aA"></td><td id="t-TA"></td><td id="t-kA"></td></tr>
+<tr class="b" id="rowB"><td data-i18n="plB"></td><td id="t-aB"></td><td id="t-TB"></td><td id="t-kB"></td></tr>
+</tbody>
+</table>
+<p class="note" data-i18n-html="note_class"></p>
+</div>
+</div>
+</section>
+
+<section class="cards">
+<article class="card"><h2><small data-i18n="law1_k"></small><span data-i18n="law1_t"></span></h2><p data-i18n-html="law1_p"></p></article>
+<article class="card"><h2><small data-i18n="law2_k"></small><span data-i18n="law2_t"></span></h2><p data-i18n-html="law2_p"></p></article>
+<article class="card"><h2><small data-i18n="law3_k"></small><span data-i18n="law3_t"></span></h2><p data-i18n-html="law3_p"></p>
+<div class="seg" role="group" data-i18n-aria="p_aria" aria-label="">
+<button type="button" id="pLog" aria-pressed="true" data-i18n="p_log"></button>
+<button type="button" id="pLin" aria-pressed="false" data-i18n="p_lin"></button>
+</div>
+<div class="plot"><canvas id="pv" role="img" data-i18n-aria="aria.pv" aria-label=""></canvas></div>
+<p class="note" data-i18n="note_pl"></p></article>
+</section>
+
+<!--@RAONA@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Lleis de Kepler",
+"eyebrow":"Gravitació · Moviment planetari",
+"h1":"Lleis de Kepler",
+"lede":"Canvia el semieix, l’excentricitat o la massa de l’estrela i mira com responen l’òrbita, la velocitat i el període.",
+"aria.cv":"Òrbites el·líptiques al voltant de l’estrela, amb els planetes A i B",
+"aria.pv":"Gràfica de la tercera llei de Kepler",
+"pause":"Pausa","play":"Reprodueix","reset":"Reinicia",
+"plA":"Planeta A","plB":"Planeta B","fsB":"Planeta B (comparació)","showB":"Mostra el planeta B",
+"fsS":"Estrela i temps","fsV":"Mostra",
+"c_l1":"1a llei: segon focus, r i r′","c_l2":"2a llei: sectors de temps igual","c_vel":"Vector velocitat",
+"l_a":"Semieix major <i>a</i>","l_e":"Excentricitat <i>e</i>","l_M":"Massa de l’estrela <i>M</i>","l_sp":"Velocitat de la simulació","l_N":"Nombre de sectors <i>N</i> (2a llei)",
+"f_a":"Semieix major a","f_e":"Excentricitat e","f_M":"Massa de l’estrela M","f_eB":"Excentricitat de B (amb a = 2 UA)",
+"a_sp":"Velocitat de la simulació","a_N":"Nombre de sectors N",
+"u_ys":"anys/s","u_yr":"anys","u_d":"dies","clock":"t = {0} anys",
+"pr_mer":"Mercuri","pr_ter":"Terra","pr_mar":"Mart","pr_jup":"Júpiter","pr_plu":"Plutó","pr_hal":"Halley","pr_exc":"Molt excèntrica",
+"h_l1":"1a llei","h_l2":"2a llei","h_l3":"3a llei",
+"o_r":"r (estrela – planeta)","o_r2":"r′ (l’altre focus – planeta)","o_sum":"r + r′","o_2a":"2a","o_rp":"Periheli a(1 − e)","o_ra":"Afeli a(1 + e)",
+"o_dt":"Temps per sector T/N","o_area":"Àrea per sector πab/N","o_v":"v ara","o_vp":"v al periheli","o_va":"v a l’afeli","o_ratio":"v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub>",
+"th_a":"a (UA)","th_T":"T (anys)","th_k":"T²/a³",
+"note_class":"<b>Per a la classe:</b> abans d’augmentar l’excentricitat, demana que preveuen si el període T canviarà.",
+"law1_k":"1a llei","law1_t":"Òrbites el·líptiques","law1_p":"L’òrbita és una el·lipse amb l’estrela en un focus. Per a qualsevol punt, <b>r + r′ = 2a</b>.",
+"law2_k":"2a llei","law2_t":"Àrees iguals en temps iguals","law2_p":"Cada sector ombrejat dura <b>T/N</b> i tots tenen la mateixa àrea <b>πab/N</b>. Prop del periheli el planeta va més ràpid.",
+"law3_k":"3a llei","law3_t":"Períodes i semieixos","law3_p":"T² és proporcional a a³. Amb T en anys, a en UA i M en masses solars: <b>T²/a³ = 1/M</b>.",
+"p_aria":"Tipus de gràfica","p_log":"log T – log a","p_lin":"T² enfront de a³",
+"note_pl":"Punts grisos: planetes del sistema solar (M = 1). Línia contínua: estrela actual.",
+"ax_a":"a (UA)","ax_T":"T (anys)","ax_a3":"a³ (UA³)","ax_T2":"T² (anys²)","perih":"periheli","afel":"afeli",
+"rng":"Escriu valors dins del rang del simulador: a de 0,2 a 50 UA, e de 0 a 0,97 i M de 0,1 a 5 M☉.",
+"m1.q":"Estrela com el Sol (M = 1 M☉). Troba el <b>semieix major</b> d’un planeta, amb òrbita circular, que triga <b>8 anys</b> a donar una volta.",
+"m1_f":"Amb a = {0} UA el període és T = {1} anys (T² = a³).",
+"m1_8":"8 anys és el període que busquem, no el semieix. Recorda: T² = a³ (T en anys, a en UA).",
+"m1_ok":"✔ Missió complida! T² = a³ → 8² = 64 = a³ → a = 4 UA.",
+"m1.more":"I si el planeta tardara 27 anys? Prediu el semieix abans de comprovar-ho i explica la regla que has fet servir.",
+"m2.q":"A <b>1 UA</b> d’una estrela, un planeta triga només <b>mig any</b> a donar una volta. Quina <b>massa</b> (en M☉) té l’estrela?",
+"m2_poc":"Amb M = {0} M☉ el període és T = {1} anys: encara és massa llarg.",
+"m2_mes":"Amb M = {0} M☉ el període és T = {1} anys: ara és massa curt.",
+"m2_ok":"✔ Missió complida! T²/a³ = 1/M → 0,5²/1³ = 0,25 = 1/M → M = 4 M☉.",
+"m2.more":"Quina massa faria que l’any a 1 UA durara 8 mesos (T = 2/3 d’any)? Prediu-ho i comprova-ho.",
+"m3.q":"Un planeta amb semieix major a = 2 UA ha de passar a només <b>0,5 UA</b> de l’estrela, al periheli. Quina <b>excentricitat</b> necessita?",
+"m3_f":"Amb e = {0} el periheli és a(1 − e) = {1} UA (i l’afeli, {2} UA).",
+"m3_ok":"✔ Missió complida! 0,5 = 2(1 − e) → e = 0,75. L’afeli queda a 2(1 + 0,75) = 3,5 UA.",
+"m3.more":"Canvia e i mira el període T de la taula. Depén de l’excentricitat? Explica per què.",
+"m4.q":"Un planeta amb a = 2 UA va, al periheli, <b>3 vegades més ràpid</b> que a l’afeli. Troba la seua <b>excentricitat</b>.",
+"m4_f":"Amb e = {0} el planeta va {1} vegades més ràpid al periheli que a l’afeli.",
+"m4_ok":"✔ Missió complida! v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub> = (1 + e)/(1 − e) = 3 → e = 0,5.",
+"m4.more":"Quina excentricitat faria que la velocitat al periheli fóra 10 vegades la de l’afeli? Prediu-ho i comprova-ho.",
+"s1.q":"Un planeta en òrbita el·líptica va més ràpid quan està més lluny de l’estrela.",
+"s1.h":"Mira la velocitat v al periheli i a l’afeli.",
+"s1.e":"Mai. Per la 2a llei, el radi vector escombra àrees iguals en temps iguals: prop de l’estrela el radi és curt i cal recórrer més arc, així que el planeta hi va més ràpid. A l’afeli és on va més lent.",
+"s2.q":"Dos planetes que giren al voltant de la mateixa estrela tenen el mateix valor de T²/a³, encara que les òrbites tinguen formes ben diferents.",
+"s2.h":"Compara la columna T²/a³ de A i de B.",
+"s2.e":"Sempre. T²/a³ = 1/M només depén de la massa de l’estrela, no del planeta ni de l’excentricitat.",
+"s3.q":"Dos planetes amb el mateix semieix major tenen òrbites de la mateixa forma.",
+"s3.h":"El semieix a fixa el període, però no l’excentricitat.",
+"s3.e":"A vegades. Amb el mateix a i el mateix e serien òrbites idèntiques, però a no determina e: hi ha òrbites quasi circulars i molt allargades amb el mateix període.",
+"s3_cx_igual":"Amb e = {0} l’òrbita de B és quasi igual que la d’A (e = 0,2). Busca una excentricitat que en diferisca més de 0,1.",
+"s3_cx":"✔ Amb e = {0} B té el mateix a = 2 UA que A (el mateix període, {1} anys), però l’òrbita és ben diferent.",
+"s4.q":"Si dos planetes tenen el mateix semieix major, el que té l’òrbita més excèntrica tarda més a donar una volta.",
+"s4.h":"Mira els períodes de la taula de la 3a llei.",
+"s4.e":"Mai: tarden el mateix. T² = a³/M només depén del semieix major, no de l’excentricitat.",
+"s5.q":"Un planeta amb el semieix major 4 vegades més gran que el d’un altre, a la mateixa estrela, tarda 8 vegades més a donar una volta.",
+"s5.h":"Compara els períodes de A i de B a la taula.",
+"s5.e":"Sempre. T² ∝ a³, i per tant T ∝ a<sup>3/2</sup>: 4<sup>3/2</sup> = 8.",
+"s6.q":"Un planeta que està a 1 UA de la seua estrela triga un any a donar una volta.",
+"s6.h":"Canvia la massa de l’estrela i mira el període.",
+"s6.e":"A vegades. Només si l’estrela té la massa del Sol (T² = a³/M). Amb una estrela més massiva l’any a 1 UA és més curt; amb una de menys massa, més llarg.",
+"s6_cx_sol":"Amb M ≈ 1 M☉ sí que dura un any. Prova una estrela amb una massa ben diferent de la del Sol.",
+"s6_cx":"✔ Amb M = {0} M☉ un planeta a 1 UA triga {1} anys, no un any.",
+"e1.ctx":"Dos planetes giren al voltant del mateix estel: A a 1 UA i B a 4 UA. Es discuteix quant triga B a donar una volta.",
+"e1.n0":"Aina","e1.n1":"Pau",
+"e1.s0":"Tarda 4 anys: si està 4 vegades més lluny, el viatge és 4 vegades més llarg.",
+"e1.s1":"Tarda 8 anys: T² és proporcional a a³, i 4³ = 64 = 8².",
+"e1.w0":"La 3a llei diu que T² ∝ a³. Amb A com a referència (T = 1 any), T² = 4³ = 64 i T = 8 anys. El període creix més de pressa que la distància perquè B no només fa una òrbita més llarga: també va més lenta.",
+"e1.w1":"Perquè la 3a llei diu que T és proporcional a a, i per això 4 · 2 = 8.",
+"e1.w2":"Perquè B té més massa que A i això la fa més lenta.",
+"e1.frame":"Aina, B no tarda 4 anys perquè…",
+"e1.model":"Aina, el recorregut de B és 4 vegades més llarg, sí, però B també va més lenta, perquè està més lluny. Per això el període creix més de pressa que la distància: T² = a³ = 64 i T = 8 anys.",
+"e2.ctx":"Un planeta recorre una òrbita molt el·líptica (a = 1,5 UA, e = 0,7). Es discuteix quan va més ràpid.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"Va més ràpid al periheli, quan està més a prop de l’estrela.",
+"e2.s1":"Va sempre a la mateixa velocitat: si no, l’òrbita no seria estable.",
+"e2.w0":"Per la 2a llei, el radi vector escombra àrees iguals en temps iguals. Prop de l’estrela el radi és curt, així que, per escombrar la mateixa àrea, cal recórrer un arc més llarg en el mateix temps: la velocitat és major.",
+"e2.w1":"Perquè prop de l’estrela hi ha menys gravetat i el planeta frena menys.",
+"e2.w2":"Perquè la velocitat només depén de la massa del planeta.",
+"e2.frame":"Marc, la velocitat no és constant perquè…",
+"e2.model":"Marc, amb e = 0,7 el periheli és a 0,45 UA i l’afeli a 2,55 UA. La 2a llei obliga el planeta a anar 5,67 vegades més ràpid al periheli (≈ 57,9 km/s) que a l’afeli (≈ 10,2 km/s). L’òrbita és estable igualment: no necessita velocitat constant, només que gravetat i velocitat encaixen en cada punt.",
+"e3.ctx":"Una estrela té una massa 4 vegades la del Sol. Es discuteix quant triga a donar una volta un planeta que està a 1 UA.",
+"e3.n0":"Laia","e3.n1":"Joan",
+"e3.s0":"Un any, com la Terra: a 1 UA l’any sempre dura un any.",
+"e3.s1":"Dos anys: amb més massa l’estrela atrau més i el planeta va més lent.",
+"e3.w0":"T²/a³ = 1/M, així que T² = 1³/4 = 0,25 i T = 0,5 anys. Amb més massa l’atracció és major i, per no caure, el planeta ha d’anar més ràpid: el període és més curt.",
+"e3.w1":"Perquè el període no depén de la massa de l’estrela, només de la distància.",
+"e3.w2":"Perquè el període depén de la massa del planeta, no de la de l’estrela.",
+"e3.frame":"Laia i Joan, a 1 UA d’aquesta estrela l’any dura… perquè…",
+"e3.model":"Cap dels dos. T² = a³/M = 1/4, així que T = 0,5 anys. Laia aplica la regla del Sol (M = 1) a una estrela que no ho és, i Joan s’equivoca de sentit: més massa vol dir més atracció, més velocitat i un període més curt.",
+"d1.q":"Dissenyes un sistema planetari: vols que, a <b>1 UA</b> de l’estrela, l’any dure <b>2 anys terrestres</b>. Tria la <b>massa</b> de l’estrela i calcula la <b>velocitat orbital</b> (òrbita circular, en UA/any).",
+"d1.lc":"Massa de l’estrela:","d1.l0":"v",
+"d1_f":"Amb M = {0} M☉ l’any a 1 UA dura {1} anys, no 2.",
+"d1_v":"Torna-ho a mirar: la volta és una circumferència de 2π · (1 UA) que es recorre en T = 2 anys. v = longitud / temps.",
+"d1_ok":"✔ Ben decidit! M = 0,25 M☉ → T = 2 anys, i v = 2π · 1/2 ≈ 3,14 UA/any (≈ 14,9 km/s).",
+"d1.more":"I si volguérem que l’any a 1 UA durara 3 anys? Quina massa faria falta? (Pista: T²/a³ = 1/M.)",
+"d2.q":"Un cometa ha de passar a <b>0,5 UA</b> de l’estrela (periheli) i allunyar-se fins a <b>10,5 UA</b> (afeli). Tria el <b>semieix major</b> de la seua òrbita i calcula’n el <b>període</b> (estrela com el Sol).",
+"d2.lc":"Semieix major:","d2.l0":"T",
+"d2_f":"Amb a = {0} UA, periheli + afeli = 2a = {1} UA, però aquí en necessitem 0,5 + 10,5 = 11 UA.",
+"d2_T":"Mira-ho al simulador: T² = a³, amb a en UA i T en anys.",
+"d2_ok":"✔ Ben decidit! 2a = 0,5 + 10,5 → a = 5,5 UA, i T = 5,5<sup>3/2</sup> ≈ 12,9 anys (amb e ≈ 0,91).",
+"d2.more":"Si el cometa tinguera el mateix a però el periheli a 1 UA, canviaria el període? A quina distància arribaria a l’afeli?"
+},
+es:{
+"title":"Leyes de Kepler",
+"eyebrow":"Gravitación · Movimiento planetario",
+"h1":"Leyes de Kepler",
+"lede":"Cambia el semieje, la excentricidad o la masa de la estrella y mira cómo responden la órbita, la velocidad y el periodo.",
+"aria.cv":"Órbitas elípticas alrededor de la estrella, con los planetas A y B",
+"aria.pv":"Gráfica de la tercera ley de Kepler",
+"pause":"Pausa","play":"Reproducir","reset":"Reiniciar",
+"plA":"Planeta A","plB":"Planeta B","fsB":"Planeta B (comparación)","showB":"Mostrar el planeta B",
+"fsS":"Estrella y tiempo","fsV":"Mostrar",
+"c_l1":"1.ª ley: segundo foco, r y r′","c_l2":"2.ª ley: sectores de igual tiempo","c_vel":"Vector velocidad",
+"l_a":"Semieje mayor <i>a</i>","l_e":"Excentricidad <i>e</i>","l_M":"Masa de la estrella <i>M</i>","l_sp":"Velocidad de la simulación","l_N":"Número de sectores <i>N</i> (2.ª ley)",
+"f_a":"Semieje mayor a","f_e":"Excentricidad e","f_M":"Masa de la estrella M","f_eB":"Excentricidad de B (con a = 2 UA)",
+"a_sp":"Velocidad de la simulación","a_N":"Número de sectores N",
+"u_ys":"años/s","u_yr":"años","u_d":"días","clock":"t = {0} años",
+"pr_mer":"Mercurio","pr_ter":"Tierra","pr_mar":"Marte","pr_jup":"Júpiter","pr_plu":"Plutón","pr_hal":"Halley","pr_exc":"Muy excéntrica",
+"h_l1":"1.ª ley","h_l2":"2.ª ley","h_l3":"3.ª ley",
+"o_r":"r (estrella – planeta)","o_r2":"r′ (el otro foco – planeta)","o_sum":"r + r′","o_2a":"2a","o_rp":"Perihelio a(1 − e)","o_ra":"Afelio a(1 + e)",
+"o_dt":"Tiempo por sector T/N","o_area":"Área por sector πab/N","o_v":"v ahora","o_vp":"v en el perihelio","o_va":"v en el afelio","o_ratio":"v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub>",
+"th_a":"a (UA)","th_T":"T (años)","th_k":"T²/a³",
+"note_class":"<b>Para la clase:</b> antes de aumentar la excentricidad, pide que prevean si el periodo T cambiará.",
+"law1_k":"1.ª ley","law1_t":"Órbitas elípticas","law1_p":"La órbita es una elipse con la estrella en un foco. Para cualquier punto, <b>r + r′ = 2a</b>.",
+"law2_k":"2.ª ley","law2_t":"Áreas iguales en tiempos iguales","law2_p":"Cada sector sombreado dura <b>T/N</b> y todos tienen la misma área <b>πab/N</b>. Cerca del perihelio el planeta va más rápido.",
+"law3_k":"3.ª ley","law3_t":"Periodos y semiejes","law3_p":"T² es proporcional a a³. Con T en años, a en UA y M en masas solares: <b>T²/a³ = 1/M</b>.",
+"p_aria":"Tipo de gráfica","p_log":"log T – log a","p_lin":"T² frente a a³",
+"note_pl":"Puntos grises: planetas del sistema solar (M = 1). Línea continua: la estrella actual.",
+"ax_a":"a (UA)","ax_T":"T (años)","ax_a3":"a³ (UA³)","ax_T2":"T² (años²)","perih":"perihelio","afel":"afelio",
+"rng":"Escribe valores dentro del rango del simulador: a de 0,2 a 50 UA, e de 0 a 0,97 y M de 0,1 a 5 M☉.",
+"m1.q":"Estrella como el Sol (M = 1 M☉). Encuentra el <b>semieje mayor</b> de un planeta, con órbita circular, que tarda <b>8 años</b> en dar una vuelta.",
+"m1_f":"Con a = {0} UA el periodo es T = {1} años (T² = a³).",
+"m1_8":"8 años es el periodo que buscamos, no el semieje. Recuerda: T² = a³ (T en años, a en UA).",
+"m1_ok":"✔ ¡Misión cumplida! T² = a³ → 8² = 64 = a³ → a = 4 UA.",
+"m1.more":"¿Y si el planeta tardara 27 años? Predice el semieje antes de comprobarlo y explica la regla que has usado.",
+"m2.q":"A <b>1 UA</b> de una estrella, un planeta tarda solo <b>medio año</b> en dar una vuelta. ¿Qué <b>masa</b> (en M☉) tiene la estrella?",
+"m2_poc":"Con M = {0} M☉ el periodo es T = {1} años: todavía es demasiado largo.",
+"m2_mes":"Con M = {0} M☉ el periodo es T = {1} años: ahora es demasiado corto.",
+"m2_ok":"✔ ¡Misión cumplida! T²/a³ = 1/M → 0,5²/1³ = 0,25 = 1/M → M = 4 M☉.",
+"m2.more":"¿Qué masa haría que el año a 1 UA durara 8 meses (T = 2/3 de año)? Predícelo y compruébalo.",
+"m3.q":"Un planeta con semieje mayor a = 2 UA debe pasar a solo <b>0,5 UA</b> de la estrella, en el perihelio. ¿Qué <b>excentricidad</b> necesita?",
+"m3_f":"Con e = {0} el perihelio está a a(1 − e) = {1} UA (y el afelio, a {2} UA).",
+"m3_ok":"✔ ¡Misión cumplida! 0,5 = 2(1 − e) → e = 0,75. El afelio queda a 2(1 + 0,75) = 3,5 UA.",
+"m3.more":"Cambia e y mira el periodo T de la tabla. ¿Depende de la excentricidad? Explica por qué.",
+"m4.q":"Un planeta con a = 2 UA va, en el perihelio, <b>3 veces más rápido</b> que en el afelio. Encuentra su <b>excentricidad</b>.",
+"m4_f":"Con e = {0} el planeta va {1} veces más rápido en el perihelio que en el afelio.",
+"m4_ok":"✔ ¡Misión cumplida! v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub> = (1 + e)/(1 − e) = 3 → e = 0,5.",
+"m4.more":"¿Qué excentricidad haría que la velocidad en el perihelio fuera 10 veces la del afelio? Predícelo y compruébalo.",
+"s1.q":"Un planeta en órbita elíptica va más rápido cuando está más lejos de la estrella.",
+"s1.h":"Mira la velocidad v en el perihelio y en el afelio.",
+"s1.e":"Nunca. Por la 2.ª ley, el radio vector barre áreas iguales en tiempos iguales: cerca de la estrella el radio es corto y hay que recorrer más arco, así que el planeta va más rápido. En el afelio es donde va más lento.",
+"s2.q":"Dos planetas que giran alrededor de la misma estrella tienen el mismo valor de T²/a³, aunque sus órbitas tengan formas muy distintas.",
+"s2.h":"Compara la columna T²/a³ de A y de B.",
+"s2.e":"Siempre. T²/a³ = 1/M solo depende de la masa de la estrella, no del planeta ni de la excentricidad.",
+"s3.q":"Dos planetas con el mismo semieje mayor tienen órbitas de la misma forma.",
+"s3.h":"El semieje a fija el periodo, pero no la excentricidad.",
+"s3.e":"A veces. Con el mismo a y el mismo e serían órbitas idénticas, pero a no determina e: hay órbitas casi circulares y muy alargadas con el mismo periodo.",
+"s3_cx_igual":"Con e = {0} la órbita de B es casi igual que la de A (e = 0,2). Busca una excentricidad que difiera en más de 0,1.",
+"s3_cx":"✔ Con e = {0} B tiene el mismo a = 2 UA que A (el mismo periodo, {1} años), pero la órbita es muy distinta.",
+"s4.q":"Si dos planetas tienen el mismo semieje mayor, el que tiene la órbita más excéntrica tarda más en dar una vuelta.",
+"s4.h":"Mira los periodos de la tabla de la 3.ª ley.",
+"s4.e":"Nunca: tardan lo mismo. T² = a³/M solo depende del semieje mayor, no de la excentricidad.",
+"s5.q":"Un planeta con el semieje mayor 4 veces más grande que el de otro, en la misma estrella, tarda 8 veces más en dar una vuelta.",
+"s5.h":"Compara los periodos de A y de B en la tabla.",
+"s5.e":"Siempre. T² ∝ a³, y por tanto T ∝ a<sup>3/2</sup>: 4<sup>3/2</sup> = 8.",
+"s6.q":"Un planeta que está a 1 UA de su estrella tarda un año en dar una vuelta.",
+"s6.h":"Cambia la masa de la estrella y mira el periodo.",
+"s6.e":"A veces. Solo si la estrella tiene la masa del Sol (T² = a³/M). Con una estrella más masiva el año a 1 UA es más corto; con una de menos masa, más largo.",
+"s6_cx_sol":"Con M ≈ 1 M☉ sí que dura un año. Prueba una estrella con una masa muy distinta de la del Sol.",
+"s6_cx":"✔ Con M = {0} M☉ un planeta a 1 UA tarda {1} años, no un año.",
+"e1.ctx":"Dos planetas giran alrededor de la misma estrella: A a 1 UA y B a 4 UA. Se discute cuánto tarda B en dar una vuelta.",
+"e1.n0":"Aina","e1.n1":"Pau",
+"e1.s0":"Tarda 4 años: si está 4 veces más lejos, el viaje es 4 veces más largo.",
+"e1.s1":"Tarda 8 años: T² es proporcional a a³, y 4³ = 64 = 8².",
+"e1.w0":"La 3.ª ley dice que T² ∝ a³. Con A como referencia (T = 1 año), T² = 4³ = 64 y T = 8 años. El periodo crece más deprisa que la distancia porque B no solo hace una órbita más larga: además va más lenta.",
+"e1.w1":"Porque la 3.ª ley dice que T es proporcional a a, y por eso 4 · 2 = 8.",
+"e1.w2":"Porque B tiene más masa que A y eso la hace más lenta.",
+"e1.frame":"Aina, B no tarda 4 años porque…",
+"e1.model":"Aina, el recorrido de B es 4 veces más largo, sí, pero B también va más lenta, porque está más lejos. Por eso el periodo crece más deprisa que la distancia: T² = a³ = 64 y T = 8 años.",
+"e2.ctx":"Un planeta recorre una órbita muy elíptica (a = 1,5 UA, e = 0,7). Se discute cuándo va más rápido.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"Va más rápido en el perihelio, cuando está más cerca de la estrella.",
+"e2.s1":"Va siempre a la misma velocidad: si no, la órbita no sería estable.",
+"e2.w0":"Por la 2.ª ley, el radio vector barre áreas iguales en tiempos iguales. Cerca de la estrella el radio es corto, así que, para barrer la misma área, hay que recorrer un arco más largo en el mismo tiempo: la velocidad es mayor.",
+"e2.w1":"Porque cerca de la estrella hay menos gravedad y el planeta frena menos.",
+"e2.w2":"Porque la velocidad solo depende de la masa del planeta.",
+"e2.frame":"Marc, la velocidad no es constante porque…",
+"e2.model":"Marc, con e = 0,7 el perihelio está a 0,45 UA y el afelio a 2,55 UA. La 2.ª ley obliga al planeta a ir 5,67 veces más rápido en el perihelio (≈ 57,9 km/s) que en el afelio (≈ 10,2 km/s). La órbita es estable igualmente: no necesita velocidad constante, solo que gravedad y velocidad encajen en cada punto.",
+"e3.ctx":"Una estrella tiene una masa 4 veces la del Sol. Se discute cuánto tarda en dar una vuelta un planeta que está a 1 UA.",
+"e3.n0":"Laia","e3.n1":"Joan",
+"e3.s0":"Un año, como la Tierra: a 1 UA el año siempre dura un año.",
+"e3.s1":"Dos años: con más masa la estrella atrae más y el planeta va más lento.",
+"e3.w0":"T²/a³ = 1/M, así que T² = 1³/4 = 0,25 y T = 0,5 años. Con más masa la atracción es mayor y, para no caer, el planeta tiene que ir más rápido: el periodo es más corto.",
+"e3.w1":"Porque el periodo no depende de la masa de la estrella, solo de la distancia.",
+"e3.w2":"Porque el periodo depende de la masa del planeta, no de la de la estrella.",
+"e3.frame":"Laia y Joan, a 1 UA de esta estrella el año dura… porque…",
+"e3.model":"Ninguno de los dos. T² = a³/M = 1/4, así que T = 0,5 años. Laia aplica la regla del Sol (M = 1) a una estrella que no lo es, y Joan se equivoca de sentido: más masa significa más atracción, más velocidad y un periodo más corto.",
+"d1.q":"Diseñas un sistema planetario: quieres que, a <b>1 UA</b> de la estrella, el año dure <b>2 años terrestres</b>. Elige la <b>masa</b> de la estrella y calcula la <b>velocidad orbital</b> (órbita circular, en UA/año).",
+"d1.lc":"Masa de la estrella:","d1.l0":"v",
+"d1_f":"Con M = {0} M☉ el año a 1 UA dura {1} años, no 2.",
+"d1_v":"Vuélvelo a mirar: la vuelta es una circunferencia de 2π · (1 UA) que se recorre en T = 2 años. v = longitud / tiempo.",
+"d1_ok":"✔ ¡Bien decidido! M = 0,25 M☉ → T = 2 años, y v = 2π · 1/2 ≈ 3,14 UA/año (≈ 14,9 km/s).",
+"d1.more":"¿Y si quisiéramos que el año a 1 UA durara 3 años? ¿Qué masa haría falta? (Pista: T²/a³ = 1/M.)",
+"d2.q":"Un cometa debe pasar a <b>0,5 UA</b> de la estrella (perihelio) y alejarse hasta <b>10,5 UA</b> (afelio). Elige el <b>semieje mayor</b> de su órbita y calcula su <b>periodo</b> (estrella como el Sol).",
+"d2.lc":"Semieje mayor:","d2.l0":"T",
+"d2_f":"Con a = {0} UA, perihelio + afelio = 2a = {1} UA, pero aquí necesitamos 0,5 + 10,5 = 11 UA.",
+"d2_T":"Míralo en el simulador: T² = a³, con a en UA y T en años.",
+"d2_ok":"✔ ¡Bien decidido! 2a = 0,5 + 10,5 → a = 5,5 UA, y T = 5,5<sup>3/2</sup> ≈ 12,9 años (con e ≈ 0,91).",
+"d2.more":"Si el cometa tuviera el mismo a pero el perihelio a 1 UA, ¿cambiaría el periodo? ¿A qué distancia llegaría en el afelio?"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){
+/* ===== Lleis de Kepler ===== */
+const KMS=4.74047,DAY=365.25,W=900,H=500,PW=560,PH=300;
+const G=s=>document.getElementById(s);
+const state={t:0,M:1,speed:0.4,N:12,playing:!REDUCE,plot:'log',show:{l1:true,l2:true,vel:true,b:true}};
+const A={a:1.5,e:0.7,m:0},B={a:1,e:0.3,m:0};
+const SOLAR=[['Me',0.387],['V',0.723],['T',1],['Ma',1.524],['J',5.203],['S',9.537],['U',19.19],['N',30.07]];
+const PRESETS=[['pr_mer',0.387,0.206],['pr_ter',1,0.017],['pr_mar',1.524,0.093],['pr_jup',5.203,0.049],['pr_plu',39.48,0.249],['pr_hal',17.83,0.967],['pr_exc',2,0.75]];
+const period=(a,M=state.M)=>Math.sqrt(a*a*a/M);
+const fn=(x,d=2)=>{const s=fmt(x,d);return s.includes(',')?s.replace(/0+$/,'').replace(/,$/,''):s;};
+const fe=x=>fn(x,3);
+const speedAt=(p,r,M=state.M)=>Math.sqrt(4*Math.PI*Math.PI*M*Math.max(0,2/r-1/p.a)); /* UA/any */
+
+function solveE(M,e){
+  let E=e<0.8?M:Math.PI;
+  for(let i=0;i<40;i++){const d=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));E-=d;if(Math.abs(d)<1e-12)break;}
+  return E;
+}
+function pos(p,m){
+  const E=solveE(m,p.e),b=p.a*Math.sqrt(1-p.e*p.e),T=period(p.a);
+  const Ed=(TAU/T)/(1-p.e*Math.cos(E));
+  return {x:p.a*(Math.cos(E)-p.e),y:b*Math.sin(E),r:p.a*(1-p.e*Math.cos(E)),vx:-p.a*Math.sin(E)*Ed,vy:b*Math.cos(E)*Ed};
+}
+
+/* ---------- controls ---------- */
+function control(host,cfg){
+  const w=document.createElement('div');w.className='kc'+(cfg.cls?' '+cfg.cls:'');
+  w.innerHTML='<label for="'+cfg.id+'"></label><input type="range" id="'+cfg.id+'" min="0" max="1000" step="1"><input type="number" id="'+cfg.id+'-n" min="'+cfg.min+'" max="'+cfg.max+'" step="'+cfg.step+'"><span class="unit">'+(cfg.unit||'')+'</span>';
+  w.querySelector('label').dataset.i18nHtml=cfg.key;w.querySelector('input[type=number]').dataset.i18nAria=cfg.aria;
+  if(cfg.ukey)w.querySelector('.unit').dataset.i18n=cfg.ukey;
+  host.appendChild(w);
+  const r=w.querySelector('input[type=range]'),n=w.querySelector('input[type=number]');
+  const dec=(String(cfg.step).split('.')[1]||'').length;
+  const rnd=v=>Math.min(cfg.max,Math.max(cfg.min,Math.round(v/cfg.step)*cfg.step));
+  const to=v=>cfg.log?1000*Math.log(v/cfg.min)/Math.log(cfg.max/cfg.min):1000*(v-cfg.min)/(cfg.max-cfg.min);
+  const from=u=>cfg.log?cfg.min*Math.pow(cfg.max/cfg.min,u/1000):cfg.min+(cfg.max-cfg.min)*u/1000;
+  const set=v=>{r.value=to(clamp(v,cfg.min,cfg.max));n.value=(+v).toFixed(dec);};
+  r.addEventListener('input',()=>{const v=rnd(from(+r.value));n.value=v.toFixed(dec);cfg.on(v);});
+  n.addEventListener('change',()=>{let v=parseFloat(String(n.value).replace(',','.'));if(!Number.isFinite(v))v=cfg.get();v=rnd(v);set(v);cfg.on(v);});
+  set(cfg.get());w.set=set;return w;
+}
+const cA=G('ctlA'),cB=G('ctlB'),cS=G('ctlS');
+const aA=control(cA,{id:'aA',key:'l_a',aria:'f_a',min:0.2,max:50,step:0.01,log:true,unit:'UA',get:()=>A.a,on:v=>A.a=v});
+const eA=control(cA,{id:'eA',key:'l_e',aria:'f_e',min:0,max:0.97,step:0.001,get:()=>A.e,on:v=>A.e=v});
+const aB=control(cB,{id:'aB',cls:'b',key:'l_a',aria:'f_a',min:0.2,max:50,step:0.01,log:true,unit:'UA',get:()=>B.a,on:v=>B.a=v});
+const eB=control(cB,{id:'eB',cls:'b',key:'l_e',aria:'f_e',min:0,max:0.97,step:0.001,get:()=>B.e,on:v=>B.e=v});
+const mS=control(cS,{id:'mS',key:'l_M',aria:'f_M',min:0.1,max:5,step:0.01,log:true,unit:'M☉',get:()=>state.M,on:v=>state.M=v});
+const sp=control(cS,{id:'sp',key:'l_sp',aria:'a_sp',min:0.01,max:50,step:0.01,log:true,ukey:'u_ys',get:()=>state.speed,on:v=>state.speed=v});
+control(cS,{id:'nS',key:'l_N',aria:'a_N',min:4,max:24,step:1,get:()=>state.N,on:v=>state.N=v});
+
+const pr=G('presets');
+PRESETS.forEach(([k,a,e])=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n=k;
+  b.addEventListener('click',()=>{A.a=a;A.e=e;A.m=0;aA.set(a);eA.set(e);
+    state.speed=clamp(period(a)/6,0.01,50);sp.set(state.speed);});
+  pr.appendChild(b);
+});
+
+function setPlay(){G('play').textContent=t(state.playing?'pause':'play');}
+function toggle(){state.playing=!state.playing;setPlay();}
+G('play').addEventListener('click',toggle);
+G('reset').addEventListener('click',()=>{A.m=0;B.m=0;state.t=0;});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON|SELECT/.test(document.activeElement.tagName)){e.preventDefault();toggle();}});
+[['l1','l1'],['l2','l2'],['vel','vel'],['showB','b']].forEach(([id,k])=>G(id).addEventListener('change',e=>{state.show[k]=e.target.checked;syncB();}));
+function syncB(){cB.classList.toggle('off',!state.show.b);G('legB').hidden=!state.show.b;G('rowB').hidden=!state.show.b;
+  cB.querySelectorAll('input').forEach(i=>i.disabled=!state.show.b);}
+G('pLog').addEventListener('click',()=>setPlot('log'));G('pLin').addEventListener('click',()=>setPlot('lin'));
+function setPlot(m){state.plot=m;G('pLog').setAttribute('aria-pressed',m==='log');G('pLin').setAttribute('aria-pressed',m==='lin');}
+
+/* ---------- canvas ---------- */
+const cv=G('cv'),ctx=fitCanvas(cv,W,H),pv=G('pv'),pctx=fitCanvas(pv,PW,PH);
+const K={};
+function colors(){const s=getComputedStyle(document.documentElement);
+  ['bg','panel','stage','ink','muted','line','pa','pb','sun','orbit','secA','secB','secNow','secEdge','f-body'].forEach(k=>K[k]=s.getPropertyValue('--'+k).trim());}
+const view={s:0,ox:0};
+function arrow(g,x0,y0,x1,y1,col){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return;
+  const ux=dx/L,uy=dy/L,h=Math.min(12,L*0.4);
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=2.5;
+  g.beginPath();g.moveTo(x0,y0);g.lineTo(x1-ux*h*0.8,y1-uy*h*0.8);g.stroke();
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x1-ux*h-uy*h*0.5,y1-uy*h+ux*h*0.5);g.lineTo(x1-ux*h+uy*h*0.5,y1-uy*h-ux*h*0.5);g.closePath();g.fill();
+}
+function label(g,tx,x,y,col,align='left',size=15){g.font=size+'px '+K['f-body'];g.fillStyle=col;g.textAlign=align;g.textBaseline='middle';g.fillText(tx,x,y);}
+function niceStep(raw){const p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+function fmtTick(v){const d=v>=10?0:v>=1?(Number.isInteger(v)?0:1):Math.min(3,Math.ceil(-Math.log10(v)));return v.toFixed(d).replace('.',',');}
+
+function draw(){
+  const w=W,h=H;
+  ctx.fillStyle=K.stage;ctx.fillRect(0,0,w,h);
+  const ps=[A];if(state.show.b)ps.push(B);
+  let xmin=0,xmax=0,ymax=0;
+  for(const p of ps){xmin=Math.min(xmin,-p.a*(1+p.e));xmax=Math.max(xmax,p.a*(1-p.e));ymax=Math.max(ymax,p.a*Math.sqrt(1-p.e*p.e));}
+  const pad=54,ts=Math.min((w-2*pad)/(xmax-xmin),(h-2*pad)/(2*ymax)),tox=w/2-ts*(xmin+xmax)/2;
+  if(!view.s){view.s=ts;view.ox=tox;}else{view.s+=(ts-view.s)*0.15;view.ox+=(tox-view.ox)*0.15;}
+  const S=view.s,OX=view.ox,OY=h/2,X=x=>OX+x*S,Y=y=>OY-y*S;
+  if(state.show.l2){
+    const N=state.N,d=TAU/N,k=Math.min(N-1,Math.floor(A.m/d));
+    const sector=(m0,m1,col)=>{ctx.beginPath();ctx.moveTo(X(0),Y(0));
+      const n=Math.max(6,Math.ceil((m1-m0)/TAU*360));
+      for(let j=0;j<=n;j++){const q=pos(A,m0+(m1-m0)*j/n);ctx.lineTo(X(q.x),Y(q.y));}
+      ctx.closePath();ctx.fillStyle=col;ctx.fill();};
+    for(let i=0;i<N;i++)sector(i*d,(i+1)*d,i%2?K.secB:K.secA);
+    sector(k*d,A.m,K.secNow);
+    ctx.strokeStyle=K.secEdge;ctx.lineWidth=1;
+    for(let i=0;i<N;i++){const q=pos(A,i*d);ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(q.x),Y(q.y));ctx.stroke();}
+  }
+  for(const p of ps){const b=p.a*Math.sqrt(1-p.e*p.e);
+    ctx.beginPath();ctx.ellipse(X(-p.a*p.e),OY,p.a*S,b*S,0,0,TAU);
+    ctx.strokeStyle=p===A?K.pa:K.pb;ctx.globalAlpha=p===A?0.9:0.7;ctx.lineWidth=2;ctx.stroke();ctx.globalAlpha=1;}
+  const qA=pos(A,A.m);
+  if(state.show.l1){
+    const fx=-2*A.a*A.e;
+    ctx.setLineDash([4,5]);ctx.strokeStyle=K.orbit;ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(X(-A.a*(1+A.e)),OY);ctx.lineTo(X(A.a*(1-A.e)),OY);ctx.stroke();ctx.setLineDash([]);
+    ctx.lineWidth=1.8;ctx.strokeStyle=K.ink;ctx.globalAlpha=.55;
+    ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(qA.x),Y(qA.y));ctx.moveTo(X(fx),OY);ctx.lineTo(X(qA.x),Y(qA.y));ctx.stroke();ctx.globalAlpha=1;
+    ctx.beginPath();ctx.arc(X(fx),OY,5,0,TAU);ctx.fillStyle=K.stage;ctx.fill();ctx.strokeStyle=K.ink;ctx.lineWidth=1.8;ctx.stroke();
+    label(ctx,'F′',X(fx),OY+19,K.muted,'center');
+    label(ctx,'F',X(0),OY+22,K.muted,'center');
+    label(ctx,'r',X(qA.x/2)+10,Y(qA.y/2)-10,K.ink);
+    label(ctx,'r′',(X(fx)+X(qA.x))/2+10,(OY+Y(qA.y))/2-10,K.ink);
+    if(A.e>0.02){
+      label(ctx,t('perih'),X(A.a*(1-A.e))+8,OY-13,K.muted);
+      label(ctx,t('afel'),X(-A.a*(1+A.e))-8,OY-13,K.muted,'right');
+    }
+  }
+  const sx=X(0),sy=Y(0),gr=ctx.createRadialGradient(sx,sy,0,sx,sy,28);
+  gr.addColorStop(0,K.sun);gr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.globalAlpha=.45;ctx.fillStyle=gr;ctx.beginPath();ctx.arc(sx,sy,28,0,TAU);ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=K.sun;ctx.beginPath();ctx.arc(sx,sy,10,0,TAU);ctx.fill();
+  for(const p of ps){
+    const q=p===A?qA:pos(p,p.m),col=p===A?K.pa:K.pb,px=X(q.x),py=Y(q.y);
+    if(state.show.vel){const vp=speedAt(p,p.a*(1-p.e)),L=0.35*p.a*S/vp;arrow(ctx,px,py,px+q.vx*L,py-q.vy*L,col);}
+    ctx.beginPath();ctx.arc(px,py,8,0,TAU);ctx.fillStyle=col;ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=K.stage;ctx.stroke();
+    label(ctx,p===A?'A':'B',px+12,py+15,col,'left',17);
+  }
+  const sc=niceStep(100/S);
+  ctx.strokeStyle=K.muted;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(18,h-20);ctx.lineTo(18+sc*S,h-20);
+  ctx.moveTo(18,h-25);ctx.lineTo(18,h-15);ctx.moveTo(18+sc*S,h-25);ctx.lineTo(18+sc*S,h-15);ctx.stroke();
+  label(ctx,fmtTick(sc)+' UA',18+sc*S+8,h-20,K.muted);
+}
+
+/* ---------- 3a llei ---------- */
+function drawPlot(){
+  const w=PW,h=PH,g=pctx;
+  g.fillStyle=K.panel;g.fillRect(0,0,w,h);
+  const L=58,R=12,T=10,Bm=44,pw=w-L-R,ph=h-T-Bm;
+  const ps=[[A,K.pa,'A']];if(state.show.b)ps.push([B,K.pb,'B']);
+  g.font='14px '+K['f-body'];g.lineWidth=1;
+  let px,py,xs=[],ys=[],xl,yl,line,P,inRange=null;
+  if(state.plot==='log'){
+    const x0=-1,x1=2,y0=-2,y1=4;
+    px=a=>L+(Math.log10(a)-x0)/(x1-x0)*pw;py=tt_=>T+(y1-Math.log10(tt_))/(y1-y0)*ph;
+    for(let i=x0;i<=x1;i++)xs.push([Math.pow(10,i),['0,1','1','10','100'][i-x0]]);
+    for(let i=y0;i<=y1;i++)ys.push([Math.pow(10,i),['0,01','0,1','1','10','100','1000','10⁴'][i-y0]]);
+    xl=t('ax_a');yl=t('ax_T');
+    line=M=>{const pts=[];for(let i=0;i<=40;i++){const a=Math.pow(10,x0+(x1-x0)*i/40);pts.push([px(a),py(Math.pow(a,1.5)/Math.sqrt(M))]);}return pts;};
+    P=(a,M)=>[px(a),py(Math.pow(a,1.5)/Math.sqrt(M))];
+  }else{
+    let mx=1.5;for(const [p] of ps)mx=Math.max(mx,1.15*p.a**3);
+    const st=niceStep(mx/4);mx=Math.ceil(mx/st)*st;
+    let my=mx*Math.max(1,1/state.M);const sty=niceStep(my/4);my=Math.ceil(my/sty)*sty;
+    px=x=>L+x/mx*pw;py=y=>T+(1-y/my)*ph;
+    for(let v=0;v<=mx+1e-9;v+=st)xs.push([v,fmtTick(v)]);
+    for(let v=0;v<=my+1e-9;v+=sty)ys.push([v,fmtTick(v)]);
+    xl=t('ax_a3');yl=t('ax_T2');
+    line=M=>[[px(0),py(0)],[px(mx),py(mx/M)]];
+    P=(a,M)=>[px(a**3),py(a**3/M)];
+    inRange=a=>a**3<=mx;
+  }
+  g.strokeStyle=K.line;g.fillStyle=K.muted;
+  for(const [v,tx] of xs){const x=px(v);g.beginPath();g.moveTo(x,T);g.lineTo(x,T+ph);g.stroke();g.textAlign='center';g.textBaseline='top';g.fillText(tx,x,T+ph+5);}
+  for(const [v,tx] of ys){const y=py(v);g.beginPath();g.moveTo(L,y);g.lineTo(L+pw,y);g.stroke();g.textAlign='right';g.textBaseline='middle';g.fillText(tx,L-6,y);}
+  g.textAlign='center';g.textBaseline='bottom';g.fillText(xl,L+pw/2,h-1);
+  g.save();g.translate(13,T+ph/2);g.rotate(-Math.PI/2);g.textBaseline='middle';g.fillText(yl,0,0);g.restore();
+  g.save();g.beginPath();g.rect(L,T,pw,ph);g.clip();
+  const drawLine=(pts,col,dash)=>{g.setLineDash(dash);g.strokeStyle=col;g.lineWidth=2;g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.stroke();g.setLineDash([]);};
+  if(Math.abs(state.M-1)>1e-6)drawLine(line(1),K.muted,[4,4]);
+  drawLine(line(state.M),K.ink,[]);
+  for(const [n,a] of SOLAR){if(inRange&&!inRange(a))continue;const [x,y]=P(a,1);
+    g.fillStyle=K.muted;g.beginPath();g.arc(x,y,3.5,0,TAU);g.fill();g.textAlign='left';g.textBaseline='bottom';g.fillText(n,x+5,y-2);}
+  for(const [p,col,n] of ps){const [x,y]=P(p.a,state.M);
+    g.fillStyle=col;g.beginPath();g.arc(x,y,6.5,0,TAU);g.fill();g.strokeStyle=K.panel;g.lineWidth=1.5;g.stroke();
+    g.font='bold 15px '+K['f-body'];g.textAlign='right';g.textBaseline='top';g.fillText(n,x-7,y+4);g.font='14px '+K['f-body'];}
+  g.restore();
+}
+
+/* ---------- lectures ---------- */
+let out={};
+function put(id,v){if(out[id]!==v){out[id]=v;G(id).textContent=v;}}
+function readouts(){
+  const q=pos(A,A.m),fx=-2*A.a*A.e,r2=Math.hypot(q.x-fx,q.y),b=A.a*Math.sqrt(1-A.e*A.e),T=period(A.a);
+  const rp=A.a*(1-A.e),ra=A.a*(1+A.e),U=' '+t('u_yr');
+  put('o-r',fmt(q.r,3)+' UA');put('o-r2',fmt(r2,3)+' UA');put('o-sum',fmt(q.r+r2,3)+' UA');put('o-2a',fmt(2*A.a,3)+' UA');
+  put('o-rp',fmt(rp,3)+' UA');put('o-ra',fmt(ra,3)+' UA');
+  const dtS=T/state.N;put('o-dt',dtS<1?fmt(dtS*DAY,1)+' '+t('u_d'):fmt(dtS,2)+U);
+  put('o-area',fmt(Math.PI*A.a*b/state.N,4)+' UA²');
+  put('o-v',fmt(speedAt(A,q.r)*KMS,1)+' km/s');put('o-vp',fmt(speedAt(A,rp)*KMS,1)+' km/s');put('o-va',fmt(speedAt(A,ra)*KMS,1)+' km/s');
+  put('o-ratio',fmt(ra/rp,2));
+  put('t-aA',fmt(A.a,3));put('t-TA',fmt(T,3));put('t-kA',fmt(T*T/A.a**3,3));
+  const TB=period(B.a);put('t-aB',fmt(B.a,3));put('t-TB',fmt(TB,3));put('t-kB',fmt(TB*TB/B.a**3,3));
+  put('clock',t('clock',{0:fmt(state.t,2)}));
+}
+
+/* ---------- bucle ---------- */
+let last=performance.now(),tick=0;
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(state.playing){const dy=dt*state.speed;state.t+=dy;
+    for(const p of [A,B])p.m=(p.m+TAU*dy/period(p.a))%TAU;}
+  if(tick++%30===0)colors();
+  draw();drawPlot();readouts();
+  requestAnimationFrame(frame);
+}
+colors();syncB();
+document.addEventListener('themechange',colors);
+try{new MutationObserver(colors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}catch(e){}
+App.hooks.push(()=>{setPlay();out={};});
+
+/* ===== Raona-ho ===== */
+function load(o){
+  o=o||{};
+  A.a=clamp(o.a||1.5,.2,50);A.e=clamp(o.e||0,0,.97);A.m=0;
+  const hasB=!!o.b;
+  if(hasB){B.a=clamp(o.b.a,.2,50);B.e=clamp(o.b.e||0,0,.97);B.m=0;}
+  state.show.b=hasB;G('showB').checked=hasB;
+  state.show.l1=state.show.l2=state.show.vel=true;['l1','l2','vel'].forEach(k=>{G(k).checked=true;});
+  state.M=clamp(o.M||1,.1,5);state.t=0;
+  aA.set(A.a);eA.set(A.e);aB.set(B.a);eB.set(B.e);mS.set(state.M);
+  state.speed=clamp(period(A.a)/6,.01,50);sp.set(state.speed);
+  state.playing=!!o.run;setPlay();syncB();view.s=0;
+  RZ.show(G('cv'));
+}
+const okA=a=>a>=.2&&a<=50, okE=e=>e>=0&&e<=.97, okM=m=>m>=.1&&m<=5;
+const FA={l:'f_a',u:'UA'}, FE={l:'f_e'};
+RZ.init({
+ sim:([o])=>load(o),
+ M:[
+  {id:'m1',f:[FA],sim:([a])=>load({a:a||4,e:0,run:true}),ok:()=>({k:'m1_ok'}),
+   chk:([a])=>!okA(a)?{k:'rng'}:Math.abs(a-4)<.005?null:Math.abs(a-8)<.005?{k:'m1_8'}:{k:'m1_f',p:[fn(a,2),fn(Math.pow(a,1.5),2)]}},
+  {id:'m2',f:[{l:'f_M',u:'M☉'}],sim:([m])=>load({a:1,e:0,M:m||1,run:true}),ok:()=>({k:'m2_ok'}),
+   chk:([m])=>!okM(m)?{k:'rng'}:Math.abs(m-4)<.005?null:{k:m<4?'m2_poc':'m2_mes',p:[fn(m,2),fn(1/Math.sqrt(m),2)]}},
+  {id:'m3',f:[FE],sim:([e])=>load({a:2,e:e||0}),ok:()=>({k:'m3_ok'}),
+   chk:([e])=>!okE(e)?{k:'rng'}:Math.abs(e-.75)<.0005?null:{k:'m3_f',p:[fe(e),fn(2*(1-e),3),fn(2*(1+e),3)]}},
+  {id:'m4',f:[FE],sim:([e])=>load({a:2,e:e||0,run:true}),ok:()=>({k:'m4_ok'}),
+   chk:([e])=>!okE(e)?{k:'rng'}:Math.abs(e-.5)<.0005?null:{k:'m4_f',p:[fe(e),fn((1+e)/(1-e),2)]}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load({a:1.5,e:.7,run:true})},
+  {id:'s2',ans:'S',sim:()=>load({a:1.5,e:.7,b:{a:4,e:.1},run:true})},
+  {id:'s3',ans:'D',f:[{l:'f_eB'}],sim:()=>load({a:2,e:.2,b:{a:2,e:.2}}),
+   cxsim:([e])=>load({a:2,e:.2,b:{a:2,e:okE(e)?e:.2},run:true}),
+   cxok:([e])=>({k:'s3_cx',p:[fe(e),fn(Math.pow(2,1.5),2)]}),
+   cx:([e])=>!okE(e)?{k:'rng'}:Math.abs(e-.2)<.1?{k:'s3_cx_igual',p:[fe(e)]}:null},
+  {id:'s4',ans:'M',sim:()=>load({a:2,e:.05,b:{a:2,e:.8},run:true})},
+  {id:'s5',ans:'S',sim:()=>load({a:1,e:.2,b:{a:4,e:.2},run:true})},
+  {id:'s6',ans:'D',f:[{l:'f_M',u:'M☉'}],sim:()=>load({a:1,e:0,M:1,run:true}),
+   cxsim:([m])=>load({a:1,e:0,M:okM(m)?m:1,run:true}),
+   cxok:([m])=>({k:'s6_cx',p:[fn(m,2),fn(1/Math.sqrt(m),2)]}),
+   cx:([m])=>!okM(m)?{k:'rng'}:Math.abs(m-1)<.05?{k:'s6_cx_sol'}:null}
+ ],
+ E:[{id:'e1',who:1,args:[{a:1,e:.1,b:{a:4,e:.1},run:true}]},
+    {id:'e2',who:0,args:[{a:1.5,e:.7,run:true}]},
+    {id:'e3',who:3,args:[{a:1,e:0,M:4,run:true}]}],
+ D:[
+  {id:'d1',chips:{vals:[.25,.5,1,2],fmt:x=>fn(x,2)+' M☉'},f:[{l:'d1.l0',u:'UA/any'}],
+   sim:([p])=>load({a:1,e:0,M:p||.25,run:true}),ok:()=>({k:'d1_ok'}),
+   chk:([p,v])=>p!==.25?{k:'d1_f',p:[fn(p,2),fn(1/Math.sqrt(p),2)]}:Math.abs(v-Math.PI)>.05?{k:'d1_v'}:null},
+  {id:'d2',chips:{vals:[3,5.5,8,10.5],fmt:x=>fn(x,2)+' UA'},f:[{l:'d2.l0',u:'anys'}],
+   sim:([p])=>load({a:p||5.5,e:p?1-.5/p:10/11,run:true}),ok:()=>({k:'d2_ok'}),
+   chk:([p,T])=>p!==5.5?{k:'d2_f',p:[fn(p,2),fn(2*p,2)]}:Math.abs(T-12.9)>.15?{k:'d2_T'}:null}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tiro parabólico — simulador interactivo</title>
+<meta name="description" content="Simulador de tiro parabólico: cambia la velocidad, el ángulo y la gravedad (Tierra, Luna, Marte, Júpiter) y compara trayectorias. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/tir-parabolic/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/tir-parabolic/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/tir-parabolic/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/tir-parabolic/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Tiro parabólico — simulador interactivo">
+<meta property="og:description" content="Simulador de tiro parabólico: cambia la velocidad, el ángulo y la gravedad (Tierra, Luna, Marte, Júpiter) y compara trayectorias. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/tir-parabolic/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+:root{--vres:#7c3aed;--ground:#6b9c5a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--vres:#a78bfa;--ground:#355c2c}}
+.stage svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.swatch{width:14px;height:3px;display:inline-block;border-radius:2px}
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls .span{grid-column:1/-1}
+.ctl select{grid-column:1/-1;width:100%}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:6px 18px}
+.cmp{grid-column:1/-1;display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;border-top:1px dashed var(--line);padding-top:8px}
+.cmp.show{display:grid}
+@media (max-width:620px){.cmp{grid-template-columns:1fr}}
+.cmp output{color:var(--pb)}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+.vals dd.b{color:var(--pb)}
+.vals dt.b{color:var(--pb)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Cinemática · 4.º ESO y Bachillerato</p>
+      <h1 data-i18n="h1">🚀 Tiro parabólico</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Sin fricción del aire. Toca las variables y lanza: mira cómo cambian el alcance, la altura máxima y el tiempo de vuelo.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 600 300" role="img" data-i18n-aria="aria.svg" aria-label="Gráfica de la trayectoria parabólica de la pelota con sus vectores velocidad"></svg></div>
+<div class="legend">
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="lg_a">trayectoria A</span></span>
+<span><span class="swatch" style="background:var(--ok)"></span><span data-i18n="lg_vx">vₓ</span></span>
+<span><span class="swatch" style="background:var(--warn)"></span><span data-i18n="lg_vy">v_y</span></span>
+<span><span class="swatch" style="background:var(--vres)"></span><span data-i18n="lg_v">v (resultante)</span></span>
+</div>
+<div class="ctls">
+<div class="ctl"><label for="v0a" data-i18n="l_v0">Velocidad inicial v₀</label><output id="v0aL"></output><input type="range" id="v0a" min="5" max="40" step="1" value="20"></div>
+<div class="ctl"><label for="anglea" data-i18n="l_th">Ángulo θ</label><output id="angleaL"></output><input type="range" id="anglea" min="1" max="89" step="1" value="45"></div>
+<div class="ctl"><label for="h0" data-i18n="l_h0">Altura de lanzamiento h₀</label><output id="h0L"></output><input type="range" id="h0" min="0" max="30" step="1" value="0"></div>
+<div class="chips span" id="anglePresets"></div>
+<div class="ctl"><label for="gSel" data-i18n="l_g">Gravedad</label><select id="gSel">
+<option value="9.8" selected data-i18n="g_earth">Tierra (9,8 m/s²)</option><option value="1.62" data-i18n="g_moon">Luna (1,62 m/s²)</option><option value="3.71" data-i18n="g_mars">Marte (3,71 m/s²)</option><option value="24.79" data-i18n="g_jup">Júpiter (24,79 m/s²)</option></select></div>
+<div class="ctl"><label for="speedSel" data-i18n="l_speed">Velocidad de la animación</label><select id="speedSel">
+<option value="0.4" data-i18n="sp_slow">Cámara lenta</option><option value="1" selected data-i18n="sp_norm">Velocidad normal</option><option value="2.5" data-i18n="sp_fast">Rápido</option></select></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="showVectors" checked><span data-i18n="c_vec">Muestra los vectores velocidad</span></label>
+<label class="check"><input type="checkbox" id="compareToggle"><span data-i18n="c_cmp">Compara con una trayectoria B</span></label>
+</div>
+<div class="cmp" id="compareBlock">
+<div class="ctl"><label for="v0b" data-i18n="l_v0b">v₀ (B)</label><output id="v0bL"></output><input type="range" id="v0b" min="5" max="40" step="1" value="30"></div>
+<div class="ctl"><label for="angleb" data-i18n="l_thb">Ángulo θ (B)</label><output id="anglebL"></output><input type="range" id="angleb" min="1" max="89" step="1" value="30"></div>
+</div>
+<div class="btns"><button class="btn primary" id="btnLaunch" type="button" data-i18n="launch">🚀 Lanzar</button><button class="btn" id="btnReset" type="button" data-i18n="reset">↺ Reiniciar</button></div>
+</div>
+</div>
+<div class="side">
+<p class="sh" data-i18n="s_live">En directo</p>
+<dl class="vals" id="readout"></dl>
+<p class="sh" data-i18n="s_res">Resultados de la trayectoria A</p>
+<dl class="vals" id="results"></dl>
+<p class="note" data-i18n="note">Los resultados de A son los de la fórmula; las gráficas y vectores se dibujan a una escala adaptada a cada lanzamiento.</p>
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Tir parabòlic — simulador interactiu",
+"eyebrow":"Cinemàtica · 4t ESO i Batxillerat",
+"h1":"🚀 Tir parabòlic",
+"lede":"Sense fricció de l’aire. Toca les variables i llança: mira com canvien l’abast, l’alçada màxima i el temps de vol.",
+"aria.svg":"Gràfica de la trajectòria parabòlica de la pilota amb els seus vectors velocitat",
+"lg_a":"trajectòria A","lg_vx":"vₓ","lg_vy":"v_y","lg_v":"v (resultant)",
+"l_v0":"Velocitat inicial v₀","l_th":"Angle θ","l_h0":"Alçada de llançament h₀","l_g":"Gravetat","l_speed":"Velocitat de l’animació",
+"g_earth":"Terra (9,8 m/s²)","g_moon":"Lluna (1,62 m/s²)","g_mars":"Mart (3,71 m/s²)","g_jup":"Júpiter (24,79 m/s²)",
+"sp_slow":"Càmera lenta","sp_norm":"Velocitat normal","sp_fast":"Ràpid",
+"c_vec":"Mostra els vectors velocitat","c_cmp":"Compara amb una trajectòria B",
+"l_v0b":"v₀ (B)","l_thb":"Angle θ (B)",
+"launch":"🚀 Llançar","resume":"▶ Continua","pause":"⏸ Pausa","reset":"↺ Reiniciar",
+"s_live":"En directe","s_res":"Resultats de la trajectòria A",
+"r_H":"Alçada màxima H","r_R":"Abast R","r_T":"Temps de vol T","r_RB":"Abast R (B)","r_TB":"Temps de vol T (B)",
+"note":"Els resultats de A són els de la fórmula; les gràfiques i vectors es dibuixen a escala adaptada a cada llançament.",
+"rng":"Escriu valors dins del rang del simulador: v₀ de 5 a 40 m/s, θ de 1 a 89° i h₀ de 0 a 30 m.",
+"m1.q":"Amb v₀ = 20 m/s, h₀ = 0 i gravetat terrestre, troba l’angle que dóna l’<b>abast màxim</b>.",
+"m1_f":"Amb θ = {0}° l’abast és {1} m. Prova altres angles i compara.",
+"m1_ok":"✔ Missió complida! A 45° l’abast és 40,8 m, el màxim quan es llança des del terra.",
+"m1.more":"Si el terra fóra la Lluna, canviaria l’angle òptim? I l’abast màxim? Prediu-ho i comprova-ho.",
+"m2.q":"Amb v₀ = 20 m/s i h₀ = 0, un llançament a 30° arriba a una certa distància. Troba l’<b>altre angle</b> que arriba exactament igual de lluny.",
+"m2_same":"Aquest és el mateix angle! Busca’n un altre.",
+"m2_f":"Amb θ = {0}° l’abast és {1} m; amb 30° és {2} m.",
+"m2_ok":"✔ Missió complida! 30° i 60° donen el mateix abast: sumen 90°.",
+"m2.more":"Comprova-ho amb 20° i 70°, i amb 10° i 80°. Quina relació hi ha entre els dos angles? Explica per què també funciona amb una altra velocitat.",
+"m3.q":"A la <b>Lluna</b> (g = 1,62 m/s²), amb θ = 45° i h₀ = 0, quina és la <b>v₀ mínima</b> (m/s, nombre enter) perquè la pilota arribe almenys a 100 m?",
+"l_v0f":"v₀",
+"m3_poc":"Amb {0} m/s l’abast és {1} m: no arriba a 100 m.",
+"m3_mes":"Amb {0} m/s sí que arriba, però no és la velocitat més xicoteta que ho aconsegueix.",
+"m3_ok":"✔ Missió complida! Amb 13 m/s: R = 13²/1,62 ≈ 104 m (amb 12 m/s només 89 m).",
+"m3.more":"Quina v₀ caldria a la Terra per a arribar també a 100 m? Prediu-ho: serà unes 6 vegades major o unes 2,5 vegades?",
+"m4.q":"A la Terra, amb θ = 45° i h₀ = 0, una pilota a 10 m/s arriba a una certa distància. Quina v₀ (m/s) cal perquè l’abast siga <b>4 vegades</b> més gran?",
+"m4_f":"Amb {0} m/s l’abast és {1} m, i el de 10 m/s multiplicat per 4 és {2} m.",
+"m4_ok":"✔ Missió complida! Amb 20 m/s l’abast és 40,8 m, justament 4 · 10,2 m.",
+"m4.more":"I si volguérem un abast 9 vegades major que el de 10 m/s, quina v₀ caldria? Generalitza la regla.",
+"s1.q":"L’abast màxim s’obté sempre llançant a 45°.",
+"s1.h":"Prova amb una altura de llançament h₀ > 0 i compara angles.",
+"s1.e":"A vegades. A 45° només és òptim si es llança des del terra (h₀ = 0). Des d’alt, el millor angle és menor de 45°.",
+"s1_cx_h0":"Amb h₀ = 0 el màxim sí que és a 45°. Prova amb una altura de llançament.",
+"s1_cx_no":"Amb h₀ = {0} m i θ = {1}° l’abast és {2} m, que no supera el de 45° ({3} m). Prova un altre angle.",
+"s1_cx":"✔ Amb h₀ = {0} m i θ = {1}° arriba a {2} m, més que a 45° ({3} m). (v₀ = 20 m/s, Terra.)",
+"l_h0f":"h₀",
+"s2.q":"En el punt més alt de la trajectòria, la velocitat de la pilota és zero.",
+"s2.h":"Mira vₓ i |v| en l’instant d’alçada màxima.",
+"s2.e":"Mai. En el punt més alt només s’anul·la v_y; vₓ = v₀·cos θ es manté constant, així que |v| = vₓ ≠ 0.",
+"s3.q":"Dos llançaments amb el mateix angle i diferent v₀ tenen el mateix temps de vol.",
+"s3.h":"Compara el temps de vol de dues velocitats amb el mateix angle.",
+"s3.e":"Mai. T = 2·v₀·sin θ/g creix amb v₀: més velocitat vertical inicial, més temps a l’aire.",
+"s4.q":"Amb h₀ = 0, dos angles complementaris (com 30° i 60°) donen el mateix abast.",
+"s4.h":"Compara les dues trajectòries amb «Compara amb una trajectòria B».",
+"s4.e":"Sempre. R = v₀²·sin 2θ/g i sin 2θ = sin(180° − 2θ): θ i 90° − θ donen el mateix valor.",
+"s5.q":"Llançant igual, la pilota arriba més lluny a la Lluna que a la Terra.",
+"s5.h":"Compara l’abast amb dues gravetats: què diu R = v₀²·sin 2θ/g?",
+"s5.e":"Sempre. Amb la mateixa v₀, θ i h₀, una g menor allarga el temps de vol i l’abast.",
+"s6.q":"Amb h₀ = 0, el temps que triga a arribar a l’alçada màxima és la meitat del temps de vol.",
+"s6.h":"Pensa en la forma de la trajectòria: puja igual que baixa?",
+"s6.e":"Sempre. Sense altura inicial la trajectòria és simètrica: t d’alçada màxima = v₀·sin θ/g = T/2.",
+"e1.ctx":"Es llancen dues pilotes a 45° des del terra, a la Terra: la primera a 10 m/s i la segona a 20 m/s. Es discuteix quant més lluny arriba la segona.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"Arriba el doble de lluny: va el doble de ràpid.",
+"e1.s1":"Arriba 4 vegades més lluny: va el doble de ràpid i, a més, està el doble de temps a l’aire.",
+"e1.w0":"R = vₓ·T. Amb h₀ = 0, vₓ = v₀·cos θ i T = 2·v₀·sin θ/g són proporcionals a v₀, així que R és proporcional a v₀²: doblar v₀ multiplica R per 4.",
+"e1.w1":"Perquè quan la velocitat és major, la gravetat actua amb més força.",
+"e1.w2":"Perquè en doblar la velocitat l’angle òptim també es dobla.",
+"e1.frame":"Pau, el doble de velocitat no dóna el doble d’abast perquè…",
+"e1.model":"Pau, el doble de velocitat fa dues coses alhora: la component horitzontal vₓ és el doble i el temps de vol T també és el doble (T = 2·v₀·sin θ/g). L’abast és R = vₓ·T, així que queda 2 · 2 = 4 vegades major. A 10 m/s arriba a 10,2 m i a 20 m/s a 40,8 m.",
+"e2.ctx":"Una pilota es llança a 45° a la Terra. Es discuteix què passa en el punt més alt de la trajectòria.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"Només s’anul·la la component vertical de la velocitat; la horitzontal continua i la pilota no està parada.",
+"e2.s1":"En el punt més alt la velocitat és zero: la pilota s’atura un instant i després cau.",
+"e2.w0":"Només hi actua la gravetat, que és vertical: v_y canvia, però vₓ = v₀·cos θ es manté constant tota la trajectòria. A dalt |v| = vₓ ≠ 0.",
+"e2.w1":"Perquè a dalt la gravetat es fa zero.",
+"e2.w2":"Perquè la pilota ha de parar-se per a canviar de pujar a baixar.",
+"e2.frame":"Marc, a dalt la pilota no està parada perquè…",
+"e2.model":"Marc, que v_y valga zero vol dir que ja no puja ni baixa, però la pilota continua avançant. Cap força horitzontal la frena (sense fricció de l’aire), així que vₓ = v₀·cos 45° es manté: a 20 m/s són uns 14,1 m/s. Per això en el punt més alt |v| = vₓ ≈ 14,1 m/s.",
+"e3.ctx":"Es llança una pilota des d’un terrat (h₀ = 20 m) amb v₀ = 20 m/s a la Terra. Es discuteix quin angle fa que arribe més lluny.",
+"e3.n0":"Mireia","e3.n1":"Quim",
+"e3.s0":"El millor angle és sempre 45°.",
+"e3.s1":"Com més gran és l’angle, més lluny arriba, perquè la pilota puja més.",
+"e3.w0":"Amb h₀ > 0 el millor angle és menor de 45° (ací uns 35°): la pilota ja parteix d’alt, així que li convé més velocitat horitzontal que més alçada. A 45° només és òptim quan h₀ = 0.",
+"e3.w1":"Perquè l’angle òptim depén només de la gravetat.",
+"e3.w2":"Perquè amb h₀ > 0 el temps de vol deixa de dependre de l’angle.",
+"e3.frame":"Mireia i Quim, amb altura inicial el millor angle és… perquè…",
+"e3.model":"Cap dels dos. Amb h₀ = 20 m, a 45° l’abast és 55,5 m, però a 35° és 57,4 m: el màxim està per davall de 45°. Quim s’equivoca més encara: a 80° la pilota puja molt però avança poc i només arriba a uns 17 m.",
+"d1.q":"Una mànega llança aigua a 12 m/s des del terra (h₀ = 0). Vols que arribe com més lluny millor. Tria l’<b>angle</b> i calcula fins on arriba.",
+"d1.lc":"Angle:","d1.l0":"R",
+"d1_ang":"Amb {0}° l’aigua arriba a {1} m, però hi ha un angle entre els proposats que arriba més lluny.",
+"d1_r":"Mira-ho al simulador: amb v₀ = 12 m/s i aquest angle, quin és l’abast R?",
+"d1_ok":"✔ Ben decidit! A 45° l’aigua arriba a 14,7 m (R = 12²/9,8).",
+"d1.more":"Si la mànega estiguera a 1,5 m d’altura, el millor angle seria major, menor o igual que 45°? Prova-ho amb h₀.",
+"d2.q":"Es llança una pilota a 20 m/s i 45° (h₀ = 0). Tria <b>on</b> tarda més a tocar a terra i digues quant dura el vol.",
+"d2.lc":"Lloc:","d2.l0":"T",
+"d2_g":"A {0} tarda menys: com més gran és g, abans cau.",
+"d2_t":"Mira-ho al simulador: T = 2·v₀·sin θ/g amb v₀ = 20 m/s, θ = 45° i g = 1,62 m/s².",
+"d2_ok":"✔ Ben decidit! A la Lluna el vol dura 17,5 s (a la Terra, només 2,9 s).",
+"d2.more":"A la Lluna, a quina alçada arriba la pilota? Compara-ho amb la Terra i explica per què.",
+"pl_1.62":"Lluna","pl_3.71":"Mart","pl_9.8":"Terra","pl_24.79":"Júpiter",
+"pa_1.62":"la Lluna","pa_3.71":"Mart","pa_9.8":"la Terra","pa_24.79":"Júpiter",
+"d3.q":"Una diana està a <b>30 m</b> en terreny pla. Llances a 20 m/s des del terra a la Terra. Quin angle (en graus enters) hi encerta?",
+"d3.l0":"Angle θ",
+"d3_f":"Amb θ = {0}° l’abast és {1} m i la diana és a 30 m.",
+"d3_ok":"✔ Ben decidit! Prop de 23,6° (o de 66,4°) l’abast és 30 m: sin 2θ = 30·g/v₀² ≈ 0,735.",
+"d3.more":"Hi ha un segon angle que també encerta. Troba’l i explica quina relació té amb el primer."
+},
+es:{
+"title":"Tiro parabólico — simulador interactivo",
+"eyebrow":"Cinemática · 4.º ESO y Bachillerato",
+"h1":"🚀 Tiro parabólico",
+"lede":"Sin fricción del aire. Toca las variables y lanza: mira cómo cambian el alcance, la altura máxima y el tiempo de vuelo.",
+"aria.svg":"Gráfica de la trayectoria parabólica de la pelota con sus vectores velocidad",
+"lg_a":"trayectoria A","lg_vx":"vₓ","lg_vy":"v_y","lg_v":"v (resultante)",
+"l_v0":"Velocidad inicial v₀","l_th":"Ángulo θ","l_h0":"Altura de lanzamiento h₀","l_g":"Gravedad","l_speed":"Velocidad de la animación",
+"g_earth":"Tierra (9,8 m/s²)","g_moon":"Luna (1,62 m/s²)","g_mars":"Marte (3,71 m/s²)","g_jup":"Júpiter (24,79 m/s²)",
+"sp_slow":"Cámara lenta","sp_norm":"Velocidad normal","sp_fast":"Rápido",
+"c_vec":"Muestra los vectores velocidad","c_cmp":"Compara con una trayectoria B",
+"l_v0b":"v₀ (B)","l_thb":"Ángulo θ (B)",
+"launch":"🚀 Lanzar","resume":"▶ Continuar","pause":"⏸ Pausa","reset":"↺ Reiniciar",
+"s_live":"En directo","s_res":"Resultados de la trayectoria A",
+"r_H":"Altura máxima H","r_R":"Alcance R","r_T":"Tiempo de vuelo T","r_RB":"Alcance R (B)","r_TB":"Tiempo de vuelo T (B)",
+"note":"Los resultados de A son los de la fórmula; las gráficas y vectores se dibujan a una escala adaptada a cada lanzamiento.",
+"rng":"Escribe valores dentro del rango del simulador: v₀ de 5 a 40 m/s, θ de 1 a 89° y h₀ de 0 a 30 m.",
+"m1.q":"Con v₀ = 20 m/s, h₀ = 0 y gravedad terrestre, encuentra el ángulo que da el <b>alcance máximo</b>.",
+"m1_f":"Con θ = {0}° el alcance es {1} m. Prueba otros ángulos y compara.",
+"m1_ok":"✔ ¡Misión cumplida! A 45° el alcance es 40,8 m, el máximo cuando se lanza desde el suelo.",
+"m1.more":"Si el suelo fuera la Luna, ¿cambiaría el ángulo óptimo? ¿Y el alcance máximo? Predícelo y compruébalo.",
+"m2.q":"Con v₀ = 20 m/s y h₀ = 0, un lanzamiento a 30° llega a cierta distancia. Encuentra el <b>otro ángulo</b> que llega exactamente igual de lejos.",
+"m2_same":"¡Ese es el mismo ángulo! Busca otro.",
+"m2_f":"Con θ = {0}° el alcance es {1} m; con 30° es {2} m.",
+"m2_ok":"✔ ¡Misión cumplida! 30° y 60° dan el mismo alcance: suman 90°.",
+"m2.more":"Compruébalo con 20° y 70°, y con 10° y 80°. ¿Qué relación hay entre los dos ángulos? Explica por qué también funciona con otra velocidad.",
+"m3.q":"En la <b>Luna</b> (g = 1,62 m/s²), con θ = 45° y h₀ = 0, ¿cuál es la <b>v₀ mínima</b> (m/s, número entero) para que la pelota llegue al menos a 100 m?",
+"l_v0f":"v₀",
+"m3_poc":"Con {0} m/s el alcance es {1} m: no llega a 100 m.",
+"m3_mes":"Con {0} m/s sí que llega, pero no es la velocidad más pequeña que lo consigue.",
+"m3_ok":"✔ ¡Misión cumplida! Con 13 m/s: R = 13²/1,62 ≈ 104 m (con 12 m/s solo 89 m).",
+"m3.more":"¿Qué v₀ haría falta en la Tierra para llegar también a 100 m? Predícelo: ¿será unas 6 veces mayor o unas 2,5 veces?",
+"m4.q":"En la Tierra, con θ = 45° y h₀ = 0, una pelota a 10 m/s llega a cierta distancia. ¿Qué v₀ (m/s) hace falta para que el alcance sea <b>4 veces</b> mayor?",
+"m4_f":"Con {0} m/s el alcance es {1} m, y el de 10 m/s multiplicado por 4 es {2} m.",
+"m4_ok":"✔ ¡Misión cumplida! Con 20 m/s el alcance es 40,8 m, justo 4 · 10,2 m.",
+"m4.more":"¿Y si quisiéramos un alcance 9 veces mayor que el de 10 m/s, qué v₀ haría falta? Generaliza la regla.",
+"s1.q":"El alcance máximo se obtiene siempre lanzando a 45°.",
+"s1.h":"Prueba con una altura de lanzamiento h₀ > 0 y compara ángulos.",
+"s1.e":"A veces. A 45° solo es óptimo si se lanza desde el suelo (h₀ = 0). Desde arriba, el mejor ángulo es menor de 45°.",
+"s1_cx_h0":"Con h₀ = 0 el máximo sí que está a 45°. Prueba con una altura de lanzamiento.",
+"s1_cx_no":"Con h₀ = {0} m y θ = {1}° el alcance es {2} m, que no supera el de 45° ({3} m). Prueba otro ángulo.",
+"s1_cx":"✔ Con h₀ = {0} m y θ = {1}° llega a {2} m, más que a 45° ({3} m). (v₀ = 20 m/s, Tierra.)",
+"l_h0f":"h₀",
+"s2.q":"En el punto más alto de la trayectoria, la velocidad de la pelota es cero.",
+"s2.h":"Mira vₓ y |v| en el instante de altura máxima.",
+"s2.e":"Nunca. En el punto más alto solo se anula v_y; vₓ = v₀·cos θ se mantiene constante, así que |v| = vₓ ≠ 0.",
+"s3.q":"Dos lanzamientos con el mismo ángulo y distinta v₀ tienen el mismo tiempo de vuelo.",
+"s3.h":"Compara el tiempo de vuelo de dos velocidades con el mismo ángulo.",
+"s3.e":"Nunca. T = 2·v₀·sen θ/g crece con v₀: más velocidad vertical inicial, más tiempo en el aire.",
+"s4.q":"Con h₀ = 0, dos ángulos complementarios (como 30° y 60°) dan el mismo alcance.",
+"s4.h":"Compara las dos trayectorias con «Compara con una trayectoria B».",
+"s4.e":"Siempre. R = v₀²·sen 2θ/g y sen 2θ = sen(180° − 2θ): θ y 90° − θ dan el mismo valor.",
+"s5.q":"Lanzando igual, la pelota llega más lejos en la Luna que en la Tierra.",
+"s5.h":"Compara el alcance con dos gravedades: ¿qué dice R = v₀²·sen 2θ/g?",
+"s5.e":"Siempre. Con la misma v₀, θ y h₀, una g menor alarga el tiempo de vuelo y el alcance.",
+"s6.q":"Con h₀ = 0, el tiempo que tarda en llegar a la altura máxima es la mitad del tiempo de vuelo.",
+"s6.h":"Piensa en la forma de la trayectoria: ¿sube igual que baja?",
+"s6.e":"Siempre. Sin altura inicial la trayectoria es simétrica: t de altura máxima = v₀·sen θ/g = T/2.",
+"e1.ctx":"Se lanzan dos pelotas a 45° desde el suelo, en la Tierra: la primera a 10 m/s y la segunda a 20 m/s. Se discute cuánto más lejos llega la segunda.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"Llega el doble de lejos: va el doble de rápido.",
+"e1.s1":"Llega 4 veces más lejos: va el doble de rápido y, además, está el doble de tiempo en el aire.",
+"e1.w0":"R = vₓ·T. Con h₀ = 0, vₓ = v₀·cos θ y T = 2·v₀·sen θ/g son proporcionales a v₀, así que R es proporcional a v₀²: doblar v₀ multiplica R por 4.",
+"e1.w1":"Porque cuando la velocidad es mayor, la gravedad actúa con más fuerza.",
+"e1.w2":"Porque al doblar la velocidad el ángulo óptimo también se dobla.",
+"e1.frame":"Pau, el doble de velocidad no da el doble de alcance porque…",
+"e1.model":"Pau, el doble de velocidad hace dos cosas a la vez: la componente horizontal vₓ es el doble y el tiempo de vuelo T también es el doble (T = 2·v₀·sen θ/g). El alcance es R = vₓ·T, así que queda 2 · 2 = 4 veces mayor. A 10 m/s llega a 10,2 m y a 20 m/s a 40,8 m.",
+"e2.ctx":"Una pelota se lanza a 45° en la Tierra. Se discute qué pasa en el punto más alto de la trayectoria.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"Solo se anula la componente vertical de la velocidad; la horizontal continúa y la pelota no está parada.",
+"e2.s1":"En el punto más alto la velocidad es cero: la pelota se para un instante y después cae.",
+"e2.w0":"Solo actúa la gravedad, que es vertical: v_y cambia, pero vₓ = v₀·cos θ se mantiene constante toda la trayectoria. Arriba |v| = vₓ ≠ 0.",
+"e2.w1":"Porque arriba la gravedad se hace cero.",
+"e2.w2":"Porque la pelota tiene que pararse para pasar de subir a bajar.",
+"e2.frame":"Marc, arriba la pelota no está parada porque…",
+"e2.model":"Marc, que v_y valga cero quiere decir que ya no sube ni baja, pero la pelota sigue avanzando. Ninguna fuerza horizontal la frena (sin fricción del aire), así que vₓ = v₀·cos 45° se mantiene: a 20 m/s son unos 14,1 m/s. Por eso en el punto más alto |v| = vₓ ≈ 14,1 m/s.",
+"e3.ctx":"Se lanza una pelota desde una azotea (h₀ = 20 m) con v₀ = 20 m/s en la Tierra. Se discute qué ángulo hace que llegue más lejos.",
+"e3.n0":"Mireia","e3.n1":"Quim",
+"e3.s0":"El mejor ángulo es siempre 45°.",
+"e3.s1":"Cuanto mayor es el ángulo, más lejos llega, porque la pelota sube más.",
+"e3.w0":"Con h₀ > 0 el mejor ángulo es menor de 45° (aquí unos 35°): la pelota ya parte de arriba, así que le conviene más velocidad horizontal que más altura. A 45° solo es óptimo cuando h₀ = 0.",
+"e3.w1":"Porque el ángulo óptimo depende solo de la gravedad.",
+"e3.w2":"Porque con h₀ > 0 el tiempo de vuelo deja de depender del ángulo.",
+"e3.frame":"Mireia y Quim, con altura inicial el mejor ángulo es… porque…",
+"e3.model":"Ninguno de los dos. Con h₀ = 20 m, a 45° el alcance es 55,5 m, pero a 35° es 57,4 m: el máximo está por debajo de 45°. Quim se equivoca todavía más: a 80° la pelota sube mucho pero avanza poco y solo llega a unos 17 m.",
+"d1.q":"Una manguera lanza agua a 12 m/s desde el suelo (h₀ = 0). Quieres que llegue lo más lejos posible. Elige el <b>ángulo</b> y calcula hasta dónde llega.",
+"d1.lc":"Ángulo:","d1.l0":"R",
+"d1_ang":"Con {0}° el agua llega a {1} m, pero hay un ángulo entre los propuestos que llega más lejos.",
+"d1_r":"Míralo en el simulador: con v₀ = 12 m/s y ese ángulo, ¿cuál es el alcance R?",
+"d1_ok":"✔ ¡Bien decidido! A 45° el agua llega a 14,7 m (R = 12²/9,8).",
+"d1.more":"Si la manguera estuviera a 1,5 m de altura, ¿el mejor ángulo sería mayor, menor o igual que 45°? Pruébalo con h₀.",
+"d2.q":"Se lanza una pelota a 20 m/s y 45° (h₀ = 0). Elige <b>dónde</b> tarda más en tocar el suelo y di cuánto dura el vuelo.",
+"d2.lc":"Lugar:","d2.l0":"T",
+"d2_g":"En {0} tarda menos: cuanto mayor es g, antes cae.",
+"d2_t":"Míralo en el simulador: T = 2·v₀·sen θ/g con v₀ = 20 m/s, θ = 45° y g = 1,62 m/s².",
+"d2_ok":"✔ ¡Bien decidido! En la Luna el vuelo dura 17,5 s (en la Tierra, solo 2,9 s).",
+"d2.more":"En la Luna, ¿a qué altura llega la pelota? Compáralo con la Tierra y explica por qué.",
+"pl_1.62":"Luna","pl_3.71":"Marte","pl_9.8":"Tierra","pl_24.79":"Júpiter",
+"pa_1.62":"la Luna","pa_3.71":"Marte","pa_9.8":"la Tierra","pa_24.79":"Júpiter",
+"d3.q":"Una diana está a <b>30 m</b> en terreno llano. Lanzas a 20 m/s desde el suelo en la Tierra. ¿Qué ángulo (en grados enteros) acierta?",
+"d3.l0":"Ángulo θ",
+"d3_f":"Con θ = {0}° el alcance es {1} m y la diana está a 30 m.",
+"d3_ok":"✔ ¡Bien decidido! Cerca de 23,6° (o de 66,4°) el alcance es 30 m: sen 2θ = 30·g/v₀² ≈ 0,735.",
+"d3.more":"Hay un segundo ángulo que también acierta. Encuéntralo y explica qué relación tiene con el primero."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../tir-parabolic/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== Tir parabòlic ===== */
+const svg=$('#svg'),VW=600,VH=300,MARGIN={top:22,right:24,bottom:40,left:46};
+const ns=tag=>document.createElementNS('http://www.w3.org/2000/svg',tag);
+const v0aEl=$('#v0a'),angleaEl=$('#anglea'),h0El=$('#h0'),gSelEl=$('#gSel'),v0bEl=$('#v0b'),anglebEl=$('#angleb');
+const showVectorsEl=$('#showVectors'),compareToggleEl=$('#compareToggle'),compareBlock=$('#compareBlock');
+const btnLaunch=$('#btnLaunch'),btnReset=$('#btnReset'),speedSel=$('#speedSel'),readout=$('#readout'),results=$('#results');
+function physics(v0,angleDeg,h0,g){
+  const th=angleDeg*Math.PI/180,vx0=v0*Math.cos(th),vy0=v0*Math.sin(th);
+  const T=(vy0+Math.sqrt(vy0*vy0+2*g*h0))/g;
+  return {vx0,vy0,T,R:vx0*T,H:h0+vy0*vy0/(2*g),tApex:vy0/g};
+}
+function stateAt(t,v0,angleDeg,h0,g){
+  const th=angleDeg*Math.PI/180,vx0=v0*Math.cos(th),vy0=v0*Math.sin(th);
+  return {x:vx0*t,y:Math.max(0,h0+vy0*t-.5*g*t*t),vx:vx0,vy:vy0-g*t};
+}
+[15,30,45,60,75].forEach(a=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=a+'°';
+  b.addEventListener('click',()=>{angleaEl.value=a;onParamsChange();});$('#anglePresets').appendChild(b);
+});
+/* escenari SVG */
+const gridGroup=ns('g'),groundRect=ns('rect'),pathAGroup=ns('g'),pathBGroup=ns('g'),vecGroup=ns('g');
+[gridGroup,groundRect,pathAGroup,pathBGroup].forEach(e=>svg.appendChild(e));
+function pl(stroke,w,dash,op){const p=ns('polyline');p.setAttribute('fill','none');p.setAttribute('stroke',stroke);p.setAttribute('stroke-width',w);if(dash)p.setAttribute('stroke-dasharray',dash);if(op)p.setAttribute('opacity',op);return p;}
+const ghostA=pl('var(--pa)',1.5,'3 5',.35),trailA=pl('var(--pa)',2.5),ghostB=pl('var(--pb)',1.5,'3 5',.35),trailB=pl('var(--pb)',2.5);
+pathAGroup.appendChild(ghostA);pathAGroup.appendChild(trailA);pathBGroup.appendChild(ghostB);pathBGroup.appendChild(trailB);
+const ballA=ns('circle'),ballB=ns('circle');
+ballA.setAttribute('r',7);ballA.setAttribute('fill','var(--pa)');ballB.setAttribute('r',7);ballB.setAttribute('fill','var(--pb)');
+svg.appendChild(ballA);svg.appendChild(ballB);svg.appendChild(vecGroup);
+groundRect.setAttribute('fill','var(--ground)');
+let scale=5,originX=MARGIN.left,originY=VH-MARGIN.bottom;
+const toScreen=(x,y)=>[originX+x*scale,originY-y*scale];
+function niceStep(maxVal){const rough=maxVal/6,mag=Math.pow(10,Math.floor(Math.log10(rough))),norm=rough/mag;
+  return (norm<1.5?1:norm<3.5?2:norm<7.5?5:10)*mag;}
+function drawScaffold(maxX,maxY){
+  const availW=VW-MARGIN.left-MARGIN.right,availH=VH-MARGIN.top-MARGIN.bottom;
+  scale=Math.max(.5,Math.min(availW/(maxX*1.08),availH/(maxY*1.25)));
+  gridGroup.innerHTML='';
+  const stepX=niceStep(maxX),stepY=niceStep(maxY);
+  const line=(x1,y1,x2,y2)=>{const l=ns('line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);l.setAttribute('stroke','var(--line)');l.setAttribute('stroke-width','1');l.setAttribute('opacity','.7');gridGroup.appendChild(l);};
+  const txt=(x,y,anchor,s)=>{const e=ns('text');e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('text-anchor',anchor);e.setAttribute('font-size','10');e.setAttribute('fill','var(--muted)');e.textContent=s;gridGroup.appendChild(e);};
+  for(let gx=0;gx<=maxX*1.08;gx+=stepX){const [sx,sy1]=toScreen(gx,0),[,sy2]=toScreen(gx,maxY*1.25);line(sx,sy1,sx,sy2);txt(sx,sy1+16,'middle',Math.round(gx));}
+  for(let gy=0;gy<=maxY*1.25;gy+=stepY){const [sx1,sy]=toScreen(0,gy),[sx2]=toScreen(maxX*1.08,gy);line(sx1,sy,sx2,sy);txt(sx1-8,sy+3,'end',Math.round(gy));}
+  const [gx0,gy0]=toScreen(0,0),[gx1]=toScreen(maxX*1.08,0);
+  groundRect.setAttribute('x',gx0-40);groundRect.setAttribute('y',gy0);groundRect.setAttribute('width',gx1-gx0+80);groundRect.setAttribute('height',6);
+}
+let flightA=null,flightB=null,simTime=0,playing=false,landed=false,lastTs=null;
+function setLaunch(){const k=playing?'pause':(simTime>0&&!landed?'resume':'launch');if(btnLaunch.textContent!==t(k))btnLaunch.textContent=t(k);}
+function computeAll(){
+  const v0a=+v0aEl.value,anglea=+angleaEl.value,h0=+h0El.value,g=+gSelEl.value;
+  $('#v0aL').textContent=v0a+' m/s';$('#angleaL').textContent=anglea+'°';$('#h0L').textContent=h0+' m';
+  flightA=physics(v0a,anglea,h0,g);Object.assign(flightA,{v0:v0a,angle:anglea,h0,g});
+  let maxX=flightA.R,maxY=Math.max(flightA.H,h0);
+  if(compareToggleEl.checked){
+    const v0b=+v0bEl.value,angleb=+anglebEl.value;
+    $('#v0bL').textContent=v0b+' m/s';$('#anglebL').textContent=angleb+'°';
+    flightB=physics(v0b,angleb,h0,g);Object.assign(flightB,{v0:v0b,angle:angleb,h0,g});
+    maxX=Math.max(maxX,flightB.R);maxY=Math.max(maxY,flightB.H,h0);
+  }else flightB=null;
+  drawScaffold(Math.max(maxX,5),Math.max(maxY,2));
+  drawGhost(ghostA,flightA);
+  if(flightB)drawGhost(ghostB,flightB);else ghostB.setAttribute('points','');
+  results.innerHTML='<dt>'+t('r_H')+'</dt><dd>'+fmt(flightA.H)+' m</dd><dt>'+t('r_R')+'</dt><dd class="hl">'+fmt(flightA.R)+' m</dd><dt>'+t('r_T')+'</dt><dd>'+fmt(flightA.T)+' s</dd>';
+  ballA.setAttribute('visibility','visible');ballB.setAttribute('visibility',flightB?'visible':'hidden');
+}
+function drawGhost(el,f){const pts=[],N=100;for(let i=0;i<=N;i++){const s=stateAt(f.T*i/N,f.v0,f.angle,f.h0,f.g);pts.push(toScreen(s.x,s.y));}
+  el.setAttribute('points',pts.map(p=>p.join(',')).join(' '));}
+function drawVector(x0,y0,dx,dy,color,key){
+  let el=vecGroup.querySelector('[data-k="'+key+'"]');
+  if(!el){el=ns('line');el.setAttribute('data-k',key);el.setAttribute('stroke',color);el.setAttribute('stroke-width',2.5);el.setAttribute('marker-end','url(#arrow-'+key+')');vecGroup.appendChild(el);
+    if(!svg.querySelector('#arrow-'+key)){const m=ns('marker');m.setAttribute('id','arrow-'+key);m.setAttribute('markerWidth','8');m.setAttribute('markerHeight','8');m.setAttribute('refX','6');m.setAttribute('refY','3');m.setAttribute('orient','auto');
+      const p=ns('path');p.setAttribute('d','M0,0 L0,6 L7,3 z');p.setAttribute('fill',color);m.appendChild(p);svg.insertBefore(m,svg.firstChild);}}
+  el.setAttribute('x1',x0);el.setAttribute('y1',y0);el.setAttribute('x2',x0+dx);el.setAttribute('y2',y0+dy);
+}
+function trail(el,f,tt){const pts=[],steps=60;for(let i=0;i<=steps;i++){const s=stateAt(tt*i/steps,f.v0,f.angle,f.h0,f.g);pts.push(toScreen(s.x,s.y));}el.setAttribute('points',pts.map(p=>p.join(',')).join(' '));}
+function updateFrame(){
+  const tA=Math.min(simTime,flightA.T),stA=stateAt(tA,flightA.v0,flightA.angle,flightA.h0,flightA.g);
+  const [bxA,byA]=toScreen(stA.x,stA.y);ballA.setAttribute('cx',bxA);ballA.setAttribute('cy',byA);trail(trailA,flightA,tA);
+  if(flightB){const tB=Math.min(simTime,flightB.T),stB=stateAt(tB,flightB.v0,flightB.angle,flightB.h0,flightB.g);
+    const [bxB,byB]=toScreen(stB.x,stB.y);ballB.setAttribute('cx',bxB);ballB.setAttribute('cy',byB);trail(trailB,flightB,tB);}
+  else trailB.setAttribute('points','');
+  vecGroup.innerHTML='';
+  if(showVectorsEl.checked){const vs=3.2;
+    drawVector(bxA,byA,stA.vx*vs,0,'var(--ok)','vxA');drawVector(bxA,byA,0,-stA.vy*vs,'var(--warn)','vyA');drawVector(bxA,byA,stA.vx*vs,-stA.vy*vs,'var(--vres)','vresA');}
+  const row=(k,v,cls)=>'<dt'+(cls?' class="'+cls+'"':'')+'>'+k+'</dt><dd'+(cls?' class="'+cls+'"':'')+'>'+v+'</dd>';
+  let h=row('t',fmt(tA)+' s')+row('x',fmt(stA.x)+' m')+row('y',fmt(stA.y)+' m')+row('vₓ',fmt(stA.vx)+' m/s')+row('v_y',fmt(stA.vy)+' m/s')+row('|v|',fmt(Math.hypot(stA.vx,stA.vy))+' m/s');
+  if(flightB)h+=row(t('r_RB'),fmt(flightB.R)+' m','b')+row(t('r_TB'),fmt(flightB.T)+' s','b');
+  readout.innerHTML=h;
+  landed=simTime>=flightA.T&&(!flightB||simTime>=flightB.T);
+}
+function tick(ts){
+  if(!playing)return;
+  if(lastTs===null)lastTs=ts;
+  simTime+=(ts-lastTs)/1000*(+speedSel.value);lastTs=ts;
+  updateFrame();
+  if(landed){playing=false;lastTs=null;setLaunch();return;}
+  requestAnimationFrame(tick);
+}
+function onParamsChange(){const was=playing;computeAll();if(!was){simTime=0;updateFrame();}setLaunch();}
+[v0aEl,angleaEl,h0El,gSelEl,v0bEl,anglebEl,showVectorsEl].forEach(el=>el.addEventListener('input',onParamsChange));
+compareToggleEl.addEventListener('change',()=>{compareBlock.classList.toggle('show',compareToggleEl.checked);onParamsChange();});
+function launch(){
+  if(playing){playing=false;setLaunch();return;}
+  if(landed||simTime===0)simTime=0;
+  playing=true;lastTs=null;setLaunch();requestAnimationFrame(tick);
+}
+btnLaunch.addEventListener('click',launch);
+btnReset.addEventListener('click',()=>{playing=false;simTime=0;lastTs=null;updateFrame();setLaunch();});
+App.hooks.push(()=>{if(flightA){computeAll();updateFrame();}setLaunch();});
+
+/* ===== Raona-ho ===== */
+function load(o){
+  o=o||{};
+  v0aEl.value=o.v||20;angleaEl.value=o.a||45;h0El.value=o.h||0;gSelEl.value=String(o.g||9.8);showVectorsEl.checked=true;
+  if(o.b){compareToggleEl.checked=true;v0bEl.value=o.b.v||o.v||20;anglebEl.value=o.b.a||45;}else compareToggleEl.checked=false;
+  compareBlock.classList.toggle('show',compareToggleEl.checked);
+  speedSel.value=o.slow?'0.4':'1';
+  playing=false;simTime=0;lastTs=null;computeAll();updateFrame();setLaunch();
+  if(o.run)launch();
+  RZ.show($('#svg'));
+}
+const ph=(v,a,h,g)=>physics(v,a,h||0,g||9.8);
+const inV=v=>v>=5&&v<=40&&Number.isInteger(v),inA=a=>a>=1&&a<=89,inH=h=>h>=0&&h<=30;
+const THF={l:'l_th',u:'°'};
+const ckA=f=>([a])=>inA(a)?f(a):{k:'rng'};
+RZ.init({
+ sim:()=>load(),
+ M:[
+  {id:'m1',f:[THF],sim:([a])=>load({a}),ok:()=>({k:'m1_ok'}),
+   chk:ckA(a=>a===45?null:{k:'m1_f',p:[a,fmt(ph(20,a).R,1)]})},
+  {id:'m2',f:[THF],sim:([a])=>load({a:30,b:{a}}),ok:()=>({k:'m2_ok'}),
+   chk:ckA(a=>a===30?{k:'m2_same'}:Math.abs(ph(20,a).R-ph(20,30).R)<.05?null:{k:'m2_f',p:[a,fmt(ph(20,a).R,1),fmt(ph(20,30).R,1)]})},
+  {id:'m3',f:[{l:'l_v0f',u:'m/s'}],sim:([v])=>load({v:clamp(v,5,40),a:45,g:1.62}),ok:()=>({k:'m3_ok'}),
+   chk:([v])=>!inV(v)?{k:'rng'}:v===13?null:v<13?{k:'m3_poc',p:[v,fmt(ph(v,45,0,1.62).R,1)]}:{k:'m3_mes',p:[v]}},
+  {id:'m4',f:[{l:'l_v0f',u:'m/s'}],sim:([v])=>load({v:10,a:45,b:{v:clamp(v,5,40),a:45}}),ok:()=>({k:'m4_ok'}),
+   chk:([v])=>!inV(v)?{k:'rng'}:v===20?null:{k:'m4_f',p:[v,fmt(ph(v,45).R,1),fmt(4*ph(10,45).R,1)]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[{l:'l_h0f',u:'m'},THF],cxsim:([h,a])=>load({h,b:{a}}),
+   cxok:([h,a])=>({k:'s1_cx',p:[h,a,fmt(ph(20,a,h).R,1),fmt(ph(20,45,h).R,1)]}),
+   cx:([h,a])=>!inH(h)||!inA(a)?{k:'rng'}:h===0?{k:'s1_cx_h0'}:ph(20,a,h).R>ph(20,45,h).R+.01?null:{k:'s1_cx_no',p:[h,a,fmt(ph(20,a,h).R,1),fmt(ph(20,45,h).R,1)]}},
+  {id:'s2',ans:'M',sim:()=>load({a:40,run:true,slow:true})},
+  {id:'s3',ans:'M',sim:()=>load({v:20,a:45,b:{v:30,a:45}})},
+  {id:'s4',ans:'S',sim:()=>load({a:30,b:{a:60}})},
+  {id:'s5',ans:'S',sim:()=>load({g:1.62,run:true})},
+  {id:'s6',ans:'S',sim:()=>load({run:true,slow:true})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({v:10,a:45,b:{v:20,a:45}})},
+  {id:'e2',who:0,sim:()=>load({v:20,a:45,run:true,slow:true})},
+  {id:'e3',who:3,sim:()=>load({v:20,a:45,h:20,b:{v:20,a:35}})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[20,35,45,60],fmt:x=>x+'°'},f:[{l:'d1.l0',u:'m'}],sim:()=>load({v:12,a:45}),ok:()=>({k:'d1_ok'}),
+   chk:([p,r])=>p!==45?{k:'d1_ang',p:[p,fmt(ph(12,p).R,1)]}:Math.abs(r-14.7)>.25?{k:'d1_r'}:null},
+  {id:'d2',chips:{vals:[1.62,3.71,9.8,24.79],fmt:x=>t('pl_'+x)},f:[{l:'d2.l0',u:'s'}],sim:()=>load({v:20,a:45,g:1.62,run:true}),ok:()=>({k:'d2_ok'}),
+   chk:([p,T])=>p!==1.62?{k:'d2_g',p:[t('pa_'+p)]}:Math.abs(T-17.46)>.3?{k:'d2_t'}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'°'}],sim:([a])=>load({v:20,a:clamp(a,1,89)}),ok:()=>({k:'d3_ok'}),
+   chk:ckA(a=>Math.abs(ph(20,a).R-30)<=1?null:{k:'d3_f',p:[a,fmt(ph(20,a).R,1)]})}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+computeAll();updateFrame();setLaunch();
+})();
+</script>
+</body>
+</html>

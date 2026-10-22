@@ -1,0 +1,1809 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La montaña rusa de la energía</title>
+<meta name="description" content="Suelta una vagoneta de montaña rusa y compara la energía potencial y la cinética. Cambia la masa, la gravedad, el rozamiento, la altura de salida y la forma de la pista. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/muntanya-russa/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/muntanya-russa/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/muntanya-russa/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/muntanya-russa/">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="La montaña rusa de la energía">
+<meta property="og:description" content="Suelta una vagoneta de montaña rusa y compara la energía potencial y la cinética. Cambia la masa, la gravedad, el rozamiento, la altura de salida y la forma de la pista. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/muntanya-russa/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+/* Layout: escenario de la montaña rusa a la izquierda y mandos a la derecha; barras, gráfica y cuentas debajo del escenario */
+:root{
+  --bg:#e7edf2; --panel:#ffffff; --ink:#14202b; --muted:#526273; --line:#cdd8e0; --chip:#edf2f6;
+  --sky1:#c9e3f6; --sky2:#f0f7fc; --ground:#b6c4ce; --grid:rgba(20,32,43,.10);
+  --track:#233445; --rail:#8da2b4; --support:#9fb1c0;
+  --ep:#1d6fe0; --ec:#d9480f; --em:#14202b; --q:#c2255c;
+  --cart:#f4b400; --cartEdge:#5c3f00; --skin:#f2c8a2;
+  --f-display:"Bricolage Grotesque","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0b1218; --panel:#131c26; --ink:#e7eef5; --muted:#92a3b4; --line:#253443; --chip:#1a2633;
+  --sky1:#0c2034; --sky2:#183653; --ground:#0a1015; --grid:rgba(231,238,245,.10);
+  --track:#d6e0ea; --rail:#7f94a9; --support:#3d5164;
+  --ep:#6fa8ff; --ec:#ff9552; --em:#e7eef5; --q:#ff6b95;
+  --cart:#ffc21a; --cartEdge:#1c1400; --skin:#efc29a; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0b1218; --panel:#131c26; --ink:#e7eef5; --muted:#92a3b4; --line:#253443; --chip:#1a2633;
+  --sky1:#0c2034; --sky2:#183653; --ground:#0a1015; --grid:rgba(231,238,245,.10);
+  --track:#d6e0ea; --rail:#7f94a9; --support:#3d5164;
+  --ep:#6fa8ff; --ec:#ff9552; --em:#e7eef5; --q:#ff6b95;
+  --cart:#ffc21a; --cartEdge:#1c1400; --skin:#efc29a; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1.02;text-wrap:balance;letter-spacing:-.01em}
+.lede{margin:0;color:var(--muted);max-width:52ch}
+.topr{display:grid;gap:8px;justify-items:end}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;border:0;background:var(--panel);color:var(--muted);padding:5px 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21.5rem;gap:16px;align-items:start}
+@media (max-width:900px){.app{grid-template-columns:minmax(0,1fr)}}
+.left{display:grid;gap:16px;min-width:0}
+
+.stage-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;min-width:0}
+.stage{border-radius:0 0 9px 9px;overflow:hidden}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn[aria-pressed=true]{border-color:var(--ep);box-shadow:inset 0 0 0 1px var(--ep)}
+.btn.primary{background:var(--ep);border-color:var(--ep);color:var(--panel);font-weight:600;min-width:7.4em}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,.seg button:focus-visible,.opt:focus-visible,.link:focus-visible{outline:2px solid var(--ep);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;color:var(--muted);font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px}
+.clock{margin-left:auto;font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.stage{position:relative;aspect-ratio:3/2;min-height:260px;max-height:72vh;background:var(--sky2)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage canvas.edit{cursor:grab;touch-action:none}
+
+.qcard{position:absolute;left:12px;right:12px;max-width:34rem;margin-inline:auto;background:var(--panel);border:1px solid var(--ep);border-radius:10px;
+  padding:12px 14px 12px;display:grid;gap:8px;box-shadow:0 6px 24px rgba(0,0,0,.18);z-index:3}
+.qcard.bot{bottom:10px}
+@media (max-width:640px){.qcard{position:static;max-width:none;margin:0 12px 12px;box-shadow:none}.stage{max-height:none}}
+.qcard .qh{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ep);font-weight:600}
+.qcard .qt{margin:0;font-family:var(--f-display);font-weight:600;font-size:17px;line-height:1.25;text-wrap:balance}
+.opts{display:grid;gap:6px}
+.opt{font:inherit;font-size:14px;text-align:left;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:7px 10px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ep)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ep);background:var(--panel);box-shadow:inset 0 0 0 1px var(--ep);font-weight:600}
+.opt.no{border-color:var(--q);box-shadow:inset 0 0 0 1px var(--q)}
+.fb{margin:0;font-size:13.5px;color:var(--ink)}
+.fb .num{font-family:var(--f-num);font-variant-numeric:tabular-nums;color:var(--muted);display:block;margin-top:3px;font-size:12.5px}
+.qfoot{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.link{font:inherit;font-size:13px;color:var(--muted);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) 5.2rem 3rem;align-items:center;gap:4px 8px}
+.ctl label{grid-column:1/-1;font-size:13.5px}
+.ctl input[type=range]{width:100%;accent-color:var(--ep);margin:0}
+.ctl input[type=number]{width:100%;font-family:var(--f-num);font-size:13px;padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:var(--sky2);color:var(--ink)}
+.ctl .unit{font-size:12px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--ep)}
+.chip[aria-pressed=true]{border-color:var(--ep);box-shadow:inset 0 0 0 1px var(--ep);font-weight:600}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--ep)}
+.note{margin:0;font-size:12.5px;color:var(--muted)}
+
+.lower{display:grid;grid-template-columns:repeat(auto-fit,minmax(17.5rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.plot{position:relative;height:230px}
+.plot canvas{position:absolute;inset:0;width:100%;height:100%}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.warn{color:var(--q);font-weight:600}
+.eq{display:grid;gap:1px;padding-top:7px;border-top:1px solid var(--line)}
+.eqn{font-size:13px;color:var(--muted)}
+.eqn i{font-style:italic}
+.eqv{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:14px;overflow-wrap:anywhere}
+.eqv.ep{color:var(--ep)}.eqv.ec{color:var(--ec)}.eqv.q{color:var(--q)}
+
+html,body{margin:0;padding:0}
+[hidden]{display:none!important}
+[hidden]{display:none!important}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Energía mecánica · Conservación</p>
+      <h1 data-i18n="title">La montaña rusa de la energía</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Suelta la vagoneta y cambia la masa, la gravedad o el rozamiento. Verás cómo la energía potencial se disfraza de cinética (y al revés) sin perderse... salvo en forma de calor.</p>
+    </div>
+  </header>
+
+  <main class="app">
+    <div class="left">
+      <section class="stage-card" data-i18n-aria="ariaSim" aria-label="Simulación">
+        <div class="bar">
+          <button id="play" class="btn primary" type="button" data-i18n="btnGo">¡Soltar!</button>
+          <button id="reset" class="btn" type="button" data-i18n="btnReset">Reiniciar</button>
+          <button id="slow" class="btn" type="button" aria-pressed="false" data-i18n="btnSlow">Cámara lenta</button>
+          <button id="edit" class="btn" type="button" aria-pressed="false" data-i18n="btnEdit">Editar pista</button>
+          <span class="legend">
+            <span><i class="dot" style="background:var(--ep)"></i><span data-i18n="lgEp">Potencial (Ep)</span></span>
+            <span><i class="dot" style="background:var(--ec)"></i><span data-i18n="lgEc">Cinética (Ec)</span></span>
+            <span><i class="dot" style="background:var(--q)"></i><span data-i18n="lgQ">Calor (Q)</span></span>
+          </span>
+          <span class="clock" id="clock">t = 0,0 s</span>
+        </div>
+        <div class="stage" id="stage">
+          <canvas id="cv" role="img" data-i18n-aria="ariaCv" aria-label="Vagoneta de montaña rusa sobre la pista, con el nivel de energía total"></canvas>
+        </div>
+        <div class="qcard bot" id="qcard" role="group" aria-live="polite" hidden></div>
+      </section>
+
+      <section class="lower">
+        <article class="card">
+          <h2><small data-i18n="smallNow">Ahora mismo</small><span data-i18n="cardBars">Barras de energía</span></h2>
+          <div class="plot"><canvas id="bars" role="img" data-i18n-aria="ariaBars" aria-label="Barras de energía"></canvas></div>
+        </article>
+        <article class="card">
+          <h2><small data-i18n="smallTime">Con el tiempo</small><span data-i18n="cardGraph">Energía frente al tiempo</span></h2>
+          <div class="plot"><canvas id="gr" role="img" data-i18n-aria="ariaGr" aria-label="Gráfica de la energía frente al tiempo"></canvas></div>
+        </article>
+        <article class="card">
+          <h2><small data-i18n="smallCalc">Para hacer las cuentas</small><span data-i18n="cardCalc">Lecturas y fórmulas</span></h2>
+          <dl>
+            <dt data-i18n="rdH">Altura h</dt><dd id="r-h">—</dd>
+            <dt data-i18n="rdV">Velocidad v</dt><dd id="r-v">—</dd>
+            <dt data-i18n="rdE0">Energía inicial E₀</dt><dd id="r-e0">—</dd>
+            <dt id="r-gl" data-i18n="rdG" hidden>Peso aparente</dt><dd id="r-g" hidden>—</dd>
+          </dl>
+          <div class="eq"><div class="eqn" data-i18n="eqEp">Ep = m · g · h</div><div class="eqv ep" id="e-ep">—</div></div>
+          <div class="eq"><div class="eqn" data-i18n="eqEc">Ec = ½ · m · v²</div><div class="eqv ec" id="e-ec">—</div></div>
+          <div class="eq"><div class="eqn" data-i18n="eqEm">Em = Ep + Ec</div><div class="eqv" id="e-em">—</div></div>
+          <div class="eq"><div class="eqn" data-i18n="eqQ">Q = E₀ − Em (calor disipado)</div><div class="eqv q" id="e-q">—</div></div>
+        </article>
+      </section>
+      <p class="note" data-i18n="model">Modelo: la vagoneta va sujeta a la vía con ruedas de seguridad y no hay resistencia del aire. El rozamiento vale μ·m·g·cosθ. Fíjate en que la masa no cambia el movimiento, pero sí las energías.</p>
+    </div>
+
+    <aside class="panel" data-i18n-aria="ariaPanel" aria-label="Mandos">
+      <fieldset>
+        <legend data-i18n="grpPlanet">Planeta</legend>
+        <div class="chips" id="planets"></div>
+        <div id="ctlG"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="grpCart">Vagoneta</legend>
+        <div id="ctlM"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="grpStart">Salida</legend>
+        <div id="ctlS" style="display:grid;gap:10px"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="grpFric">Rozamiento</legend>
+        <div class="chips" id="fchips"></div>
+        <div id="ctlF"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="grpTrack">Pista</legend>
+        <div class="chips" id="tchips"></div>
+        <p class="note" id="tnote" hidden></p>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="grpTime">Tiempo</legend>
+        <div id="ctlT"></div>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="grpShow">Mostrar</legend>
+        <label class="check"><input type="checkbox" id="chkQ" checked><span data-i18n="chkQ">Preguntas de la vagoneta</span></label>
+        <label class="check"><input type="checkbox" id="chkTalk" checked><span data-i18n="chkTalk">Comentarios del pasajero</span></label>
+        <label class="check"><input type="checkbox" id="chkLvl" checked><span data-i18n="chkLvl">Línea de energía total</span></label>
+      </fieldset>
+    </aside>
+  </main>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+<script>
+/* ================= FÍSICA Y PISTAS ================= */
+const TRACKS={
+  clasica:{kind:'spline',h:[50,30,10,18,33,24,8,14,26,12,20]},
+  halfpipe:{kind:'spline',h:[50,36,22,12,6,4,6,12,22,36,50]},
+  dificil:{kind:'spline',h:[50,30,12,6,10,28,44,30,14,8,12]},
+  looping:{kind:'loop'}
+};
+const LOOP={x0:36,yb:2,R:9,a:3.2};
+const SPAN=100;                 // longitud horizontal de las pistas (m)
+
+/* Interpolación cúbica monótona (PCHIP): sin rebotes, cimas y valles planos en los nodos */
+function pchipSlopes(xs,ys,m0,mn){
+  const n=xs.length,h=[],d=[],m=new Array(n).fill(0);
+  for(let i=0;i<n-1;i++){h[i]=xs[i+1]-xs[i];d[i]=(ys[i+1]-ys[i])/h[i];}
+  for(let k=1;k<n-1;k++){
+    if(d[k-1]*d[k]>0){const w1=2*h[k]+h[k-1],w2=h[k]+2*h[k-1];m[k]=(w1+w2)/(w1/d[k-1]+w2/d[k]);}
+  }
+  const end=(h0,h1,d0,d1)=>{
+    let m=((2*h0+h1)*d0-h0*d1)/(h0+h1);
+    if(Math.sign(m)!==Math.sign(d0))m=0;
+    else if(Math.sign(d0)!==Math.sign(d1)&&Math.abs(m)>3*Math.abs(d0))m=3*d0;
+    return m;
+  };
+  if(n===2){m[0]=m[1]=d[0];}
+  else{m[0]=end(h[0],h[1],d[0],d[1]);m[n-1]=end(h[n-2],h[n-3],d[n-2],d[n-3]);}
+  if(typeof m0==='number')m[0]=m0;
+  if(typeof mn==='number')m[n-1]=mn;
+  return {m,h};
+}
+function sampleSpline(xs,ys,m0,mn,dx){
+  const {m,h}=pchipSlopes(xs,ys,m0,mn),pts=[];
+  for(let k=0;k<xs.length-1;k++){
+    const n=Math.max(2,Math.round(h[k]/dx));
+    for(let j=0;j<n;j++){
+      const t=j/n,t2=t*t,t3=t2*t;
+      const y=(2*t3-3*t2+1)*ys[k]+(t3-2*t2+t)*h[k]*m[k]+(-2*t3+3*t2)*ys[k+1]+(t3-t2)*h[k]*m[k+1];
+      pts.push([xs[k]+t*h[k],y]);
+    }
+  }
+  pts.push([xs[xs.length-1],ys[ys.length-1]]);
+  return pts;
+}
+/* Suavizado gaussiano en y (reflexión impar en los extremos) para que los valles no sean cerrados */
+function smoothY(pts,sigma){
+  const n=pts.length,dx=pts[1][0]-pts[0][0],r=Math.ceil(3*sigma/dx),w=[];
+  let sw=0;
+  for(let j=-r;j<=r;j++){const v=Math.exp(-0.5*Math.pow(j*dx/sigma,2));w.push(v);sw+=v;}
+  const y=pts.map(p=>p[1]);
+  const get=i=>i<0?2*y[0]-y[-i]:i>=n?2*y[n-1]-y[2*(n-1)-i]:y[i];
+  return pts.map((p,i)=>{let a=0;for(let j=-r;j<=r;j++)a+=w[j+r]*get(i+j);return [p[0],a/sw];});
+}
+function rawPath(def){
+  if(def.kind==='spline'){
+    const xs=def.h.map((_,i)=>i*SPAN/(def.h.length-1));
+    return {pts:smoothY(sampleSpline(xs,def.h,undefined,undefined,0.05),3.5),loop:null};
+  }
+  const {x0,yb,R,a}=LOOP;
+  const A=sampleSpline([0,12,24,x0],[50,30,8,yb],undefined,0,0.05);
+  const pts=A.slice(0,-1);
+  const i0=pts.length;
+  const n=900;
+  for(let j=0;j<n;j++){
+    const th=2*Math.PI*j/n;
+    pts.push([x0+a*th+R*Math.sin(th),yb+R*(1-Math.cos(th))]);
+  }
+  const xe=x0+a*2*Math.PI,i1=pts.length;
+  const C=sampleSpline([xe,78,SPAN],[yb,16,10],0,undefined,0.05);
+  for(const p of C)pts.push(p);
+  return {pts,loop:[i0,i1]};
+}
+/* Remuestreo a paso de arco uniforme y tabla de pendientes y curvatura */
+function buildTrack(def,ds){
+  ds=ds||0.1;
+  const {pts,loop}=rawPath(def);
+  const cum=[0];
+  for(let i=1;i<pts.length;i++)cum[i]=cum[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+  const total=cum[cum.length-1],N=Math.floor(total/ds);
+  const X=new Float64Array(N+1),Y=new Float64Array(N+1);
+  let p=0;
+  for(let k=0;k<=N;k++){
+    const s=k*ds;
+    while(p<pts.length-2&&cum[p+1]<s)p++;
+    const seg=cum[p+1]-cum[p]||1,f=Math.min(1,Math.max(0,(s-cum[p])/seg));
+    X[k]=pts[p][0]+(pts[p+1][0]-pts[p][0])*f;
+    Y[k]=pts[p][1]+(pts[p+1][1]-pts[p][1])*f;
+  }
+  const SIN=new Float64Array(N+1),COS=new Float64Array(N+1),TH=new Float64Array(N+1),KAP=new Float64Array(N+1);
+  for(let k=0;k<N;k++){
+    const dx=X[k+1]-X[k],dy=Y[k+1]-Y[k],l=Math.hypot(dx,dy)||1;
+    SIN[k]=dy/l;COS[k]=dx/l;TH[k]=Math.atan2(dy,dx);
+  }
+  SIN[N]=SIN[N-1];COS[N]=COS[N-1];TH[N]=TH[N-1];
+  const raw=new Float64Array(N+1);
+  for(let k=0;k<N-1;k++){
+    let d=TH[k+1]-TH[k];
+    while(d>Math.PI)d-=2*Math.PI;
+    while(d<-Math.PI)d+=2*Math.PI;
+    raw[k]=d/ds;
+  }
+  raw[N-1]=raw[N-2];raw[N]=raw[N-1];
+  const W=5;
+  for(let k=0;k<=N;k++){
+    let s=0,c=0;
+    for(let j=Math.max(0,k-W);j<=Math.min(N,k+W);j++){s+=raw[j];c++;}
+    KAP[k]=s/c;
+  }
+  return {ds,N,L:N*ds,X,Y,SIN,COS,TH,KAP,loopS:loop?[cum[loop[0]],cum[loop[1]-1]]:null};
+}
+function seg(TR,s){const k=Math.floor(s/TR.ds);return k<0?0:k>=TR.N?TR.N-1:k;}
+function hAt(TR,s){const k=seg(TR,s),f=s/TR.ds-k;return TR.Y[k]+(TR.Y[k+1]-TR.Y[k])*f;}
+function xyAt(TR,s){const k=seg(TR,s),f=s/TR.ds-k;return [TR.X[k]+(TR.X[k+1]-TR.X[k])*f,TR.Y[k]+(TR.Y[k+1]-TR.Y[k])*f];}
+function kapAt(TR,s){const k=seg(TR,s),f=s/TR.ds-k;return TR.KAP[k]+(TR.KAP[k+1]-TR.KAP[k])*f;}
+function startS(TR,h0){
+  if(h0>=TR.Y[0])return 0;
+  for(let k=0;k<TR.N;k++){
+    if(TR.Y[k]>h0&&TR.Y[k+1]<=h0)return (k+(TR.Y[k]-h0)/(TR.Y[k]-TR.Y[k+1]))*TR.ds;
+  }
+  return 0;
+}
+/* Peso aparente N/(m·g) (solo se usa en el looping): la vagoneta se apoya en el lado izquierdo de la tangente */
+function normalRatio(TR,g,s,v){return (v*v*kapAt(TR,s)+g*TR.COS[seg(TR,s)])/g;}
+
+/* Un paso de integración: Verlet para la gravedad + rozamiento cinético (μ·N) aparte */
+function physStep(sim,P,TR,dt){
+  const g=P.g;
+  const k0=seg(TR,sim.s);
+  const a0=-g*TR.SIN[k0];
+  if(sim.v===0&&Math.abs(a0)<=P.mu*g*Math.max(TR.COS[k0],0))return 0;   // rozamiento estático: se queda quieta
+  let s=sim.s+sim.v*dt+0.5*a0*dt*dt,v=sim.v,bounce=0;
+  if(s<0){s=-s;v=-v;bounce=1;}
+  else if(s>TR.L){s=2*TR.L-s;v=-v;bounce=1;}
+  const a1=-g*TR.SIN[seg(TR,s)];
+  v+=0.5*(a0+a1)*dt;
+  if(P.mu>0){
+    const Nm=g*Math.max(0,TR.COS[seg(TR,s)]);   // N = m·g·cosθ (el resto del cálculo no depende de m)
+    const av=Math.abs(v),dv=Math.min(av,P.mu*Nm*dt);
+    sim.Q+=0.5*P.m*(av*av-(av-dv)*(av-dv));
+    v=Math.sign(v)*(av-dv);
+  }
+  sim.s=s;sim.v=v;
+  return bounce;
+}
+
+/* ================= TEXTOS (castellano / valencià) ================= */
+const T={
+es:{
+  eyebrow:"Energía mecánica · Conservación",
+  title:"La montaña rusa de la energía",
+  lede:"Suelta la vagoneta y cambia la masa, la gravedad o el rozamiento. Verás cómo la energía potencial se disfraza de cinética (y al revés) sin perderse... salvo en forma de calor.",
+  btnGo:"¡Soltar!", btnPause:"Pausa", btnResume:"Seguir", btnReset:"Reiniciar", btnSlow:"Cámara lenta",
+  btnEdit:"Editar pista", btnEditDone:"Terminar edición",
+  lgEp:"Potencial (Ep)", lgEc:"Cinética (Ec)", lgQ:"Calor (Q)",
+  smallNow:"Ahora mismo", cardBars:"Barras de energía", smallTime:"Con el tiempo", cardGraph:"Energía frente al tiempo",
+  smallCalc:"Para hacer las cuentas", cardCalc:"Lecturas y fórmulas",
+  rdH:"Altura h", rdV:"Velocidad v", rdE0:"Energía inicial E₀", rdG:"Peso aparente",
+  eqEp:"Ep = m · g · h", eqEc:"Ec = ½ · m · v²", eqEm:"Em = Ep + Ec", eqQ:"Q = E₀ − Em (calor disipado)",
+  model:"Modelo: la vagoneta va sujeta a la vía con ruedas de seguridad y no hay resistencia del aire. El rozamiento vale μ·m·g·cosθ. Fíjate en que la masa no cambia el movimiento, pero sí las energías.",
+  grpPlanet:"Planeta", grpCart:"Vagoneta", grpStart:"Salida", grpFric:"Rozamiento", grpTrack:"Pista", grpTime:"Tiempo", grpShow:"Mostrar",
+  lblG:"Gravedad <i>g</i>", lblM:"Masa <i>m</i>", lblH0:"Altura inicial <i>h</i>₀", lblV0:"Velocidad inicial <i>v</i>₀",
+  lblMu:"Coeficiente de rozamiento <i>μ</i>", lblSpeed:"Velocidad de la animación",
+  chkQ:"Preguntas de la vagoneta", chkTalk:"Comentarios del pasajero", chkLvl:"Línea de energía total",
+  planets:{earth:"Tierra",moon:"Luna",mars:"Marte",jup:"Júpiter",pluto:"Plutón"},
+  fric:["Sin rozamiento","Poco","Medio","Mucho"],
+  tracks:{clasica:"Clásica",halfpipe:"Half-pipe",dificil:"Colina difícil",looping:"Looping",custom:"Mi pista"},
+  editHint:"Arrastra los círculos de la pista hacia arriba o abajo para moldearla.",
+  loopNote:h=>"El looping no se retoca, que se marea. Con ruedas de seguridad no se cae; sin ellas, la salida mínima sería de unos "+h+" m.",
+  warnLoop:"¡se caería!", ground:"suelo (h = 0)", lvlNow:"Em/(m·g): hasta aquí puedo subir", lvl0:"nivel inicial",
+  qHead:"La vagoneta pregunta", qSkip:"Saltar", qNext:"Seguir",
+  axT:"t (s)", axE:"E (J)"
+},
+va:{
+  eyebrow:"Energia mecànica · Conservació",
+  title:"La muntanya russa de l'energia",
+  lede:"Deixa anar la vagoneta i canvia la massa, la gravetat o el fregament. Veuràs com l'energia potencial es disfressa de cinètica (i a l'inrevés) sense perdre's... tret de la calor.",
+  btnGo:"Deixa-la anar!", btnPause:"Pausa", btnResume:"Continuar", btnReset:"Reiniciar", btnSlow:"Càmera lenta",
+  btnEdit:"Editar pista", btnEditDone:"Acabar l'edició",
+  lgEp:"Potencial (Ep)", lgEc:"Cinètica (Ec)", lgQ:"Calor (Q)",
+  smallNow:"Ara mateix", cardBars:"Barres d'energia", smallTime:"Amb el temps", cardGraph:"Energia enfront del temps",
+  smallCalc:"Per fer els comptes", cardCalc:"Lectures i fórmules",
+  rdH:"Altura h", rdV:"Velocitat v", rdE0:"Energia inicial E₀", rdG:"Pes aparent",
+  eqEp:"Ep = m · g · h", eqEc:"Ec = ½ · m · v²", eqEm:"Em = Ep + Ec", eqQ:"Q = E₀ − Em (calor dissipada)",
+  model:"Model: la vagoneta va subjecta a la via amb rodes de seguretat i no hi ha resistència de l'aire. El fregament val μ·m·g·cosθ. Fixa't que la massa no canvia el moviment, però sí les energies.",
+  grpPlanet:"Planeta", grpCart:"Vagoneta", grpStart:"Eixida", grpFric:"Fregament", grpTrack:"Pista", grpTime:"Temps", grpShow:"Mostrar",
+  lblG:"Gravetat <i>g</i>", lblM:"Massa <i>m</i>", lblH0:"Altura inicial <i>h</i>₀", lblV0:"Velocitat inicial <i>v</i>₀",
+  lblMu:"Coeficient de fregament <i>μ</i>", lblSpeed:"Velocitat de l'animació",
+  chkQ:"Preguntes de la vagoneta", chkTalk:"Comentaris del passatger", chkLvl:"Línia d'energia total",
+  planets:{earth:"Terra",moon:"Lluna",mars:"Mart",jup:"Júpiter",pluto:"Plutó"},
+  fric:["Sense fregament","Poc","Mitjà","Molt"],
+  tracks:{clasica:"Clàssica",halfpipe:"Half-pipe",dificil:"Pujada difícil",looping:"Looping",custom:"La meua pista"},
+  editHint:"Arrossega els cercles de la pista cap amunt o cap avall per modelar-la.",
+  loopNote:h=>"El looping no es retoca, que es mareja. Amb rodes de seguretat no cau; sense elles, l'eixida mínima seria d'uns "+h+" m.",
+  warnLoop:"cauria!", ground:"terra (h = 0)", lvlNow:"Em/(m·g): fins ací puc pujar", lvl0:"nivell inicial",
+  qHead:"La vagoneta pregunta", qSkip:"Botar-se-la", qNext:"Continuar",
+  axT:"t (s)", axE:"E (J)"
+}};
+
+const TQ={
+es:{
+  start:["Abróchense los cinturones. Y los apuntes."],
+  top:["Ep a tope. El estómago, un poco menos.","Aquí arriba todo es potencial... y sudor frío.","Mi Ec se ha ido de vacaciones."],
+  bottom:["¡Ec máxima! Mi peinado ya no existe.","Toda esa Ep convertida en velocidad. Gracias, gravedad.","Esto no es energía gratis: es energía transformada."],
+  turn:["Me paro un instante. Toda mi Ec ha pasado a Ep.","Fin de la subida: aquí Em = Ep."],
+  heat:["Huele a rozamiento... y a energía que se va en calor.","El carril se está calentando a mi costa."],
+  stop:["Fin del viaje. Gracias por volar con Newton Airlines.","Parada total. Ec = 0, ganas de repetir = 100 %."],
+  bounce:["¡Ouch! Fin de la vía.","El tope y yo ya nos conocemos."],
+  inv:["Cabeza abajo y sin tirantes. Confío en la física."],
+  earth:["De vuelta a casa. Gravedad de andar por casa."],
+  moon:["En la Luna todo cae a cámara lenta."],
+  mars:["Marte: gravedad justita, pero se aguanta."],
+  jup:["En Júpiter hasta los pensamientos pesan."],
+  pluto:["Plutón: aquí hasta caerse da pereza."]
+},
+va:{
+  start:["Cordeu-vos els cinturons. I els apunts."],
+  top:["Ep al màxim. L'estómac, un poc menys.","Ací dalt tot és potencial... i suor freda.","La meua Ec se n'ha anat de vacances."],
+  bottom:["Ec màxima! El meu pentinat ja no existeix.","Tota aquesta Ep convertida en velocitat. Gràcies, gravetat.","Açò no és energia gratis: és energia transformada."],
+  turn:["Pare un instant. Tota la meua Ec ha passat a Ep.","Fi de la pujada: ací Em = Ep."],
+  heat:["Fa olor de fregament... i d'energia que se'n va en calor.","La via s'escalfa a costa meua."],
+  stop:["Fi del viatge. Gràcies per volar amb Newton Airlines.","Parada total. Ec = 0, ganes de repetir = 100 %."],
+  bounce:["Ai! Fi de la via.","El topall i jo ja ens coneixem."],
+  inv:["Cap per avall i sense tirants. Confie en la física."],
+  earth:["De tornada a casa. Gravetat de nou."],
+  moon:["A la Lluna tot cau a càmera lenta."],
+  mars:["Mart: gravetat justeta, però s'aguanta."],
+  jup:["A Júpiter fins i tot els pensaments pesen."],
+  pluto:["Plutó: ací fins i tot caure fa mandra."]
+}};
+
+const RZT={ca:{
+"ariaSim": "Simulació",
+"ariaPanel": "Controls",
+"ariaCv": "Vagoneta de muntanya russa sobre la pista, amb el nivell d’energia total",
+"ariaBars": "Barres d’energia",
+"ariaGr": "Gràfica de l’energia enfront del temps",
+"rng": "Escriu un valor dins del rang del simulador.",
+"pa_moon": "la Lluna",
+"pa_mars": "Mart",
+"pa_earth": "la Terra",
+"pa_jup": "Júpiter",
+"f_v": "Velocitat v",
+"f_v0": "Velocitat inicial v₀",
+"f_h": "Altura màxima h",
+"f_g": "Gravetat g",
+"f_mu": "Coeficient de fregament μ",
+"m1.q": "Sense fregament i eixint en repòs des de <b>h₀ = 40 m</b> (Terra, g = 9,81 m/s²), amb quina <b>velocitat</b> passa la vagoneta per <b>h = 12 m</b> (el fons de la primera vall)?",
+"m1_2": "Et falta el factor 2: de ½·v² = g·Δh ix v² = 2·g·Δh, no v² = g·Δh.",
+"m1_sq": "Això és v², no v. Falta l’arrel quadrada.",
+"m1_f": "Amb v = {0} m/s l’Ec seria {1} J, però l’Ep que s’ha convertit és m·g·(40 − 12) = {2} J. Han de coincidir.",
+"m1_ok": "✔ Missió complida! m·g·(h₀ − h) = ½·m·v² → v = √(2·9,81·28) ≈ 23,4 m/s (uns 84 km/h).",
+"m1.more": "Repeteix el càlcul amb una vagoneta de 400 kg. Canvia la velocitat? Comprova-ho al simulador i explica per què.",
+"m2.q": "Sense fregament, la vagoneta ix de <b>h₀ = 28 m</b> amb una velocitat inicial. Troba la <b>v₀ mínima</b> (a passos de 0,5 m/s) perquè supere el segon cim, que fa 31 m.",
+"m2_step": "El simulador funciona a passos de 0,5 m/s: escriu un múltiple de 0,5.",
+"m2_poc": "Amb v₀ = {0} m/s la vagoneta només arriba a h₀ + v₀²/(2g) = {1} m: no supera el cim de 31 m.",
+"m2_mes": "Amb v₀ = {0} m/s passa el cim, però n’hi ha una v₀ menor que també ho aconsegueix.",
+"m2_ok": "✔ Missió complida! Cal h₀ + v₀²/(2g) > 31 m: amb 8 m/s dóna 31,3 m; amb 7,5 m/s només 30,9 m.",
+"m2.more": "Si la vagoneta fóra de 400 kg, la v₀ mínima canviaria? Pensa què passa amb la m a l’equació i comprova-ho.",
+"m3.q": "Sense fregament, la vagoneta ix de <b>h₀ = 20 m</b> amb <b>v₀ = 10 m/s</b> (Terra). A quina <b>altura màxima</b> arriba (en m)?",
+"m3_sum": "No es poden sumar metres i m/s. Passa la v₀ a altura amb v₀²/(2g).",
+"m3_f": "Per arribar a h = {0} m caldria una Ep de {1} J, però l’energia total és E₀ = {2} J.",
+"m3_ok": "✔ Missió complida! h = h₀ + v₀²/(2g) = 20 + 100/19,62 ≈ 25,1 m.",
+"m3.more": "I si la vagoneta isquera en repòs des de 25,1 m? Compara les dues eixides: què tenen de comú?",
+"m4.q": "Des de <b>h₀ = 40 m</b>, sense fregament, la vagoneta ha de passar pel fons de la primera vall (<b>h = 12 m</b>) a <b>15 m/s</b>. Quina <b>gravetat</b> g (en m/s²) cal?",
+"m4_f": "Amb g = {0} m/s² la velocitat a la vall és {1} m/s.",
+"m4_ok": "✔ Missió complida! m·g·28 = ½·m·15² → g = 225/56 ≈ 4,02 m/s².",
+"m4.more": "Hi ha algun planeta de la llista amb una gravetat així? Mart té 3,71 m/s²: amb quina velocitat hi passaria?",
+"s1.q": "Si la vagoneta pesa el doble (la mateixa altura d’eixida, sense fregament), arriba al fons amb més velocitat.",
+"s1.h": "Canvia la massa i mira la velocitat v a la vall.",
+"s1.e": "Mai. m·g·Δh = ½·m·v²: la massa es cancel·la i v = √(2·g·Δh) no en depén. Canvien les energies, no la velocitat.",
+"s2.q": "Sense fregament i eixint en repòs, la vagoneta mai no arriba a una altura superior a la d’eixida.",
+"s2.h": "Fixa’t en la línia d’energia total Em/(m·g).",
+"s2.e": "Sempre. Em = E₀ = m·g·h₀ i l’Ec no pot ser negativa, així que m·g·h ≤ m·g·h₀ en tot moment.",
+"s3.q": "L’energia mecànica (Ep + Ec) de la vagoneta es conserva durant tot el recorregut.",
+"s3.h": "Pensa en el que passa quan hi ha fregament.",
+"s3.e": "A vegades. Només es conserva si no hi ha fregament. Amb fregament, una part es dissipa en calor (Q) i Ep + Ec va baixant.",
+"s3_cx_no": "Amb μ = {0} el fregament és pràcticament nul. Prova amb un valor major (a partir de 0,01).",
+"s3_cx": "✔ Amb μ = {0} la vagoneta va perdent energia mecànica en forma de calor: Ep + Ec ja no és constant.",
+"s4.q": "A la Lluna (g = 1,62 m/s²), eixint en repòs de 40 m i sense fregament, la vagoneta arriba més amunt que a la Terra.",
+"s4.h": "Compara la línia d’energia total en els dos planetes.",
+"s4.e": "Mai. En repòs, Em/(m·g) = h₀ amb qualsevol g: l’altura màxima no depén de la gravetat. A la Lluna tarda més, però no puja més.",
+"s5.q": "Sense fregament, la vagoneta té la màxima energia cinètica en el punt més baix de la pista que visita.",
+"s5.h": "Mira les barres d’Ep i Ec quan passa pel fons de la vall més baixa.",
+"s5.e": "Sempre. Ec = Em − Ep amb Em constant, així que l’Ec és màxima quan l’Ep és mínima, és a dir, al punt més baix.",
+"s6.q": "Si dues vagonetes ixen de la mateixa altura, la que ix amb v₀ > 0 arriba al fons amb més velocitat que la que ix en repòs (sense fregament).",
+"s6.h": "Compara v a la vall amb v₀ = 0 i amb v₀ > 0.",
+"s6.e": "Sempre. ½·v² = ½·v₀² + g·Δh: amb v₀ > 0 s’afegeix energia cinètica inicial i la velocitat al fons és major.",
+"e1.ctx": "Dues vagonetes, una de 200 kg i una de 400 kg, ixen en repòs de la mateixa altura (40 m) i sense fregament. Es discuteix amb quina velocitat arriba cada una al fons de la primera vall.",
+"e1.n0": "Aina",
+"e1.n1": "Pau",
+"e1.s0": "La de 400 kg arriba més ràpida: té més massa i, per tant, més energia.",
+"e1.s1": "Arriben a la mateixa velocitat: v no depén de la massa.",
+"e1.w0": "m·g·Δh = ½·m·v²: la m es cancel·la i queda v = √(2·g·Δh). Amb 200 kg o amb 400 kg és v ≈ 23,4 m/s. Canvien les energies (la de 400 kg en té el doble), no la velocitat.",
+"e1.w1": "Perquè totes les vagonetes tenen la mateixa velocitat en qualsevol lloc de la pista, siga quina siga l’altura.",
+"e1.w2": "Perquè la vagoneta pesada fa més fregament i això compensa l’energia extra.",
+"e1.frame": "Aina, la massa no canvia la velocitat perquè…",
+"e1.model": "Aina, la vagoneta de 400 kg té el doble d’energia (E₀ = m·g·h₀), però també el doble de massa per accelerar. En igualar m·g·Δh = ½·m·v², la m desapareix: v = √(2·9,81·28) ≈ 23,4 m/s per a totes dues.",
+"e2.ctx": "Una vagoneta de 200 kg ix en repòs de 40 m, sense fregament, i supera el segon cim (31 m). Es discuteix quanta energia cinètica té quan hi passa.",
+"e2.n0": "Clara",
+"e2.n1": "Marc",
+"e2.s0": "Encara en té: Ec = Em − Ep = m·g·(40 − 31) ≈ 17,7 kJ.",
+"e2.s1": "Cap: a dalt de tot s’ha d’aturar un instant.",
+"e2.w0": "Com que passa el cim i continua, no s’atura: la seua Em = m·g·40 és major que la Ep al cim, m·g·31, i la diferència és Ec. Només s’aturaria al cim si h₀ fóra justament 31 m.",
+"e2.w1": "Perquè el cim és el punt més alt i allà l’Ec sempre és zero.",
+"e2.w2": "Perquè l’Ec només depén de l’altura.",
+"e2.frame": "Marc, a dalt del cim la vagoneta encara té Ec perquè…",
+"e2.model": "Marc, només s’atura a dalt si arriba justet, però aquesta vagoneta té 9 m d’altura de sobra: Ec = m·g·Δh = 200·9,81·9 ≈ 17,7 kJ, és a dir, v ≈ 13,3 m/s al cim.",
+"e3.ctx": "Una vagoneta ix en repòs de 40 m i, amb fregament (μ = 0,06), acaba parant-se a la pista. Es discuteix què ha passat amb la seua energia inicial E₀.",
+"e3.n0": "Laia",
+"e3.n1": "Joan",
+"e3.s0": "Es conserva: l’energia mecànica Ep + Ec continua valent E₀.",
+"e3.s1": "S’ha perdut: la vagoneta ja no es mou, així que l’energia ha desaparegut.",
+"e3.w0": "L’energia total es conserva, però no la mecànica: el fregament en transforma una part en calor (Q) i E₀ = Ep + Ec + Q. Si s’atura en una vall, encara té Ep i la resta s’ha convertit en calor.",
+"e3.w1": "Perquè quan la vagoneta s’atura, tota l’energia s’ha convertit en energia potencial.",
+"e3.w2": "Perquè el fregament només actua quan la vagoneta puja.",
+"e3.frame": "Laia i Joan, amb fregament l’energia inicial…",
+"e3.model": "Cap dels dos. Laia: Ep + Ec ja no val E₀, perquè una part s’ha dissipat. Joan: l’energia no desapareix, s’ha convertit en calor Q (la barra rosa del simulador). En parar-se: E₀ = Ep + Q.",
+"d1.q": "Prova de seguretat: la vagoneta (200 kg, sense fregament) ha d’eixir en repòs i superar el segon cim, de 31 m. Tria l’<b>altura d’eixida més xicoteta</b> de la llista que ho aconsegueix i calcula l’<b>energia cinètica</b> que tindrà al cim.",
+"d1.lc": "Altura d’eixida:",
+"d1.l0": "Ec",
+"d1_poc": "Amb {0} m la vagoneta no arriba al cim de 31 m: Em/(m·g) = {0} m.",
+"d1_mes": "Amb {0} m passa el cim, però n’hi ha una altura menor a la llista que també ho aconsegueix.",
+"d1_ec": "Mira-ho al simulador: al cim, Ec = Em − Ep = m·g·(h₀ − h).",
+"d1_ok": "✔ Ben decidit! Ec = 200 · 9,81 · (32 − 31) ≈ 1,96 kJ: arriba justet, però passa.",
+"d1.more": "Amb la mateixa altura d’eixida i el doble de massa, l’Ec al cim seria el doble? I la velocitat? Comprova-ho.",
+"d2.q": "La vagoneta (eixida en repòs de 40 m, sense fregament) ha de passar pel fons de la primera vall (12 m) a <b>almenys 20 m/s</b>. Tria el planeta amb la <b>menor gravetat</b> que ho aconsegueix i calcula la <b>velocitat</b> real amb què hi passa.",
+"d2.lc": "Planeta:",
+"d2.l0": "v",
+"d2_poc": "Amb la gravetat de {0} (g = {1} m/s²) la vagoneta passa a {2} m/s: no arriba als 20 m/s.",
+"d2_mes": "Amb la gravetat de {0} s’arriba als 20 m/s, però n’hi ha un planeta de la llista amb menys gravetat que també ho aconsegueix.",
+"d2_v": "Mira-ho al simulador: v = √(2·g·Δh), amb Δh = 40 − 12 = 28 m.",
+"d2_ok": "✔ Ben decidit! A la Terra v = √(2·9,81·28) ≈ 23,4 m/s ≥ 20. A Mart només arribaria a 14,4 m/s.",
+"d2.more": "Quin és el valor mínim de g (en m/s²) per arribar a 20 m/s? No és cap planeta de la llista: calcula’l."
+},
+es:{
+"ariaSim": "Simulación",
+"ariaPanel": "Mandos",
+"ariaCv": "Vagoneta de montaña rusa sobre la pista, con el nivel de energía total",
+"ariaBars": "Barras de energía",
+"ariaGr": "Gráfica de la energía frente al tiempo",
+"rng": "Escribe un valor dentro del rango del simulador.",
+"pa_moon": "la Luna",
+"pa_mars": "Marte",
+"pa_earth": "la Tierra",
+"pa_jup": "Júpiter",
+"f_v": "Velocidad v",
+"f_v0": "Velocidad inicial v₀",
+"f_h": "Altura máxima h",
+"f_g": "Gravedad g",
+"f_mu": "Coeficiente de rozamiento μ",
+"m1.q": "Sin rozamiento y saliendo en reposo desde <b>h₀ = 40 m</b> (Tierra, g = 9,81 m/s²), ¿con qué <b>velocidad</b> pasa la vagoneta por <b>h = 12 m</b> (el fondo del primer valle)?",
+"m1_2": "Te falta el factor 2: de ½·v² = g·Δh sale v² = 2·g·Δh, no v² = g·Δh.",
+"m1_sq": "Eso es v², no v. Falta la raíz cuadrada.",
+"m1_f": "Con v = {0} m/s la Ec sería {1} J, pero la Ep que se ha convertido es m·g·(40 − 12) = {2} J. Tienen que coincidir.",
+"m1_ok": "✔ ¡Misión cumplida! m·g·(h₀ − h) = ½·m·v² → v = √(2·9,81·28) ≈ 23,4 m/s (unos 84 km/h).",
+"m1.more": "Repite el cálculo con una vagoneta de 400 kg. ¿Cambia la velocidad? Compruébalo en el simulador y explica por qué.",
+"m2.q": "Sin rozamiento, la vagoneta sale de <b>h₀ = 28 m</b> con una velocidad inicial. Encuentra la <b>v₀ mínima</b> (en pasos de 0,5 m/s) para que supere la segunda cima, que mide 31 m.",
+"m2_step": "El simulador funciona en pasos de 0,5 m/s: escribe un múltiplo de 0,5.",
+"m2_poc": "Con v₀ = {0} m/s la vagoneta solo llega a h₀ + v₀²/(2g) = {1} m: no supera la cima de 31 m.",
+"m2_mes": "Con v₀ = {0} m/s pasa la cima, pero hay una v₀ menor que también lo consigue.",
+"m2_ok": "✔ ¡Misión cumplida! Hace falta h₀ + v₀²/(2g) > 31 m: con 8 m/s da 31,3 m; con 7,5 m/s solo 30,9 m.",
+"m2.more": "Si la vagoneta fuera de 400 kg, ¿cambiaría la v₀ mínima? Piensa qué pasa con la m en la ecuación y compruébalo.",
+"m3.q": "Sin rozamiento, la vagoneta sale de <b>h₀ = 20 m</b> con <b>v₀ = 10 m/s</b> (Tierra). ¿A qué <b>altura máxima</b> llega (en m)?",
+"m3_sum": "No se pueden sumar metros y m/s. Pasa la v₀ a altura con v₀²/(2g).",
+"m3_f": "Para llegar a h = {0} m haría falta una Ep de {1} J, pero la energía total es E₀ = {2} J.",
+"m3_ok": "✔ ¡Misión cumplida! h = h₀ + v₀²/(2g) = 20 + 100/19,62 ≈ 25,1 m.",
+"m3.more": "¿Y si la vagoneta saliera en reposo desde 25,1 m? Compara las dos salidas: ¿qué tienen en común?",
+"m4.q": "Desde <b>h₀ = 40 m</b>, sin rozamiento, la vagoneta tiene que pasar por el fondo del primer valle (<b>h = 12 m</b>) a <b>15 m/s</b>. ¿Qué <b>gravedad</b> g (en m/s²) hace falta?",
+"m4_f": "Con g = {0} m/s² la velocidad en el valle es {1} m/s.",
+"m4_ok": "✔ ¡Misión cumplida! m·g·28 = ½·m·15² → g = 225/56 ≈ 4,02 m/s².",
+"m4.more": "¿Hay algún planeta de la lista con una gravedad así? Marte tiene 3,71 m/s²: ¿con qué velocidad pasaría?",
+"s1.q": "Si la vagoneta pesa el doble (la misma altura de salida, sin rozamiento), llega al fondo con más velocidad.",
+"s1.h": "Cambia la masa y mira la velocidad v en el valle.",
+"s1.e": "Nunca. m·g·Δh = ½·m·v²: la masa se cancela y v = √(2·g·Δh) no depende de ella. Cambian las energías, no la velocidad.",
+"s2.q": "Sin rozamiento y saliendo en reposo, la vagoneta nunca llega a una altura superior a la de salida.",
+"s2.h": "Fíjate en la línea de energía total Em/(m·g).",
+"s2.e": "Siempre. Em = E₀ = m·g·h₀ y la Ec no puede ser negativa, así que m·g·h ≤ m·g·h₀ en todo momento.",
+"s3.q": "La energía mecánica (Ep + Ec) de la vagoneta se conserva durante todo el recorrido.",
+"s3.h": "Piensa en lo que pasa cuando hay rozamiento.",
+"s3.e": "A veces. Solo se conserva si no hay rozamiento. Con rozamiento, una parte se disipa en calor (Q) y Ep + Ec va bajando.",
+"s3_cx_no": "Con μ = {0} el rozamiento es prácticamente nulo. Prueba con un valor mayor (a partir de 0,01).",
+"s3_cx": "✔ Con μ = {0} la vagoneta va perdiendo energía mecánica en forma de calor: Ep + Ec ya no es constante.",
+"s4.q": "En la Luna (g = 1,62 m/s²), saliendo en reposo de 40 m y sin rozamiento, la vagoneta llega más arriba que en la Tierra.",
+"s4.h": "Compara la línea de energía total en los dos planetas.",
+"s4.e": "Nunca. En reposo, Em/(m·g) = h₀ con cualquier g: la altura máxima no depende de la gravedad. En la Luna tarda más, pero no sube más.",
+"s5.q": "Sin rozamiento, la vagoneta tiene la máxima energía cinética en el punto más bajo de la pista que visita.",
+"s5.h": "Mira las barras de Ep y Ec cuando pasa por el fondo del valle más bajo.",
+"s5.e": "Siempre. Ec = Em − Ep con Em constante, así que la Ec es máxima cuando la Ep es mínima, es decir, en el punto más bajo.",
+"s6.q": "Si dos vagonetas salen de la misma altura, la que sale con v₀ > 0 llega al fondo con más velocidad que la que sale en reposo (sin rozamiento).",
+"s6.h": "Compara v en el valle con v₀ = 0 y con v₀ > 0.",
+"s6.e": "Siempre. ½·v² = ½·v₀² + g·Δh: con v₀ > 0 se añade energía cinética inicial y la velocidad al fondo es mayor.",
+"e1.ctx": "Dos vagonetas, una de 200 kg y otra de 400 kg, salen en reposo de la misma altura (40 m) y sin rozamiento. Se discute con qué velocidad llega cada una al fondo del primer valle.",
+"e1.n0": "Aina",
+"e1.n1": "Pau",
+"e1.s0": "La de 400 kg llega más rápida: tiene más masa y, por tanto, más energía.",
+"e1.s1": "Llegan a la misma velocidad: v no depende de la masa.",
+"e1.w0": "m·g·Δh = ½·m·v²: la m se cancela y queda v = √(2·g·Δh). Con 200 kg o con 400 kg es v ≈ 23,4 m/s. Cambian las energías (la de 400 kg tiene el doble), no la velocidad.",
+"e1.w1": "Porque todas las vagonetas tienen la misma velocidad en cualquier lugar de la pista, sea cual sea la altura.",
+"e1.w2": "Porque la vagoneta pesada hace más rozamiento y eso compensa la energía extra.",
+"e1.frame": "Aina, la masa no cambia la velocidad porque…",
+"e1.model": "Aina, la vagoneta de 400 kg tiene el doble de energía (E₀ = m·g·h₀), pero también el doble de masa que acelerar. Al igualar m·g·Δh = ½·m·v², la m desaparece: v = √(2·9,81·28) ≈ 23,4 m/s para las dos.",
+"e2.ctx": "Una vagoneta de 200 kg sale en reposo de 40 m, sin rozamiento, y supera la segunda cima (31 m). Se discute cuánta energía cinética tiene cuando pasa por ella.",
+"e2.n0": "Clara",
+"e2.n1": "Marc",
+"e2.s0": "Todavía tiene: Ec = Em − Ep = m·g·(40 − 31) ≈ 17,7 kJ.",
+"e2.s1": "Ninguna: arriba del todo tiene que pararse un instante.",
+"e2.w0": "Como pasa la cima y continúa, no se detiene: su Em = m·g·40 es mayor que la Ep en la cima, m·g·31, y la diferencia es Ec. Solo se pararía en la cima si h₀ fuera justamente 31 m.",
+"e2.w1": "Porque la cima es el punto más alto y allí la Ec siempre es cero.",
+"e2.w2": "Porque la Ec solo depende de la altura.",
+"e2.frame": "Marc, arriba de la cima la vagoneta todavía tiene Ec porque…",
+"e2.model": "Marc, solo se para arriba si llega justita, pero esta vagoneta tiene 9 m de altura de sobra: Ec = m·g·Δh = 200·9,81·9 ≈ 17,7 kJ, es decir, v ≈ 13,3 m/s en la cima.",
+"e3.ctx": "Una vagoneta sale en reposo de 40 m y, con rozamiento (μ = 0,06), acaba parándose en la pista. Se discute qué ha pasado con su energía inicial E₀.",
+"e3.n0": "Laia",
+"e3.n1": "Joan",
+"e3.s0": "Se conserva: la energía mecánica Ep + Ec sigue valiendo E₀.",
+"e3.s1": "Se ha perdido: la vagoneta ya no se mueve, así que la energía ha desaparecido.",
+"e3.w0": "La energía total se conserva, pero no la mecánica: el rozamiento transforma una parte en calor (Q) y E₀ = Ep + Ec + Q. Si se detiene en un valle, todavía tiene Ep y el resto se ha convertido en calor.",
+"e3.w1": "Porque cuando la vagoneta se para, toda la energía se ha convertido en energía potencial.",
+"e3.w2": "Porque el rozamiento solo actúa cuando la vagoneta sube.",
+"e3.frame": "Laia y Joan, con rozamiento la energía inicial…",
+"e3.model": "Ninguno de los dos. Laia: Ep + Ec ya no vale E₀, porque una parte se ha disipado. Joan: la energía no desaparece, se ha convertido en calor Q (la barra rosa del simulador). Al pararse: E₀ = Ep + Q.",
+"d1.q": "Prueba de seguridad: la vagoneta (200 kg, sin rozamiento) debe salir en reposo y superar la segunda cima, de 31 m. Elige la <b>altura de salida más pequeña</b> de la lista que lo consigue y calcula la <b>energía cinética</b> que tendrá en la cima.",
+"d1.lc": "Altura de salida:",
+"d1.l0": "Ec",
+"d1_poc": "Con {0} m la vagoneta no llega a la cima de 31 m: Em/(m·g) = {0} m.",
+"d1_mes": "Con {0} m pasa la cima, pero hay una altura menor en la lista que también lo consigue.",
+"d1_ec": "Míralo en el simulador: en la cima, Ec = Em − Ep = m·g·(h₀ − h).",
+"d1_ok": "✔ ¡Bien decidido! Ec = 200 · 9,81 · (32 − 31) ≈ 1,96 kJ: llega justo, pero pasa.",
+"d1.more": "Con la misma altura de salida y el doble de masa, ¿la Ec en la cima sería el doble? ¿Y la velocidad? Compruébalo.",
+"d2.q": "La vagoneta (salida en reposo de 40 m, sin rozamiento) debe pasar por el fondo del primer valle (12 m) a <b>al menos 20 m/s</b>. Elige el planeta con la <b>menor gravedad</b> que lo consigue y calcula la <b>velocidad</b> real con la que pasa.",
+"d2.lc": "Planeta:",
+"d2.l0": "v",
+"d2_poc": "Con la gravedad de {0} (g = {1} m/s²) la vagoneta pasa a {2} m/s: no llega a los 20 m/s.",
+"d2_mes": "Con la gravedad de {0} se llega a los 20 m/s, pero hay un planeta de la lista con menos gravedad que también lo consigue.",
+"d2_v": "Míralo en el simulador: v = √(2·g·Δh), con Δh = 40 − 12 = 28 m.",
+"d2_ok": "✔ ¡Bien decidido! En la Tierra v = √(2·9,81·28) ≈ 23,4 m/s ≥ 20. En Marte solo llegaría a 14,4 m/s.",
+"d2.more": "¿Cuál es el valor mínimo de g (en m/s²) para llegar a 20 m/s? No es ningún planeta de la lista: calcúlalo."
+}};
+function flatT(o){const r={};for(const k in o){const v=o[k];if(typeof v==='string')r[k]=v;else if(typeof v==='function')r[k]=v('{0}');else if(Array.isArray(v))v.forEach((x,i)=>{r[k+'.'+i]=x;});else for(const j in v)r[k+'.'+j]=v[j];}return r;}
+const I18N={ca:Object.assign(flatT(T.va),RZT.ca),es:Object.assign(flatT(T.es),RZT.es)};
+
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../muntanya-russa/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(()=>{
+const TAU=Math.PI*2;
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lg=()=>LANG==='ca'?'va':'es';
+const tr=k=>t(k);
+const fmt=(x,d=1,l=lg())=>Number.isFinite(x)?x.toLocaleString(l==='va'?'ca-ES':'es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}):"—";
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+
+/* ---------- estado ---------- */
+const P={m:200,g:9.81,mu:0,h0:40,v0:0};
+const S={playing:false,started:false,speed:1,slow:false,editing:false,talk:true,level:true,qOn:true,track:'clasica'};
+const defs={clasica:TRACKS.clasica,halfpipe:TRACKS.halfpipe,dificil:TRACKS.dificil,looping:TRACKS.looping,custom:null};
+let TR=buildTrack(defs.clasica);
+const sim={s:0,v:0,Q:0,t:0,E0:1,hs:0,vs:0,stopT:0,bounced:0,dir:1};
+let hist=[],histAcc=0,particles=[],bubble=null,flags={},lastQuip=-1e9,dirty=true;
+const Q={active:null,last:-99,seen:{},pend:null,wasPlaying:false};
+
+function energies(){
+  const h=hAt(TR,sim.s),ep=P.m*P.g*h,ec=0.5*P.m*sim.v*sim.v;
+  return {h,ep,ec,em:ep+ec,q:Math.max(0,sim.E0-ep-ec)};
+}
+function pushHist(){const e=energies();hist.push([sim.t,e.ep,e.ec]);if(hist.length>6000)hist.splice(0,1000);}
+
+/* ---------- comentarios del pasajero ---------- */
+function quip(key,force,long){
+  if(!S.talk)return;
+  const now=performance.now();
+  if(!force&&now-lastQuip<3500)return;
+  const n=TQ[lg()][key].length;
+  lastQuip=now;
+  bubble={key,i:Math.floor(Math.random()*n),t0:now,dur:long?7000:3400};
+}
+
+/* ---------- reinicio ---------- */
+function resetSim(quipKey,keepPlay){
+  const was=S.playing||Q.wasPlaying&&!!Q.active;
+  closeQ(true);
+  sim.s=startS(TR,P.h0);sim.v=P.v0;sim.Q=0;sim.t=0;sim.hs=0;sim.vs=0;sim.stopT=0;sim.bounced=0;sim.dir=1;
+  sim.E0=P.m*P.g*hAt(TR,sim.s)+0.5*P.m*P.v0*P.v0;
+  hist=[];histAcc=0;particles.length=0;flags={};Q.last=-99;Q.pend=null;
+  S.playing=!!(keepPlay&&was&&!S.editing);S.started=S.playing;
+  pushHist();
+  if(quipKey)quip(quipKey,true,!S.playing);
+  updatePlay();
+}
+function updatePlay(){
+  const b=$('play');
+  b.textContent=S.playing?tr('btnPause'):(S.started||sim.t>0?tr('btnResume'):tr('btnGo'));
+  $('slow').setAttribute('aria-pressed',S.slow);
+  $('edit').setAttribute('aria-pressed',S.editing);
+  $('edit').textContent=S.editing?tr('btnEditDone'):tr('btnEdit');
+}
+function togglePlay(){
+  if(Q.active){closeQ(false);return;}
+  if(S.editing)return;
+  S.playing=!S.playing;if(S.playing)S.started=true;
+  updatePlay();
+}
+
+/* ---------- mandos ---------- */
+function control(host,cfg){
+  const w=document.createElement('div');w.className='ctl';
+  w.innerHTML=`<label for="${cfg.id}"></label><input type="range" id="${cfg.id}" min="0" max="1000" step="1"><input type="number" id="${cfg.id}-n" step="${cfg.step}" aria-label="${cfg.id}"><span class="unit">${cfg.unit}</span>`;
+  host.appendChild(w);w.querySelector('label').dataset.i18nHtml=cfg.key;
+  const r=w.querySelector('input[type=range]'),n=w.querySelector('input[type=number]');
+  const dec=(String(cfg.step).split('.')[1]||'').length;
+  const rnd=v=>clamp(Math.round(v/cfg.step)*cfg.step,cfg.min,cfg.max);
+  const to=v=>cfg.log?1000*Math.log(v/cfg.min)/Math.log(cfg.max/cfg.min):1000*(v-cfg.min)/(cfg.max-cfg.min);
+  const from=u=>cfg.log?cfg.min*Math.pow(cfg.max/cfg.min,u/1000):cfg.min+(cfg.max-cfg.min)*u/1000;
+  const set=v=>{v=rnd(v);r.value=to(v);n.min=cfg.min;n.max=cfg.max;n.value=(+v).toFixed(dec);return v;};
+  r.addEventListener('input',()=>{const v=rnd(from(+r.value));n.value=v.toFixed(dec);cfg.on(v);});
+  n.addEventListener('change',()=>{let v=parseFloat(String(n.value).replace(',','.'));if(!Number.isFinite(v))v=cfg.get();v=set(v);cfg.on(v);});
+  set(cfg.get());
+  return {set,setMax(m){cfg.max=m;set(cfg.get());}};
+}
+const restart=()=>resetSim(null,true);
+const cG=control($('ctlG'),{id:'g',key:'lblG',min:0.5,max:30,step:0.01,unit:'m/s²',get:()=>P.g,on:v=>{P.g=v;syncPlanets();restart();}});
+const cM=control($('ctlM'),{id:'m',key:'lblM',min:10,max:2000,step:1,log:true,unit:'kg',get:()=>P.m,on:v=>{P.m=v;restart();}});
+const cH=control($('ctlS'),{id:'h0',key:'lblH0',min:2,max:50,step:0.5,unit:'m',get:()=>P.h0,on:v=>{P.h0=v;restart();}});
+const cV=control($('ctlS'),{id:'v0',key:'lblV0',min:0,max:25,step:0.5,unit:'m/s',get:()=>P.v0,on:v=>{P.v0=v;restart();}});
+const cMu=control($('ctlF'),{id:'mu',key:'lblMu',min:0,max:0.4,step:0.005,unit:'',get:()=>P.mu,on:v=>{P.mu=v;syncFric();}});
+control($('ctlT'),{id:'spd',key:'lblSpeed',min:0.1,max:3,step:0.05,log:true,unit:'×',get:()=>S.speed,on:v=>{S.speed=v;}});
+
+const PLANETS=[['earth',9.81],['moon',1.62],['mars',3.71],['jup',24.79],['pluto',0.62]];
+const FRICS=[0,0.02,0.06,0.15];
+const TRACKIDS=['clasica','halfpipe','dificil','looping','custom'];
+function mkChips(host,items,onclick){
+  host.innerHTML='';
+  return items.map((it,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',()=>onclick(i));host.appendChild(b);return b;});
+}
+const pChips=mkChips($('planets'),PLANETS,i=>{P.g=PLANETS[i][1];cG.set(P.g);syncPlanets();resetSim(PLANETS[i][0],true);});
+const fChips=mkChips($('fchips'),FRICS,i=>{P.mu=FRICS[i];cMu.set(P.mu);syncFric();});
+const tChips=mkChips($('tchips'),TRACKIDS,i=>pickTrack(TRACKIDS[i]));
+function syncPlanets(){PLANETS.forEach((p,i)=>pChips[i].setAttribute('aria-pressed',Math.abs(P.g-p[1])<0.005));}
+function syncFric(){FRICS.forEach((f,i)=>fChips[i].setAttribute('aria-pressed',Math.abs(P.mu-f)<0.0005));}
+function syncTracks(){TRACKIDS.forEach((id,i)=>tChips[i].setAttribute('aria-pressed',S.track===id));}
+function labelChips(){
+  PLANETS.forEach((p,i)=>pChips[i].textContent=tr('planets.'+p[0]));
+  fChips.forEach((b,i)=>b.textContent=tr('fric.'+i));
+  TRACKIDS.forEach((id,i)=>tChips[i].textContent=tr('tracks.'+id));
+}
+
+/* ---------- pistas ---------- */
+function loopMinH(){
+  if(!TR.loopS)return 0;
+  let need=0;
+  const k0=Math.floor(TR.loopS[0]/TR.ds),k1=Math.floor(TR.loopS[1]/TR.ds);
+  for(let k=k0;k<=k1;k++){const c=TR.COS[k],ka=TR.KAP[k];if(c<0&&ka>1e-4)need=Math.max(need,TR.Y[k]+(-c)/(2*ka));}
+  return need;
+}
+function trackNote(){
+  const n=$('tnote');
+  if(S.editing){n.hidden=false;n.textContent=tr('editHint');}
+  else if(TR.loopS){n.hidden=false;n.textContent=t('loopNote',{0:fmt(loopMinH(),1)});}
+  else n.hidden=true;
+}
+function rebuildTrack(){
+  TR=buildTrack(defs[S.track]);
+  const mx=Math.floor(TR.Y[0]);cH.setMax(mx);P.h0=clamp(P.h0,2,mx);cH.set(P.h0);
+  dirty=true;
+}
+function pickTrack(id){
+  if(id==='custom'&&!defs.custom){
+    const src=defs[S.track].kind==='spline'?defs[S.track]:defs.clasica;
+    defs.custom={kind:'spline',h:src.h.slice()};
+  }
+  S.track=id;
+  rebuildTrack();syncTracks();
+  if(TR.loopS&&S.editing)setEdit(false);
+  resetSim('start',true);
+  trackNote();
+  if(id==='custom'&&!S.editing)setEdit(true);
+}
+function setEdit(on){
+  if(on&&TR.loopS){const n=$('tnote');n.hidden=false;n.textContent=t('loopNote',{0:fmt(loopMinH(),1)});return;}
+  S.editing=on;
+  closeQ(true);
+  if(on){S.playing=false;resetSim(null,false);}
+  else resetSim('start',false);
+  cv.classList.toggle('edit',on);
+  updatePlay();trackNote();
+}
+
+/* ---------- preguntas ---------- */
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const QB=[
+ {id:'topcmp',types:['top'],ok:()=>true,
+  ctx:()=>{const e=energies();return {ep:Math.round(e.ep),ec:Math.round(e.ec)};},
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a,f=(x,d=0)=>fmt(x,d,l);
+    const ep=c.ep,ec=c.ec,ci=ep>1.15*ec?0:ec>1.15*ep?1:2;
+    const names=[L("La potencial (Ep)","La potencial (Ep)"),L("La cinética (Ec)","La cinètica (Ec)"),L("Más o menos iguales","Més o menys iguals")];
+    const good=ci===0?L("Eso es. Arriba manda la altura.","Això és. Dalt mana l'altura."):ci===1?L("Eso es. Aquí manda la velocidad.","Això és. Ací mana la velocitat."):L("Eso es: van igualadas.","Això és: van igualades.");
+    return {text:L("Ahora mismo, ¿qué energía es mayor en la vagoneta?","Ara mateix, quina energia és major a la vagoneta?"),
+      num:`Ep = ${f(ep)} J · Ec = ${f(ec)} J · Em = ${f(ep+ec)} J`,
+      opts:names.map((t,i)=>({t,ok:i===ci,fb:i===ci?good:L("Las barras no mienten.","Les barres no menteixen.")}))};
+  }},
+ {id:'bottom',types:['bottom'],ok:()=>true,ctx:()=>({}),
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a;
+    return {text:L("Estoy en el fondo del valle. Comparado con las alturas de alrededor, ¿cómo van mi Ep y mi Ec?","Estic al fons de la vall. Comparat amb les altures de voltant, com van la meua Ep i la meua Ec?"),
+      opts:[
+        {t:L("Ep mínima y Ec máxima","Ep mínima i Ec màxima"),ok:true,fb:L("Exacto. Entre dos puntos cercanos Em apenas cambia, así que lo que pierdo de Ep lo gano en Ec.","Exacte. Entre dos punts pròxims Em amb prou feines canvia, així que el que perc d'Ep ho guanye en Ec.")},
+        {t:L("Ep máxima y Ec mínima","Ep màxima i Ec mínima"),ok:false,fb:L("Eso pasaría en la cima. Aquí abajo es justo al revés.","Això passaria al cim. Ací baix és just a l'inrevés.")},
+        {t:L("Las dos al máximo","Les dos al màxim"),ok:false,fb:L("Energía gratis. La conservación de la energía no admite descuentos.","Energia gratis. La conservació de l'energia no admet descomptes.")}]};
+  }},
+ {id:'mass',types:['top','bottom'],ok:()=>true,ctx:()=>({}),
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a;
+    return {text:L("Si la vagoneta pesara el doble (misma altura de salida, sin aire), ¿cómo sería mi velocidad en el fondo?","Si la vagoneta pesara el doble (mateixa altura d'eixida, sense aire), com seria la meua velocitat al fons?"),
+      num:"m·g·h = ½·m·v²  ⇒  v = √(2·g·h)",
+      opts:[
+        {t:L("La misma","La mateixa"),ok:true,fb:L("La m aparece en los dos lados y se simplifica. Galileo ya lo sospechaba desde la Torre de Pisa (o eso cuentan).","La m apareix als dos costats i se simplifica. Galileu ja ho sospitava des de la Torre de Pisa (o això conten).")},
+        {t:L("El doble","El doble"),ok:false,fb:L("Ojalá. Pero la m se simplifica y la velocidad no depende de ella.","Tant de bo. Però la m se simplifica i la velocitat no en depén.")},
+        {t:L("La mitad","La meitat"),ok:false,fb:L("Pesar más no te frena: la m se simplifica en la ecuación.","Pesar més no et frena: la m se simplifica a l'equació.")}]};
+  }},
+ {id:'numec',types:['top','bottom'],ok:()=>energies().ep>500,
+  ctx:()=>{const e=energies();return {ep:Math.round(e.ep),em:Math.round(e.em)};},
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a,f=x=>fmt(x,0,l);
+    const ec=c.em-c.ep;
+    const cand=[c.ep+c.em,c.em,c.ep].filter((v,i,a)=>v!==ec&&a.indexOf(v)===i);
+    while(cand.length<2)cand.push(ec*2+500*cand.length);
+    const calc=`Ec = Em − Ep = ${f(c.em)} − ${f(c.ep)} = ${f(ec)} J`;
+    return {text:L(`Ahora mismo mi Ep es ${f(c.ep)} J y mi Em es ${f(c.em)} J. ¿Cuánto vale mi Ec?`,`Ara mateix la meua Ep és ${f(c.ep)} J i la meua Em és ${f(c.em)} J. Quant val la meua Ec?`),
+      num:calc,
+      opts:[
+        {t:f(ec)+" J",ok:true,fb:L("Bien despejado: Em = Ep + Ec.","Ben aïllat: Em = Ep + Ec.")},
+        {t:f(cand[0])+" J",ok:false,fb:L("Despeja de Em = Ep + Ec.","Aïlla d'Em = Ep + Ec.")},
+        {t:f(cand[1])+" J",ok:false,fb:L("Despeja de Em = Ep + Ec.","Aïlla d'Em = Ep + Ec.")}]};
+  }},
+ {id:'velocity',types:['bottom','top'],
+  ok:()=>{const e=energies(),h0=sim.E0/(P.m*P.g);return P.mu===0&&P.v0===0&&e.h<h0-3&&Math.sqrt(2*P.g*(h0-e.h))>3;},
+  ctx:()=>{const e=energies();return {h0:sim.E0/(P.m*P.g),h:e.h,g:P.g};},
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a,f=(x,d=1)=>fmt(x,d,l);
+    const dh=c.h0-c.h,v=Math.sqrt(2*c.g*dh);
+    return {text:L(`Salí desde ${f(c.h0)} m sin empujón y ahora estoy a ${f(c.h)} m, sin rozamiento. ¿Qué velocidad llevo?`,`Vaig eixir des de ${f(c.h0)} m sense empentó i ara estic a ${f(c.h)} m, sense fregament. Quina velocitat porte?`),
+      num:`v = √(2 · g · Δh) = √(2 · ${f(c.g,2)} · ${f(dh)}) = ${f(v)} m/s`,
+      opts:[
+        {t:f(v)+" m/s",ok:true,fb:L("Conservación: m·g·h₀ = m·g·h + ½·m·v².","Conservació: m·g·h₀ = m·g·h + ½·m·v².")},
+        {t:f(v/Math.SQRT2)+" m/s",ok:false,fb:L("Te falta el 2: de ½·v² = g·Δh sale v² = 2·g·Δh.","Et falta el 2: de ½·v² = g·Δh ix v² = 2·g·Δh.")},
+        {t:f(v*v,0)+" m/s",ok:false,fb:L("Te falta la raíz: eso es v², no v.","Et falta l'arrel: això és v², no v.")}]};
+  }},
+ {id:'turn',types:['turn'],ok:()=>true,ctx:()=>({}),
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a;
+    return {text:L("Me he parado un instante y vuelvo hacia atrás. ¿Por qué no sigo subiendo?","M'he parat un instant i torne cap arrere. Per què no continue pujant?"),
+      opts:[
+        {t:L("Mi Ec se ha agotado: aquí Em = Ep","La meua Ec s'ha esgotat: ací Em = Ep"),ok:true,fb:L("Eso es: toda la Ec se ha convertido en Ep. Más arriba no llego con la Em que tengo.","Això és: tota l'Ec s'ha convertit en Ep. Més amunt no arribe amb l'Em que tinc.")},
+        {t:L("Porque peso demasiado","Perquè pese massa"),ok:false,fb:L("La masa se simplifica: da igual lo que pese.","La massa se simplifica: tant se val el que pese.")},
+        {t:L("Porque la gravedad ha cambiado de opinión","Perquè la gravetat ha canviat d'opinió"),ok:false,fb:L("La gravedad no cambia de opinión... salvo que toques el mando de los planetas.","La gravetat no canvia d'opinió... tret que toques el comandament dels planetes.")}]};
+  }},
+ {id:'fric',types:['friction'],ok:()=>P.mu>0,
+  ctx:()=>({pct:Math.round(100*energies().q/sim.E0)}),
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a;
+    return {text:L(`Mi energía mecánica ha caído un ${c.pct} %. ¿Adónde se ha ido?`,`La meua energia mecànica ha caigut un ${c.pct} %. On ha anat?`),
+      num:"Ep + Ec + Q = E₀",
+      opts:[
+        {t:L("Se ha convertido en calor por el rozamiento","S'ha convertit en calor pel fregament"),ok:true,fb:L("Exacto. La energía total no se pierde: solo deja de ser mecánica y se reparte en calor.","Exacte. L'energia total no es perd: només deixa de ser mecànica i es reparteix en calor.")},
+        {t:L("Se ha destruido","S'ha destruït"),ok:false,fb:L("La energía ni se crea ni se destruye; como mucho se va a calentar algo.","L'energia ni es crea ni es destrueix; com a molt se'n va a escalfar alguna cosa.")},
+        {t:L("Se la ha quedado la pista como Ep","S'ho ha quedat la pista com a Ep"),ok:false,fb:L("La pista no cambia de altura, así que no gana Ep.","La pista no canvia d'altura, així que no guanya Ep.")}]};
+  }},
+ {id:'stop',types:['stop'],ok:()=>P.mu>0,
+  ctx:()=>{const e=energies();return {e0:Math.round(sim.E0),ep:Math.round(e.ep),q:Math.round(e.q)};},
+  build:(c,l)=>{
+    const L=(a,b)=>l==='va'?b:a,f=x=>fmt(x,0,l);
+    return {text:L("Me he parado del todo y ya no tengo Ec. ¿Qué ha sido de la energía con la que salí?","M'he parat del tot i ja no tinc Ec. Què ha sigut de l'energia amb què vaig eixir?"),
+      num:`E₀ = ${f(c.e0)} J · Ep = ${f(c.ep)} J · Q = ${f(c.q)} J`,
+      opts:[
+        {t:L("Una parte sigue como Ep (por la altura) y el resto se ha disipado en calor","Una part continua com a Ep (per l'altura) i la resta s'ha dissipat en calor"),ok:true,fb:L("Cuadra: Ep + Q = E₀.","Quadra: Ep + Q = E₀.")},
+        {t:L("Se ha esfumado","S'ha esfumat"),ok:false,fb:L("La energía no se esfuma: se transforma.","L'energia no s'esfuma: es transforma.")},
+        {t:L("Sigue toda como Ec, pero escondida","Continua tota com a Ec, però amagada"),ok:false,fb:L("Con v = 0 no hay Ec escondida: Ec = ½·m·v² = 0.","Amb v = 0 no hi ha Ec amagada: Ec = ½·m·v² = 0.")}]};
+  }}
+];
+const qcard=$('qcard');
+function cartScreenY(){const p=xyAt(TR,sim.s);return V.oy-p[1]*V.S;}
+function offer(type){
+  if(!S.qOn||S.editing||Q.active||sim.t<2.5)return;
+  if(sim.t-Q.last<10){if(type==='friction'||type==='stop')Q.pend=type;return;}
+  ask(type);
+}
+function ask(type){
+  const pool=QB.filter(q=>q.types.includes(type)&&q.ok());
+  if(!pool.length)return;
+  pool.sort((a,b)=>(Q.seen[a.id]||0)-(Q.seen[b.id]||0)+(Math.random()-0.5)*0.5);
+  const q=pool[0];Q.seen[q.id]=(Q.seen[q.id]||0)+1;
+  Q.active={q,ctx:q.ctx(),perm:shuffle([0,1,2]),picked:-1};
+  Q.wasPlaying=S.playing;S.playing=false;
+  const topPos=cartScreenY()>V.h*0.5;qcard.className='qcard '+(topPos?'top':'bot');qcard.style.top=topPos?($('stage').offsetTop+10)+'px':'';
+  renderQ();updatePlay();
+  if(matchMedia('(max-width:640px)').matches)qcard.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function renderQ(){
+  const a=Q.active;if(!a){qcard.hidden=true;return;}
+  const d=a.q.build(a.ctx,lg());
+  qcard.hidden=false;qcard.innerHTML='';
+  const mk=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
+  qcard.appendChild(mk('div','qh',tr('qHead')));
+  qcard.appendChild(mk('p','qt',d.text));
+  const box=mk('div','opts');
+  a.perm.forEach(oi=>{
+    const o=d.opts[oi],b=mk('button','opt',o.t);b.type='button';
+    if(a.picked>=0){b.disabled=true;if(o.ok)b.classList.add('ok');else if(oi===a.picked)b.classList.add('no');}
+    else b.addEventListener('click',()=>{a.picked=oi;renderQ();});
+    box.appendChild(b);
+  });
+  qcard.appendChild(box);
+  if(a.picked>=0){
+    const p=mk('p','fb',d.opts[a.picked].fb);
+    if(d.num)p.appendChild(mk('span','num',d.num));
+    qcard.appendChild(p);
+    const foot=mk('div','qfoot');
+    const nx=mk('button','btn primary',tr('qNext'));nx.type='button';nx.addEventListener('click',()=>closeQ(false));
+    foot.appendChild(nx);qcard.appendChild(foot);
+    nx.focus({preventScroll:true});
+  }else{
+    const foot=mk('div','qfoot');
+    const sk=mk('button','link',tr('qSkip'));sk.type='button';sk.addEventListener('click',()=>closeQ(false));
+    foot.appendChild(sk);qcard.appendChild(foot);
+  }
+}
+function closeQ(silent){
+  if(!Q.active){qcard.hidden=true;return;}
+  Q.active=null;qcard.hidden=true;Q.last=sim.t;
+  if(!silent){S.playing=Q.wasPlaying;updatePlay();}
+}
+
+/* ---------- eventos de la trayectoria ---------- */
+function detect(dts){
+  const k=seg(TR,sim.s),hd=sim.v*TR.SIN[k];
+  const vs=Math.abs(sim.v)<1e-9?0:Math.sign(sim.v),hs=Math.abs(hd)<1e-3?0:Math.sign(hd);
+  let ev=null;
+  if(sim.bounced){quip('bounce');sim.bounced=0;if(vs)sim.vs=vs;if(hs)sim.hs=hs;}
+  else{
+    if(vs!==0){if(sim.vs!==0&&vs!==sim.vs)ev='turn';sim.vs=vs;}
+    if(hs!==0){
+      if(!ev&&sim.hs>0&&hs<0)ev='top';
+      else if(!ev&&sim.hs<0&&hs>0)ev='bottom';
+      sim.hs=hs;
+    }
+  }
+  if(vs!==0)sim.dir=vs;
+  if(ev){
+    if(ev==='bottom'||ev==='top'||ev==='turn')quip(ev==='bottom'?'bottom':(ev==='turn'?'turn':'top'));
+    offer(ev);
+  }
+  if(TR.loopS&&sim.s>TR.loopS[0]&&sim.s<TR.loopS[1]&&TR.COS[k]<-0.3&&!flags.inv){flags.inv=1;quip('inv',true);}
+  const e=energies();
+  if(P.mu>0&&e.q/sim.E0>0.08&&!flags.heat){flags.heat=1;quip('heat');}
+  if(P.mu>0&&e.q/sim.E0>0.12&&!flags.fq){flags.fq=1;offer('friction');}
+  if(Math.abs(sim.v)>0.5)flags.moved=1;
+  if(Math.abs(sim.v)<1e-12){sim.stopT+=dts;if(sim.stopT>0.8&&flags.moved&&!flags.stop&&sim.t>1){flags.stop=1;quip('stop',true);offer('stop');}}
+  else sim.stopT=0;
+  if(Q.pend&&!Q.active&&sim.t-Q.last>=10){const p=Q.pend;Q.pend=null;ask(p);}
+}
+
+/* ---------- lienzos ---------- */
+const cv=$('cv'),ctx=cv.getContext('2d'),bc=$('bars'),bctx=bc.getContext('2d'),gc=$('gr'),gctx=gc.getContext('2d');
+const bg=document.createElement('canvas');
+let DPR=1,C={};
+const WIN={x0:-6,x1:106,y0:-7,y1:62};
+const V={w:0,h:0,S:1,ox:0,oy:0};
+const X=x=>V.ox+x*V.S,Yy=y=>V.oy-y*V.S;
+function fit(c){
+  const r=c.getBoundingClientRect();DPR=window.devicePixelRatio||1;
+  const w=Math.max(1,Math.round(r.width*DPR)),h=Math.max(1,Math.round(r.height*DPR));
+  if(c.width!==w||c.height!==h){c.width=w;c.height=h;}
+  return {w:r.width,h:r.height};
+}
+function colors(){
+  const st=getComputedStyle(document.documentElement);
+  ['panel','ink','muted','line','sky1','sky2','ground','grid','track','rail','support','ep','ec','em','q','cart','cartEdge','skin','f-body','f-num'].forEach(k=>{
+    const v=st.getPropertyValue('--'+k).trim();if(C[k]!==v){C[k]=v;dirty=true;}});
+}
+function layout(w,h){
+  const sc=Math.min((w-20)/(WIN.x1-WIN.x0),(h-14)/(WIN.y1-WIN.y0));
+  V.S=sc;V.w=w;V.h=h;
+  V.ox=(w-(WIN.x1-WIN.x0)*sc)/2-WIN.x0*sc;
+  const top=(h-(WIN.y1-WIN.y0)*sc)/2;V.oy=top+WIN.y1*sc;
+}
+function label(g,t,x,y,col,align='left',size=12,weight=''){g.font=`${weight} ${size}px ${C['f-body']}`;g.fillStyle=col;g.textAlign=align;g.textBaseline='middle';g.fillText(t,x,y);}
+function rrect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+
+function renderBG(){
+  const w=V.w,h=V.h;
+  bg.width=Math.round(w*DPR);bg.height=Math.round(h*DPR);
+  const g=bg.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);
+  const gr=g.createLinearGradient(0,0,0,Yy(0));gr.addColorStop(0,C.sky1);gr.addColorStop(1,C.sky2);
+  g.fillStyle=gr;g.fillRect(0,0,w,h);
+  g.lineWidth=1;
+  for(let y=10;y<=50;y+=10){
+    g.strokeStyle=C.grid;g.beginPath();g.moveTo(0,Yy(y));g.lineTo(w,Yy(y));g.stroke();
+    label(g,y+' m',6,Yy(y)-8,C.muted,'left',11);
+  }
+  g.fillStyle=C.ground;g.fillRect(0,Yy(0),w,h-Yy(0));
+  g.strokeStyle=C.muted;g.lineWidth=1.5;g.beginPath();g.moveTo(0,Yy(0));g.lineTo(w,Yy(0));g.stroke();
+  label(g,tr('ground'),6,Yy(0)+12,C.muted,'left',11);
+  // soportes (cada 4 m en horizontal)
+  let prev=null,nextX=0;
+  g.strokeStyle=C.support;g.lineWidth=1.2;
+  for(let k=0;k<=TR.N;k++){
+    const s=k*TR.ds;
+    if(TR.loopS&&s>TR.loopS[0]-1&&s<TR.loopS[1]+1){prev=null;continue;}
+    if(TR.X[k]<nextX-1e-6)continue;
+    nextX=TR.X[k]+4;
+    const x=X(TR.X[k]),y=Yy(TR.Y[k]),y0=Yy(0);
+    g.beginPath();g.moveTo(x,y);g.lineTo(x,y0);g.stroke();
+    if(prev){g.beginPath();if(prev.up){g.moveTo(prev.x,prev.y);g.lineTo(x,y0);}else{g.moveTo(prev.x,y0);g.lineTo(x,y);}g.stroke();}
+    prev={x,y,up:prev?!prev.up:true};
+  }
+  // carril
+  g.lineJoin='round';g.lineCap='round';
+  g.beginPath();
+  for(let k=0;k<=TR.N;k+=2){const x=X(TR.X[k]),y=Yy(TR.Y[k]);k?g.lineTo(x,y):g.moveTo(x,y);}
+  g.strokeStyle=C.rail;g.lineWidth=7;g.stroke();
+  g.strokeStyle=C.track;g.lineWidth=3;g.stroke();
+  // traviesas
+  g.strokeStyle=C.rail;g.lineWidth=1.2;g.lineCap='butt';
+  const ts=Math.round(1.6/TR.ds);
+  g.beginPath();
+  for(let k=0;k<=TR.N;k+=ts){const x=X(TR.X[k]),y=Yy(TR.Y[k]),sn=TR.SIN[Math.min(k,TR.N-1)],cs=TR.COS[Math.min(k,TR.N-1)];
+    g.moveTo(x-sn*5,y-cs*5);g.lineTo(x+sn*5,y+cs*5);}
+  g.stroke();
+  // topes
+  g.strokeStyle=C.muted;g.lineWidth=4;g.lineCap='round';
+  for(const k of [0,TR.N]){const x=X(TR.X[k]),y=Yy(TR.Y[k]),sn=TR.SIN[Math.min(k,TR.N-1)],cs=TR.COS[Math.min(k,TR.N-1)];
+    g.beginPath();g.moveTo(x,y);g.lineTo(x-sn*16,y-cs*16);g.stroke();}
+}
+
+function drawCart(px,py,th,e){
+  const u=Math.max(8,Math.min(15,V.S*1.5)),r=0.5*u;
+  const vmax=Math.sqrt(2*sim.E0/P.m),ratio=vmax>0?Math.abs(sim.v)/vmax:0;
+  const scared=ratio>0.55,still=Math.abs(sim.v)<0.05;
+  // líneas de velocidad
+  if(ratio>0.3&&S.playing){
+    const dx=Math.cos(th)*sim.dir,dy=-Math.sin(th)*sim.dir;
+    ctx.strokeStyle=C.muted;ctx.globalAlpha=0.55;ctx.lineWidth=1.5;ctx.lineCap='round';
+    for(let i=-1;i<=1;i++){
+      const ox=px-dx*3*u+(-dy)*i*u*0.9,oy=py-dy*3*u+dx*i*u*0.9-u*1.2;
+      ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox-dx*ratio*u*3,oy-dy*ratio*u*3);ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  }
+  ctx.save();ctx.translate(px,py);ctx.rotate(-th);ctx.scale(sim.dir,1);
+  ctx.lineJoin='round';
+  ctx.fillStyle=C.cartEdge;
+  for(const wx of [-1.7*u,1.7*u]){ctx.beginPath();ctx.arc(wx,-r,r,0,TAU);ctx.fill();}
+  const bt=-r-0.2*u-1.6*u;
+  rrect(ctx,-2.7*u,bt,5.4*u,1.6*u,0.5*u);ctx.fillStyle=C.cart;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=C.cartEdge;ctx.stroke();
+  ctx.fillStyle=C.cartEdge;ctx.globalAlpha=0.55;ctx.fillRect(-2.2*u,bt+0.55*u,4.4*u,0.28*u);ctx.globalAlpha=1;
+  // pasajero
+  const hx=0.1*u,hy=bt-0.55*u,hr=0.9*u;
+  ctx.fillStyle=C.skin;ctx.strokeStyle=C.cartEdge;ctx.lineWidth=1.3;
+  ctx.beginPath();ctx.arc(hx,hy,hr,0,TAU);ctx.fill();ctx.stroke();
+  // pelo hacia atrás
+  const hl=Math.min(2.2*u,ratio*3*u);
+  ctx.strokeStyle=C.cartEdge;ctx.lineWidth=1.6;ctx.lineCap='round';
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(hx-hr*0.7,hy-hr*(0.55-i*0.35));ctx.lineTo(hx-hr*0.7-0.5*u-hl,hy-hr*(0.55-i*0.35)-hl*0.15);ctx.stroke();}
+  // ojo
+  ctx.fillStyle='#fff';ctx.lineWidth=1;
+  if(still){ctx.strokeStyle=C.cartEdge;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(hx+0.05*u,hy-0.2*u);ctx.lineTo(hx+0.6*u,hy-0.2*u);ctx.stroke();}
+  else{
+    const er=scared?0.36*u:0.28*u;
+    ctx.beginPath();ctx.arc(hx+0.38*u,hy-0.2*u,er,0,TAU);ctx.fill();ctx.stroke();
+    ctx.fillStyle=C.cartEdge;ctx.beginPath();ctx.arc(hx+0.48*u,hy-0.2*u,er*0.42,0,TAU);ctx.fill();
+  }
+  // boca
+  ctx.strokeStyle=C.cartEdge;ctx.fillStyle=C.cartEdge;ctx.lineWidth=1.4;
+  if(scared){ctx.beginPath();ctx.ellipse(hx+0.45*u,hy+0.42*u,0.2*u,0.3*u,0,0,TAU);ctx.fill();}
+  else if(still){ctx.beginPath();ctx.moveTo(hx+0.1*u,hy+0.5*u);ctx.quadraticCurveTo(hx+0.4*u,hy+0.35*u,hx+0.7*u,hy+0.5*u);ctx.stroke();}
+  else{ctx.beginPath();ctx.arc(hx+0.4*u,hy+0.25*u,0.32*u,0.15*Math.PI,0.85*Math.PI);ctx.stroke();}
+  ctx.restore();
+}
+function wrapText(t,max){
+  const words=t.split(' '),lines=[];let cur='';
+  for(const w of words){const test=cur?cur+' '+w:w;if(ctx.measureText(test).width>max&&cur){lines.push(cur);cur=w;}else cur=test;}
+  if(cur)lines.push(cur);return lines;
+}
+function drawBubble(px,py,now){
+  if(!bubble||!S.talk)return;
+  const age=now-bubble.t0;if(age>bubble.dur){bubble=null;return;}
+  const text=TQ[lg()][bubble.key][bubble.i];
+  ctx.font=`500 13px ${C['f-body']}`;
+  const lines=wrapText(text,Math.min(210,V.w-40)),lh=17;
+  let bw=0;for(const l of lines)bw=Math.max(bw,ctx.measureText(l).width);
+  bw+=20;const bh=lines.length*lh+12;
+  let bx=clamp(px-bw/2,8,V.w-bw-8),by=py-62-bh;
+  let below=false;if(by<6){by=py+30;below=true;}
+  ctx.globalAlpha=age>bubble.dur-400?Math.max(0,(bubble.dur-age)/400):1;
+  rrect(ctx,bx,by,bw,bh,9);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.line;ctx.lineWidth=1.2;ctx.stroke();
+  const tx=clamp(px,bx+14,bx+bw-14);
+  ctx.beginPath();
+  if(below){ctx.moveTo(tx-6,by);ctx.lineTo(tx,by-8);ctx.lineTo(tx+6,by);}
+  else{ctx.moveTo(tx-6,by+bh);ctx.lineTo(tx,by+bh+8);ctx.lineTo(tx+6,by+bh);}
+  ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.line;ctx.stroke();
+  ctx.fillStyle=C.panel;ctx.fillRect(tx-5,below?by-1:by+bh-1.5,10,2.5);
+  ctx.fillStyle=C.ink;ctx.textAlign='left';ctx.textBaseline='middle';
+  lines.forEach((l,i)=>ctx.fillText(l,bx+10,by+6+lh*(i+0.5)));
+  ctx.globalAlpha=1;
+}
+/* manejadores de edición: sobre la pista, en los nodos */
+function knotXY(i){
+  const n=defs[S.track].h.length,x=i*SPAN/(n-1);
+  let lo=0,hi=TR.N;
+  while(lo<hi){const m=(lo+hi)>>1;if(TR.X[m]<x)lo=m+1;else hi=m;}
+  return [x,TR.Y[lo]];
+}
+let drag=null,hover=-1;
+function drawHandles(){
+  const n=defs[S.track].h.length;
+  for(let i=0;i<n;i++){
+    const [x,y]=knotXY(i),big=drag?drag.i===i:hover===i;
+    ctx.beginPath();ctx.arc(X(x),Yy(y),big?10:8,0,TAU);ctx.fillStyle=C.panel;ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=C.ep;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(X(x),Yy(y)-3.5);ctx.lineTo(X(x),Yy(y)+3.5);ctx.lineWidth=1.5;ctx.stroke();
+  }
+}
+
+let lastT=performance.now();
+function draw(now,dtReal){
+  const {w,h}=fit(cv);
+  if(w!==V.w||h!==V.h||dirty){layout(w,h);renderBG();dirty=false;}
+  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(bg,0,0,w,h);
+  const e=energies(),mg=P.m*P.g;
+  // niveles de energía
+  if(S.level&&!S.editing){
+    const yE=e.em/mg,y0=sim.E0/mg;
+    const lineAt=(y,dash,alpha)=>{const yy=Math.max(Yy(y),4);ctx.setLineDash(dash);ctx.globalAlpha=alpha;ctx.strokeStyle=C.em;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(w,yy);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;return yy;};
+    const yy=lineAt(yE,[7,5],0.7);
+    label(ctx,tr('lvlNow')+(yE>WIN.y1?' ('+fmt(yE,0)+' m)':''),w-8,Math.max(yy-9,12),C.em,'right',12,'600');
+    if(Math.abs(y0-yE)*V.S>22){const y2=lineAt(y0,[2,4],0.4);label(ctx,tr('lvl0'),w-8,Math.max(y2-9,12),C.muted,'right',11);}
+  }
+  const k=seg(TR,sim.s),[wx,wy]=xyAt(TR,sim.s),th=Math.atan2(TR.SIN[k],TR.COS[k]);
+  const px=X(wx),py=Yy(wy);
+  if(!S.editing){
+    // altura sobre el suelo
+    ctx.setLineDash([3,4]);ctx.strokeStyle=C.ep;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,Yy(0));ctx.stroke();ctx.setLineDash([]);
+    if(py<Yy(0)-26)label(ctx,'h = '+fmt(e.h,1)+' m',px+6,(py+Yy(0))/2,C.ep,'left',12,'600');
+  }
+  // partículas de calor
+  if(S.playing&&P.mu>0&&Math.abs(sim.v)>0.5){
+    const rate=60*Math.min(1,P.mu*8)*Math.min(1,Math.abs(sim.v)/10)*dtReal;
+    let nn=Math.floor(rate)+(Math.random()<rate%1?1:0);
+    while(nn-->0&&particles.length<80)particles.push({x:px+(Math.random()-0.5)*14,y:py-2,vx:(Math.random()-0.5)*14,vy:-(14+Math.random()*26),l:1});
+  }
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];p.x+=p.vx*dtReal;p.y+=p.vy*dtReal;p.l-=dtReal*1.1;
+    if(p.l<=0){particles.splice(i,1);continue;}
+    ctx.globalAlpha=p.l*0.8;ctx.fillStyle=C.q;ctx.beginPath();ctx.arc(p.x,p.y,2.4*p.l+0.8,0,TAU);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  drawCart(px,py,th,e);
+  if(S.editing)drawHandles();else drawBubble(px,py,now);
+}
+
+/* ---------- barras ---------- */
+function drawBars(){
+  const {w,h}=fit(bc),g=bctx;
+  g.setTransform(DPR,0,0,DPR,0,0);g.clearRect(0,0,w,h);
+  const e=energies(),Emax=sim.E0*1.06,L=6,R=6,Tp=22,B=30;
+  const bh=h-Tp-B,sc=bh/Emax,cw=(w-L-R)/4,bw=Math.min(52,cw*0.62),base=h-B;
+  g.strokeStyle=C.line;g.lineWidth=1;g.beginPath();g.moveTo(L,base+0.5);g.lineTo(w-R,base+0.5);g.stroke();
+  const y0=base-sim.E0*sc;
+  g.setLineDash([5,4]);g.strokeStyle=C.muted;g.beginPath();g.moveTo(L,y0);g.lineTo(w-R,y0);g.stroke();g.setLineDash([]);
+  label(g,'E₀ = '+fmt(sim.E0,0)+' J',w-R,y0-8,C.muted,'right',11);
+  const cols=[['Ep',e.ep],['Ec',e.ec],['Em',e.em],['Q',e.q]];
+  cols.forEach(([n,v],i)=>{
+    const cx=L+cw*(i+0.5),x=cx-bw/2;
+    if(n==='Em'){
+      const hp=e.ep*sc,hc=e.ec*sc;
+      g.fillStyle=C.ep;g.fillRect(x,base-hp,bw,hp);
+      g.fillStyle=C.ec;g.fillRect(x,base-hp-hc,bw,hc);
+      g.strokeStyle=C.em;g.lineWidth=1.5;g.strokeRect(x,base-hp-hc,bw,hp+hc);
+    }else{
+      g.fillStyle=n==='Ep'?C.ep:n==='Ec'?C.ec:C.q;g.fillRect(x,base-v*sc,bw,v*sc);
+    }
+    label(g,fmt(v,0),cx,Math.max(base-v*sc-9,Tp-2),C.ink,'center',11);
+    label(g,n,cx,base+14,C.ink,'center',13,'600');
+  });
+  label(g,'J',w-R,Tp-12,C.muted,'right',11);
+}
+/* ---------- gráfica ---------- */
+function niceStep(raw){const p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+function drawGraph(){
+  const {w,h}=fit(gc),g=gctx;
+  g.setTransform(DPR,0,0,DPR,0,0);g.clearRect(0,0,w,h);
+  const L=54,R=10,Tp=10,B=30,pw=w-L-R,ph=h-Tp-B;
+  const W=20,t1=Math.max(W,sim.t),t0=t1-W;
+  const st=niceStep(sim.E0*1.05/4),ymax=Math.ceil(sim.E0*1.05/st)*st;
+  const px=t=>L+(t-t0)/W*pw,py=v=>Tp+(1-v/ymax)*ph;
+  g.font=`11px ${C['f-num']}`;g.lineWidth=1;g.strokeStyle=C.line;g.fillStyle=C.muted;
+  for(let v=0;v<=ymax+1e-6;v+=st){const y=py(v);g.beginPath();g.moveTo(L,y);g.lineTo(L+pw,y);g.stroke();g.textAlign='right';g.textBaseline='middle';g.fillText(fmt(v,0),L-5,y);}
+  for(let t=Math.ceil(t0/5)*5;t<=t1+1e-6;t+=5){const x=px(t);g.beginPath();g.moveTo(x,Tp);g.lineTo(x,Tp+ph);g.stroke();g.textAlign='center';g.textBaseline='top';g.fillText(fmt(t,0),x,Tp+ph+4);}
+  g.textAlign='right';g.textBaseline='bottom';g.fillText(tr('axT'),L+pw,h-1);
+  g.save();g.beginPath();g.rect(L,Tp-2,pw+2,ph+4);g.clip();
+  const line=(idx,col,wd,dash)=>{
+    g.setLineDash(dash||[]);g.strokeStyle=col;g.lineWidth=wd;g.lineJoin='round';g.beginPath();let first=true;
+    for(const r of hist){if(r[0]<t0-0.1)continue;const v=idx<0?r[1]+r[2]:r[idx];const x=px(r[0]),y=py(v);if(first){g.moveTo(x,y);first=false;}else g.lineTo(x,y);}
+    g.stroke();g.setLineDash([]);
+  };
+  line(-1,C.em,1.6,[6,4]);line(1,C.ep,2.2);line(2,C.ec,2.2);
+  g.restore();
+  // leyenda
+  let lx=L+8;g.textAlign='left';g.textBaseline='middle';
+  for(const [n,c] of [['Ep',C.ep],['Ec',C.ec],['Em',C.em]]){g.fillStyle=c;g.fillRect(lx,Tp+6,12,3);g.fillStyle=C.ink;g.font=`600 12px ${C['f-body']}`;g.fillText(n,lx+16,Tp+8);lx+=46;}
+}
+
+/* ---------- lecturas ---------- */
+const out={};
+function put(id,v){if(out[id]!==v){out[id]=v;$(id).textContent=v;}}
+function readouts(){
+  const e=energies(),av=Math.abs(sim.v);
+  put('r-h',fmt(e.h,1)+' m');put('r-v',fmt(av,1)+' m/s · '+fmt(av*3.6,0)+' km/h');put('r-e0',fmt(sim.E0,0)+' J');
+  put('e-ep',`${fmt(P.m,0)} · ${fmt(P.g,2)} · ${fmt(e.h,1)} = ${fmt(e.ep,0)} J`);
+  put('e-ec',`½ · ${fmt(P.m,0)} · ${fmt(av,1)}² = ${fmt(e.ec,0)} J`);
+  put('e-em',`${fmt(e.ep,0)} + ${fmt(e.ec,0)} = ${fmt(e.em,0)} J`);
+  put('e-q',`${fmt(sim.E0,0)} − ${fmt(e.em,0)} = ${fmt(e.q,0)} J`);
+  put('clock','t = '+fmt(sim.t,1)+' s');
+  const lp=!!TR.loopS;$('r-gl').hidden=!lp;$('r-g').hidden=!lp;
+  if(lp){
+    const inLoop=sim.s>TR.loopS[0]&&sim.s<TR.loopS[1],G=normalRatio(TR,P.g,sim.s,sim.v);
+    const neg=inLoop&&G<0;
+    put('r-g',!inLoop?'—':fmt(G,2)+' g'+(neg?' · '+tr('warnLoop'):''));
+    $('r-g').className=neg?'warn':'';
+  }
+}
+
+/* ---------- bucle ---------- */
+let tickN=0;
+function frame(now){
+  const dtReal=Math.min(0.05,(now-lastT)/1000);lastT=now;
+  if(S.playing&&!Q.active){
+    const dts=dtReal*S.speed*(S.slow?0.25:1);
+    sim.t+=dts;
+    const n=Math.min(600,Math.max(1,Math.ceil(dts/(1/600)))),st=dts/n;
+    for(let i=0;i<n;i++)if(physStep(sim,P,TR,st))sim.bounced=1;
+    histAcc+=dts;if(histAcc>=0.05){histAcc=0;pushHist();}
+    detect(dts);
+  }
+  if(tickN++%30===0)colors();
+  draw(now,dtReal);drawBars();drawGraph();readouts();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- eventos de interfaz ---------- */
+$('play').addEventListener('click',togglePlay);
+$('reset').addEventListener('click',()=>{resetSim('start',false);});
+$('slow').addEventListener('click',()=>{S.slow=!S.slow;updatePlay();});
+$('edit').addEventListener('click',()=>setEdit(!S.editing));
+$('chkQ').addEventListener('change',e=>{S.qOn=e.target.checked;if(!S.qOn&&Q.active)closeQ(false);});
+$('chkTalk').addEventListener('change',e=>{S.talk=e.target.checked;if(!S.talk)bubble=null;});
+$('chkLvl').addEventListener('change',e=>{S.level=e.target.checked;});
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!/INPUT|BUTTON|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();togglePlay();}
+  if(e.key==='Escape'&&Q.active)closeQ(false);
+});
+function langHook(){
+  labelChips();updatePlay();trackNote();dirty=true;
+  Object.keys(out).forEach(k=>delete out[k]);
+  if(Q.active)renderQ();
+}
+App.hooks.push(langHook);
+
+/* edición de pista con el puntero */
+const ptr=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+function hitKnot(x,y){
+  const n=defs[S.track].h.length;let best=-1,bd=18;
+  for(let i=0;i<n;i++){const [kx,ky]=knotXY(i),d=Math.hypot(X(kx)-x,Yy(ky)-y);if(d<bd){bd=d;best=i;}}
+  return best;
+}
+cv.addEventListener('pointerdown',e=>{
+  if(!S.editing)return;
+  const [x,y]=ptr(e),i=hitKnot(x,y);if(i<0)return;
+  const [,ty]=knotXY(i);
+  drag={i,off:ty-(V.oy-y)/V.S};
+  cv.setPointerCapture(e.pointerId);e.preventDefault();
+});
+cv.addEventListener('pointermove',e=>{
+  if(!S.editing)return;
+  const [x,y]=ptr(e);
+  if(!drag){hover=hitKnot(x,y);return;}
+  if(S.track!=='custom'){
+    defs.custom={kind:'spline',h:defs[S.track].h.slice()};S.track='custom';syncTracks();
+  }
+  const def=defs.custom,target=(V.oy-y)/V.S+drag.off,cur=knotXY(drag.i)[1];
+  def.h[drag.i]=clamp(Math.round((def.h[drag.i]+1.25*(target-cur))*10)/10,2,58);
+  rebuildTrack();resetSim(null,false);
+});
+const endDrag=()=>{drag=null;};
+cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+
+/* ---------- arranque ---------- */
+colors();
+rebuildTrack();syncTracks();syncPlanets();syncFric();
+/* ===== Raona-ho ===== */
+const TRC=buildTrack(TRACKS.clasica);
+function passes(h0,v0,mu){            /* simulació sense dibuix: ¿supera el segon cim (31 m)? */
+  const Pp={m:200,g:9.81,mu:mu||0,h0,v0:v0||0},sm={s:startS(TRC,h0),v:v0||0,Q:0},dt=1/600,sPeak=72.6;
+  let mx=sm.s;
+  for(let tt=0;tt<60;tt+=dt){physStep(sm,Pp,TRC,dt);mx=Math.max(mx,sm.s);if(mx>sPeak)return true;}
+  return false;
+}
+function load(o){
+  o=o||{};
+  if(S.editing)setEdit(false);
+  if(S.track!=='clasica'){S.track='clasica';rebuildTrack();syncTracks();trackNote();}
+  P.g=o.g||9.81;P.m=o.m||200;P.mu=o.mu||0;P.v0=o.v0||0;P.h0=clamp(o.h0||40,2,Math.floor(TR.Y[0]));
+  cG.set(P.g);cM.set(P.m);cMu.set(P.mu);cH.set(P.h0);cV.set(P.v0);
+  syncPlanets();syncFric();
+  if(o.run){S.qOn=false;$('chkQ').checked=false;}
+  resetSim(null,false);
+  if(o.run){S.playing=true;S.started=true;updatePlay();}
+  RZ.show($('cv'));
+}
+const fq=x=>{const s=fmt(x,3);return s.includes(',')?s.replace(/0+$/,'').replace(/,$/,''):s;};
+const GK={1.62:'moon',3.71:'mars',9.81:'earth',24.79:'jup'};
+RZ.init({
+ sim:([o])=>load(o),
+ M:[
+  {id:'m1',f:[{l:'f_v',u:'m/s'}],sim:()=>load({h0:40,run:true}),ok:()=>({k:'m1_ok'}),
+   chk:([v])=>!(v>0&&v<200)?{k:'rng'}:Math.abs(v-23.44)<=.25?null:
+     Math.abs(v-16.57)<=.25?{k:'m1_2'}:Math.abs(v-549.4)<=3?{k:'m1_sq'}:
+     {k:'m1_f',p:[fmt(v,1),fmt(.5*200*v*v,0),fmt(200*9.81*28,0)]}},
+  {id:'m2',f:[{l:'f_v0',u:'m/s'}],sim:([v])=>load({h0:28,v0:clamp(v||0,0,25),run:true}),ok:()=>({k:'m2_ok'}),
+   chk:([v])=>!(v>=0&&v<=25)?{k:'rng'}:Math.abs(v*2-Math.round(v*2))>1e-9?{k:'m2_step'}:
+     !passes(28,v)?{k:'m2_poc',p:[fmt(v,1),fmt(28+v*v/(2*9.81),1)]}:
+     (v>0&&passes(28,v-.5))?{k:'m2_mes',p:[fmt(v,1)]}:null},
+  {id:'m3',f:[{l:'f_h',u:'m'}],sim:()=>load({h0:20,v0:10,run:true}),ok:()=>({k:'m3_ok'}),
+   chk:([h])=>!(h>0&&h<500)?{k:'rng'}:Math.abs(h-25.1)<=.15?null:Math.abs(h-30)<=.15?{k:'m3_sum'}:
+     {k:'m3_f',p:[fmt(h,1),fmt(200*9.81*h,0),fmt(200*9.81*20+.5*200*100,0)]}},
+  {id:'m4',f:[{l:'f_g',u:'m/s²'}],sim:([g])=>load({h0:40,g:clamp(g||4.02,.5,30),run:true}),ok:()=>({k:'m4_ok'}),
+   chk:([g])=>!(g>=.5&&g<=30)?{k:'rng'}:Math.abs(g-4.02)<=.1?null:
+     {k:'m4_f',p:[fmt(g,2),fmt(Math.sqrt(2*g*28),1)]}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load({m:400,h0:40,run:true})},
+  {id:'s2',ans:'S',sim:()=>load({h0:30,run:true})},
+  {id:'s3',ans:'D',f:[{l:'f_mu'}],sim:()=>load({h0:40,run:true}),
+   cxsim:([mu])=>load({h0:40,mu:clamp(mu||.06,0,.4),run:true}),
+   cxok:([mu])=>({k:'s3_cx',p:[fq(mu)]}),
+   cx:([mu])=>!(mu>=0&&mu<=.4)?{k:'rng'}:mu<.01?{k:'s3_cx_no',p:[fq(mu)]}:null},
+  {id:'s4',ans:'M',sim:()=>load({g:1.62,h0:40,run:true})},
+  {id:'s5',ans:'S',sim:()=>load({h0:40,run:true})},
+  {id:'s6',ans:'S',sim:()=>load({h0:28,v0:5,run:true})}
+ ],
+ E:[{id:'e1',who:1,args:[{m:400,h0:40,run:true}]},
+    {id:'e2',who:0,args:[{h0:40,run:true}]},
+    {id:'e3',who:3,args:[{mu:.06,h0:40,run:true}]}],
+ D:[
+  {id:'d1',chips:{vals:[30,32,36,45],fmt:x=>x+' m'},f:[{l:'d1.l0',u:'J'}],
+   sim:([p])=>load({h0:p||32,run:true}),ok:()=>({k:'d1_ok'}),
+   chk:([p,ec])=>p<32?{k:'d1_poc',p:[p]}:p>32?{k:'d1_mes',p:[p]}:(ec<1860||ec>2060)?{k:'d1_ec'}:null},
+  {id:'d2',chips:{vals:[1.62,3.71,9.81,24.79],fmt:x=>t('planets.'+GK[x])},f:[{l:'d2.l0',u:'m/s'}],
+   sim:([p])=>load({h0:40,g:p||9.81,run:true}),ok:()=>({k:'d2_ok'}),
+   chk:([p,v])=>p<9.81?{k:'d2_poc',p:[t('pa_'+GK[p]),fmt(p,2),fmt(Math.sqrt(2*p*28),1)]}:p>9.81?{k:'d2_mes',p:[t('pa_'+GK[p])]}:Math.abs(v-23.44)>.4?{k:'d2_v'}:null}
+ ]
+});
+
+initQuiz([]);
+initLang();applyLang();
+resetSim('start',false);
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',colors);}catch(e){}
+new MutationObserver(colors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+window.addEventListener('resize',()=>{dirty=true;});
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
