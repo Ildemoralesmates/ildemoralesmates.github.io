@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Figures de Lissajous — simulador interactiu</title>
+<meta name="description" content="Dos moviments oscil·latoris perpendiculars, un horitzontal i un de vertical, dibuixen una figura de Lissajous. Canvia les freqüències i la fase, mira les dues ones a la vegada i aprèn a deduir la relació fx:fy comptant les tangències. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@RAONA_CSS@*/
+.stage svg{display:block;width:100%;height:auto}
+.stage svg text{font-family:var(--f-num);font-size:11px;fill:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.swatch{width:14px;height:3px;display:inline-block;border-radius:2px}
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls .span{grid-column:1/-1}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:4px 18px}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+.vals dd.hl1{color:var(--pa);font-weight:700}
+.vals dd.hl2{color:var(--pb);font-weight:700}
+.tyl{margin:0;padding:6px 10px;border-radius:8px;background:var(--chip);border:1px solid var(--line);font-size:13.5px;color:var(--ink)}
+.chiprow{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chiprow .lb{font-size:12px;letter-spacing:.02em;text-transform:none;color:var(--muted);font-weight:600;margin-right:4px}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 640 344" role="img" data-i18n-aria="aria.svg" aria-label=""></svg></div>
+<div class="legend">
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="lg_x"></span></span>
+<span><span class="swatch" style="background:var(--pb)"></span><span data-i18n="lg_y"></span></span>
+<span><span class="swatch" style="background:var(--ink)"></span><span data-i18n="lg_f"></span></span>
+</div>
+<div class="ctls">
+<div class="btns"><button class="btn primary" id="btnPlay" type="button"></button><button class="btn" id="btnStep" type="button" data-i18n="step"></button><button class="btn" id="btnReset" type="button" data-i18n="reset"></button>
+<select id="speed" aria-label="Velocitat"><option value="0.5" data-i18n="sp_slow"></option><option value="1" selected data-i18n="sp_norm"></option><option value="2" data-i18n="sp_fast"></option></select></div>
+<div class="chiprow"><span class="lb" data-i18n="lb_ratio"></span><span id="pRatio" class="chips"></span></div>
+<div class="chiprow"><span class="lb" data-i18n="lb_phase"></span><span id="pPhase" class="chips"></span></div>
+<div class="ctl"><label for="fa" data-i18n="l_fa"></label><output id="faL"></output><input type="range" id="fa" min="1" max="9" step="1" value="1"></div>
+<div class="ctl"><label for="fb" data-i18n="l_fb"></label><output id="fbL"></output><input type="range" id="fb" min="1" max="9" step="1" value="2"></div>
+<div class="ctl"><label for="dl" data-i18n="l_dl"></label><output id="dlL"></output><input type="range" id="dl" min="0" max="360" step="5" value="40"></div>
+<div class="ctl"><label for="amA" data-i18n="l_A"></label><output id="amAL"></output><input type="range" id="amA" min="0.4" max="1" step="0.05" value="1"></div>
+<div class="ctl"><label for="amB" data-i18n="l_B"></label><output id="amBL"></output><input type="range" id="amB" min="0.4" max="1" step="0.05" value="1"></div>
+<div class="ctl"><label for="pg" data-i18n="l_pg"></label><output id="pgL"></output><input type="range" id="pg" min="0" max="1" step="0.005" value="0"></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="mark"><span data-i18n="c_mark"></span></label>
+<label class="check"><input type="checkbox" id="guide" checked><span data-i18n="c_guide"></span></label>
+<label class="check"><input type="checkbox" id="sweep"><span data-i18n="c_sweep"></span></label>
+</div>
+</div>
+</div>
+<div class="side">
+<p class="sh" data-i18n="s_live"></p>
+<dl class="vals" id="readout"></dl>
+<p class="sh" data-i18n="s_res"></p>
+<dl class="vals" id="results"></dl>
+<p class="tyl" id="tyl" aria-live="polite"></p>
+<p class="note" data-i18n="note"></p>
+</div>
+</div>
+</section>
+
+<!--@RAONA@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Figures de Lissajous — simulador interactiu",
+"eyebrow":"Moviment oscil·latori · Física de Batxillerat",
+"h1":"〰️ Figures de Lissajous",
+"lede":"Un punt que oscil·la horitzontalment amb una freqüència fₓ i verticalment amb una altra f_y dibuixa una figura. Canvia les freqüències i la fase i mira com apareixen les dues ones.",
+"aria.svg":"Figura de Lissajous dins d’un requadre amb el punt mòbil, i a la dreta les gràfiques de x en funció del temps i de y en funció del temps",
+"cyc":"cicles","lg_x":"moviment horitzontal x","lg_y":"moviment vertical y","lg_f":"figura de Lissajous",
+"lb_ratio":"Relació fₓ:f_y","lb_phase":"Fase δ",
+"l_fa":"Freqüència fₓ (horitzontal)","l_fb":"Freqüència f_y (vertical)","l_dl":"Fase δ de x","l_A":"Amplitud A (horitzontal)","l_B":"Amplitud B (vertical)","l_pg":"Progrés de la figura",
+"c_mark":"Marca les tangències amb els costats","c_guide":"Mostra les projeccions del punt","c_sweep":"Fes variar la fase δ contínuament",
+"sp_slow":"Càmera lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Ràpid (2×)",
+"play":"▶ Reproduir","pause":"⏸ Pausa","resume":"▶ Continua","reset":"↺ Reiniciar","step":"+1/16 de figura",
+"s_live":"En directe","s_res":"Resultats",
+"rd_p":"Progrés","rd_t":"Temps transcorregut","rd_x":"x del punt","rd_y":"y del punt","rd_d":"Fase δ",
+"r_ratio":"fₓ : f_y","r_red":"Relació reduïda","r_close":"La figura es tanca cada","r_tr":"Tangències amb el costat dret","r_tt":"Tangències amb el costat superior","r_cross":"Autointerseccions (fase genèrica)",
+"ty_line":"Segment recte: fₓ = f_y amb les dues oscil·lacions en fase (o en oposició).",
+"ty_circ":"Circumferència: fₓ = f_y, A = B i fase δ = 90°.",
+"ty_ell0":"El·lipse amb els eixos paral·lels als costats (fase de 90°).",
+"ty_ell":"El·lipse inclinada: fₓ = f_y amb una fase que no és 0°, 90° ni 180°.",
+"ty_par":"Corba degenerada: es recorre dues vegades endavant i endarrere (no té autointerseccions).",
+"ty_lis":"Figura de Lissajous amb relació {0}:{1}.",
+"note":"Les freqüències són en Hz i el temps en segons: la figura triga 1/mcd(fₓ, f_y) segons a tancar-se. Les tangències es compten amb els costats dret (x = +A) i superior (y = +B): amb una fase genèrica coincideixen amb fₓ i f_y reduïdes. L’animació va més lenta que el temps real perquè es vega bé.",
+"rng":"Escriu valors dins del rang del simulador (freqüències de 1 a 9 Hz, fase de 0° a 360°).",
+"l_xf":"fₓ","l_yf":"f_y","l_tr":"dret","l_tt":"superior","l_df":"δ","l_tf":"T","l_rf":"B/A",
+"m1.q":"Una figura toca <b>3 vegades</b> el costat superior del requadre i <b>2 vegades</b> el costat dret. Quines són les freqüències fₓ i f_y (nombres enters de 1 a 9)?",
+"m1_swap":"Has canviat els eixos: els contactes amb el costat superior compten els màxims de y (f_y) i els del costat dret, els de x (fₓ).",
+"m1_f":"{0}:{1} no dona 3 tangències amb el costat superior i 2 amb el dret. Compta quantes vegades arriba cada oscil·lació al seu màxim.",
+"m1_ok":"✔ Missió complida! fₓ:f_y = 2:3 (o múltiples, com 4:6): 2 màxims de x i 3 màxims de y.",
+"m1.more":"Si la figura tocara 5 vegades el costat superior i 4 el dret, quines serien fₓ i f_y? Prediu-ho i comprova-ho al simulador.",
+"m2.q":"Una figura té fₓ = 3 Hz i f_y = 4 Hz (fase genèrica). Quantes vegades toca el costat <b>dret</b> i el <b>superior</b>?",
+"m2_swap":"Els has intercanviat: el costat dret el toca fₓ vegades i el superior, f_y vegades.",
+"m2_f":"{0} i {1} no són correctes. Cada costat es toca tantes vegades com cicles fa l’oscil·lació corresponent en una figura completa.",
+"m2_ok":"✔ Missió complida! 3 contactes amb el dret (fₓ = 3) i 4 amb el superior (f_y = 4).",
+"m2.more":"I si fₓ = 6 i f_y = 8? Fixa’t que la relació es pot reduir: cal comptar amb 6 i 8 o amb 3 i 4?",
+"m3.q":"Amb fₓ = f_y i A = B, quina <b>fase δ</b> (entre 0° i 180°) fa que la figura siga una <b>circumferència</b>?",
+"m3_f":"Amb δ = {0}° no s’obté una circumferència. Pensa quina diferència de fase entre x i y converteix l’el·lipse en un cercle.",
+"m3_ok":"✔ Missió complida! Amb δ = 90°, x = A·sin(ωt + 90°) = A·cos(ωt) i y = A·sin(ωt): MCU.",
+"m3.more":"Amb δ = 90°, canvia l’amplitud B. Què passa amb la figura? I si A ≠ B?",
+"m4.q":"Amb fₓ = f_y, quina fase δ (entre 0° i 180°) fa que la figura siga un <b>segment recte</b>? Escriu-ne una.",
+"m4_c":"Amb δ = {0}° la figura és una circumferència, no un segment. Busca la fase on x i y van sempre alhora.",
+"m4_f":"Amb δ = {0}° la figura és una el·lipse oberta, no un segment.",
+"m4_ok":"✔ Missió complida! Amb δ = 0° (o 180°) x i y són proporcionals: la figura és un segment.",
+"m4.more":"Amb δ = 0° i fₓ = f_y, la diagonal té pendent positiva; amb δ = 180°, negativa. Per què?",
+"m5.q":"Una figura té fₓ = 4 Hz i f_y = 6 Hz. Quant triga (en s) a <b>tancar-se</b>, és a dir, a tornar al punt inicial amb el mateix moviment?",
+"m5_f":"{0} s no és el temps de tancament. Han de tornar alhora a l’inici x (període 1/4 s) i y (període 1/6 s): busca el primer instant comú.",
+"m5_ok":"✔ Missió complida! T = 1/mcd(4, 6) = 1/2 = 0,5 s: en aquest temps x fa 2 cicles i y fa 3.",
+"m5.more":"Per què la figura de 4:6 és igual que la de 2:3 però es dibuixa en la meitat de temps?",
+"s1.q":"Si fₓ = f_y, la figura és sempre una el·lipse, una circumferència o un segment.",
+"s1.h":"Prova diferents fases amb fₓ = f_y = 1.",
+"s1.e":"Sempre. Amb la mateixa freqüència, x i y només es diferencien en la fase: la fase decideix si l’el·lipse és un segment, una el·lipse inclinada o una circumferència.",
+"s2.q":"Si fₓ ≠ f_y, la figura es creua sempre a si mateixa.",
+"s2.h":"Mira la relació 1:2 per a diferents fases.",
+"s2.e":"De vegades. Amb una fase genèrica sí que hi ha autointerseccions (1:2 és un vuit), però amb fases especials la corba degenera i es recorre dues vegades, com una paràbola.",
+"s2_cx":"✔ Amb δ = {0}° la figura 1:2 és un arc de paràbola recorregut dues vegades: no té cap autointersecció.",
+"s2_cx_no":"Amb δ = {0}° la figura 1:2 encara es creua. Busca una fase on la corba es pleque sobre si mateixa.",
+"s3.q":"Si dupliquem l’amplitud A, canvia la relació fₓ:f_y de la figura.",
+"s3.h":"Mira què canvia en estirar la figura en horitzontal.",
+"s3.e":"Mai. L’amplitud només estira o encongeix la figura; la relació de freqüències és la que fixa el nombre de tangències.",
+"s4.q":"Una figura que toca 4 vegades el costat superior i 3 el costat dret té f_y : fₓ = 4 : 3.",
+"s4.h":"Els màxims de y són els contactes amb el costat superior.",
+"s4.e":"Sempre. Cada contacte amb el costat superior és un màxim de y, i cada contacte amb el costat dret, un màxim de x: els nombres de tangències són f_y i fₓ.",
+"s5.q":"Les freqüències fₓ = 4 Hz i f_y = 6 Hz donen una figura diferent de la de fₓ = 2 Hz i f_y = 3 Hz (amb la mateixa fase).",
+"s5.h":"Compara les dues relacions reduïdes.",
+"s5.e":"Mai. La relació reduïda és la mateixa (2:3), per tant la figura és idèntica; només canvia el temps de tancament (0,5 s en lloc d’1 s).",
+"s6.q":"Amb fₓ = f_y, A = B i δ = 90°, el punt descriu un moviment circular uniforme.",
+"s6.h":"Escriu x(t) i y(t) i fixa’t que x² + y² és constant.",
+"s6.e":"Sempre. x = A·cos(ωt) i y = A·sin(ωt): x² + y² = A² i la rapidesa angular és constant, és a dir, un MCU.",
+"e1.ctx":"Una figura toca 2 vegades el costat superior i 3 vegades el costat dret. Es discuteix quina és la relació fₓ:f_y.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"fₓ:f_y = 2:3.",
+"e1.s1":"fₓ:f_y = 3:2.",
+"e1.w0":"Els contactes amb el costat dret compten els màxims de x (fₓ = 3) i els del superior, els de y (f_y = 2): fₓ:f_y = 3:2.",
+"e1.w1":"Perquè la freqüència més gran sempre va a l’eix x.",
+"e1.w2":"Perquè la figura es tanca després de 3 cicles.",
+"e1.frame":"Pau, fₓ:f_y és 3:2 perquè…",
+"e1.model":"Pau, has agafat els nombres en l’ordre en què apareixien al text, però cada costat compta l’eix contrari al que sembla: el costat dret es toca cada vegada que x arriba a +A, així que els contactes amb el costat dret són fₓ = 3, i els del superior, f_y = 2.",
+"e2.ctx":"Es vol una circumferència amb dues oscil·lacions de la mateixa freqüència i la mateixa amplitud. Es discuteix com han de ser entre si.",
+"e2.n0":"Marc","e2.n1":"Clara",
+"e2.s0":"Han d’estar en fase, així x i y valen sempre el mateix.",
+"e2.s1":"Han d’estar desfasades 90°.",
+"e2.w0":"Si estigueren en fase seria x = y, una diagonal. La circumferència exigeix x = A·cos(ωt) i y = A·sin(ωt), desfasades 90°.",
+"e2.w1":"Perquè les oscil·lacions han de tindre amplituds diferents.",
+"e2.w2":"Perquè la fase només modifica la grandària de la figura.",
+"e2.frame":"Marc, perquè siga una circumferència cal que…",
+"e2.model":"Marc, si x i y valen sempre el mateix, el punt es mou sobre la diagonal x = y: un segment, no un cercle. Per a la circumferència, quan x és màxima, y ha de ser zero, i al revés: un desfasament de 90°.",
+"e3.ctx":"Una figura té fₓ = 1 Hz i f_y = 2 Hz. Es discuteix quant triga a tancar-se.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"Es tanca en 1 s.",
+"e3.s1":"Es tanca en 0,5 s, perquè y fa un cicle en 0,5 s.",
+"e3.w0":"Han de tornar alhora a l’inici: x ho fa cada 1 s i y cada 0,5 s; el primer instant comú és t = 1 s = 1/mcd(1, 2).",
+"e3.w1":"Perquè sempre es tanca amb la freqüència més alta.",
+"e3.w2":"Perquè el temps de tancament és la suma dels períodes.",
+"e3.frame":"Clara, no es tanca en 0,5 s perquè…",
+"e3.model":"Clara, en 0,5 s y ha completat un cicle, però x només ha fet mitja oscil·lació: el punt no ha tornat a l’inici amb el mateix moviment. Per tancar-se han de coincidir els dos eixos: t = 1 s, quan x fa 1 cicle i y en fa 2.",
+"e4.ctx":"En un oscil·loscopi veiem una el·lipse que va canviant lentament d’inclinació i d’obertura. Es discuteix què implica.",
+"e4.n0":"Marc","e4.n1":"Clara",
+"e4.s0":"Les freqüències són exactament iguals i la fase no canvia.",
+"e4.s1":"Les freqüències són gairebé iguals, però una mica diferents.",
+"e4.w0":"Si fₓ fóra exactament igual a f_y, la fase seria fixa i l’el·lipse no canviaria. Una petita diferència de freqüències fa que δ vaja variant lentament.",
+"e4.w1":"Perquè una el·lipse només apareix quan fₓ = 2·f_y.",
+"e4.w2":"Perquè l’amplitud de x va disminuint contínuament.",
+"e4.frame":"Marc, l’el·lipse canvia lentament perquè…",
+"e4.model":"Marc, amb fₓ = f_y exactes la fase seria constant i l’el·lipse quedaria quieta. Si les freqüències difereixen una mica, la fase relativa varia amb el temps (Δδ = 2π·Δf·t) i l’el·lipse va passant de segment a el·lipse i a cercle. Per això els oscil·loscopis serveixen per afinar freqüències.",
+"d1.q":"Vols una figura que toque <b>3 vegades</b> el costat superior i <b>5 vegades</b> el dret. Tria la relació fₓ:f_y i escriu quant triga (en s) a tancar-se.",
+"d1.lc":"fₓ:f_y","d1.l0":"T",
+"d1_p":"Amb {0}:{1} tocaria {2} vegades el costat superior i {3} el dret: no és el que et demanen.",
+"d1_t":"Mira-ho al simulador: T = 1/mcd(fₓ, f_y) amb aquestes freqüències.",
+"d1_ok":"✔ Ben decidit! fₓ:f_y = 5:3 i, com que mcd(5, 3) = 1, la figura es tanca en T = 1 s.",
+"d1.more":"Si les freqüències fóren 10 Hz i 6 Hz, tindries la mateixa figura? Quant tardaria a tancar-se?",
+"d2.q":"Un oscil·loscopi mostra una figura que toca 3 vegades el costat superior i 2 vegades el dret. Si fₓ = 200 Hz, quina és f_y (en Hz)?",
+"d2.l0":"f_y",
+"d2_sw":"{0} Hz surt de posar la proporció al revés: f_y és la del costat superior, més alta que fₓ.",
+"d2_f":"{0} Hz no compleix f_y/fₓ = 3/2.",
+"d2_ok":"✔ Ben decidit! f_y/fₓ = 3/2, per tant f_y = 300 Hz.",
+"d2.more":"Una octava és una relació 2:1 i una quinta, 3:2. Quina figura veuries amb una nota i la seua octava?",
+"d3.q":"Per a obtindre una circumferència amb fₓ = f_y, tria la fase δ i escriu la relació B/A que cal.",
+"d3.lc":"Fase:","d3.l0":"B/A",
+"d3_p":"Amb δ = {0}° no s’obté una circumferència; mira la figura al simulador.",
+"d3_r":"Amb δ = 90°, per a una circumferència cal que les dues amplituds siguen iguals.",
+"d3_ok":"✔ Ben decidit! δ = 90° i B/A = 1: x i y desfasades 90° amb la mateixa amplitud.",
+"d3.more":"Si B/A = 0,5 amb δ = 90°, quina figura obtens? Descriu-la."
+},
+es:{
+"title":"Figuras de Lissajous — simulador interactivo",
+"eyebrow":"Movimiento oscilatorio · Física de Bachillerato",
+"h1":"〰️ Figuras de Lissajous",
+"lede":"Un punto que oscila horizontalmente con una frecuencia fₓ y verticalmente con otra f_y dibuja una figura. Cambia las frecuencias y la fase y mira cómo aparecen las dos ondas.",
+"aria.svg":"Figura de Lissajous dentro de un recuadro con el punto móvil, y a la derecha las gráficas de x en función del tiempo y de y en función del tiempo",
+"cyc":"ciclos","lg_x":"movimiento horizontal x","lg_y":"movimiento vertical y","lg_f":"figura de Lissajous",
+"lb_ratio":"Relación fₓ:f_y","lb_phase":"Fase δ",
+"l_fa":"Frecuencia fₓ (horizontal)","l_fb":"Frecuencia f_y (vertical)","l_dl":"Fase δ de x","l_A":"Amplitud A (horizontal)","l_B":"Amplitud B (vertical)","l_pg":"Progreso de la figura",
+"c_mark":"Marca las tangencias con los lados","c_guide":"Muestra las proyecciones del punto","c_sweep":"Haz variar la fase δ continuamente",
+"sp_slow":"Cámara lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Rápido (2×)",
+"play":"▶ Reproducir","pause":"⏸ Pausa","resume":"▶ Continúa","reset":"↺ Reiniciar","step":"+1/16 de figura",
+"s_live":"En directo","s_res":"Resultados",
+"rd_p":"Progreso","rd_t":"Tiempo transcurrido","rd_x":"x del punto","rd_y":"y del punto","rd_d":"Fase δ",
+"r_ratio":"fₓ : f_y","r_red":"Relación reducida","r_close":"La figura se cierra cada","r_tr":"Tangencias con el lado derecho","r_tt":"Tangencias con el lado superior","r_cross":"Autointersecciones (fase genérica)",
+"ty_line":"Segmento recto: fₓ = f_y con las dos oscilaciones en fase (o en oposición).",
+"ty_circ":"Circunferencia: fₓ = f_y, A = B y fase δ = 90°.",
+"ty_ell0":"Elipse con los ejes paralelos a los lados (fase de 90°).",
+"ty_ell":"Elipse inclinada: fₓ = f_y con una fase que no es 0°, 90° ni 180°.",
+"ty_par":"Curva degenerada: se recorre dos veces de ida y vuelta (no tiene autointersecciones).",
+"ty_lis":"Figura de Lissajous con relación {0}:{1}.",
+"note":"Las frecuencias están en Hz y el tiempo en segundos: la figura tarda 1/mcd(fₓ, f_y) segundos en cerrarse. Las tangencias se cuentan con los lados derecho (x = +A) y superior (y = +B): con una fase genérica coinciden con fₓ y f_y reducidas. La animación va más lenta que el tiempo real para que se vea bien.",
+"rng":"Escribe valores dentro del rango del simulador (frecuencias de 1 a 9 Hz, fase de 0° a 360°).",
+"l_xf":"fₓ","l_yf":"f_y","l_tr":"derecho","l_tt":"superior","l_df":"δ","l_tf":"T","l_rf":"B/A",
+"m1.q":"Una figura toca <b>3 veces</b> el lado superior del recuadro y <b>2 veces</b> el lado derecho. ¿Cuáles son las frecuencias fₓ y f_y (números enteros de 1 a 9)?",
+"m1_swap":"Has cambiado los ejes: los contactos con el lado superior cuentan los máximos de y (f_y) y los del lado derecho, los de x (fₓ).",
+"m1_f":"{0}:{1} no da 3 tangencias con el lado superior y 2 con el derecho. Cuenta cuántas veces llega cada oscilación a su máximo.",
+"m1_ok":"✔ ¡Misión cumplida! fₓ:f_y = 2:3 (o múltiplos, como 4:6): 2 máximos de x y 3 máximos de y.",
+"m1.more":"Si la figura tocara 5 veces el lado superior y 4 el derecho, ¿cuáles serían fₓ y f_y? Predícelo y compruébalo en el simulador.",
+"m2.q":"Una figura tiene fₓ = 3 Hz y f_y = 4 Hz (fase genérica). ¿Cuántas veces toca el lado <b>derecho</b> y el <b>superior</b>?",
+"m2_swap":"Los has intercambiado: el lado derecho lo toca fₓ veces y el superior, f_y veces.",
+"m2_f":"{0} y {1} no son correctos. Cada lado se toca tantas veces como ciclos hace la oscilación correspondiente en una figura completa.",
+"m2_ok":"✔ ¡Misión cumplida! 3 contactos con el derecho (fₓ = 3) y 4 con el superior (f_y = 4).",
+"m2.more":"¿Y si fₓ = 6 y f_y = 8? Fíjate en que la relación se puede reducir: ¿hay que contar con 6 y 8 o con 3 y 4?",
+"m3.q":"Con fₓ = f_y y A = B, ¿qué <b>fase δ</b> (entre 0° y 180°) hace que la figura sea una <b>circunferencia</b>?",
+"m3_f":"Con δ = {0}° no se obtiene una circunferencia. Piensa qué diferencia de fase entre x e y convierte la elipse en un círculo.",
+"m3_ok":"✔ ¡Misión cumplida! Con δ = 90°, x = A·sin(ωt + 90°) = A·cos(ωt) e y = A·sin(ωt): MCU.",
+"m3.more":"Con δ = 90°, cambia la amplitud B. ¿Qué pasa con la figura? ¿Y si A ≠ B?",
+"m4.q":"Con fₓ = f_y, ¿qué fase δ (entre 0° y 180°) hace que la figura sea un <b>segmento recto</b>? Escribe una.",
+"m4_c":"Con δ = {0}° la figura es una circunferencia, no un segmento. Busca la fase en la que x e y van siempre a la vez.",
+"m4_f":"Con δ = {0}° la figura es una elipse abierta, no un segmento.",
+"m4_ok":"✔ ¡Misión cumplida! Con δ = 0° (o 180°) x e y son proporcionales: la figura es un segmento.",
+"m4.more":"Con δ = 0° y fₓ = f_y, la diagonal tiene pendiente positiva; con δ = 180°, negativa. ¿Por qué?",
+"m5.q":"Una figura tiene fₓ = 4 Hz y f_y = 6 Hz. ¿Cuánto tarda (en s) en <b>cerrarse</b>, es decir, en volver al punto inicial con el mismo movimiento?",
+"m5_f":"{0} s no es el tiempo de cierre. Tienen que volver a la vez al inicio x (periodo 1/4 s) e y (periodo 1/6 s): busca el primer instante común.",
+"m5_ok":"✔ ¡Misión cumplida! T = 1/mcd(4, 6) = 1/2 = 0,5 s: en ese tiempo x hace 2 ciclos e y hace 3.",
+"m5.more":"¿Por qué la figura de 4:6 es igual que la de 2:3 pero se dibuja en la mitad de tiempo?",
+"s1.q":"Si fₓ = f_y, la figura es siempre una elipse, una circunferencia o un segmento.",
+"s1.h":"Prueba distintas fases con fₓ = f_y = 1.",
+"s1.e":"Siempre. Con la misma frecuencia, x e y solo se diferencian en la fase: la fase decide si la elipse es un segmento, una elipse inclinada o una circunferencia.",
+"s2.q":"Si fₓ ≠ f_y, la figura se cruza siempre a sí misma.",
+"s2.h":"Mira la relación 1:2 para distintas fases.",
+"s2.e":"A veces. Con una fase genérica sí hay autointersecciones (1:2 es un ocho), pero con fases especiales la curva degenera y se recorre dos veces, como una parábola.",
+"s2_cx":"✔ Con δ = {0}° la figura 1:2 es un arco de parábola recorrido dos veces: no tiene ninguna autointersección.",
+"s2_cx_no":"Con δ = {0}° la figura 1:2 todavía se cruza. Busca una fase en la que la curva se pliegue sobre sí misma.",
+"s3.q":"Si duplicamos la amplitud A, cambia la relación fₓ:f_y de la figura.",
+"s3.h":"Mira qué cambia al estirar la figura en horizontal.",
+"s3.e":"Nunca. La amplitud solo estira o encoge la figura; la relación de frecuencias es la que fija el número de tangencias.",
+"s4.q":"Una figura que toca 4 veces el lado superior y 3 el lado derecho tiene f_y : fₓ = 4 : 3.",
+"s4.h":"Los máximos de y son los contactos con el lado superior.",
+"s4.e":"Siempre. Cada contacto con el lado superior es un máximo de y, y cada contacto con el lado derecho, un máximo de x: los números de tangencias son f_y y fₓ.",
+"s5.q":"Las frecuencias fₓ = 4 Hz y f_y = 6 Hz dan una figura distinta de la de fₓ = 2 Hz y f_y = 3 Hz (con la misma fase).",
+"s5.h":"Compara las dos relaciones reducidas.",
+"s5.e":"Nunca. La relación reducida es la misma (2:3), por tanto la figura es idéntica; solo cambia el tiempo de cierre (0,5 s en lugar de 1 s).",
+"s6.q":"Con fₓ = f_y, A = B y δ = 90°, el punto describe un movimiento circular uniforme.",
+"s6.h":"Escribe x(t) e y(t) y fíjate en que x² + y² es constante.",
+"s6.e":"Siempre. x = A·cos(ωt) e y = A·sin(ωt): x² + y² = A² y la rapidez angular es constante, es decir, un MCU.",
+"e1.ctx":"Una figura toca 2 veces el lado superior y 3 veces el lado derecho. Se discute cuál es la relación fₓ:f_y.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"fₓ:f_y = 2:3.",
+"e1.s1":"fₓ:f_y = 3:2.",
+"e1.w0":"Los contactos con el lado derecho cuentan los máximos de x (fₓ = 3) y los del superior, los de y (f_y = 2): fₓ:f_y = 3:2.",
+"e1.w1":"Porque la frecuencia más grande siempre va al eje x.",
+"e1.w2":"Porque la figura se cierra tras 3 ciclos.",
+"e1.frame":"Pau, fₓ:f_y es 3:2 porque…",
+"e1.model":"Pau, has cogido los números en el orden en que aparecían en el texto, pero cada lado cuenta el eje contrario al que parece: el lado derecho se toca cada vez que x llega a +A, así que los contactos con el lado derecho son fₓ = 3, y los del superior, f_y = 2.",
+"e2.ctx":"Se quiere una circunferencia con dos oscilaciones de la misma frecuencia y la misma amplitud. Se discute cómo deben ser entre sí.",
+"e2.n0":"Marc","e2.n1":"Clara",
+"e2.s0":"Tienen que estar en fase, así x e y valen siempre lo mismo.",
+"e2.s1":"Tienen que estar desfasadas 90°.",
+"e2.w0":"Si estuvieran en fase sería x = y, una diagonal. La circunferencia exige x = A·cos(ωt) e y = A·sin(ωt), desfasadas 90°.",
+"e2.w1":"Porque las oscilaciones deben tener amplitudes distintas.",
+"e2.w2":"Porque la fase solo modifica el tamaño de la figura.",
+"e2.frame":"Marc, para que sea una circunferencia hace falta que…",
+"e2.model":"Marc, si x e y valen siempre lo mismo, el punto se mueve sobre la diagonal x = y: un segmento, no un círculo. Para la circunferencia, cuando x es máxima, y debe ser cero, y al revés: un desfase de 90°.",
+"e3.ctx":"Una figura tiene fₓ = 1 Hz y f_y = 2 Hz. Se discute cuánto tarda en cerrarse.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"Se cierra en 1 s.",
+"e3.s1":"Se cierra en 0,5 s, porque y hace un ciclo en 0,5 s.",
+"e3.w0":"Tienen que volver a la vez al inicio: x lo hace cada 1 s e y cada 0,5 s; el primer instante común es t = 1 s = 1/mcd(1, 2).",
+"e3.w1":"Porque siempre se cierra con la frecuencia más alta.",
+"e3.w2":"Porque el tiempo de cierre es la suma de los periodos.",
+"e3.frame":"Clara, no se cierra en 0,5 s porque…",
+"e3.model":"Clara, en 0,5 s y ha completado un ciclo, pero x solo ha hecho media oscilación: el punto no ha vuelto al inicio con el mismo movimiento. Para cerrarse tienen que coincidir los dos ejes: t = 1 s, cuando x hace 1 ciclo e y hace 2.",
+"e4.ctx":"En un osciloscopio vemos una elipse que va cambiando lentamente de inclinación y de apertura. Se discute qué implica.",
+"e4.n0":"Marc","e4.n1":"Clara",
+"e4.s0":"Las frecuencias son exactamente iguales y la fase no cambia.",
+"e4.s1":"Las frecuencias son casi iguales, pero algo distintas.",
+"e4.w0":"Si fₓ fuera exactamente igual a f_y, la fase sería fija y la elipse no cambiaría. Una pequeña diferencia de frecuencias hace que δ vaya variando lentamente.",
+"e4.w1":"Porque una elipse solo aparece cuando fₓ = 2·f_y.",
+"e4.w2":"Porque la amplitud de x va disminuyendo continuamente.",
+"e4.frame":"Marc, la elipse cambia lentamente porque…",
+"e4.model":"Marc, con fₓ = f_y exactas la fase sería constante y la elipse quedaría quieta. Si las frecuencias difieren un poco, la fase relativa varía con el tiempo (Δδ = 2π·Δf·t) y la elipse va pasando de segmento a elipse y a círculo. Por eso los osciloscopios sirven para afinar frecuencias.",
+"d1.q":"Quieres una figura que toque <b>3 veces</b> el lado superior y <b>5 veces</b> el derecho. Elige la relación fₓ:f_y y escribe cuánto tarda (en s) en cerrarse.",
+"d1.lc":"fₓ:f_y","d1.l0":"T",
+"d1_p":"Con {0}:{1} tocaría {2} veces el lado superior y {3} el derecho: no es lo que te piden.",
+"d1_t":"Míralo en el simulador: T = 1/mcd(fₓ, f_y) con estas frecuencias.",
+"d1_ok":"✔ ¡Bien decidido! fₓ:f_y = 5:3 y, como mcd(5, 3) = 1, la figura se cierra en T = 1 s.",
+"d1.more":"Si las frecuencias fueran 10 Hz y 6 Hz, ¿tendrías la misma figura? ¿Cuánto tardaría en cerrarse?",
+"d2.q":"Un osciloscopio muestra una figura que toca 3 veces el lado superior y 2 veces el derecho. Si fₓ = 200 Hz, ¿cuál es f_y (en Hz)?",
+"d2.l0":"f_y",
+"d2_sw":"{0} Hz sale de poner la proporción al revés: f_y es la del lado superior, más alta que fₓ.",
+"d2_f":"{0} Hz no cumple f_y/fₓ = 3/2.",
+"d2_ok":"✔ ¡Bien decidido! f_y/fₓ = 3/2, por tanto f_y = 300 Hz.",
+"d2.more":"Una octava es una relación 2:1 y una quinta, 3:2. ¿Qué figura verías con una nota y su octava?",
+"d3.q":"Para obtener una circunferencia con fₓ = f_y, elige la fase δ y escribe la relación B/A necesaria.",
+"d3.lc":"Fase:","d3.l0":"B/A",
+"d3_p":"Con δ = {0}° no se obtiene una circunferencia; mira la figura en el simulador.",
+"d3_r":"Con δ = 90°, para una circunferencia hace falta que las dos amplitudes sean iguales.",
+"d3_ok":"✔ ¡Bien decidido! δ = 90° y B/A = 1: x e y desfasadas 90° con la misma amplitud.",
+"d3.more":"Si B/A = 0,5 con δ = 90°, ¿qué figura obtienes? Descríbela."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){
+/* ===== Figures de Lissajous: x = A·sin(2π·a'·u + δ), y = B·sin(2π·b'·u), u ∈ [0,1] = una figura completa ===== */
+const svg=$('#svg');
+const faEl=$('#fa'),fbEl=$('#fb'),dlEl=$('#dl'),amAEl=$('#amA'),amBEl=$('#amB'),pgEl=$('#pg'),speedEl=$('#speed');
+const markEl=$('#mark'),guideEl=$('#guide'),sweepEl=$('#sweep');
+const btnPlay=$('#btnPlay'),btnStep=$('#btnStep'),btnReset=$('#btnReset');
+const readout=$('#readout'),results=$('#results'),tyl=$('#tyl');
+const CX=170,CY=172,HALF=150,DUR=6;
+let u=0,playing=false,last=null,presLang=null;
+const f1=n=>n.toFixed(1);
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const RAD=Math.PI/180;
+function P(){
+  const a=+faEl.value,b=+fbEl.value,g=gcd(a,b);
+  return {a,b,g,ar:a/g,br:b/g,d:+dlEl.value*RAD,dd:+dlEl.value,A:+amAEl.value,B:+amBEl.value};
+}
+const px=(p,uu)=>Math.sin(TAU*p.ar*uu+p.d),py=(p,uu)=>Math.sin(TAU*p.br*uu);
+const sx=(p,uu)=>CX+p.A*HALF*px(p,uu),sy=(p,uu)=>CY-p.B*HALF*py(p,uu);
+/* punts de tangència amb els costats: retorna {vr,vl,ht,hb} com a llistes de [x,y] normalitzats */
+function tangents(p){
+  const o={r:[],l:[],t:[],b:[]};
+  for(let k=0;k<2*p.ar;k++){
+    const uu=((Math.PI/2+k*Math.PI-p.d)/(TAU*p.ar)%1+1)%1,pt=[k%2===0?1:-1,py(p,uu)];(k%2===0?o.r:o.l).push(pt);
+  }
+  for(let k=0;k<2*p.br;k++){
+    const uu=((Math.PI/2+k*Math.PI)/(TAU*p.br))%1,pt=[px(p,uu),k%2===0?1:-1];(k%2===0?o.t:o.b).push(pt);
+  }
+  return o;
+}
+function distinct(L,i){const out=[];L.forEach(q=>{if(!out.some(r=>Math.abs(r[i]-q[i])<.01))out.push(q);});return out;}
+function retraced(p){
+  /* la corba es recorre dues vegades (degenerada) si cada punt de prova torna a aparéixer en un altre instant */
+  const M=1200,xs=[],ys=[];for(let i=0;i<M;i++){xs.push(px(p,i/M));ys.push(py(p,i/M));}
+  let hit=0;const tests=[.137,.291,.443,.597,.71,.853];
+  tests.forEach(uu=>{const x0=px(p,uu),y0=py(p,uu);let f=false;
+    for(let i=0;i<M&&!f;i++){const du=Math.abs(i/M-uu);if(Math.min(du,1-du)<.03)continue;if(Math.abs(xs[i]-x0)<.012&&Math.abs(ys[i]-y0)<.012)f=true;}
+    if(f)hit++;});
+  return hit>=5;
+}
+function draw(){
+  const p=P(),o0=[];
+  let o='';
+  /* requadre */
+  const bx0=CX-p.A*HALF,bx1=CX+p.A*HALF,by0=CY-p.B*HALF,by1=CY+p.B*HALF;
+  o+='<rect x="'+f1(CX-HALF-6)+'" y="'+f1(CY-HALF-6)+'" width="'+(2*HALF+12)+'" height="'+(2*HALF+12)+'" rx="6" fill="none" stroke="var(--line)"/>';
+  o+='<rect x="'+f1(bx0)+'" y="'+f1(by0)+'" width="'+f1(bx1-bx0)+'" height="'+f1(by1-by0)+'" fill="none" stroke="var(--muted)" stroke-dasharray="4 4" opacity=".7"/>';
+  o+='<path d="M'+(CX-HALF-6)+','+CY+'H'+(CX+HALF+6)+'M'+CX+','+(CY-HALF-6)+'V'+(CY+HALF+6)+'" stroke="var(--line)"/>';
+  /* corba completa i traç */
+  const N=700,all=[];for(let i=0;i<=N;i++){const uu=i/N;all.push(f1(sx(p,uu))+','+f1(sy(p,uu)));}
+  o+='<polyline fill="none" stroke="var(--line)" stroke-width="3" stroke-linejoin="round" points="'+all.join(' ')+'"/>';
+  const n=Math.max(2,Math.ceil(u*N)),tp=[];for(let i=0;i<=n;i++){const uu=u*i/n;tp.push(f1(sx(p,uu))+','+f1(sy(p,uu)));}
+  if(u>0)o+='<polyline fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" points="'+tp.join(' ')+'"/>';
+  /* tangències */
+  if(markEl.checked){
+    const T=tangents(p);
+    ['r','l'].forEach(k=>distinct(T[k],1).forEach(q=>{o+='<circle cx="'+f1(CX+q[0]*p.A*HALF)+'" cy="'+f1(CY-q[1]*p.B*HALF)+'" r="4.6" fill="var(--pa)" stroke="var(--panel)" stroke-width="1.2"/>';}));
+    ['t','b'].forEach(k=>distinct(T[k],0).forEach(q=>{o+='<circle cx="'+f1(CX+q[0]*p.A*HALF)+'" cy="'+f1(CY-q[1]*p.B*HALF)+'" r="4.6" fill="var(--pb)" stroke="var(--panel)" stroke-width="1.2"/>';}));
+  }
+  /* punt mòbil i projeccions */
+  const X=sx(p,u),Y=sy(p,u);
+  if(guideEl.checked){
+    o+='<line x1="'+f1(X)+'" y1="'+f1(Y)+'" x2="'+f1(X)+'" y2="'+f1(CY+HALF+6)+'" stroke="var(--pa)" stroke-dasharray="3 4"/><line x1="'+f1(X)+'" y1="'+f1(Y)+'" x2="'+f1(CX-HALF-6)+'" y2="'+f1(Y)+'" stroke="var(--pb)" stroke-dasharray="3 4"/>';
+    o+='<circle cx="'+f1(X)+'" cy="'+f1(CY+HALF+6)+'" r="4" fill="var(--pa)"/><circle cx="'+f1(CX-HALF-6)+'" cy="'+f1(Y)+'" r="4" fill="var(--pb)"/>';
+  }
+  o+='<circle cx="'+f1(X)+'" cy="'+f1(Y)+'" r="7" fill="var(--warn)" stroke="var(--panel)" stroke-width="2"/>';
+  /* ones x(u) i y(u) */
+  const gx0=372,gx1=626,gw=gx1-gx0,gy1=88,gy2=258,gh=62;
+  const wave=(cy,fn,col)=>{const pts=[];for(let i=0;i<=300;i++){const uu=i/300;pts.push(f1(gx0+gw*uu)+','+f1(cy-gh*fn(uu)));}
+    return '<line x1="'+gx0+'" y1="'+cy+'" x2="'+gx1+'" y2="'+cy+'" stroke="var(--line)"/><polyline fill="none" stroke="'+col+'" stroke-width="2" points="'+pts.join(' ')+'"/>';};
+  o+=wave(gy1,uu=>p.A*px(p,uu),'var(--pa)')+wave(gy2,uu=>p.B*py(p,uu),'var(--pb)');
+  const mx=gx0+gw*u;
+  o+='<line x1="'+f1(mx)+'" y1="'+(gy1-gh-6)+'" x2="'+f1(mx)+'" y2="'+(gy2+gh+6)+'" stroke="var(--muted)" stroke-dasharray="3 4"/>';
+  o+='<circle cx="'+f1(mx)+'" cy="'+f1(gy1-gh*p.A*px(p,u))+'" r="4.6" fill="var(--pa)"/><circle cx="'+f1(mx)+'" cy="'+f1(gy2-gh*p.B*py(p,u))+'" r="4.6" fill="var(--pb)"/>';
+  o+='<text x="'+gx0+'" y="'+(gy1-gh-10)+'" style="fill:var(--pa);font-weight:700">x(t) · '+p.ar+' '+t('cyc')+'</text><text x="'+gx0+'" y="'+(gy2-gh-10)+'" style="fill:var(--pb);font-weight:700">y(t) · '+p.br+' '+t('cyc')+'</text>';
+  o+='<text x="'+gx1+'" y="'+(gy2+gh+22)+'" text-anchor="end">t → '+fmt(1/p.g,2)+' s</text>';
+  svg.innerHTML=o;
+}
+const row=(k,v,c)=>'<dt>'+k+'</dt><dd'+(c?' class="'+c+'"':'')+'>'+v+'</dd>';
+function panels(){
+  const p=P(),Tc=tangents(p),nr=distinct(Tc.r,1).length,nt=distinct(Tc.t,0).length;
+  readout.innerHTML=row(t('rd_p'),fmt(u*100,0)+' %')+row(t('rd_t'),fmt(u/p.g,3)+' s')+row(t('rd_x'),fmt(p.A*px(p,u),2),'hl1')+row(t('rd_y'),fmt(p.B*py(p,u),2),'hl2')+row(t('rd_d'),Math.round(p.dd)+'°');
+  results.innerHTML=row(t('r_ratio'),p.a+' : '+p.b)+row(t('r_red'),'<b>'+p.ar+' : '+p.br+'</b>')+row(t('r_close'),fmt(1/p.g,3)+' s')+row(t('r_tr'),nr,'hl1')+row(t('r_tt'),nt,'hl2')+
+    row(t('r_cross'),p.ar===1&&p.br===1?'0':String(2*p.ar*p.br-p.ar-p.br));
+  let k;
+  if(p.ar===1&&p.br===1){
+    const s=Math.abs(Math.sin(p.d));
+    k=s<.02?'ty_line':s>.98?(Math.abs(p.A-p.B)<1e-9?'ty_circ':'ty_ell0'):'ty_ell';
+    tyl.textContent=t(k);
+  }else{
+    /* degenerada: algun costat tocat menys vegades del que correspon */
+    const deg=retraced(p);
+    tyl.textContent=deg?t('ty_par'):t('ty_lis',{0:p.ar,1:p.br});
+  }
+}
+function labels(){
+  $('#faL').textContent=faEl.value+' Hz';$('#fbL').textContent=fbEl.value+' Hz';$('#dlL').textContent=Math.round(+dlEl.value)+'°';
+  $('#amAL').textContent=fmt(+amAEl.value,2);$('#amBL').textContent=fmt(+amBEl.value,2);
+  $('#pgL').textContent=fmt(u*100,0)+' %';pgEl.value=u;
+}
+function buildChips(){
+  if(presLang===LANG)return;presLang=LANG;
+  const R=$('#pRatio'),F=$('#pPhase');R.innerHTML='';F.innerHTML='';
+  [[1,1],[1,2],[2,1],[1,3],[3,2],[2,3],[3,4],[4,3],[5,4]].forEach(([a,b])=>{
+    const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=a+':'+b;c.dataset.a=a;c.dataset.b=b;
+    c.onclick=()=>{faEl.value=a;fbEl.value=b;sweepEl.checked=false;refresh();};R.appendChild(c);});
+  [0,45,90,135,180].forEach(d=>{
+    const c=document.createElement('button');c.type='button';c.className='chip';c.textContent=d+'°';c.dataset.d=d;
+    c.onclick=()=>{dlEl.value=d;sweepEl.checked=false;refresh();};F.appendChild(c);});
+}
+function pressChips(){
+  $$('#pRatio .chip').forEach(c=>c.setAttribute('aria-pressed',String(+c.dataset.a===+faEl.value&&+c.dataset.b===+fbEl.value)));
+  $$('#pPhase .chip').forEach(c=>c.setAttribute('aria-pressed',String(+c.dataset.d===+dlEl.value)));
+}
+function setPlay(){const k=playing?'pause':(u>0&&u<1?'resume':'play');if(btnPlay.textContent!==t(k))btnPlay.textContent=t(k);}
+function refresh(){buildChips();pressChips();labels();draw();panels();setPlay();}
+function tick(ts){
+  if(!playing)return;
+  if(last===null)last=ts;
+  const dt=(ts-last)/1000*(+speedEl.value);last=ts;
+  u+=dt/DUR;
+  if(sweepEl.checked){u=u%1;dlEl.value=((+dlEl.value+dt*40)%360);}
+  else if(u>=1){u=1;playing=false;last=null;}
+  refresh();
+  if(playing)requestAnimationFrame(tick);
+}
+function play(){
+  if(playing){playing=false;last=null;setPlay();return;}
+  if(u>=1)u=0;
+  playing=true;last=null;setPlay();requestAnimationFrame(tick);
+}
+[faEl,fbEl,dlEl,amAEl,amBEl,markEl,guideEl].forEach(e=>e.addEventListener('input',refresh));
+sweepEl.addEventListener('change',()=>{if(sweepEl.checked&&!playing)play();else refresh();});
+pgEl.addEventListener('input',()=>{u=+pgEl.value;playing=false;last=null;refresh();});
+btnPlay.addEventListener('click',play);
+btnStep.addEventListener('click',()=>{playing=false;last=null;u=Math.min(1,Math.round(u*16+1e-9)/16+1/16);refresh();});
+btnReset.addEventListener('click',()=>{playing=false;last=null;u=0;sweepEl.checked=false;refresh();});
+App.hooks.push(()=>{presLang=null;refresh();});
+
+/* ===== Raona-ho ===== */
+const dv=(x,d)=>x===undefined?d:x;
+function load(o){
+  o=o||{};
+  faEl.value=dv(o.a,1);fbEl.value=dv(o.b,2);dlEl.value=dv(o.d,40);amAEl.value=dv(o.A,1);amBEl.value=dv(o.B,1);
+  markEl.checked=!!o.mark;guideEl.checked=true;sweepEl.checked=!!o.sweep;speedEl.value='1';
+  playing=false;last=null;u=clamp(dv(o.u,o.run?0:1),0,1);
+  refresh();
+  if(o.run)play();
+  RZ.show($('#svg'));
+}
+const lim=(x,a,b)=>Math.round(clamp(x,a,b));
+const PAIRS=[[3,5],[5,3],[5,4],[4,5]];
+RZ.init({
+ sim:()=>load(),
+ M:[
+  {id:'m1',f:[{l:'l_xf',u:'Hz'},{l:'l_yf',u:'Hz'}],sim:([x,y])=>load({a:Number.isFinite(x)?lim(x,1,9):2,b:Number.isFinite(y)?lim(y,1,9):3,d:40,mark:true}),ok:()=>({k:'m1_ok'}),
+   chk:([x,y])=>(Number.isInteger(x)&&Number.isInteger(y)&&x>=1&&y>=1&&x*3===y*2)?null:(x*2===y*3?{k:'m1_swap'}:{k:'m1_f',p:[fmt(x,0),fmt(y,0)]})},
+  {id:'m2',f:[{l:'l_tr'},{l:'l_tt'}],sim:()=>load({a:3,b:4,d:40,mark:true}),ok:()=>({k:'m2_ok'}),
+   chk:([r,s])=>(r===3&&s===4)?null:(r===4&&s===3?{k:'m2_swap'}:{k:'m2_f',p:[fmt(r,0),fmt(s,0)]})},
+  {id:'m3',f:[{l:'l_df',u:'°'}],sim:([d])=>load({a:1,b:1,d:Number.isFinite(d)?clamp(d,0,360):90}),ok:()=>({k:'m3_ok'}),
+   chk:([d])=>(Math.abs(d-90)<=2||Math.abs(d-270)<=2)?null:{k:'m3_f',p:[fmt(d,0)]}},
+  {id:'m4',f:[{l:'l_df',u:'°'}],sim:([d])=>load({a:1,b:1,d:Number.isFinite(d)?clamp(d,0,360):0}),ok:()=>({k:'m4_ok'}),
+   chk:([d])=>(d<=2||Math.abs(d-180)<=2||d>=358)?null:(Math.abs(d-90)<=2||Math.abs(d-270)<=2)?{k:'m4_c',p:[fmt(d,0)]}:{k:'m4_f',p:[fmt(d,0)]}},
+  {id:'m5',f:[{l:'l_tf',u:'s'}],sim:()=>load({a:4,b:6,d:40,run:true}),ok:()=>({k:'m5_ok'}),
+   chk:([x])=>Math.abs(x-.5)<=.01?null:{k:'m5_f',p:[fmt(x,2)]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load({a:1,b:1,d:40,sweep:true,run:true})},
+  {id:'s2',ans:'D',f:[{l:'l_df',u:'°'}],cxsim:([d])=>load({a:1,b:2,d:clamp(d,0,360)}),
+   cxok:([d])=>({k:'s2_cx',p:[fmt(d,0)]}),
+   cx:([d])=>!(d>=0&&d<=360)?{k:'rng'}:[45,135,225,315].some(q=>Math.abs(d-q)<=3)?null:{k:'s2_cx_no',p:[fmt(d,0)]}},
+  {id:'s3',ans:'M',sim:()=>load({a:2,b:3,d:40,A:.5,mark:true})},
+  {id:'s4',ans:'S',sim:()=>load({a:3,b:4,d:40,mark:true})},
+  {id:'s5',ans:'M',sim:()=>load({a:4,b:6,d:40,mark:true})},
+  {id:'s6',ans:'S',sim:()=>load({a:1,b:1,d:90,run:true})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({a:3,b:2,d:40,mark:true})},
+  {id:'e2',who:1,sim:()=>load({a:1,b:1,d:90,run:true})},
+  {id:'e3',who:0,sim:()=>load({a:1,b:2,d:40,run:true})},
+  {id:'e4',who:1,sim:()=>load({a:1,b:1,d:40,sweep:true,run:true})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[0,1,2,3],fmt:i=>PAIRS[i][0]+':'+PAIRS[i][1]},f:[{l:'d1.l0',u:'s'}],
+   sim:(a)=>{const q=PAIRS[Number.isFinite(a[0])?a[0]:1];load({a:q[0],b:q[1],d:40,mark:true});},ok:()=>({k:'d1_ok'}),
+   chk:([i,T])=>i!==1?{k:'d1_p',p:[PAIRS[i][0],PAIRS[i][1],PAIRS[i][1],PAIRS[i][0]]}:Math.abs(T-1)>.01?{k:'d1_t'}:null},
+  {id:'d2',f:[{l:'d2.l0',u:'Hz'}],sim:()=>load({a:2,b:3,d:40,mark:true}),ok:()=>({k:'d2_ok'}),
+   chk:([x])=>Math.abs(x-300)<=1?null:Math.abs(x-133.3)<=2?{k:'d2_sw',p:[fmt(x,1)]}:{k:'d2_f',p:[fmt(x,1)]}},
+  {id:'d3',chips:{vals:[0,45,90,180],fmt:x=>x+'°'},f:[{l:'d3.l0'}],
+   sim:(a)=>load({a:1,b:1,d:Number.isFinite(a[0])?a[0]:90}),ok:()=>({k:'d3_ok'}),
+   chk:([d,r])=>d!==90?{k:'d3_p',p:[d]}:Math.abs(r-1)>.02?{k:'d3_r'}:null}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+refresh();
+})();
+</script>
+</body>
+</html>

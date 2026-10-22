@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Acceleració tangencial i normal (centrípeta) — simulador interactiu</title>
+<meta name="description" content="Un mòbil recorre una circumferència, una el·lipse o un circuit: mira per separat l’acceleració tangencial (canvia el mòdul de v) i la normal o centrípeta (canvia la direcció), amb el radi de curvatura i la circumferència osculadora. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/acceleracio-tangencial-normal/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/acceleracio-tangencial-normal/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/acceleracio-tangencial-normal/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/acceleracio-tangencial-normal/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Acceleració tangencial i normal (centrípeta) — simulador interactiu">
+<meta property="og:description" content="Un mòbil recorre una circumferència, una el·lipse o un circuit: mira per separat l’acceleració tangencial (canvia el mòdul de v) i la normal o centrípeta (canvia la direcció), amb el radi de curvatura i la circumferència osculadora. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/acceleracio-tangencial-normal/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.stage svg{display:block;width:100%;height:auto}
+.stage svg text{font-family:var(--f-num);font-size:11px;fill:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.swatch{width:14px;height:3px;display:inline-block;border-radius:2px}
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls .span{grid-column:1/-1}
+.ctl select{grid-column:1/-1;width:100%}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:4px 18px}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+.vals dd.hl2{color:var(--pb);font-weight:700}
+.vals dd.hl1{color:var(--pa);font-weight:700}
+.tyl{margin:0;padding:6px 10px;border-radius:8px;background:var(--chip);border:1px solid var(--line);font-size:13.5px;color:var(--ink)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Cinemàtica · 4t ESO i Batxillerat</p>
+      <h1 data-i18n="h1">🏎️ Acceleració tangencial i normal</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">En una corba, l’acceleració té dues parts: l’aₜ canvia el mòdul de la velocitat i l’aₙ (centrípeta) en canvia la direcció. Tria la trajectòria, la velocitat i l’aₜ, i mira-les per separat.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 600 340" role="img" data-i18n-aria="aria.svg" aria-label="Mòbil sobre una trajectòria corba amb els vectors velocitat, acceleració tangencial, acceleració normal i acceleració total"></svg></div>
+<div class="legend">
+<span><span class="swatch" style="background:var(--ok)"></span><span data-i18n="lg_v">velocitat v</span></span>
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="lg_at">acc. tangencial aₜ</span></span>
+<span><span class="swatch" style="background:var(--pb)"></span><span data-i18n="lg_an">acc. normal aₙ</span></span>
+<span><span class="swatch" style="background:var(--warn)"></span><span data-i18n="lg_a">acc. total a</span></span>
+</div>
+<div class="ctls">
+<div class="btns"><button class="btn primary" id="btnPlay" type="button"></button><button class="btn" id="btnStep" type="button" data-i18n="step">+1 s</button><button class="btn" id="btnReset" type="button" data-i18n="reset">↺ Reiniciar</button>
+<select id="speed" aria-label="Velocitat"><option value="0.5" data-i18n="sp_slow">Càmera lenta (0,5×)</option><option value="1" selected data-i18n="sp_norm">Normal (1×)</option><option value="2" data-i18n="sp_fast">Ràpid (2×)</option></select></div>
+<div class="chips span" id="presets"></div>
+<div class="ctl"><label for="kind" data-i18n="l_kind">Trajectòria</label><select id="kind"><option value="circle" data-i18n="k_circle">Circumferència</option><option value="ellipse" data-i18n="k_ellipse">El·lipse</option><option value="stadium" data-i18n="k_stadium">Circuit (rectes i semicercles)</option></select></div>
+<div class="ctl"><label for="rr" data-i18n="l_R">Radi R</label><output id="rrL"></output><input type="range" id="rr" min="5" max="60" step="1" value="20"></div>
+<div class="ctl"><label for="v0" data-i18n="l_v0">Rapidesa inicial v₀</label><output id="v0L"></output><input type="range" id="v0" min="0" max="30" step="1" value="10"></div>
+<div class="ctl"><label for="at" data-i18n="l_at">Acceleració tangencial aₜ</label><output id="atL"></output><input type="range" id="at" min="-5" max="5" step="0.5" value="0"></div>
+<div class="ctl span"><label for="tt" data-i18n="l_t">Temps t</label><output id="ttL"></output><input type="range" id="tt" min="0" max="12" step="0.05" value="0"></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="comp" checked><span data-i18n="c_comp">Mostra les components aₜ i aₙ</span></label>
+<label class="check"><input type="checkbox" id="vel" checked><span data-i18n="c_vel">Mostra la velocitat v</span></label>
+<label class="check"><input type="checkbox" id="osc"><span data-i18n="c_osc">Mostra la circumferència osculadora (radi ρ)</span></label>
+<label class="check"><input type="checkbox" id="trail" checked><span data-i18n="c_trail">Deixa el rastre</span></label>
+</div>
+</div>
+</div>
+<div class="side">
+<p class="sh" data-i18n="s_live">En directe</p>
+<dl class="vals" id="readout"></dl>
+<p class="sh" data-i18n="s_res">Resultats</p>
+<dl class="vals" id="results"></dl>
+<p class="tyl" id="tyl" aria-live="polite"></p>
+<p class="note" data-i18n="note">L’escala de les fletxes s’ajusta automàticament quan canvia la rapidesa (mira les barres de baix): les d’acceleració i les de velocitat tenen escales diferents i no es poden comparar en longitud entre elles. En l’el·lipse, R és el semieix menor (el major val 2R); al circuit, és el radi de les semicircumferències. Si aₜ &lt; 0, el mòbil s’atura quan v arriba a 0.</p>
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Acceleració tangencial i normal (centrípeta) — simulador interactiu",
+"eyebrow":"Cinemàtica · 4t ESO i Batxillerat",
+"h1":"🏎️ Acceleració tangencial i normal",
+"lede":"En una corba, l’acceleració té dues parts: l’aₜ canvia el mòdul de la velocitat i l’aₙ (centrípeta) en canvia la direcció. Tria la trajectòria, la velocitat i l’aₜ, i mira-les per separat.",
+"aria.svg":"Mòbil sobre una trajectòria corba amb els vectors velocitat, acceleració tangencial, acceleració normal i acceleració total",
+"lg_v":"velocitat v","lg_at":"acc. tangencial aₜ","lg_an":"acc. normal aₙ","lg_a":"acc. total a",
+"l_kind":"Trajectòria","k_circle":"Circumferència","k_ellipse":"El·lipse","k_stadium":"Circuit (rectes i semicercles)",
+"l_R":"Radi R","l_v0":"Rapidesa inicial v₀","l_at":"Acceleració tangencial aₜ","l_t":"Temps t",
+"c_comp":"Mostra les components aₜ i aₙ","c_vel":"Mostra la velocitat v","c_osc":"Mostra la circumferència osculadora (radi ρ)","c_trail":"Deixa el rastre",
+"sp_slow":"Càmera lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Ràpid (2×)",
+"play":"▶ Reproduir","pause":"⏸ Pausa","resume":"▶ Continua","reset":"↺ Reiniciar","step":"+1 s",
+"pr_mcu":"MCU","pr_mcua":"Accelera","pr_fren":"Frena","pr_cir":"Circuit","pr_ell":"El·lipse",
+"s_live":"En directe","s_res":"Resultats",
+"rd_t":"Temps t","rd_s":"Espai recorregut","rd_v":"Rapidesa v","rd_at":"aₜ (tangencial)","rd_an":"aₙ (normal)","rd_a":"|a| (total)","rd_rho":"Radi de curvatura ρ","rd_ang":"Angle entre a i v",
+"r_an":"aₙ = v²/ρ","r_a":"|a| = √(aₜ² + aₙ²)",
+"ty_stop":"El mòbil està parat: v = 0 i no hi ha acceleració.",
+"ty0":"Moviment rectilini uniforme (MRU): aₜ = 0 i aₙ = 0, per tant a = 0.",
+"ty1":"Moviment rectilini uniformement accelerat (MRUA): només aₜ; aₙ = 0 perquè ρ → ∞.",
+"ty2":"Rapidesa constant en una corba: aₜ = 0, però hi ha aₙ = v²/ρ.",
+"ty2c":"Moviment circular uniforme (MCU): aₜ = 0, només hi ha aₙ = v²/R, cap al centre.",
+"ty3":"Corba accelerada: hi ha aₜ (canvia |v|) i aₙ (canvia la direcció de v).",
+"ty3c":"Moviment circular uniformement accelerat (MCUA): aₜ constant i aₙ = v²/R que va creixent.",
+"note":"L’escala de les fletxes s’ajusta automàticament quan canvia la rapidesa (mira les barres de baix): les d’acceleració i les de velocitat tenen escales diferents i no es poden comparar en longitud entre elles. En l’el·lipse, R és el semieix menor (el major val 2R); al circuit, és el radi de les semicircumferències. Si aₜ < 0, el mòbil s’atura quan v arriba a 0.",
+"sc_a":"escala a","sc_v":"escala v",
+"rng":"Escriu valors dins del rang del simulador (R de 5 a 60 m, v de 1 a 30 m/s).",
+"l_Rf":"R","l_vf":"v","l_anf":"aₙ","l_tf":"t",
+"m1.q":"Un cotxe recorre una corba circular de <b>50 m de radi</b> amb una rapidesa constant de <b>20 m/s</b>. Calcula’n l’acceleració <b>normal</b> (en m/s²).",
+"m1_v":"{0} m/s² és v/R: falta elevar la velocitat al quadrat. Recorda que aₙ = v²/R.",
+"m1_f":"{0} m/s² no coincideix amb aₙ = v²/R. Revisa les unitats (m/s i m).",
+"m1_ok":"✔ Missió complida! aₙ = v²/R = 20²/50 = 8 m/s², dirigida cap al centre.",
+"m1.more":"Si la rapidesa passara de 20 a 40 m/s, l’acceleració normal es duplicaria? Prediu-ho i comprova-ho al simulador.",
+"m2.q":"En una circumferència de <b>25 m de radi</b>, amb quina rapidesa (m/s) ha d’anar un mòbil perquè l’acceleració normal siga <b>4 m/s²</b>?",
+"m2_sq":"{0} m/s és aₙ·R: falta l’arrel quadrada (v = √(aₙ·R)).",
+"m2_f":"{0} m/s no dona aₙ = 4 m/s². Recorda que aₙ = v²/R i aïlla v.",
+"m2_ok":"✔ Missió complida! v = √(aₙ·R) = √(4·25) = 10 m/s.",
+"m2.more":"Si el radi fóra 4 vegades major (100 m) amb la mateixa aₙ, quina rapidesa caldria? Calcula-ho abans de comprovar-ho.",
+"m3.q":"Un mòbil surt del repòs en una circumferència de <b>20 m de radi</b> amb una acceleració tangencial constant de <b>2 m/s²</b>. Quant val l’acceleració <b>normal</b> als <b>3 s</b>?",
+"m3_f":"{0} m/s² no és correcte. Primer calcula la rapidesa als 3 s (v = aₜ·t) i després aplica aₙ = v²/R.",
+"m3_ok":"✔ Missió complida! v = 2·3 = 6 m/s i aₙ = 6²/20 = 1,8 m/s².",
+"m3.more":"Fixa’t que aₜ no ha canviat però aₙ sí. Què creix més de pressa amb el temps: aₙ o aₜ? Per què?",
+"m4.q":"Amb el mateix mòbil (R = 20 m, aₜ = 2 m/s², parteix del repòs), en quin instant (s) l’acceleració normal <b>iguala</b> la tangencial?",
+"m4_sq":"{0} s és t²: falta l’arrel quadrada (aₙ = (aₜ·t)²/R és proporcional a t²).",
+"m4_f":"{0} s no fa aₙ = aₜ. Planteja (aₜ·t)²/R = aₜ i aïlla t.",
+"m4_ok":"✔ Missió complida! (2·t)²/20 = 2 → t² = 10 → t ≈ 3,16 s.",
+"m4.more":"I si el radi fóra 80 m, l’instant seria més prompte o més tard? Raona-ho amb la fórmula.",
+"s1.q":"En un moviment circular uniforme (la rapidesa és constant) l’acceleració és zero.",
+"s1.h":"La velocitat és un vector: pensa què passa amb la seua direcció.",
+"s1.e":"Mai. Encara que el mòdul de v no canvie, la direcció sí: hi ha acceleració normal aₙ = v²/R, dirigida cap al centre.",
+"s2.q":"L’acceleració normal apunta sempre cap al centre de curvatura de la trajectòria.",
+"s2.h":"Mira la fletxa taronja en diferents punts de l’el·lipse o del circuit.",
+"s2.e":"Sempre. Per definició és perpendicular a v i va cap al costat còncau de la corba, on és el centre de curvatura.",
+"s3.q":"Si l’acceleració tangencial és zero, l’acceleració total del mòbil és zero.",
+"s3.h":"Pensa en un cotxe que pren una corba a rapidesa constant.",
+"s3.e":"De vegades. En una trajectòria recta, aₙ = 0 i tot s’anul·la (MRU); però en una corba, encara que aₜ = 0, hi ha aₙ = v²/ρ i l’acceleració no és nul·la.",
+"s3_cx":"✔ Amb R = {0} m i v = {1} m/s tens aₜ = 0 però aₙ = {2} m/s² ≠ 0: l’acceleració no és zero.",
+"s4.q":"En un tros recte de la trajectòria l’acceleració normal és zero.",
+"s4.h":"Quin és el radi de curvatura d’una recta?",
+"s4.e":"Sempre. Una recta té radi de curvatura infinit (ρ → ∞) i aₙ = v²/ρ = 0: la velocitat no canvia de direcció.",
+"s5.q":"L’acceleració normal pot fer que augmente la rapidesa del mòbil.",
+"s5.h":"Fixa’t en l’angle entre aₙ i v.",
+"s5.e":"Mai. aₙ és perpendicular a v: només en canvia la direcció. La rapidesa només canvia per l’acceleració tangencial.",
+"s6.q":"Si el radi de la corba es duplica (amb la mateixa rapidesa), l’acceleració normal es redueix a la meitat.",
+"s6.h":"Compara aₙ = v²/R amb R = 10 m i amb R = 20 m.",
+"s6.e":"Sempre. aₙ és inversament proporcional al radi: amb la mateixa v, doble R vol dir meitat d’aₙ.",
+"s7.q":"Si en una mateixa corba dupliquem la rapidesa (v ≠ 0), l’acceleració normal es duplica.",
+"s7.h":"aₙ depén de v, però com?",
+"s7.e":"Mai. aₙ = v²/R depén del quadrat de v: en duplicar-la, aₙ es quadruplica.",
+"e1.ctx":"Un cotxe pren una corba circular amb la rapidesa constant de 72 km/h. Es discuteix si el cotxe té acceleració.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"Com la rapidesa no canvia, l’acceleració és zero.",
+"e1.s1":"Té acceleració: la velocitat canvia de direcció, encara que el mòdul no canvie.",
+"e1.w0":"L’acceleració és un vector; si la direcció de v canvia, v canvia i hi ha acceleració normal aₙ = v²/R ≠ 0.",
+"e1.w1":"Perquè en una corba la rapidesa augmenta una mica.",
+"e1.w2":"Perquè en una corba sempre hi ha una força que frena el cotxe.",
+"e1.frame":"Pau, sí que hi ha acceleració perquè…",
+"e1.model":"Pau, tens raó que la rapidesa és constant, però l’acceleració mesura el canvi del vector velocitat, no només del seu mòdul. En una corba la direcció de v canvia contínuament: hi ha una acceleració normal aₙ = v²/R, dirigida cap al centre. Només si la trajectòria fóra recta i v constant seria zero.",
+"e2.ctx":"Una pedra lligada a un fil gira en un cercle horitzontal amb rapidesa constant. Es discuteix cap a on apunta la seua acceleració.",
+"e2.n0":"Marc","e2.n1":"Clara",
+"e2.s0":"Apunta cap a fora, cap a on ‘tira’ la pedra.",
+"e2.s1":"Apunta cap al centre del cercle, cap a la mà.",
+"e2.w0":"aₙ és perpendicular a v i va cap al centre de curvatura. La sensació de ‘tirar cap a fora’ és la inèrcia: la pedra tendeix a seguir en línia recta.",
+"e2.w1":"Perquè el fil sempre estira la pedra cap a fora.",
+"e2.w2":"Perquè l’acceleració sempre té el sentit de la velocitat.",
+"e2.frame":"Marc, l’acceleració apunta cap al centre perquè…",
+"e2.model":"Marc, el fil estira la pedra cap a la mà (cap al centre): aquesta força produeix l’acceleració normal, que va cap al centre. La ‘força cap a fora’ que notes és la inèrcia de la pedra, que vol seguir recta. Si es trenca el fil, la pedra surt per la tangent, no cap a fora.",
+"e3.ctx":"Un mòbil parteix del repòs en una circumferència amb acceleració tangencial constant. Es discuteix com és l’acceleració total.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"Si aₜ és constant, l’acceleració total també és constant.",
+"e3.s1":"L’acceleració total canvia: aₜ és constant però aₙ augmenta amb la rapidesa.",
+"e3.w0":"aₙ = v²/R i v creix amb el temps; per tant aₙ creix (com t²) i la suma vectorial d’aₜ i aₙ canvia de mòdul i de direcció.",
+"e3.w1":"Perquè aₜ sempre disminueix mentre el mòbil accelera.",
+"e3.w2":"Perquè l’acceleració normal és sempre constant en una circumferència.",
+"e3.frame":"Pau, l’acceleració total no és constant perquè…",
+"e3.model":"Pau, fixa’t que només una de les dues components és constant. aₜ ho és, però aₙ = v²/R creix a mesura que el mòbil va més de pressa (en aquest cas, ∝ t²). Com que aₜ i aₙ són perpendiculars, |a| = √(aₜ² + aₙ²) augmenta i el vector a gira cap al centre.",
+"e4.ctx":"Un mòbil va a 10 m/s per una circumferència de 5 m de radi. Es calcula l’acceleració normal.",
+"e4.n0":"Marc","e4.n1":"Clara",
+"e4.s0":"aₙ = v/R = 10/5 = 2 m/s².",
+"e4.s1":"aₙ = v·R = 10·5 = 50 m/s².",
+"e4.w0":"aₙ = v²/R = 100/5 = 20 m/s². Ni v/R ni v·R tenen les unitats d’una acceleració (m/s²).",
+"e4.w1":"Perquè el radi sempre s’ha de multiplicar per la velocitat.",
+"e4.w2":"Perquè l’acceleració normal no depén del radi.",
+"e4.frame":"Marc i Clara, el resultat correcte és…",
+"e4.model":"Cap dels dos. La fórmula és aₙ = v²/R = 10²/5 = 20 m/s². Una bona comprovació és mirar les unitats: v/R dona 1/s i v·R dona m²/s, però només v²/R dona m/s², que és el que ha de ser una acceleració.",
+"d1.q":"Una corba de 40 m de radi només admet acceleracions normals de fins a 4 m/s². Tria la <b>rapidesa més gran</b> que ho permet i escriu l’<b>aₙ</b> resultant.",
+"d1.lc":"Rapidesa:","d1.l0":"aₙ",
+"d1_lo":"Amb {0} m/s, aₙ = {1} m/s²: ho permet, però no és la rapidesa més gran possible.",
+"d1_hi":"Amb {0} m/s, aₙ = {1} m/s²: passa de 4 m/s².",
+"d1_a":"Mira-ho al simulador: aₙ = v²/R amb aquesta rapidesa i R = 40 m.",
+"d1_ok":"✔ Ben decidit! Amb 12 m/s, aₙ = 144/40 = 3,6 m/s² (amb 15 m/s seria 5,6 m/s²: no val).",
+"d1.more":"Quina seria exactament la rapidesa màxima que dona aₙ = 4 m/s²? Calcula-la amb √(aₙ·R).",
+"d2.q":"Tres cotxes van a 20 m/s per corbes circulars de radis 10 m, 20 m i 40 m. Tria la <b>corba on l’acceleració normal és major</b> i escriu-ne el valor.",
+"d2.lc":"Radi:","d2.l0":"aₙ",
+"d2_p":"Amb R = {0} m, aₙ = {1} m/s², però n’hi ha una amb aₙ major.",
+"d2_a":"Mira-ho al simulador: aₙ = v²/R amb v = 20 m/s i aquest radi.",
+"d2_ok":"✔ Ben decidit! La corba més tancada (R = 10 m) dona aₙ = 400/10 = 40 m/s²: la mateixa rapidesa és molt més exigent en una corba tancada.",
+"d2.more":"Per què les carreteres rebaixen el límit de velocitat a les corbes tancades? Relaciona-ho amb aₙ = v²/R.",
+"d3.q":"Un cotxe va a 20 m/s per una circumferència de 50 m de radi i, a més, accelera amb aₜ = 3 m/s². Quant val el <b>mòdul de l’acceleració total</b> en aquest instant?",
+"d3.l0":"|a|",
+"d3_sum":"{0} m/s² és aₜ + aₙ: els mòduls no se sumen directament, perquè aₜ i aₙ són perpendiculars.",
+"d3_f":"{0} m/s² no coincideix amb |a| = √(aₜ² + aₙ²). Calcula primer aₙ = v²/R.",
+"d3_ok":"✔ Ben decidit! aₙ = 400/50 = 8 m/s² i |a| = √(3² + 8²) ≈ 8,54 m/s².",
+"d3.more":"Quin angle forma l’acceleració total amb la velocitat? Calcula’l amb tan α = aₙ/aₜ i comprova-ho al simulador."
+},
+es:{
+"title":"Aceleración tangencial y normal (centrípeta) — simulador interactivo",
+"eyebrow":"Cinemática · 4.º ESO y Bachillerato",
+"h1":"🏎️ Aceleración tangencial y normal",
+"lede":"En una curva, la aceleración tiene dos partes: la aₜ cambia el módulo de la velocidad y la aₙ (centrípeta) cambia su dirección. Elige la trayectoria, la velocidad y la aₜ, y mira cada una por separado.",
+"aria.svg":"Móvil sobre una trayectoria curva con los vectores velocidad, aceleración tangencial, aceleración normal y aceleración total",
+"lg_v":"velocidad v","lg_at":"acel. tangencial aₜ","lg_an":"acel. normal aₙ","lg_a":"acel. total a",
+"l_kind":"Trayectoria","k_circle":"Circunferencia","k_ellipse":"Elipse","k_stadium":"Circuito (rectas y semicírculos)",
+"l_R":"Radio R","l_v0":"Rapidez inicial v₀","l_at":"Aceleración tangencial aₜ","l_t":"Tiempo t",
+"c_comp":"Muestra las componentes aₜ y aₙ","c_vel":"Muestra la velocidad v","c_osc":"Muestra la circunferencia osculatriz (radio ρ)","c_trail":"Deja el rastro",
+"sp_slow":"Cámara lenta (0,5×)","sp_norm":"Normal (1×)","sp_fast":"Rápido (2×)",
+"play":"▶ Reproducir","pause":"⏸ Pausa","resume":"▶ Continúa","reset":"↺ Reiniciar","step":"+1 s",
+"pr_mcu":"MCU","pr_mcua":"Acelera","pr_fren":"Frena","pr_cir":"Circuito","pr_ell":"Elipse",
+"s_live":"En directo","s_res":"Resultados",
+"rd_t":"Tiempo t","rd_s":"Espacio recorrido","rd_v":"Rapidez v","rd_at":"aₜ (tangencial)","rd_an":"aₙ (normal)","rd_a":"|a| (total)","rd_rho":"Radio de curvatura ρ","rd_ang":"Ángulo entre a y v",
+"r_an":"aₙ = v²/ρ","r_a":"|a| = √(aₜ² + aₙ²)",
+"ty_stop":"El móvil está parado: v = 0 y no hay aceleración.",
+"ty0":"Movimiento rectilíneo uniforme (MRU): aₜ = 0 y aₙ = 0, por tanto a = 0.",
+"ty1":"Movimiento rectilíneo uniformemente acelerado (MRUA): solo aₜ; aₙ = 0 porque ρ → ∞.",
+"ty2":"Rapidez constante en una curva: aₜ = 0, pero hay aₙ = v²/ρ.",
+"ty2c":"Movimiento circular uniforme (MCU): aₜ = 0, solo hay aₙ = v²/R, hacia el centro.",
+"ty3":"Curva acelerada: hay aₜ (cambia |v|) y aₙ (cambia la dirección de v).",
+"ty3c":"Movimiento circular uniformemente acelerado (MCUA): aₜ constante y aₙ = v²/R que va creciendo.",
+"note":"La escala de las flechas se ajusta automáticamente cuando cambia la rapidez (mira las barras de abajo): las de aceleración y las de velocidad tienen escalas distintas y no se pueden comparar en longitud entre sí. En la elipse, R es el semieje menor (el mayor vale 2R); en el circuito, es el radio de las semicircunferencias. Si aₜ < 0, el móvil se detiene cuando v llega a 0.",
+"sc_a":"escala a","sc_v":"escala v",
+"rng":"Escribe valores dentro del rango del simulador (R de 5 a 60 m, v de 1 a 30 m/s).",
+"l_Rf":"R","l_vf":"v","l_anf":"aₙ","l_tf":"t",
+"m1.q":"Un coche recorre una curva circular de <b>50 m de radio</b> con una rapidez constante de <b>20 m/s</b>. Calcula su aceleración <b>normal</b> (en m/s²).",
+"m1_v":"{0} m/s² es v/R: falta elevar la velocidad al cuadrado. Recuerda que aₙ = v²/R.",
+"m1_f":"{0} m/s² no coincide con aₙ = v²/R. Revisa las unidades (m/s y m).",
+"m1_ok":"✔ ¡Misión cumplida! aₙ = v²/R = 20²/50 = 8 m/s², dirigida hacia el centro.",
+"m1.more":"Si la rapidez pasara de 20 a 40 m/s, ¿se duplicaría la aceleración normal? Predícelo y compruébalo en el simulador.",
+"m2.q":"En una circunferencia de <b>25 m de radio</b>, ¿con qué rapidez (m/s) debe ir un móvil para que la aceleración normal sea <b>4 m/s²</b>?",
+"m2_sq":"{0} m/s es aₙ·R: falta la raíz cuadrada (v = √(aₙ·R)).",
+"m2_f":"{0} m/s no da aₙ = 4 m/s². Recuerda que aₙ = v²/R y despeja v.",
+"m2_ok":"✔ ¡Misión cumplida! v = √(aₙ·R) = √(4·25) = 10 m/s.",
+"m2.more":"Si el radio fuera 4 veces mayor (100 m) con la misma aₙ, ¿qué rapidez haría falta? Calcúlalo antes de comprobarlo.",
+"m3.q":"Un móvil sale del reposo en una circunferencia de <b>20 m de radio</b> con una aceleración tangencial constante de <b>2 m/s²</b>. ¿Cuánto vale la aceleración <b>normal</b> a los <b>3 s</b>?",
+"m3_f":"{0} m/s² no es correcto. Primero calcula la rapidez a los 3 s (v = aₜ·t) y después aplica aₙ = v²/R.",
+"m3_ok":"✔ ¡Misión cumplida! v = 2·3 = 6 m/s y aₙ = 6²/20 = 1,8 m/s².",
+"m3.more":"Fíjate en que aₜ no ha cambiado pero aₙ sí. ¿Qué crece más deprisa con el tiempo: aₙ o aₜ? ¿Por qué?",
+"m4.q":"Con el mismo móvil (R = 20 m, aₜ = 2 m/s², parte del reposo), ¿en qué instante (s) la aceleración normal <b>iguala</b> a la tangencial?",
+"m4_sq":"{0} s es t²: falta la raíz cuadrada (aₙ = (aₜ·t)²/R es proporcional a t²).",
+"m4_f":"{0} s no hace aₙ = aₜ. Plantea (aₜ·t)²/R = aₜ y despeja t.",
+"m4_ok":"✔ ¡Misión cumplida! (2·t)²/20 = 2 → t² = 10 → t ≈ 3,16 s.",
+"m4.more":"¿Y si el radio fuera 80 m, el instante sería antes o después? Razónalo con la fórmula.",
+"s1.q":"En un movimiento circular uniforme (la rapidez es constante) la aceleración es cero.",
+"s1.h":"La velocidad es un vector: piensa qué pasa con su dirección.",
+"s1.e":"Nunca. Aunque el módulo de v no cambie, la dirección sí: hay aceleración normal aₙ = v²/R, dirigida hacia el centro.",
+"s2.q":"La aceleración normal apunta siempre hacia el centro de curvatura de la trayectoria.",
+"s2.h":"Mira la flecha naranja en distintos puntos de la elipse o del circuito.",
+"s2.e":"Siempre. Por definición es perpendicular a v y va hacia el lado cóncavo de la curva, donde está el centro de curvatura.",
+"s3.q":"Si la aceleración tangencial es cero, la aceleración total del móvil es cero.",
+"s3.h":"Piensa en un coche que toma una curva a rapidez constante.",
+"s3.e":"A veces. En una trayectoria recta, aₙ = 0 y todo se anula (MRU); pero en una curva, aunque aₜ = 0, hay aₙ = v²/ρ y la aceleración no es nula.",
+"s3_cx":"✔ Con R = {0} m y v = {1} m/s tienes aₜ = 0 pero aₙ = {2} m/s² ≠ 0: la aceleración no es cero.",
+"s4.q":"En un tramo recto de la trayectoria la aceleración normal es cero.",
+"s4.h":"¿Cuál es el radio de curvatura de una recta?",
+"s4.e":"Siempre. Una recta tiene radio de curvatura infinito (ρ → ∞) y aₙ = v²/ρ = 0: la velocidad no cambia de dirección.",
+"s5.q":"La aceleración normal puede hacer que aumente la rapidez del móvil.",
+"s5.h":"Fíjate en el ángulo entre aₙ y v.",
+"s5.e":"Nunca. aₙ es perpendicular a v: solo cambia su dirección. La rapidez solo cambia por la aceleración tangencial.",
+"s6.q":"Si el radio de la curva se duplica (con la misma rapidez), la aceleración normal se reduce a la mitad.",
+"s6.h":"Compara aₙ = v²/R con R = 10 m y con R = 20 m.",
+"s6.e":"Siempre. aₙ es inversamente proporcional al radio: con la misma v, doble R significa mitad de aₙ.",
+"s7.q":"Si en una misma curva duplicamos la rapidez (v ≠ 0), la aceleración normal se duplica.",
+"s7.h":"aₙ depende de v, pero ¿cómo?",
+"s7.e":"Nunca. aₙ = v²/R depende del cuadrado de v: al duplicarla, aₙ se cuadruplica.",
+"e1.ctx":"Un coche toma una curva circular con la rapidez constante de 72 km/h. Se discute si el coche tiene aceleración.",
+"e1.n0":"Pau","e1.n1":"Aina",
+"e1.s0":"Como la rapidez no cambia, la aceleración es cero.",
+"e1.s1":"Tiene aceleración: la velocidad cambia de dirección, aunque el módulo no cambie.",
+"e1.w0":"La aceleración es un vector; si la dirección de v cambia, v cambia y hay aceleración normal aₙ = v²/R ≠ 0.",
+"e1.w1":"Porque en una curva la rapidez aumenta un poco.",
+"e1.w2":"Porque en una curva siempre hay una fuerza que frena el coche.",
+"e1.frame":"Pau, sí que hay aceleración porque…",
+"e1.model":"Pau, tienes razón en que la rapidez es constante, pero la aceleración mide el cambio del vector velocidad, no solo de su módulo. En una curva la dirección de v cambia continuamente: hay una aceleración normal aₙ = v²/R, dirigida hacia el centro. Solo si la trayectoria fuera recta y v constante sería cero.",
+"e2.ctx":"Una piedra atada a una cuerda gira en un círculo horizontal con rapidez constante. Se discute hacia dónde apunta su aceleración.",
+"e2.n0":"Marc","e2.n1":"Clara",
+"e2.s0":"Apunta hacia fuera, hacia donde ‘tira’ la piedra.",
+"e2.s1":"Apunta hacia el centro del círculo, hacia la mano.",
+"e2.w0":"aₙ es perpendicular a v y va hacia el centro de curvatura. La sensación de ‘tirar hacia fuera’ es la inercia: la piedra tiende a seguir en línea recta.",
+"e2.w1":"Porque la cuerda siempre tira de la piedra hacia fuera.",
+"e2.w2":"Porque la aceleración siempre tiene el sentido de la velocidad.",
+"e2.frame":"Marc, la aceleración apunta hacia el centro porque…",
+"e2.model":"Marc, la cuerda tira de la piedra hacia la mano (hacia el centro): esa fuerza produce la aceleración normal, que va hacia el centro. La ‘fuerza hacia fuera’ que notas es la inercia de la piedra, que quiere seguir recta. Si se rompe la cuerda, la piedra sale por la tangente, no hacia fuera.",
+"e3.ctx":"Un móvil parte del reposo en una circunferencia con aceleración tangencial constante. Se discute cómo es la aceleración total.",
+"e3.n0":"Pau","e3.n1":"Clara",
+"e3.s0":"Si aₜ es constante, la aceleración total también es constante.",
+"e3.s1":"La aceleración total cambia: aₜ es constante pero aₙ aumenta con la rapidez.",
+"e3.w0":"aₙ = v²/R y v crece con el tiempo; por tanto aₙ crece (como t²) y la suma vectorial de aₜ y aₙ cambia de módulo y de dirección.",
+"e3.w1":"Porque aₜ siempre disminuye mientras el móvil acelera.",
+"e3.w2":"Porque la aceleración normal es siempre constante en una circunferencia.",
+"e3.frame":"Pau, la aceleración total no es constante porque…",
+"e3.model":"Pau, fíjate en que solo una de las dos componentes es constante. aₜ lo es, pero aₙ = v²/R crece a medida que el móvil va más deprisa (en este caso, ∝ t²). Como aₜ y aₙ son perpendiculares, |a| = √(aₜ² + aₙ²) aumenta y el vector a gira hacia el centro.",
+"e4.ctx":"Un móvil va a 10 m/s por una circunferencia de 5 m de radio. Se calcula la aceleración normal.",
+"e4.n0":"Marc","e4.n1":"Clara",
+"e4.s0":"aₙ = v/R = 10/5 = 2 m/s².",
+"e4.s1":"aₙ = v·R = 10·5 = 50 m/s².",
+"e4.w0":"aₙ = v²/R = 100/5 = 20 m/s². Ni v/R ni v·R tienen las unidades de una aceleración (m/s²).",
+"e4.w1":"Porque el radio siempre hay que multiplicarlo por la velocidad.",
+"e4.w2":"Porque la aceleración normal no depende del radio.",
+"e4.frame":"Marc y Clara, el resultado correcto es…",
+"e4.model":"Ninguno de los dos. La fórmula es aₙ = v²/R = 10²/5 = 20 m/s². Una buena comprobación es mirar las unidades: v/R da 1/s y v·R da m²/s, pero solo v²/R da m/s², que es lo que debe ser una aceleración.",
+"d1.q":"Una curva de 40 m de radio solo admite aceleraciones normales de hasta 4 m/s². Elige la <b>rapidez más grande</b> que lo permite y escribe la <b>aₙ</b> resultante.",
+"d1.lc":"Rapidez:","d1.l0":"aₙ",
+"d1_lo":"Con {0} m/s, aₙ = {1} m/s²: lo permite, pero no es la rapidez más grande posible.",
+"d1_hi":"Con {0} m/s, aₙ = {1} m/s²: pasa de 4 m/s².",
+"d1_a":"Míralo en el simulador: aₙ = v²/R con esta rapidez y R = 40 m.",
+"d1_ok":"✔ ¡Bien decidido! Con 12 m/s, aₙ = 144/40 = 3,6 m/s² (con 15 m/s sería 5,6 m/s²: no vale).",
+"d1.more":"¿Cuál sería exactamente la rapidez máxima que da aₙ = 4 m/s²? Calcúlala con √(aₙ·R).",
+"d2.q":"Tres coches van a 20 m/s por curvas circulares de radios 10 m, 20 m y 40 m. Elige la <b>curva donde la aceleración normal es mayor</b> y escribe su valor.",
+"d2.lc":"Radio:","d2.l0":"aₙ",
+"d2_p":"Con R = {0} m, aₙ = {1} m/s², pero hay una con aₙ mayor.",
+"d2_a":"Míralo en el simulador: aₙ = v²/R con v = 20 m/s y este radio.",
+"d2_ok":"✔ ¡Bien decidido! La curva más cerrada (R = 10 m) da aₙ = 400/10 = 40 m/s²: la misma rapidez es mucho más exigente en una curva cerrada.",
+"d2.more":"¿Por qué las carreteras rebajan el límite de velocidad en las curvas cerradas? Relaciónalo con aₙ = v²/R.",
+"d3.q":"Un coche va a 20 m/s por una circunferencia de 50 m de radio y, además, acelera con aₜ = 3 m/s². ¿Cuánto vale el <b>módulo de la aceleración total</b> en ese instante?",
+"d3.l0":"|a|",
+"d3_sum":"{0} m/s² es aₜ + aₙ: los módulos no se suman directamente, porque aₜ y aₙ son perpendiculares.",
+"d3_f":"{0} m/s² no coincide con |a| = √(aₜ² + aₙ²). Calcula primero aₙ = v²/R.",
+"d3_ok":"✔ ¡Bien decidido! aₙ = 400/50 = 8 m/s² y |a| = √(3² + 8²) ≈ 8,54 m/s².",
+"d3.more":"¿Qué ángulo forma la aceleración total con la velocidad? Calcúlalo con tan α = aₙ/aₜ y compruébalo en el simulador."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/acceleracio-tangencial-normal/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== Acceleració tangencial i normal ===== */
+const svg=$('#svg');
+const kindEl=$('#kind'),rrEl=$('#rr'),v0El=$('#v0'),atEl=$('#at'),ttEl=$('#tt'),speedEl=$('#speed');
+const compEl=$('#comp'),velEl=$('#vel'),oscEl=$('#osc'),trailEl=$('#trail');
+const btnPlay=$('#btnPlay'),btnStep=$('#btnStep'),btnReset=$('#btnReset');
+const readout=$('#readout'),results=$('#results'),tyl=$('#tyl'),presetsEl=$('#presets');
+const TMAX=12;
+let T=0,playing=false,last=null,presLang=null;
+const f1=n=>n.toFixed(1);
+/* ---------- geometria: cada trajectòria tanca i es parametritza per l’espai recorregut s ---------- */
+function geoCircle(R){return {L:TAU*R,kmax:1/R,bb:[-R,-R,R,R],at(s){const th=s/R;return {x:R*Math.cos(th),y:R*Math.sin(th),tx:-Math.sin(th),ty:Math.cos(th),k:1/R};}};}
+function geoEllipse(R){
+  const a=2*R,b=R,n=720,tbl=[0];let px=a,py=0;
+  for(let i=1;i<=n;i++){const ph=TAU*i/n,x=a*Math.cos(ph),y=b*Math.sin(ph);tbl.push(tbl[i-1]+Math.hypot(x-px,y-py));px=x;py=y;}
+  const L=tbl[n];
+  return {L,kmax:a/(b*b),bb:[-a,-b,a,b],at(s){
+    s=((s%L)+L)%L;let lo=0,hi=n;
+    while(hi-lo>1){const m=(lo+hi)>>1;if(tbl[m]<=s)lo=m;else hi=m;}
+    const f=(s-tbl[lo])/(tbl[lo+1]-tbl[lo]),ph=TAU*(lo+f)/n,c=Math.cos(ph),sn=Math.sin(ph);
+    const dx=-a*sn,dy=b*c,dl=Math.hypot(dx,dy),den=Math.pow(a*a*sn*sn+b*b*c*c,1.5);
+    return {x:a*c,y:b*sn,tx:dx/dl,ty:dy/dl,k:a*b/den};}};
+}
+function geoStadium(R){
+  const c=1.2*R,l1=2*c,l2=Math.PI*R,L=2*l1+2*l2;
+  return {L,kmax:1/R,bb:[-c-R,-R,c+R,R],at(s){
+    s=((s%L)+L)%L;
+    if(s<l1)return {x:-c+s,y:-R,tx:1,ty:0,k:0};
+    s-=l1;if(s<l2){const th=-Math.PI/2+s/R;return {x:c+R*Math.cos(th),y:R*Math.sin(th),tx:-Math.sin(th),ty:Math.cos(th),k:1/R};}
+    s-=l2;if(s<l1)return {x:c-s,y:R,tx:-1,ty:0,k:0};
+    s-=l1;const th=Math.PI/2+s/R;return {x:-c+R*Math.cos(th),y:R*Math.sin(th),tx:-Math.sin(th),ty:Math.cos(th),k:1/R};}};
+}
+let gKey='',gCache=null;
+function geo(){
+  const k=kindEl.value+'|'+rrEl.value;
+  if(k!==gKey){const R=+rrEl.value;gCache=kindEl.value==='ellipse'?geoEllipse(R):kindEl.value==='stadium'?geoStadium(R):geoCircle(R);gKey=k;}
+  return gCache;
+}
+/* ---------- cinemàtica: rapidesa v = v0 + aₜ·t (s’atura si arriba a 0) ---------- */
+function kin(t){
+  const v0=+v0El.value,at=+atEl.value,ts=at<0?v0/(-at):Infinity,te=Math.min(t,ts);
+  const stopped=at<0&&t>=ts;
+  return {s:v0*te+.5*at*te*te,v:Math.max(0,v0+at*te),at:stopped?0:at,stopped};
+}
+function state(t){
+  const g=geo(),k=kin(t),p=g.at(k.s),an=k.v*k.v*p.k;
+  return {g,k,p,an,at:k.at,a:Math.hypot(k.at,an),rho:p.k>1e-9?1/p.k:Infinity};
+}
+function scales(g,S){
+  /* escala automàtica per trams (1-2-5): les fletxes ocupen entre ~45 i 90 px i la barra de baix diu què valen */
+  const aRef=Math.max(S.k.v*S.k.v*g.kmax,Math.abs(S.at),.5),vRef=Math.max(S.k.v,1);
+  return {ka:90/niceCeil(aRef),kv:70/niceCeil(vRef)};
+}
+const niceCeil=x=>{const mag=Math.pow(10,Math.floor(Math.log10(x))),m=x/mag;return (m<=1?1:m<=2?2:m<=5?5:10)*mag;};
+const niceFloor=x=>{const mag=Math.pow(10,Math.floor(Math.log10(x))),m=x/mag;return (m>=5?5:m>=2?2:1)*mag;};
+/* ---------- dibuix ---------- */
+function arrow(X,Y,dx,dy,len,color,w){
+  if(len<1.5)return '';
+  const x2=X+dx*len,y2=Y+dy*len,px=-dy,py=dx,h=Math.min(9,len*.6);
+  return '<line x1="'+f1(X)+'" y1="'+f1(Y)+'" x2="'+f1(x2-dx*h*.5)+'" y2="'+f1(y2-dy*h*.5)+'" stroke="'+color+'" stroke-width="'+(w||2.6)+'" stroke-linecap="round"/>'+
+    '<polygon points="'+f1(x2)+','+f1(y2)+' '+f1(x2-dx*h+px*h*.45)+','+f1(y2-dy*h+py*h*.45)+' '+f1(x2-dx*h-px*h*.45)+','+f1(y2-dy*h-py*h*.45)+'" fill="'+color+'"/>';
+}
+function draw(){
+  const S=state(T),g=S.g,sc0=scales(g,S),bb=g.bb,bw=bb[2]-bb[0],bh=bb[3]-bb[1];
+  const sc=Math.min(520/bw,265/bh),bcx=(bb[0]+bb[2])/2,bcy=(bb[1]+bb[3])/2;
+  const wx=x=>300+(x-bcx)*sc,wy=y=>152-(y-bcy)*sc;
+  const p=S.p,X=wx(p.x),Y=wy(p.y);
+  let o='<defs><clipPath id="cl"><rect x="2" y="2" width="596" height="296"/></clipPath></defs>';
+  /* pista */
+  const N=260,pts=[];for(let i=0;i<=N;i++){const q=g.at(g.L*i/N);pts.push(f1(wx(q.x))+','+f1(wy(q.y)));}
+  o+='<polyline fill="none" stroke="var(--line)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" points="'+pts.join(' ')+'"/>';
+  o+='<polyline fill="none" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 6" opacity=".7" points="'+pts.join(' ')+'"/>';
+  /* rastre (última volta) */
+  if(trailEl.checked&&S.k.s>0){
+    const s1=S.k.s,s0=Math.max(0,s1-g.L),n=Math.max(2,Math.min(220,Math.ceil((s1-s0)/g.L*220))),tp=[];
+    for(let i=0;i<=n;i++){const q=g.at(s0+(s1-s0)*i/n);tp.push(f1(wx(q.x))+','+f1(wy(q.y)));}
+    o+='<polyline fill="none" stroke="var(--ink)" stroke-width="2.2" opacity=".55" stroke-linejoin="round" points="'+tp.join(' ')+'"/>';
+  }
+  /* circumferència osculadora */
+  if(oscEl.checked&&p.k>1e-9){
+    const rho=1/p.k,cxw=p.x-p.ty*rho,cyw=p.y+p.tx*rho,rp=rho*sc;
+    if(rp<1500)o+='<g clip-path="url(#cl)"><circle cx="'+f1(wx(cxw))+'" cy="'+f1(wy(cyw))+'" r="'+f1(rp)+'" fill="none" stroke="var(--pb)" stroke-width="1.4" stroke-dasharray="5 5" opacity=".8"/>'+
+      '<line x1="'+f1(X)+'" y1="'+f1(Y)+'" x2="'+f1(wx(cxw))+'" y2="'+f1(wy(cyw))+'" stroke="var(--pb)" stroke-dasharray="2 4" opacity=".7"/><circle cx="'+f1(wx(cxw))+'" cy="'+f1(wy(cyw))+'" r="3.2" fill="var(--pb)"/></g>';
+  }
+  /* vectors (direccions en pantalla: y invertida) */
+  const tdx=p.tx,tdy=-p.ty,ndx=-p.ty,ndy=-p.tx,ka=sc0.ka,kv=sc0.kv;
+  const atV=[tdx*S.at*ka,tdy*S.at*ka],anV=[ndx*S.an*ka,ndy*S.an*ka],aV=[atV[0]+anV[0],atV[1]+anV[1]];
+  if(S.k.v>0||S.at!==0){
+    if(velEl.checked&&S.k.v>0){const l=S.k.v*kv;o+=arrow(X,Y,tdx,tdy,l,'var(--ok)',2.8)+'<text x="'+f1(X+tdx*(l+9)-4)+'" y="'+f1(Y+tdy*(l+9)+4)+'" style="fill:var(--ok);font-weight:700">v</text>';}
+    if(compEl.checked){
+      const lt=Math.abs(S.at)*ka,ln=S.an*ka,sg=S.at<0?-1:1;
+      if(S.at!==0&&S.an>1e-9){o+='<line x1="'+f1(X+atV[0])+'" y1="'+f1(Y+atV[1])+'" x2="'+f1(X+aV[0])+'" y2="'+f1(Y+aV[1])+'" stroke="var(--pb)" stroke-dasharray="3 4" opacity=".7"/><line x1="'+f1(X+anV[0])+'" y1="'+f1(Y+anV[1])+'" x2="'+f1(X+aV[0])+'" y2="'+f1(Y+aV[1])+'" stroke="var(--pa)" stroke-dasharray="3 4" opacity=".7"/>';}
+      if(lt>=1.5)o+=arrow(X,Y,tdx*sg,tdy*sg,lt,'var(--pa)',2.6)+'<text x="'+f1(X+tdx*sg*(lt+9)-5)+'" y="'+f1(Y+tdy*sg*(lt+9)+4)+'" style="fill:var(--pa);font-weight:700">aₜ</text>';
+      if(ln>=1.5)o+=arrow(X,Y,ndx,ndy,ln,'var(--pb)',2.6)+'<text x="'+f1(X+ndx*(ln+9)-5)+'" y="'+f1(Y+ndy*(ln+9)+4)+'" style="fill:var(--pb);font-weight:700">aₙ</text>';
+    }
+    const la=Math.hypot(aV[0],aV[1]);
+    if(la>=1.5){const ux=aV[0]/la,uy=aV[1]/la;o+=arrow(X,Y,ux,uy,la,'var(--warn)',3.2)+'<text x="'+f1(X+ux*(la+10)-3)+'" y="'+f1(Y+uy*(la+10)+4)+'" style="fill:var(--warn);font-weight:700">a</text>';}
+  }
+  /* mòbil */
+  o+='<circle cx="'+f1(X)+'" cy="'+f1(Y)+'" r="7" fill="var(--ink)" stroke="var(--panel)" stroke-width="2"/>';
+  /* barres d’escala */
+  const Na=niceFloor(110/ka),Nv=niceFloor(100/kv);
+  o+='<g><line x1="20" y1="324" x2="'+f1(20+Na*ka)+'" y2="324" stroke="var(--ink)" stroke-width="2"/><path d="M20,320V328M'+f1(20+Na*ka)+',320V328" stroke="var(--ink)"/><text x="'+f1(28+Na*ka)+'" y="328">'+fmtN(Na)+' m/s² ('+t('sc_a')+')</text></g>';
+  o+='<g><line x1="330" y1="324" x2="'+f1(330+Nv*kv)+'" y2="324" stroke="var(--ok)" stroke-width="2"/><path d="M330,320V328M'+f1(330+Nv*kv)+',320V328" stroke="var(--ok)"/><text x="'+f1(338+Nv*kv)+'" y="328">'+fmtN(Nv)+' m/s ('+t('sc_v')+')</text></g>';
+  svg.innerHTML=o;
+}
+const fmtN=x=>x>=1?String(Math.round(x*100)/100).replace('.',','):String(x).replace('.',',');
+/* ---------- panells ---------- */
+const row=(k,v,c)=>'<dt>'+k+'</dt><dd'+(c?' class="'+c+'"':'')+'>'+v+'</dd>';
+function panels(){
+  const S=state(T),rho=S.rho,rs=Number.isFinite(rho)?fmt(rho,2)+' m':'∞';
+  const ang=S.a>1e-9?fmt(Math.atan2(S.an,S.at)*180/Math.PI,1)+'°':'—';
+  readout.innerHTML=row(t('rd_t'),fmt(T,2)+' s')+row(t('rd_s'),fmt(S.k.s,2)+' m')+row(t('rd_v'),fmt(S.k.v,2)+' m/s')+
+    row(t('rd_at'),fmt(S.at,2)+' m/s²','hl1')+row(t('rd_an'),fmt(S.an,2)+' m/s²','hl2')+row(t('rd_a'),fmt(S.a,2)+' m/s²')+row(t('rd_rho'),rs)+row(t('rd_ang'),ang);
+  results.innerHTML=row(t('r_an'),Number.isFinite(rho)?fmt(S.k.v,2)+'² / '+fmt(rho,2)+' = <b>'+fmt(S.an,2)+'</b> m/s²':'0 m/s²')+
+    row(t('r_a'),'√('+fmt(S.at,2)+'² + '+fmt(S.an,2)+'²) = <b>'+fmt(S.a,2)+'</b> m/s²');
+  const curved=S.p.k>1e-9,circ=kindEl.value==='circle';
+  tyl.textContent=t(S.k.stopped||(S.k.v===0&&+atEl.value<=0)?'ty_stop':(S.at===0?(curved?(circ?'ty2c':'ty2'):'ty0'):(curved?(circ?'ty3c':'ty3'):'ty1')));
+}
+function labels(){
+  $('#rrL').textContent=rrEl.value+' m';$('#v0L').textContent=v0El.value+' m/s';$('#atL').textContent=fmt(+atEl.value,1)+' m/s²';
+  $('#ttL').textContent=fmt(T,2)+' s';ttEl.value=T;
+}
+function buildPresets(){
+  if(presLang===LANG)return;presLang=LANG;presetsEl.innerHTML='';
+  [['pr_mcu',{kind:'circle',R:20,v0:10,at:0}],['pr_mcua',{kind:'circle',R:20,v0:2,at:2}],['pr_fren',{kind:'circle',R:20,v0:20,at:-3}],['pr_cir',{kind:'stadium',R:20,v0:12,at:0}],['pr_ell',{kind:'ellipse',R:15,v0:10,at:0}]].forEach(([k,o])=>{
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t(k);b.onclick=()=>load(Object.assign({quiet:true},o));presetsEl.appendChild(b);});
+}
+function setPlay(){const k=playing?'pause':(T>0&&T<TMAX?'resume':'play');if(btnPlay.textContent!==t(k))btnPlay.textContent=t(k);}
+function refresh(){buildPresets();labels();draw();panels();setPlay();}
+function tick(ts){
+  if(!playing)return;
+  if(last===null)last=ts;
+  T+=(ts-last)/1000*(+speedEl.value);last=ts;
+  if(T>=TMAX){T=TMAX;playing=false;last=null;}
+  refresh();
+  if(playing)requestAnimationFrame(tick);
+}
+function play(){
+  if(playing){playing=false;last=null;setPlay();return;}
+  if(T>=TMAX)T=0;
+  playing=true;last=null;setPlay();requestAnimationFrame(tick);
+}
+[kindEl,rrEl,v0El,atEl,compEl,velEl,oscEl,trailEl].forEach(e=>e.addEventListener('input',refresh));
+ttEl.addEventListener('input',()=>{T=+ttEl.value;playing=false;last=null;refresh();});
+btnPlay.addEventListener('click',play);
+btnStep.addEventListener('click',()=>{playing=false;last=null;T=Math.min(TMAX,Math.floor(T+1e-9)+1);refresh();});
+btnReset.addEventListener('click',()=>{playing=false;last=null;T=0;refresh();});
+App.hooks.push(()=>{presLang=null;refresh();});
+
+/* ===== Raona-ho ===== */
+const dv=(x,d)=>x===undefined?d:x;
+function load(o){
+  o=o||{};
+  kindEl.value=o.kind||'circle';rrEl.value=dv(o.R,20);v0El.value=dv(o.v0,10);atEl.value=dv(o.at,0);
+  compEl.checked=o.comp!==false;velEl.checked=true;oscEl.checked=!!o.osc;trailEl.checked=true;
+  speedEl.value='1';playing=false;last=null;T=clamp(dv(o.t,0),0,TMAX);
+  refresh();
+  if(o.run)play();
+  if(!o.quiet)RZ.show($('#svg'));
+}
+const lim=(x,a,b)=>clamp(x,a,b);
+RZ.init({
+ sim:()=>load(),
+ M:[
+  {id:'m1',f:[{l:'l_anf',u:'m/s²'}],sim:()=>load({kind:'circle',R:50,v0:20,at:0}),ok:()=>({k:'m1_ok'}),
+   chk:([x])=>Math.abs(x-8)<=.1?null:Math.abs(x-.4)<.05?{k:'m1_v',p:[fmt(x,2)]}:{k:'m1_f',p:[fmt(x,2)]}},
+  {id:'m2',f:[{l:'l_vf',u:'m/s'}],sim:([v])=>load({kind:'circle',R:25,v0:lim(v,0,30)}),ok:()=>({k:'m2_ok'}),
+   chk:([v])=>Math.abs(v-10)<=.1?null:Math.abs(v-100)<1?{k:'m2_sq',p:[fmt(v,2)]}:{k:'m2_f',p:[fmt(v,2)]}},
+  {id:'m3',f:[{l:'l_anf',u:'m/s²'}],sim:()=>load({kind:'circle',R:20,v0:0,at:2,t:3}),ok:()=>({k:'m3_ok'}),
+   chk:([x])=>Math.abs(x-1.8)<=.05?null:{k:'m3_f',p:[fmt(x,2)]}},
+  {id:'m4',f:[{l:'l_tf',u:'s'}],sim:([x])=>load({kind:'circle',R:20,v0:0,at:2,t:Number.isFinite(x)?lim(x,0,TMAX):0}),ok:()=>({k:'m4_ok'}),
+   chk:([x])=>Math.abs(x-Math.sqrt(10))<=.05?null:Math.abs(x-10)<.3?{k:'m4_sq',p:[fmt(x,2)]}:{k:'m4_f',p:[fmt(x,2)]}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load({kind:'circle',R:20,v0:10,at:0,run:true})},
+  {id:'s2',ans:'S',sim:()=>load({kind:'ellipse',R:15,v0:10,at:0,run:true})},
+  {id:'s3',ans:'D',f:[{l:'l_Rf',u:'m'},{l:'l_vf',u:'m/s'}],cxsim:([R,v])=>load({kind:'circle',R:lim(R,5,60),v0:lim(v,0,30),at:0}),
+   cxok:([R,v])=>({k:'s3_cx',p:[R,v,fmt(v*v/R,2)]}),
+   cx:([R,v])=>(R>=5&&R<=60&&v>=1&&v<=30)?null:{k:'rng'}},
+  {id:'s4',ans:'S',sim:()=>load({kind:'stadium',R:20,v0:12,at:0,t:.5})},
+  {id:'s5',ans:'M',sim:()=>load({kind:'circle',R:20,v0:10,at:0,run:true})},
+  {id:'s6',ans:'S',sim:()=>load({kind:'circle',R:10,v0:10,at:0})},
+  {id:'s7',ans:'M',sim:()=>load({kind:'circle',R:20,v0:10,at:0})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({kind:'circle',R:50,v0:20,at:0,run:true})},
+  {id:'e2',who:1,sim:()=>load({kind:'circle',R:10,v0:8,at:0,run:true})},
+  {id:'e3',who:1,sim:()=>load({kind:'circle',R:20,v0:0,at:2,run:true})},
+  {id:'e4',who:3,sim:()=>load({kind:'circle',R:5,v0:10,at:0})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[10,12,15,20],fmt:x=>x+' m/s'},f:[{l:'d1.l0',u:'m/s²'}],
+   sim:(a)=>load({kind:'circle',R:40,v0:Number.isFinite(a[0])?a[0]:12}),ok:()=>({k:'d1_ok'}),
+   chk:([p,a])=>p<12?{k:'d1_lo',p:[p,fmt(p*p/40,1)]}:p>12?{k:'d1_hi',p:[p,fmt(p*p/40,1)]}:Math.abs(a-3.6)>.05?{k:'d1_a'}:null},
+  {id:'d2',chips:{vals:[10,20,40],fmt:x=>x+' m'},f:[{l:'d2.l0',u:'m/s²'}],
+   sim:(a)=>load({kind:'circle',R:Number.isFinite(a[0])?a[0]:10,v0:20}),ok:()=>({k:'d2_ok'}),
+   chk:([p,a])=>p!==10?{k:'d2_p',p:[p,fmt(400/p,1)]}:Math.abs(a-40)>.5?{k:'d2_a'}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'m/s²'}],sim:()=>load({kind:'circle',R:50,v0:20,at:3,t:0}),ok:()=>({k:'d3_ok'}),
+   chk:([x])=>Math.abs(x-Math.sqrt(73))<=.05?null:Math.abs(x-11)<=.05?{k:'d3_sum',p:[fmt(x,2)]}:{k:'d3_f',p:[fmt(x,2)]}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+refresh();
+})();
+</script>
+</body>
+</html>
