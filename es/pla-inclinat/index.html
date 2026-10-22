@@ -1,263 +1,829 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Cambia el ángulo del plano inclinado y mira cómo el peso se descompone en P∥ = mg·sen θ y P⊥ = mg·cos θ; la normal equilibra la componente perpendicular.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plano inclinado: descomposición del peso</title>
+<meta name="description" content="Cambia el ángulo del plano inclinado y mira cómo el peso se descompone en P∥ = mg·sen θ y P⊥ = mg·cos θ; la normal equilibra la componente perpendicular. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta name="author" content="Ilde">
 <link rel="canonical" href="https://ildemoralesmates.github.io/es/pla-inclinat/">
 <link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/pla-inclinat/">
 <link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/pla-inclinat/">
 <link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/pla-inclinat/">
-<meta name="author" content="Ilde">
 <link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
 <meta property="og:site_name" content="Recursos de matemáticas">
 <meta property="og:title" content="Plano inclinado: descomposición del peso">
-<meta property="og:description" content="Cambia el ángulo del plano inclinado y mira cómo el peso se descompone en P∥ = mg·sen θ y P⊥ = mg·cos θ; la normal equilibra la componente perpendicular.">
+<meta property="og:description" content="Cambia el ángulo del plano inclinado y mira cómo el peso se descompone en P∥ = mg·sen θ y P⊥ = mg·cos θ; la normal equilibra la componente perpendicular. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
 <meta property="og:url" content="https://ildemoralesmates.github.io/es/pla-inclinat/">
 <meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<title>Plano inclinado: descomposición del peso</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
-<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+
 <style>
 :root{
-  color-scheme:light;
-  --bg:#EDF1F6; --grid:rgba(36,84,214,.09);
-  --surface:#FFFFFF; --surface2:#F3F6FA;
-  --fg:#14202E; --muted:#526174; --line:#C7D2E0;
-  --accent:#2454D6; --accent-ink:#FFFFFF;
-  --font-head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
-  --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background-color:var(--bg);
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:24px 24px;
-  color:var(--fg); font:17px/1.5 var(--font-body);
-}
-.page{max-width:1120px;margin:0 auto;padding:20px 16px 8px}
-.back{display:inline-block;font:600 .9rem var(--font-mono);color:var(--muted);text-decoration:none}
-.back:hover{color:var(--fg);text-decoration:underline}
-.navtop{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-.lang{font:600 .85rem var(--font-mono);color:var(--accent);text-decoration:none;border:1.5px solid var(--line);border-radius:99px;padding:4px 12px;background:var(--surface)}
-.lang:hover{border-color:var(--accent)}
-.lang:focus-visible,.back:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.top{margin-bottom:14px}
-h1{font:700 clamp(1.5rem,4vw,2.1rem)/1.15 var(--font-head);margin:0}
-.kicker{font:600 .85rem var(--font-mono);color:var(--muted);margin:6px 0 0;text-transform:uppercase;letter-spacing:.04em}
-.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
-.sheet{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:14px}
-.stage{background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:6px}
-canvas{width:100%;height:auto;display:block}
-.side{display:grid;gap:14px}
-.card{background:var(--surface);border:2px solid var(--fg);border-radius:16px;padding:14px 16px}
-.ctl{margin-top:8px}
-.ctl:first-child{margin-top:0}
-.ctl .row{display:flex;justify-content:space-between;align-items:baseline;font-weight:600}
-.val{font:600 .95rem var(--font-mono);font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;accent-color:var(--accent)}
-.chk{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.98rem}
-.chk input{width:18px;height:18px;accent-color:var(--accent)}
-.btns{display:flex;gap:10px;margin-top:14px}
-.btn{font:700 1rem var(--font-body);border:2px solid var(--fg);background:var(--surface);color:var(--fg);border-radius:10px;padding:9px 18px;min-height:44px;cursor:pointer}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-table{width:100%;border-collapse:collapse;font-size:.95rem}
-td{padding:4px 2px}
-td:last-child{text-align:right;font:600 .95rem var(--font-mono);font-variant-numeric:tabular-nums}
-.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px}
-.note{font-size:.9rem;color:var(--muted);margin:10px 0 0}
-.msg{font-weight:600;margin:10px 0 0;color:var(--fg)}
-@media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:480px){body{font-size:16px}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:6px 18px}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap}
+.vals{margin:0}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.msg{min-height:1.5em;font-size:14.5px;margin:0;font-weight:600}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
 </style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <div class="page">
-  <nav class="navtop">
-    <a class="back" href="../../">← Recursos de matemáticas</a>
-    <a class="lang" href="../../pla-inclinat/" hreflang="ca" lang="ca">Valencià</a>
-  </nav>
-  <div class="top">
-    <h1>Plano inclinado: descomposición del peso</h1>
-    <p class="kicker">4.º ESO · Dinámica</p>
-  </div>
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">4.º ESO · Dinámica</p>
+      <h1 data-i18n="h1">Plano inclinado: descomposición del peso</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Cambia el ángulo, la masa y el rozamiento, suelta el bloque y comprueba qué hace cada fuerza.</p>
+    </div>
+  </header>
 
-  <div class="layout">
-    <div class="sheet">
-      <div class="stage"><canvas id="pi-cv" width="900" height="540" role="img" aria-label="Bloque sobre un plano inclinado con el peso, sus componentes y la normal"></canvas></div>
-    </div>
-    <div class="side">
-      <div class="card">
-        <div class="ctl"><div class="row"><label for="pi-th">Ángulo θ</label><span class="val" id="pi-vth">30°</span></div>
-          <input type="range" id="pi-th" min="0" max="80" step="0.5" value="30"></div>
-        <div class="ctl"><div class="row"><label for="pi-m">Masa m</label><span class="val" id="pi-vm">5 kg</span></div>
-          <input type="range" id="pi-m" min="1" max="10" step="0.5" value="5"></div>
-        <div class="ctl"><div class="row"><label for="pi-mu">Coeficiente de rozamiento μ</label><span class="val" id="pi-vmu">0,00</span></div>
-          <input type="range" id="pi-mu" min="0" max="1" step="0.01" value="0"></div>
-        <div class="chk"><input type="checkbox" id="pi-comp" checked><label for="pi-comp">Muestra las componentes del peso</label></div>
-        <div class="chk"><input type="checkbox" id="pi-n" checked><label for="pi-n">Muestra la normal</label></div>
-        <div class="chk"><input type="checkbox" id="pi-fr" checked><label for="pi-fr">Muestra el rozamiento</label></div>
-        <div class="chk"><input type="checkbox" id="pi-ang" checked><label for="pi-ang">Marca los ángulos</label></div>
-        <div class="btns">
-          <button type="button" class="btn primary" id="pi-go">Soltar</button>
-          <button type="button" class="btn" id="pi-reset">Reiniciar</button>
-        </div>
-      </div>
-      <div class="card">
-        <table>
-          <tr><td><span class="dot" style="background:#c0392b"></span>Peso P = mg</td><td id="pi-oP"></td></tr>
-          <tr><td><span class="dot" style="background:#d68910"></span>P∥ = mg·sen θ</td><td id="pi-oPx"></td></tr>
-          <tr><td><span class="dot" style="background:#7d3c98"></span>P⊥ = mg·cos θ</td><td id="pi-oPy"></td></tr>
-          <tr><td><span class="dot" style="background:#1e8449"></span>Normal N</td><td id="pi-oN"></td></tr>
-          <tr><td><span class="dot" style="background:#555"></span>Rozamiento Fr</td><td id="pi-oFr"></td></tr>
-          <tr><td>Aceleración a</td><td id="pi-oA"></td></tr>
-        </table>
-        <p class="msg" id="pi-msg" aria-live="polite"></p>
-        <p class="note">g = 9,8 m/s². Los vectores se dibujan con longitud proporcional a su módulo (escala adaptada a la masa).</p>
-        <p class="note"><b>Para la clase:</b> antes de mover el control, pide que prevean si N será mayor o menor que P cuando aumente el ángulo.</p>
-      </div>
-    </div>
-  </div>
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label="Bloque sobre un plano inclinado con el peso, sus componentes y la normal"></canvas></div>
+<div class="ctls">
+<div class="ctl"><label for="th" data-i18n="l_th">Ángulo θ</label><output id="vth"></output><input type="range" id="th" min="0" max="80" step="0.5" value="30"></div>
+<div class="ctl"><label for="m" data-i18n="l_m">Masa m</label><output id="vm"></output><input type="range" id="m" min="1" max="10" step="0.5" value="5"></div>
+<div class="ctl"><label for="mu" data-i18n="l_mu">Coeficiente de rozamiento μ</label><output id="vmu"></output><input type="range" id="mu" min="0" max="1" step="0.01" value="0"></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="comp" checked><span data-i18n="c_comp">Muestra las componentes del peso</span></label>
+<label class="check"><input type="checkbox" id="n" checked><span data-i18n="c_n">Muestra la normal</span></label>
+<label class="check"><input type="checkbox" id="fr" checked><span data-i18n="c_fr">Muestra el rozamiento</span></label>
+<label class="check"><input type="checkbox" id="ang" checked><span data-i18n="c_ang">Marca los ángulos</span></label>
+</div>
+<div class="btns"><button class="btn primary" id="go" type="button" data-i18n="go">Soltar</button><button class="btn" id="reset" type="button" data-i18n="reset">Reiniciar</button></div>
+</div>
+</div>
+<div class="side">
+<dl class="vals">
+<dt><span class="dot" style="background:#c0392b"></span><span data-i18n="o_P">Peso P = mg</span></dt><dd id="oP"></dd>
+<dt><span class="dot" style="background:#d68910"></span><span data-i18n="o_Px">P∥ = mg·sen θ</span></dt><dd id="oPx"></dd>
+<dt><span class="dot" style="background:#7d3c98"></span><span data-i18n="o_Py">P⊥ = mg·cos θ</span></dt><dd id="oPy"></dd>
+<dt><span class="dot" style="background:#1e8449"></span><span data-i18n="o_N">Normal N</span></dt><dd id="oN"></dd>
+<dt><span class="dot" style="background:#888"></span><span data-i18n="o_Fr">Rozamiento Fr</span></dt><dd id="oFr"></dd>
+<dt><span data-i18n="o_a">Aceleración a</span></dt><dd id="oA" class="hl"></dd>
+</dl>
+<p class="msg" id="msg" aria-live="polite"></p>
+<p class="note" data-i18n="note_scale">g = 9,8 m/s². Los vectores se dibujan con longitud proporcional a su módulo (escala adaptada a la masa).</p>
+<p class="note" data-i18n-html="note_class"><b>Para la clase:</b> antes de mover el control, pide que prevean si N será mayor o menor que P cuando aumente el ángulo.</p>
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
 </div>
 
 <script>
-(function(){
-  var cv=document.getElementById('pi-cv'), ctx=cv.getContext('2d');
-  var $=function(id){return document.getElementById('pi-'+id);};
-  var g=9.8, L=480, A={x:110,y:500}, BW=64, BH=42, PXM=100;
-  var S0=400, SMIN=BW/2+4;
-  var s=S0, v=0, running=false, last=null;
-  var fmt=function(x,d){return x.toFixed(d===undefined?1:d).replace('.',',');};
-
-  var MSG={
-    pla:'Con θ = 0 todo el peso lo soporta la normal: N = P.',
-    eq:'Equilibrio: Fr = P∥ y N = P⊥. Como tan θ ≤ μ, no desliza.',
-    lliure:'Sin rozamiento: la única fuerza neta es P∥, así que a = g·sen θ (¡no depende de la masa!).',
-    llisca:'Desliza: a = g(sen θ − μ cos θ), porque Fr = μN.'
-  };
-  var BTN_GO='Soltar', BTN_PAUSE='Pausa';
-
-  function state(){
-    var th=parseFloat($('th').value)*Math.PI/180;
-    var m=parseFloat($('m').value), mu=parseFloat($('mu').value);
-    var P=m*g, Px=P*Math.sin(th), Py=P*Math.cos(th), N=Py;
-    var slides=Math.tan(th)>mu+1e-9 && th>0;
-    var Fr=slides?mu*N:Px;
-    var a=slides?g*(Math.sin(th)-mu*Math.cos(th)):0;
-    return {th:th,m:m,mu:mu,P:P,Px:Px,Py:Py,N:N,Fr:Fr,a:a,slides:slides};
+const I18N={
+ca:{
+"title":"Pla inclinat: descomposició del pes",
+"eyebrow":"4t ESO · Dinàmica",
+"h1":"Pla inclinat: descomposició del pes",
+"lede":"Canvia l’angle, la massa i el fregament, deixa anar el bloc i comprova què fa cada força.",
+"aria.cv":"Bloc sobre un pla inclinat amb el pes, les seues components i la normal",
+"l_th":"Angle θ","l_m":"Massa m","l_mu":"Coeficient de fregament μ",
+"c_comp":"Mostra les components del pes","c_n":"Mostra la normal","c_fr":"Mostra el fregament","c_ang":"Marca els angles",
+"go":"Deixar anar","pause":"Pausa","reset":"Reiniciar",
+"o_P":"Pes P = mg","o_Px":"P∥ = mg·sin θ","o_Py":"P⊥ = mg·cos θ","o_N":"Normal N","o_Fr":"Fregament Fr","o_a":"Acceleració a",
+"msg_pla":"Amb θ = 0 tot el pes el suporta la normal: N = P.",
+"msg_eq":"Equilibri: Fr = P∥ i N = P⊥. Com que tan θ ≤ μ, no llisca.",
+"msg_lliure":"Sense fregament: l’única força neta és P∥, així que a = g·sin θ (no depén de la massa!).",
+"msg_llisca":"Llisca: a = g(sin θ − μ cos θ), perquè Fr = μN.",
+"note_scale":"g = 9,8 m/s². Els vectors es dibuixen amb longitud proporcional al seu mòdul (escala adaptada a la massa).",
+"note_class":"<b>Per a la classe:</b> abans de moure el control, demana que preveuen si N serà major o menor que P quan augmente l’angle.",
+"rng":"Escriu valors dins del rang del simulador: angle de 0 a 80° i μ de 0 a 1.",
+"m1.q":"Amb el bloc de 5 kg, troba l’angle perquè la normal N valga <b>la meitat del pes</b> (N = P/2).",
+"m1_f":"Amb θ = {0}° la normal val {1} N, que és el {2} % del pes (m = 5 kg).",
+"m1_ok":"✔ Missió complida! A 60°, cos θ = 0,5, així que N = P·cos θ = P/2.",
+"m1.more":"Si l’angle arribara a 90° (paret vertical), quant valdria N? Explica per què té sentit.",
+"m2.q":"Sense fregament i amb m = 5 kg, aconsegueix una acceleració de <b>4,9 m/s²</b> (la meitat de g). Quin angle cal?",
+"m2_f":"Amb θ = {0}° i μ = 0, l’acceleració és {1} m/s².",
+"m2_ok":"✔ Missió complida! A 30°, sin θ = 0,5 i a = g·sin θ = 4,9 m/s².",
+"m2.more":"Repeteix-ho amb m = 10 kg i el mateix angle. Canvia l’acceleració? Comprova-ho i explica per què.",
+"m3.q":"A 30° i amb m = 5 kg, quin és el <b>menor μ</b> (dos decimals) perquè el bloc <b>no llisque</b>?",
+"m3_lli":"Amb μ = {0} el bloc encara llisca: a = {1} m/s².",
+"m3_mes":"Amb μ = {0} no llisca, però no és el valor més xicotet que ho aconsegueix. Prova amb un μ menor.",
+"m3_ok":"✔ Missió complida! El límit és μ = tan 30° ≈ 0,58.",
+"m3.more":"Compara el límit amb tan 30°. Creus que a 45° el μ mínim serà major o menor? Prediu-ho i comprova-ho.",
+"m4.q":"Posa μ = 1,00 (el màxim del simulador). Fins a quin angle <b>màxim</b>, en graus enters, es manté quiet el bloc?",
+"m4_lli":"A {0}° el bloc llisca (a = {1} m/s²).",
+"m4_poc":"A {0}° el bloc encara es manté quiet: es pot inclinar més.",
+"m4_ok":"✔ Missió complida! A 45°, tan θ = 1 = μ: justament al límit.",
+"m4.more":"I si μ = 0,5, l’angle màxim serà menor o major que 45°? Troba la relació entre μ i l’angle límit.",
+"s1.q":"Sense fregament, un bloc de 10 kg baixa pel pla inclinat amb més acceleració que un de 1 kg.",
+"s1.h":"Canvia la massa al simulador i mira què passa amb a.",
+"s1.e":"Mai. Sense fregament a = g·sin θ: el bloc pesat té més força cap avall, però també més massa per accelerar, i la massa es cancel·la.",
+"s2.q":"Quan augmentem l’angle del pla inclinat, la normal N augmenta.",
+"s2.h":"Mira la fila de N mentre mous l’angle.",
+"s2.e":"Mai. N = mg·cos θ i el cosinus disminueix quan θ creix. Qui augmenta és P∥ = mg·sin θ.",
+"s3.q":"La normal que fa el pla sobre el bloc és igual al pes del bloc (N = P).",
+"s3.h":"Fixa’t en N i en P a angles diferents.",
+"s3.e":"A vegades. Només quan el pla és horitzontal (θ = 0). En un pla inclinat, N = P·cos θ és menor que P.",
+"s3_cx_no":"Amb θ = 0 sí que N = P. Busca un angle diferent de zero (fins a 80°).",
+"s3_cx":"✔ Amb θ = {0}° N = {1} N i P = {2} N (m = 5 kg): N no és igual a P.",
+"s4.q":"Un bloc quiet sobre el pla inclinat amb fregament té una força de fregament Fr = μ·N.",
+"s4.h":"Posa un μ gran i un angle xicotet: compara Fr amb μ·N.",
+"s4.e":"A vegades. Fr = μ·N només quan el bloc llisca o està a punt de fer-ho. En repòs, Fr = P∥ i pot ser menor que μ·N.",
+"s4_cx_slide":"Amb θ = {0}° i μ = {1} el bloc llisca, i llavors sí que Fr = μ·N. Busca un cas en què es quede quiet.",
+"s4_cx_zero":"Amb θ = 0 o μ = 0 no hi ha fregament que comparar. Prova amb tots dos més grans que zero.",
+"s4_cx":"✔ Amb θ = {0}° i μ = {1} el bloc no es mou: Fr = {2} N, però μ·N = {3} N (m = 5 kg).",
+"s5.q":"Si el bloc no llisca, la força de fregament és exactament igual a P∥.",
+"s5.h":"Pensa en les forces al llarg del pla quan el bloc està quiet: què diu la 1a llei de Newton?",
+"s5.e":"Sempre. En equilibri, la suma de forces al llarg del pla és zero, així que Fr = P∥.",
+"s6.q":"Amb fregament, un bloc que llisca baixa amb menys acceleració que un sense fregament al mateix angle.",
+"s6.h":"Compara a amb μ = 0 i amb μ > 0 al mateix angle.",
+"s6.e":"Sempre. a = g(sin θ − μ cos θ) és menor que g·sin θ quan μ > 0.",
+"e1.ctx":"Un bloc de 8 kg i un altre de 2 kg es deixen anar alhora, sense fregament, pel mateix pla inclinat de 30°.",
+"e1.n0":"Aina","e1.n1":"Pau",
+"e1.s0":"El de 8 kg arribarà abans a baix: pesa més i, per tant, el tira cap avall amb més força.",
+"e1.s1":"Arribaran junts: l’acceleració és la mateixa per als dos.",
+"e1.w0":"La força que tira cap avall (P∥ = m·g·sin θ) és major per al bloc pesat, però també té més massa per accelerar. La massa es cancel·la: a = g·sin 30° = 4,9 m/s² per als dos.",
+"e1.w1":"Perquè la normal és la mateixa per als dos blocs, i la normal és la que els fa baixar.",
+"e1.w2":"Perquè sense fregament tots els objectes cauen amb la mateixa acceleració, g, i el pla no hi influeix.",
+"e1.frame":"Aina, la massa no importa perquè…",
+"e1.model":"Aina, el bloc de 8 kg té un pes quatre vegades major, i per això la força que el tira pel pla també és quatre vegades major (P∥ = m·g·sin 30°). Però també té quatre vegades més massa per moure, així que a = P∥/m = g·sin 30° = 4,9 m/s² per als dos. Arriben junts.",
+"e2.ctx":"Un bloc de 5 kg reposa sobre un pla inclinat de 40°, sense fregament. Es discuteix quant val la normal.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"La normal és la component perpendicular del pes: N = m·g·cos θ, i a 40° és menor que el pes.",
+"e2.s1":"La normal sempre és igual al pes: N = m·g, perquè el pla aguanta el bloc.",
+"e2.w0":"El bloc no es mou perpendicularment al pla, així que N només ha de compensar la component P⊥ = m·g·cos θ. La resta del pes (P∥) és la que fa baixar el bloc.",
+"e2.w1":"Perquè la normal depén de la massa del bloc però no de l’angle del pla.",
+"e2.w2":"Perquè la normal ha de compensar el fregament, no el pes.",
+"e2.frame":"Marc, la normal no és igual al pes perquè…",
+"e2.model":"Marc, a 40° el pes del bloc (49 N) es descompon en P∥ = 49·sin 40° ≈ 31,5 N, que fa baixar el bloc, i P⊥ = 49·cos 40° ≈ 37,5 N, que és el que el pla ha d’aguantar: N = 37,5 N, menor que 49 N. La normal només és igual al pes quan el pla és horitzontal.",
+"e3.ctx":"Una caixa de 10 kg reposa, sense lliscar, sobre una rampa de 20° amb μ = 0,6. Es discuteix quant val la força de fregament.",
+"e3.n0":"Laia","e3.n1":"Joan",
+"e3.s0":"Fr = μ·N = 0,6 · 98 N = 58,8 N: el fregament sempre és μ per la normal.",
+"e3.s1":"Fr = 0: la caixa està quieta i, si no es mou, no hi ha fregament.",
+"e3.w0":"La caixa està en equilibri, així que el fregament compensa exactament P∥: Fr = m·g·sin 20° ≈ 33,5 N. És menor que el màxim possible, μ·N ≈ 55,3 N.",
+"e3.w1":"Perquè el fregament només apareix quan el bloc ja s’ha començat a moure.",
+"e3.w2":"Perquè la normal no intervé en el fregament.",
+"e3.frame":"Laia i Joan, en aquesta rampa el fregament val… perquè…",
+"e3.model":"Cap dels dos. El fregament sí que actua (Joan s’equivoca), però no val μ·N (Laia s’equivoca, i a més ha usat N = P). Com que la caixa no llisca, la suma de forces al llarg de la rampa és zero: Fr = P∥ = 98·sin 20° ≈ 33,5 N, menor que el màxim μ·N = 0,6·98·cos 20° ≈ 55,3 N.",
+"d1.q":"Una caixa de 8 kg ha de baixar per una rampa de fusta pel seu propi pes. El fregament és μ = 0,3. Tria l’<b>angle més xicotet</b> que ho aconsegueix i calcula amb quina acceleració baixarà.",
+"d1.lc":"Angle de la rampa:","d1.l0":"a",
+"d1_poc":"Amb {0}° tan θ = {1}, menor que μ = 0,3: el bloc no llisca.",
+"d1_mes":"Amb {0}° sí que llisca, però n’hi ha un de més xicotet que també ho aconsegueix.",
+"d1_a":"Mira-ho al simulador: a = g(sin θ − μ cos θ) amb θ = 20° i μ = 0,3.",
+"d1_ok":"✔ Ben decidit! Amb 20° i μ = 0,3: a ≈ 0,59 m/s². Es mou, però molt a poc a poc.",
+"d1.more":"Canviaria l’angle mínim si la caixa fóra de 2 kg? I l’acceleració? Comprova-ho.",
+"d2.q":"Una caixa de 5 kg ha de quedar <b>quieta</b> en una rampa de 35°. Tria el <b>menor μ</b> que ho aconsegueix i digues quant val llavors la força de fregament.",
+"d2.lc":"Coeficient μ:","d2.l0":"Fr",
+"d2_lli":"Amb μ = {0} el bloc llisca (tan 35° ≈ 0,70).",
+"d2_mes":"Amb μ = {0} es queda quiet, però n’hi ha un de menor que també serveix.",
+"d2_naive":"Això és μ·N, el fregament màxim possible, però el bloc no hi arriba. En repòs, quina força cal que compense P∥?",
+"d2_fr":"Torna-ho a mirar: en repòs, el fregament compensa exactament una altra força del pes.",
+"d2_ok":"✔ Ben decidit! Fr = P∥ = 49·sin 35° ≈ 28,1 N, menor que el màxim μ·N ≈ 32,1 N.",
+"d2.more":"Si poses μ = 1,00, canvia la força de fregament? Comprova-ho i explica per què."
+},
+es:{
+"title":"Plano inclinado: descomposición del peso",
+"eyebrow":"4.º ESO · Dinámica",
+"h1":"Plano inclinado: descomposición del peso",
+"lede":"Cambia el ángulo, la masa y el rozamiento, suelta el bloque y comprueba qué hace cada fuerza.",
+"aria.cv":"Bloque sobre un plano inclinado con el peso, sus componentes y la normal",
+"l_th":"Ángulo θ","l_m":"Masa m","l_mu":"Coeficiente de rozamiento μ",
+"c_comp":"Muestra las componentes del peso","c_n":"Muestra la normal","c_fr":"Muestra el rozamiento","c_ang":"Marca los ángulos",
+"go":"Soltar","pause":"Pausa","reset":"Reiniciar",
+"o_P":"Peso P = mg","o_Px":"P∥ = mg·sen θ","o_Py":"P⊥ = mg·cos θ","o_N":"Normal N","o_Fr":"Rozamiento Fr","o_a":"Aceleración a",
+"msg_pla":"Con θ = 0 todo el peso lo soporta la normal: N = P.",
+"msg_eq":"Equilibrio: Fr = P∥ y N = P⊥. Como tan θ ≤ μ, no desliza.",
+"msg_lliure":"Sin rozamiento: la única fuerza neta es P∥, así que a = g·sen θ (¡no depende de la masa!).",
+"msg_llisca":"Desliza: a = g(sen θ − μ cos θ), porque Fr = μN.",
+"note_scale":"g = 9,8 m/s². Los vectores se dibujan con longitud proporcional a su módulo (escala adaptada a la masa).",
+"note_class":"<b>Para la clase:</b> antes de mover el control, pide que prevean si N será mayor o menor que P cuando aumente el ángulo.",
+"rng":"Escribe valores dentro del rango del simulador: ángulo de 0 a 80° y μ de 0 a 1.",
+"m1.q":"Con el bloque de 5 kg, encuentra el ángulo para que la normal N valga <b>la mitad del peso</b> (N = P/2).",
+"m1_f":"Con θ = {0}° la normal vale {1} N, que es el {2} % del peso (m = 5 kg).",
+"m1_ok":"✔ ¡Misión cumplida! A 60°, cos θ = 0,5, así que N = P·cos θ = P/2.",
+"m1.more":"Si el ángulo llegara a 90° (pared vertical), ¿cuánto valdría N? Explica por qué tiene sentido.",
+"m2.q":"Sin rozamiento y con m = 5 kg, consigue una aceleración de <b>4,9 m/s²</b> (la mitad de g). ¿Qué ángulo hace falta?",
+"m2_f":"Con θ = {0}° y μ = 0, la aceleración es {1} m/s².",
+"m2_ok":"✔ ¡Misión cumplida! A 30°, sen θ = 0,5 y a = g·sen θ = 4,9 m/s².",
+"m2.more":"Repítelo con m = 10 kg y el mismo ángulo. ¿Cambia la aceleración? Compruébalo y explica por qué.",
+"m3.q":"A 30° y con m = 5 kg, ¿cuál es el <b>menor μ</b> (dos decimales) para que el bloque <b>no deslice</b>?",
+"m3_lli":"Con μ = {0} el bloque todavía desliza: a = {1} m/s².",
+"m3_mes":"Con μ = {0} no desliza, pero no es el valor más pequeño que lo consigue. Prueba con un μ menor.",
+"m3_ok":"✔ ¡Misión cumplida! El límite es μ = tan 30° ≈ 0,58.",
+"m3.more":"Compara el límite con tan 30°. ¿Crees que a 45° el μ mínimo será mayor o menor? Predícelo y compruébalo.",
+"m4.q":"Pon μ = 1,00 (el máximo del simulador). ¿Hasta qué ángulo <b>máximo</b>, en grados enteros, se mantiene quieto el bloque?",
+"m4_lli":"A {0}° el bloque desliza (a = {1} m/s²).",
+"m4_poc":"A {0}° el bloque todavía se mantiene quieto: se puede inclinar más.",
+"m4_ok":"✔ ¡Misión cumplida! A 45°, tan θ = 1 = μ: justo en el límite.",
+"m4.more":"¿Y si μ = 0,5, el ángulo máximo será menor o mayor que 45°? Encuentra la relación entre μ y el ángulo límite.",
+"s1.q":"Sin rozamiento, un bloque de 10 kg baja por el plano inclinado con más aceleración que uno de 1 kg.",
+"s1.h":"Cambia la masa en el simulador y mira qué pasa con a.",
+"s1.e":"Nunca. Sin rozamiento a = g·sen θ: el bloque pesado tiene más fuerza hacia abajo, pero también más masa que acelerar, y la masa se cancela.",
+"s2.q":"Cuando aumentamos el ángulo del plano inclinado, la normal N aumenta.",
+"s2.h":"Mira la fila de N mientras mueves el ángulo.",
+"s2.e":"Nunca. N = mg·cos θ y el coseno disminuye cuando θ crece. Quien aumenta es P∥ = mg·sen θ.",
+"s3.q":"La normal que hace el plano sobre el bloque es igual al peso del bloque (N = P).",
+"s3.h":"Fíjate en N y en P a ángulos diferentes.",
+"s3.e":"A veces. Solo cuando el plano es horizontal (θ = 0). En un plano inclinado, N = P·cos θ es menor que P.",
+"s3_cx_no":"Con θ = 0 sí que N = P. Busca un ángulo distinto de cero (hasta 80°).",
+"s3_cx":"✔ Con θ = {0}° N = {1} N y P = {2} N (m = 5 kg): N no es igual a P.",
+"s4.q":"Un bloque quieto sobre el plano inclinado con rozamiento tiene una fuerza de rozamiento Fr = μ·N.",
+"s4.h":"Pon un μ grande y un ángulo pequeño: compara Fr con μ·N.",
+"s4.e":"A veces. Fr = μ·N solo cuando el bloque desliza o está a punto de hacerlo. En reposo, Fr = P∥ y puede ser menor que μ·N.",
+"s4_cx_slide":"Con θ = {0}° y μ = {1} el bloque desliza, y entonces sí que Fr = μ·N. Busca un caso en que se quede quieto.",
+"s4_cx_zero":"Con θ = 0 o μ = 0 no hay rozamiento que comparar. Prueba con los dos mayores que cero.",
+"s4_cx":"✔ Con θ = {0}° y μ = {1} el bloque no se mueve: Fr = {2} N, pero μ·N = {3} N (m = 5 kg).",
+"s5.q":"Si el bloque no desliza, la fuerza de rozamiento es exactamente igual a P∥.",
+"s5.h":"Piensa en las fuerzas a lo largo del plano cuando el bloque está quieto: ¿qué dice la 1.ª ley de Newton?",
+"s5.e":"Siempre. En equilibrio, la suma de fuerzas a lo largo del plano es cero, así que Fr = P∥.",
+"s6.q":"Con rozamiento, un bloque que desliza baja con menos aceleración que uno sin rozamiento al mismo ángulo.",
+"s6.h":"Compara a con μ = 0 y con μ > 0 al mismo ángulo.",
+"s6.e":"Siempre. a = g(sen θ − μ cos θ) es menor que g·sen θ cuando μ > 0.",
+"e1.ctx":"Un bloque de 8 kg y otro de 2 kg se sueltan a la vez, sin rozamiento, por el mismo plano inclinado de 30°.",
+"e1.n0":"Aina","e1.n1":"Pau",
+"e1.s0":"El de 8 kg llegará antes abajo: pesa más y, por tanto, tira de él hacia abajo con más fuerza.",
+"e1.s1":"Llegarán juntos: la aceleración es la misma para los dos.",
+"e1.w0":"La fuerza que tira hacia abajo (P∥ = m·g·sen θ) es mayor para el bloque pesado, pero también tiene más masa que acelerar. La masa se cancela: a = g·sen 30° = 4,9 m/s² para los dos.",
+"e1.w1":"Porque la normal es la misma para los dos bloques, y la normal es la que los hace bajar.",
+"e1.w2":"Porque sin rozamiento todos los objetos caen con la misma aceleración, g, y el plano no influye.",
+"e1.frame":"Aina, la masa no importa porque…",
+"e1.model":"Aina, el bloque de 8 kg tiene un peso cuatro veces mayor, y por eso la fuerza que tira de él por el plano también es cuatro veces mayor (P∥ = m·g·sen 30°). Pero también tiene cuatro veces más masa que mover, así que a = P∥/m = g·sen 30° = 4,9 m/s² para los dos. Llegan juntos.",
+"e2.ctx":"Un bloque de 5 kg reposa sobre un plano inclinado de 40°, sin rozamiento. Se discute cuánto vale la normal.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"La normal es la componente perpendicular del peso: N = m·g·cos θ, y a 40° es menor que el peso.",
+"e2.s1":"La normal siempre es igual al peso: N = m·g, porque el plano sostiene el bloque.",
+"e2.w0":"El bloque no se mueve perpendicularmente al plano, así que N solo tiene que compensar la componente P⊥ = m·g·cos θ. El resto del peso (P∥) es lo que hace bajar el bloque.",
+"e2.w1":"Porque la normal depende de la masa del bloque pero no del ángulo del plano.",
+"e2.w2":"Porque la normal tiene que compensar el rozamiento, no el peso.",
+"e2.frame":"Marc, la normal no es igual al peso porque…",
+"e2.model":"Marc, a 40° el peso del bloque (49 N) se descompone en P∥ = 49·sen 40° ≈ 31,5 N, que hace bajar el bloque, y P⊥ = 49·cos 40° ≈ 37,5 N, que es lo que el plano tiene que sostener: N = 37,5 N, menor que 49 N. La normal solo es igual al peso cuando el plano es horizontal.",
+"e3.ctx":"Una caja de 10 kg reposa, sin deslizar, sobre una rampa de 20° con μ = 0,6. Se discute cuánto vale la fuerza de rozamiento.",
+"e3.n0":"Laia","e3.n1":"Joan",
+"e3.s0":"Fr = μ·N = 0,6 · 98 N = 58,8 N: el rozamiento siempre es μ por la normal.",
+"e3.s1":"Fr = 0: la caja está quieta y, si no se mueve, no hay rozamiento.",
+"e3.w0":"La caja está en equilibrio, así que el rozamiento compensa exactamente P∥: Fr = m·g·sen 20° ≈ 33,5 N. Es menor que el máximo posible, μ·N ≈ 55,3 N.",
+"e3.w1":"Porque el rozamiento solo aparece cuando el bloque ya ha empezado a moverse.",
+"e3.w2":"Porque la normal no interviene en el rozamiento.",
+"e3.frame":"Laia y Joan, en esta rampa el rozamiento vale… porque…",
+"e3.model":"Ninguno de los dos. El rozamiento sí que actúa (Joan se equivoca), pero no vale μ·N (Laia se equivoca, y además ha usado N = P). Como la caja no desliza, la suma de fuerzas a lo largo de la rampa es cero: Fr = P∥ = 98·sen 20° ≈ 33,5 N, menor que el máximo μ·N = 0,6·98·cos 20° ≈ 55,3 N.",
+"d1.q":"Una caja de 8 kg tiene que bajar por una rampa de madera por su propio peso. El rozamiento es μ = 0,3. Elige el <b>ángulo más pequeño</b> que lo consigue y calcula con qué aceleración bajará.",
+"d1.lc":"Ángulo de la rampa:","d1.l0":"a",
+"d1_poc":"Con {0}° tan θ = {1}, menor que μ = 0,3: el bloque no desliza.",
+"d1_mes":"Con {0}° sí que desliza, pero hay uno más pequeño que también lo consigue.",
+"d1_a":"Míralo en el simulador: a = g(sen θ − μ cos θ) con θ = 20° y μ = 0,3.",
+"d1_ok":"✔ ¡Bien decidido! Con 20° y μ = 0,3: a ≈ 0,59 m/s². Se mueve, pero muy despacio.",
+"d1.more":"¿Cambiaría el ángulo mínimo si la caja fuera de 2 kg? ¿Y la aceleración? Compruébalo.",
+"d2.q":"Una caja de 5 kg tiene que quedarse <b>quieta</b> en una rampa de 35°. Elige el <b>menor μ</b> que lo consigue y di cuánto vale entonces la fuerza de rozamiento.",
+"d2.lc":"Coeficiente μ:","d2.l0":"Fr",
+"d2_lli":"Con μ = {0} el bloque desliza (tan 35° ≈ 0,70).",
+"d2_mes":"Con μ = {0} se queda quieto, pero hay uno menor que también sirve.",
+"d2_naive":"Eso es μ·N, el rozamiento máximo posible, pero el bloque no llega a él. En reposo, ¿qué fuerza tiene que compensar P∥?",
+"d2_fr":"Vuelve a mirarlo: en reposo, el rozamiento compensa exactamente otra fuerza del peso.",
+"d2_ok":"✔ ¡Bien decidido! Fr = P∥ = 49·sen 35° ≈ 28,1 N, menor que el máximo μ·N ≈ 32,1 N.",
+"d2.more":"Si pones μ = 1,00, ¿cambia la fuerza de rozamiento? Compruébalo y explica por qué."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../pla-inclinat/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
   }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
 
-  function arrow(x0,y0,dx,dy,color,label,o){
-    o=o||{};
-    var len=Math.hypot(dx,dy); if(len<3) return;
-    var x1=x0+dx, y1=y0+dy, ang=Math.atan2(dy,dx), h=11;
-    ctx.save();
-    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=o.w||3;
-    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1-Math.cos(ang)*h*0.6,y1-Math.sin(ang)*h*0.6); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x1,y1);
-    ctx.lineTo(x1-h*Math.cos(ang-0.4),y1-h*Math.sin(ang-0.4));
-    ctx.lineTo(x1-h*Math.cos(ang+0.4),y1-h*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
-    if(label){
-      ctx.font='bold 16px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(label,x1+Math.cos(ang)*16+(o.lx||0),y1+Math.sin(ang)*16+(o.ly||0));
-    }
-    ctx.restore();
-  }
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
 
-  function draw(){
-    var st=state(), th=st.th, cs=Math.cos(th), sn=Math.sin(th);
-    ctx.clearRect(0,0,cv.width,cv.height);
-    var B={x:A.x+L*cs,y:A.y}, C={x:A.x+L*cs,y:A.y-L*sn};
-    ctx.fillStyle='#e6e2d6'; ctx.strokeStyle='#8a8570'; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.lineTo(C.x,C.y); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(A.x-40,A.y); ctx.lineTo(B.x+40,B.y); ctx.stroke();
-    if($('ang').checked && th>0.01){
-      ctx.strokeStyle='#2b6cb0'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(A.x,A.y,70,-th,0); ctx.stroke();
-      ctx.fillStyle='#2b6cb0'; ctx.font='bold 17px system-ui'; ctx.textAlign='left'; ctx.textBaseline='middle';
-      ctx.fillText('θ',A.x+80,A.y-Math.max(10,Math.min(th*30,25))+(th<0.3?-6:0));
-    }
-    var cx0=A.x+s*cs, cy0=A.y-s*sn;
-    ctx.save(); ctx.translate(cx0,cy0); ctx.rotate(-th);
-    ctx.fillStyle='#4a7fb5'; ctx.strokeStyle='#1f3f66'; ctx.lineWidth=2;
-    ctx.fillRect(-BW/2,-BH,BW,BH); ctx.strokeRect(-BW/2,-BH,BW,BH);
-    ctx.fillStyle='#fff'; ctx.font='bold 15px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(fmt(st.m,1).replace(',0','')+' kg',0,-BH/2);
-    ctx.restore();
-    var n={x:-sn,y:-cs}, u={x:cs,y:-sn};
-    var G={x:cx0+n.x*BH/2,y:cy0+n.y*BH/2};
-    var k=150/st.P;
-    arrow(G.x,G.y,0,st.P*k,'#c0392b','P',{w:4,ly:6});
-    if($('comp').checked && th>0.01){
-      var pxv={x:-u.x*st.Px*k,y:-u.y*st.Px*k};
-      var pyv={x:-n.x*st.Py*k,y:-n.y*st.Py*k};
-      ctx.save(); ctx.strokeStyle='#999'; ctx.setLineDash([5,5]); ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.moveTo(G.x+pxv.x,G.y+pxv.y); ctx.lineTo(G.x,G.y+st.P*k);
-      ctx.moveTo(G.x+pyv.x,G.y+pyv.y); ctx.lineTo(G.x,G.y+st.P*k); ctx.stroke(); ctx.restore();
-      arrow(G.x,G.y,pxv.x,pxv.y,'#d68910','P∥',{w:3.5,lx:-8,ly:8});
-      arrow(G.x,G.y,pyv.x,pyv.y,'#7d3c98','P⊥',{w:3.5,lx:-10,ly:10});
-    }
-    if($('n').checked){ arrow(G.x,G.y,n.x*st.N*k,n.y*st.N*k,'#1e8449','N',{w:3.5,lx:-10,ly:-6}); }
-    if($('fr').checked && st.mu>0 && th>0.01){
-      arrow(G.x,G.y,u.x*st.Fr*k,u.y*st.Fr*k,'#555','Fr',{w:3,lx:8,ly:-8});
-    }
-    if($('ang').checked && th>0.01){
-      ctx.strokeStyle='#2b6cb0'; ctx.lineWidth=2; ctx.beginPath();
-      ctx.arc(G.x,G.y,42,Math.PI/2-th,Math.PI/2); ctx.stroke();
-      var am=Math.PI/2-th/2;
-      ctx.fillStyle='#2b6cb0'; ctx.font='bold 15px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('θ',G.x+Math.cos(am)*58,G.y+Math.sin(am)*58);
-    }
-    $('vth').textContent=fmt(th*180/Math.PI,1)+'°';
-    $('vm').textContent=fmt(st.m,1)+' kg';
-    $('vmu').textContent=fmt(st.mu,2);
-    $('oP').textContent=fmt(st.P)+' N';
-    $('oPx').textContent=fmt(st.Px)+' N';
-    $('oPy').textContent=fmt(st.Py)+' N';
-    $('oN').textContent=fmt(st.N)+' N';
-    $('oFr').textContent=st.mu>0?fmt(st.Fr)+' N':'—';
-    $('oA').textContent=fmt(st.a,2)+' m/s²';
-    var key;
-    if(th<0.01) key='pla';
-    else if(!st.slides) key='eq';
-    else if(st.mu===0) key='lliure';
-    else key='llisca';
-    $('msg').textContent=MSG[key];
-  }
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
 
-  function loop(t){
-    if(last===null) last=t;
-    var dt=Math.min((t-last)/1000,0.05); last=t;
-    if(running){
-      var st=state();
-      if(st.slides){
-        v+=st.a*dt; s-=v*dt*PXM;
-        if(s<=SMIN){ s=SMIN; v=0; running=false; $('go').textContent=BTN_GO; }
-      } else { v=0; }
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
     }
-    draw(); requestAnimationFrame(loop);
-  }
-
-  $('go').addEventListener('click',function(){
-    if(running){ running=false; $('go').textContent=BTN_GO; return; }
-    if(s<=SMIN+0.5){ s=S0; v=0; }
-    running=true; $('go').textContent=BTN_PAUSE;
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
   });
-  $('reset').addEventListener('click',function(){ running=false; s=S0; v=0; $('go').textContent=BTN_GO; });
-  ['th','m','mu'].forEach(function(id){ $(id).addEventListener('input',function(){ v=0; }); });
-  requestAnimationFrame(loop);
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== Pla inclinat ===== */
+const g=9.8,RL=480,A={x:110,y:500},BW=64,BH=42,PXM=100,W=900,H=540;
+const S0=400,SMIN=BW/2+4;
+const cx=fitCanvas($('#cv'),W,H);
+let s=S0,v=0,running=false,last=null;
+const f1=(x,d=1)=>fmt(x,d);
+const fa=x=>f1(x,1).replace(/,0$/,'');   /* angle o μ sense decimals de més */
+const fm=x=>f1(x,2).replace(/,?0+$/,'');
+const rad=d=>d*Math.PI/180;
+const slidesAt=(th,mu)=>th>0&&Math.tan(rad(th))>mu+1e-9;
+const accAt=(th,mu)=>slidesAt(th,mu)?g*(Math.sin(rad(th))-mu*Math.cos(rad(th))):0;
+function pal(){return C().dark?
+  {wedge:'#222a3b',edge:'#6b7590',block:'#4a7fb5',bedge:'#9db8d8',P:'#ff6b5b',Px:'#f0b24a',Py:'#b58cff',N:'#4cd08a',Fr:'#aab2c5',ang:'#76a2ff',dash:'#7d869b'}:
+  {wedge:'#e6e2d6',edge:'#8a8570',block:'#4a7fb5',bedge:'#1f3f66',P:'#c0392b',Px:'#d68910',Py:'#7d3c98',N:'#1e8449',Fr:'#555555',ang:'#2b6cb0',dash:'#999999'};}
+function state(){
+  const th=parseFloat($('#th').value)*Math.PI/180,m=parseFloat($('#m').value),mu=parseFloat($('#mu').value);
+  const P=m*g,Px=P*Math.sin(th),Py=P*Math.cos(th),N=Py;
+  const slides=Math.tan(th)>mu+1e-9&&th>0;
+  const Fr=slides?mu*N:Px,a=slides?g*(Math.sin(th)-mu*Math.cos(th)):0;
+  return {th,m,mu,P,Px,Py,N,Fr,a,slides};
+}
+function arrow(x0,y0,dx,dy,color,label,o){
+  o=o||{};const len=Math.hypot(dx,dy);if(len<3)return;
+  const x1=x0+dx,y1=y0+dy,ang=Math.atan2(dy,dx),h=11;
+  cx.save();cx.strokeStyle=color;cx.fillStyle=color;cx.lineWidth=o.w||3;
+  cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(x1-Math.cos(ang)*h*.6,y1-Math.sin(ang)*h*.6);cx.stroke();
+  cx.beginPath();cx.moveTo(x1,y1);cx.lineTo(x1-h*Math.cos(ang-.4),y1-h*Math.sin(ang-.4));cx.lineTo(x1-h*Math.cos(ang+.4),y1-h*Math.sin(ang+.4));cx.closePath();cx.fill();
+  if(label){cx.font='bold 16px system-ui';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(label,x1+Math.cos(ang)*16+(o.lx||0),y1+Math.sin(ang)*16+(o.ly||0));}
+  cx.restore();
+}
+const setTxt=(el,x)=>{if(el.textContent!==x)el.textContent=x;};
+function draw(){
+  const st=state(),th=st.th,cs=Math.cos(th),sn=Math.sin(th),K=pal();
+  cx.clearRect(0,0,W,H);
+  const B={x:A.x+RL*cs,y:A.y},Cc={x:A.x+RL*cs,y:A.y-RL*sn};
+  cx.fillStyle=K.wedge;cx.strokeStyle=K.edge;cx.lineWidth=2;
+  cx.beginPath();cx.moveTo(A.x,A.y);cx.lineTo(B.x,B.y);cx.lineTo(Cc.x,Cc.y);cx.closePath();cx.fill();cx.stroke();
+  cx.beginPath();cx.moveTo(A.x-40,A.y);cx.lineTo(B.x+40,B.y);cx.stroke();
+  if($('#ang').checked&&th>.01){
+    cx.strokeStyle=K.ang;cx.lineWidth=2;cx.beginPath();cx.arc(A.x,A.y,70,-th,0);cx.stroke();
+    cx.fillStyle=K.ang;cx.font='bold 17px system-ui';cx.textAlign='left';cx.textBaseline='middle';
+    cx.fillText('θ',A.x+80,A.y-Math.max(10,Math.min(th*30,25))+(th<.3?-6:0));
+  }
+  const cx0=A.x+s*cs,cy0=A.y-s*sn;
+  cx.save();cx.translate(cx0,cy0);cx.rotate(-th);
+  cx.fillStyle=K.block;cx.strokeStyle=K.bedge;cx.lineWidth=2;cx.fillRect(-BW/2,-BH,BW,BH);cx.strokeRect(-BW/2,-BH,BW,BH);
+  cx.fillStyle='#fff';cx.font='bold 15px system-ui';cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillText(f1(st.m,1).replace(',0','')+' kg',0,-BH/2);cx.restore();
+  const n={x:-sn,y:-cs},u={x:cs,y:-sn},G={x:cx0+n.x*BH/2,y:cy0+n.y*BH/2},k=150/st.P;
+  arrow(G.x,G.y,0,st.P*k,K.P,'P',{w:4,ly:6});
+  if($('#comp').checked&&th>.01){
+    const pxv={x:-u.x*st.Px*k,y:-u.y*st.Px*k},pyv={x:-n.x*st.Py*k,y:-n.y*st.Py*k};
+    cx.save();cx.strokeStyle=K.dash;cx.setLineDash([5,5]);cx.lineWidth=1.5;
+    cx.beginPath();cx.moveTo(G.x+pxv.x,G.y+pxv.y);cx.lineTo(G.x,G.y+st.P*k);cx.moveTo(G.x+pyv.x,G.y+pyv.y);cx.lineTo(G.x,G.y+st.P*k);cx.stroke();cx.restore();
+    arrow(G.x,G.y,pxv.x,pxv.y,K.Px,'P∥',{w:3.5,lx:-8,ly:8});
+    arrow(G.x,G.y,pyv.x,pyv.y,K.Py,'P⊥',{w:3.5,lx:-10,ly:10});
+  }
+  if($('#n').checked)arrow(G.x,G.y,n.x*st.N*k,n.y*st.N*k,K.N,'N',{w:3.5,lx:-10,ly:-6});
+  if($('#fr').checked&&st.mu>0&&th>.01)arrow(G.x,G.y,u.x*st.Fr*k,u.y*st.Fr*k,K.Fr,'Fr',{w:3,lx:8,ly:-8});
+  if($('#ang').checked&&th>.01){
+    cx.strokeStyle=K.ang;cx.lineWidth=2;cx.beginPath();cx.arc(G.x,G.y,42,Math.PI/2-th,Math.PI/2);cx.stroke();
+    const am=Math.PI/2-th/2;cx.fillStyle=K.ang;cx.font='bold 15px system-ui';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText('θ',G.x+Math.cos(am)*58,G.y+Math.sin(am)*58);
+  }
+  setTxt($('#vth'),f1(th*180/Math.PI,1)+'°');setTxt($('#vm'),f1(st.m,1)+' kg');setTxt($('#vmu'),f1(st.mu,2));
+  setTxt($('#oP'),f1(st.P)+' N');setTxt($('#oPx'),f1(st.Px)+' N');setTxt($('#oPy'),f1(st.Py)+' N');setTxt($('#oN'),f1(st.N)+' N');
+  setTxt($('#oFr'),st.mu>0?f1(st.Fr)+' N':'—');setTxt($('#oA'),f1(st.a,2)+' m/s²');
+  const key=th<.01?'pla':!st.slides?'eq':st.mu===0?'lliure':'llisca';
+  setTxt($('#msg'),t('msg_'+key));
+}
+function setGo(){setTxt($('#go'),t(running?'pause':'go'));}
+function toggleGo(){
+  if(running){running=false;setGo();return;}
+  if(s<=SMIN+.5){s=S0;v=0;}
+  running=true;setGo();
+}
+function loop(ts){
+  if(last===null)last=ts;
+  const dt=Math.min((ts-last)/1000,.05);last=ts;
+  if(running){const st=state();
+    if(st.slides){v+=st.a*dt;s-=v*dt*PXM;if(s<=SMIN){s=SMIN;v=0;running=false;setGo();}}
+    else v=0;}
+  draw();requestAnimationFrame(loop);
+}
+$('#go').addEventListener('click',toggleGo);
+$('#reset').addEventListener('click',()=>{running=false;s=S0;v=0;setGo();});
+['th','m','mu'].forEach(id=>$('#'+id).addEventListener('input',()=>{v=0;}));
+document.addEventListener('themechange',draw);
+App.hooks.push(setGo);
+
+/* ===== Raona-ho ===== */
+function load(th,m,mu,run){
+  $('#th').value=clamp(+th,0,80);$('#m').value=clamp(+m,1,10);$('#mu').value=clamp(+mu,0,1);
+  ['comp','n','fr','ang'].forEach(k=>{$('#'+k).checked=true;});
+  running=false;s=S0;v=0;setGo();if(run)toggleGo();
+  RZ.show($('#cv'));
+}
+const inTh=a=>a>=0&&a<=80, inMu=x=>x>=0&&x<=1;
+const ckTh=f=>([a])=>inTh(a)?f(a):{k:'rng'};
+const cos=a=>Math.cos(rad(a)), sin=a=>Math.sin(rad(a)), tan=a=>Math.tan(rad(a));
+const THF={l:'l_th',u:'°'}, MUF={l:'l_mu'};
+RZ.init({
+ sim:([a,b,c,d])=>load(a,b,c,d),
+ M:[
+  {id:'m1',f:[THF],sim:([a])=>load(a,5,0),ok:()=>({k:'m1_ok'}),
+   chk:ckTh(a=>Math.abs(a-60)<1e-6?null:{k:'m1_f',p:[fa(a),f1(5*g*cos(a),1),f1(100*cos(a),0)]})},
+  {id:'m2',f:[THF],sim:([a])=>load(a,5,0,true),ok:()=>({k:'m2_ok'}),
+   chk:ckTh(a=>Math.abs(g*sin(a)-4.9)<.05?null:{k:'m2_f',p:[fa(a),f1(g*sin(a),2)]})},
+  {id:'m3',f:[MUF],sim:([x])=>load(30,5,x),ok:()=>({k:'m3_ok'}),
+   chk:([x])=>!inMu(x)?{k:'rng'}:x<.575?{k:'m3_lli',p:[fm(x),f1(accAt(30,x),2)]}:x>.585?{k:'m3_mes',p:[fm(x)]}:null},
+  {id:'m4',f:[THF],sim:([a])=>load(a,5,1),ok:()=>({k:'m4_ok'}),
+   chk:ckTh(a=>a===45?null:a>45?{k:'m4_lli',p:[fa(a),f1(accAt(a,1),2)]}:{k:'m4_poc',p:[fa(a)]})}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load(30,10,0,true)},
+  {id:'s2',ans:'M',sim:()=>load(20,5,0)},
+  {id:'s3',ans:'D',f:[THF],cxsim:([a])=>load(a,5,0),
+   cxok:([a])=>({k:'s3_cx',p:[fa(a),f1(5*g*cos(a),1),f1(5*g,1)]}),
+   cx:ckTh(a=>a>0?null:{k:'s3_cx_no'})},
+  {id:'s4',ans:'D',f:[THF,MUF],cxsim:([a,x])=>load(a,5,x),
+   cxok:([a,x])=>({k:'s4_cx',p:[fa(a),fm(x),f1(5*g*sin(a),1),f1(x*5*g*cos(a),1)]}),
+   cx:([a,x])=>!inTh(a)||!inMu(x)?{k:'rng'}:(a<=0||x<=0)?{k:'s4_cx_zero'}:!(tan(a)<x-1e-9)?{k:'s4_cx_slide',p:[fa(a),fm(x)]}:null},
+  {id:'s5',ans:'S',sim:()=>load(25,5,.6)},
+  {id:'s6',ans:'S',sim:()=>load(40,5,.3,true)}
+ ],
+ E:[{id:'e1',who:1,args:[30,8,0,true]},{id:'e2',who:0,args:[40,5,0]},{id:'e3',who:3,args:[20,10,.6]}],
+ D:[
+  {id:'d1',chips:{vals:[10,15,20,25],fmt:x=>x+'°'},f:[{l:'d1.l0',u:'m/s²'}],sim:()=>load(20,8,.3,true),ok:()=>({k:'d1_ok'}),
+   chk:([p,a])=>p<20?{k:'d1_poc',p:[p,f1(tan(p),2)]}:p>20?{k:'d1_mes',p:[p]}:Math.abs(a-.59)>.03?{k:'d1_a'}:null},
+  {id:'d2',chips:{vals:[.4,.6,.8,1]},f:[{l:'d2.l0',u:'N'}],sim:()=>load(35,5,.8),ok:()=>({k:'d2_ok'}),
+   chk:([p,fr])=>p<.8?{k:'d2_lli',p:[fm(p)]}:p>.8?{k:'d2_mes',p:[fm(p)]}:Math.abs(fr-28.1)<=.3?null:Math.abs(fr-32.1)<=.3?{k:'d2_naive'}:{k:'d2_fr'}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+requestAnimationFrame(loop);
 })();
 </script>
-
-<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" style="color:inherit">CC BY-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
-</body></html>
+</body>
+</html>

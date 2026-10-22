@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pla inclinat: descomposició del pes</title>
+<meta name="description" content="Canvia l’angle del pla inclinat i mira com el pes es descompon en P∥ = mg·sin θ i P⊥ = mg·cos θ; la normal equilibra la component perpendicular. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d’altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@RAONA_CSS@*/
+.ctls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:6px 18px}
+.btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap}
+.vals{margin:0}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.msg{min-height:1.5em;font-size:14.5px;margin:0;font-weight:600}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="ctls">
+<div class="ctl"><label for="th" data-i18n="l_th"></label><output id="vth"></output><input type="range" id="th" min="0" max="80" step="0.5" value="30"></div>
+<div class="ctl"><label for="m" data-i18n="l_m"></label><output id="vm"></output><input type="range" id="m" min="1" max="10" step="0.5" value="5"></div>
+<div class="ctl"><label for="mu" data-i18n="l_mu"></label><output id="vmu"></output><input type="range" id="mu" min="0" max="1" step="0.01" value="0"></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="comp" checked><span data-i18n="c_comp"></span></label>
+<label class="check"><input type="checkbox" id="n" checked><span data-i18n="c_n"></span></label>
+<label class="check"><input type="checkbox" id="fr" checked><span data-i18n="c_fr"></span></label>
+<label class="check"><input type="checkbox" id="ang" checked><span data-i18n="c_ang"></span></label>
+</div>
+<div class="btns"><button class="btn primary" id="go" type="button" data-i18n="go"></button><button class="btn" id="reset" type="button" data-i18n="reset"></button></div>
+</div>
+</div>
+<div class="side">
+<dl class="vals">
+<dt><span class="dot" style="background:#c0392b"></span><span data-i18n="o_P"></span></dt><dd id="oP"></dd>
+<dt><span class="dot" style="background:#d68910"></span><span data-i18n="o_Px"></span></dt><dd id="oPx"></dd>
+<dt><span class="dot" style="background:#7d3c98"></span><span data-i18n="o_Py"></span></dt><dd id="oPy"></dd>
+<dt><span class="dot" style="background:#1e8449"></span><span data-i18n="o_N"></span></dt><dd id="oN"></dd>
+<dt><span class="dot" style="background:#888"></span><span data-i18n="o_Fr"></span></dt><dd id="oFr"></dd>
+<dt><span data-i18n="o_a"></span></dt><dd id="oA" class="hl"></dd>
+</dl>
+<p class="msg" id="msg" aria-live="polite"></p>
+<p class="note" data-i18n="note_scale"></p>
+<p class="note" data-i18n-html="note_class"></p>
+</div>
+</div>
+</section>
+
+<!--@RAONA@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Pla inclinat: descomposició del pes",
+"eyebrow":"4t ESO · Dinàmica",
+"h1":"Pla inclinat: descomposició del pes",
+"lede":"Canvia l’angle, la massa i el fregament, deixa anar el bloc i comprova què fa cada força.",
+"aria.cv":"Bloc sobre un pla inclinat amb el pes, les seues components i la normal",
+"l_th":"Angle θ","l_m":"Massa m","l_mu":"Coeficient de fregament μ",
+"c_comp":"Mostra les components del pes","c_n":"Mostra la normal","c_fr":"Mostra el fregament","c_ang":"Marca els angles",
+"go":"Deixar anar","pause":"Pausa","reset":"Reiniciar",
+"o_P":"Pes P = mg","o_Px":"P∥ = mg·sin θ","o_Py":"P⊥ = mg·cos θ","o_N":"Normal N","o_Fr":"Fregament Fr","o_a":"Acceleració a",
+"msg_pla":"Amb θ = 0 tot el pes el suporta la normal: N = P.",
+"msg_eq":"Equilibri: Fr = P∥ i N = P⊥. Com que tan θ ≤ μ, no llisca.",
+"msg_lliure":"Sense fregament: l’única força neta és P∥, així que a = g·sin θ (no depén de la massa!).",
+"msg_llisca":"Llisca: a = g(sin θ − μ cos θ), perquè Fr = μN.",
+"note_scale":"g = 9,8 m/s². Els vectors es dibuixen amb longitud proporcional al seu mòdul (escala adaptada a la massa).",
+"note_class":"<b>Per a la classe:</b> abans de moure el control, demana que preveuen si N serà major o menor que P quan augmente l’angle.",
+"rng":"Escriu valors dins del rang del simulador: angle de 0 a 80° i μ de 0 a 1.",
+"m1.q":"Amb el bloc de 5 kg, troba l’angle perquè la normal N valga <b>la meitat del pes</b> (N = P/2).",
+"m1_f":"Amb θ = {0}° la normal val {1} N, que és el {2} % del pes (m = 5 kg).",
+"m1_ok":"✔ Missió complida! A 60°, cos θ = 0,5, així que N = P·cos θ = P/2.",
+"m1.more":"Si l’angle arribara a 90° (paret vertical), quant valdria N? Explica per què té sentit.",
+"m2.q":"Sense fregament i amb m = 5 kg, aconsegueix una acceleració de <b>4,9 m/s²</b> (la meitat de g). Quin angle cal?",
+"m2_f":"Amb θ = {0}° i μ = 0, l’acceleració és {1} m/s².",
+"m2_ok":"✔ Missió complida! A 30°, sin θ = 0,5 i a = g·sin θ = 4,9 m/s².",
+"m2.more":"Repeteix-ho amb m = 10 kg i el mateix angle. Canvia l’acceleració? Comprova-ho i explica per què.",
+"m3.q":"A 30° i amb m = 5 kg, quin és el <b>menor μ</b> (dos decimals) perquè el bloc <b>no llisque</b>?",
+"m3_lli":"Amb μ = {0} el bloc encara llisca: a = {1} m/s².",
+"m3_mes":"Amb μ = {0} no llisca, però no és el valor més xicotet que ho aconsegueix. Prova amb un μ menor.",
+"m3_ok":"✔ Missió complida! El límit és μ = tan 30° ≈ 0,58.",
+"m3.more":"Compara el límit amb tan 30°. Creus que a 45° el μ mínim serà major o menor? Prediu-ho i comprova-ho.",
+"m4.q":"Posa μ = 1,00 (el màxim del simulador). Fins a quin angle <b>màxim</b>, en graus enters, es manté quiet el bloc?",
+"m4_lli":"A {0}° el bloc llisca (a = {1} m/s²).",
+"m4_poc":"A {0}° el bloc encara es manté quiet: es pot inclinar més.",
+"m4_ok":"✔ Missió complida! A 45°, tan θ = 1 = μ: justament al límit.",
+"m4.more":"I si μ = 0,5, l’angle màxim serà menor o major que 45°? Troba la relació entre μ i l’angle límit.",
+"s1.q":"Sense fregament, un bloc de 10 kg baixa pel pla inclinat amb més acceleració que un de 1 kg.",
+"s1.h":"Canvia la massa al simulador i mira què passa amb a.",
+"s1.e":"Mai. Sense fregament a = g·sin θ: el bloc pesat té més força cap avall, però també més massa per accelerar, i la massa es cancel·la.",
+"s2.q":"Quan augmentem l’angle del pla inclinat, la normal N augmenta.",
+"s2.h":"Mira la fila de N mentre mous l’angle.",
+"s2.e":"Mai. N = mg·cos θ i el cosinus disminueix quan θ creix. Qui augmenta és P∥ = mg·sin θ.",
+"s3.q":"La normal que fa el pla sobre el bloc és igual al pes del bloc (N = P).",
+"s3.h":"Fixa’t en N i en P a angles diferents.",
+"s3.e":"A vegades. Només quan el pla és horitzontal (θ = 0). En un pla inclinat, N = P·cos θ és menor que P.",
+"s3_cx_no":"Amb θ = 0 sí que N = P. Busca un angle diferent de zero (fins a 80°).",
+"s3_cx":"✔ Amb θ = {0}° N = {1} N i P = {2} N (m = 5 kg): N no és igual a P.",
+"s4.q":"Un bloc quiet sobre el pla inclinat amb fregament té una força de fregament Fr = μ·N.",
+"s4.h":"Posa un μ gran i un angle xicotet: compara Fr amb μ·N.",
+"s4.e":"A vegades. Fr = μ·N només quan el bloc llisca o està a punt de fer-ho. En repòs, Fr = P∥ i pot ser menor que μ·N.",
+"s4_cx_slide":"Amb θ = {0}° i μ = {1} el bloc llisca, i llavors sí que Fr = μ·N. Busca un cas en què es quede quiet.",
+"s4_cx_zero":"Amb θ = 0 o μ = 0 no hi ha fregament que comparar. Prova amb tots dos més grans que zero.",
+"s4_cx":"✔ Amb θ = {0}° i μ = {1} el bloc no es mou: Fr = {2} N, però μ·N = {3} N (m = 5 kg).",
+"s5.q":"Si el bloc no llisca, la força de fregament és exactament igual a P∥.",
+"s5.h":"Pensa en les forces al llarg del pla quan el bloc està quiet: què diu la 1a llei de Newton?",
+"s5.e":"Sempre. En equilibri, la suma de forces al llarg del pla és zero, així que Fr = P∥.",
+"s6.q":"Amb fregament, un bloc que llisca baixa amb menys acceleració que un sense fregament al mateix angle.",
+"s6.h":"Compara a amb μ = 0 i amb μ > 0 al mateix angle.",
+"s6.e":"Sempre. a = g(sin θ − μ cos θ) és menor que g·sin θ quan μ > 0.",
+"e1.ctx":"Un bloc de 8 kg i un altre de 2 kg es deixen anar alhora, sense fregament, pel mateix pla inclinat de 30°.",
+"e1.n0":"Aina","e1.n1":"Pau",
+"e1.s0":"El de 8 kg arribarà abans a baix: pesa més i, per tant, el tira cap avall amb més força.",
+"e1.s1":"Arribaran junts: l’acceleració és la mateixa per als dos.",
+"e1.w0":"La força que tira cap avall (P∥ = m·g·sin θ) és major per al bloc pesat, però també té més massa per accelerar. La massa es cancel·la: a = g·sin 30° = 4,9 m/s² per als dos.",
+"e1.w1":"Perquè la normal és la mateixa per als dos blocs, i la normal és la que els fa baixar.",
+"e1.w2":"Perquè sense fregament tots els objectes cauen amb la mateixa acceleració, g, i el pla no hi influeix.",
+"e1.frame":"Aina, la massa no importa perquè…",
+"e1.model":"Aina, el bloc de 8 kg té un pes quatre vegades major, i per això la força que el tira pel pla també és quatre vegades major (P∥ = m·g·sin 30°). Però també té quatre vegades més massa per moure, així que a = P∥/m = g·sin 30° = 4,9 m/s² per als dos. Arriben junts.",
+"e2.ctx":"Un bloc de 5 kg reposa sobre un pla inclinat de 40°, sense fregament. Es discuteix quant val la normal.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"La normal és la component perpendicular del pes: N = m·g·cos θ, i a 40° és menor que el pes.",
+"e2.s1":"La normal sempre és igual al pes: N = m·g, perquè el pla aguanta el bloc.",
+"e2.w0":"El bloc no es mou perpendicularment al pla, així que N només ha de compensar la component P⊥ = m·g·cos θ. La resta del pes (P∥) és la que fa baixar el bloc.",
+"e2.w1":"Perquè la normal depén de la massa del bloc però no de l’angle del pla.",
+"e2.w2":"Perquè la normal ha de compensar el fregament, no el pes.",
+"e2.frame":"Marc, la normal no és igual al pes perquè…",
+"e2.model":"Marc, a 40° el pes del bloc (49 N) es descompon en P∥ = 49·sin 40° ≈ 31,5 N, que fa baixar el bloc, i P⊥ = 49·cos 40° ≈ 37,5 N, que és el que el pla ha d’aguantar: N = 37,5 N, menor que 49 N. La normal només és igual al pes quan el pla és horitzontal.",
+"e3.ctx":"Una caixa de 10 kg reposa, sense lliscar, sobre una rampa de 20° amb μ = 0,6. Es discuteix quant val la força de fregament.",
+"e3.n0":"Laia","e3.n1":"Joan",
+"e3.s0":"Fr = μ·N = 0,6 · 98 N = 58,8 N: el fregament sempre és μ per la normal.",
+"e3.s1":"Fr = 0: la caixa està quieta i, si no es mou, no hi ha fregament.",
+"e3.w0":"La caixa està en equilibri, així que el fregament compensa exactament P∥: Fr = m·g·sin 20° ≈ 33,5 N. És menor que el màxim possible, μ·N ≈ 55,3 N.",
+"e3.w1":"Perquè el fregament només apareix quan el bloc ja s’ha començat a moure.",
+"e3.w2":"Perquè la normal no intervé en el fregament.",
+"e3.frame":"Laia i Joan, en aquesta rampa el fregament val… perquè…",
+"e3.model":"Cap dels dos. El fregament sí que actua (Joan s’equivoca), però no val μ·N (Laia s’equivoca, i a més ha usat N = P). Com que la caixa no llisca, la suma de forces al llarg de la rampa és zero: Fr = P∥ = 98·sin 20° ≈ 33,5 N, menor que el màxim μ·N = 0,6·98·cos 20° ≈ 55,3 N.",
+"d1.q":"Una caixa de 8 kg ha de baixar per una rampa de fusta pel seu propi pes. El fregament és μ = 0,3. Tria l’<b>angle més xicotet</b> que ho aconsegueix i calcula amb quina acceleració baixarà.",
+"d1.lc":"Angle de la rampa:","d1.l0":"a",
+"d1_poc":"Amb {0}° tan θ = {1}, menor que μ = 0,3: el bloc no llisca.",
+"d1_mes":"Amb {0}° sí que llisca, però n’hi ha un de més xicotet que també ho aconsegueix.",
+"d1_a":"Mira-ho al simulador: a = g(sin θ − μ cos θ) amb θ = 20° i μ = 0,3.",
+"d1_ok":"✔ Ben decidit! Amb 20° i μ = 0,3: a ≈ 0,59 m/s². Es mou, però molt a poc a poc.",
+"d1.more":"Canviaria l’angle mínim si la caixa fóra de 2 kg? I l’acceleració? Comprova-ho.",
+"d2.q":"Una caixa de 5 kg ha de quedar <b>quieta</b> en una rampa de 35°. Tria el <b>menor μ</b> que ho aconsegueix i digues quant val llavors la força de fregament.",
+"d2.lc":"Coeficient μ:","d2.l0":"Fr",
+"d2_lli":"Amb μ = {0} el bloc llisca (tan 35° ≈ 0,70).",
+"d2_mes":"Amb μ = {0} es queda quiet, però n’hi ha un de menor que també serveix.",
+"d2_naive":"Això és μ·N, el fregament màxim possible, però el bloc no hi arriba. En repòs, quina força cal que compense P∥?",
+"d2_fr":"Torna-ho a mirar: en repòs, el fregament compensa exactament una altra força del pes.",
+"d2_ok":"✔ Ben decidit! Fr = P∥ = 49·sin 35° ≈ 28,1 N, menor que el màxim μ·N ≈ 32,1 N.",
+"d2.more":"Si poses μ = 1,00, canvia la força de fregament? Comprova-ho i explica per què."
+},
+es:{
+"title":"Plano inclinado: descomposición del peso",
+"eyebrow":"4.º ESO · Dinámica",
+"h1":"Plano inclinado: descomposición del peso",
+"lede":"Cambia el ángulo, la masa y el rozamiento, suelta el bloque y comprueba qué hace cada fuerza.",
+"aria.cv":"Bloque sobre un plano inclinado con el peso, sus componentes y la normal",
+"l_th":"Ángulo θ","l_m":"Masa m","l_mu":"Coeficiente de rozamiento μ",
+"c_comp":"Muestra las componentes del peso","c_n":"Muestra la normal","c_fr":"Muestra el rozamiento","c_ang":"Marca los ángulos",
+"go":"Soltar","pause":"Pausa","reset":"Reiniciar",
+"o_P":"Peso P = mg","o_Px":"P∥ = mg·sen θ","o_Py":"P⊥ = mg·cos θ","o_N":"Normal N","o_Fr":"Rozamiento Fr","o_a":"Aceleración a",
+"msg_pla":"Con θ = 0 todo el peso lo soporta la normal: N = P.",
+"msg_eq":"Equilibrio: Fr = P∥ y N = P⊥. Como tan θ ≤ μ, no desliza.",
+"msg_lliure":"Sin rozamiento: la única fuerza neta es P∥, así que a = g·sen θ (¡no depende de la masa!).",
+"msg_llisca":"Desliza: a = g(sen θ − μ cos θ), porque Fr = μN.",
+"note_scale":"g = 9,8 m/s². Los vectores se dibujan con longitud proporcional a su módulo (escala adaptada a la masa).",
+"note_class":"<b>Para la clase:</b> antes de mover el control, pide que prevean si N será mayor o menor que P cuando aumente el ángulo.",
+"rng":"Escribe valores dentro del rango del simulador: ángulo de 0 a 80° y μ de 0 a 1.",
+"m1.q":"Con el bloque de 5 kg, encuentra el ángulo para que la normal N valga <b>la mitad del peso</b> (N = P/2).",
+"m1_f":"Con θ = {0}° la normal vale {1} N, que es el {2} % del peso (m = 5 kg).",
+"m1_ok":"✔ ¡Misión cumplida! A 60°, cos θ = 0,5, así que N = P·cos θ = P/2.",
+"m1.more":"Si el ángulo llegara a 90° (pared vertical), ¿cuánto valdría N? Explica por qué tiene sentido.",
+"m2.q":"Sin rozamiento y con m = 5 kg, consigue una aceleración de <b>4,9 m/s²</b> (la mitad de g). ¿Qué ángulo hace falta?",
+"m2_f":"Con θ = {0}° y μ = 0, la aceleración es {1} m/s².",
+"m2_ok":"✔ ¡Misión cumplida! A 30°, sen θ = 0,5 y a = g·sen θ = 4,9 m/s².",
+"m2.more":"Repítelo con m = 10 kg y el mismo ángulo. ¿Cambia la aceleración? Compruébalo y explica por qué.",
+"m3.q":"A 30° y con m = 5 kg, ¿cuál es el <b>menor μ</b> (dos decimales) para que el bloque <b>no deslice</b>?",
+"m3_lli":"Con μ = {0} el bloque todavía desliza: a = {1} m/s².",
+"m3_mes":"Con μ = {0} no desliza, pero no es el valor más pequeño que lo consigue. Prueba con un μ menor.",
+"m3_ok":"✔ ¡Misión cumplida! El límite es μ = tan 30° ≈ 0,58.",
+"m3.more":"Compara el límite con tan 30°. ¿Crees que a 45° el μ mínimo será mayor o menor? Predícelo y compruébalo.",
+"m4.q":"Pon μ = 1,00 (el máximo del simulador). ¿Hasta qué ángulo <b>máximo</b>, en grados enteros, se mantiene quieto el bloque?",
+"m4_lli":"A {0}° el bloque desliza (a = {1} m/s²).",
+"m4_poc":"A {0}° el bloque todavía se mantiene quieto: se puede inclinar más.",
+"m4_ok":"✔ ¡Misión cumplida! A 45°, tan θ = 1 = μ: justo en el límite.",
+"m4.more":"¿Y si μ = 0,5, el ángulo máximo será menor o mayor que 45°? Encuentra la relación entre μ y el ángulo límite.",
+"s1.q":"Sin rozamiento, un bloque de 10 kg baja por el plano inclinado con más aceleración que uno de 1 kg.",
+"s1.h":"Cambia la masa en el simulador y mira qué pasa con a.",
+"s1.e":"Nunca. Sin rozamiento a = g·sen θ: el bloque pesado tiene más fuerza hacia abajo, pero también más masa que acelerar, y la masa se cancela.",
+"s2.q":"Cuando aumentamos el ángulo del plano inclinado, la normal N aumenta.",
+"s2.h":"Mira la fila de N mientras mueves el ángulo.",
+"s2.e":"Nunca. N = mg·cos θ y el coseno disminuye cuando θ crece. Quien aumenta es P∥ = mg·sen θ.",
+"s3.q":"La normal que hace el plano sobre el bloque es igual al peso del bloque (N = P).",
+"s3.h":"Fíjate en N y en P a ángulos diferentes.",
+"s3.e":"A veces. Solo cuando el plano es horizontal (θ = 0). En un plano inclinado, N = P·cos θ es menor que P.",
+"s3_cx_no":"Con θ = 0 sí que N = P. Busca un ángulo distinto de cero (hasta 80°).",
+"s3_cx":"✔ Con θ = {0}° N = {1} N y P = {2} N (m = 5 kg): N no es igual a P.",
+"s4.q":"Un bloque quieto sobre el plano inclinado con rozamiento tiene una fuerza de rozamiento Fr = μ·N.",
+"s4.h":"Pon un μ grande y un ángulo pequeño: compara Fr con μ·N.",
+"s4.e":"A veces. Fr = μ·N solo cuando el bloque desliza o está a punto de hacerlo. En reposo, Fr = P∥ y puede ser menor que μ·N.",
+"s4_cx_slide":"Con θ = {0}° y μ = {1} el bloque desliza, y entonces sí que Fr = μ·N. Busca un caso en que se quede quieto.",
+"s4_cx_zero":"Con θ = 0 o μ = 0 no hay rozamiento que comparar. Prueba con los dos mayores que cero.",
+"s4_cx":"✔ Con θ = {0}° y μ = {1} el bloque no se mueve: Fr = {2} N, pero μ·N = {3} N (m = 5 kg).",
+"s5.q":"Si el bloque no desliza, la fuerza de rozamiento es exactamente igual a P∥.",
+"s5.h":"Piensa en las fuerzas a lo largo del plano cuando el bloque está quieto: ¿qué dice la 1.ª ley de Newton?",
+"s5.e":"Siempre. En equilibrio, la suma de fuerzas a lo largo del plano es cero, así que Fr = P∥.",
+"s6.q":"Con rozamiento, un bloque que desliza baja con menos aceleración que uno sin rozamiento al mismo ángulo.",
+"s6.h":"Compara a con μ = 0 y con μ > 0 al mismo ángulo.",
+"s6.e":"Siempre. a = g(sen θ − μ cos θ) es menor que g·sen θ cuando μ > 0.",
+"e1.ctx":"Un bloque de 8 kg y otro de 2 kg se sueltan a la vez, sin rozamiento, por el mismo plano inclinado de 30°.",
+"e1.n0":"Aina","e1.n1":"Pau",
+"e1.s0":"El de 8 kg llegará antes abajo: pesa más y, por tanto, tira de él hacia abajo con más fuerza.",
+"e1.s1":"Llegarán juntos: la aceleración es la misma para los dos.",
+"e1.w0":"La fuerza que tira hacia abajo (P∥ = m·g·sen θ) es mayor para el bloque pesado, pero también tiene más masa que acelerar. La masa se cancela: a = g·sen 30° = 4,9 m/s² para los dos.",
+"e1.w1":"Porque la normal es la misma para los dos bloques, y la normal es la que los hace bajar.",
+"e1.w2":"Porque sin rozamiento todos los objetos caen con la misma aceleración, g, y el plano no influye.",
+"e1.frame":"Aina, la masa no importa porque…",
+"e1.model":"Aina, el bloque de 8 kg tiene un peso cuatro veces mayor, y por eso la fuerza que tira de él por el plano también es cuatro veces mayor (P∥ = m·g·sen 30°). Pero también tiene cuatro veces más masa que mover, así que a = P∥/m = g·sen 30° = 4,9 m/s² para los dos. Llegan juntos.",
+"e2.ctx":"Un bloque de 5 kg reposa sobre un plano inclinado de 40°, sin rozamiento. Se discute cuánto vale la normal.",
+"e2.n0":"Clara","e2.n1":"Marc",
+"e2.s0":"La normal es la componente perpendicular del peso: N = m·g·cos θ, y a 40° es menor que el peso.",
+"e2.s1":"La normal siempre es igual al peso: N = m·g, porque el plano sostiene el bloque.",
+"e2.w0":"El bloque no se mueve perpendicularmente al plano, así que N solo tiene que compensar la componente P⊥ = m·g·cos θ. El resto del peso (P∥) es lo que hace bajar el bloque.",
+"e2.w1":"Porque la normal depende de la masa del bloque pero no del ángulo del plano.",
+"e2.w2":"Porque la normal tiene que compensar el rozamiento, no el peso.",
+"e2.frame":"Marc, la normal no es igual al peso porque…",
+"e2.model":"Marc, a 40° el peso del bloque (49 N) se descompone en P∥ = 49·sen 40° ≈ 31,5 N, que hace bajar el bloque, y P⊥ = 49·cos 40° ≈ 37,5 N, que es lo que el plano tiene que sostener: N = 37,5 N, menor que 49 N. La normal solo es igual al peso cuando el plano es horizontal.",
+"e3.ctx":"Una caja de 10 kg reposa, sin deslizar, sobre una rampa de 20° con μ = 0,6. Se discute cuánto vale la fuerza de rozamiento.",
+"e3.n0":"Laia","e3.n1":"Joan",
+"e3.s0":"Fr = μ·N = 0,6 · 98 N = 58,8 N: el rozamiento siempre es μ por la normal.",
+"e3.s1":"Fr = 0: la caja está quieta y, si no se mueve, no hay rozamiento.",
+"e3.w0":"La caja está en equilibrio, así que el rozamiento compensa exactamente P∥: Fr = m·g·sen 20° ≈ 33,5 N. Es menor que el máximo posible, μ·N ≈ 55,3 N.",
+"e3.w1":"Porque el rozamiento solo aparece cuando el bloque ya ha empezado a moverse.",
+"e3.w2":"Porque la normal no interviene en el rozamiento.",
+"e3.frame":"Laia y Joan, en esta rampa el rozamiento vale… porque…",
+"e3.model":"Ninguno de los dos. El rozamiento sí que actúa (Joan se equivoca), pero no vale μ·N (Laia se equivoca, y además ha usado N = P). Como la caja no desliza, la suma de fuerzas a lo largo de la rampa es cero: Fr = P∥ = 98·sen 20° ≈ 33,5 N, menor que el máximo μ·N = 0,6·98·cos 20° ≈ 55,3 N.",
+"d1.q":"Una caja de 8 kg tiene que bajar por una rampa de madera por su propio peso. El rozamiento es μ = 0,3. Elige el <b>ángulo más pequeño</b> que lo consigue y calcula con qué aceleración bajará.",
+"d1.lc":"Ángulo de la rampa:","d1.l0":"a",
+"d1_poc":"Con {0}° tan θ = {1}, menor que μ = 0,3: el bloque no desliza.",
+"d1_mes":"Con {0}° sí que desliza, pero hay uno más pequeño que también lo consigue.",
+"d1_a":"Míralo en el simulador: a = g(sen θ − μ cos θ) con θ = 20° y μ = 0,3.",
+"d1_ok":"✔ ¡Bien decidido! Con 20° y μ = 0,3: a ≈ 0,59 m/s². Se mueve, pero muy despacio.",
+"d1.more":"¿Cambiaría el ángulo mínimo si la caja fuera de 2 kg? ¿Y la aceleración? Compruébalo.",
+"d2.q":"Una caja de 5 kg tiene que quedarse <b>quieta</b> en una rampa de 35°. Elige el <b>menor μ</b> que lo consigue y di cuánto vale entonces la fuerza de rozamiento.",
+"d2.lc":"Coeficiente μ:","d2.l0":"Fr",
+"d2_lli":"Con μ = {0} el bloque desliza (tan 35° ≈ 0,70).",
+"d2_mes":"Con μ = {0} se queda quieto, pero hay uno menor que también sirve.",
+"d2_naive":"Eso es μ·N, el rozamiento máximo posible, pero el bloque no llega a él. En reposo, ¿qué fuerza tiene que compensar P∥?",
+"d2_fr":"Vuelve a mirarlo: en reposo, el rozamiento compensa exactamente otra fuerza del peso.",
+"d2_ok":"✔ ¡Bien decidido! Fr = P∥ = 49·sen 35° ≈ 28,1 N, menor que el máximo μ·N ≈ 32,1 N.",
+"d2.more":"Si pones μ = 1,00, ¿cambia la fuerza de rozamiento? Compruébalo y explica por qué."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){
+/* ===== Pla inclinat ===== */
+const g=9.8,RL=480,A={x:110,y:500},BW=64,BH=42,PXM=100,W=900,H=540;
+const S0=400,SMIN=BW/2+4;
+const cx=fitCanvas($('#cv'),W,H);
+let s=S0,v=0,running=false,last=null;
+const f1=(x,d=1)=>fmt(x,d);
+const fa=x=>f1(x,1).replace(/,0$/,'');   /* angle o μ sense decimals de més */
+const fm=x=>f1(x,2).replace(/,?0+$/,'');
+const rad=d=>d*Math.PI/180;
+const slidesAt=(th,mu)=>th>0&&Math.tan(rad(th))>mu+1e-9;
+const accAt=(th,mu)=>slidesAt(th,mu)?g*(Math.sin(rad(th))-mu*Math.cos(rad(th))):0;
+function pal(){return C().dark?
+  {wedge:'#222a3b',edge:'#6b7590',block:'#4a7fb5',bedge:'#9db8d8',P:'#ff6b5b',Px:'#f0b24a',Py:'#b58cff',N:'#4cd08a',Fr:'#aab2c5',ang:'#76a2ff',dash:'#7d869b'}:
+  {wedge:'#e6e2d6',edge:'#8a8570',block:'#4a7fb5',bedge:'#1f3f66',P:'#c0392b',Px:'#d68910',Py:'#7d3c98',N:'#1e8449',Fr:'#555555',ang:'#2b6cb0',dash:'#999999'};}
+function state(){
+  const th=parseFloat($('#th').value)*Math.PI/180,m=parseFloat($('#m').value),mu=parseFloat($('#mu').value);
+  const P=m*g,Px=P*Math.sin(th),Py=P*Math.cos(th),N=Py;
+  const slides=Math.tan(th)>mu+1e-9&&th>0;
+  const Fr=slides?mu*N:Px,a=slides?g*(Math.sin(th)-mu*Math.cos(th)):0;
+  return {th,m,mu,P,Px,Py,N,Fr,a,slides};
+}
+function arrow(x0,y0,dx,dy,color,label,o){
+  o=o||{};const len=Math.hypot(dx,dy);if(len<3)return;
+  const x1=x0+dx,y1=y0+dy,ang=Math.atan2(dy,dx),h=11;
+  cx.save();cx.strokeStyle=color;cx.fillStyle=color;cx.lineWidth=o.w||3;
+  cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(x1-Math.cos(ang)*h*.6,y1-Math.sin(ang)*h*.6);cx.stroke();
+  cx.beginPath();cx.moveTo(x1,y1);cx.lineTo(x1-h*Math.cos(ang-.4),y1-h*Math.sin(ang-.4));cx.lineTo(x1-h*Math.cos(ang+.4),y1-h*Math.sin(ang+.4));cx.closePath();cx.fill();
+  if(label){cx.font='bold 16px system-ui';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(label,x1+Math.cos(ang)*16+(o.lx||0),y1+Math.sin(ang)*16+(o.ly||0));}
+  cx.restore();
+}
+const setTxt=(el,x)=>{if(el.textContent!==x)el.textContent=x;};
+function draw(){
+  const st=state(),th=st.th,cs=Math.cos(th),sn=Math.sin(th),K=pal();
+  cx.clearRect(0,0,W,H);
+  const B={x:A.x+RL*cs,y:A.y},Cc={x:A.x+RL*cs,y:A.y-RL*sn};
+  cx.fillStyle=K.wedge;cx.strokeStyle=K.edge;cx.lineWidth=2;
+  cx.beginPath();cx.moveTo(A.x,A.y);cx.lineTo(B.x,B.y);cx.lineTo(Cc.x,Cc.y);cx.closePath();cx.fill();cx.stroke();
+  cx.beginPath();cx.moveTo(A.x-40,A.y);cx.lineTo(B.x+40,B.y);cx.stroke();
+  if($('#ang').checked&&th>.01){
+    cx.strokeStyle=K.ang;cx.lineWidth=2;cx.beginPath();cx.arc(A.x,A.y,70,-th,0);cx.stroke();
+    cx.fillStyle=K.ang;cx.font='bold 17px system-ui';cx.textAlign='left';cx.textBaseline='middle';
+    cx.fillText('θ',A.x+80,A.y-Math.max(10,Math.min(th*30,25))+(th<.3?-6:0));
+  }
+  const cx0=A.x+s*cs,cy0=A.y-s*sn;
+  cx.save();cx.translate(cx0,cy0);cx.rotate(-th);
+  cx.fillStyle=K.block;cx.strokeStyle=K.bedge;cx.lineWidth=2;cx.fillRect(-BW/2,-BH,BW,BH);cx.strokeRect(-BW/2,-BH,BW,BH);
+  cx.fillStyle='#fff';cx.font='bold 15px system-ui';cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillText(f1(st.m,1).replace(',0','')+' kg',0,-BH/2);cx.restore();
+  const n={x:-sn,y:-cs},u={x:cs,y:-sn},G={x:cx0+n.x*BH/2,y:cy0+n.y*BH/2},k=150/st.P;
+  arrow(G.x,G.y,0,st.P*k,K.P,'P',{w:4,ly:6});
+  if($('#comp').checked&&th>.01){
+    const pxv={x:-u.x*st.Px*k,y:-u.y*st.Px*k},pyv={x:-n.x*st.Py*k,y:-n.y*st.Py*k};
+    cx.save();cx.strokeStyle=K.dash;cx.setLineDash([5,5]);cx.lineWidth=1.5;
+    cx.beginPath();cx.moveTo(G.x+pxv.x,G.y+pxv.y);cx.lineTo(G.x,G.y+st.P*k);cx.moveTo(G.x+pyv.x,G.y+pyv.y);cx.lineTo(G.x,G.y+st.P*k);cx.stroke();cx.restore();
+    arrow(G.x,G.y,pxv.x,pxv.y,K.Px,'P∥',{w:3.5,lx:-8,ly:8});
+    arrow(G.x,G.y,pyv.x,pyv.y,K.Py,'P⊥',{w:3.5,lx:-10,ly:10});
+  }
+  if($('#n').checked)arrow(G.x,G.y,n.x*st.N*k,n.y*st.N*k,K.N,'N',{w:3.5,lx:-10,ly:-6});
+  if($('#fr').checked&&st.mu>0&&th>.01)arrow(G.x,G.y,u.x*st.Fr*k,u.y*st.Fr*k,K.Fr,'Fr',{w:3,lx:8,ly:-8});
+  if($('#ang').checked&&th>.01){
+    cx.strokeStyle=K.ang;cx.lineWidth=2;cx.beginPath();cx.arc(G.x,G.y,42,Math.PI/2-th,Math.PI/2);cx.stroke();
+    const am=Math.PI/2-th/2;cx.fillStyle=K.ang;cx.font='bold 15px system-ui';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText('θ',G.x+Math.cos(am)*58,G.y+Math.sin(am)*58);
+  }
+  setTxt($('#vth'),f1(th*180/Math.PI,1)+'°');setTxt($('#vm'),f1(st.m,1)+' kg');setTxt($('#vmu'),f1(st.mu,2));
+  setTxt($('#oP'),f1(st.P)+' N');setTxt($('#oPx'),f1(st.Px)+' N');setTxt($('#oPy'),f1(st.Py)+' N');setTxt($('#oN'),f1(st.N)+' N');
+  setTxt($('#oFr'),st.mu>0?f1(st.Fr)+' N':'—');setTxt($('#oA'),f1(st.a,2)+' m/s²');
+  const key=th<.01?'pla':!st.slides?'eq':st.mu===0?'lliure':'llisca';
+  setTxt($('#msg'),t('msg_'+key));
+}
+function setGo(){setTxt($('#go'),t(running?'pause':'go'));}
+function toggleGo(){
+  if(running){running=false;setGo();return;}
+  if(s<=SMIN+.5){s=S0;v=0;}
+  running=true;setGo();
+}
+function loop(ts){
+  if(last===null)last=ts;
+  const dt=Math.min((ts-last)/1000,.05);last=ts;
+  if(running){const st=state();
+    if(st.slides){v+=st.a*dt;s-=v*dt*PXM;if(s<=SMIN){s=SMIN;v=0;running=false;setGo();}}
+    else v=0;}
+  draw();requestAnimationFrame(loop);
+}
+$('#go').addEventListener('click',toggleGo);
+$('#reset').addEventListener('click',()=>{running=false;s=S0;v=0;setGo();});
+['th','m','mu'].forEach(id=>$('#'+id).addEventListener('input',()=>{v=0;}));
+document.addEventListener('themechange',draw);
+App.hooks.push(setGo);
+
+/* ===== Raona-ho ===== */
+function load(th,m,mu,run){
+  $('#th').value=clamp(+th,0,80);$('#m').value=clamp(+m,1,10);$('#mu').value=clamp(+mu,0,1);
+  ['comp','n','fr','ang'].forEach(k=>{$('#'+k).checked=true;});
+  running=false;s=S0;v=0;setGo();if(run)toggleGo();
+  RZ.show($('#cv'));
+}
+const inTh=a=>a>=0&&a<=80, inMu=x=>x>=0&&x<=1;
+const ckTh=f=>([a])=>inTh(a)?f(a):{k:'rng'};
+const cos=a=>Math.cos(rad(a)), sin=a=>Math.sin(rad(a)), tan=a=>Math.tan(rad(a));
+const THF={l:'l_th',u:'°'}, MUF={l:'l_mu'};
+RZ.init({
+ sim:([a,b,c,d])=>load(a,b,c,d),
+ M:[
+  {id:'m1',f:[THF],sim:([a])=>load(a,5,0),ok:()=>({k:'m1_ok'}),
+   chk:ckTh(a=>Math.abs(a-60)<1e-6?null:{k:'m1_f',p:[fa(a),f1(5*g*cos(a),1),f1(100*cos(a),0)]})},
+  {id:'m2',f:[THF],sim:([a])=>load(a,5,0,true),ok:()=>({k:'m2_ok'}),
+   chk:ckTh(a=>Math.abs(g*sin(a)-4.9)<.05?null:{k:'m2_f',p:[fa(a),f1(g*sin(a),2)]})},
+  {id:'m3',f:[MUF],sim:([x])=>load(30,5,x),ok:()=>({k:'m3_ok'}),
+   chk:([x])=>!inMu(x)?{k:'rng'}:x<.575?{k:'m3_lli',p:[fm(x),f1(accAt(30,x),2)]}:x>.585?{k:'m3_mes',p:[fm(x)]}:null},
+  {id:'m4',f:[THF],sim:([a])=>load(a,5,1),ok:()=>({k:'m4_ok'}),
+   chk:ckTh(a=>a===45?null:a>45?{k:'m4_lli',p:[fa(a),f1(accAt(a,1),2)]}:{k:'m4_poc',p:[fa(a)]})}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load(30,10,0,true)},
+  {id:'s2',ans:'M',sim:()=>load(20,5,0)},
+  {id:'s3',ans:'D',f:[THF],cxsim:([a])=>load(a,5,0),
+   cxok:([a])=>({k:'s3_cx',p:[fa(a),f1(5*g*cos(a),1),f1(5*g,1)]}),
+   cx:ckTh(a=>a>0?null:{k:'s3_cx_no'})},
+  {id:'s4',ans:'D',f:[THF,MUF],cxsim:([a,x])=>load(a,5,x),
+   cxok:([a,x])=>({k:'s4_cx',p:[fa(a),fm(x),f1(5*g*sin(a),1),f1(x*5*g*cos(a),1)]}),
+   cx:([a,x])=>!inTh(a)||!inMu(x)?{k:'rng'}:(a<=0||x<=0)?{k:'s4_cx_zero'}:!(tan(a)<x-1e-9)?{k:'s4_cx_slide',p:[fa(a),fm(x)]}:null},
+  {id:'s5',ans:'S',sim:()=>load(25,5,.6)},
+  {id:'s6',ans:'S',sim:()=>load(40,5,.3,true)}
+ ],
+ E:[{id:'e1',who:1,args:[30,8,0,true]},{id:'e2',who:0,args:[40,5,0]},{id:'e3',who:3,args:[20,10,.6]}],
+ D:[
+  {id:'d1',chips:{vals:[10,15,20,25],fmt:x=>x+'°'},f:[{l:'d1.l0',u:'m/s²'}],sim:()=>load(20,8,.3,true),ok:()=>({k:'d1_ok'}),
+   chk:([p,a])=>p<20?{k:'d1_poc',p:[p,f1(tan(p),2)]}:p>20?{k:'d1_mes',p:[p]}:Math.abs(a-.59)>.03?{k:'d1_a'}:null},
+  {id:'d2',chips:{vals:[.4,.6,.8,1]},f:[{l:'d2.l0',u:'N'}],sim:()=>load(35,5,.8),ok:()=>({k:'d2_ok'}),
+   chk:([p,fr])=>p<.8?{k:'d2_lli',p:[fm(p)]}:p>.8?{k:'d2_mes',p:[fm(p)]}:Math.abs(fr-28.1)<=.3?null:Math.abs(fr-32.1)<=.3?{k:'d2_naive'}:{k:'d2_fr'}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
