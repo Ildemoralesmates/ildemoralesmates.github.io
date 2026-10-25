@@ -74,6 +74,47 @@ input:disabled{opacity:.5}
 .ctrl.locked label::after{content:" 🔒";font-size:.8em}
 .ctrl input[type=number]{padding:5px 8px}
 .stats .v{font-variant-numeric:tabular-nums}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.tabs button{padding:7px 12px;font-size:13.5px}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+/* variables de simuladors/raona.css -> variables de química */
+:root{--stage:var(--cv);--panel:var(--card);--pa:var(--acc);--muted:var(--mut);--warn:var(--ko)}
+#reason{margin-top:14px}
+#reason .btn:not(.primary){background:transparent;color:var(--ink);border-color:var(--line)}
+#reason .btn.primary{background:var(--acc);color:#fff}
+#rztabs{display:flex;flex-wrap:wrap;border-radius:14px}
+#reason .chips{display:flex;gap:6px;flex-wrap:wrap}
+#reason .chip[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+#reason .task{color:var(--ink)}
+#reason h2 small{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600}
 </style></head>
 <body><div class="wrap">
 <header class="top">
@@ -147,13 +188,14 @@ input:disabled{opacity:.5}
 </div>
 <p class="note">El volumen indicado es el de la disolución (como en un matraz aforado). Se considera que 1 mL de agua pesa 1 g y que el soluto disuelto ocupa un volumen aproximado, de modo que hay algo menos de agua que el volumen indicado. Las solubilidades son valores aproximados de tablas (g de soluto por 100 g de agua); el sulfato de cobre(II) se da para la sal anhidra.</p>
 </section>
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow"></small><span data-i18n="rz_title"></span></h2><p data-i18n="rz_intro"></p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label=""><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM"></button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS"></button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE"></button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD"></button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
 
 <footer>Hecho para el aula · Un único archivo por animación, funciona sin conexión.</footer>
 </div>
-<script>const LANG="es";const T={"title": "Disoluciones y concentración · Soluto, saturación y reto", "h1": "Disoluciones y concentración", "sub": "Añade soluto al agua y observa cómo cambian la concentración y la saturación. Después, ponte a prueba con el reto.", "description": "Simulador interactivo de disoluciones para ESO: añade soluto, calcula la concentración (g/L, % en masa, mol/L), observa la saturación y la solubilidad según la temperatura, con un reto de 5 tareas.", "card_text": "Añade soluto, observa la saturación y calcula la concentración en g/L, % y mol/L. Incluye un reto de 5 tareas.", "level": "3.º–4.º ESO", "mode_explore": "Explora", "mode_challenge": "Reto", "lbl_solute": "Soluto", "sol_nacl": "Sal común (NaCl)", "sol_sugar": "Azúcar (sacarosa)", "sol_kno3": "Nitrato de potasio (KNO₃)", "sol_cuso4": "Sulfato de cobre(II) anhidro (CuSO₄)", "lbl_volume": "Volumen de la disolución", "lbl_temp": "Temperatura", "lbl_mass": "Soluto añadido", "btn_add1": "+1 g", "btn_add10": "+10 g", "btn_sub1": "−1 g", "btn_empty": "Vaciar", "lens_title": "Vista ampliada: partículas de soluto", "lens_note": "Más puntos = disolución más concentrada.", "sol_title": "Solubilidad según la temperatura", "sol_y": "g de soluto por 100 g de agua", "sol_x": "Temperatura (°C)", "leg_unsat": "No saturada", "leg_sat": "Saturada + precipitado", "r_gL": "Concentración en masa", "r_pct": "Porcentaje en masa", "r_mol": "Concentración molar", "calc_title": "El cálculo", "calc_gL": "c = m / V = {0} g / {1} L = <b>{2} g/L<\/b>", "calc_pct": "% = m<sub>soluto<\/sub> / (m<sub>soluto<\/sub> + m<sub>agua<\/sub>) · 100 = {0} / ({0} + {1}) · 100 = <b>{2} %<\/b>", "calc_mol": "n = m / M<sub>m<\/sub> = {0} g / {1} g/mol = {2} mol → c = n / V = {2} / {3} = <b>{4} mol/L<\/b>", "sat_none": "Todavía no hay soluto añadido.", "sat_unsat": "No saturada: todavía caben {0} g más de soluto.", "sat_just": "Saturada: justo en el límite de solubilidad.", "sat_prec": "Saturada con precipitado: sobran {0} g sin disolver (no cuentan para la concentración).", "sol_info": "Solubilidad a {0} °C: {1} g por cada 100 g de agua (valores aproximados).", "note": "El volumen indicado es el de la disolución (como en un matraz aforado). Se considera que 1 mL de agua pesa 1 g y que el soluto disuelto ocupa un volumen aproximado, de modo que hay algo menos de agua que el volumen indicado. Las solubilidades son valores aproximados de tablas (g de soluto por 100 g de agua); el sulfato de cobre(II) se da para la sal anhidra.", "chal_progress": "Reto {0} de {1}", "chal_hints": "Pistas usadas: {0}", "chal_points": "Puntos: {0} / {1}", "task_title": "Reto {0}", "btn_check": "Comprobar", "btn_hint": "Pista", "btn_next": "Siguiente reto →", "btn_restart": "Empezar el reto de nuevo", "task_1": "Prepara 250 mL de disolución de sal (NaCl) con una concentración de 40 g/L.", "task_2": "Prepara 400 mL de disolución de azúcar al 20 % en masa. Pista: el azúcar ocupa volumen, así que la masa de agua es menor de 400 g.", "task_3": "Prepara 500 mL de disolución de sal (NaCl) 0,5 mol/L. Dato: M<sub>m<\/sub>(NaCl) = 58,44 g/mol.", "task_4": "El KNO₃ es muy sensible a la temperatura. Para 200 mL de disolución a 60 °C, encuentra la masa máxima de KNO₃ que se puede disolver (disolución justo saturada, con una tolerancia de ±3 g).", "task_5": "Tienes 150 g de KNO₃ disueltos en 200 mL de disolución a 80 °C. Enfría lentamente: ¿a qué temperatura aparecen los primeros cristales? Deja la temperatura justo por debajo de ese punto.", "tip1_1": "Usa la concentración en masa: c = m / V. Cuidado: el volumen tiene que ir en litros.", "tip2_1": "m = c · V = 40 g/L · 0,250 L = 10 g.", "tip1_2": "El porcentaje en masa es m(soluto) / m(disolución) · 100. Como el azúcar ocupa volumen, no hay 400 g de agua: fíjate en el % que muestra el simulador y ajusta la masa.", "tip2_2": "Prueba con unos 85–90 g: el agua son unos 400 − 0,63 · m gramos y hace falta que m / (m + agua) = 0,20.", "tip1_3": "Calcula primero los moles (n = c · V) y después pásalos a gramos con la masa molar.", "tip2_3": "n = 0,5 mol/L · 0,5 L = 0,25 mol → m = 0,25 · 58,44 ≈ 14,6 g.", "tip1_4": "Añade soluto poco a poco hasta que empiece a quedar en el fondo. Fíjate en la curva de solubilidad.", "tip2_4": "A 60 °C la solubilidad del KNO₃ es de unos 110 g por cada 100 g de agua; en 200 mL de disolución caben unos 153 g.", "tip1_5": "Baja la temperatura poco a poco: la solubilidad disminuye y el exceso de soluto cristaliza.", "tip2_5": "Busca el punto donde la curva de solubilidad da unos 107 g por cada 100 g de agua (el soluto ocupa volumen, por eso no son 75 g).", "fb_now": "Ahora tienes {0}; el objetivo es {1}.", "fb_t4_low": "Todavía no está saturada: puedes añadir más soluto.", "fb_t4_high": "Te has pasado: ya sobra soluto sin disolver. Quita un poco.", "fb_t4_zero": "Añade soluto y observa cuándo la disolución deja de admitir más.", "fb_t5_none": "Todo el soluto sigue disuelto: baja todavía más la temperatura.", "fb_t5_many": "Ya hay demasiados cristales ({0} g). Sube un poco la temperatura hasta que solo aparezca una pequeña cantidad.", "fb_ok": "¡Correcto! Estrellas ganadas: {0} de 3.", "ok_1": "m = c · V = 40 g/L · 0,25 L = 10 g de sal.", "ok_2": "El 20 % significa 20 g de soluto por cada 100 g de disolución. Como el azúcar ocupa volumen, hacen falta unos 86 g (no 100 g): el agua es menos de 400 g.", "ok_3": "n = 0,5 mol/L · 0,5 L = 0,25 mol, y 0,25 mol · 58,44 g/mol ≈ 14,6 g de sal.", "ok_4": "A 60 °C, en 200 mL de disolución se disuelven unos 153 g de KNO₃ (unos 110 g por cada 100 g de agua).", "ok_5": "La solubilidad del KNO₃ baja al enfriar: hacia los 59 °C ya solo caben 150 g en 200 mL y el resto cristaliza.", "end_title": "¡Reto completado!", "end_text": "Has resuelto los 5 retos con {0} pistas. Puntuación: {1} / {2}."};</script><script>/* Utilitats comunes (T i LANG els injecta build.py abans d'aquest fitxer) */
+<script>const LANG="es";const T={"title": "Disoluciones y concentración · Soluto, saturación y reto", "h1": "Disoluciones y concentración", "sub": "Añade soluto al agua y observa cómo cambian la concentración y la saturación. Después, ponte a prueba con el reto.", "description": "Simulador interactivo de disoluciones para ESO: añade soluto, calcula la concentración (g/L, % en masa, mol/L), observa la saturación y la solubilidad según la temperatura, con un reto de 5 tareas.", "card_text": "Añade soluto, observa la saturación y calcula la concentración en g/L, % y mol/L. Incluye un reto de 5 tareas.", "level": "3.º–4.º ESO", "mode_explore": "Explora", "mode_challenge": "Reto", "lbl_solute": "Soluto", "sol_nacl": "Sal común (NaCl)", "sol_sugar": "Azúcar (sacarosa)", "sol_kno3": "Nitrato de potasio (KNO₃)", "sol_cuso4": "Sulfato de cobre(II) anhidro (CuSO₄)", "lbl_volume": "Volumen de la disolución", "lbl_temp": "Temperatura", "lbl_mass": "Soluto añadido", "btn_add1": "+1 g", "btn_add10": "+10 g", "btn_sub1": "−1 g", "btn_empty": "Vaciar", "lens_title": "Vista ampliada: partículas de soluto", "lens_note": "Más puntos = disolución más concentrada.", "sol_title": "Solubilidad según la temperatura", "sol_y": "g de soluto por 100 g de agua", "sol_x": "Temperatura (°C)", "leg_unsat": "No saturada", "leg_sat": "Saturada + precipitado", "r_gL": "Concentración en masa", "r_pct": "Porcentaje en masa", "r_mol": "Concentración molar", "calc_title": "El cálculo", "calc_gL": "c = m / V = {0} g / {1} L = <b>{2} g/L<\/b>", "calc_pct": "% = m<sub>soluto<\/sub> / (m<sub>soluto<\/sub> + m<sub>agua<\/sub>) · 100 = {0} / ({0} + {1}) · 100 = <b>{2} %<\/b>", "calc_mol": "n = m / M<sub>m<\/sub> = {0} g / {1} g/mol = {2} mol → c = n / V = {2} / {3} = <b>{4} mol/L<\/b>", "sat_none": "Todavía no hay soluto añadido.", "sat_unsat": "No saturada: todavía caben {0} g más de soluto.", "sat_just": "Saturada: justo en el límite de solubilidad.", "sat_prec": "Saturada con precipitado: sobran {0} g sin disolver (no cuentan para la concentración).", "sol_info": "Solubilidad a {0} °C: {1} g por cada 100 g de agua (valores aproximados).", "note": "El volumen indicado es el de la disolución (como en un matraz aforado). Se considera que 1 mL de agua pesa 1 g y que el soluto disuelto ocupa un volumen aproximado, de modo que hay algo menos de agua que el volumen indicado. Las solubilidades son valores aproximados de tablas (g de soluto por 100 g de agua); el sulfato de cobre(II) se da para la sal anhidra.", "chal_progress": "Reto {0} de {1}", "chal_hints": "Pistas usadas: {0}", "chal_points": "Puntos: {0} / {1}", "task_title": "Reto {0}", "btn_check": "Comprobar", "btn_hint": "Pista", "btn_next": "Siguiente reto →", "btn_restart": "Empezar el reto de nuevo", "task_1": "Prepara 250 mL de disolución de sal (NaCl) con una concentración de 40 g/L.", "task_2": "Prepara 400 mL de disolución de azúcar al 20 % en masa. Pista: el azúcar ocupa volumen, así que la masa de agua es menor de 400 g.", "task_3": "Prepara 500 mL de disolución de sal (NaCl) 0,5 mol/L. Dato: M<sub>m<\/sub>(NaCl) = 58,44 g/mol.", "task_4": "El KNO₃ es muy sensible a la temperatura. Para 200 mL de disolución a 60 °C, encuentra la masa máxima de KNO₃ que se puede disolver (disolución justo saturada, con una tolerancia de ±3 g).", "task_5": "Tienes 150 g de KNO₃ disueltos en 200 mL de disolución a 80 °C. Enfría lentamente: ¿a qué temperatura aparecen los primeros cristales? Deja la temperatura justo por debajo de ese punto.", "tip1_1": "Usa la concentración en masa: c = m / V. Cuidado: el volumen tiene que ir en litros.", "tip2_1": "m = c · V = 40 g/L · 0,250 L = 10 g.", "tip1_2": "El porcentaje en masa es m(soluto) / m(disolución) · 100. Como el azúcar ocupa volumen, no hay 400 g de agua: fíjate en el % que muestra el simulador y ajusta la masa.", "tip2_2": "Prueba con unos 85–90 g: el agua son unos 400 − 0,63 · m gramos y hace falta que m / (m + agua) = 0,20.", "tip1_3": "Calcula primero los moles (n = c · V) y después pásalos a gramos con la masa molar.", "tip2_3": "n = 0,5 mol/L · 0,5 L = 0,25 mol → m = 0,25 · 58,44 ≈ 14,6 g.", "tip1_4": "Añade soluto poco a poco hasta que empiece a quedar en el fondo. Fíjate en la curva de solubilidad.", "tip2_4": "A 60 °C la solubilidad del KNO₃ es de unos 110 g por cada 100 g de agua; en 200 mL de disolución caben unos 153 g.", "tip1_5": "Baja la temperatura poco a poco: la solubilidad disminuye y el exceso de soluto cristaliza.", "tip2_5": "Busca el punto donde la curva de solubilidad da unos 107 g por cada 100 g de agua (el soluto ocupa volumen, por eso no son 75 g).", "fb_now": "Ahora tienes {0}; el objetivo es {1}.", "fb_t4_low": "Todavía no está saturada: puedes añadir más soluto.", "fb_t4_high": "Te has pasado: ya sobra soluto sin disolver. Quita un poco.", "fb_t4_zero": "Añade soluto y observa cuándo la disolución deja de admitir más.", "fb_t5_none": "Todo el soluto sigue disuelto: baja todavía más la temperatura.", "fb_t5_many": "Ya hay demasiados cristales ({0} g). Sube un poco la temperatura hasta que solo aparezca una pequeña cantidad.", "fb_ok": "¡Correcto! Estrellas ganadas: {0} de 3.", "ok_1": "m = c · V = 40 g/L · 0,25 L = 10 g de sal.", "ok_2": "El 20 % significa 20 g de soluto por cada 100 g de disolución. Como el azúcar ocupa volumen, hacen falta unos 86 g (no 100 g): el agua es menos de 400 g.", "ok_3": "n = 0,5 mol/L · 0,5 L = 0,25 mol, y 0,25 mol · 58,44 g/mol ≈ 14,6 g de sal.", "ok_4": "A 60 °C, en 200 mL de disolución se disuelven unos 153 g de KNO₃ (unos 110 g por cada 100 g de agua).", "ok_5": "La solubilidad del KNO₃ baja al enfriar: hacia los 59 °C ya solo caben 150 g en 200 mL y el resto cristaliza.", "end_title": "¡Reto completado!", "end_text": "Has resuelto los 5 retos con {0} pistas. Puntuación: {1} / {2}.", "l_g": "Masa", "l_c": "Concentración", "l_p": "Porcentaje", "l_m": "Molaridad", "l_T": "Temperatura", "l_s": "Solubilidad", "s_cx_no": "Ese valor no lo desmiente. Busca un soluto que, a 20 °C y en 250 mL, admita 100 g sin que sobre nada.", "rng": "Ese valor no tiene sentido aquí. Vuélvelo a pensar.", "m1.q": "Sal común, 20 °C: quieres 500 mL de disolución con una concentración de 60 g/L. ¿Cuántos gramos de sal tienes que disolver?", "m1_h": "60 g/L son 60 g por cada litro, pero solo tienes medio litro.", "m1_f": "Concentración = masa / volumen en litros. Despeja la masa y recuerda pasar los mL a L.", "m1_ok": "✔ ¡Misión cumplida! 60 g/L · 0,5 L = 30 g de sal.", "m1.more": "¿Cabe toda esa sal en 500 mL a 20 °C? Compara con el límite de solubilidad.", "m2.q": "Disolvemos 30 g de sal en 250 mL de disolución (20 °C). ¿Cuál es la concentración en g/L?", "m2_h": "30 / 250 = 0,12 son gramos por mL. Pasa los 250 mL a litros antes de dividir.", "m2_f": "Concentración (g/L) = masa disuelta (g) / volumen de disolución (L). Fíjate en las unidades.", "m2_ok": "✔ ¡Misión cumplida! 30 g / 0,25 L = 120 g/L.", "m2.more": "¿Cuántos gramos más caben en esos 250 mL antes de que la sal empiece a quedarse en el fondo?", "m3.q": "Disolvemos 58,44 g de NaCl (masa molar 58,44 g/mol) en 500 mL de disolución. ¿Cuál es la concentración en mol/L?", "m3_h": "1 mol es la cantidad de sustancia. La molaridad es moles por litro: aún tienes que dividir por el volumen en litros.", "m3_f": "Primero pasa los gramos a moles (masa / masa molar) y luego divide por el volumen en litros.", "m3_ok": "✔ ¡Misión cumplida! 58,44 / 58,44 = 1 mol; 1 mol / 0,5 L = 2 mol/L.", "m3.more": "Si doblas el volumen de disolución con la misma sal, ¿qué pasa con la molaridad?", "m4.q": "Azúcar a 20 °C: disolvemos 80 g en una disolución de 400 mL. ¿Qué porcentaje en masa tiene? (Ojo: el agua que hay no pesa 400 g.)", "m4_h": "20 % sería dividir 80 entre 400, pero 400 es un volumen (mL), no la masa de la disolución. La masa de la disolución es soluto + agua.", "m4_f": "% en masa = masa de soluto / masa de disolución · 100. La masa de disolución es soluto + agua; el agua es lo que queda al restar el volumen que ocupa el azúcar.", "m4_ok": "✔ ¡Misión cumplida! Hay 80 g de azúcar y ≈ 350 g de agua: 80 / 430 ≈ 18,6 %.", "m4.more": "¿Cuál de los dos porcentajes (el de masa o el que saldría dividiendo por 400) describe mejor la disolución?", "s1.q": "«Calentar el agua permite disolver más soluto (en los cuatro sólidos del simulador).»", "s1.h": "Mira la curva de solubilidad de cada sustancia.", "s1.e": "Siempre en estos cuatro sólidos: todas las curvas suben. Pero la sal casi no cambia (de 35,7 a 39,2 g/100 g entre 0 y 100 °C) y hay sustancias, como los gases, que se comportan al revés.", "s2.q": "«Si disuelvo 50 g de azúcar en 100 mL de agua, obtengo exactamente 100 mL de disolución.»", "s2.h": "Piensa en el sitio que ocupan las partículas del soluto entre las del agua.", "s2.e": "Nunca: el soluto disuelto ocupa volumen (unos 0,6 mL por cada gramo de azúcar), así que el volumen final es mayor que 100 mL (≈ 131 mL).", "s3.q": "«Si añado más soluto del que cabe, la concentración de la disolución sigue subiendo.»", "s3.h": "Sube la masa por encima del límite y mira la concentración.", "s3.e": "Nunca: lo que sobra no se disuelve, queda en el fondo. La concentración solo cuenta el soluto disuelto y se queda en el valor de saturación.", "s4.q": "«Si enfriamos una disolución saturada de KNO<sub>3<\/sub>, parte del soluto cristaliza.»", "s4.h": "Compara la solubilidad a 80 °C y a 20 °C.", "s4.e": "Siempre: a menos temperatura cabe menos KNO<sub>3<\/sub> (31,6 g/100 g a 20 °C frente a 169 a 80 °C), y lo que sobra vuelve a ser sólido.", "s5.q": "«Si disuelvo 100 g de soluto en 250 mL de agua a 20 °C, siempre queda una parte sin disolver.»", "s5.h": "Compara la solubilidad de los cuatro solutos a 20 °C.", "s5.e": "A veces: la sal, el KNO<sub>3<\/sub> y el CuSO<sub>4<\/sub> no caben, pero el azúcar es tan soluble (204 g/100 g a 20 °C) que se disuelven los 100 g sin problema.", "s5.cx": "✔ Contraejemplo encontrado: el azúcar tiene una solubilidad de {0} g/100 g a 20 °C y se disuelven los 100 g.", "e1.ctx": "Ponemos 50 g de azúcar en 100 mL de agua y removemos hasta que se disuelve todo.", "e1.n0": "Marta", "e1.n1": "Pau", "e1.s0": "Tendremos 100 mL de disolución: el azúcar se ha fundido dentro del agua y no ocupa sitio.", "e1.s1": "Tendremos más de 100 mL: el azúcar disuelto también ocupa volumen.", "e1.w0": "Las partículas del soluto no desaparecen: se intercalan entre las del agua y aportan volumen (unos 0,6 mL por gramo de azúcar), así que el volumen final es mayor.", "e1.w1": "Porque el azúcar hace que el agua se dilate.", "e1.w2": "Porque el volumen solo depende del agua.", "e1.frame": "Marta, el volumen final es mayor porque…", "e1.model": "Marta, que el azúcar «desaparezca» es solo apariencia: sus moléculas siguen ahí, entre las del agua, y ocupan sitio. Por eso 50 g de azúcar en 100 mL de agua dan unos 131 mL de disolución. Pau tiene razón.", "e2.ctx": "Tenemos una disolución de sal saturada a 20 °C y le echamos 20 g de sal más.", "e2.n0": "Marta", "e2.n1": "Pau", "e2.s0": "La concentración no cambia: la sal que sobra va al fondo.", "e2.s1": "La concentración sube, porque ahora hay más sal dentro del vaso.", "e2.w0": "La concentración solo cuenta el soluto disuelto. Una vez saturada, lo que se añade precipita y no entra en la disolución.", "e2.w1": "Porque la sal nueva se disuelve pero el volumen también aumenta en la misma proporción.", "e2.w2": "Porque las disoluciones saturadas no tienen concentración.", "e2.frame": "Pau, la concentración no sube porque…", "e2.model": "Pau, el vaso ya no admite más sal: los 20 g añadidos se quedan en el fondo, sin disolverse. Dentro del líquido hay la misma sal disuelta que antes, así que la concentración es la misma. Marta tiene razón.", "e3.ctx": "Una disolución saturada de KNO<sub>3<\/sub> a 80 °C se enfría lentamente hasta los 20 °C.", "e3.n0": "Marta", "e3.n1": "Pau", "e3.s0": "Una parte del KNO<sub>3<\/sub> cristaliza.", "e3.s1": "El líquido que queda sigue saturado, con la concentración que toca a 20 °C.", "e3.w0": "A 20 °C cabe mucho menos (31,6 g/100 g frente a 169 a 80 °C): lo sobrante cristaliza y el líquido restante queda saturado con esa solubilidad.", "e3.w1": "Porque al enfriarse, el agua se evapora y deja el soluto.", "e3.w2": "Porque el KNO<sub>3<\/sub> se descompone con el frío.", "e3.frame": "Marta y Pau, tenéis razón porque…", "e3.model": "Marta y Pau, a menos temperatura el agua disuelve menos KNO<sub>3<\/sub>: lo que sobra cristaliza (Marta) y el líquido que queda está saturado a la solubilidad de 20 °C (Pau). Las dos cosas pasan a la vez.", "d1.q": "Tienes 250 mL de disolución de sal a 20 °C y quieres que toda la sal se disuelva. ¿Cuál es el máximo de sal (g) que puedes poner?", "d1_h": "35,9 g es para 100 g de AGUA. Esos 250 mL incluyen el volumen que ocupa la sal, así que no son 250 g de agua.", "d1_no": "Prueba en el simulador: sube la masa hasta que la disolución pase de «no saturada» a «saturada» y apunta el valor límite.", "d1_ok": "✔ ¡Bien decidido! El límite es ≈ 79 g: a partir de ahí, la sal que sobra queda en el fondo.", "d1.more": "¿Y si calientas el agua a 100 °C, cuánto podrás disolver? ¿Merece la pena calentar para la sal?", "d2.q": "Necesitas la disolución más concentrada posible (en g/L) en 250 mL a 20 °C. ¿Qué soluto eliges?", "d2.lc": "Soluto:", "d_1": "La sal admite ≈ 79 g en 250 mL. Hay un soluto mucho más soluble.", "d_3": "El KNO<sub>3<\/sub> a 20 °C solo disuelve ≈ 70 g en 250 mL.", "d_4": "El CuSO<sub>4<\/sub> a 20 °C solo disuelve ≈ 51 g en 250 mL.", "d2_ok": "✔ ¡Bien decidido! El azúcar disuelve ≈ 223 g en 250 mL, unos 890 g/L, mucho más que cualquiera de los otros.", "d2.more": "¿Por qué la concentración (g/L) puede ser tan alta si el volumen no crece en la misma proporción?", "d3.q": "Quieres disolver del todo 100 g de KNO<sub>3<\/sub> en 200 mL de disolución. ¿Cuál es la temperatura mínima (°C) a la que tienes que calentar el agua?", "d3_no": "Prueba en el simulador: sube la temperatura hasta que los 100 g desaparezcan del fondo, y afina el valor.", "d3_ok": "✔ ¡Bien decidido! A ≈ 39 °C ya se disuelven los 100 g; por debajo, sobra.", "d3.more": "Si la dejas enfriar después hasta 20 °C, ¿cuánto KNO<sub>3<\/sub> cristalizará?"};</script><script>/* Utilitats comunes (T i LANG els injecta build.py abans d'aquest fitxer) */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
-function t(k,...a){let s=T[k];if(s===undefined)return k;a.forEach((v,i)=>{s=s.split('{'+i+'}').join(v);});return s;}
+function t(k,...a){let s=T[k];if(s===undefined)return k;const o=(a.length===1&&a[0]&&typeof a[0]==='object')?a[0]:a;for(const i in o)s=s.split('{'+i+'}').join(o[i]);return s;}
 function fmt(x,d=2){return Number(x).toLocaleString(LANG==='va'?'ca-ES':'es-ES',{maximumFractionDigits:d});}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
 function lerp(a,b,u){return a+(b-a)*u;}
@@ -207,7 +249,230 @@ function loop(fn){let last=performance.now();
 
 /* Preferència de moviment reduït */
 const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-</script><script>(()=>{
+</script><script>/* Capa de compatibilitat Raona-ho (motor compartit de tools/simuladors/src) dins del pipeline de química */
+const I18N={ca:{},es:{}};
+const REDUCE=REDUCED;
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* Passa els textos genèrics del motor (quiz.js + raona.js) al diccionari T d'aquesta pàgina; els de cada sim manen */
+(function(){const d=I18N[LANG==='es'?'es':'ca'];Object.keys(d).forEach(k=>{if(!(k in T))T[k]=d[k];});
+  $$('[data-i18n]').forEach(e=>{e.innerHTML=t(e.dataset.i18n);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});})();
+
+(()=>{
 /* ---------- dades: solubilitat (g de solut / 100 g d'aigua) a 0,20,40,60,80,100 °C (aprox.) ---------- */
 const TEMPS=[0,20,40,60,80,100];
 const SOL={
@@ -493,6 +758,35 @@ function drawSolub(d){
   const x2=ml+150;c.fillStyle='rgba(232,89,12,.55)';c.fillRect(x2,H-12,12,12);c.fillStyle=C.mut;c.fillText(t('leg_sat'),x2+17,H-6);
 }
 
+/* ===== Raona-ho ===== */
+function loadSol(k,V,T,m){setMode('explore');st.sol=k;st.V=V;st.T=T;st.m=m;el.sel.value=k;dispD=derive().dis;grains=[];dots=[];refresh();RZ.show($('#beaker'));}
+const SOLK=['nacl','sugar','kno3','cuso4'];
+RZ.init({
+ F:{g:{l:'l_g',u:'g'},c:{l:'l_c',u:'g/L'},p:{l:'l_p',u:'%'},m:{l:'l_m',u:'mol/L'},T:{l:'l_T',u:'°C'},s:{l:'l_s',u:'g/100 g'}},
+ M:[
+  {id:'m1',f:['g'],sim:()=>loadSol('nacl',500,20,30),ok:()=>({k:'m1_ok'}),chk:([v])=>Math.abs(v-30)<=.6?null:Math.abs(v-60)<=1?{k:'m1_h'}:{k:'m1_f'}},
+  {id:'m2',f:['c'],sim:()=>loadSol('nacl',250,20,30),ok:()=>({k:'m2_ok'}),chk:([v])=>Math.abs(v-120)<=2?null:Math.abs(v-.12)<=.01?{k:'m2_h'}:{k:'m2_f'}},
+  {id:'m3',f:['m'],sim:()=>loadSol('nacl',500,20,58.4),ok:()=>({k:'m3_ok'}),chk:([v])=>Math.abs(v-2)<=.06?null:Math.abs(v-1)<=.03?{k:'m3_h'}:{k:'m3_f'}},
+  {id:'m4',f:['p'],sim:()=>loadSol('sugar',400,20,80),ok:()=>({k:'m4_ok'}),chk:([v])=>Math.abs(v-18.6)<=.4?null:Math.abs(v-20)<=.1?{k:'m4_h'}:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>loadSol('nacl',250,20,0)},
+  {id:'s2',ans:'M',sim:()=>loadSol('sugar',100,20,50)},
+  {id:'s3',ans:'M',sim:()=>loadSol('nacl',250,20,100)},
+  {id:'s4',ans:'S',sim:()=>loadSol('kno3',200,80,200)},
+  {id:'s5',ans:'D',f:['s'],sim:()=>loadSol('nacl',250,20,100),cxsim:()=>loadSol('sugar',250,20,100),cxok:([v])=>({k:'s5.cx',p:[fmtN(v)]}),
+   cx:([v])=>Math.abs(v-204)<=2?null:{k:'s_cx_no'}}
+ ],
+ E:[{id:'e1',who:1,args:['sugar',131,20,50]},{id:'e2',who:0,args:['nacl',250,20,100]},{id:'e3',who:2,args:['kno3',200,20,200]}],
+ sim:v=>loadSol(v[0],v[1],v[2],v[3]),
+ D:[
+  {id:'d1',f:['g'],sim:([v])=>loadSol('nacl',250,20,(v>0&&v<=300)?v:79),ok:()=>({k:'d1_ok'}),chk:([v])=>Math.abs(v-79.2)<=1.6?null:Math.abs(v-89.75)<=1.6?{k:'d1_h'}:{k:'d1_no'}},
+  {id:'d2',chips:{vals:[1,2,3,4],fmt:x=>t('sol_'+SOLK[x-1])},sim:([p])=>loadSol(SOLK[(p||2)-1],250,20,300),ok:()=>({k:'d2_ok'}),chk:([p])=>p===2?null:{k:'d_'+p}},
+  {id:'d3',f:['T'],sim:([v])=>loadSol('kno3',200,(v>=0&&v<=100)?v:39,100),ok:()=>({k:'d3_ok'}),chk:([v])=>(v>=38&&v<=41)?null:{k:'d3_no'}}
+ ]
+});
+initQuiz([]);applyLevel();
+/* ===== fi Raona-ho ===== */
 /* ---------- bucle ---------- */
 buildSelect();setMode('explore');
 loop((dt,now)=>{

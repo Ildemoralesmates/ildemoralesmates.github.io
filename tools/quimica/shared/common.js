@@ -1,7 +1,7 @@
 /* Utilitats comunes (T i LANG els injecta build.py abans d'aquest fitxer) */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
-function t(k,...a){let s=T[k];if(s===undefined)return k;a.forEach((v,i)=>{s=s.split('{'+i+'}').join(v);});return s;}
+function t(k,...a){let s=T[k];if(s===undefined)return k;const o=(a.length===1&&a[0]&&typeof a[0]==='object')?a[0]:a;for(const i in o)s=s.split('{'+i+'}').join(o[i]);return s;}
 function fmt(x,d=2){return Number(x).toLocaleString(LANG==='va'?'ca-ES':'es-ES',{maximumFractionDigits:d});}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
 function lerp(a,b,u){return a+(b-a)*u;}

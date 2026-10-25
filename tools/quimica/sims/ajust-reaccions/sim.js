@@ -253,6 +253,34 @@ $('#btnHint').onclick=giveHint;
 $('#btnNext').onclick=()=>{chal.idx++;rx=chal.idx;$('#hintBox').hidden=true;wasSolved=false;resetCoefs();updateChal();};
 $('#btnRestart').onclick=restartChal;
 
+/* ===== Raona-ho ===== */
+function loadRx(i,cf){setMode('explore');$('#rxSel').value=i;rx=i;wasSolved=!!cf;resetCoefs();if(cf){coef=cf.slice();buildSteppers();}refresh();RZ.show($('#bal'));}
+RZ.init({
+ F:{n:{l:'l_n'}},
+ sim:v=>loadRx(v[0],v[1]),
+ M:[
+  {id:'m1',f:['n'],sim:()=>loadRx(2,[1,2,1,2]),ok:()=>({k:'m1_ok'}),chk:([v])=>v===2?null:v===1?{k:'m1_h'}:{k:'m1_f'}},
+  {id:'m2',f:['n'],sim:()=>loadRx(4,[1,5,3,4]),ok:()=>({k:'m2_ok'}),chk:([v])=>v===10?null:v===5?{k:'m2_h'}:{k:'m2_f'}},
+  {id:'m3',f:['n'],sim:()=>loadRx(3,[4,3,2]),ok:()=>({k:'m3_ok'}),chk:([v])=>v===8?null:v===6?{k:'m3_h'}:{k:'m3_f'}},
+  {id:'m4',f:['n'],sim:()=>loadRx(4,[1,5,3,4]),ok:()=>({k:'m4_ok'}),chk:([v])=>v===21?null:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>loadRx(0,[1,1,1])},
+  {id:'s2',ans:'S',sim:()=>loadRx(0,[2,1,2])},
+  {id:'s3',ans:'D',f:['n'],sim:()=>loadRx(0,[2,1,2]),cxsim:([v])=>loadRx(v===3?2:4,v===3?[1,2,1,2]:[1,5,3,4]),cxok:([v])=>({k:'s3.cx',p:[fmtN(v)]}),
+   cx:([v])=>(v===3||v===7)?null:{k:'s_cx_no'}},
+  {id:'s4',ans:'S',sim:()=>loadRx(0,[4,2,4])},
+  {id:'s5',ans:'M',sim:()=>loadRx(0,[2,1,2])}
+ ],
+ E:[{id:'e1',who:1,args:[0,[1,1,1]]},{id:'e2',who:2,args:[2,[1,2,1,2]]},{id:'e3',who:3,args:[3,[4,3,2]]}],
+ D:[
+  {id:'d1',f:['n'],sim:()=>loadRx(4,[2,10,6,8]),ok:()=>({k:'d1_ok'}),chk:([v])=>v===10?null:v===5?{k:'d1_h'}:{k:'d1_no'}},
+  {id:'d2',f:['n'],sim:()=>loadRx(1,[1,3,2]),ok:()=>({k:'d2_ok'}),chk:([v])=>v===300?null:v===100?{k:'d2_h'}:{k:'d2_no'}},
+  {id:'d3',chips:{vals:[1,2,3],fmt:x=>t('d3.c'+x)},sim:()=>loadRx(2,[1,2,1,1]),ok:()=>({k:'d3_ok'}),chk:([p])=>p===2?null:{k:'d_'+p}}
+ ]
+});
+initQuiz([]);applyLevel();
+/* ===== fi Raona-ho ===== */
 buildSelect();buildLegend();buildSteppers();refresh();ang=target;
 loop(draw);
 })();

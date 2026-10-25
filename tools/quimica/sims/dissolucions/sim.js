@@ -284,6 +284,35 @@ function drawSolub(d){
   const x2=ml+150;c.fillStyle='rgba(232,89,12,.55)';c.fillRect(x2,H-12,12,12);c.fillStyle=C.mut;c.fillText(t('leg_sat'),x2+17,H-6);
 }
 
+/* ===== Raona-ho ===== */
+function loadSol(k,V,T,m){setMode('explore');st.sol=k;st.V=V;st.T=T;st.m=m;el.sel.value=k;dispD=derive().dis;grains=[];dots=[];refresh();RZ.show($('#beaker'));}
+const SOLK=['nacl','sugar','kno3','cuso4'];
+RZ.init({
+ F:{g:{l:'l_g',u:'g'},c:{l:'l_c',u:'g/L'},p:{l:'l_p',u:'%'},m:{l:'l_m',u:'mol/L'},T:{l:'l_T',u:'°C'},s:{l:'l_s',u:'g/100 g'}},
+ M:[
+  {id:'m1',f:['g'],sim:()=>loadSol('nacl',500,20,30),ok:()=>({k:'m1_ok'}),chk:([v])=>Math.abs(v-30)<=.6?null:Math.abs(v-60)<=1?{k:'m1_h'}:{k:'m1_f'}},
+  {id:'m2',f:['c'],sim:()=>loadSol('nacl',250,20,30),ok:()=>({k:'m2_ok'}),chk:([v])=>Math.abs(v-120)<=2?null:Math.abs(v-.12)<=.01?{k:'m2_h'}:{k:'m2_f'}},
+  {id:'m3',f:['m'],sim:()=>loadSol('nacl',500,20,58.4),ok:()=>({k:'m3_ok'}),chk:([v])=>Math.abs(v-2)<=.06?null:Math.abs(v-1)<=.03?{k:'m3_h'}:{k:'m3_f'}},
+  {id:'m4',f:['p'],sim:()=>loadSol('sugar',400,20,80),ok:()=>({k:'m4_ok'}),chk:([v])=>Math.abs(v-18.6)<=.4?null:Math.abs(v-20)<=.1?{k:'m4_h'}:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>loadSol('nacl',250,20,0)},
+  {id:'s2',ans:'M',sim:()=>loadSol('sugar',100,20,50)},
+  {id:'s3',ans:'M',sim:()=>loadSol('nacl',250,20,100)},
+  {id:'s4',ans:'S',sim:()=>loadSol('kno3',200,80,200)},
+  {id:'s5',ans:'D',f:['s'],sim:()=>loadSol('nacl',250,20,100),cxsim:()=>loadSol('sugar',250,20,100),cxok:([v])=>({k:'s5.cx',p:[fmtN(v)]}),
+   cx:([v])=>Math.abs(v-204)<=2?null:{k:'s_cx_no'}}
+ ],
+ E:[{id:'e1',who:1,args:['sugar',131,20,50]},{id:'e2',who:0,args:['nacl',250,20,100]},{id:'e3',who:2,args:['kno3',200,20,200]}],
+ sim:v=>loadSol(v[0],v[1],v[2],v[3]),
+ D:[
+  {id:'d1',f:['g'],sim:([v])=>loadSol('nacl',250,20,(v>0&&v<=300)?v:79),ok:()=>({k:'d1_ok'}),chk:([v])=>Math.abs(v-79.2)<=1.6?null:Math.abs(v-89.75)<=1.6?{k:'d1_h'}:{k:'d1_no'}},
+  {id:'d2',chips:{vals:[1,2,3,4],fmt:x=>t('sol_'+SOLK[x-1])},sim:([p])=>loadSol(SOLK[(p||2)-1],250,20,300),ok:()=>({k:'d2_ok'}),chk:([p])=>p===2?null:{k:'d_'+p}},
+  {id:'d3',f:['T'],sim:([v])=>loadSol('kno3',200,(v>=0&&v<=100)?v:39,100),ok:()=>({k:'d3_ok'}),chk:([v])=>(v>=38&&v<=41)?null:{k:'d3_no'}}
+ ]
+});
+initQuiz([]);applyLevel();
+/* ===== fi Raona-ho ===== */
 /* ---------- bucle ---------- */
 buildSelect();setMode('explore');
 loop((dt,now)=>{

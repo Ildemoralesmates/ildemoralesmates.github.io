@@ -92,6 +92,47 @@ table.atoms .dot{display:inline-block;width:12px;height:12px;border-radius:50%;m
 #exploreSel{display:flex;gap:6px;align-items:center;min-width:0;max-width:100%}
 #exploreSel select{min-width:0;flex:1 1 auto}
 @media (max-width:600px){#exploreSel{width:100%}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.tabs button{padding:7px 12px;font-size:13.5px}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+/* variables de simuladors/raona.css -> variables de química */
+:root{--stage:var(--cv);--panel:var(--card);--pa:var(--acc);--muted:var(--mut);--warn:var(--ko)}
+#reason{margin-top:14px}
+#reason .btn:not(.primary){background:transparent;color:var(--ink);border-color:var(--line)}
+#reason .btn.primary{background:var(--acc);color:#fff}
+#rztabs{display:flex;flex-wrap:wrap;border-radius:14px}
+#reason .chips{display:flex;gap:6px;flex-wrap:wrap}
+#reason .chip[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+#reason .task{color:var(--ink)}
+#reason h2 small{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600}
 </style></head>
 <body><div class="wrap">
 <header class="top">
@@ -145,13 +186,14 @@ table.atoms .dot{display:inline-block;width:12px;height:12px;border-radius:50%;m
 <div class="idea"><b>Regla d’or:</b> només es canvien els <b>coeficients</b> (els nombres davant). Els <b>subíndexs</b> (com el 2 de H<sub>2</sub>O) descriuen la molècula i no es toquen mai.</div>
 <p class="note">La balança compta àtoms, no massa: una reacció està ajustada quan cada element apareix en el mateix nombre a banda i banda (llei de conservació de la massa, Lavoisier).</p>
 </section>
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow"></small><span data-i18n="rz_title"></span></h2><p data-i18n="rz_intro"></p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label=""><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM"></button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS"></button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE"></button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD"></button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
 
 <footer>Fet per a l’aula · Un únic fitxer per animació, funciona sense connexió.</footer>
 </div>
-<script>const LANG="va";const T={"title": "Ajust de reaccions químiques · Balança visual de molècules", "h1": "Ajust de reaccions: la balança d’àtoms", "sub": "Posa coeficients davant de cada substància fins que la balança quede equilibrada: els àtoms ni es creen ni es destrueixen.", "description": "Simulador interactiu per a ajustar reaccions químiques (3r i 4t d’ESO): balança visual amb molècules, comptador d’àtoms per element i repte amb 5 reaccions.", "card_text": "Equilibra la balança amb molècules i aprén a ajustar reaccions. Inclou un repte de 5 reaccions amb pistes.", "level": "3r–4t ESO", "mode_explore": "Explora", "mode_challenge": "Repte", "lbl_reaction": "Reacció", "pan_left": "Reactius", "pan_right": "Productes", "atoms_count": "{0} àtoms", "coef_title": "Coeficients", "coef_less": "Disminuir el coeficient de {0}", "coef_more": "Augmentar el coeficient de {0}", "atoms_title": "Comptador d’àtoms", "th_element": "Element", "th_left": "Reactius", "th_right": "Productes", "rule": "<b>Regla d’or:<\/b> només es canvien els <b>coeficients<\/b> (els nombres davant). Els <b>subíndexs<\/b> (com el 2 de H<sub>2<\/sub>O) descriuen la molècula i no es toquen mai.", "btn_reset": "Torna a 1", "btn_hint": "Pista", "btn_next": "Reacció següent →", "btn_restart": "Torna a començar el repte", "note": "La balança compta àtoms, no massa: una reacció està ajustada quan cada element apareix en el mateix nombre a banda i banda (llei de conservació de la massa, Lavoisier).", "legend_title": "Àtoms", "el_H": "hidrogen", "el_C": "carboni", "el_O": "oxigen", "el_N": "nitrogen", "el_Fe": "ferro", "sp_H2": "hidrogen", "sp_O2": "oxigen", "sp_H2O": "aigua", "sp_N2": "nitrogen", "sp_NH3": "amoníac", "sp_CH4": "metà", "sp_CO2": "diòxid de carboni", "sp_C3H8": "propà", "sp_Fe": "ferro", "sp_Fe2O3": "òxid de ferro(III)", "rx_aigua_name": "Síntesi de l’aigua", "rx_aigua_info": "L’hidrogen i l’oxigen es combinen per a formar aigua: 2 H<sub>2<\/sub> + O<sub>2<\/sub> → 2 H<sub>2<\/sub>O.", "rx_aigua_tip": "Compta els oxígens: n’hi ha 2 a l’esquerra i només 1 a la dreta. Què pots canviar per a arreglar-ho?", "rx_amoniac_name": "Síntesi de l’amoníac (procés Haber)", "rx_amoniac_info": "El nitrogen de l’aire i l’hidrogen donen amoníac, base dels fertilitzants: N<sub>2<\/sub> + 3 H<sub>2<\/sub> → 2 NH<sub>3<\/sub>.", "rx_amoniac_tip": "Iguala primer el nitrogen i després mira l’hidrogen: 2 i 3 no encaixen directament, busca el mínim comú múltiple (6).", "rx_metana_name": "Combustió del metà (gas natural)", "rx_metana_info": "El metà crema amb l’oxigen i dona diòxid de carboni i aigua: CH<sub>4<\/sub> + 2 O<sub>2<\/sub> → CO<sub>2<\/sub> + 2 H<sub>2<\/sub>O.", "rx_metana_tip": "Deixa l’oxigen per al final: apareix en dues substàncies dels productes.", "rx_ferro_name": "Oxidació del ferro (rovell)", "rx_ferro_info": "El ferro s’oxida a l’aire i forma rovell: 4 Fe + 3 O<sub>2<\/sub> → 2 Fe<sub>2<\/sub>O<sub>3<\/sub>.", "rx_ferro_tip": "A la dreta els oxígens van de 3 en 3 i a l’esquerra de 2 en 2. Busca el mínim comú múltiple (6) i després ajusta el ferro.", "rx_propa_name": "Combustió del propà (gas de la bombona)", "rx_propa_info": "El propà crema amb l’oxigen: C<sub>3<\/sub>H<sub>8<\/sub> + 5 O<sub>2<\/sub> → 3 CO<sub>2<\/sub> + 4 H<sub>2<\/sub>O.", "rx_propa_tip": "Segueix l’ordre C → H → O: primer el carboni, després l’hidrogen i l’oxigen al final.", "st_ok": "Equilibrada! Cada element té els mateixos àtoms a cada plat.", "st_simplify": "Els àtoms ja quadren, però no és la forma més senzilla: tots els coeficients es poden dividir entre {0}.", "st_no": "Encara no quadra. Revisa: {0}.", "st_tilt_left": "La balança pesa cap als reactius.", "st_tilt_right": "La balança pesa cap als productes.", "st_tilt_even": "Hi ha el mateix nombre total d’àtoms, però no els mateixos de cada element.", "info_prefix": "Reacció:", "chal_progress": "Reacció {0} de {1}", "chal_hints": "Pistes usades: {0}", "chal_points": "Punts: {0} / {1}", "chal_wait": "Ajusta la reacció per a continuar.", "chal_solved": "Reacció resolta! Estrelles guanyades: {0} de 3.", "hint_extra": "Pista: el coeficient de {0} és {1}.", "end_title": "Repte completat!", "end_text": "Has ajustat les 5 reaccions amb {0} pistes. Puntuació: {1} / {2}."};</script><script>/* Utilitats comunes (T i LANG els injecta build.py abans d'aquest fitxer) */
+<script>const LANG="va";const T={"title": "Ajust de reaccions químiques · Balança visual de molècules", "h1": "Ajust de reaccions: la balança d’àtoms", "sub": "Posa coeficients davant de cada substància fins que la balança quede equilibrada: els àtoms ni es creen ni es destrueixen.", "description": "Simulador interactiu per a ajustar reaccions químiques (3r i 4t d’ESO): balança visual amb molècules, comptador d’àtoms per element i repte amb 5 reaccions.", "card_text": "Equilibra la balança amb molècules i aprén a ajustar reaccions. Inclou un repte de 5 reaccions amb pistes.", "level": "3r–4t ESO", "mode_explore": "Explora", "mode_challenge": "Repte", "lbl_reaction": "Reacció", "pan_left": "Reactius", "pan_right": "Productes", "atoms_count": "{0} àtoms", "coef_title": "Coeficients", "coef_less": "Disminuir el coeficient de {0}", "coef_more": "Augmentar el coeficient de {0}", "atoms_title": "Comptador d’àtoms", "th_element": "Element", "th_left": "Reactius", "th_right": "Productes", "rule": "<b>Regla d’or:<\/b> només es canvien els <b>coeficients<\/b> (els nombres davant). Els <b>subíndexs<\/b> (com el 2 de H<sub>2<\/sub>O) descriuen la molècula i no es toquen mai.", "btn_reset": "Torna a 1", "btn_hint": "Pista", "btn_next": "Reacció següent →", "btn_restart": "Torna a començar el repte", "note": "La balança compta àtoms, no massa: una reacció està ajustada quan cada element apareix en el mateix nombre a banda i banda (llei de conservació de la massa, Lavoisier).", "legend_title": "Àtoms", "el_H": "hidrogen", "el_C": "carboni", "el_O": "oxigen", "el_N": "nitrogen", "el_Fe": "ferro", "sp_H2": "hidrogen", "sp_O2": "oxigen", "sp_H2O": "aigua", "sp_N2": "nitrogen", "sp_NH3": "amoníac", "sp_CH4": "metà", "sp_CO2": "diòxid de carboni", "sp_C3H8": "propà", "sp_Fe": "ferro", "sp_Fe2O3": "òxid de ferro(III)", "rx_aigua_name": "Síntesi de l’aigua", "rx_aigua_info": "L’hidrogen i l’oxigen es combinen per a formar aigua: 2 H<sub>2<\/sub> + O<sub>2<\/sub> → 2 H<sub>2<\/sub>O.", "rx_aigua_tip": "Compta els oxígens: n’hi ha 2 a l’esquerra i només 1 a la dreta. Què pots canviar per a arreglar-ho?", "rx_amoniac_name": "Síntesi de l’amoníac (procés Haber)", "rx_amoniac_info": "El nitrogen de l’aire i l’hidrogen donen amoníac, base dels fertilitzants: N<sub>2<\/sub> + 3 H<sub>2<\/sub> → 2 NH<sub>3<\/sub>.", "rx_amoniac_tip": "Iguala primer el nitrogen i després mira l’hidrogen: 2 i 3 no encaixen directament, busca el mínim comú múltiple (6).", "rx_metana_name": "Combustió del metà (gas natural)", "rx_metana_info": "El metà crema amb l’oxigen i dona diòxid de carboni i aigua: CH<sub>4<\/sub> + 2 O<sub>2<\/sub> → CO<sub>2<\/sub> + 2 H<sub>2<\/sub>O.", "rx_metana_tip": "Deixa l’oxigen per al final: apareix en dues substàncies dels productes.", "rx_ferro_name": "Oxidació del ferro (rovell)", "rx_ferro_info": "El ferro s’oxida a l’aire i forma rovell: 4 Fe + 3 O<sub>2<\/sub> → 2 Fe<sub>2<\/sub>O<sub>3<\/sub>.", "rx_ferro_tip": "A la dreta els oxígens van de 3 en 3 i a l’esquerra de 2 en 2. Busca el mínim comú múltiple (6) i després ajusta el ferro.", "rx_propa_name": "Combustió del propà (gas de la bombona)", "rx_propa_info": "El propà crema amb l’oxigen: C<sub>3<\/sub>H<sub>8<\/sub> + 5 O<sub>2<\/sub> → 3 CO<sub>2<\/sub> + 4 H<sub>2<\/sub>O.", "rx_propa_tip": "Segueix l’ordre C → H → O: primer el carboni, després l’hidrogen i l’oxigen al final.", "st_ok": "Equilibrada! Cada element té els mateixos àtoms a cada plat.", "st_simplify": "Els àtoms ja quadren, però no és la forma més senzilla: tots els coeficients es poden dividir entre {0}.", "st_no": "Encara no quadra. Revisa: {0}.", "st_tilt_left": "La balança pesa cap als reactius.", "st_tilt_right": "La balança pesa cap als productes.", "st_tilt_even": "Hi ha el mateix nombre total d’àtoms, però no els mateixos de cada element.", "info_prefix": "Reacció:", "chal_progress": "Reacció {0} de {1}", "chal_hints": "Pistes usades: {0}", "chal_points": "Punts: {0} / {1}", "chal_wait": "Ajusta la reacció per a continuar.", "chal_solved": "Reacció resolta! Estrelles guanyades: {0} de 3.", "hint_extra": "Pista: el coeficient de {0} és {1}.", "end_title": "Repte completat!", "end_text": "Has ajustat les 5 reaccions amb {0} pistes. Puntuació: {1} / {2}.", "l_n": "Nombre", "rng": "Eixe valor no té sentit ací. Torna-ho a pensar.", "s_cx_no": "Eixa reacció no el desmenteix. Compta les molècules a cada costat de les equacions ajustades i busca’n una on no hi haja més a l’esquerra.", "m1.q": "Combustió del metà: CH<sub>4<\/sub> + O<sub>2<\/sub> → CO<sub>2<\/sub> + H<sub>2<\/sub>O. Quantes molècules d’O<sub>2<\/sub> reaccionen amb cada molècula de CH<sub>4<\/sub> quan l’equació està ben ajustada?", "m1_h": "1 és el valor de partida i no ajusta res: mira la taula d’àtoms, falten oxigens a l’esquerra.", "m1_f": "Ajusta primer H i C; després compta els O de la dreta (2 del CO<sub>2<\/sub> + els de l’aigua) i decideix quantes molècules d’O<sub>2<\/sub> els aporten.", "m1_ok": "✔ Missió complida! CH<sub>4<\/sub> + 2 O<sub>2<\/sub> → CO<sub>2<\/sub> + 2 H<sub>2<\/sub>O: 4 H i 4 O a cada costat.", "m1.more": "Hi ha tantes molècules a l’esquerra com a la dreta? És una norma o una casualitat?", "m2.q": "Propà ben ajustat (C<sub>3<\/sub>H<sub>8<\/sub> + O<sub>2<\/sub> → CO<sub>2<\/sub> + H<sub>2<\/sub>O). Quants àtoms d’oxigen hi ha a cada costat de l’equació?", "m2_h": "5 és el coeficient de l’O<sub>2<\/sub>, però cada molècula en porta 2 àtoms: compta àtoms, no molècules.", "m2_f": "Ajusta l’equació i mira la fila de l’oxigen a la taula d’àtoms: el nombre de l’esquerra ha de ser igual al de la dreta.", "m2_ok": "✔ Missió complida! 5 O<sub>2<\/sub> = 10 àtoms d’O; a la dreta, 3 CO<sub>2<\/sub> (6) + 4 H<sub>2<\/sub>O (4) = 10.", "m2.more": "Per què ajustar els oxigens al final és més còmode que començar per ells?", "m3.q": "Oxidació del ferro: 4 Fe + 3 O<sub>2<\/sub> → 2 Fe<sub>2<\/sub>O<sub>3<\/sub>. Quants àtoms de ferro calen per a reaccionar amb 6 molècules d’O<sub>2<\/sub>?", "m3_h": "6 seria si reaccionaren 1 a 1, però l’equació diu 4 Fe per cada 3 O<sub>2<\/sub>.", "m3_f": "La proporció de l’equació és 4 Fe : 3 O<sub>2<\/sub>. Si les molècules d’O<sub>2<\/sub> es dupliquen, què passa amb el ferro?", "m3_ok": "✔ Missió complida! 6 O<sub>2<\/sub> és el doble de 3, així que calen el doble de Fe: 8 àtoms.", "m3.more": "Si en comptes de molècules foren mols, canviaria la proporció?", "m4.q": "Propà ben ajustat. Quants àtoms hi ha en total en cada plat de la balança? (El nombre apareix sota el plat.)", "m4_f": "Ajusta l’equació fins que la balança quede horitzontal i llig el recompte de qualsevol dels dos plats.", "m4_ok": "✔ Missió complida! 21 àtoms a cada plat: 11 + 10 a l’esquerra, 9 + 12 a la dreta. La balança està en equilibri.", "m4.more": "Seria el mateix nombre si miraren molècules en lloc d’àtoms?", "s1.q": "«Per a ajustar una equació puc canviar els subíndexs de les fórmules (per exemple, H<sub>2<\/sub>O per H<sub>2<\/sub>O<sub>2<\/sub>).»", "s1.h": "Pensa si H<sub>2<\/sub>O i H<sub>2<\/sub>O<sub>2<\/sub> són la mateixa substància.", "s1.e": "Mai: canviar un subíndex canvia la substància (H<sub>2<\/sub>O és aigua; H<sub>2<\/sub>O<sub>2<\/sub> és aigua oxigenada). Només es poden canviar els coeficients.", "s2.q": "«En una equació química ben ajustada hi ha el mateix nombre d’àtoms de cada element a cada costat.»", "s2.h": "Mira la taula d’àtoms quan la balança queda en equilibri.", "s2.e": "Sempre: és la llei de conservació de la massa; els àtoms es reorganitzen, però no es creen ni es destrueixen.", "s3.q": "«En una equació ben ajustada, sempre hi ha més molècules a l’esquerra que a la dreta.»", "s3.h": "Compta molècules (no àtoms) en diverses reaccions ajustades.", "s3.e": "De vegades: en l’aigua o l’amoníac passa, però en el metà hi ha 3 molècules a cada costat i en el propà n’hi ha més a la dreta (7) que a l’esquerra (6). Es conserven els àtoms, no les molècules.", "s3.cx": "✔ Contraexemple trobat: eixa reacció té {0} molècules a la dreta, i no n’hi ha menys a l’esquerra.", "s4.q": "«Si multipliquem tots els coeficients d’una equació ajustada per 2, continua ajustada.»", "s4.h": "Prova-ho amb l’aigua: de 2, 1, 2 passa a 4, 2, 4.", "s4.e": "Sempre: si hi ha els mateixos àtoms a cada costat, el doble de cada cosa també. Però la forma estàndard usa els enters més xicotets possibles.", "s5.q": "«L’equació 2 H<sub>2<\/sub> + O<sub>2<\/sub> → 2 H<sub>2<\/sub>O vol dir que 2 g d’hidrogen i 1 g d’oxigen donen 2 g d’aigua.»", "s5.h": "Els coeficients compten molècules (o mols), no grams.", "s5.e": "Mai: els coeficients són proporcions de molècules o mols, no de grams. En massa: 4 g d’H<sub>2<\/sub> + 32 g d’O<sub>2<\/sub> → 36 g d’aigua.", "e1.ctx": "Cal ajustar H<sub>2<\/sub> + O<sub>2<\/sub> → H<sub>2<\/sub>O (ara hi ha 2 O a l’esquerra i només 1 a la dreta).", "e1.n0": "Marta", "e1.n1": "Pau", "e1.s0": "Ho arregle fàcil: escric H<sub>2<\/sub>O<sub>2<\/sub> a la dreta i ja hi ha 2 O.", "e1.s1": "No pots canviar la fórmula de l’aigua. Cal posar coeficients: 2 H<sub>2<\/sub> + O<sub>2<\/sub> → 2 H<sub>2<\/sub>O.", "e1.w0": "El subíndex defineix la substància: H<sub>2<\/sub>O<sub>2<\/sub> és aigua oxigenada, no aigua. Ajustar només permet posar coeficients davant de les fórmules.", "e1.w1": "Perquè l’H<sub>2<\/sub>O<sub>2<\/sub> no existeix com a substància.", "e1.w2": "Perquè els coeficients no es poden posar davant de les fórmules.", "e1.frame": "Marta, no val canviar el subíndex perquè…", "e1.model": "Marta, el subíndex forma part de la fórmula: si el canvies, ja no tens aigua sinó una altra substància (aigua oxigenada). Per a ajustar només pots posar coeficients: 2 H<sub>2<\/sub> + O<sub>2<\/sub> → 2 H<sub>2<\/sub>O. Pau té raó.", "e2.ctx": "Dues persones comproven si CH<sub>4<\/sub> + 2 O<sub>2<\/sub> → CO<sub>2<\/sub> + 2 H<sub>2<\/sub>O està ajustada.", "e2.n0": "Marta", "e2.n1": "Pau", "e2.s0": "Sí: 1 C, 4 H i 4 O a cada costat.", "e2.s1": "Sí, i hi ha 3 molècules a cada costat, però això és casualitat d’aquesta reacció.", "e2.w0": "L’ajust es comprova comptant àtoms de cada element. Que el nombre de molècules coincidisca és casual: al propà no passa.", "e2.w1": "Perquè sempre hi ha el mateix nombre de molècules a cada costat.", "e2.w2": "Perquè en una equació ajustada els coeficients han de ser tots iguals.", "e2.frame": "Marta i Pau, tenen raó perquè…", "e2.model": "Marta i Pau, està ajustada perquè hi ha els mateixos àtoms de cada element a cada costat. Que també hi haja 3 molècules a cada costat és una casualitat: en altres reaccions, com la del propà, no passa.", "e3.ctx": "Algú revisa 4 Fe + 3 O<sub>2<\/sub> → 2 Fe<sub>2<\/sub>O<sub>3<\/sub>.", "e3.n0": "Marta", "e3.n1": "Pau", "e3.s0": "Està mal ajustada: a l’esquerra hi ha 7 molècules i a la dreta només 2.", "e3.s1": "Està mal ajustada: haurien de reaccionar 1 Fe per cada O<sub>2<\/sub>.", "e3.w0": "Està ben ajustada: 4 Fe i 6 O a cada costat. S’ajusta comptant àtoms, no molècules, i cap regla exigeix que els coeficients dels reactius siguen iguals.", "e3.w1": "Perquè el ferro no pot reaccionar amb l’oxigen.", "e3.w2": "Perquè Fe<sub>2<\/sub>O<sub>3<\/sub> no és una fórmula correcta.", "e3.frame": "Marta i Pau, l’equació sí que està ajustada perquè…", "e3.model": "Marta i Pau, compteu àtoms: 4 Fe i 3 · 2 = 6 O a l’esquerra; 2 · 2 = 4 Fe i 2 · 3 = 6 O a la dreta. Està ajustada. Tenir un nombre diferent de molècules o coeficients desiguals no és cap error.", "d1.q": "Vols cremar 2 molècules de propà amb la quantitat justa d’oxigen. Quantes molècules d’O<sub>2<\/sub> necessites?", "d1_h": "5 és el que calen per a UNA molècula de propà. Ara en tens 2.", "d1_no": "Mira l’equació ajustada: quantes molècules d’O<sub>2<\/sub> van amb cada molècula de C<sub>3<\/sub>H<sub>8<\/sub>? Multiplica per les que en tens.", "d1_ok": "✔ Ben decidit! 2 · 5 = 10 molècules d’O<sub>2<\/sub>, i en sorten 6 CO<sub>2<\/sub> i 8 H<sub>2<\/sub>O.", "d1.more": "I si l’oxigen que et queda és menys? Qui s’acaba primer, el propà o l’oxigen?", "d2.q": "Una fàbrica fa amoníac (N<sub>2<\/sub> + H<sub>2<\/sub> → NH<sub>3<\/sub>) i li arriben 100 molècules de N<sub>2<\/sub>. Quantes molècules d’H<sub>2<\/sub> ha de tenir preparades perquè no en sobre ni en falte cap?", "d2_h": "Pensaves en una relació 1 a 1? L’equació ajustada és N<sub>2<\/sub> + 3 H<sub>2<\/sub> → 2 NH<sub>3<\/sub>.", "d2_no": "Ajusta primer l’equació i llig la proporció N<sub>2<\/sub> : H<sub>2<\/sub>. Després multiplica pel nombre de molècules de N<sub>2<\/sub>.", "d2_ok": "✔ Ben decidit! La proporció és 1 : 3, així que 100 N<sub>2<\/sub> demanen 300 H<sub>2<\/sub> (i en sortiran 200 NH<sub>3<\/sub>).", "d2.more": "Per què 100 N<sub>2<\/sub> + 300 H<sub>2<\/sub> són 400 molècules però només s’obtenen 200?", "d3.q": "Un company ha «ajustat» així la combustió del metà: CH<sub>4<\/sub> + 2 O<sub>2<\/sub> → CO<sub>2<\/sub> + H<sub>2<\/sub>O. Què li diries?", "d3.lc": "Diagnòstic:", "d3.c1": "Està ben ajustada", "d3.c2": "Falta posar un 2 davant de l’H<sub>2<\/sub>O", "d3.c3": "Falta posar un 3 davant de l’O<sub>2<\/sub>", "d_1": "No: a l’esquerra hi ha 4 H i a la dreta només 2, i 4 O davant de 3.", "d_3": "Amb 3 O<sub>2<\/sub> tindries 6 O a l’esquerra i només 3 a la dreta: no ho arregla. Fixa’t primer en l’hidrogen.", "d3_ok": "✔ Ben decidit! Amb 2 H<sub>2<\/sub>O hi ha 4 H i 2 + 2 = 4 O a la dreta: tot quadra.", "d3.more": "Quin element convé deixar per al final en les combustions i per què?"};</script><script>/* Utilitats comunes (T i LANG els injecta build.py abans d'aquest fitxer) */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 
-function t(k,...a){let s=T[k];if(s===undefined)return k;a.forEach((v,i)=>{s=s.split('{'+i+'}').join(v);});return s;}
+function t(k,...a){let s=T[k];if(s===undefined)return k;const o=(a.length===1&&a[0]&&typeof a[0]==='object')?a[0]:a;for(const i in o)s=s.split('{'+i+'}').join(o[i]);return s;}
 function fmt(x,d=2){return Number(x).toLocaleString(LANG==='va'?'ca-ES':'es-ES',{maximumFractionDigits:d});}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
 function lerp(a,b,u){return a+(b-a)*u;}
@@ -205,7 +247,230 @@ function loop(fn){let last=performance.now();
 
 /* Preferència de moviment reduït */
 const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-</script><script>(()=>{
+</script><script>/* Capa de compatibilitat Raona-ho (motor compartit de tools/simuladors/src) dins del pipeline de química */
+const I18N={ca:{},es:{}};
+const REDUCE=REDUCED;
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* Passa els textos genèrics del motor (quiz.js + raona.js) al diccionari T d'aquesta pàgina; els de cada sim manen */
+(function(){const d=I18N[LANG==='es'?'es':'ca'];Object.keys(d).forEach(k=>{if(!(k in T))T[k]=d[k];});
+  $$('[data-i18n]').forEach(e=>{e.innerHTML=t(e.dataset.i18n);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});})();
+
+(()=>{
 /* ---------- dades ---------- */
 const EL={
   H:{c:'#ffffff',r:8,s:'#7a859b'},
@@ -460,6 +725,34 @@ $('#btnHint').onclick=giveHint;
 $('#btnNext').onclick=()=>{chal.idx++;rx=chal.idx;$('#hintBox').hidden=true;wasSolved=false;resetCoefs();updateChal();};
 $('#btnRestart').onclick=restartChal;
 
+/* ===== Raona-ho ===== */
+function loadRx(i,cf){setMode('explore');$('#rxSel').value=i;rx=i;wasSolved=!!cf;resetCoefs();if(cf){coef=cf.slice();buildSteppers();}refresh();RZ.show($('#bal'));}
+RZ.init({
+ F:{n:{l:'l_n'}},
+ sim:v=>loadRx(v[0],v[1]),
+ M:[
+  {id:'m1',f:['n'],sim:()=>loadRx(2,[1,2,1,2]),ok:()=>({k:'m1_ok'}),chk:([v])=>v===2?null:v===1?{k:'m1_h'}:{k:'m1_f'}},
+  {id:'m2',f:['n'],sim:()=>loadRx(4,[1,5,3,4]),ok:()=>({k:'m2_ok'}),chk:([v])=>v===10?null:v===5?{k:'m2_h'}:{k:'m2_f'}},
+  {id:'m3',f:['n'],sim:()=>loadRx(3,[4,3,2]),ok:()=>({k:'m3_ok'}),chk:([v])=>v===8?null:v===6?{k:'m3_h'}:{k:'m3_f'}},
+  {id:'m4',f:['n'],sim:()=>loadRx(4,[1,5,3,4]),ok:()=>({k:'m4_ok'}),chk:([v])=>v===21?null:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>loadRx(0,[1,1,1])},
+  {id:'s2',ans:'S',sim:()=>loadRx(0,[2,1,2])},
+  {id:'s3',ans:'D',f:['n'],sim:()=>loadRx(0,[2,1,2]),cxsim:([v])=>loadRx(v===3?2:4,v===3?[1,2,1,2]:[1,5,3,4]),cxok:([v])=>({k:'s3.cx',p:[fmtN(v)]}),
+   cx:([v])=>(v===3||v===7)?null:{k:'s_cx_no'}},
+  {id:'s4',ans:'S',sim:()=>loadRx(0,[4,2,4])},
+  {id:'s5',ans:'M',sim:()=>loadRx(0,[2,1,2])}
+ ],
+ E:[{id:'e1',who:1,args:[0,[1,1,1]]},{id:'e2',who:2,args:[2,[1,2,1,2]]},{id:'e3',who:3,args:[3,[4,3,2]]}],
+ D:[
+  {id:'d1',f:['n'],sim:()=>loadRx(4,[2,10,6,8]),ok:()=>({k:'d1_ok'}),chk:([v])=>v===10?null:v===5?{k:'d1_h'}:{k:'d1_no'}},
+  {id:'d2',f:['n'],sim:()=>loadRx(1,[1,3,2]),ok:()=>({k:'d2_ok'}),chk:([v])=>v===300?null:v===100?{k:'d2_h'}:{k:'d2_no'}},
+  {id:'d3',chips:{vals:[1,2,3],fmt:x=>t('d3.c'+x)},sim:()=>loadRx(2,[1,2,1,1]),ok:()=>({k:'d3_ok'}),chk:([p])=>p===2?null:{k:'d_'+p}}
+ ]
+});
+initQuiz([]);applyLevel();
+/* ===== fi Raona-ho ===== */
 buildSelect();buildLegend();buildSteppers();refresh();ang=target;
 loop(draw);
 })();

@@ -102,6 +102,47 @@ footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-appl
 footer.cc a{color:inherit}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
 
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
 .pun{display:grid;gap:6px;padding:14px;overflow-x:auto}
 .gh{display:grid;place-items:center;min-height:34px;padding:4px 6px;border-radius:8px;background:var(--chip);border:1px solid var(--line);font-family:var(--f-num);font-weight:700;font-size:14px;transition:background .12s,border-color .12s}
 .gh.corner{background:transparent;border-color:transparent;font:600 11px var(--f-body);color:var(--muted);text-align:center;letter-spacing:.04em}
@@ -223,6 +264,8 @@ ol.q b{color:var(--ink);font-weight:600}
       <ol class="q" data-i18n-html="c3.l"><li><b>Prediu abans de mirar:</b> activa el mode predicció, completa el quadre en una pissarra i després revela-ho.</li><li>Quins creuaments donen <b>100 %</b> de descendents iguals? Quins donen <b>3:1</b>? I <b>1:1</b>?</li><li>Un individu de fenotip dominant: com saps si és <b>AA</b> o <b>Aa</b>? Dissenya un creuament que ho resolga (creuament prova).</li><li>Al dondiego de nit, per què el creuament de dues plantes roses dóna <b>1:2:1</b> i no 3:1?</li></ol>
     </article>
   </section>
+
+  <section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
   <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
 </div>
 
@@ -259,7 +302,93 @@ cross:"{a} × {b}",
 "c2.note":"Amb poques dades, l'atzar mana: 3:1 no vol dir que de cada 4 n'isquen exactament 3.",
 "esp":"esp.",pp:"punts",
 "c3.s":"Per a la classe","c3.h":"Preguntes per pensar",
-"c3.l":"<li><b>Prediu abans de mirar:</b> activa el mode predicció, completa el quadre en una pissarra i després revela-ho.</li><li>Quins creuaments donen <b>100 %</b> de descendents iguals? Quins donen <b>3:1</b>? I <b>1:1</b>?</li><li>Un individu de fenotip dominant: com saps si és <b>AA</b> o <b>Aa</b>? Dissenya un creuament que ho resolga (creuament prova).</li><li>Al dondiego de nit, per què el creuament de dues plantes roses dóna <b>1:2:1</b> i no 3:1?</li>"
+"c3.l":"<li><b>Prediu abans de mirar:</b> activa el mode predicció, completa el quadre en una pissarra i després revela-ho.</li><li>Quins creuaments donen <b>100 %</b> de descendents iguals? Quins donen <b>3:1</b>? I <b>1:1</b>?</li><li>Un individu de fenotip dominant: com saps si és <b>AA</b> o <b>Aa</b>? Dissenya un creuament que ho resolga (creuament prova).</li><li>Al dondiego de nit, per què el creuament de dues plantes roses dóna <b>1:2:1</b> i no 3:1?</li>",
+"rng":"Escriu un nombre enter major que 0.",
+"l_verd":"Llavor verda","l_het":"Heterozigots","l_dom":"Grogues i llises","l_rec":"Verdes i rugoses",
+"l_rojes":"Vermelles","l_roses":"Roses","l_blanques":"Blanques","l_blaves":"Zorbs blaus","l_tar":"Zorbs taronges","l_pct":"Descendents recessius","l_pn":"Descendents verds","l_pnn":"Descendents que no són aa","l_n":"Nombre de pèsols",
+"m1.q":"Es creuen dos pèsols de llavor groga heterozigots (Aa × Aa). Segons el quadre, quin percentatge de la descendència tindrà llavor <b>verda</b> i quin percentatge serà <b>heterozigot</b>?",
+"m1_f":"Mira el quadre: de les 4 caselles, quantes són aa? I quantes són Aa?",
+"m1_75":"75 % és la part groga (genotips AA i Aa). Aquí et demanem la verda: només el genotip aa.",
+"m1_ok":"✔ Missió complida! 1 casella de 4 és aa (25 %) i 2 de 4 són Aa (50 %).",
+"m1.more":"Si naixen 8 descendents, n'hi haurà exactament 2 de verds? Prova-ho a la simulació amb +1, +10 i +1000.",
+"m2.q":"Creuament de dos gens (AaBb × AaBb) en pèsols. De les 16 caselles, quantes tenen llavor <b>groga i llisa</b> (dominants en els dos gens)? I quantes <b>verda i rugosa</b> (recessives en els dos)?",
+"m2_f":"Per ser groga i llisa cal almenys una A i almenys una B. Compta les caselles que ho compleixen, i després les que són aabb.",
+"m2_ok":"✔ Missió complida! És la proporció 9 : 3 : 3 : 1: 9 de 16 grogues i llises, i només 1 de 16 verda i rugosa.",
+"m2.more":"Quantes de les 16 són grogues i rugoses? I verdes i llises? Comprova que les quatre sumen 16.",
+"m3.q":"Dondiego de nit (dominància incompleta): es creuen dues flors roses (Aa × Aa). Quin percentatge de la descendència serà <b>vermell</b>, quin <b>rosa</b> i quin <b>blanc</b>?",
+"m3_f":"Amb dominància incompleta l'heterozigot (Aa) no és vermell: té un color intermedi. Compta les caselles AA, Aa i aa.",
+"m3_ok":"✔ Missió complida! La proporció fenotípica és 1 : 2 : 1, igual que la genotípica.",
+"m3.more":"Amb dominància completa eren 3 : 1. Per què ara apareixen tres fenotips diferents?",
+"m4.q":"Una Zorb blava heterozigota (Aa) es creua amb una de taronja (aa). Si naixen <b>80</b> Zorbs, quantes en seran de cada color <b>segons el que s'espera</b>?",
+"m4_f":"Aa × aa té 4 caselles: 2 Aa (blaus) i 2 aa (taronges). Quina fracció és cada color? Aplica-la a 80.",
+"m4_ok":"✔ Missió complida! La proporció és 1 : 1: 40 blaus i 40 taronges.",
+"m4.more":"Si només naixen 3 Zorbs, han de ser exactament 1,5 de cada color? Què vol dir «esperar» 40?",
+"s_cx_no":"Aquest valor no es dona en cap creuament entre dos progenitors així. Fes proves amb els creuaments predefinits.",
+"s1.q":"«Si els dos progenitors són de fenotip dominant, tota la descendència és de fenotip dominant.»",
+"s1.h":"Prova AA × AA, AA × Aa i Aa × Aa.",
+"s1.e":"De vegades: amb AA × AA o AA × Aa tots són dominants, però amb Aa × Aa un de cada quatre és aa (recessiu).",
+"s1.cx":"✔ Contraexemple trobat: Aa × Aa dona un 25 % de descendents recessius encara que els dos progenitors són dominants.",
+"s2.q":"«Si un dels progenitors és aa, tota la descendència és aa.»",
+"s2.h":"Compara aa × aa amb aa × Aa i aa × AA.",
+"s2.e":"De vegades: només amb aa × aa. Amb aa × Aa la meitat no és aa, i amb aa × AA cap ho és.",
+"s2.cx":"✔ Contraexemple trobat: en aquest creuament el {0} % dels descendents no és aa.",
+"s3.q":"«Si es creuen dos pèsols Aa × Aa i naixen 4 descendents, exactament 1 és de llavor verda.»",
+"s3.h":"Fes +1 quatre vegades i mira què passa; torna-ho a provar unes quantes vegades.",
+"s3.e":"De vegades: cada descendent és verd amb probabilitat 1/4, però l'atzar no reparteix exactament. En 4 descendents poden eixir 0, 1, 2… verds; el 3 : 1 només s'acosta amb molts descendents.",
+"s3.cx":"✔ Contraexemple trobat: amb 4 descendents és perfectament possible que {0} siguen verds.",
+"s4.q":"«Amb dominància incompleta, el creuament Aa × Aa pot donar els tres fenotips: vermell, rosa i blanc.»",
+"s4.h":"Mira els tres genotips possibles i el color de cadascun.",
+"s4.e":"Sempre: AA és vermell, Aa és rosa i aa és blanc, i els tres apareixen en Aa × Aa (1 : 2 : 1).",
+"s5.q":"«En un creuament AaBb × AaBb, la proporció 9 : 3 : 3 : 1 s'acosta a la real quan hi ha molts descendents.»",
+"s5.h":"Fes +1000 diverses vegades a la simulació.",
+"s5.e":"Sempre: com més descendents, més s'acosten les freqüències observades a les esperades (la desviació màxima es va reduint).",
+"s6.q":"«Dos Zorbs de pell taronja (aa × aa) poden tindre una cria de pell blava.»",
+"s6.h":"Quins gàmetes pot formar un aa?",
+"s6.e":"Mai: un aa només dona gàmetes a, així que tots els descendents són aa, és a dir, taronja. (Excepte si apareix una mutació, però això ja és una altra història.)",
+"e1.ctx":"Es creuen dos pèsols Aa × Aa (llavor groga) i en neixen <b>4</b>. Quants seran verds?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Exactament 1 serà verd, perquè la proporció és 3 : 1.",
+"e1.s1":"Potser 1, però també poden eixir 0 o 2: el 3 : 1 només es nota amb molts descendents.",
+"e1.w0":"Cada descendent es decideix a l'atzar (1 possibilitat de 4 de ser verd). La proporció 3 : 1 és el que s'espera de mitjana, no el que passa en cada tanda.",
+"e1.w1":"Perquè amb 4 descendents mai pot eixir cap de verd.",
+"e1.w2":"Perquè els quadres de Punnett només valen per a més de 100 descendents.",
+"e1.frame":"Marta, que la proporció siga 3 : 1 no vol dir que en 4 descendents n'hi haja exactament 1 de verd perquè…",
+"e1.model":"Marta, el quadre dona la probabilitat de cada descendent (1/4 de ser verd), no un resultat exacte. En 4 descendents pot haver-ne 0, 1, 2… de verds; la proporció 3 : 1 només es nota quan en tens molts, com mostra la simulació.",
+"e2.ctx":"Dondiego de nit, dominància incompleta: es creuen dues flors roses (Aa × Aa). Quins colors i en quina proporció surten?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"3 : 1, com als pèsols: un 75 % de vermelles i un 25 % de blanques.",
+"e2.s1":"1 : 2 : 1: un 25 % de vermelles, un 50 % de roses i un 25 % de blanques.",
+"e2.w0":"Quan la dominància és incompleta, l'heterozigot (Aa) té un fenotip intermedi (rosa): els tres genotips donen tres colors diferents.",
+"e2.w1":"Perquè el color rosa és una mutació que no es pot heretar.",
+"e2.w2":"Perquè les flors tenen més de dos gàmetes diferents.",
+"e2.frame":"Joan, la proporció no és 3 : 1 perquè…",
+"e2.model":"Joan, el 3 : 1 és de la dominància completa, on Aa té el mateix aspecte que AA. Ací Aa és rosa, diferent de AA (vermella) i d'aa (blanca): els tres genotips es veuen i la proporció fenotípica és 1 : 2 : 1.",
+"e3.ctx":"Es creua un pèsol de llavor groga pura (AA) amb un de llavor verda (aa). Quina descendència s'espera?",
+"e3.n0":"Laia","e3.n1":"Àlex",
+"e3.s0":"Meitat grogues i meitat verdes, perquè cada progenitor aporta una de les dues.",
+"e3.s1":"Tots seran Aa, però la meitat tindran la llavor verda.",
+"e3.w0":"AA només dona gàmetes A i aa només a: tots els descendents són Aa, i com que A domina, tots són grocs (100 %).",
+"e3.w1":"Perquè AA × aa no es pot representar en un quadre de Punnett.",
+"e3.w2":"Perquè el color verd desapareix sempre en la descendència.",
+"e3.frame":"Laia i Àlex, no hi ha descendents verds perquè…",
+"e3.model":"AA només forma gàmetes A i aa només gàmetes a, així que tots els descendents són Aa. Com que A és dominant sobre a, tots tenen llavor groga: 100 %. Laia confon aquest creuament amb Aa × aa, i Àlex diu que són Aa però oblida que Aa és groga.",
+"d1.q":"Vols que <b>tota</b> la descendència de pèsols siga de llavor groga i un dels progenitors ha de ser verd (aa). Quin genotip ha de tindre l'altre?",
+"d1.lc":"Progenitor 2:",
+"d1_no":"Aa × aa no dona «tot groc»: el {0} % de la descendència seria verd.",
+"d1_no2":"aa × aa només dona descendents aa: tots serien verds.",
+"d1_ok":"✔ Ben decidit! AA × aa: tots els descendents són Aa i, com A domina, 100 % grocs.",
+"d1.more":"I si volguérem que la meitat fossen verds? Quin genotip hauria de tindre el segon progenitor?",
+"d2.q":"Un criador vol que <b>la meitat</b> de les cries de Zorb siguen taronges. Un dels progenitors és blau heterozigot (Aa). Quin genotip ha de tindre l'altre?",
+"d2.lc":"Progenitor 2:",
+"d2_no":"Amb aquest genotip, el {0} % de les cries seria taronja.",
+"d2_ok":"✔ Ben decidit! Aa × aa dona 1 : 1: la meitat blaus (Aa) i la meitat taronges (aa).",
+"d2.more":"Amb Aa × Aa el percentatge de taronges és del 25 %. Per què baixa de 50 % a 25 %?",
+"d3.q":"Creues dos pèsols Aa × Aa i vols tindre <b>més d'un 99 %</b> de probabilitat que, almenys, un descendent siga verd. Quants pèsols has de sembrar com a mínim?",
+"d3.l0":"Pèsols",
+"d3_lo":"Amb {0} pèsols la probabilitat d'obtindre almenys 1 verd és només del {1} %.",
+"d3_hi":"Amb {0} pèsols ja passes del 99 % ({1} %), però no és el mínim.",
+"d3_ok":"✔ Ben decidit! Amb 17 pèsols: 1 − (3/4)<sup>17</sup> ≈ 99,25 %. Amb 16 només arribaria al 98,99 %.",
+"d3.more":"Per què es calcula 1 − (3/4)<sup>n</sup> i no (1/4)·n? Què representa (3/4)<sup>n</sup>?"
 },
 es:{
 title:"Cuadros de Punnett",
@@ -292,7 +421,93 @@ cross:"{a} × {b}",
 "c2.note":"Con pocos datos manda el azar: 3:1 no significa que de cada 4 salgan exactamente 3.",
 "esp":"esp.",pp:"puntos",
 "c3.s":"Para la clase","c3.h":"Preguntas para pensar",
-"c3.l":"<li><b>Predice antes de mirar:</b> activa el modo predicción, completa el cuadro en la pizarra y después revélalo.</li><li>¿Qué cruces dan <b>100 %</b> de descendientes iguales? ¿Cuáles dan <b>3:1</b>? ¿Y <b>1:1</b>?</li><li>Un individuo de fenotipo dominante: ¿cómo sabes si es <b>AA</b> o <b>Aa</b>? Diseña un cruce que lo resuelva (cruce de prueba).</li><li>En el dondiego de noche, ¿por qué el cruce de dos plantas rosas da <b>1:2:1</b> y no 3:1?</li>"
+"c3.l":"<li><b>Predice antes de mirar:</b> activa el modo predicción, completa el cuadro en la pizarra y después revélalo.</li><li>¿Qué cruces dan <b>100 %</b> de descendientes iguales? ¿Cuáles dan <b>3:1</b>? ¿Y <b>1:1</b>?</li><li>Un individuo de fenotipo dominante: ¿cómo sabes si es <b>AA</b> o <b>Aa</b>? Diseña un cruce que lo resuelva (cruce de prueba).</li><li>En el dondiego de noche, ¿por qué el cruce de dos plantas rosas da <b>1:2:1</b> y no 3:1?</li>",
+"rng":"Escribe un número entero mayor que 0.",
+"l_verd":"Semilla verde","l_het":"Heterocigotos","l_dom":"Amarillas y lisas","l_rec":"Verdes y rugosas",
+"l_rojes":"Rojas","l_roses":"Rosas","l_blanques":"Blancas","l_blaves":"Zorbs azules","l_tar":"Zorbs naranjas","l_pct":"Descendientes recesivos","l_pn":"Descendientes verdes","l_pnn":"Descendientes que no son aa","l_n":"Número de guisantes",
+"m1.q":"Se cruzan dos guisantes de semilla amarilla heterocigotos (Aa × Aa). Según el cuadro, ¿qué porcentaje de la descendencia tendrá semilla <b>verde</b> y qué porcentaje será <b>heterocigoto</b>?",
+"m1_f":"Mira el cuadro: de las 4 casillas, ¿cuántas son aa? ¿Y cuántas son Aa?",
+"m1_75":"75 % es la parte amarilla (genotipos AA y Aa). Aquí te pedimos la verde: solo el genotipo aa.",
+"m1_ok":"✔ ¡Misión cumplida! 1 casilla de 4 es aa (25 %) y 2 de 4 son Aa (50 %).",
+"m1.more":"Si nacen 8 descendientes, ¿habrá exactamente 2 verdes? Pruébalo en la simulación con +1, +10 y +1000.",
+"m2.q":"Cruce de dos genes (AaBb × AaBb) en guisantes. De las 16 casillas, ¿cuántas tienen semilla <b>amarilla y lisa</b> (dominantes en los dos genes)? ¿Y cuántas <b>verde y rugosa</b> (recesivas en los dos)?",
+"m2_f":"Para ser amarilla y lisa hace falta al menos una A y al menos una B. Cuenta las casillas que lo cumplen, y después las que son aabb.",
+"m2_ok":"✔ ¡Misión cumplida! Es la proporción 9 : 3 : 3 : 1: 9 de 16 amarillas y lisas, y solo 1 de 16 verde y rugosa.",
+"m2.more":"¿Cuántas de las 16 son amarillas y rugosas? ¿Y verdes y lisas? Comprueba que las cuatro suman 16.",
+"m3.q":"Dondiego de noche (dominancia incompleta): se cruzan dos flores rosas (Aa × Aa). ¿Qué porcentaje de la descendencia será <b>rojo</b>, cuál <b>rosa</b> y cuál <b>blanco</b>?",
+"m3_f":"Con dominancia incompleta el heterocigoto (Aa) no es rojo: tiene un color intermedio. Cuenta las casillas AA, Aa y aa.",
+"m3_ok":"✔ ¡Misión cumplida! La proporción fenotípica es 1 : 2 : 1, igual que la genotípica.",
+"m3.more":"Con dominancia completa eran 3 : 1. ¿Por qué ahora aparecen tres fenotipos distintos?",
+"m4.q":"Una Zorb azul heterocigota (Aa) se cruza con una naranja (aa). Si nacen <b>80</b> Zorbs, ¿cuántas serán de cada color <b>según lo esperado</b>?",
+"m4_f":"Aa × aa tiene 4 casillas: 2 Aa (azules) y 2 aa (naranjas). ¿Qué fracción es cada color? Aplícala a 80.",
+"m4_ok":"✔ ¡Misión cumplida! La proporción es 1 : 1: 40 azules y 40 naranjas.",
+"m4.more":"Si solo nacen 3 Zorbs, ¿tienen que ser exactamente 1,5 de cada color? ¿Qué significa «esperar» 40?",
+"s_cx_no":"Ese valor no se da en ningún cruce entre dos progenitores así. Haz pruebas con los cruces predefinidos.",
+"s1.q":"«Si los dos progenitores son de fenotipo dominante, toda la descendencia es de fenotipo dominante.»",
+"s1.h":"Prueba AA × AA, AA × Aa y Aa × Aa.",
+"s1.e":"A veces: con AA × AA o AA × Aa todos son dominantes, pero con Aa × Aa uno de cada cuatro es aa (recesivo).",
+"s1.cx":"✔ Contraejemplo encontrado: Aa × Aa da un 25 % de descendientes recesivos aunque los dos progenitores son dominantes.",
+"s2.q":"«Si uno de los progenitores es aa, toda la descendencia es aa.»",
+"s2.h":"Compara aa × aa con aa × Aa y aa × AA.",
+"s2.e":"A veces: solo con aa × aa. Con aa × Aa la mitad no es aa, y con aa × AA ninguno lo es.",
+"s2.cx":"✔ Contraejemplo encontrado: en este cruce el {0} % de los descendientes no es aa.",
+"s3.q":"«Si se cruzan dos guisantes Aa × Aa y nacen 4 descendientes, exactamente 1 es de semilla verde.»",
+"s3.h":"Pulsa +1 cuatro veces y mira qué pasa; repítelo unas cuantas veces.",
+"s3.e":"A veces: cada descendiente es verde con probabilidad 1/4, pero el azar no reparte exactamente. En 4 descendientes pueden salir 0, 1, 2… verdes; el 3 : 1 solo se acerca con muchos descendientes.",
+"s3.cx":"✔ Contraejemplo encontrado: con 4 descendientes es perfectamente posible que {0} sean verdes.",
+"s4.q":"«Con dominancia incompleta, el cruce Aa × Aa puede dar los tres fenotipos: rojo, rosa y blanco.»",
+"s4.h":"Mira los tres genotipos posibles y el color de cada uno.",
+"s4.e":"Siempre: AA es rojo, Aa es rosa y aa es blanco, y los tres aparecen en Aa × Aa (1 : 2 : 1).",
+"s5.q":"«En un cruce AaBb × AaBb, la proporción 9 : 3 : 3 : 1 se acerca a la real cuando hay muchos descendientes.»",
+"s5.h":"Pulsa +1000 varias veces en la simulación.",
+"s5.e":"Siempre: cuantos más descendientes, más se acercan las frecuencias observadas a las esperadas (la desviación máxima va disminuyendo).",
+"s6.q":"«Dos Zorbs de piel naranja (aa × aa) pueden tener una cría de piel azul.»",
+"s6.h":"¿Qué gametos puede formar un aa?",
+"s6.e":"Nunca: un aa solo da gametos a, así que todos los descendientes son aa, es decir, naranjas. (Salvo que aparezca una mutación, pero eso ya es otra historia.)",
+"e1.ctx":"Se cruzan dos guisantes Aa × Aa (semilla amarilla) y nacen <b>4</b>. ¿Cuántos serán verdes?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Exactamente 1 será verde, porque la proporción es 3 : 1.",
+"e1.s1":"Quizá 1, pero también pueden salir 0 o 2: el 3 : 1 solo se nota con muchos descendientes.",
+"e1.w0":"Cada descendiente se decide al azar (1 posibilidad de 4 de ser verde). La proporción 3 : 1 es lo que se espera de media, no lo que pasa en cada tanda.",
+"e1.w1":"Porque con 4 descendientes nunca puede salir ninguno verde.",
+"e1.w2":"Porque los cuadros de Punnett solo valen para más de 100 descendientes.",
+"e1.frame":"Marta, que la proporción sea 3 : 1 no significa que en 4 descendientes haya exactamente 1 verde porque…",
+"e1.model":"Marta, el cuadro da la probabilidad de cada descendiente (1/4 de ser verde), no un resultado exacto. En 4 descendientes puede haber 0, 1, 2… verdes; la proporción 3 : 1 solo se nota cuando tienes muchos, como muestra la simulación.",
+"e2.ctx":"Dondiego de noche, dominancia incompleta: se cruzan dos flores rosas (Aa × Aa). ¿Qué colores y en qué proporción salen?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"3 : 1, como en los guisantes: un 75 % de rojas y un 25 % de blancas.",
+"e2.s1":"1 : 2 : 1: un 25 % de rojas, un 50 % de rosas y un 25 % de blancas.",
+"e2.w0":"Cuando la dominancia es incompleta, el heterocigoto (Aa) tiene un fenotipo intermedio (rosa): los tres genotipos dan tres colores distintos.",
+"e2.w1":"Porque el color rosa es una mutación que no se puede heredar.",
+"e2.w2":"Porque las flores tienen más de dos gametos distintos.",
+"e2.frame":"Joan, la proporción no es 3 : 1 porque…",
+"e2.model":"Joan, el 3 : 1 es de la dominancia completa, donde Aa tiene el mismo aspecto que AA. Aquí Aa es rosa, distinta de AA (roja) y de aa (blanca): los tres genotipos se ven y la proporción fenotípica es 1 : 2 : 1.",
+"e3.ctx":"Se cruza un guisante de semilla amarilla pura (AA) con uno de semilla verde (aa). ¿Qué descendencia se espera?",
+"e3.n0":"Laia","e3.n1":"Álex",
+"e3.s0":"Mitad amarillas y mitad verdes, porque cada progenitor aporta una de las dos.",
+"e3.s1":"Todos serán Aa, pero la mitad tendrán la semilla verde.",
+"e3.w0":"AA solo da gametos A y aa solo a: todos los descendientes son Aa, y como A domina, todos son amarillos (100 %).",
+"e3.w1":"Porque AA × aa no se puede representar en un cuadro de Punnett.",
+"e3.w2":"Porque el color verde desaparece siempre en la descendencia.",
+"e3.frame":"Laia y Álex, no hay descendientes verdes porque…",
+"e3.model":"AA solo forma gametos A y aa solo gametos a, así que todos los descendientes son Aa. Como A es dominante sobre a, todos tienen semilla amarilla: 100 %. Laia confunde este cruce con Aa × aa, y Álex dice que son Aa pero olvida que Aa es amarilla.",
+"d1.q":"Quieres que <b>toda</b> la descendencia de guisantes sea de semilla amarilla y uno de los progenitores tiene que ser verde (aa). ¿Qué genotipo debe tener el otro?",
+"d1.lc":"Progenitor 2:",
+"d1_no":"Aa × aa no da «todo amarillo»: el {0} % de la descendencia sería verde.",
+"d1_no2":"aa × aa solo da descendientes aa: todos serían verdes.",
+"d1_ok":"✔ ¡Bien decidido! AA × aa: todos los descendientes son Aa y, como A domina, 100 % amarillos.",
+"d1.more":"¿Y si quisiéramos que la mitad fueran verdes? ¿Qué genotipo debería tener el segundo progenitor?",
+"d2.q":"Un criador quiere que <b>la mitad</b> de las crías de Zorb sean naranjas. Uno de los progenitores es azul heterocigoto (Aa). ¿Qué genotipo debe tener el otro?",
+"d2.lc":"Progenitor 2:",
+"d2_no":"Con este genotipo, el {0} % de las crías sería naranja.",
+"d2_ok":"✔ ¡Bien decidido! Aa × aa da 1 : 1: la mitad azules (Aa) y la mitad naranjas (aa).",
+"d2.more":"Con Aa × Aa el porcentaje de naranjas es del 25 %. ¿Por qué baja de 50 % a 25 %?",
+"d3.q":"Cruzas dos guisantes Aa × Aa y quieres tener <b>más de un 99 %</b> de probabilidad de que, al menos, un descendiente sea verde. ¿Cuántos guisantes debes sembrar como mínimo?",
+"d3.l0":"Guisantes",
+"d3_lo":"Con {0} guisantes la probabilidad de obtener al menos 1 verde es solo del {1} %.",
+"d3_hi":"Con {0} guisantes ya pasas del 99 % ({1} %), pero no es el mínimo.",
+"d3_ok":"✔ ¡Bien decidido! Con 17 guisantes: 1 − (3/4)<sup>17</sup> ≈ 99,25 %. Con 16 solo llegaría al 98,99 %.",
+"d3.more":"¿Por qué se calcula 1 − (3/4)<sup>n</sup> y no (1/4)·n? ¿Qué representa (3/4)<sup>n</sup>?"
 }};
 /* ===== utilitats comunes (idioma, canvas, colors) ===== */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -359,6 +574,220 @@ function slider(host,{id,key,min,max,step,val,fmtv,on}){
   upd();
   return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
 }
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
 
 
 /* ================== datos de les situacions ================== */
@@ -550,6 +979,50 @@ ids('revealAll').addEventListener('click',()=>{
 $$('[data-add]').forEach(b=>b.addEventListener('click',()=>addOffspring(+b.dataset.add)));
 ids('simReset').addEventListener('click',()=>{resetSim();renderSim();});
 document.addEventListener('langchange',()=>{buildScen();buildSelectors();buildPresets();if(M){renderGrid();renderResults();renderSim();}});
+
+/* ===== Raona-ho ===== */
+function load(sc,ng,a,b){S.sc=sc;S.ng=ng;S.p1=[a.slice(0,2),a.slice(2,4)||'Bb'];S.p2=[b.slice(0,2),b.slice(2,4)||'Bb'];
+  $('#scen').value=sc;$$('#ngSeg button').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.ng===ng)));
+  buildSelectors();buildPresets();refresh(true);RZ.show($('#pun'));}
+const GT=['AA','Aa','aa'];
+const pctGreen=(a,b)=>{const g=x=>x==='AA'?[1,0]:x==='Aa'?[.5,.5]:[0,1];const [pa,qa]=g(a),[pb,qb]=g(b);return Math.round(qa*qb*1000)/10;};
+const pctFirst=n=>Math.round((1-Math.pow(.75,n))*1000)/10;
+RZ.init({
+ F:{verd:{l:'l_verd',u:'%'},het:{l:'l_het',u:'%'},dom:{l:'l_dom',u:'/16'},rec:{l:'l_rec',u:'/16'},
+    ro:{l:'l_rojes',u:'%'},rs:{l:'l_roses',u:'%'},bl:{l:'l_blanques',u:'%'},zb:{l:'l_blaves'},zt:{l:'l_tar'},pct:{l:'l_pct',u:'%'},pnn:{l:'l_pnn',u:'%'}},
+ sim:v=>load(v[0],v[1],v[2],v[3]),
+ M:[
+  {id:'m1',f:['verd','het'],sim:()=>load(0,1,'Aa','Aa'),ok:()=>({k:'m1_ok'}),
+   chk:([v,h])=>v===25&&h===50?null:v===75?{k:'m1_75'}:{k:'m1_f'}},
+  {id:'m2',f:['dom','rec'],sim:()=>load(0,2,'AaBb','AaBb'),ok:()=>({k:'m2_ok'}),
+   chk:([d,r])=>d===9&&r===1?null:{k:'m2_f'}},
+  {id:'m3',f:['ro','rs','bl'],sim:()=>load(1,1,'Aa','Aa'),ok:()=>({k:'m3_ok'}),
+   chk:([a,b,c])=>a===25&&b===50&&c===25?null:{k:'m3_f'}},
+  {id:'m4',f:['zb','zt'],sim:()=>load(2,1,'Aa','aa'),ok:()=>({k:'m4_ok'}),
+   chk:([b,t])=>b===40&&t===40?null:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:['pct'],cxsim:()=>load(0,1,'Aa','Aa'),cxok:()=>({k:'s1.cx'}),
+   cx:([v])=>v===25?null:{k:'s_cx_no'}},
+  {id:'s2',ans:'D',f:['pnn'],cxsim:()=>load(0,1,'aa','Aa'),cxok:([v])=>({k:'s2.cx',p:[v]}),
+   cx:([v])=>(v===50||v===100)?null:{k:'s_cx_no'}},
+  {id:'s3',ans:'D',f:[{l:'l_pn'}],cxsim:()=>load(0,1,'Aa','Aa'),cxok:([v])=>({k:'s3.cx',p:[v]}),
+   cx:([v])=>(Number.isInteger(v)&&v>=0&&v<=4&&v!==1)?null:{k:'s_cx_no'},sim:()=>load(0,1,'Aa','Aa')},
+  {id:'s4',ans:'S',sim:()=>load(1,1,'Aa','Aa')},
+  {id:'s5',ans:'S',sim:()=>load(0,2,'AaBb','AaBb')},
+  {id:'s6',ans:'M',sim:()=>load(2,1,'aa','aa')}
+ ],
+ E:[{id:'e1',who:1,args:[0,1,'Aa','Aa']},{id:'e2',who:1,args:[1,1,'Aa','Aa']},{id:'e3',who:3,args:[0,1,'AA','aa']}],
+ D:[
+  {id:'d1',chips:{vals:[1,2,3],fmt:x=>GT[x-1]},sim:([p])=>load(0,1,'aa',GT[p-1]),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===1?null:p===3?{k:'d1_no2'}:{k:'d1_no',p:[pctGreen('aa',GT[p-1])]}},
+  {id:'d2',chips:{vals:[1,2,3],fmt:x=>GT[x-1]},sim:([p])=>load(2,1,'Aa',GT[p-1]),ok:()=>({k:'d2_ok'}),
+   chk:([p])=>p===3?null:{k:'d2_no',p:[pctGreen('Aa',GT[p-1])]}},
+  {id:'d3',f:[{l:'d3.l0'}],sim:()=>load(0,1,'Aa','Aa'),ok:()=>({k:'d3_ok'}),
+   chk:([n])=>(!Number.isInteger(n)||n<1)?{k:'rng'}:n<17?{k:'d3_lo',p:[n,pctFirst(n)]}:n>17?{k:'d3_hi',p:[n,pctFirst(n)]}:null}
+ ]
+});
+initQuiz([]);
 
 initLang();
 buildScen();buildSelectors();buildPresets();

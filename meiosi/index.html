@@ -148,6 +148,47 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .ladder .lr.on{color:var(--ink);font-weight:600}
 .ladder .lr.on .bar2{opacity:1;background:var(--pb)}
 
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
 /* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
 .sidep{display:grid;gap:8px;align-content:start}
 .stepper{display:flex;gap:5px;flex-wrap:wrap}
@@ -234,6 +275,8 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 </aside>
 </div>
 <section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
   </main>
   <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
 </div>
@@ -334,7 +377,88 @@ const I18N={
 "leg_p":"Origen patern",
 "leg_c":"Cromòmer",
 "chi":"quiasma",
-"hint4":"☝ Pitja sobre un parell de cromosomes per girar-lo (orientació a l'atzar)."
+"hint4":"☝ Pitja sobre un parell de cromosomes per girar-lo (orientació a l'atzar).",
+"rng":"Escriu un nombre enter entre 1 i 30.",
+"l_chrom":"Cromosomes","l_chromat":"Cromàtides","l_biv":"Bivalents","l_p2":"Amb 2 parells (2n = 4)","l_p3":"Amb 3 parells (2n = 6)","l_p4":"Amb 4 parells (2n = 8)","l_gam":"Gàmetes","l_adn":"ADN de cada gàmeta","l_step":"Pas (1–10)","l_par":"Parells d'homòlegs",
+"n6":"Anafase I","n7":"Telofase I","n9":"Anafase II","n10":"Telofase II",
+"m1.q":"Observa el <b>pas 2</b> (fase S, l'ADN ja s'ha duplicat) en una cèl·lula 2n = 4. Quants <b>cromosomes</b> i quantes <b>cromàtides</b> hi ha en total?",
+"m1_8":"Eixos 8 són les cromàtides. Els cromosomes es compten pels centròmers i la fase S no n'afig cap de nou.",
+"m1_f":"Cada cromosoma duplicat té 2 cromàtides germanes unides pel centròmer. Quants cromosomes? Quantes cromàtides entre tots?",
+"m1_ok":"✔ Missió complida! 4 cromosomes i 4 × 2 = 8 cromàtides: duplicar l'ADN no duplica els cromosomes.",
+"m1.more":"I abans de la fase S (pas 1)? Quantes cromàtides hi havia?",
+"m2.q":"Una cèl·lula té 2n = 8. A la metafase I, quants <b>bivalents</b> (parells d'homòlegs units) hi ha i quantes <b>cromàtides</b> en total?",
+"m2_biv":"Un bivalent és un <b>parell</b> d'homòlegs, no un cromosoma. 2n = 8 vol dir 8 cromosomes en total.",
+"m2_f":"Parells = 2n / 2. Cada cromosoma té 2 cromàtides (ja duplicades en la fase S).",
+"m2_ok":"✔ Missió complida! 4 bivalents i 8 × 2 = 16 cromàtides (4 per tètrada).",
+"m2.more":"Quantes cromàtides arriben a cada pol a l'anafase I?",
+"m3.q":"A la metafase I (pas 5) cada parell s'orienta a l'atzar de 2 maneres. Quantes <b>combinacions diferents</b> hi ha amb 2, 3 i 4 parells? (Prova-ho amb el de 2 parells.)",
+"m3_f":"Cada parell afig un factor 2 a les combinacions. Amb 2 parells: 2 × 2.",
+"m3_ok":"✔ Missió complida! 2<sup>2</sup> = 4, 2<sup>3</sup> = 8 i 2<sup>4</sup> = 16: duplica per cada parell nou.",
+"m3.more":"I amb 23 parells (humans)? Escriu la potència i estima l'ordre de magnitud.",
+"m4.q":"Mira el <b>pas 10</b> (final de la meiosi) a partir d'una cèl·lula inicial amb 2C d'ADN. Quants gàmetes es formen i quanta quantitat d'ADN (en C) té cada un?",
+"m4_2":"2 és el nombre de cèl·lules després de la meiosi I. Al pas 10 ja ha passat també la segona divisió.",
+"m4_f":"Compta les cèl·lules al final i mira l'estadística d'ADN d'una d'elles.",
+"m4_ok":"✔ Missió complida! 4 gàmetes amb 1C cadascun: la meitat de l'ADN de la cèl·lula inicial (2C).",
+"m4.more":"Si la cèl·lula inicial fóra 2n = 6, canviarien el nombre de gàmetes o l'ADN per gàmeta?",
+"s1.q":"«Després de la fase S, la cèl·lula té el doble de cromosomes que abans.»",
+"s1.h":"Compta cromosomes (pels centròmers) i cromàtides al pas 2.",
+"s1.e":"Mai: es dupliquen l'ADN i les cromàtides (de 4 a 8), però els cromosomes es compten pels centròmers i continuen sent 4.",
+"s2.q":"«Les dues cromàtides germanes d'un cromosoma són sempre idèntiques.»",
+"s2.h":"Compara les puntes de les cromàtides abans i després del crossing-over.",
+"s2.e":"De vegades: just després de la fase S són còpies idèntiques, però després del crossing-over ja no ho són, perquè han intercanviat fragments amb una cromàtida de l'homòleg.",
+"s2.cx":"✔ Contraexemple trobat: al pas {0} les cromàtides germanes ja no són idèntiques (hi ha hagut crossing-over).",
+"s3.q":"«La meiosi II separa les cromàtides germanes, com en una mitosi.»",
+"s3.h":"Mira el pas 9 (anafase II).",
+"s3.e":"Sempre: la meiosi I separa els homòlegs (és reduccional) i la II separa les cromàtides germanes (és equacional, com una mitosi).",
+"s4.q":"«En aquesta simulació, els quatre gàmetes finals són diferents entre si.»",
+"s4.h":"Compara els quatre gàmetes al pas 10 (i canvia l'orientació a la metafase I).",
+"s4.e":"Sempre (en aquest model): el crossing-over fa que les cromàtides de cada parell siguen totes diferents, i cada gàmeta en rep una de cada parell. En la realitat depén dels al·lels que porten els progenitors.",
+"s5.q":"«Totes les cèl·lules que hi ha durant la meiosi són diploides (2n = 4).»",
+"s5.h":"Mira l'estadística «Cromosomes» a diferents passos.",
+"s5.e":"De vegades: la cèl·lula inicial és diploide, però en acabar la meiosi I (telofase I) les dues cèl·lules filles ja són haploides (n = 2).",
+"s5.cx":"✔ Contraexemple trobat: al pas {0} les cèl·lules ja són haploides (n = 2).",
+"s6.q":"«Si un parell d'homòlegs no se separa a l'anafase I (no-disjunció), els quatre gàmetes tenen igualment el nombre correcte de cromosomes.»",
+"s6.h":"Pensa a quin pol anirien els dos homòlegs d'aquest parell.",
+"s6.e":"Mai: els dos homòlegs van al mateix pol, de manera que dos gàmetes tindran un cromosoma de més (n+1) i els altres dos un de menys (n−1).",
+"e1.ctx":"Una cèl·lula 2n = 4 acaba de duplicar l'ADN (fase S). Quants cromosomes té ara?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"8, perquè hi ha el doble d'ADN.",
+"e1.s1":"4: ara cada cromosoma té dues cromàtides, però els cromosomes es compten pels centròmers.",
+"e1.w0":"Duplicar l'ADN fa que cada cromosoma tinga dues cromàtides germanes unides pel centròmer. Com que els cromosomes es compten pels centròmers, continuen sent 4.",
+"e1.w1":"Perquè la cèl·lula elimina la meitat de l'ADN després de duplicar-lo.",
+"e1.w2":"Perquè la duplicació només afecta els cromosomes més curts.",
+"e1.frame":"Marta, el nombre de cromosomes no es duplica perquè…",
+"e1.model":"Marta, el que es duplica és l'ADN, no el nombre de cromosomes: cada cromosoma passa a tindre dues cromàtides germanes unides pel centròmer. Pau té raó: continuem comptant 4 cromosomes (i 8 cromàtides).",
+"e2.ctx":"La meiosi redueix el nombre de cromosomes a la meitat (de 2n a n). Per què?",
+"e2.n0":"Marta","e2.n1":"Pau",
+"e2.s0":"Perquè l'ADN es redueix a la meitat a la fase S.",
+"e2.s1":"Perquè hi ha dues duplicacions de l'ADN i només una divisió.",
+"e2.w0":"Hi ha una sola duplicació de l'ADN (fase S) i dues divisions seguides, sense fase S entre elles: això fa passar de 2n a n.",
+"e2.w1":"Perquè la meiosi II torna a duplicar l'ADN abans de dividir-se.",
+"e2.w2":"Perquè els gàmetes perden cromosomes a l'atzar mentre es formen.",
+"e2.frame":"Marta i Pau, cap de les dues té raó perquè…",
+"e2.model":"A la fase S l'ADN es duplica, no es redueix (Marta) i només hi ha una duplicació, no dues (Pau). Són dues divisions després d'una sola duplicació, i entre elles no hi ha fase S: 2n → n → n.",
+"e3.ctx":"Un company diu que la meiosi genera variabilitat genètica per dos processos. Qui té raó?",
+"e3.n0":"Marta","e3.n1":"Pau",
+"e3.s0":"Pel crossing-over: les cromàtides no germanes dels homòlegs intercanvien fragments.",
+"e3.s1":"Per l'orientació a l'atzar dels parells a la metafase I, que reparteix de maneres diferents els cromosomes maternes i paternes.",
+"e3.w0":"Són dues fonts independents de variabilitat: el crossing-over crea cromàtides noves amb fragments dels dos progenitors, i l'orientació a l'atzar combina de moltes maneres els cromosomes sencers.",
+"e3.w1":"Perquè la duplicació de l'ADN també genera variabilitat.",
+"e3.w2":"Perquè la meiosi II afig mutacions noves a cada gàmeta.",
+"e3.frame":"Marta i Pau, les dues afirmacions són correctes perquè…",
+"e3.model":"Les dues tenen raó: són les dues fonts de variabilitat de la meiosi. El crossing-over mescla fragments d'homòlegs (profase I) i l'orientació a l'atzar reparteix els parells de moltes maneres (metafase I). La duplicació, en canvi, fa còpies idèntiques.",
+"d1.q":"Vols veure en la simulació com se separen les <b>cromàtides germanes</b>. A quin pas has d'anar?",
+"d1.lc":"Pas:",
+"d1_6":"A l'anafase I se separen els homòlegs, cadascun amb les dues cromàtides encara unides.",
+"d1_7":"A la telofase I la cèl·lula ja s'ha dividit en dues; les cromàtides continuen unides.",
+"d1_10":"A la telofase II les cromàtides ja són cromosomes independents; la separació ha passat un pas abans.",
+"d1_ok":"✔ Ben decidit! A l'anafase II es divideixen els centròmers i les cromàtides germanes viatgen a pols oposats.",
+"d1.more":"I per veure com se separen els homòlegs? Quin pas triaries?",
+"d2.q":"Vols que, només per l'orientació dels parells a la metafase I, hi haja <b>més de 1000</b> combinacions possibles. Quin és el nombre <b>mínim</b> de parells d'homòlegs?",
+"d2_lo":"Amb {0} parells: 2<sup>{0}</sup> = {1} combinacions, menys de 1000.",
+"d2_hi":"Amb {0} parells: 2<sup>{0}</sup> = {1}, supera 1000, però no és el mínim.",
+"d2_ok":"✔ Ben decidit! 2<sup>10</sup> = 1024 > 1000, mentre que 2<sup>9</sup> = 512 no arriba.",
+"d2.more":"Els humans tenen 23 parells. Quantes vegades supera aquesta xifra els 1000?"
 },
 "es":{
 "title":"Meiosis: de la célula diploide a los cuatro gametos",
@@ -430,7 +554,88 @@ const I18N={
 "leg_p":"Origen paterno",
 "leg_c":"Centrómero",
 "chi":"quiasma",
-"hint4":"☝ Pulsa sobre un par de cromosomas para girarlo (orientación al azar)."
+"hint4":"☝ Pulsa sobre un par de cromosomas para girarlo (orientación al azar).",
+"rng":"Escribe un número entero entre 1 y 30.",
+"l_chrom":"Cromosomas","l_chromat":"Cromátidas","l_biv":"Bivalentes","l_p2":"Con 2 pares (2n = 4)","l_p3":"Con 3 pares (2n = 6)","l_p4":"Con 4 pares (2n = 8)","l_gam":"Gametos","l_adn":"ADN de cada gameto","l_step":"Paso (1–10)","l_par":"Pares de homólogos",
+"n6":"Anafase I","n7":"Telofase I","n9":"Anafase II","n10":"Telofase II",
+"m1.q":"Observa el <b>paso 2</b> (fase S, el ADN ya se ha duplicado) en una célula 2n = 4. ¿Cuántos <b>cromosomas</b> y cuántas <b>cromátidas</b> hay en total?",
+"m1_8":"Esas 8 son las cromátidas. Los cromosomas se cuentan por los centrómeros y la fase S no añade ninguno nuevo.",
+"m1_f":"Cada cromosoma duplicado tiene 2 cromátidas hermanas unidas por el centrómero. ¿Cuántos cromosomas? ¿Cuántas cromátidas entre todos?",
+"m1_ok":"✔ ¡Misión cumplida! 4 cromosomas y 4 × 2 = 8 cromátidas: duplicar el ADN no duplica los cromosomas.",
+"m1.more":"¿Y antes de la fase S (paso 1)? ¿Cuántas cromátidas había?",
+"m2.q":"Una célula tiene 2n = 8. En la metafase I, ¿cuántos <b>bivalentes</b> (pares de homólogos unidos) hay y cuántas <b>cromátidas</b> en total?",
+"m2_biv":"Un bivalente es un <b>par</b> de homólogos, no un cromosoma. 2n = 8 significa 8 cromosomas en total.",
+"m2_f":"Pares = 2n / 2. Cada cromosoma tiene 2 cromátidas (ya duplicadas en la fase S).",
+"m2_ok":"✔ ¡Misión cumplida! 4 bivalentes y 8 × 2 = 16 cromátidas (4 por tétrada).",
+"m2.more":"¿Cuántas cromátidas llegan a cada polo en la anafase I?",
+"m3.q":"En la metafase I (paso 5) cada par se orienta al azar de 2 maneras. ¿Cuántas <b>combinaciones distintas</b> hay con 2, 3 y 4 pares? (Pruébalo con el de 2 pares.)",
+"m3_f":"Cada par añade un factor 2 a las combinaciones. Con 2 pares: 2 × 2.",
+"m3_ok":"✔ ¡Misión cumplida! 2<sup>2</sup> = 4, 2<sup>3</sup> = 8 y 2<sup>4</sup> = 16: se duplica por cada par nuevo.",
+"m3.more":"¿Y con 23 pares (humanos)? Escribe la potencia y estima el orden de magnitud.",
+"m4.q":"Mira el <b>paso 10</b> (final de la meiosis) a partir de una célula inicial con 2C de ADN. ¿Cuántos gametos se forman y qué cantidad de ADN (en C) tiene cada uno?",
+"m4_2":"2 es el número de células después de la meiosis I. En el paso 10 ya ha pasado también la segunda división.",
+"m4_f":"Cuenta las células al final y mira la estadística de ADN de una de ellas.",
+"m4_ok":"✔ ¡Misión cumplida! 4 gametos con 1C cada uno: la mitad del ADN de la célula inicial (2C).",
+"m4.more":"Si la célula inicial fuera 2n = 6, ¿cambiarían el número de gametos o el ADN por gameto?",
+"s1.q":"«Después de la fase S, la célula tiene el doble de cromosomas que antes.»",
+"s1.h":"Cuenta cromosomas (por los centrómeros) y cromátidas en el paso 2.",
+"s1.e":"Nunca: se duplican el ADN y las cromátidas (de 4 a 8), pero los cromosomas se cuentan por los centrómeros y siguen siendo 4.",
+"s2.q":"«Las dos cromátidas hermanas de un cromosoma son siempre idénticas.»",
+"s2.h":"Compara las puntas de las cromátidas antes y después del crossing-over.",
+"s2.e":"A veces: justo después de la fase S son copias idénticas, pero tras el crossing-over ya no lo son, porque han intercambiado fragmentos con una cromátida del homólogo.",
+"s2.cx":"✔ Contraejemplo encontrado: en el paso {0} las cromátidas hermanas ya no son idénticas (ha habido crossing-over).",
+"s3.q":"«La meiosis II separa las cromátidas hermanas, como en una mitosis.»",
+"s3.h":"Mira el paso 9 (anafase II).",
+"s3.e":"Siempre: la meiosis I separa los homólogos (es reduccional) y la II separa las cromátidas hermanas (es ecuacional, como una mitosis).",
+"s4.q":"«En esta simulación, los cuatro gametos finales son distintos entre sí.»",
+"s4.h":"Compara los cuatro gametos en el paso 10 (y cambia la orientación en la metafase I).",
+"s4.e":"Siempre (en este modelo): el crossing-over hace que las cromátidas de cada par sean todas distintas, y cada gameto recibe una de cada par. En la realidad depende de los alelos que llevan los progenitores.",
+"s5.q":"«Todas las células que hay durante la meiosis son diploides (2n = 4).»",
+"s5.h":"Mira la estadística «Cromosomas» en distintos pasos.",
+"s5.e":"A veces: la célula inicial es diploide, pero al acabar la meiosis I (telofase I) las dos células hijas ya son haploides (n = 2).",
+"s5.cx":"✔ Contraejemplo encontrado: en el paso {0} las células ya son haploides (n = 2).",
+"s6.q":"«Si un par de homólogos no se separa en la anafase I (no disyunción), los cuatro gametos tienen igualmente el número correcto de cromosomas.»",
+"s6.h":"Piensa a qué polo irían los dos homólogos de ese par.",
+"s6.e":"Nunca: los dos homólogos van al mismo polo, de modo que dos gametos tendrán un cromosoma de más (n+1) y los otros dos uno de menos (n−1).",
+"e1.ctx":"Una célula 2n = 4 acaba de duplicar el ADN (fase S). ¿Cuántos cromosomas tiene ahora?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"8, porque hay el doble de ADN.",
+"e1.s1":"4: ahora cada cromosoma tiene dos cromátidas, pero los cromosomas se cuentan por los centrómeros.",
+"e1.w0":"Duplicar el ADN hace que cada cromosoma tenga dos cromátidas hermanas unidas por el centrómero. Como los cromosomas se cuentan por los centrómeros, siguen siendo 4.",
+"e1.w1":"Porque la célula elimina la mitad del ADN después de duplicarlo.",
+"e1.w2":"Porque la duplicación solo afecta a los cromosomas más cortos.",
+"e1.frame":"Marta, el número de cromosomas no se duplica porque…",
+"e1.model":"Marta, lo que se duplica es el ADN, no el número de cromosomas: cada cromosoma pasa a tener dos cromátidas hermanas unidas por el centrómero. Pau tiene razón: seguimos contando 4 cromosomas (y 8 cromátidas).",
+"e2.ctx":"La meiosis reduce el número de cromosomas a la mitad (de 2n a n). ¿Por qué?",
+"e2.n0":"Marta","e2.n1":"Pau",
+"e2.s0":"Porque el ADN se reduce a la mitad en la fase S.",
+"e2.s1":"Porque hay dos duplicaciones del ADN y solo una división.",
+"e2.w0":"Hay una sola duplicación del ADN (fase S) y dos divisiones seguidas, sin fase S entre ellas: eso hace pasar de 2n a n.",
+"e2.w1":"Porque la meiosis II vuelve a duplicar el ADN antes de dividirse.",
+"e2.w2":"Porque los gametos pierden cromosomas al azar mientras se forman.",
+"e2.frame":"Marta y Pau, ninguna de las dos tiene razón porque…",
+"e2.model":"En la fase S el ADN se duplica, no se reduce (Marta) y solo hay una duplicación, no dos (Pau). Son dos divisiones después de una sola duplicación, y entre ellas no hay fase S: 2n → n → n.",
+"e3.ctx":"Un compañero dice que la meiosis genera variabilidad genética por dos procesos. ¿Quién tiene razón?",
+"e3.n0":"Marta","e3.n1":"Pau",
+"e3.s0":"Por el crossing-over: las cromátidas no hermanas de los homólogos intercambian fragmentos.",
+"e3.s1":"Por la orientación al azar de los pares en la metafase I, que reparte de formas distintas los cromosomas maternos y paternos.",
+"e3.w0":"Son dos fuentes independientes de variabilidad: el crossing-over crea cromátidas nuevas con fragmentos de los dos progenitores, y la orientación al azar combina de muchas maneras los cromosomas enteros.",
+"e3.w1":"Porque la duplicación del ADN también genera variabilidad.",
+"e3.w2":"Porque la meiosis II añade mutaciones nuevas a cada gameto.",
+"e3.frame":"Marta y Pau, las dos afirmaciones son correctas porque…",
+"e3.model":"Las dos tienen razón: son las dos fuentes de variabilidad de la meiosis. El crossing-over mezcla fragmentos de homólogos (profase I) y la orientación al azar reparte los pares de muchas formas (metafase I). La duplicación, en cambio, hace copias idénticas.",
+"d1.q":"Quieres ver en la simulación cómo se separan las <b>cromátidas hermanas</b>. ¿A qué paso tienes que ir?",
+"d1.lc":"Paso:",
+"d1_6":"En la anafase I se separan los homólogos, cada uno con sus dos cromátidas todavía unidas.",
+"d1_7":"En la telofase I la célula ya se ha dividido en dos; las cromátidas siguen unidas.",
+"d1_10":"En la telofase II las cromátidas ya son cromosomas independientes; la separación ha ocurrido un paso antes.",
+"d1_ok":"✔ ¡Bien decidido! En la anafase II se dividen los centrómeros y las cromátidas hermanas viajan a polos opuestos.",
+"d1.more":"¿Y para ver cómo se separan los homólogos? ¿Qué paso elegirías?",
+"d2.q":"Quieres que, solo por la orientación de los pares en la metafase I, haya <b>más de 1000</b> combinaciones posibles. ¿Cuál es el número <b>mínimo</b> de pares de homólogos?",
+"d2_lo":"Con {0} pares: 2<sup>{0}</sup> = {1} combinaciones, menos de 1000.",
+"d2_hi":"Con {0} pares: 2<sup>{0}</sup> = {1}, supera 1000, pero no es el mínimo.",
+"d2_ok":"✔ ¡Bien decidido! 2<sup>10</sup> = 1024 > 1000, mientras que 2<sup>9</sup> = 512 no llega.",
+"d2.more":"Los humanos tienen 23 pares. ¿Cuántas veces supera esa cifra los 1000?"
 }
 };
 /* ===== utilitats comunes (idioma, canvas, colors) ===== */
@@ -572,6 +777,146 @@ function initQuiz(qs){
   const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
   document.addEventListener('langchange',applyLevel);
 }
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
 
 /* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
 const SI18N={
@@ -755,6 +1100,40 @@ function render(ph){
   drawSpindle(ph,Lo);
   paintText();
 }
+/* ===== Raona-ho ===== */
+function load(i){stepGo(i);RZ.show($('#msvg'));}
+const pw=n=>Math.pow(2,n);
+RZ.init({
+ F:{chrom:{l:'l_chrom'},chromat:{l:'l_chromat'},biv:{l:'l_biv'},p2:{l:'l_p2'},p3:{l:'l_p3'},p4:{l:'l_p4'},gam:{l:'l_gam'},adn:{l:'l_adn',u:'C'},step:{l:'l_step'},par:{l:'l_par'}},
+ sim:v=>load(v[0]),
+ M:[
+  {id:'m1',f:['chrom','chromat'],sim:()=>load(1),ok:()=>({k:'m1_ok'}),
+   chk:([c,a])=>c===4&&a===8?null:c===8?{k:'m1_8'}:{k:'m1_f'}},
+  {id:'m2',f:['biv','chromat'],sim:()=>load(4),ok:()=>({k:'m2_ok'}),
+   chk:([b,a])=>b===4&&a===16?null:b===8?{k:'m2_biv'}:{k:'m2_f'}},
+  {id:'m3',f:['p2','p3','p4'],sim:()=>load(4),ok:()=>({k:'m3_ok'}),
+   chk:([a,b,c])=>a===4&&b===8&&c===16?null:{k:'m3_f'}},
+  {id:'m4',f:['gam','adn'],sim:()=>load(9),ok:()=>({k:'m4_ok'}),
+   chk:([g,d])=>g===4&&d===1?null:g===2?{k:'m4_2'}:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load(1)},
+  {id:'s2',ans:'D',f:['step'],sim:()=>load(1),cxsim:()=>load(6),cxok:([v])=>({k:'s2.cx',p:[v]}),
+   cx:([v])=>(Number.isInteger(v)&&v>=4&&v<=10)?null:{k:'s_cx_no'}},
+  {id:'s3',ans:'S',sim:()=>load(8)},
+  {id:'s4',ans:'S',sim:()=>load(9)},
+  {id:'s5',ans:'D',f:['step'],sim:()=>load(0),cxsim:()=>load(9),cxok:([v])=>({k:'s5.cx',p:[v]}),
+   cx:([v])=>(Number.isInteger(v)&&v>=7&&v<=10)?null:{k:'s_cx_no'}},
+  {id:'s6',ans:'M',sim:()=>load(5)}
+ ],
+ E:[{id:'e1',who:1,args:[1]},{id:'e2',who:3,args:[6]},{id:'e3',who:2,args:[3]}],
+ D:[
+  {id:'d1',chips:{vals:[6,7,9,10],fmt:x=>t('n'+x)},sim:([p])=>load(p-1),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===9?null:{k:'d1_'+p}},
+  {id:'d2',f:['par'],sim:()=>load(4),ok:()=>({k:'d2_ok'}),
+   chk:([n])=>(!Number.isInteger(n)||n<1||n>30)?{k:'rng'}:n<10?{k:'d2_lo',p:[n,nf(pw(n),0)]}:n>10?{k:'d2_hi',p:[n,nf(pw(n),0)]}:null}
+ ]
+});
 initQuiz(QDATA);
 initLang();applyLang();
 buildSvg();

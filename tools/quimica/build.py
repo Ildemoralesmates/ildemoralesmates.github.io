@@ -31,6 +31,23 @@ css_common = (shared / "common.css").read_text(encoding="utf-8")
 js_common = (shared / "common.js").read_text(encoding="utf-8")
 shell = (shared / "shell.html").read_text(encoding="utf-8")
 
+# Raona-ho: motor compartit amb tools/simuladors (una sola font); només s'injecta si body.html porta <!--@RAONA@-->
+SIMSRC = ROOT.parent / "simuladors" / "src"
+RAONA_HTML = ('<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow"></small><span data-i18n="rz_title"></span></h2><p data-i18n="rz_intro"></p>'
+    '<div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label=""><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM"></button>'
+    '<button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS"></button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE"></button>'
+    '<button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD"></button></div>'
+    '<div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>')
+_SKIP = (".simgrid", "@media (max-width:820px){.simgrid", ".simcv", ".side", "[hidden]", ".idea", ".card p.idea", ".row")
+
+
+def raona_assets():
+    css = "\n".join(l for l in (SIMSRC / "raona.css").read_text(encoding="utf-8").splitlines() if not l.startswith(_SKIP))
+    css += "\n" + (shared / "raona_compat.css").read_text(encoding="utf-8")
+    js = "\n".join([(shared / "raona_pre.js").read_text(encoding="utf-8"), (SIMSRC / "quiz.js").read_text(encoding="utf-8"),
+                    (SIMSRC / "raona.js").read_text(encoding="utf-8"), (shared / "raona_post.js").read_text(encoding="utf-8")])
+    return css, js
+
 
 def fail(msg):
     print("ERROR:", msg, file=sys.stderr)
@@ -54,7 +71,7 @@ def jsjson(obj):
     return json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
 
 
-def render(lang, slug, meta, body, css_extra="", js_extra=""):
+def render(lang, slug, meta, body, css_extra="", js_extra="", js_lib=""):
     here = page_dir(lang, slug)
     other = "es" if lang == "va" else "va"
     langswitch = ""
@@ -79,7 +96,7 @@ def render(lang, slug, meta, body, css_extra="", js_extra=""):
     if js_extra:
         script = (
             f'<script>const LANG={json.dumps(lang)};const T={jsjson(meta["T"])};</script>'
-            f"<script>{js_common}</script><script>{js_extra}</script>"
+            f"<script>{js_common}</script><script>{js_lib}\n{js_extra}</script>"
         )
     gc = CFG.get("goatcounter")
     if gc:
@@ -145,6 +162,11 @@ def main():
         body_tpl = (d / "body.html").read_text(encoding="utf-8")
         js = (d / "sim.js").read_text(encoding="utf-8")
         css = (d / "sim.css").read_text(encoding="utf-8") if (d / "sim.css").exists() else ""
+        js_lib = ""
+        if "<!--@RAONA@-->" in body_tpl:
+            rcss, js_lib = raona_assets()
+            css += "\n" + rcss
+            body_tpl = body_tpl.replace("<!--@RAONA@-->", RAONA_HTML)
         # claus usades pel JS: t('clau')
         used = set(re.findall(r"""\bt\(\s*['"](\w+)['"]\s*[,)]""", js))
         for lang in LANGS:
@@ -158,7 +180,7 @@ def main():
                     fail(f"{slug}/{lang}: el body usa la clau inexistent '{k}'")
                 body = body.replace("{{" + k + "}}", T[k])
             meta = {"title": T["title"], "h1": T["h1"], "sub": T["sub"], "description": T["description"], "T": T}
-            write(page_dir(lang, slug) / "index.html", render(lang, slug, meta, body, css, js))
+            write(page_dir(lang, slug) / "index.html", render(lang, slug, meta, body, css, js, js_lib))
 
     # pàgines d'índex
     for lang in LANGS:

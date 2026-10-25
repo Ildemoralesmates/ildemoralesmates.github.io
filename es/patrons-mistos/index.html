@@ -102,6 +102,47 @@ footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-appl
 footer.cc a{color:inherit}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
 
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
 /* Patrons amb mistos: escenari de paper quadriculat a l'esquerra, quadern (taula, predicció, fórmula) a la dreta */
 :root{--grid:rgba(35,80,200,.09); --head:#c8321f; --wood:#c4955a; --wood-edge:#94683a;
   --c1:#2350c8; --c2:#c77d0a; --c3:#1d8a4e; --bad:#b3261e}
@@ -131,7 +172,7 @@ footer.cc a{color:inherit}
 .mc.g0{background:var(--wood-edge)} .mc.m1{background:var(--c1)} .mc.m2{background:var(--c2)} .mc.m3{background:var(--c3)}
 .mc.plain{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .sum .eq{font-weight:700}
-.side{display:grid;gap:16px;min-width:0}
+.side{display:grid;gap:16px;min-width:0;background:none;border:0;padding:0;border-radius:0}
 .tw{overflow-x:auto}
 .ptab{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
 .ptab th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--line)}
@@ -228,6 +269,8 @@ footer.cc a{color:inherit}
       <p class="note" data-i18n="foot">Flechas ← → del teclado: figura anterior o siguiente. Cada color es un bloque nuevo de cerillas.</p>
     </aside>
   </main>
+
+  <section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
   <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
 </div>
 <script>
@@ -322,7 +365,91 @@ const I18N={
   e_houses:'1 paret inicial i 5 mistos per cada casa (terra, paret, sostre i dos de teulada): 5n + 1.',
   e_double:'2 mistos verticals per a començar i 5 per cada columna nova: 5n + 2. Compara-la amb les cases: mateix «+5», diferent inici.',
   e_loose:'Com que no comparteixen cap misto, cada quadrat en necessita 4: 4n. És l’únic patró proporcional: el doble de quadrats, el doble de mistos.',
-  e_grid:'Cada capa nova en forma de L afegeix 4, 8, 12… mistos. En total 2n(n + 1). Les diferències no són constants: no és lineal.'
+  e_grid:'Cada capa nova en forma de L afegeix 4, 8, 12… mistos. En total 2n(n + 1). Les diferències no són constants: no és lineal.',
+"rng":"Escriu un nombre enter de figura entre 1 i 10 (el simulador arriba fins a la 10).",
+"rng2":"Escriu un nombre enter de figura (1, 2, 3…).",
+"l_fig":"Figura","l_q":"Quadrats, figura","l_t":"Triangles, figura",
+"m1.q":"Quina figura de la <b>fila de quadrats</b> necessita exactament <b>28 mistos</b>?",
+"m1_f":"La figura {0} de la fila de quadrats necessita {1} mistos, no 28.",
+"m1_ok":"✔ Missió complida! 3 · 9 + 1 = 28 mistos: és la figura 9.",
+"m1.more":"L'has trobada provant o resolent 3n + 1 = 28? Com ho faries per a una figura de 301 mistos?",
+"m2.q":"Busca una figura de la <b>fila de quadrats</b> i una de la <b>fila de triangles</b> que necessiten <b>exactament els mateixos mistos</b>.",
+"m2_f":"Quadrats {0}: {1} mistos. Triangles {2}: {3} mistos. No coincideixen.",
+"m2_ok":"✔ Missió complida! Quadrats {0} i triangles {1} necessiten tots dos {2} mistos.",
+"m2.more":"Hi ha més d'una parella (2 i 3, 4 i 6…). Quina relació hi ha entre els dos números? Resol 3a + 1 = 2b + 1.",
+"m3.q":"Quina figura de la <b>doble fila</b> necessita exactament <b>6 mistos més</b> que la figura 4 de la fila de cases?",
+"m3_f":"La figura {0} de la doble fila necessita {1} mistos; en calen 27 (els 21 de la figura 4 de les cases, més 6).",
+"m3_ok":"✔ Missió complida! 5 · 5 + 2 = 27 = 21 + 6.",
+"m3.more":"A igual figura, la doble fila sempre té 1 misto més que les cases. Per què, si totes dues afegeixen 5 cada vegada?",
+"m4.q":"Quina figura de la <b>quadrícula</b> necessita exactament <b>60 mistos</b>?",
+"m4_f":"La figura {0} de la quadrícula necessita {1} mistos, no 60.",
+"m4_ok":"✔ Missió complida! 2 · 5 · 6 = 60 mistos: és la figura 5.",
+"m4.more":"Aquí no val dividir directament com a 3n + 1 = 28. Per què? Quin tipus d'expressió és 2n(n + 1)?",
+"s_cx_no":"La figura {0} de la fila de quadrats té {1} mistos, que és parell. Busca'n una on no ho siga.",
+"s1.q":"«A la fila de quadrats, cada figura nova afegeix sempre els mateixos mistos.»",
+"s1.h":"Mira la columna «Diferència» de la taula.",
+"s1.e":"Afegeix 3 cada vegada (la diferència és constant). Per això la regla és 3n + 1: el 3 és el que s'afegeix i l'1 és el misto de partida.",
+"s2.q":"«A la fila de quadrats, la figura 2n té el doble de mistos que la figura n.»",
+"s2.h":"Compara la figura 4 amb la 8: 13 i 25.",
+"s2.e":"Mai: 2(3n + 1) = 6n + 2, però la figura 2n té 3 · 2n + 1 = 6n + 1. Sempre en falta 1, perquè el misto de partida no es duplica.",
+"s3.q":"«A la fila de quadrats solts, la figura 2n té el doble de mistos que la figura n.»",
+"s3.h":"Compara la figura 3 amb la 6.",
+"s3.e":"Sempre: 4 · 2n = 2 · 4n. Com que no hi ha misto de partida, doblar la figura dobla els mistos: és el patró proporcional.",
+"s4.q":"«A la quadrícula, cada figura nova afegeix els mateixos mistos que l'anterior.»",
+"s4.h":"Mira la columna «Diferència».",
+"s4.e":"Mai: les diferències són 8, 12, 16… i van creixent. Per això la quadrícula no és lineal: 2n(n + 1) du una n².",
+"s5.q":"«A la fila de quadrats, el nombre de mistos és sempre parell.»",
+"s5.h":"Prova la figura 1 i la figura 2.",
+"s5.e":"De vegades: 3n + 1 és parell quan n és imparell (4, 10, 16…) i imparell quan n és parell (7, 13, 19…).",
+"s5.cx":"✔ Contraexemple trobat: la figura {0} té {1} mistos, que és imparell.",
+"s6.q":"«A la quadrícula, el nombre de mistos és sempre un múltiple de 4.»",
+"s6.h":"Prova les figures 1, 2, 3 i 4: 4, 12, 24, 40…",
+"s6.e":"Sempre: 2n(n + 1) i n(n + 1) és sempre parell (és el producte de dos nombres consecutius), així que 2 · parell és múltiple de 4.",
+"e1.ctx":"Una fila de cases i una doble fila afegeixen 5 mistos cada vegada que creixen. Tenen els mateixos mistos en cada figura?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Sí: si creixen igual, tenen sempre els mateixos mistos.",
+"e1.s1":"No: la doble fila en té 1 més a cada figura, perquè comença amb 2 mistos i les cases amb 1.",
+"e1.w0":"Créixer igual (+5) no vol dir tindre els mateixos mistos: també compta el punt de partida (1 misto a les cases, 2 a la doble fila).",
+"e1.w1":"Perquè la doble fila té el doble de mistos que les cases a cada figura.",
+"e1.w2":"Perquè les cases i la doble fila no tenen les mateixes figures.",
+"e1.frame":"Marta, créixer igual no vol dir tindre els mateixos mistos perquè…",
+"e1.model":"Marta, tots dos patrons afegeixen 5 mistos a cada pas, però no comencen igual: les cases amb 1 misto (5n + 1) i la doble fila amb 2 (5n + 2). Per això, a cada figura, la doble fila en té exactament 1 més.",
+"e2.ctx":"A la fila de quadrats, la figura 8 necessita <b>25 mistos</b>. Quants en necessita la figura 16?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"50: és el doble de figura, així que el doble de mistos.",
+"e2.s1":"48: cada quadrat afegeix 3 mistos, així que 3 · 16.",
+"e2.w0":"Joan duplica també el misto de partida, que no es repeteix, i Rita se n'oblida. Són 3 · 16 + 1 = 49.",
+"e2.w1":"Perquè a partir de la figura 10 els quadrats ja no comparteixen mistos.",
+"e2.w2":"Perquè la figura 16 no es pot calcular sense dibuixar-la.",
+"e2.frame":"Joan i Rita, la figura 16 no té ni 50 ni 48 mistos perquè…",
+"e2.model":"Joan, el misto de partida no es duplica: amb 2 · 25 = 50 el comptes dues vegades. Rita, 3 · 16 = 48 se n'oblida: cada quadrat afegeix 3, però el patró comença amb 1 misto. Són 3 · 16 + 1 = 49.",
+"e3.ctx":"Dos companys busquen la regla de la fila de quadrats. Qui té raó?",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"El primer quadrat en necessita 4 i cada quadrat nou n'afegeix 3: 4 + 3(n − 1).",
+"e3.s1":"Hi ha 1 misto de partida i cada quadrat n'afegeix 3: 1 + 3n.",
+"e3.w0":"Les dues expressions són iguals: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Són dues maneres de comptar el mateix patró.",
+"e3.w1":"Perquè 4 i 1 són nombres diferents, i així les expressions no poden donar el mateix.",
+"e3.w2":"Perquè només valen per a la figura 1.",
+"e3.frame":"Àlex i Laia, les dues expressions són correctes perquè…",
+"e3.model":"Les dues expressions donen sempre el mateix: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Àlex compta un quadrat sencer i després 3 per cada quadrat nou; Laia compta el misto de partida i 3 per quadrat. Són dues maneres de mirar la mateixa figura.",
+"d1.q":"Tens una caixa de <b>50 mistos</b>. Quantes cases pots fer amb una <b>fila de cases</b> i quants mistos te'n sobren?",
+"d1.l0":"Cases","d1.l1":"Mistos que sobren",
+"d1_over":"10 cases en necessiten 51: te'n falta 1. Recorda el misto de partida de la fila de cases.",
+"d1_c":"Amb {0} cases en gastes {1} mistos (5 · {0} + 1). Compara-ho amb els 50 de la caixa.",
+"d1_s":"Amb 9 cases en gastes 46 mistos. Quants en queden dels 50?",
+"d1_ok":"✔ Ben decidit! 5 · 9 + 1 = 46 mistos; en sobren 4.",
+"d1.more":"I si la caixa tinguera 500 mistos? Escriu la desigualtat 5n + 1 ≤ 500 i resol-la.",
+"d2.q":"Vols fer la <b>figura 10</b> amb els <b>menys mistos possibles</b>. Quina fila tries?",
+"d2.lc":"Fila:",
+"d2_no":"«{0}» necessita {1} mistos per a la figura 10; n'hi ha una que en gasta menys.",
+"d2_ok":"✔ Ben decidit! La fila de triangles només necessita 2 · 10 + 1 = 21 mistos: cada triangle afegeix només 2.",
+"d2.more":"Serà la més barata per a qualsevol figura? Compara 2n + 1 amb les altres expressions.",
+"d3.q":"Per a un mural vols una <b>doble fila</b> amb <b>més de 100 mistos</b>. Quina és la <b>primera figura</b> que ho aconsegueix?",
+"d3.l0":"Figura",
+"d3_lo":"La figura {0} de la doble fila només en té {1}: encara no passa de 100.",
+"d3_hi":"La figura {0} en té {1}: sí que passa de 100, però no és la primera que ho fa.",
+"d3_ok":"✔ Ben decidit! 5 · 19 + 2 = 97 (no arriba) i 5 · 20 + 2 = 102 (ja passa).",
+"d3.more":"Com ho resoldries per a més de 1000 mistos? Escriu la desigualtat 5n + 2 > 1000."
  },
  es:{
   title:'Patrones con cerillas', eyebrow:'Álgebra · 1.º y 2.º ESO', h1:'Patrones con cerillas',
@@ -348,9 +475,307 @@ const I18N={
   e_houses:'1 pared inicial y 5 cerillas por cada casa (suelo, pared, techo y dos de tejado): 5n + 1.',
   e_double:'2 cerillas verticales para empezar y 5 por cada columna nueva: 5n + 2. Compárala con las casas: mismo «+5», distinto inicio.',
   e_loose:'Como no comparten ninguna cerilla, cada cuadrado necesita 4: 4n. Es el único patrón proporcional: el doble de cuadrados, el doble de cerillas.',
-  e_grid:'Cada capa nueva en forma de L añade 4, 8, 12… cerillas. En total 2n(n + 1). Las diferencias no son constantes: no es lineal.'
+  e_grid:'Cada capa nueva en forma de L añade 4, 8, 12… cerillas. En total 2n(n + 1). Las diferencias no son constantes: no es lineal.',
+"rng":"Escribe un número entero de figura entre 1 y 10 (el simulador llega hasta la 10).",
+"rng2":"Escribe un número entero de figura (1, 2, 3…).",
+"l_fig":"Figura","l_q":"Cuadrados, figura","l_t":"Triángulos, figura",
+"m1.q":"¿Qué figura de la <b>fila de cuadrados</b> necesita exactamente <b>28 cerillas</b>?",
+"m1_f":"La figura {0} de la fila de cuadrados necesita {1} cerillas, no 28.",
+"m1_ok":"✔ ¡Misión cumplida! 3 · 9 + 1 = 28 cerillas: es la figura 9.",
+"m1.more":"¿La has encontrado probando o resolviendo 3n + 1 = 28? ¿Cómo lo harías para una figura de 301 cerillas?",
+"m2.q":"Busca una figura de la <b>fila de cuadrados</b> y una de la <b>fila de triángulos</b> que necesiten <b>exactamente las mismas cerillas</b>.",
+"m2_f":"Cuadrados {0}: {1} cerillas. Triángulos {2}: {3} cerillas. No coinciden.",
+"m2_ok":"✔ ¡Misión cumplida! Cuadrados {0} y triángulos {1} necesitan los dos {2} cerillas.",
+"m2.more":"Hay más de una pareja (2 y 3, 4 y 6…). ¿Qué relación hay entre los dos números? Resuelve 3a + 1 = 2b + 1.",
+"m3.q":"¿Qué figura de la <b>doble fila</b> necesita exactamente <b>6 cerillas más</b> que la figura 4 de la fila de casas?",
+"m3_f":"La figura {0} de la doble fila necesita {1} cerillas; hacen falta 27 (las 21 de la figura 4 de las casas, más 6).",
+"m3_ok":"✔ ¡Misión cumplida! 5 · 5 + 2 = 27 = 21 + 6.",
+"m3.more":"A igual figura, la doble fila siempre tiene 1 cerilla más que las casas. ¿Por qué, si las dos añaden 5 cada vez?",
+"m4.q":"¿Qué figura de la <b>cuadrícula</b> necesita exactamente <b>60 cerillas</b>?",
+"m4_f":"La figura {0} de la cuadrícula necesita {1} cerillas, no 60.",
+"m4_ok":"✔ ¡Misión cumplida! 2 · 5 · 6 = 60 cerillas: es la figura 5.",
+"m4.more":"Aquí no vale dividir directamente como en 3n + 1 = 28. ¿Por qué? ¿Qué tipo de expresión es 2n(n + 1)?",
+"s_cx_no":"La figura {0} de la fila de cuadrados tiene {1} cerillas, que es par. Busca una donde no lo sea.",
+"s1.q":"«En la fila de cuadrados, cada figura nueva añade siempre las mismas cerillas.»",
+"s1.h":"Mira la columna «Diferencia» de la tabla.",
+"s1.e":"Añade 3 cada vez (la diferencia es constante). Por eso la regla es 3n + 1: el 3 es lo que se añade y el 1 es la cerilla de partida.",
+"s2.q":"«En la fila de cuadrados, la figura 2n tiene el doble de cerillas que la figura n.»",
+"s2.h":"Compara la figura 4 con la 8: 13 y 25.",
+"s2.e":"Nunca: 2(3n + 1) = 6n + 2, pero la figura 2n tiene 3 · 2n + 1 = 6n + 1. Siempre falta 1, porque la cerilla de partida no se duplica.",
+"s3.q":"«En la fila de cuadrados sueltos, la figura 2n tiene el doble de cerillas que la figura n.»",
+"s3.h":"Compara la figura 3 con la 6.",
+"s3.e":"Siempre: 4 · 2n = 2 · 4n. Como no hay cerilla de partida, doblar la figura dobla las cerillas: es el patrón proporcional.",
+"s4.q":"«En la cuadrícula, cada figura nueva añade las mismas cerillas que la anterior.»",
+"s4.h":"Mira la columna «Diferencia».",
+"s4.e":"Nunca: las diferencias son 8, 12, 16… y van creciendo. Por eso la cuadrícula no es lineal: 2n(n + 1) lleva una n².",
+"s5.q":"«En la fila de cuadrados, el número de cerillas es siempre par.»",
+"s5.h":"Prueba la figura 1 y la figura 2.",
+"s5.e":"A veces: 3n + 1 es par cuando n es impar (4, 10, 16…) e impar cuando n es par (7, 13, 19…).",
+"s5.cx":"✔ Contraejemplo encontrado: la figura {0} tiene {1} cerillas, que es impar.",
+"s6.q":"«En la cuadrícula, el número de cerillas es siempre un múltiplo de 4.»",
+"s6.h":"Prueba las figuras 1, 2, 3 y 4: 4, 12, 24, 40…",
+"s6.e":"Siempre: 2n(n + 1) y n(n + 1) es siempre par (es el producto de dos números consecutivos), así que 2 · par es múltiplo de 4.",
+"e1.ctx":"Una fila de casas y una doble fila añaden 5 cerillas cada vez que crecen. ¿Tienen las mismas cerillas en cada figura?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Sí: si crecen igual, tienen siempre las mismas cerillas.",
+"e1.s1":"No: la doble fila tiene 1 más en cada figura, porque empieza con 2 cerillas y las casas con 1.",
+"e1.w0":"Crecer igual (+5) no significa tener las mismas cerillas: también cuenta el punto de partida (1 cerilla en las casas, 2 en la doble fila).",
+"e1.w1":"Porque la doble fila tiene el doble de cerillas que las casas en cada figura.",
+"e1.w2":"Porque las casas y la doble fila no tienen las mismas figuras.",
+"e1.frame":"Marta, crecer igual no significa tener las mismas cerillas porque…",
+"e1.model":"Marta, los dos patrones añaden 5 cerillas en cada paso, pero no empiezan igual: las casas con 1 cerilla (5n + 1) y la doble fila con 2 (5n + 2). Por eso, en cada figura, la doble fila tiene exactamente 1 más.",
+"e2.ctx":"En la fila de cuadrados, la figura 8 necesita <b>25 cerillas</b>. ¿Cuántas necesita la figura 16?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"50: es el doble de figura, así que el doble de cerillas.",
+"e2.s1":"48: cada cuadrado añade 3 cerillas, así que 3 · 16.",
+"e2.w0":"Joan duplica también la cerilla de partida, que no se repite, y Rita se olvida de ella. Son 3 · 16 + 1 = 49.",
+"e2.w1":"Porque a partir de la figura 10 los cuadrados ya no comparten cerillas.",
+"e2.w2":"Porque la figura 16 no se puede calcular sin dibujarla.",
+"e2.frame":"Joan y Rita, la figura 16 no tiene ni 50 ni 48 cerillas porque…",
+"e2.model":"Joan, la cerilla de partida no se duplica: con 2 · 25 = 50 la cuentas dos veces. Rita, 3 · 16 = 48 se olvida de ella: cada cuadrado añade 3, pero el patrón empieza con 1 cerilla. Son 3 · 16 + 1 = 49.",
+"e3.ctx":"Dos compañeros buscan la regla de la fila de cuadrados. ¿Quién tiene razón?",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"El primer cuadrado necesita 4 y cada cuadrado nuevo añade 3: 4 + 3(n − 1).",
+"e3.s1":"Hay 1 cerilla de partida y cada cuadrado añade 3: 1 + 3n.",
+"e3.w0":"Las dos expresiones son iguales: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Son dos maneras de contar el mismo patrón.",
+"e3.w1":"Porque 4 y 1 son números distintos, y así las expresiones no pueden dar lo mismo.",
+"e3.w2":"Porque solo valen para la figura 1.",
+"e3.frame":"Álex y Laia, las dos expresiones son correctas porque…",
+"e3.model":"Las dos expresiones dan siempre lo mismo: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Álex cuenta un cuadrado entero y luego 3 por cada cuadrado nuevo; Laia cuenta la cerilla de partida y 3 por cuadrado. Son dos maneras de mirar la misma figura.",
+"d1.q":"Tienes una caja de <b>50 cerillas</b>. ¿Cuántas casas puedes hacer con una <b>fila de casas</b> y cuántas cerillas te sobran?",
+"d1.l0":"Casas","d1.l1":"Cerillas que sobran",
+"d1_over":"10 casas necesitan 51: te falta 1. Recuerda la cerilla de partida de la fila de casas.",
+"d1_c":"Con {0} casas gastas {1} cerillas (5 · {0} + 1). Compáralo con las 50 de la caja.",
+"d1_s":"Con 9 casas gastas 46 cerillas. ¿Cuántas quedan de las 50?",
+"d1_ok":"✔ ¡Bien decidido! 5 · 9 + 1 = 46 cerillas; sobran 4.",
+"d1.more":"¿Y si la caja tuviera 500 cerillas? Escribe la desigualdad 5n + 1 ≤ 500 y resuélvela.",
+"d2.q":"Quieres hacer la <b>figura 10</b> con las <b>menos cerillas posibles</b>. ¿Qué fila eliges?",
+"d2.lc":"Fila:",
+"d2_no":"«{0}» necesita {1} cerillas para la figura 10; hay una que gasta menos.",
+"d2_ok":"✔ ¡Bien decidido! La fila de triángulos solo necesita 2 · 10 + 1 = 21 cerillas: cada triángulo añade solo 2.",
+"d2.more":"¿Será la más barata para cualquier figura? Compara 2n + 1 con las demás expresiones.",
+"d3.q":"Para un mural quieres una <b>doble fila</b> con <b>más de 100 cerillas</b>. ¿Cuál es la <b>primera figura</b> que lo consigue?",
+"d3.l0":"Figura",
+"d3_lo":"La figura {0} de la doble fila solo tiene {1}: todavía no pasa de 100.",
+"d3_hi":"La figura {0} tiene {1}: sí pasa de 100, pero no es la primera que lo hace.",
+"d3_ok":"✔ ¡Bien decidido! 5 · 19 + 2 = 97 (no llega) y 5 · 20 + 2 = 102 (ya pasa).",
+"d3.more":"¿Cómo lo resolverías para más de 1000 cerillas? Escribe la desigualdad 5n + 2 > 1000."
  }
 };
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
 
 const E=id=>document.getElementById(id);
 const H3=Math.sqrt(3)/2;
@@ -468,9 +893,49 @@ E('predCheck').addEventListener('click',checkPred); E('predNew').addEventListene
 E('predIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkPred();});
 E('formCheck').addEventListener('click',checkForm); E('formIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkForm();});
 E('reveal').addEventListener('click',()=>{solShown=!solShown;renderInfo();});
-document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;
   if(e.key==='ArrowRight'){e.preventDefault();E('plus').click();} if(e.key==='ArrowLeft'){e.preventDefault();E('minus').click();}});
 document.addEventListener('langchange',()=>{E('predFb').textContent='';E('formFb').textContent='';if(E('svg').childNodes.length)renderInfo();});
+
+/* ===== Raona-ho ===== */
+const PC=['squares','triangles','houses','double','loose'];
+function load(p,k){pid=p;n=Math.max(NMIN,Math.min(NMAX,k));solShown=false;E('formIn').value='';E('formFb').textContent='';newPred();draw('none');RZ.show(E('svg'));}
+const ri=f=>(v,r)=>v.every(x=>Number.isInteger(x)&&x>=NMIN&&x<=NMAX)?f(v,r):{k:'rng'};
+const fv=(p,k)=>PAT[p].f(k);
+RZ.init({
+ F:{fig:{l:'l_fig'},q:{l:'l_q'},tr:{l:'l_t'}},
+ sim:v=>load(v[0],v[1]),
+ M:[
+  {id:'m1',f:['fig'],sim:([k])=>load('squares',k),ok:()=>({k:'m1_ok'}),
+   chk:ri(([k])=>fv('squares',k)===28?null:{k:'m1_f',p:[k,fv('squares',k)]})},
+  {id:'m2',f:['q','tr'],sim:null,ok:([a,b])=>({k:'m2_ok',p:[a,b,fv('squares',a)]}),
+   chk:ri(([a,b])=>fv('squares',a)===fv('triangles',b)?null:{k:'m2_f',p:[a,fv('squares',a),b,fv('triangles',b)]})},
+  {id:'m3',f:['fig'],sim:([k])=>load('double',k),ok:()=>({k:'m3_ok'}),
+   chk:ri(([k])=>fv('double',k)===27?null:{k:'m3_f',p:[k,fv('double',k)]})},
+  {id:'m4',f:['fig'],sim:([k])=>load('grid',k),ok:()=>({k:'m4_ok'}),
+   chk:ri(([k])=>fv('grid',k)===60?null:{k:'m4_f',p:[k,fv('grid',k)]})}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load('squares',4)},
+  {id:'s2',ans:'M',sim:()=>load('squares',4)},
+  {id:'s3',ans:'S',sim:()=>load('loose',3)},
+  {id:'s4',ans:'M',sim:()=>load('grid',4)},
+  {id:'s5',ans:'D',f:['fig'],cxsim:([k])=>load('squares',k),
+   cxok:([k])=>({k:'s5.cx',p:[k,fv('squares',k)]}),
+   cx:ri(([k])=>fv('squares',k)%2===1?null:{k:'s_cx_no',p:[k,fv('squares',k)]})},
+  {id:'s6',ans:'S',sim:()=>load('grid',4)}
+ ],
+ E:[{id:'e1',who:1,args:['double',4]},{id:'e2',who:3,args:['squares',8]},{id:'e3',who:2,args:['squares',5]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0'},{l:'d1.l1'}],sim:([c])=>load('houses',c>=NMIN?c:9),ok:()=>({k:'d1_ok'}),
+   chk:([c,r])=>c===10?{k:'d1_over'}:c!==9?{k:'d1_c',p:[c,5*c+1]}:r!==4?{k:'d1_s'}:null},
+  {id:'d2',chips:{vals:[1,2,3,4,5],fmt:x=>t('p_'+PC[x-1])},sim:([p])=>load(PC[p-1],10),ok:()=>({k:'d2_ok'}),
+   chk:([p])=>p===2?null:{k:'d2_no',p:()=>[t('p_'+PC[p-1]),fv(PC[p-1],10)]}},
+  {id:'d3',f:[{l:'d3.l0'}],sim:null,ok:()=>({k:'d3_ok'}),
+   chk:([k])=>(!Number.isInteger(k)||k<1)?{k:'rng2'}:k<20?{k:'d3_lo',p:[k,fv('double',k)]}:k>20?{k:'d3_hi',p:[k,fv('double',k)]}:null}
+ ]
+});
+initQuiz([]);
 
 initLang();applyLang();newPred();draw('build');
 </script>

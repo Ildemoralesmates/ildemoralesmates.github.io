@@ -8,6 +8,7 @@
 <meta name="author" content="Ilde">
 <style>
 /*@COMMON_CSS@*/
+/*@RAONA_CSS@*/
 /* Patrons amb mistos: escenari de paper quadriculat a l'esquerra, quadern (taula, predicció, fórmula) a la dreta */
 :root{--grid:rgba(35,80,200,.09); --head:#c8321f; --wood:#c4955a; --wood-edge:#94683a;
   --c1:#2350c8; --c2:#c77d0a; --c3:#1d8a4e; --bad:#b3261e}
@@ -37,7 +38,7 @@
 .mc.g0{background:var(--wood-edge)} .mc.m1{background:var(--c1)} .mc.m2{background:var(--c2)} .mc.m3{background:var(--c3)}
 .mc.plain{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .sum .eq{font-weight:700}
-.side{display:grid;gap:16px;min-width:0}
+.side{display:grid;gap:16px;min-width:0;background:none;border:0;padding:0;border-radius:0}
 .tw{overflow-x:auto}
 .ptab{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
 .ptab th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--line)}
@@ -130,6 +131,8 @@
       <p class="note" data-i18n="foot"></p>
     </aside>
   </main>
+
+  <!--@RAONA@-->
   <!--@FOOTER@-->
 </div>
 <script>
@@ -159,7 +162,91 @@ const I18N={
   e_houses:'1 paret inicial i 5 mistos per cada casa (terra, paret, sostre i dos de teulada): 5n + 1.',
   e_double:'2 mistos verticals per a començar i 5 per cada columna nova: 5n + 2. Compara-la amb les cases: mateix «+5», diferent inici.',
   e_loose:'Com que no comparteixen cap misto, cada quadrat en necessita 4: 4n. És l’únic patró proporcional: el doble de quadrats, el doble de mistos.',
-  e_grid:'Cada capa nova en forma de L afegeix 4, 8, 12… mistos. En total 2n(n + 1). Les diferències no són constants: no és lineal.'
+  e_grid:'Cada capa nova en forma de L afegeix 4, 8, 12… mistos. En total 2n(n + 1). Les diferències no són constants: no és lineal.',
+"rng":"Escriu un nombre enter de figura entre 1 i 10 (el simulador arriba fins a la 10).",
+"rng2":"Escriu un nombre enter de figura (1, 2, 3…).",
+"l_fig":"Figura","l_q":"Quadrats, figura","l_t":"Triangles, figura",
+"m1.q":"Quina figura de la <b>fila de quadrats</b> necessita exactament <b>28 mistos</b>?",
+"m1_f":"La figura {0} de la fila de quadrats necessita {1} mistos, no 28.",
+"m1_ok":"✔ Missió complida! 3 · 9 + 1 = 28 mistos: és la figura 9.",
+"m1.more":"L'has trobada provant o resolent 3n + 1 = 28? Com ho faries per a una figura de 301 mistos?",
+"m2.q":"Busca una figura de la <b>fila de quadrats</b> i una de la <b>fila de triangles</b> que necessiten <b>exactament els mateixos mistos</b>.",
+"m2_f":"Quadrats {0}: {1} mistos. Triangles {2}: {3} mistos. No coincideixen.",
+"m2_ok":"✔ Missió complida! Quadrats {0} i triangles {1} necessiten tots dos {2} mistos.",
+"m2.more":"Hi ha més d'una parella (2 i 3, 4 i 6…). Quina relació hi ha entre els dos números? Resol 3a + 1 = 2b + 1.",
+"m3.q":"Quina figura de la <b>doble fila</b> necessita exactament <b>6 mistos més</b> que la figura 4 de la fila de cases?",
+"m3_f":"La figura {0} de la doble fila necessita {1} mistos; en calen 27 (els 21 de la figura 4 de les cases, més 6).",
+"m3_ok":"✔ Missió complida! 5 · 5 + 2 = 27 = 21 + 6.",
+"m3.more":"A igual figura, la doble fila sempre té 1 misto més que les cases. Per què, si totes dues afegeixen 5 cada vegada?",
+"m4.q":"Quina figura de la <b>quadrícula</b> necessita exactament <b>60 mistos</b>?",
+"m4_f":"La figura {0} de la quadrícula necessita {1} mistos, no 60.",
+"m4_ok":"✔ Missió complida! 2 · 5 · 6 = 60 mistos: és la figura 5.",
+"m4.more":"Aquí no val dividir directament com a 3n + 1 = 28. Per què? Quin tipus d'expressió és 2n(n + 1)?",
+"s_cx_no":"La figura {0} de la fila de quadrats té {1} mistos, que és parell. Busca'n una on no ho siga.",
+"s1.q":"«A la fila de quadrats, cada figura nova afegeix sempre els mateixos mistos.»",
+"s1.h":"Mira la columna «Diferència» de la taula.",
+"s1.e":"Afegeix 3 cada vegada (la diferència és constant). Per això la regla és 3n + 1: el 3 és el que s'afegeix i l'1 és el misto de partida.",
+"s2.q":"«A la fila de quadrats, la figura 2n té el doble de mistos que la figura n.»",
+"s2.h":"Compara la figura 4 amb la 8: 13 i 25.",
+"s2.e":"Mai: 2(3n + 1) = 6n + 2, però la figura 2n té 3 · 2n + 1 = 6n + 1. Sempre en falta 1, perquè el misto de partida no es duplica.",
+"s3.q":"«A la fila de quadrats solts, la figura 2n té el doble de mistos que la figura n.»",
+"s3.h":"Compara la figura 3 amb la 6.",
+"s3.e":"Sempre: 4 · 2n = 2 · 4n. Com que no hi ha misto de partida, doblar la figura dobla els mistos: és el patró proporcional.",
+"s4.q":"«A la quadrícula, cada figura nova afegeix els mateixos mistos que l'anterior.»",
+"s4.h":"Mira la columna «Diferència».",
+"s4.e":"Mai: les diferències són 8, 12, 16… i van creixent. Per això la quadrícula no és lineal: 2n(n + 1) du una n².",
+"s5.q":"«A la fila de quadrats, el nombre de mistos és sempre parell.»",
+"s5.h":"Prova la figura 1 i la figura 2.",
+"s5.e":"De vegades: 3n + 1 és parell quan n és imparell (4, 10, 16…) i imparell quan n és parell (7, 13, 19…).",
+"s5.cx":"✔ Contraexemple trobat: la figura {0} té {1} mistos, que és imparell.",
+"s6.q":"«A la quadrícula, el nombre de mistos és sempre un múltiple de 4.»",
+"s6.h":"Prova les figures 1, 2, 3 i 4: 4, 12, 24, 40…",
+"s6.e":"Sempre: 2n(n + 1) i n(n + 1) és sempre parell (és el producte de dos nombres consecutius), així que 2 · parell és múltiple de 4.",
+"e1.ctx":"Una fila de cases i una doble fila afegeixen 5 mistos cada vegada que creixen. Tenen els mateixos mistos en cada figura?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Sí: si creixen igual, tenen sempre els mateixos mistos.",
+"e1.s1":"No: la doble fila en té 1 més a cada figura, perquè comença amb 2 mistos i les cases amb 1.",
+"e1.w0":"Créixer igual (+5) no vol dir tindre els mateixos mistos: també compta el punt de partida (1 misto a les cases, 2 a la doble fila).",
+"e1.w1":"Perquè la doble fila té el doble de mistos que les cases a cada figura.",
+"e1.w2":"Perquè les cases i la doble fila no tenen les mateixes figures.",
+"e1.frame":"Marta, créixer igual no vol dir tindre els mateixos mistos perquè…",
+"e1.model":"Marta, tots dos patrons afegeixen 5 mistos a cada pas, però no comencen igual: les cases amb 1 misto (5n + 1) i la doble fila amb 2 (5n + 2). Per això, a cada figura, la doble fila en té exactament 1 més.",
+"e2.ctx":"A la fila de quadrats, la figura 8 necessita <b>25 mistos</b>. Quants en necessita la figura 16?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"50: és el doble de figura, així que el doble de mistos.",
+"e2.s1":"48: cada quadrat afegeix 3 mistos, així que 3 · 16.",
+"e2.w0":"Joan duplica també el misto de partida, que no es repeteix, i Rita se n'oblida. Són 3 · 16 + 1 = 49.",
+"e2.w1":"Perquè a partir de la figura 10 els quadrats ja no comparteixen mistos.",
+"e2.w2":"Perquè la figura 16 no es pot calcular sense dibuixar-la.",
+"e2.frame":"Joan i Rita, la figura 16 no té ni 50 ni 48 mistos perquè…",
+"e2.model":"Joan, el misto de partida no es duplica: amb 2 · 25 = 50 el comptes dues vegades. Rita, 3 · 16 = 48 se n'oblida: cada quadrat afegeix 3, però el patró comença amb 1 misto. Són 3 · 16 + 1 = 49.",
+"e3.ctx":"Dos companys busquen la regla de la fila de quadrats. Qui té raó?",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"El primer quadrat en necessita 4 i cada quadrat nou n'afegeix 3: 4 + 3(n − 1).",
+"e3.s1":"Hi ha 1 misto de partida i cada quadrat n'afegeix 3: 1 + 3n.",
+"e3.w0":"Les dues expressions són iguals: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Són dues maneres de comptar el mateix patró.",
+"e3.w1":"Perquè 4 i 1 són nombres diferents, i així les expressions no poden donar el mateix.",
+"e3.w2":"Perquè només valen per a la figura 1.",
+"e3.frame":"Àlex i Laia, les dues expressions són correctes perquè…",
+"e3.model":"Les dues expressions donen sempre el mateix: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Àlex compta un quadrat sencer i després 3 per cada quadrat nou; Laia compta el misto de partida i 3 per quadrat. Són dues maneres de mirar la mateixa figura.",
+"d1.q":"Tens una caixa de <b>50 mistos</b>. Quantes cases pots fer amb una <b>fila de cases</b> i quants mistos te'n sobren?",
+"d1.l0":"Cases","d1.l1":"Mistos que sobren",
+"d1_over":"10 cases en necessiten 51: te'n falta 1. Recorda el misto de partida de la fila de cases.",
+"d1_c":"Amb {0} cases en gastes {1} mistos (5 · {0} + 1). Compara-ho amb els 50 de la caixa.",
+"d1_s":"Amb 9 cases en gastes 46 mistos. Quants en queden dels 50?",
+"d1_ok":"✔ Ben decidit! 5 · 9 + 1 = 46 mistos; en sobren 4.",
+"d1.more":"I si la caixa tinguera 500 mistos? Escriu la desigualtat 5n + 1 ≤ 500 i resol-la.",
+"d2.q":"Vols fer la <b>figura 10</b> amb els <b>menys mistos possibles</b>. Quina fila tries?",
+"d2.lc":"Fila:",
+"d2_no":"«{0}» necessita {1} mistos per a la figura 10; n'hi ha una que en gasta menys.",
+"d2_ok":"✔ Ben decidit! La fila de triangles només necessita 2 · 10 + 1 = 21 mistos: cada triangle afegeix només 2.",
+"d2.more":"Serà la més barata per a qualsevol figura? Compara 2n + 1 amb les altres expressions.",
+"d3.q":"Per a un mural vols una <b>doble fila</b> amb <b>més de 100 mistos</b>. Quina és la <b>primera figura</b> que ho aconsegueix?",
+"d3.l0":"Figura",
+"d3_lo":"La figura {0} de la doble fila només en té {1}: encara no passa de 100.",
+"d3_hi":"La figura {0} en té {1}: sí que passa de 100, però no és la primera que ho fa.",
+"d3_ok":"✔ Ben decidit! 5 · 19 + 2 = 97 (no arriba) i 5 · 20 + 2 = 102 (ja passa).",
+"d3.more":"Com ho resoldries per a més de 1000 mistos? Escriu la desigualtat 5n + 2 > 1000."
  },
  es:{
   title:'Patrones con cerillas', eyebrow:'Álgebra · 1.º y 2.º ESO', h1:'Patrones con cerillas',
@@ -185,9 +272,95 @@ const I18N={
   e_houses:'1 pared inicial y 5 cerillas por cada casa (suelo, pared, techo y dos de tejado): 5n + 1.',
   e_double:'2 cerillas verticales para empezar y 5 por cada columna nueva: 5n + 2. Compárala con las casas: mismo «+5», distinto inicio.',
   e_loose:'Como no comparten ninguna cerilla, cada cuadrado necesita 4: 4n. Es el único patrón proporcional: el doble de cuadrados, el doble de cerillas.',
-  e_grid:'Cada capa nueva en forma de L añade 4, 8, 12… cerillas. En total 2n(n + 1). Las diferencias no son constantes: no es lineal.'
+  e_grid:'Cada capa nueva en forma de L añade 4, 8, 12… cerillas. En total 2n(n + 1). Las diferencias no son constantes: no es lineal.',
+"rng":"Escribe un número entero de figura entre 1 y 10 (el simulador llega hasta la 10).",
+"rng2":"Escribe un número entero de figura (1, 2, 3…).",
+"l_fig":"Figura","l_q":"Cuadrados, figura","l_t":"Triángulos, figura",
+"m1.q":"¿Qué figura de la <b>fila de cuadrados</b> necesita exactamente <b>28 cerillas</b>?",
+"m1_f":"La figura {0} de la fila de cuadrados necesita {1} cerillas, no 28.",
+"m1_ok":"✔ ¡Misión cumplida! 3 · 9 + 1 = 28 cerillas: es la figura 9.",
+"m1.more":"¿La has encontrado probando o resolviendo 3n + 1 = 28? ¿Cómo lo harías para una figura de 301 cerillas?",
+"m2.q":"Busca una figura de la <b>fila de cuadrados</b> y una de la <b>fila de triángulos</b> que necesiten <b>exactamente las mismas cerillas</b>.",
+"m2_f":"Cuadrados {0}: {1} cerillas. Triángulos {2}: {3} cerillas. No coinciden.",
+"m2_ok":"✔ ¡Misión cumplida! Cuadrados {0} y triángulos {1} necesitan los dos {2} cerillas.",
+"m2.more":"Hay más de una pareja (2 y 3, 4 y 6…). ¿Qué relación hay entre los dos números? Resuelve 3a + 1 = 2b + 1.",
+"m3.q":"¿Qué figura de la <b>doble fila</b> necesita exactamente <b>6 cerillas más</b> que la figura 4 de la fila de casas?",
+"m3_f":"La figura {0} de la doble fila necesita {1} cerillas; hacen falta 27 (las 21 de la figura 4 de las casas, más 6).",
+"m3_ok":"✔ ¡Misión cumplida! 5 · 5 + 2 = 27 = 21 + 6.",
+"m3.more":"A igual figura, la doble fila siempre tiene 1 cerilla más que las casas. ¿Por qué, si las dos añaden 5 cada vez?",
+"m4.q":"¿Qué figura de la <b>cuadrícula</b> necesita exactamente <b>60 cerillas</b>?",
+"m4_f":"La figura {0} de la cuadrícula necesita {1} cerillas, no 60.",
+"m4_ok":"✔ ¡Misión cumplida! 2 · 5 · 6 = 60 cerillas: es la figura 5.",
+"m4.more":"Aquí no vale dividir directamente como en 3n + 1 = 28. ¿Por qué? ¿Qué tipo de expresión es 2n(n + 1)?",
+"s_cx_no":"La figura {0} de la fila de cuadrados tiene {1} cerillas, que es par. Busca una donde no lo sea.",
+"s1.q":"«En la fila de cuadrados, cada figura nueva añade siempre las mismas cerillas.»",
+"s1.h":"Mira la columna «Diferencia» de la tabla.",
+"s1.e":"Añade 3 cada vez (la diferencia es constante). Por eso la regla es 3n + 1: el 3 es lo que se añade y el 1 es la cerilla de partida.",
+"s2.q":"«En la fila de cuadrados, la figura 2n tiene el doble de cerillas que la figura n.»",
+"s2.h":"Compara la figura 4 con la 8: 13 y 25.",
+"s2.e":"Nunca: 2(3n + 1) = 6n + 2, pero la figura 2n tiene 3 · 2n + 1 = 6n + 1. Siempre falta 1, porque la cerilla de partida no se duplica.",
+"s3.q":"«En la fila de cuadrados sueltos, la figura 2n tiene el doble de cerillas que la figura n.»",
+"s3.h":"Compara la figura 3 con la 6.",
+"s3.e":"Siempre: 4 · 2n = 2 · 4n. Como no hay cerilla de partida, doblar la figura dobla las cerillas: es el patrón proporcional.",
+"s4.q":"«En la cuadrícula, cada figura nueva añade las mismas cerillas que la anterior.»",
+"s4.h":"Mira la columna «Diferencia».",
+"s4.e":"Nunca: las diferencias son 8, 12, 16… y van creciendo. Por eso la cuadrícula no es lineal: 2n(n + 1) lleva una n².",
+"s5.q":"«En la fila de cuadrados, el número de cerillas es siempre par.»",
+"s5.h":"Prueba la figura 1 y la figura 2.",
+"s5.e":"A veces: 3n + 1 es par cuando n es impar (4, 10, 16…) e impar cuando n es par (7, 13, 19…).",
+"s5.cx":"✔ Contraejemplo encontrado: la figura {0} tiene {1} cerillas, que es impar.",
+"s6.q":"«En la cuadrícula, el número de cerillas es siempre un múltiplo de 4.»",
+"s6.h":"Prueba las figuras 1, 2, 3 y 4: 4, 12, 24, 40…",
+"s6.e":"Siempre: 2n(n + 1) y n(n + 1) es siempre par (es el producto de dos números consecutivos), así que 2 · par es múltiplo de 4.",
+"e1.ctx":"Una fila de casas y una doble fila añaden 5 cerillas cada vez que crecen. ¿Tienen las mismas cerillas en cada figura?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Sí: si crecen igual, tienen siempre las mismas cerillas.",
+"e1.s1":"No: la doble fila tiene 1 más en cada figura, porque empieza con 2 cerillas y las casas con 1.",
+"e1.w0":"Crecer igual (+5) no significa tener las mismas cerillas: también cuenta el punto de partida (1 cerilla en las casas, 2 en la doble fila).",
+"e1.w1":"Porque la doble fila tiene el doble de cerillas que las casas en cada figura.",
+"e1.w2":"Porque las casas y la doble fila no tienen las mismas figuras.",
+"e1.frame":"Marta, crecer igual no significa tener las mismas cerillas porque…",
+"e1.model":"Marta, los dos patrones añaden 5 cerillas en cada paso, pero no empiezan igual: las casas con 1 cerilla (5n + 1) y la doble fila con 2 (5n + 2). Por eso, en cada figura, la doble fila tiene exactamente 1 más.",
+"e2.ctx":"En la fila de cuadrados, la figura 8 necesita <b>25 cerillas</b>. ¿Cuántas necesita la figura 16?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"50: es el doble de figura, así que el doble de cerillas.",
+"e2.s1":"48: cada cuadrado añade 3 cerillas, así que 3 · 16.",
+"e2.w0":"Joan duplica también la cerilla de partida, que no se repite, y Rita se olvida de ella. Son 3 · 16 + 1 = 49.",
+"e2.w1":"Porque a partir de la figura 10 los cuadrados ya no comparten cerillas.",
+"e2.w2":"Porque la figura 16 no se puede calcular sin dibujarla.",
+"e2.frame":"Joan y Rita, la figura 16 no tiene ni 50 ni 48 cerillas porque…",
+"e2.model":"Joan, la cerilla de partida no se duplica: con 2 · 25 = 50 la cuentas dos veces. Rita, 3 · 16 = 48 se olvida de ella: cada cuadrado añade 3, pero el patrón empieza con 1 cerilla. Son 3 · 16 + 1 = 49.",
+"e3.ctx":"Dos compañeros buscan la regla de la fila de cuadrados. ¿Quién tiene razón?",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"El primer cuadrado necesita 4 y cada cuadrado nuevo añade 3: 4 + 3(n − 1).",
+"e3.s1":"Hay 1 cerilla de partida y cada cuadrado añade 3: 1 + 3n.",
+"e3.w0":"Las dos expresiones son iguales: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Son dos maneras de contar el mismo patrón.",
+"e3.w1":"Porque 4 y 1 son números distintos, y así las expresiones no pueden dar lo mismo.",
+"e3.w2":"Porque solo valen para la figura 1.",
+"e3.frame":"Álex y Laia, las dos expresiones son correctas porque…",
+"e3.model":"Las dos expresiones dan siempre lo mismo: 4 + 3(n − 1) = 4 + 3n − 3 = 3n + 1. Álex cuenta un cuadrado entero y luego 3 por cada cuadrado nuevo; Laia cuenta la cerilla de partida y 3 por cuadrado. Son dos maneras de mirar la misma figura.",
+"d1.q":"Tienes una caja de <b>50 cerillas</b>. ¿Cuántas casas puedes hacer con una <b>fila de casas</b> y cuántas cerillas te sobran?",
+"d1.l0":"Casas","d1.l1":"Cerillas que sobran",
+"d1_over":"10 casas necesitan 51: te falta 1. Recuerda la cerilla de partida de la fila de casas.",
+"d1_c":"Con {0} casas gastas {1} cerillas (5 · {0} + 1). Compáralo con las 50 de la caja.",
+"d1_s":"Con 9 casas gastas 46 cerillas. ¿Cuántas quedan de las 50?",
+"d1_ok":"✔ ¡Bien decidido! 5 · 9 + 1 = 46 cerillas; sobran 4.",
+"d1.more":"¿Y si la caja tuviera 500 cerillas? Escribe la desigualdad 5n + 1 ≤ 500 y resuélvela.",
+"d2.q":"Quieres hacer la <b>figura 10</b> con las <b>menos cerillas posibles</b>. ¿Qué fila eliges?",
+"d2.lc":"Fila:",
+"d2_no":"«{0}» necesita {1} cerillas para la figura 10; hay una que gasta menos.",
+"d2_ok":"✔ ¡Bien decidido! La fila de triángulos solo necesita 2 · 10 + 1 = 21 cerillas: cada triángulo añade solo 2.",
+"d2.more":"¿Será la más barata para cualquier figura? Compara 2n + 1 con las demás expresiones.",
+"d3.q":"Para un mural quieres una <b>doble fila</b> con <b>más de 100 cerillas</b>. ¿Cuál es la <b>primera figura</b> que lo consigue?",
+"d3.l0":"Figura",
+"d3_lo":"La figura {0} de la doble fila solo tiene {1}: todavía no pasa de 100.",
+"d3_hi":"La figura {0} tiene {1}: sí pasa de 100, pero no es la primera que lo hace.",
+"d3_ok":"✔ ¡Bien decidido! 5 · 19 + 2 = 97 (no llega) y 5 · 20 + 2 = 102 (ya pasa).",
+"d3.more":"¿Cómo lo resolverías para más de 1000 cerillas? Escribe la desigualdad 5n + 2 > 1000."
  }
 };
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
 
 const E=id=>document.getElementById(id);
 const H3=Math.sqrt(3)/2;
@@ -305,9 +478,49 @@ E('predCheck').addEventListener('click',checkPred); E('predNew').addEventListene
 E('predIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkPred();});
 E('formCheck').addEventListener('click',checkForm); E('formIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkForm();});
 E('reveal').addEventListener('click',()=>{solShown=!solShown;renderInfo();});
-document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;
   if(e.key==='ArrowRight'){e.preventDefault();E('plus').click();} if(e.key==='ArrowLeft'){e.preventDefault();E('minus').click();}});
 document.addEventListener('langchange',()=>{E('predFb').textContent='';E('formFb').textContent='';if(E('svg').childNodes.length)renderInfo();});
+
+/* ===== Raona-ho ===== */
+const PC=['squares','triangles','houses','double','loose'];
+function load(p,k){pid=p;n=Math.max(NMIN,Math.min(NMAX,k));solShown=false;E('formIn').value='';E('formFb').textContent='';newPred();draw('none');RZ.show(E('svg'));}
+const ri=f=>(v,r)=>v.every(x=>Number.isInteger(x)&&x>=NMIN&&x<=NMAX)?f(v,r):{k:'rng'};
+const fv=(p,k)=>PAT[p].f(k);
+RZ.init({
+ F:{fig:{l:'l_fig'},q:{l:'l_q'},tr:{l:'l_t'}},
+ sim:v=>load(v[0],v[1]),
+ M:[
+  {id:'m1',f:['fig'],sim:([k])=>load('squares',k),ok:()=>({k:'m1_ok'}),
+   chk:ri(([k])=>fv('squares',k)===28?null:{k:'m1_f',p:[k,fv('squares',k)]})},
+  {id:'m2',f:['q','tr'],sim:null,ok:([a,b])=>({k:'m2_ok',p:[a,b,fv('squares',a)]}),
+   chk:ri(([a,b])=>fv('squares',a)===fv('triangles',b)?null:{k:'m2_f',p:[a,fv('squares',a),b,fv('triangles',b)]})},
+  {id:'m3',f:['fig'],sim:([k])=>load('double',k),ok:()=>({k:'m3_ok'}),
+   chk:ri(([k])=>fv('double',k)===27?null:{k:'m3_f',p:[k,fv('double',k)]})},
+  {id:'m4',f:['fig'],sim:([k])=>load('grid',k),ok:()=>({k:'m4_ok'}),
+   chk:ri(([k])=>fv('grid',k)===60?null:{k:'m4_f',p:[k,fv('grid',k)]})}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load('squares',4)},
+  {id:'s2',ans:'M',sim:()=>load('squares',4)},
+  {id:'s3',ans:'S',sim:()=>load('loose',3)},
+  {id:'s4',ans:'M',sim:()=>load('grid',4)},
+  {id:'s5',ans:'D',f:['fig'],cxsim:([k])=>load('squares',k),
+   cxok:([k])=>({k:'s5.cx',p:[k,fv('squares',k)]}),
+   cx:ri(([k])=>fv('squares',k)%2===1?null:{k:'s_cx_no',p:[k,fv('squares',k)]})},
+  {id:'s6',ans:'S',sim:()=>load('grid',4)}
+ ],
+ E:[{id:'e1',who:1,args:['double',4]},{id:'e2',who:3,args:['squares',8]},{id:'e3',who:2,args:['squares',5]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0'},{l:'d1.l1'}],sim:([c])=>load('houses',c>=NMIN?c:9),ok:()=>({k:'d1_ok'}),
+   chk:([c,r])=>c===10?{k:'d1_over'}:c!==9?{k:'d1_c',p:[c,5*c+1]}:r!==4?{k:'d1_s'}:null},
+  {id:'d2',chips:{vals:[1,2,3,4,5],fmt:x=>t('p_'+PC[x-1])},sim:([p])=>load(PC[p-1],10),ok:()=>({k:'d2_ok'}),
+   chk:([p])=>p===2?null:{k:'d2_no',p:()=>[t('p_'+PC[p-1]),fv(PC[p-1],10)]}},
+  {id:'d3',f:[{l:'d3.l0'}],sim:null,ok:()=>({k:'d3_ok'}),
+   chk:([k])=>(!Number.isInteger(k)||k<1)?{k:'rng2'}:k<20?{k:'d3_lo',p:[k,fv('double',k)]}:k>20?{k:'d3_hi',p:[k,fv('double',k)]}:null}
+ ]
+});
+initQuiz([]);
 
 initLang();applyLang();newPred();draw('build');
 </script>

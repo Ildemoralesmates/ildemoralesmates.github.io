@@ -418,6 +418,33 @@ $('#bPlay').addEventListener('click',()=>{
 const tl=$('#tl');
 tl.addEventListener('input',()=>{dragging=true;playing=false;P=target=tl.value/1000*N();syncPlayBtn();});
 ['change','pointerup','blur'].forEach(ev=>tl.addEventListener(ev,()=>{dragging=false;}));
+/* ===== Raona-ho ===== */
+function loadSep(tk,mx,pp){setTech(tk);if(mx)setMix(mx);P=target=pp;playing=false;syncPlayBtn();RZ.show($('#scene'));}
+RZ.init({
+ F:{rf:{l:'l_rf'},T:{l:'l_T',u:'°C'},V:{l:'l_V',u:'mL'},d:{l:'l_d',u:'cm'}},
+ sim:v=>loadSep(v[0],v[1],v[2]),
+ M:[
+  {id:'m1',f:['rf'],sim:()=>loadSep('chrom',0,5),ok:()=>({k:'m1_ok'}),chk:([v])=>Math.abs(v-.586)<=.012?null:Math.abs(v-4.1)<=.05?{k:'m1_h'}:{k:'m1_f'}},
+  {id:'m2',f:['rf'],sim:()=>loadSep('chrom',0,5),ok:()=>({k:'m2_ok'}),chk:([v])=>Math.abs(v-.814)<=.012?null:Math.abs(v-5.7)<=.05?{k:'m2_h'}:{k:'m2_f'}},
+  {id:'m3',f:['T'],sim:()=>loadSep('dist',1,3),ok:()=>({k:'m3_ok'}),chk:([v])=>Math.abs(v-78)<=1.5?null:v===100?{k:'m3_h'}:{k:'m3_f'}},
+  {id:'m4',f:['V'],sim:()=>loadSep('dec',0,2),ok:()=>({k:'m4_ok'}),chk:([v])=>Math.abs(v-111.1)<=1.5?null:Math.abs(v-90)<=.5?{k:'m4_h'}:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>loadSep('filt',1,4)},
+  {id:'s2',ans:'S',sim:()=>loadSep('dec',1,2)},
+  {id:'s3',ans:'S',sim:()=>loadSep('dist',1,5)},
+  {id:'s4',ans:'M',sim:()=>loadSep('dist',1,5)},
+  {id:'s5',ans:'S',sim:()=>loadSep('chrom',0,5)}
+ ],
+ E:[{id:'e1',who:1,args:['filt',1,4]},{id:'e2',who:3,args:['dec',0,2]},{id:'e3',who:2,args:['chrom',0,5]}],
+ D:[
+  {id:'d1',chips:{vals:[1,2,3,4],fmt:x=>t('d1.c'+x)},sim:()=>loadSep('dist',0,5),ok:()=>({k:'d1_ok'}),chk:([p])=>p===3?null:{k:'d_'+p}},
+  {id:'d2',f:['T'],sim:()=>loadSep('dist',1,4),ok:()=>({k:'d2_ok'}),chk:([v])=>(v>=77&&v<=82)?null:Math.abs(v-100)<=1?{k:'d2_h'}:{k:'d2_no'}},
+  {id:'d3',f:['d'],sim:()=>loadSep('chrom',0,5),ok:()=>({k:'d3_ok'}),chk:([v])=>Math.abs(v-5)<=.15?null:Math.abs(v-3.5)<=.05?{k:'d3_h'}:{k:'d3_no'}}
+ ]
+});
+initQuiz([]);applyLevel();
+/* ===== fi Raona-ho ===== */
 buildSteps();syncTabs();
 loop((dt,now)=>{
   tm=REDUCED?0:now;

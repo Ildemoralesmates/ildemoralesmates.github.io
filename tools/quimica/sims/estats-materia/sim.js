@@ -269,6 +269,37 @@ gcv.addEventListener('keydown',ev=>{
   else if(ev.key==='End'){E=Etot;setDir(0);ev.preventDefault();}
 });
 
+/* ===== Raona-ho ===== */
+function goPh(key,ph,f){$('#subSel').value=key;setup(key);E=B[ph]+(B[ph+1]-B[ph])*f;setDir(0);RZ.show($('#box'));}
+function goE(key,e){$('#subSel').value=key;setup(key);E=clamp(e,0,Etot);setDir(0);RZ.show($('#box'));}
+function goT(key,T){$('#subSel').value=key;setup(key);E=clamp(EofT(T),0,Etot);setDir(0);RZ.show($('#box'));}
+const SUBK=['water','ethanol','acetone','nitrogen','iron'];
+RZ.init({
+ F:{E:{l:'l_E',u:'kJ'},T:{l:'l_T',u:'°C'},t:{l:'l_t',u:'s'},x:{l:'l_x',u:'×'}},
+ M:[
+  {id:'m1',f:['E'],sim:()=>goPh('water',1,0),ok:()=>({k:'m1_ok'}),chk:([v])=>Math.abs(v-6.27)<=.25?null:{k:'m1_f'}},
+  {id:'m2',f:['E'],sim:()=>goPh('water',1,1),ok:()=>({k:'m2_ok'}),chk:([v])=>Math.abs(v-33.4)<=.5?null:Math.abs(v-334)<=4?{k:'m2_h'}:{k:'m2_f'}},
+  {id:'m3',f:['T'],sim:()=>goE('water',60),ok:()=>({k:'m3_ok'}),chk:([v])=>Math.abs(v-48.6)<=1.2?null:Math.abs(v)<=1?{k:'m3_h'}:{k:'m3_f'}},
+  {id:'m4',f:['x'],sim:()=>goPh('water',3,0),ok:()=>({k:'m4_ok'}),chk:([v])=>Math.abs(v-6.77)<=.25?null:(v>0&&v<1)?{k:'m4_i'}:{k:'m4_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>goPh('water',1,.5)},
+  {id:'s2',ans:'D',f:['T'],sim:()=>goPh('water',2,.5),cxsim:(v)=>goPh('water',v[0]===100?3:1,.5),cxok:([v])=>({k:'s2.cx',p:[fmtN(v)]}),
+   cx:([v])=>(v===0||v===100)?null:{k:'s_cx_no'}},
+  {id:'s3',ans:'M',sim:()=>goPh('water',3,.5)},
+  {id:'s4',ans:'S',sim:()=>goPh('water',1,.5)},
+  {id:'s5',ans:'S',sim:()=>goPh('water',4,.2)}
+ ],
+ E:[{id:'e1',who:1,args:['water',3,.5]},{id:'e2',who:3,args:['water',1,.5]},{id:'e3',who:2,args:['water',3,.5]}],
+ sim:(v)=>goPh(v[0]||'water',v[1]===undefined?1:v[1],v[2]===undefined?.5:v[2]),
+ D:[
+  {id:'d1',f:['T'],sim:()=>goE('water',50),ok:()=>({k:'d1_ok'}),chk:([v])=>Math.abs(v-24.7)<=1?null:{k:'d1_no'}},
+  {id:'d2',chips:{vals:[1,2,3,4,5],fmt:x=>t('sub_'+SUBK[x-1])},sim:([p])=>goT(SUBK[(p||1)-1],80),ok:()=>({k:'d2_ok'}),chk:([p])=>p===1?null:{k:'d_'+p}},
+  {id:'d3',f:['t'],sim:()=>goPh('water',1,0),ok:()=>({k:'d3_ok'}),chk:([v])=>Math.abs(v-334)<=5?null:Math.abs(v-3340)<=40?{k:'d3_h'}:{k:'d3_no'}}
+ ]
+});
+initQuiz([]);applyLevel();
+/* ===== fi Raona-ho ===== */
 /* ---------- bucle ---------- */
 setup('water');cur=stateAt(E);
 let acc=0;

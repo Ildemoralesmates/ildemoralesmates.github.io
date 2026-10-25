@@ -148,6 +148,47 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .ladder .lr.on{color:var(--ink);font-weight:600}
 .ladder .lr.on .bar2{opacity:1;background:var(--pb)}
 
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
 /* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
 .sidep{display:grid;gap:8px;align-content:start}
 .stepper{display:flex;gap:5px;flex-wrap:wrap}
@@ -229,6 +270,8 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 </aside>
 </div>
 <section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
   </main>
   <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
 </div>
@@ -333,7 +376,86 @@ const I18N={
 "ro_v":"Volum de la cèl·lula",
 "v_big":"cèl·lula inflada (turgent)",
 "v_small":"cèl·lula arrugada (plasmòlisi / crenació)",
-"v_ok":"volum estable"
+"v_ok":"volum estable",
+"rng":"Escriu un nombre enter entre 0 i 30.",
+"l_conc":"Concentració de cada costat","l_cl":"Concentració a l'esquerra","l_cr":"Concentració a la dreta","l_lvl":"Nivell de l'esquerra","l_ext":"Soluts del medi extern",
+"m1.q":"Membrana <b>permeable</b>, 26 soluts a l'esquerra i cap a la dreta (concentració inicial a l'esquerra ≈ 34 %). Quan els soluts s'hagen repartit, quina concentració (%) tindrà cada costat?",
+"m1_34":"34 % és la concentració inicial de l'esquerra. Quan s'iguale, els soluts estaran repartits entre els dos costats.",
+"m1_f":"Són els mateixos soluts de sempre, però ara repartits entre dos costats iguals. Quina concentració té cada costat?",
+"m1_ok":"✔ Missió complida! Els mateixos soluts en el doble de volum: 34 % / 2 ≈ 17 %.",
+"m1.more":"La simulació triga uns 40 s a arribar-hi. Per què la lectura continua oscil·lant un poc al voltant del 17 %? (Equilibri dinàmic.)",
+"m2.q":"Membrana <b>impermeable</b>, 20 soluts a l'esquerra i 5 a la dreta. Quina és la concentració de soluts (%) de cada costat? (Mira el quadre de lectura sota la simulació.)",
+"m2_sw":"Ho tens girat: l'esquerra és la que té més soluts.",
+"m2_f":"Mira «Concentració de soluts» al quadre sota la simulació. Amb la membrana impermeable no canvia.",
+"m2_ok":"✔ Missió complida! ≈ 26 % a l'esquerra i ≈ 7 % a la dreta: la concentració és proporcional al nombre de soluts.",
+"m2.more":"Comprova que la relació 20 / 5 = 4 es manté entre les dues concentracions.",
+"m3.q":"Membrana <b>semipermeable</b>, 28 soluts a l'esquerra i 3 a la dreta. Espera uns 30 s i llegeix el «Nivell» de l'esquerra (comença en 100 %). Quant val aproximadament?",
+"m3_f":"Mira «Nivell» a l'esquerra. Si encara és ≈ 100 %, espera una mica més: l'osmosi és lenta.",
+"m3_hi":"Tant no puja: l'ascens es frena quan la diferència de nivell fa pressió contrària.",
+"m3_ok":"✔ Missió complida! El nivell de l'esquerra puja (≈ 105–120 %) i el de la dreta baixa: l'aigua ha anat cap al costat més concentrat.",
+"m3.more":"Per què no puja fins a igualar les concentracions? Pensa en la pressió de la columna de líquid.",
+"s1.q":"«L'aigua es mou sempre cap al costat amb menys soluts.»",
+"s1.h":"Posa una membrana semipermeable amb 28 soluts a l'esquerra i 3 a la dreta, i fixa't en el nivell.",
+"s1.e":"Mai: per osmosi l'aigua va cap al costat més concentrat en soluts (hipertònic), és a dir, cap on hi ha menys aigua lliure.",
+"s2.q":"«L'osmosi és la difusió de l'aigua a través d'una membrana semipermeable.»",
+"s2.h":"Compara què creua la membrana en cada tipus.",
+"s2.e":"Sempre: l'osmosi és simplement difusió, però de l'aigua, i amb una membrana que deixa passar l'aigua i no els soluts.",
+"s3.q":"«Si els dos costats tenen concentracions diferents, l'aigua es mou sempre d'un costat a l'altre.»",
+"s3.h":"Prova els tres tipus de membrana.",
+"s3.e":"De vegades: amb membrana semipermeable hi ha flux net d'aigua, però amb una membrana impermeable no passa res, per molt diferents que siguen les concentracions.",
+"s3.cx":"✔ Contraexemple trobat: amb la membrana impermeable el nivell es queda en 100 % tot el temps.",
+"s4.q":"«Una cèl·lula animal en un medi isotònic no canvia de volum.»",
+"s4.h":"Posa els mateixos soluts a dins i a fora (14 i 14).",
+"s4.e":"Sempre (de mitjana): l'entrada i l'eixida d'aigua s'equilibren i no hi ha flux net. El volum oscil·la un poc per l'atzar, però ni s'infla ni s'arruga.",
+"s5.q":"«Amb una membrana semipermeable, els soluts acaben creuant-la si esperem prou.»",
+"s5.h":"Observa uns quants segons i compta els soluts de cada costat.",
+"s5.e":"Mai: una membrana semipermeable només deixa passar l'aigua (els porus són massa xicotets per als soluts), així que el recompte de soluts de cada costat no canvia.",
+"s6.q":"«En una difusió, si pugem la temperatura, s'arriba abans a l'equilibri.»",
+"s6.h":"Compara T = ×0,5 i T = ×3 amb la mateixa configuració.",
+"s6.e":"Sempre: més temperatura vol dir més agitació, més xocs i més creuaments; l'equilibri final és el mateix, però s'hi arriba abans.",
+"e1.ctx":"Un glòbul roig (cèl·lula animal) es posa en aigua destil·lada, que gairebé no té soluts. Què li passa?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"S'infla i pot rebentar: entra aigua cap a l'interior.",
+"e1.s1":"No li passa res: la membrana no deixa passar res.",
+"e1.w0":"La membrana és semipermeable: no deixa passar els soluts, però sí l'aigua. Com que dins hi ha més soluts que fora, l'aigua entra per osmosi.",
+"e1.w1":"Perquè l'aigua destil·lada té soluts que entren dins de la cèl·lula.",
+"e1.w2":"Perquè les cèl·lules animals no tenen membrana.",
+"e1.frame":"Pau, la cèl·lula no es queda igual perquè…",
+"e1.model":"Pau, la membrana no deixa passar els soluts, però sí l'aigua. Dins de la cèl·lula hi ha més soluts que fora (medi hipotònic), així que l'aigua entra i la cèl·lula s'infla; sense paret cel·lular pot arribar a rebentar (lisi). Marta ho explica bé.",
+"e2.ctx":"Membrana semipermeable, 28 soluts a l'esquerra i 3 a la dreta. Què passa amb el nivell de líquid?",
+"e2.n0":"Marta","e2.n1":"Pau",
+"e2.s0":"Puja a la dreta: els soluts passen cap a la dreta i arrosseguen l'aigua.",
+"e2.s1":"No puja en cap costat: l'aigua ja és als dos costats.",
+"e2.w0":"Els soluts no poden creuar. L'aigua es mou per osmosi cap al costat més concentrat (l'esquerra), i el nivell de l'esquerra puja.",
+"e2.w1":"Perquè l'aigua va sempre cap al costat amb menys soluts.",
+"e2.w2":"Perquè una membrana semipermeable no deixa passar res.",
+"e2.frame":"Marta i Pau, cap de les dues ho explica bé perquè…",
+"e2.model":"Marta s'equivoca: els soluts no creuen una membrana semipermeable. Pau també: que hi haja aigua als dos costats no vol dir que no hi haja flux net. L'aigua va cap al costat més concentrat (l'esquerra) i el nivell d'allà puja.",
+"e3.ctx":"Amb una membrana permeable, els soluts de l'esquerra acaben repartits per tota la cubeta. Qui ho explica bé?",
+"e3.n0":"Marta","e3.n1":"Pau",
+"e3.s0":"Les partícules es mouen a l'atzar i, com que n'hi ha més a l'esquerra, en creuen més cap a la dreta que a l'inrevés.",
+"e3.s1":"No hi ha cap força que les empenga: és només l'agitació tèrmica, i al final queda un equilibri dinàmic en què en creuen el mateix cap als dos costats.",
+"e3.w0":"Els dos descriuen el mateix: moviment aleatori més quantitat desigual a cada costat dona un flux net cap al costat menys concentrat, fins a l'equilibri dinàmic.",
+"e3.w1":"Perquè les partícules «volen» anar al costat on hi ha menys.",
+"e3.w2":"Perquè la membrana permeable empeny els soluts cap a la dreta.",
+"e3.frame":"Marta i Pau, les dues explicacions són correctes perquè…",
+"e3.model":"Les dues són correctes: cap partícula «decideix» res; l'atzar més una diferència de quantitat produeix un flux net cap on n'hi ha menys. A l'equilibri continuen creuant, però igual en els dos sentits.",
+"d1.q":"Hi ha 28 soluts a l'esquerra i 3 a la dreta. Vols que el nivell de l'esquerra <b>puge</b> (flux net d'aigua cap a l'esquerra). Quina membrana tries?",
+"d1.lc":"Membrana:",
+"d1_2":"Amb membrana permeable els soluts també creuen i les concentracions s'igualen: l'aigua no s'acumula en un costat.",
+"d1_3":"Amb membrana impermeable no passa res: el nivell es queda en 100 %.",
+"d1_ok":"✔ Ben decidit! Només amb la semipermeable els soluts es queden i l'aigua es mou cap al costat més concentrat.",
+"d1.more":"Comprova els tres casos a la simulació i compara els nivells.",
+"d2.q":"Una cèl·lula animal té 14 soluts a l'interior. Quants soluts ha de tindre el medi extern perquè <b>no canvie de volum</b>?",
+"d2_lo":"Amb {0} el medi és hipotònic: entra aigua i la cèl·lula s'infla.",
+"d2_hi":"Amb {0} el medi és hipertònic: ix aigua i la cèl·lula s'arruga (crenació).",
+"d2_ok":"✔ Ben decidit! Medi isotònic: 14 a dins i 14 a fora, sense flux net d'aigua.",
+"d2.more":"Per què es posa sèrum fisiològic (isotònic) a la vena en lloc d'aigua pura?",
+"d3.q":"Vols que, en una difusió amb membrana permeable (26 soluts a l'esquerra), s'arribe a l'equilibri <b>com més aviat millor</b>. Quina temperatura tries?",
+"d3.lc":"Temperatura:",
+"d3_no":"Amb aquesta temperatura les partícules s'agiten menys: el repartiment és més lent.",
+"d3_ok":"✔ Ben decidit! A més temperatura, més agitació i més creuaments per segon: s'arriba abans a l'equilibri (que és el mateix).",
+"d3.more":"L'equilibri final canvia amb la temperatura? Comprova-ho."
 },
 "es":{
 "title":"Ósmosis y difusión: partículas y membrana semipermeable",
@@ -433,7 +555,86 @@ const I18N={
 "ro_v":"Volumen de la célula",
 "v_big":"célula hinchada (turgente)",
 "v_small":"célula arrugada (plasmólisis / crenación)",
-"v_ok":"volumen estable"
+"v_ok":"volumen estable",
+"rng":"Escribe un número entero entre 0 y 30.",
+"l_conc":"Concentración de cada lado","l_cl":"Concentración a la izquierda","l_cr":"Concentración a la derecha","l_lvl":"Nivel de la izquierda","l_ext":"Solutos del medio externo",
+"m1.q":"Membrana <b>permeable</b>, 26 solutos a la izquierda y ninguno a la derecha (concentración inicial a la izquierda ≈ 34 %). Cuando los solutos se hayan repartido, ¿qué concentración (%) tendrá cada lado?",
+"m1_34":"34 % es la concentración inicial de la izquierda. Cuando se iguale, los solutos estarán repartidos entre los dos lados.",
+"m1_f":"Son los mismos solutos de siempre, pero ahora repartidos entre dos lados iguales. ¿Qué concentración tiene cada lado?",
+"m1_ok":"✔ ¡Misión cumplida! Los mismos solutos en el doble de volumen: 34 % / 2 ≈ 17 %.",
+"m1.more":"La simulación tarda unos 40 s en llegar. ¿Por qué la lectura sigue oscilando un poco alrededor del 17 %? (Equilibrio dinámico.)",
+"m2.q":"Membrana <b>impermeable</b>, 20 solutos a la izquierda y 5 a la derecha. ¿Cuál es la concentración de solutos (%) de cada lado? (Mira el cuadro de lectura bajo la simulación.)",
+"m2_sw":"Lo tienes girado: la izquierda es la que tiene más solutos.",
+"m2_f":"Mira «Concentración de solutos» en el cuadro bajo la simulación. Con la membrana impermeable no cambia.",
+"m2_ok":"✔ ¡Misión cumplida! ≈ 26 % a la izquierda y ≈ 7 % a la derecha: la concentración es proporcional al número de solutos.",
+"m2.more":"Comprueba que la relación 20 / 5 = 4 se mantiene entre las dos concentraciones.",
+"m3.q":"Membrana <b>semipermeable</b>, 28 solutos a la izquierda y 3 a la derecha. Espera unos 30 s y lee el «Nivel» de la izquierda (empieza en 100 %). ¿Cuánto vale aproximadamente?",
+"m3_f":"Mira «Nivel» a la izquierda. Si todavía es ≈ 100 %, espera un poco más: la ósmosis es lenta.",
+"m3_hi":"Tanto no sube: el ascenso se frena cuando la diferencia de nivel hace presión contraria.",
+"m3_ok":"✔ ¡Misión cumplida! El nivel de la izquierda sube (≈ 105–120 %) y el de la derecha baja: el agua ha ido hacia el lado más concentrado.",
+"m3.more":"¿Por qué no sube hasta igualar las concentraciones? Piensa en la presión de la columna de líquido.",
+"s1.q":"«El agua se mueve siempre hacia el lado con menos solutos.»",
+"s1.h":"Pon una membrana semipermeable con 28 solutos a la izquierda y 3 a la derecha, y fíjate en el nivel.",
+"s1.e":"Nunca: por ósmosis el agua va hacia el lado más concentrado en solutos (hipertónico), es decir, hacia donde hay menos agua libre.",
+"s2.q":"«La ósmosis es la difusión del agua a través de una membrana semipermeable.»",
+"s2.h":"Compara qué cruza la membrana en cada tipo.",
+"s2.e":"Siempre: la ósmosis es simplemente difusión, pero del agua, y con una membrana que deja pasar el agua y no los solutos.",
+"s3.q":"«Si los dos lados tienen concentraciones distintas, el agua se mueve siempre de un lado a otro.»",
+"s3.h":"Prueba los tres tipos de membrana.",
+"s3.e":"A veces: con membrana semipermeable hay flujo neto de agua, pero con una membrana impermeable no pasa nada, por muy distintas que sean las concentraciones.",
+"s3.cx":"✔ Contraejemplo encontrado: con la membrana impermeable el nivel se queda en 100 % todo el tiempo.",
+"s4.q":"«Una célula animal en un medio isotónico no cambia de volumen.»",
+"s4.h":"Pon los mismos solutos dentro y fuera (14 y 14).",
+"s4.e":"Siempre (de media): la entrada y la salida de agua se equilibran y no hay flujo neto. El volumen oscila un poco por el azar, pero ni se hincha ni se arruga.",
+"s5.q":"«Con una membrana semipermeable, los solutos acaban cruzándola si esperamos lo suficiente.»",
+"s5.h":"Observa unos segundos y cuenta los solutos de cada lado.",
+"s5.e":"Nunca: una membrana semipermeable solo deja pasar el agua (los poros son demasiado pequeños para los solutos), así que el recuento de solutos de cada lado no cambia.",
+"s6.q":"«En una difusión, si subimos la temperatura, se llega antes al equilibrio.»",
+"s6.h":"Compara T = ×0,5 y T = ×3 con la misma configuración.",
+"s6.e":"Siempre: más temperatura significa más agitación, más choques y más cruces; el equilibrio final es el mismo, pero se llega antes.",
+"e1.ctx":"Un glóbulo rojo (célula animal) se pone en agua destilada, que casi no tiene solutos. ¿Qué le pasa?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Se hincha y puede reventar: entra agua al interior.",
+"e1.s1":"No le pasa nada: la membrana no deja pasar nada.",
+"e1.w0":"La membrana es semipermeable: no deja pasar los solutos, pero sí el agua. Como dentro hay más solutos que fuera, el agua entra por ósmosis.",
+"e1.w1":"Porque el agua destilada tiene solutos que entran dentro de la célula.",
+"e1.w2":"Porque las células animales no tienen membrana.",
+"e1.frame":"Pau, la célula no se queda igual porque…",
+"e1.model":"Pau, la membrana no deja pasar los solutos, pero sí el agua. Dentro de la célula hay más solutos que fuera (medio hipotónico), así que el agua entra y la célula se hincha; sin pared celular puede llegar a reventar (lisis). Marta lo explica bien.",
+"e2.ctx":"Membrana semipermeable, 28 solutos a la izquierda y 3 a la derecha. ¿Qué pasa con el nivel de líquido?",
+"e2.n0":"Marta","e2.n1":"Pau",
+"e2.s0":"Sube a la derecha: los solutos pasan a la derecha y arrastran el agua.",
+"e2.s1":"No sube en ningún lado: el agua ya está en los dos lados.",
+"e2.w0":"Los solutos no pueden cruzar. El agua se mueve por ósmosis hacia el lado más concentrado (la izquierda), y el nivel de la izquierda sube.",
+"e2.w1":"Porque el agua va siempre hacia el lado con menos solutos.",
+"e2.w2":"Porque una membrana semipermeable no deja pasar nada.",
+"e2.frame":"Marta y Pau, ninguna de las dos lo explica bien porque…",
+"e2.model":"Marta se equivoca: los solutos no cruzan una membrana semipermeable. Pau también: que haya agua en los dos lados no significa que no haya flujo neto. El agua va hacia el lado más concentrado (la izquierda) y el nivel de allí sube.",
+"e3.ctx":"Con una membrana permeable, los solutos de la izquierda acaban repartidos por toda la cubeta. ¿Quién lo explica bien?",
+"e3.n0":"Marta","e3.n1":"Pau",
+"e3.s0":"Las partículas se mueven al azar y, como hay más a la izquierda, cruzan más hacia la derecha que al revés.",
+"e3.s1":"No hay ninguna fuerza que las empuje: es solo la agitación térmica, y al final queda un equilibrio dinámico en el que cruzan lo mismo en los dos sentidos.",
+"e3.w0":"Los dos describen lo mismo: movimiento aleatorio más cantidad desigual a cada lado da un flujo neto hacia el lado menos concentrado, hasta el equilibrio dinámico.",
+"e3.w1":"Porque las partículas «quieren» ir al lado donde hay menos.",
+"e3.w2":"Porque la membrana permeable empuja los solutos hacia la derecha.",
+"e3.frame":"Marta y Pau, las dos explicaciones son correctas porque…",
+"e3.model":"Las dos son correctas: ninguna partícula «decide» nada; el azar más una diferencia de cantidad produce un flujo neto hacia donde hay menos. En el equilibrio siguen cruzando, pero igual en los dos sentidos.",
+"d1.q":"Hay 28 solutos a la izquierda y 3 a la derecha. Quieres que el nivel de la izquierda <b>suba</b> (flujo neto de agua hacia la izquierda). ¿Qué membrana eliges?",
+"d1.lc":"Membrana:",
+"d1_2":"Con membrana permeable los solutos también cruzan y las concentraciones se igualan: el agua no se acumula en un lado.",
+"d1_3":"Con membrana impermeable no pasa nada: el nivel se queda en 100 %.",
+"d1_ok":"✔ ¡Bien decidido! Solo con la semipermeable los solutos se quedan y el agua se mueve hacia el lado más concentrado.",
+"d1.more":"Comprueba los tres casos en la simulación y compara los niveles.",
+"d2.q":"Una célula animal tiene 14 solutos en el interior. ¿Cuántos solutos tiene que tener el medio externo para que <b>no cambie de volumen</b>?",
+"d2_lo":"Con {0} el medio es hipotónico: entra agua y la célula se hincha.",
+"d2_hi":"Con {0} el medio es hipertónico: sale agua y la célula se arruga (crenación).",
+"d2_ok":"✔ ¡Bien decidido! Medio isotónico: 14 dentro y 14 fuera, sin flujo neto de agua.",
+"d2.more":"¿Por qué se pone suero fisiológico (isotónico) en la vena en lugar de agua pura?",
+"d3.q":"Quieres que, en una difusión con membrana permeable (26 solutos a la izquierda), se llegue al equilibrio <b>cuanto antes</b>. ¿Qué temperatura eliges?",
+"d3.lc":"Temperatura:",
+"d3_no":"Con esa temperatura las partículas se agitan menos: el reparto es más lento.",
+"d3_ok":"✔ ¡Bien decidido! A más temperatura, más agitación y más cruces por segundo: se llega antes al equilibrio (que es el mismo).",
+"d3.more":"¿El equilibrio final cambia con la temperatura? Compruébalo."
 }
 };
 /* ===== utilitats comunes (idioma, canvas, colors) ===== */
@@ -575,6 +776,146 @@ function initQuiz(qs){
   const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
   document.addEventListener('langchange',applyLevel);
 }
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
 
 /* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
 const SI18N={
@@ -788,6 +1129,42 @@ function initO(){
   $('#oreset').addEventListener('click',doReset);
   requestAnimationFrame(loopO);
 }
+/* ===== Raona-ho ===== */
+function load(m,L,R,scn,T){
+  applyPreset({L:L,R:R,m:m,scene:scn||'tank'});
+  const tt2=T||1;sim.T=tt2;slT.set(tt2);
+  RZ.show($('#oc'));}
+const MB=['semi','perm','imp'];
+RZ.init({
+ F:{conc:{l:'l_conc',u:'%'},cl:{l:'l_cl',u:'%'},cr:{l:'l_cr',u:'%'},lvl:{l:'l_lvl',u:'%'},ext:{l:'l_ext'}},
+ sim:v=>load(v[0],v[1],v[2],v[3],v[4]),
+ M:[
+  {id:'m1',f:['conc'],sim:()=>load('perm',26,0,'tank'),ok:()=>({k:'m1_ok'}),
+   chk:([v])=>(v>=16&&v<=18)?null:(v>=33&&v<=35)?{k:'m1_34'}:{k:'m1_f'}},
+  {id:'m2',f:['cl','cr'],sim:()=>load('imp',20,5,'tank'),ok:()=>({k:'m2_ok'}),
+   chk:([a,b])=>(Math.abs(a-26)<=1&&Math.abs(b-7)<=1)?null:(Math.abs(a-7)<=1&&Math.abs(b-26)<=1)?{k:'m2_sw'}:{k:'m2_f'}},
+  {id:'m3',f:['lvl'],sim:()=>load('semi',28,3,'tank'),ok:()=>({k:'m3_ok'}),
+   chk:([v])=>(v>=103&&v<=125)?null:v>125?{k:'m3_hi'}:{k:'m3_f'}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>load('semi',28,3,'tank')},
+  {id:'s2',ans:'S',sim:()=>load('semi',28,3,'tank')},
+  {id:'s3',ans:'D',f:['lvl'],sim:()=>load('semi',28,3,'tank'),cxsim:()=>load('imp',28,3,'tank'),cxok:()=>({k:'s3.cx'}),
+   cx:([v])=>(v>=99&&v<=101)?null:{k:'s_cx_no'}},
+  {id:'s4',ans:'S',sim:()=>load('semi',14,14,'cell')},
+  {id:'s5',ans:'M',sim:()=>load('semi',28,3,'tank')},
+  {id:'s6',ans:'S',sim:()=>load('perm',26,0,'tank',3)}
+ ],
+ E:[{id:'e1',who:0,args:['semi',14,0,'cell']},{id:'e2',who:3,args:['semi',28,3,'tank']},{id:'e3',who:2,args:['perm',26,0,'tank']}],
+ D:[
+  {id:'d1',chips:{vals:[1,2,3],fmt:x=>t(['m_semi','m_perm','m_imp'][x-1])},sim:([p])=>load(MB[p-1],28,3,'tank'),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===1?null:{k:'d1_'+p}},
+  {id:'d2',f:['ext'],sim:([n])=>load('semi',14,(Number.isInteger(n)&&n>=0&&n<=30)?n:14,'cell'),ok:()=>({k:'d2_ok'}),
+   chk:([n])=>(!Number.isInteger(n)||n<0||n>30)?{k:'rng'}:n<14?{k:'d2_lo',p:[n]}:n>14?{k:'d2_hi',p:[n]}:null},
+  {id:'d3',chips:{vals:[0.5,1,3],fmt:x=>'×'+nf(x,1)},sim:([p])=>load('perm',26,0,'tank',p),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p===3?null:{k:'d3_no'}}
+ ]
+});
 initQuiz(QDATA);
 initLang();initO();applyLang();
 document.addEventListener('langchange',()=>{paintCtl();paintReadout();});
