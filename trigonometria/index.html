@@ -1,198 +1,971 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ca">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Circumferència goniomètrica - Raons trigonomètriques (4t ESO)</title>
-<meta name="description" content="Circumferència goniomètrica interactiva: mou un punt i mira com canvien el sinus, el cosinus i la tangent. Taules d'angles notables amb valors exactes (radicals), gràfica i test. Per a 4t ESO.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Circumferència goniomètrica</title>
+<meta name="description" content="Circumferència goniomètrica interactiva: mou un punt i mira com canvien el sinus, el cosinus i la tangent. Taules d'angles notables amb valors exactes (radicals), gràfica i test. Amb activitats per a raonar. Per a 4t ESO.">
+<meta name="author" content="Ilde">
 <link rel="canonical" href="https://ildemoralesmates.github.io/trigonometria/">
 <link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/trigonometria/">
 <link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/trigonometria/">
 <link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/trigonometria/">
-<meta name="author" content="Ilde">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
 <meta property="og:site_name" content="Recursos de matemàtiques">
-<meta property="og:title" content="Circumferència goniomètrica i raons trigonomètriques">
-<meta property="og:description" content="Circumferència goniomètrica interactiva: mou un punt i mira com canvien el sinus, el cosinus i la tangent. Taules d'angles notables amb valors exactes (radicals), gràfica i test. Per a 4t ESO.">
+<meta property="og:title" content="Circumferència goniomètrica">
+<meta property="og:description" content="Circumferència goniomètrica interactiva: mou un punt i mira com canvien el sinus, el cosinus i la tangent. Taules d'angles notables amb valors exactes (radicals), gràfica i test. Amb activitats per a raonar. Per a 4t ESO.">
 <meta property="og:url" content="https://ildemoralesmates.github.io/trigonometria/">
 <meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+
 <style>
 :root{
-  --sin:#d62839; --cos:#1769c4; --tan:#139a4b; --ang:#6a3fd1;
-  --ink:#1f2430; --muted:#5b6475; --bg:#f3f5f9; --card:#fff; --line:#d5dbe8;
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.4}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:#1f2a44;color:#fff}
-header h1{margin:0;font-size:1.35rem;font-weight:700}
-header .sub{font-size:.9rem;opacity:.8}
-.tools{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
-.seg{display:inline-flex;border:1px solid rgba(255,255,255,.45);border-radius:8px;overflow:hidden}
-.seg button{background:transparent;color:#fff;border:0;padding:6px 12px;font-size:.9rem;cursor:pointer}
-.seg button[aria-pressed="true"]{background:#fff;color:#1f2a44;font-weight:700}
-.wrap{max-width:1300px;margin:0 auto;padding:16px}
-.top{display:grid;grid-template-columns:minmax(300px,1.05fr) minmax(320px,1fr);gap:16px;align-items:start}
-@media(max-width:920px){.top{grid-template-columns:1fr}}
-.card{background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:16px}
-.card h2{margin:0 0 8px;font-size:1.05rem}
-.hint{font-size:.85rem;color:var(--muted);margin:4px 0 8px}
-#circle,#graph{width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+:root{--sin:#d62839;--cos:#1769c4;--tan:#139a4b;--ang:#6a3fd1}
+#circle,#graph{width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none;background:#fff;border-radius:10px}
 #circle{max-width:640px;margin:0 auto;cursor:crosshair}
 .halo{paint-order:stroke;stroke:#fff;stroke-width:.04;stroke-linejoin:round}
-.halo2{paint-order:stroke;stroke:#fff;stroke-width:3;stroke-linejoin:round}
-.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:8px 0}
-.row label{display:inline-flex;align-items:center;gap:6px;font-size:.92rem}
-input[type=range]{flex:1;min-width:160px;accent-color:var(--ang)}
-input[type=number]{width:92px;padding:5px 7px;font-size:1rem;border:1px solid var(--line);border-radius:8px}
-.btn{background:var(--ang);color:#fff;border:0;border-radius:8px;padding:7px 14px;font-size:.95rem;cursor:pointer}
-.btn.ghost{background:#fff;color:var(--ang);border:1px solid var(--ang)}
-select{padding:5px;border-radius:8px;border:1px solid var(--line);font-size:.92rem}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{padding:4px 9px;border:1px solid #c5cde0;border-radius:999px;background:#fff;cursor:pointer;font-size:.9rem;color:var(--ink)}
-.chip.on{background:var(--ang);border-color:var(--ang);color:#fff}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.muted{color:var(--muted);font-size:13px}
+.ctlrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.ctlrow label{display:inline-flex;align-items:center;gap:6px;font-size:14px}
+.ctlrow input[type=range]{flex:1;min-width:150px;accent-color:var(--ang)}
+input[type=number]{width:88px;padding:5px 7px;font:inherit;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+select{padding:5px;border-radius:7px;border:1px solid var(--line);font:inherit;font-size:13px;background:var(--panel);color:var(--ink)}
 .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:3px}
-.rr{display:grid;grid-template-columns:72px 98px 1fr;align-items:center;gap:6px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:1.1rem}
+.legend{display:flex;gap:14px;font-weight:700;font-size:14px}
+.rr{display:grid;grid-template-columns:64px 92px 1fr;align-items:center;gap:6px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:16px}
 .rr:last-of-type{border-bottom:0}
 .rr .lab{font-weight:700}
-.rr.s .lab{color:var(--sin)} .rr.c .lab{color:var(--cos)} .rr.t .lab{color:var(--tan)}
+.rr.s .lab{color:var(--sin)}.rr.c .lab{color:var(--cos)}.rr.t .lab{color:var(--tan)}
 .rr .dec{font-variant-numeric:tabular-nums}
-.rr .ex{font-size:1.15rem}
-.bigang{font-size:1.25rem;font-weight:700;color:var(--ang);margin-bottom:2px}
-.muted{color:var(--muted);font-size:.88rem}
-.pill{display:inline-block;padding:2px 9px;border-radius:999px;background:#eceff7;font-size:.85rem;margin:2px 0}
-.pill.ok{background:#dff3e6;color:#176a3a}
-.legend{display:flex;gap:14px;font-weight:700;font-size:.95rem;margin-bottom:2px}
+.bigang{font-size:19px;font-weight:700;color:var(--ang);margin-bottom:2px}
+.tpill{display:inline-block;padding:2px 9px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12.5px;margin:2px 0}
+.tpill.ok{border-color:var(--ok);color:var(--ok)}
 .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 2px;font-size:.95em}
 .frac .n{border-bottom:1.5px solid currentColor;padding:0 3px 1px}
 .frac .d{padding:1px 3px 0}
 .sq{white-space:nowrap}
 .sq .rd{border-top:1.5px solid currentColor;padding:0 1px;margin-left:1px}
-.val{white-space:nowrap}
+.tval{white-space:nowrap}
 .tw{overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:520px}
-th,td{border:1px solid var(--line);padding:6px 8px;text-align:center;font-size:1.02rem}
-th{background:#eef1f8;font-size:.9rem}
-th small{font-weight:400;color:var(--muted)}
-td.clk,tr.clk{cursor:pointer}
-td.clk:hover,tr.clk:hover td{background:#f1ebff}
-.cur{background:#e3d8ff !important;font-weight:700}
-tr.qh td{background:#eef1f8;text-align:left;font-weight:600;font-size:.88rem;cursor:default}
-.qline{font-size:1.2rem;margin:6px 0 10px}
-.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px}
-.opt{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px;font-size:1.25rem;cursor:pointer;min-height:58px;color:var(--ink)}
-.opt:hover:not([disabled]){border-color:var(--ang)}
-.opt.good{border-color:#1f9d55;background:#e4f6ea}
-.opt.bad{border-color:#d62839;background:#fde7ea}
-.fb{padding:10px 12px;border-radius:10px;background:#f4f6fb;margin:8px 0}
+.tw table{border-collapse:collapse;width:100%;min-width:520px}
+.tw th,.tw td{border:1px solid var(--line);padding:5px 8px;text-align:center;font-size:15px}
+.tw th{background:var(--chip);font-size:13px}
+.tw th small{font-weight:400;color:var(--muted)}
+.tw td.clk,.tw tr.clk{cursor:pointer}
+.tw td.clk:hover,.tw tr.clk:hover td{background:var(--chip)}
+.tw .cur{background:color-mix(in srgb,var(--ang) 22%,transparent)!important;font-weight:700}
+.tw tr.qh td{background:var(--chip);text-align:left;font-weight:600;font-size:13px;cursor:default}
+.qline{font-size:18px;margin:6px 0 10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:10px}
+.topt{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:10px;font-size:19px;cursor:pointer;min-height:54px;color:var(--ink)}
+.topt:hover:not([disabled]){border-color:var(--ang)}
+.topt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.topt.bad{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 15%,transparent)}
+.fb{padding:10px 12px;border-radius:10px;background:var(--stage);margin:8px 0}
 .fb p{margin:3px 0}
-footer{text-align:center;color:var(--muted);font-size:.8rem;padding:6px 0 18px}
-.backbar{padding:8px 20px;background:var(--bg)}
-.navtop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.lang{font-size:13px;font-weight:600;color:var(--ang);text-decoration:none;border:1.5px solid var(--line);border-radius:99px;padding:3px 12px;background:#fff}
-.lang:hover{border-color:var(--ang)}
-.back{display:inline-block;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none}
+.trow{display:flex;gap:8px;margin:8px 0}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
 .back:hover{color:var(--ink);text-decoration:underline}
-@media print{.backbar{display:none}}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
 </style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
-<nav class="backbar navtop">
+<div class="page">
   <a class="back" href="../">← Recursos de matemàtiques</a>
-  <a class="lang" href="../es/trigonometria/" hreflang="es" lang="es">Castellano</a>
-</nav>
-<header>
-  <div>
-    <h1 data-i18n="title"></h1>
-    <div class="sub" data-i18n="sub"></div>
-  </div>
-  <div class="tools">
-    <div class="seg" role="group">
-      <button id="uDeg" aria-pressed="true" data-i18n="unitDeg"></button>
-      <button id="uRad" aria-pressed="false" data-i18n="unitRad"></button>
-    </div>
-  </div>
-</header>
-
-<div class="wrap">
-  <div class="top">
-    <section class="card">
-      <svg id="circle" viewBox="-1.62 -1.62 3.24 3.24" role="img" aria-label="Circumferència goniomètrica"></svg>
-    </section>
-
+  <header class="top">
     <div>
-      <section class="card">
-        <h2 data-i18n="ctrlTitle"></h2>
-        <p class="hint" data-i18n="ctrlHint"></p>
-        <div class="row">
-          <label><b data-i18n="angleLbl"></b></label>
-          <input type="range" id="slider" min="0" max="360" step="1" value="30">
-          <input type="number" id="angleInput" step="1"> <span id="angleUnit"></span>
-        </div>
-        <div class="row">
-          <button class="btn" id="play"></button>
-          <label><span data-i18n="speed"></span>
-            <select id="speed">
-              <option value="15" data-i18n="slow"></option>
-              <option value="40" selected data-i18n="mid"></option>
-              <option value="90" data-i18n="fast"></option>
-            </select>
-          </label>
-        </div>
-        <div class="row">
-          <label><input type="checkbox" id="magnet" checked> <span data-i18n="magnet"></span></label>
-          <label><input type="checkbox" id="pauseN" checked> <span data-i18n="pauseN"></span></label>
-        </div>
-        <div class="row">
-          <b data-i18n="showLbl"></b>
-          <label><input type="checkbox" id="shSin" checked><span class="dot" style="background:var(--sin)"></span><span data-i18n="fnSin"></span></label>
-          <label><input type="checkbox" id="shCos" checked><span class="dot" style="background:var(--cos)"></span><span data-i18n="fnCos"></span></label>
-          <label><input type="checkbox" id="shTan" checked><span class="dot" style="background:var(--tan)"></span><span data-i18n="fnTan"></span></label>
-        </div>
-        <div><b data-i18n="quickTitle"></b></div>
-        <div class="chips" id="quick" style="margin-top:6px"></div>
-      </section>
-
-      <section class="card">
-        <h2 data-i18n="readTitle"></h2>
-        <div id="readout"></div>
-      </section>
-
-      <section class="card">
-        <h2 data-i18n="graphTitle"></h2>
-        <div class="legend"><span style="color:var(--sin)" data-i18n="fnSin"></span><span style="color:var(--cos)" data-i18n="fnCos"></span></div>
-        <svg id="graph" viewBox="0 0 440 230" role="img" aria-label="Gràfica"></svg>
-        <p class="hint" data-i18n="graphHint"></p>
-      </section>
+      <p class="eyebrow" data-i18n="eyebrow">Matemàtiques · 4t ESO · Funcions</p>
+      <h1 data-i18n="title">Circumferència goniomètrica</h1>
     </div>
-  </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Mou el punt per la circumferència i mira com canvien el sinus, el cosinus i la tangent.</p>
+    </div>
+  </header>
 
-  <section class="card">
-    <h2 data-i18n="tabATitle"></h2>
-    <p class="hint" data-i18n="tabAHint"></p>
-    <div class="tw" id="tabA"></div>
-    <p class="muted" data-i18n="relNote"></p>
-  </section>
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Circumferència goniomètrica</h2>
+<div class="simgrid">
+<div class="simcv"><svg id="circle" viewBox="-1.62 -1.62 3.24 3.24" role="img" data-i18n-aria="aria.circle" aria-label="Circumferència goniomètrica"></svg></div>
+<div class="side">
+<div class="seg" role="group" data-i18n-aria="aria.unit" aria-label="Unitat">
+<button id="uDeg" type="button" aria-pressed="true" data-i18n="unitDeg">Graus</button>
+<button id="uRad" type="button" aria-pressed="false" data-i18n="unitRad">Radians</button>
+</div>
+<fieldset>
+<legend data-i18n="ctrlTitle">Mou el punt</legend>
+<p class="hint" data-i18n="ctrlHint">Arrossega el punt per la circumferència (o fes clic on vulgues), usa el control lliscant o escriu l’angle.</p>
+<div class="ctlrow">
+<label><b data-i18n="angleLbl">Angle α</b></label>
+<input type="range" id="slider" min="0" max="360" step="1" value="30">
+<input type="number" id="angleInput" step="1"> <span id="angleUnit"></span>
+</div>
+<div class="ctlrow">
+<button class="btn primary" type="button" id="play"></button>
+<label><span data-i18n="speed">Velocitat</span>
+<select id="speed">
+<option value="15" data-i18n="slow">Lenta</option>
+<option value="40" selected data-i18n="mid">Normal</option>
+<option value="90" data-i18n="fast">Ràpida</option>
+</select></label>
+</div>
+<div class="ctlrow">
+<label><input type="checkbox" id="magnet" checked> <span data-i18n="magnet">Imant als angles notables</span></label>
+<label><input type="checkbox" id="pauseN" checked> <span data-i18n="pauseN">Pausa en els notables mentre s’anima</span></label>
+</div>
+<div class="ctlrow">
+<b data-i18n="showLbl">Mostrar:</b>
+<label><input type="checkbox" id="shSin" checked><span class="dot" style="background:var(--sin)"></span><span data-i18n="fnSin">sin α</span></label>
+<label><input type="checkbox" id="shCos" checked><span class="dot" style="background:var(--cos)"></span><span data-i18n="fnCos">cos α</span></label>
+<label><input type="checkbox" id="shTan" checked><span class="dot" style="background:var(--tan)"></span><span data-i18n="fnTan">tg α</span></label>
+</div>
+<div><b data-i18n="quickTitle">Angles notables</b></div>
+<div class="chips" id="quick"></div>
+</fieldset>
+<fieldset>
+<legend data-i18n="readTitle">Raons trigonomètriques</legend>
+<div id="readout"></div>
+</fieldset>
+<fieldset>
+<legend data-i18n="graphTitle">Les gràfiques de sin α i cos α</legend>
+<div class="legend"><span style="color:var(--sin)" data-i18n="fnSin">sin α</span><span style="color:var(--cos)" data-i18n="fnCos">cos α</span></div>
+<svg id="graph" viewBox="0 0 440 230" role="img" data-i18n-aria="aria.graph" aria-label="Gràfica"></svg>
+<p class="hint" data-i18n="graphHint">Pots arrossegar damunt de la gràfica.</p>
+</fieldset>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"><b>Per a la classe:</b> abans de moure el punt, demana quin signe tindran sin, cos i tg en cada quadrant. Després comprova-ho amb la circumferència: el signe ve de si el punt està a la dreta o a l'esquerra, amunt o avall.</div>
+</section>
 
-  <section class="card">
-    <h2 data-i18n="tabBTitle"></h2>
-    <p class="hint" data-i18n="tabBHint"></p>
-    <div class="tw" id="tabB"></div>
-  </section>
+<section class="card">
+<h2 data-i18n="tabATitle">Angles notables i els seus relacionats</h2>
+<p class="hint" data-i18n="tabAHint">Fes clic en qualsevol angle per portar-hi el punt.</p>
+<div class="tw" id="tabA"></div>
+<p class="muted" data-i18n="relNote">Recorda: sin(90° − α) = cos α i cos(90° − α) = sin α.</p>
+</section>
 
-  <section class="card">
-    <h2 data-i18n="testTitle"></h2>
-    <div id="testBox"></div>
-  </section>
-  <footer data-i18n="footer"></footer>
+<section class="card">
+<h2 data-i18n="tabBTitle">Valors exactes (amb radicals)</h2>
+<p class="hint" data-i18n="tabBHint">Fes clic en una fila per portar el punt a eixe angle.</p>
+<div class="tw" id="tabB"></div>
+</section>
+
+<section class="card">
+<h2 data-i18n="testTitle">Posa’t a prova</h2>
+<div id="testBox"></div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
 </div>
 
 <script>
+const I18N={
+"ca": {
+"title": "Circumferència goniomètrica",
+"sub": "Raons trigonomètriques d’un angle · 4t ESO",
+"unitDeg": "Graus",
+"unitRad": "Radians",
+"ctrlTitle": "Mou el punt",
+"ctrlHint": "Arrossega el punt per la circumferència (o fes clic on vulgues), usa el control lliscant o escriu l’angle.",
+"angleLbl": "Angle α",
+"play": "▶ Animar",
+"stop": "⏸ Pausa",
+"speed": "Velocitat",
+"slow": "Lenta",
+"mid": "Normal",
+"fast": "Ràpida",
+"magnet": "Imant als angles notables",
+"pauseN": "Pausa en els notables mentre s’anima",
+"showLbl": "Mostrar:",
+"fnSin": "sin α",
+"fnCos": "cos α",
+"fnTan": "tg α",
+"sinN": "sin",
+"cosN": "cos",
+"tanN": "tg",
+"quickTitle": "Angles notables",
+"readTitle": "Raons trigonomètriques",
+"quad1": "1r quadrant",
+"quad2": "2n quadrant",
+"quad3": "3r quadrant",
+"quad4": "4t quadrant",
+"axis": "sobre un eix",
+"redLbl": "Reducció al 1r quadrant",
+"noRed": "ja és al 1r quadrant",
+"approx": "No és un angle notable: valors aproximats.",
+"exactNote": "Angle notable: valors exactes amb radicals.",
+"nd": "no existeix",
+"graphTitle": "Les gràfiques de sin α i cos α",
+"graphHint": "Pots arrossegar damunt de la gràfica.",
+"tabATitle": "Angles notables i els seus relacionats",
+"tabAHint": "Fes clic en qualsevol angle per portar-hi el punt.",
+"thAlpha": "α (1r quadrant)",
+"thComp": "Complementari",
+"thSup": "Suplementari (2n quadrant)",
+"th3": "3r quadrant",
+"th4": "4t quadrant",
+"relNote": "Recorda: sin(90° − α) = cos α i cos(90° − α) = sin α.",
+"tabBTitle": "Valors exactes (amb radicals)",
+"tabBHint": "Fes clic en una fila per portar el punt a eixe angle.",
+"thDeg": "α (graus)",
+"thRad": "α (rad)",
+"thRed": "Reducció",
+"testTitle": "Posa’t a prova",
+"qText": "Quin és el valor exacte de {0} {1}?",
+"next": "Següent",
+"seeIt": "Veure-ho a la circumferència",
+"score": "Encerts",
+"ok": "Correcte!",
+"ko": "No és això.",
+"chkSq": "Comprovació",
+"onAxis": "{0} està sobre un eix, així que el punt de la circumferència és P({1}, {2}).",
+"abscissa": "cos és la primera coordenada (abscissa) del punt",
+"ordinate": "sin és la segona coordenada (ordenada) del punt",
+"tanAxisND": "tg = sin / cos i cos = 0: no es pot dividir per 0, per tant no existeix.",
+"tanAxis": "tg = sin / cos = 0 / ({0}) = 0.",
+"redIs": "Reducció:",
+"refVal": "{0} {1} = {2}",
+"tanRefND": "tg {0} no existeix, perquè cos {0} = 0.",
+"signIs": "Al {0} el signe de {1} és {2}.",
+"result": "Així doncs, {0} {1} = {2}",
+"eyebrow": "Matemàtiques · 4t ESO · Funcions",
+"lede": "Mou el punt per la circumferència i mira com canvien el sinus, el cosinus i la tangent.",
+"aria.circle": "Circumferència goniomètrica",
+"aria.graph": "Gràfica",
+"aria.unit": "Unitat",
+"idea": "<b>Per a la classe:</b> abans de moure el punt, demana quin signe tindran sin, cos i tg en cada quadrant. Després comprova-ho amb la circumferència: el signe ve de si el punt està a la dreta o a l'esquerra, amunt o avall.",
+"sim_title": "Circumferència goniomètrica",
+"rng": "Escriu un nombre enter entre 0 i 360.",
+"f_n": "Angle (°)",
+"m1.q": "Escriu un angle α (en graus enters, de 0° a 360°) amb <b>sin α = 1/2</b> que estiga al <b>2n quadrant</b>.",
+"m1_q": "{0}° té sin α = 1/2, però no és del 2n quadrant (entre 90° i 180°).",
+"m1_f": "A {0}°, sin α = {1}, no 0,5.",
+"m1_ok": "✔ Missió complida! 150° = 180° − 30°, així que sin 150° = sin 30° = 1/2.",
+"m1.more": "Hi ha un altre angle entre 0° i 360° amb sin α = 1/2. Quin és, i com el trobes a partir d'aquest?",
+"m2.q": "Escriu un angle α amb <b>cos α = −√2/2</b> i <b>sin α positiu</b>.",
+"m2_s": "{0}° té cos α = −√2/2, però el seu sin α és negatiu (3r quadrant).",
+"m2_f": "A {0}°, cos α = {1}, no −0,707.",
+"m2_ok": "✔ Missió complida! 135° = 180° − 45°: al 2n quadrant cos és negatiu i sin positiu.",
+"m2.more": "I si volguérem cos α = −√2/2 amb sin α negatiu? Quin angle?",
+"m3.q": "Escriu un angle α amb <b>tg α = −√3</b> al <b>2n quadrant</b>.",
+"m3_q": "{0}° té tg α = −√3, però no és del 2n quadrant.",
+"m3_f": "A {0}°, tg α = {1}, no −1,732.",
+"m3_ok": "✔ Missió complida! 120° = 180° − 60°, i tg 60° = √3. Al 2n quadrant la tg és negativa.",
+"m3.more": "Quin altre angle entre 0° i 360° té tg α = −√3? En quin quadrant està?",
+"m4.q": "Escriu un angle α més gran que 180° amb <b>sin α = cos α</b>.",
+"m4_q": "{0}° compleix sin α = cos α, però no és major que 180°.",
+"m4_f": "A {0}°, sin α = {1} i cos α = {2}: no són iguals.",
+"m4_ok": "✔ Missió complida! A 225° (3r quadrant) sin i cos valen −√2/2.",
+"m4.more": "Per què sin α = cos α només passa a 45° i a 225°? Què valdrà tg α en aquests angles?",
+"s1.q": "«Per a qualsevol angle, sin²α + cos²α = 1.»",
+"s1.h": "Mira la lectura «Comprovació» mentre mous el punt.",
+"s1.e": "Sempre: el punt (cos α, sin α) està sobre la circumferència de radi 1, i això és el teorema de Pitàgores: cos²α + sin²α = 1.",
+"s2.q": "«Si sin α > 0, aleshores cos α > 0.»",
+"s2.h": "Busca un angle amb sin α positiu però cos α no positiu.",
+"s2.e": "De vegades: al 1r quadrant sí, però al 2n quadrant sin > 0 i cos < 0 (i a 90°, cos = 0).",
+"s2_cx_no": "{0}° no és un contraexemple: sin α = {1} i cos α = {2}.",
+"s3.q": "«Hi ha algun angle amb sin α = 1,5.»",
+"s3.h": "El punt P(cos α, sin α) està sobre la circumferència de radi 1.",
+"s3.e": "Mai: sin α és l'altura del punt sobre la circumferència de radi 1, i mai passa d'1.",
+"s4.q": "«Quan cos α ≠ 0, tg α = sin α / cos α.»",
+"s4.h": "Compara els valors de la lectura per a 30°, 45° i 60°.",
+"s4.e": "Sempre: és la definició de la tangent. I quan cos α = 0 (90° i 270°), la tg no existeix.",
+"s5.q": "«Si tg α > 0, l'angle està al 1r quadrant.»",
+"s5.h": "Pensa en el signe de sin α / cos α.",
+"s5.e": "De vegades: al 3r quadrant sin i cos són tots dos negatius, així que el quocient és positiu. Per exemple, tg 225° = 1.",
+"s5_cx_no": "{0}° no és un contraexemple: tg α = {1}.",
+"s6.q": "«Hi ha un angle on sin α i cos α valen tots dos 1.»",
+"s6.h": "Calcula sin²α + cos²α.",
+"s6.e": "Mai: 1² + 1² = 2, però sin²α + cos²α = 1 sempre.",
+"e1.ctx": "Quant val <b>sin 150°</b>?",
+"e1.n0": "Marta",
+"e1.n1": "Pau",
+"e1.s0": "−1/2, perquè 150° és al 2n quadrant i allí el sinus és negatiu.",
+"e1.s1": "1/2: 180° − 150° = 30° i, al 2n quadrant, el sinus és positiu.",
+"e1.w0": "Pau té raó. Al 2n quadrant el punt està per damunt de l'eix horitzontal, així que sin > 0. El que és negatiu al 2n quadrant és el cosinus.",
+"e1.w1": "Perquè el sinus sempre és positiu.",
+"e1.w2": "Perquè 150° és del 3r quadrant.",
+"e1.frame": "Marta, sin 150° no és negatiu perquè…",
+"e1.model": "Marta, al 2n quadrant el punt de la circumferència està per damunt de l'eix horitzontal, així que sin α és positiu; el que és negatiu al 2n quadrant és cos α. Reduint, sin 150° = sin(180° − 150°) = sin 30° = 1/2.",
+"e2.ctx": "Quant val <b>cos 225°</b>?",
+"e2.n0": "Rita",
+"e2.n1": "Joan",
+"e2.s0": "−√2/2: 225° − 180° = 45° i, al 3r quadrant, el cosinus és negatiu.",
+"e2.s1": "√2/2, perquè 225° = 180° + 45° i cos 45° = √2/2.",
+"e2.w0": "Rita té raó. Joan fa bé la reducció, però oblida el signe: al 3r quadrant el punt està a l'esquerra de l'eix vertical, així que cos < 0.",
+"e2.w1": "Perquè 225° és del 4t quadrant.",
+"e2.w2": "Perquè cos 45° val −√2/2.",
+"e2.frame": "Joan, cos 225° no és positiu perquè…",
+"e2.model": "Joan, la reducció és correcta (el valor absolut és el de 45°), però cal afegir el signe. Al 3r quadrant el punt està a l'esquerra de l'eix vertical, així que cos 225° = −√2/2.",
+"e3.ctx": "Quant val <b>tg 90°</b>?",
+"e3.n0": "Àlex",
+"e3.n1": "Laia",
+"e3.s0": "1, perquè sin 90° = 1.",
+"e3.s1": "0, perquè cos 90° = 0.",
+"e3.w0": "No existeix: tg 90° = sin 90° / cos 90° = 1 / 0, i no es pot dividir entre 0. Àlex oblida el denominador i Laia el confon amb el numerador.",
+"e3.w1": "Perquè val infinit positiu i això és un nombre.",
+"e3.w2": "Perquè val exactament 0,5.",
+"e3.frame": "Àlex i Laia, tg 90° no és 1 ni 0 perquè…",
+"e3.model": "Àlex i Laia, la tangent és sin α / cos α. A 90°, sin = 1 i cos = 0, així que queda 1/0, que no té sentit. Per això tg 90° no existeix (ni tg 270°).",
+"e4.ctx": "Calcula <b>sin²30° + cos²30°</b>.",
+"e4.n0": "Àlex",
+"e4.n1": "Laia",
+"e4.s0": "(1/2)² + (√3/2)² = 1/4 + 3/4 = 1.",
+"e4.s1": "Dóna 1 per a qualsevol angle, així que és 1 sense calcular res.",
+"e4.w0": "Totes dues tenen raó: la identitat sin²α + cos²α = 1 val per a tot angle, i amb 30° es comprova amb els valors exactes.",
+"e4.w1": "Perquè només val per als angles notables.",
+"e4.w2": "Perquè sin²α + cos²α depén de l'angle.",
+"e4.frame": "Àlex i Laia, les dues teniu raó perquè…",
+"e4.model": "Àlex i Laia, el punt (cos α, sin α) està sempre sobre la circumferència de radi 1, així que sin²α + cos²α = 1 per a qualsevol angle. Àlex ho comprova amb 30°: 1/4 + 3/4 = 1.",
+"d1.q": "Un punt P de la circumferència té coordenades <b>(−√3/2, 1/2)</b>. Quin angle α li correspon?",
+"d1.lc": "α val:",
+"d1_no": "A {0}°, P = ({1}, {2}), no (−0,866; 0,5).",
+"d1_ok": "✔ Ben decidit! A 150°, cos = −√3/2 i sin = 1/2.",
+"d1.more": "I si P fóra (−√3/2, −1/2)? Quin angle seria?",
+"d2.q": "Escriu un angle del <b>3r quadrant</b> amb <b>sin α = −1/2</b>.",
+"d2.l0": "Angle (°)",
+"d2_q": "{0}° té sin α = −1/2, però no és del 3r quadrant (entre 180° i 270°).",
+"d2_f": "A {0}°, sin α = {1}, no −0,5.",
+"d2_ok": "✔ Ben decidit! 210° = 180° + 30°: al 3r quadrant sin és negatiu i sin 30° = 1/2.",
+"d2.more": "Quin altre angle del cercle té sin α = −1/2? En quin quadrant està?",
+"d3.q": "Quants angles entre 0° i 360° (tots dos inclosos) tenen <b>sin α = 1/2</b>?",
+"d3.l0": "Quantitat",
+"d3_1": "Només n'has trobat un: fixa't també en el 2n quadrant.",
+"d3_f": "No són {0}: sin α = 1/2 només a l'altura 1/2, que talla la circumferència en dos punts.",
+"d3_ok": "✔ Ben decidit! A 30° i a 150°: l'altura 1/2 talla la circumferència en dos punts.",
+"d3.more": "Quants angles hi ha entre 0° i 360° amb sin α = 1? I amb sin α = −1?"
+},
+"es": {
+"title": "Circunferencia goniométrica",
+"sub": "Razones trigonométricas de un ángulo · 4.º ESO",
+"unitDeg": "Grados",
+"unitRad": "Radianes",
+"ctrlTitle": "Mueve el punto",
+"ctrlHint": "Arrastra el punto por la circunferencia (o haz clic donde quieras), usa el deslizador o escribe el ángulo.",
+"angleLbl": "Ángulo α",
+"play": "▶ Animar",
+"stop": "⏸ Pausa",
+"speed": "Velocidad",
+"slow": "Lenta",
+"mid": "Normal",
+"fast": "Rápida",
+"magnet": "Imán a los ángulos notables",
+"pauseN": "Pausa en los notables mientras se anima",
+"showLbl": "Mostrar:",
+"fnSin": "sen α",
+"fnCos": "cos α",
+"fnTan": "tg α",
+"sinN": "sen",
+"cosN": "cos",
+"tanN": "tg",
+"quickTitle": "Ángulos notables",
+"readTitle": "Razones trigonométricas",
+"quad1": "1.er cuadrante",
+"quad2": "2.º cuadrante",
+"quad3": "3.er cuadrante",
+"quad4": "4.º cuadrante",
+"axis": "sobre un eje",
+"redLbl": "Reducción al 1.er cuadrante",
+"noRed": "ya está en el 1.er cuadrante",
+"approx": "No es un ángulo notable: valores aproximados.",
+"exactNote": "Ángulo notable: valores exactos con radicales.",
+"nd": "no existe",
+"graphTitle": "Las gráficas de sen α y cos α",
+"graphHint": "Puedes arrastrar sobre la gráfica.",
+"tabATitle": "Ángulos notables y sus relacionados",
+"tabAHint": "Haz clic en cualquier ángulo para llevar el punto allí.",
+"thAlpha": "α (1.er cuadrante)",
+"thComp": "Complementario",
+"thSup": "Suplementario (2.º cuadrante)",
+"th3": "3.er cuadrante",
+"th4": "4.º cuadrante",
+"relNote": "Recuerda: sen(90° − α) = cos α y cos(90° − α) = sen α.",
+"tabBTitle": "Valores exactos (con radicales)",
+"tabBHint": "Haz clic en una fila para llevar el punto a ese ángulo.",
+"thDeg": "α (grados)",
+"thRad": "α (rad)",
+"thRed": "Reducción",
+"testTitle": "Ponte a prueba",
+"qText": "¿Cuál es el valor exacto de {0} {1}?",
+"next": "Siguiente",
+"seeIt": "Verlo en la circunferencia",
+"score": "Aciertos",
+"ok": "¡Correcto!",
+"ko": "No es eso.",
+"chkSq": "Comprobación",
+"onAxis": "{0} está sobre un eje, así que el punto de la circunferencia es P({1}, {2}).",
+"abscissa": "cos es la primera coordenada (abscisa) del punto",
+"ordinate": "sen es la segunda coordenada (ordenada) del punto",
+"tanAxisND": "tg = sen / cos y cos = 0: no se puede dividir entre 0, así que no existe.",
+"tanAxis": "tg = sen / cos = 0 / ({0}) = 0.",
+"redIs": "Reducción:",
+"refVal": "{0} {1} = {2}",
+"tanRefND": "tg {0} no existe, porque cos {0} = 0.",
+"signIs": "En el {0} el signo de {1} es {2}.",
+"result": "Por tanto, {0} {1} = {2}",
+"eyebrow": "Matemáticas · 4.º ESO · Funciones",
+"lede": "Mueve el punto por la circunferencia y mira cómo cambian el seno, el coseno y la tangente.",
+"aria.circle": "Circunferencia goniométrica",
+"aria.graph": "Gráfica",
+"aria.unit": "Unidad",
+"idea": "<b>Para la clase:</b> antes de mover el punto, pregunta qué signo tendrán sin, cos y tg en cada cuadrante. Después compruébalo con la circunferencia: el signo viene de si el punto está a la derecha o a la izquierda, arriba o abajo.",
+"sim_title": "Circunferencia goniométrica",
+"rng": "Escribe un número entero entre 0 y 360.",
+"f_n": "Ángulo (°)",
+"m1.q": "Escribe un ángulo α (en grados enteros, de 0° a 360°) con <b>sin α = 1/2</b> que esté en el <b>2.º cuadrante</b>.",
+"m1_q": "{0}° tiene sin α = 1/2, pero no es del 2.º cuadrante (entre 90° y 180°).",
+"m1_f": "En {0}°, sin α = {1}, no 0,5.",
+"m1_ok": "✔ ¡Misión cumplida! 150° = 180° − 30°, así que sin 150° = sin 30° = 1/2.",
+"m1.more": "Hay otro ángulo entre 0° y 360° con sin α = 1/2. ¿Cuál es, y cómo lo encuentras a partir de este?",
+"m2.q": "Escribe un ángulo α con <b>cos α = −√2/2</b> y <b>sin α positivo</b>.",
+"m2_s": "{0}° tiene cos α = −√2/2, pero su sin α es negativo (3.er cuadrante).",
+"m2_f": "En {0}°, cos α = {1}, no −0,707.",
+"m2_ok": "✔ ¡Misión cumplida! 135° = 180° − 45°: en el 2.º cuadrante cos es negativo y sin positivo.",
+"m2.more": "¿Y si quisiéramos cos α = −√2/2 con sin α negativo? ¿Qué ángulo?",
+"m3.q": "Escribe un ángulo α con <b>tg α = −√3</b> en el <b>2.º cuadrante</b>.",
+"m3_q": "{0}° tiene tg α = −√3, pero no es del 2.º cuadrante.",
+"m3_f": "En {0}°, tg α = {1}, no −1,732.",
+"m3_ok": "✔ ¡Misión cumplida! 120° = 180° − 60°, y tg 60° = √3. En el 2.º cuadrante la tg es negativa.",
+"m3.more": "¿Qué otro ángulo entre 0° y 360° tiene tg α = −√3? ¿En qué cuadrante está?",
+"m4.q": "Escribe un ángulo α mayor que 180° con <b>sin α = cos α</b>.",
+"m4_q": "{0}° cumple sin α = cos α, pero no es mayor que 180°.",
+"m4_f": "En {0}°, sin α = {1} y cos α = {2}: no son iguales.",
+"m4_ok": "✔ ¡Misión cumplida! En 225° (3.er cuadrante) sin y cos valen −√2/2.",
+"m4.more": "¿Por qué sin α = cos α solo ocurre en 45° y en 225°? ¿Cuánto valdrá tg α en esos ángulos?",
+"s1.q": "«Para cualquier ángulo, sin²α + cos²α = 1.»",
+"s1.h": "Mira la lectura «Comprobación» mientras mueves el punto.",
+"s1.e": "Siempre: el punto (cos α, sin α) está sobre la circunferencia de radio 1, y eso es el teorema de Pitágoras: cos²α + sin²α = 1.",
+"s2.q": "«Si sin α > 0, entonces cos α > 0.»",
+"s2.h": "Busca un ángulo con sin α positivo pero cos α no positivo.",
+"s2.e": "A veces: en el 1.er cuadrante sí, pero en el 2.º cuadrante sin > 0 y cos < 0 (y en 90°, cos = 0).",
+"s2_cx_no": "{0}° no es un contraejemplo: sin α = {1} y cos α = {2}.",
+"s3.q": "«Hay algún ángulo con sin α = 1,5.»",
+"s3.h": "El punto P(cos α, sin α) está sobre la circunferencia de radio 1.",
+"s3.e": "Nunca: sin α es la altura del punto sobre la circunferencia de radio 1, y nunca pasa de 1.",
+"s4.q": "«Cuando cos α ≠ 0, tg α = sin α / cos α.»",
+"s4.h": "Compara los valores de la lectura para 30°, 45° y 60°.",
+"s4.e": "Siempre: es la definición de la tangente. Y cuando cos α = 0 (90° y 270°), la tg no existe.",
+"s5.q": "«Si tg α > 0, el ángulo está en el 1.er cuadrante.»",
+"s5.h": "Piensa en el signo de sin α / cos α.",
+"s5.e": "A veces: en el 3.er cuadrante sin y cos son los dos negativos, así que el cociente es positivo. Por ejemplo, tg 225° = 1.",
+"s5_cx_no": "{0}° no es un contraejemplo: tg α = {1}.",
+"s6.q": "«Hay un ángulo donde sin α y cos α valen los dos 1.»",
+"s6.h": "Calcula sin²α + cos²α.",
+"s6.e": "Nunca: 1² + 1² = 2, pero sin²α + cos²α = 1 siempre.",
+"e1.ctx": "¿Cuánto vale <b>sin 150°</b>?",
+"e1.n0": "Marta",
+"e1.n1": "Pau",
+"e1.s0": "−1/2, porque 150° está en el 2.º cuadrante y allí el seno es negativo.",
+"e1.s1": "1/2: 180° − 150° = 30° y, en el 2.º cuadrante, el seno es positivo.",
+"e1.w0": "Pau tiene razón. En el 2.º cuadrante el punto está por encima del eje horizontal, así que sin > 0. Lo que es negativo en el 2.º cuadrante es el coseno.",
+"e1.w1": "Porque el seno siempre es positivo.",
+"e1.w2": "Porque 150° es del 3.er cuadrante.",
+"e1.frame": "Marta, sin 150° no es negativo porque…",
+"e1.model": "Marta, en el 2.º cuadrante el punto de la circunferencia está por encima del eje horizontal, así que sin α es positivo; lo que es negativo en el 2.º cuadrante es cos α. Reduciendo, sin 150° = sin(180° − 150°) = sin 30° = 1/2.",
+"e2.ctx": "¿Cuánto vale <b>cos 225°</b>?",
+"e2.n0": "Rita",
+"e2.n1": "Joan",
+"e2.s0": "−√2/2: 225° − 180° = 45° y, en el 3.er cuadrante, el coseno es negativo.",
+"e2.s1": "√2/2, porque 225° = 180° + 45° y cos 45° = √2/2.",
+"e2.w0": "Rita tiene razón. Joan hace bien la reducción, pero olvida el signo: en el 3.er cuadrante el punto está a la izquierda del eje vertical, así que cos < 0.",
+"e2.w1": "Porque 225° es del 4.º cuadrante.",
+"e2.w2": "Porque cos 45° vale −√2/2.",
+"e2.frame": "Joan, cos 225° no es positivo porque…",
+"e2.model": "Joan, la reducción es correcta (el valor absoluto es el de 45°), pero hay que añadir el signo. En el 3.er cuadrante el punto está a la izquierda del eje vertical, así que cos 225° = −√2/2.",
+"e3.ctx": "¿Cuánto vale <b>tg 90°</b>?",
+"e3.n0": "Álex",
+"e3.n1": "Laia",
+"e3.s0": "1, porque sin 90° = 1.",
+"e3.s1": "0, porque cos 90° = 0.",
+"e3.w0": "No existe: tg 90° = sin 90° / cos 90° = 1 / 0, y no se puede dividir entre 0. Álex olvida el denominador y Laia lo confunde con el numerador.",
+"e3.w1": "Porque vale infinito positivo y eso es un número.",
+"e3.w2": "Porque vale exactamente 0,5.",
+"e3.frame": "Álex y Laia, tg 90° no es 1 ni 0 porque…",
+"e3.model": "Álex y Laia, la tangente es sin α / cos α. En 90°, sin = 1 y cos = 0, así que queda 1/0, que no tiene sentido. Por eso tg 90° no existe (ni tg 270°).",
+"e4.ctx": "Calcula <b>sin²30° + cos²30°</b>.",
+"e4.n0": "Álex",
+"e4.n1": "Laia",
+"e4.s0": "(1/2)² + (√3/2)² = 1/4 + 3/4 = 1.",
+"e4.s1": "Da 1 para cualquier ángulo, así que es 1 sin calcular nada.",
+"e4.w0": "Las dos tienen razón: la identidad sin²α + cos²α = 1 vale para todo ángulo, y con 30° se comprueba con los valores exactos.",
+"e4.w1": "Porque solo vale para los ángulos notables.",
+"e4.w2": "Porque sin²α + cos²α depende del ángulo.",
+"e4.frame": "Álex y Laia, las dos tenéis razón porque…",
+"e4.model": "Álex y Laia, el punto (cos α, sin α) está siempre sobre la circunferencia de radio 1, así que sin²α + cos²α = 1 para cualquier ángulo. Álex lo comprueba con 30°: 1/4 + 3/4 = 1.",
+"d1.q": "Un punto P de la circunferencia tiene coordenadas <b>(−√3/2, 1/2)</b>. ¿Qué ángulo α le corresponde?",
+"d1.lc": "α vale:",
+"d1_no": "En {0}°, P = ({1}, {2}), no (−0,866; 0,5).",
+"d1_ok": "✔ ¡Bien decidido! En 150°, cos = −√3/2 y sin = 1/2.",
+"d1.more": "¿Y si P fuera (−√3/2, −1/2)? ¿Qué ángulo sería?",
+"d2.q": "Escribe un ángulo del <b>3.er cuadrante</b> con <b>sin α = −1/2</b>.",
+"d2.l0": "Ángulo (°)",
+"d2_q": "{0}° tiene sin α = −1/2, pero no es del 3.er cuadrante (entre 180° y 270°).",
+"d2_f": "En {0}°, sin α = {1}, no −0,5.",
+"d2_ok": "✔ ¡Bien decidido! 210° = 180° + 30°: en el 3.er cuadrante sin es negativo y sin 30° = 1/2.",
+"d2.more": "¿Qué otro ángulo del círculo tiene sin α = −1/2? ¿En qué cuadrante está?",
+"d3.q": "¿Cuántos ángulos entre 0° y 360° (los dos incluidos) tienen <b>sin α = 1/2</b>?",
+"d3.l0": "Cantidad",
+"d3_1": "Solo has encontrado uno: fíjate también en el 2.º cuadrante.",
+"d3_f": "No son {0}: sin α = 1/2 solo a la altura 1/2, que corta la circunferencia en dos puntos.",
+"d3_ok": "✔ ¡Bien decidido! En 30° y en 150°: la altura 1/2 corta la circunferencia en dos puntos.",
+"d3.more": "¿Cuántos ángulos hay entre 0° y 360° con sin α = 1? ¿Y con sin α = −1?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/trigonometria/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
 (function(){
 'use strict';
 
@@ -211,59 +984,8 @@ const SG={
   3:{sin:'-',cos:'-',tan:'+'},
   4:{sin:'-',cos:'+',tan:'-'}
 };
-const T={
- va:{
-  title:'Circumferència goniomètrica',
-  sub:'Raons trigonomètriques d’un angle · 4t ESO',
-  unitDeg:'Graus', unitRad:'Radians',
-  ctrlTitle:'Mou el punt',
-  ctrlHint:'Arrossega el punt per la circumferència (o fes clic on vulgues), usa el control lliscant o escriu l’angle.',
-  angleLbl:'Angle α',
-  play:'▶ Animar', stop:'⏸ Pausa',
-  speed:'Velocitat', slow:'Lenta', mid:'Normal', fast:'Ràpida',
-  magnet:'Imant als angles notables',
-  pauseN:'Pausa en els notables mentre s’anima',
-  showLbl:'Mostrar:',
-  fnSin:'sin α', fnCos:'cos α', fnTan:'tg α',
-  sinN:'sin', cosN:'cos', tanN:'tg',
-  quickTitle:'Angles notables',
-  readTitle:'Raons trigonomètriques',
-  quad:['1r quadrant','2n quadrant','3r quadrant','4t quadrant'],
-  axis:'sobre un eix',
-  redLbl:'Reducció al 1r quadrant',
-  noRed:'ja és al 1r quadrant',
-  approx:'No és un angle notable: valors aproximats.',
-  exactNote:'Angle notable: valors exactes amb radicals.',
-  nd:'no existeix',
-  graphTitle:'Les gràfiques de sin α i cos α',
-  graphHint:'Pots arrossegar damunt de la gràfica.',
-  tabATitle:'Angles notables i els seus relacionats',
-  tabAHint:'Fes clic en qualsevol angle per portar-hi el punt.',
-  thAlpha:'α (1r quadrant)', thComp:'Complementari', thSup:'Suplementari (2n quadrant)', th3:'3r quadrant', th4:'4t quadrant',
-  relNote:'Recorda: sin(90° − α) = cos α i cos(90° − α) = sin α.',
-  tabBTitle:'Valors exactes (amb radicals)',
-  tabBHint:'Fes clic en una fila per portar el punt a eixe angle.',
-  thDeg:'α (graus)', thRad:'α (rad)', thRed:'Reducció',
-  testTitle:'Posa’t a prova',
-  qText:(f,a)=>'Quin és el valor exacte de '+f+' '+a+'?',
-  next:'Següent', seeIt:'Veure-ho a la circumferència',
-  score:'Encerts', ok:'Correcte!', ko:'No és això.',
-  chkSq:'Comprovació',
-  onAxis:(a,c,s)=>a+' està sobre un eix, així que el punt de la circumferència és P('+c+', '+s+').',
-  abscissa:'cos és la primera coordenada (abscissa) del punt',
-  ordinate:'sin és la segona coordenada (ordenada) del punt',
-  tanAxisND:'tg = sin / cos i cos = 0: no es pot dividir per 0, per tant no existeix.',
-  tanAxis:(c)=>'tg = sin / cos = 0 / ('+c+') = 0.',
-  redIs:'Reducció:',
-  refVal:(f,a,v)=>f+' '+a+' = '+v,
-  tanRefND:(a)=>'tg '+a+' no existeix, perquè cos '+a+' = 0.',
-  signIs:(q,f,s)=>'Al '+q+' el signe de '+f+' és '+s+'.',
-  result:(f,a,v)=>'Així doncs, '+f+' '+a+' = '+v,
-  footer:'Fitxer autocontingut: funciona sense connexió.'
- }
-};
-
-const ST={angle:30,lang:'va',unit:'deg',playing:false,speed:40,magnet:true,pause:true,show:{sin:true,cos:true,tan:true}};
+const T={va:I18N.ca,es:I18N.es};
+const ST={angle:30,lang:(LANG==='es'?'es':'va'),unit:'deg',playing:false,speed:40,magnet:true,pause:true,show:{sin:true,cos:true,tan:true}};
 try{
   const u=localStorage.getItem('tg_unit'); if(u==='deg'||u==='rad') ST.unit=u;
 }catch(e){}
@@ -302,9 +1024,9 @@ function magHTML(mag){
   return p.length===2 ? frac(f(p[0]),f(p[1])) : f(mag);
 }
 function valHTML(v){
-  if(v.mag==='nd') return '<span class="val">'+t('nd')+'</span>';
+  if(v.mag==='nd') return '<span class="tval">'+t('nd')+'</span>';
   const sg=(v.sign==='-'&&v.mag!=='0')?'−':'';
-  return '<span class="val">'+sg+magHTML(v.mag)+'</span>';
+  return '<span class="tval">'+sg+magHTML(v.mag)+'</span>';
 }
 function quadOf(d){
   if(d<=90) return {q:1,ref:d};
@@ -501,13 +1223,13 @@ function renderReadout(){
   if(ax) qtxt=t('axis');
   else {
     const sg=SG[qi+1];
-    qtxt=t('quad')[qi]+' ('+t('sinN')+' '+signSym(sg.sin)+', '+t('cosN')+' '+signSym(sg.cos)+', tg '+signSym(sg.tan)+')';
+    qtxt=t('quad'+((qi)+1))+' ('+t('sinN')+' '+signSym(sg.sin)+', '+t('cosN')+' '+signSym(sg.cos)+', tg '+signSym(sg.tan)+')';
   }
   const rowH=(cls,lab,dec,ex)=>'<div class="rr '+cls+'"><span class="lab">'+lab+'</span><span class="dec">'+dec+'</span><span class="ex">'+ex+'</span></div>';
   const ex=fn=>n!==null?'= '+valHTML(exact(fn,n)):'';
   let h='';
   h+='<div class="bigang">α = '+prim+' = '+sec+'</div>';
-  h+='<div class="pill">'+qtxt+'</div> ';
+  h+='<div class="tpill">'+qtxt+'</div> ';
   h+='<div class="muted">'+t('redLbl')+': '+redLine(a)+'</div>';
   h+='<div style="margin-top:6px">';
   h+=rowH('s',t('fnSin'),'= '+fmt(s,3),ex('sin'));
@@ -515,7 +1237,7 @@ function renderReadout(){
   h+=rowH('t',t('fnTan'),nd?'—':'= '+fmt(s/c,3),nd?t('nd'):ex('tan'));
   h+='</div>';
   h+='<div class="muted" style="margin-top:6px">'+t('chkSq')+': '+t('sinN')+'²α + '+t('cosN')+'²α = '+fmt(s*s,3)+' + '+fmt(c*c,3)+' = '+fmt(s*s+c*c,3)+'</div>';
-  h+='<div style="margin-top:6px"><span class="pill'+(n!==null?' ok':'')+'">'+(n!==null?t('exactNote'):t('approx'))+'</span></div>';
+  h+='<div style="margin-top:6px"><span class="tpill'+(n!==null?' ok':'')+'">'+(n!==null?t('exactNote'):t('approx'))+'</span></div>';
   $('#readout').innerHTML=h;
 }
 
@@ -545,7 +1267,7 @@ function buildTableB(){
        +'<th style="color:var(--sin)">'+t('fnSin')+'</th><th style="color:var(--cos)">'+t('fnCos')+'</th><th style="color:var(--tan)">'+t('fnTan')+'</th></tr></thead><tbody>';
   groups.forEach((g,i)=>{
     const sg=SG[i+1];
-    h+='<tr class="qh"><td colspan="6">'+t('quad')[i]+' · '+t('sinN')+' '+signSym(sg.sin)+', '+t('cosN')+' '+signSym(sg.cos)+', tg '+signSym(sg.tan)+'</td></tr>';
+    h+='<tr class="qh"><td colspan="6">'+t('quad'+((i)+1))+' · '+t('sinN')+' '+signSym(sg.sin)+', '+t('cosN')+' '+signSym(sg.cos)+', tg '+signSym(sg.tan)+'</td></tr>';
     g.forEach(d=>{
       h+='<tr class="clk" data-deg="'+d+'"><td>'+d+'°</td><td>'+radHTML(d)+'</td><td>'+redShort(d)+'</td>'
         +'<td>'+valHTML(exact('sin',d))+'</td><td>'+valHTML(exact('cos',d))+'</td><td>'+valHTML(exact('tan',d))+'</td></tr>';
@@ -565,7 +1287,7 @@ function buildQuick(){
   const box=$('#quick'); box.innerHTML='';
   NOT.forEach(n=>{
     const b=document.createElement('button');
-    b.className='chip'; b.setAttribute('data-deg',n);
+    b.className='chip'; b.setAttribute('aria-pressed','false'); b.setAttribute('data-deg',n);
     b.textContent=angleText(n,ST.unit);
     b.addEventListener('click',()=>{ stopPlay(); setAngle(n); });
     box.appendChild(b);
@@ -574,7 +1296,7 @@ function buildQuick(){
 function markChips(){
   const n=notableOf(ST.angle);
   document.querySelectorAll('#quick .chip').forEach(el=>{
-    el.classList.toggle('on', n!==null && Number(el.getAttribute('data-deg'))===n);
+    el.setAttribute('aria-pressed',String(n!==null && Number(el.getAttribute('data-deg'))===n));
   });
 }
 function ensureCircleVisible(){
@@ -617,25 +1339,25 @@ function explain(fn,d){
   const val=valHTML(exact(fn,d));
   if(d%90===0){
     const c=valHTML(exact('cos',d)), s=valHTML(exact('sin',d));
-    let h='<p>'+t('onAxis')(A,c,s)+'</p>';
+    let h='<p>'+tt('onAxis',A,c,s)+'</p>';
     if(fn==='cos') h+='<p>'+t('abscissa')+': '+val+'</p>';
     else if(fn==='sin') h+='<p>'+t('ordinate')+': '+val+'</p>';
-    else h+='<p>'+(exact('cos',d).mag==='0'?t('tanAxisND'):t('tanAxis')(c))+'</p>';
+    else h+='<p>'+(exact('cos',d).mag==='0'?t('tanAxisND'):tt('tanAxis',c))+'</p>';
     return h;
   }
   const refA=angleHTML(ref,ST.unit);
   let h='<p><b>'+t('redIs')+'</b> '+redLine(d)+'</p>';
-  h+='<p>'+(REF[ref][fn]==='nd'?t('tanRefND')(refA):t('refVal')(fnN,refA,magHTML(REF[ref][fn])))+'</p>';
-  h+='<p>'+t('signIs')(t('quad')[q-1],fnN,signSym(SG[q][fn]))+'</p>';
-  h+='<p><b>'+t('result')(fnN,A,val)+'</b></p>';
+  h+='<p>'+(REF[ref][fn]==='nd'?tt('tanRefND',refA):tt('refVal',fnN,refA,magHTML(REF[ref][fn])))+'</p>';
+  h+='<p>'+tt('signIs',t('quad'+q),fnN,signSym(SG[q][fn]))+'</p>';
+  h+='<p><b>'+tt('result',fnN,A,val)+'</b></p>';
   return h;
 }
 function renderTest(){
   if(!TS.q) newQuestion();
   const Q=TS.q;
-  let h='<div class="qline">'+t('qText')(t(Q.fn+'N'),angleHTML(Q.d,ST.unit))+'</div><div class="opts">';
+  let h='<div class="qline">'+tt('qText',t(Q.fn+'N'),angleHTML(Q.d,ST.unit))+'</div><div class="opts">';
   Q.opts.forEach(o=>{
-    const k=o.sign+o.mag; let cls='opt';
+    const k=o.sign+o.mag; let cls='topt';
     if(TS.done){ if(k===Q.key) cls+=' good'; else if(k===TS.chosen) cls+=' bad'; }
     h+='<button class="'+cls+'" data-k="'+k+'"'+(TS.done?' disabled':'')+'>'+valHTML(o)+'</button>';
   });
@@ -643,11 +1365,11 @@ function renderTest(){
   if(TS.done){
     const okk=TS.chosen===Q.key;
     h+='<div class="fb"><p><b>'+(okk?t('ok'):t('ko'))+'</b></p>'+explain(Q.fn,Q.d)+'</div>';
-    h+='<div class="row"><button class="btn" id="tNext">'+t('next')+'</button><button class="btn ghost" id="tSee">'+t('seeIt')+'</button></div>';
+    h+='<div class="trow"><button class="btn" id="tNext">'+t('next')+'</button><button class="btn" id="tSee">'+t('seeIt')+'</button></div>';
   }
   h+='<div class="muted">'+t('score')+': '+TS.right+' / '+TS.total+'</div>';
   $('#testBox').innerHTML=h;
-  document.querySelectorAll('#testBox .opt').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#testBox .topt').forEach(b=>b.addEventListener('click',()=>{
     if(TS.done) return;
     TS.chosen=b.getAttribute('data-k'); TS.done=true; TS.total++;
     if(TS.chosen===Q.key) TS.right++;
@@ -729,7 +1451,7 @@ $('#shSin').addEventListener('change',e=>{ ST.show.sin=e.target.checked; render(
 $('#shCos').addEventListener('change',e=>{ ST.show.cos=e.target.checked; render(); });
 $('#shTan').addEventListener('change',e=>{ ST.show.tan=e.target.checked; render(); });
 
-function applyLang(){
+function applyPage(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.getAttribute('data-i18n')); });
   $('#uDeg').setAttribute('aria-pressed',ST.unit==='deg');
   $('#uRad').setAttribute('aria-pressed',ST.unit==='rad');
@@ -739,11 +1461,58 @@ function applyLang(){
   buildTicks(); buildGraphLabels(); buildQuick(); buildTableA(); buildTableB(); renderTest();
   render();
 }
-$('#uDeg').addEventListener('click',()=>{ ST.unit='deg'; try{localStorage.setItem('tg_unit','deg');}catch(e){} applyLang(); });
-$('#uRad').addEventListener('click',()=>{ ST.unit='rad'; try{localStorage.setItem('tg_unit','rad');}catch(e){} applyLang(); });
+$('#uDeg').addEventListener('click',()=>{ ST.unit='deg'; try{localStorage.setItem('tg_unit','deg');}catch(e){} applyPage(); });
+$('#uRad').addEventListener('click',()=>{ ST.unit='rad'; try{localStorage.setItem('tg_unit','rad');}catch(e){} applyPage(); });
 
-applyLang();
+applyPage();
+
+
+/* ===== Raona-ho ===== */
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+const sinD=n=>Math.sin(n*Math.PI/180),cosD=n=>Math.cos(n*Math.PI/180),tanD=n=>sinD(n)/cosD(n);
+const near=(x,y)=>Math.abs(x-y)<1e-9;
+const f3=x=>fmt(x,3);
+const go=(a)=>{stopPlay();setAngle(a);RZ.show($('#circle'));};
+const ang=(n,def)=>isI(n,0,360)?n:def;
+RZ.init({
+ F:{n:{l:'f_n'}},
+ sim:v=>go(v[0]),
+ M:[
+  {id:'m1',f:['n'],sim:([n])=>go(ang(n,150)),ok:()=>({k:'m1_ok'}),
+   chk:([n])=>!isI(n,0,360)?RNG:(near(sinD(n),.5)&&n>90&&n<180)?null:near(sinD(n),.5)?{k:'m1_q',p:[n]}:{k:'m1_f',p:[n,f3(sinD(n))]}},
+  {id:'m2',f:['n'],sim:([n])=>go(ang(n,135)),ok:()=>({k:'m2_ok'}),
+   chk:([n])=>!isI(n,0,360)?RNG:(near(cosD(n),-Math.SQRT2/2)&&sinD(n)>0)?null:near(cosD(n),-Math.SQRT2/2)?{k:'m2_s',p:[n]}:{k:'m2_f',p:[n,f3(cosD(n))]}},
+  {id:'m3',f:['n'],sim:([n])=>go(ang(n,120)),ok:()=>({k:'m3_ok'}),
+   chk:([n])=>!isI(n,0,360)?RNG:(near(tanD(n),-Math.sqrt(3))&&n>90&&n<180)?null:near(tanD(n),-Math.sqrt(3))?{k:'m3_q',p:[n]}:{k:'m3_f',p:[n,Math.abs(cosD(n))<1e-9?'—':f3(tanD(n))]}},
+  {id:'m4',f:['n'],sim:([n])=>go(ang(n,225)),ok:()=>({k:'m4_ok'}),
+   chk:([n])=>!isI(n,0,360)?RNG:(near(sinD(n),cosD(n))&&n>180)?null:near(sinD(n),cosD(n))?{k:'m4_q',p:[n]}:{k:'m4_f',p:[n,f3(sinD(n)),f3(cosD(n))]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>go(30)},
+  {id:'s2',ans:'D',f:['n'],cxsim:([n])=>go(ang(n,120)),
+   cx:([n])=>!isI(n,0,360)?RNG:(sinD(n)>1e-9&&cosD(n)<=1e-9)?null:{k:'s2_cx_no',p:[n,f3(sinD(n)),f3(cosD(n))]},
+   sim:()=>go(120)},
+  {id:'s3',ans:'M',sim:()=>go(90)},
+  {id:'s4',ans:'S',sim:()=>go(60)},
+  {id:'s5',ans:'D',f:['n'],cxsim:([n])=>go(ang(n,225)),
+   cx:([n])=>!isI(n,0,360)?RNG:(n>180&&n<270)?null:{k:'s5_cx_no',p:[n,Math.abs(cosD(n))<1e-9?'—':f3(tanD(n))]},
+   sim:()=>go(225)},
+  {id:'s6',ans:'M',sim:()=>go(45)}
+ ],
+ E:[{id:'e1',who:1,args:[150]},{id:'e2',who:0,args:[225]},{id:'e3',who:3,args:[90]},{id:'e4',who:2,args:[30]}],
+ D:[
+  {id:'d1',chips:{vals:[30,120,150,210,330],fmt:x=>x+'°'},sim:()=>go(150),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===150?null:{k:'d1_no',p:[p,f3(cosD(p)),f3(sinD(p))]}},
+  {id:'d2',f:[{l:'d2.l0'}],sim:([n])=>go(ang(n,210)),ok:()=>({k:'d2_ok'}),
+   chk:([n])=>!isI(n,0,360)?RNG:(near(sinD(n),-.5)&&n>180&&n<270)?null:near(sinD(n),-.5)?{k:'d2_q',p:[n]}:{k:'d2_f',p:[n,f3(sinD(n))]}},
+  {id:'d3',f:[{l:'d3.l0'}],sim:()=>go(30),ok:()=>({k:'d3_ok'}),
+   chk:([n])=>n===2?null:n===1?{k:'d3_1'}:{k:'d3_f',p:[n]}}
+ ]
+});
 })();
+initQuiz([]);
+initLang();applyLang();
 </script>
 </body>
 </html>

@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Garbell d'Eratòstenes</title>
+<meta name="description" content="Garbell d'Eratòstenes interactiu: tacha els múltiples dels primers primers i descobreix els nombres primers menors que 500. Amb activitats per a raonar.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+:root{--tint-s:68%;--tint-l:83%;--ring-l:36%;--cols:20}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--tint-s:46%;--tint-l:25%;--ring-l:62%}}
+@media (max-width:640px){:root{--cols:10}}
+@media (max-width:820px){.side{order:-1}}
+.board{background:var(--stage);border:1px solid var(--line);border-radius:10px;padding:8px}
+.grid{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.c{position:relative;aspect-ratio:1.1/1;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:clamp(9px,1.2vw,13px);color:var(--ink);transition:background .25s,color .25s;user-select:none}
+@media (max-width:640px){.c{font-size:13px;aspect-ratio:1.3/1}}
+.c::after{content:"";position:absolute;left:14%;right:14%;top:50%;height:2px;background:hsl(var(--h,0) 60% var(--ring-l));border-radius:2px;transform:rotate(-32deg) scaleX(0);transform-origin:left center;transition:transform .25s ease-out}
+.c.one{color:var(--muted)}
+.c.x{background:hsl(var(--h) var(--tint-s) var(--tint-l));color:var(--muted);transition-delay:var(--d,0ms)}
+.c.x::after{transform:rotate(-32deg) scaleX(1);transition-delay:var(--d,0ms)}
+.c.p{font-weight:600;box-shadow:inset 0 0 0 2px hsl(var(--h) 62% var(--ring-l));border-radius:50%}
+.c.hl{outline:3px solid var(--pb);outline-offset:-3px;z-index:1;font-weight:700}
+.grid.done .c:not(.x):not(.one){font-weight:600;color:var(--pa);background:color-mix(in srgb,var(--pa) 12%,transparent)}
+.primes{display:flex;flex-wrap:wrap;gap:8px}
+.pbtn{font:inherit;cursor:pointer;background:var(--panel);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;min-width:58px;padding:5px 10px 4px;display:flex;flex-direction:column;align-items:center;line-height:1.1;transition:background .2s,border-color .2s,transform .1s}
+.pbtn .n{font-family:var(--f-num);font-weight:600;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.pbtn .s{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:3px}
+.pbtn .sw{width:9px;height:9px;border-radius:50%;background:hsl(var(--h) 65% 52%);display:inline-block}
+.pbtn:hover{border-color:hsl(var(--h) 60% 50%)}
+.pbtn:active{transform:scale(.96)}
+.pbtn[aria-pressed="true"]{background:hsl(var(--h) var(--tint-s) var(--tint-l));border-color:hsl(var(--h) 62% var(--ring-l))}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.status{font-size:14px}
+.status b{font-family:var(--f-num)}
+code{font-family:var(--f-num)}
+@media (prefers-reduced-motion:reduce){.c,.c::after,.pbtn{transition:none!important}}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="simgrid">
+<div class="simcv"><div class="board"><div class="grid" id="grid" role="group" data-i18n-aria="aria.grid" aria-label=""></div></div></div>
+<div class="side">
+<fieldset>
+<legend data-i18n="plabel"></legend>
+<div class="primes" id="primes"></div>
+<div class="btns">
+<button class="btn primary" id="play" type="button" data-i18n="play"></button>
+<button class="btn" id="reset" type="button" data-i18n="reset"></button>
+</div>
+<div class="status" id="status" aria-live="polite"></div>
+</fieldset>
+<p class="note" data-i18n-html="note"></p>
+</div>
+</div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Garbell d'Eratòstenes",
+"eyebrow":"Matemàtiques · 1r ESO · Numèric",
+"h1":"Garbell d'Eratòstenes",
+"lede":"Tacha els múltiples dels primers i el que queda sense tachar són els primers.",
+"sim_title":"Els nombres del 1 al 500",
+"story":"Nombres de l'1 al 500. Prem un primer i es tachen tots els seus múltiples. Quan uses els huit primers de la llista, el que queda sense tachar són els primers menors que 500.",
+"aria.grid":"Taula de nombres de l'1 al 500",
+"plabel":"Primers fins a √500 ≈ 22,4",
+"play":"Reprodueix el garbell","reset":"Reinicia",
+"note":"L'1 no és primer ni compost, així que comença tachat. N'hi ha prou d'arribar fins al 19: el següent primer és el 23 i <code>23² = 529 &gt; 500</code>, de manera que tot compost menor que 500 té algun factor primer menor o igual que 19. Pots prémer els botons en l'ordre que vulgues, i tornar a prémer-ne un per a destachar.",
+"init":"Exemple amb 2 i 3 ja tachats. Prem el següent primer: <b>5</b>.",
+"hint0":"Prem un primer per a tachar els seus múltiples.",
+"left":"Sense tachar (del 2 al 500): <b>{0}</b>",
+"newm":"Múltiples de {0}: <b>{1}</b> nous tachats. ",
+"all":"Sense tachar: <b>{0}</b> nombres. Són tots els primers menors que 500.",
+"idea":"<b>Per a la classe:</b> abans de prémer, demana als alumnes que predisguen quants nombres quedaran sense tachar. El primer cop sempre sorprèn: sembla que dos botons n'eliminen la meitat.",
+"rng":"Escriu un nombre enter dins del rang.",
+"f_n":"Nombre",
+"m1.q":"Escriu un nombre <b>compost menor que 500</b> que <b>no</b> siga múltiple de 2, 3, 5 ni 7 (així només el tacharan els primers majors).",
+"m1_prime":"{0} és primer: no es tacha mai. Busca un compost.",
+"m1_small":"{0} = {1} × {2}: ja el tacha el {1}.",
+"m1_ok":"✔ Missió complida! {0} = {1} × {2}: només el tacha el {1}.",
+"m1.more":"Quin és el més xicotet que compleix això? Per què no pot ser menor que 121?",
+"m2.q":"Si prems <b>només el 7</b>, quants nombres es tachen? (No comptes el 7 mateix, que es queda marcat.)",
+"m2_inc":"Has comptat el 7 mateix. El 7 queda marcat, no tachat.",
+"m2_f":"Els múltiples de 7 fins a 500 són 7·1, 7·2… fins a 7·71. Descomptant el 7, en queden 70.",
+"m2_ok":"✔ Missió complida! 500 ÷ 7 ≈ 71,4: hi ha 71 múltiples i, sense el 7, 70 nombres tachats.",
+"m2.more":"I si premes només el 2? I només el 3? Quin primer tacha més nombres i per què?",
+"m3.q":"Quin és el <b>primer nombre</b> que tachas <b>només en prémer el 13</b> (cap primer menor de 13 ja el tacha)?",
+"m3_f":"{0} no és múltiple de 13.",
+"m3_small":"{0} = {1} × {2}: ja el tacha el {1}, que és menor que 13.",
+"m3_ok":"✔ Missió complida! 169 = 13 × 13: tots els múltiples anteriors de 13 ja tenen un factor primer menor.",
+"m3.more":"Quin és el primer nombre que només tacharia el 17? I el 19? Què tenen en comú?",
+"m4.q":"Escriu el <b>major primer</b> menor que 500.",
+"m4_comp":"{0} = {1} × {2} és compost.",
+"m4_less":"{0} és primer, però n'hi ha un de major entre {0} i 500.",
+"m4_ok":"✔ Missió complida! 499 no és múltiple de cap primer fins al 19.",
+"m4.more":"Entre 1 i 500 hi ha 95 primers. Se t'ocorre una manera d'estimar quants hi ha entre 1 i 1000?",
+"s1.q":"«Si un nombre menor que 500 és compost, algun dels primers 2, 3, 5, 7, 11, 13, 17 o 19 el divideix.»",
+"s1.h":"Un compost n = a · b té un factor menor o igual que √n.",
+"s1.e":"Sempre: si n és compost té un divisor primer p amb p² ≤ n < 500, i p ≤ 22. Així que p és un dels vuit primers de la llista.",
+"s2.q":"«El 1 és un nombre primer, i per això el garbell el deixa sense tachar.»",
+"s2.h":"Un primer té exactament dos divisors.",
+"s2.e":"Mai: l'1 té un únic divisor, així que no és primer ni compost. Per això comença tachat.",
+"s3.q":"«Després de prémer el 2 i el 3, tots els nombres que queden sense tachar són primers.»",
+"s3.h":"Busca un compost que no tinga el 2 ni el 3 com a factors.",
+"s3.e":"De vegades: 25 = 5 · 5 queda sense tachar i no és primer. Cal prémer el 5 i la resta de primers.",
+"s3_cx_no":"{0} ja el tacha el 2 o el 3. Busca un que no.",
+"s3_cx_prime":"{0} és primer: no és un contraexemple.",
+"s4.q":"«Si un nombre ≤ 500 queda sense tachar després de prémer tots els primers fins al 19, és primer.»",
+"s4.h":"Ara pensa què diu el garbell sobre els factors dels compostos.",
+"s4.e":"Sempre: si fos compost, algun primer fins al 19 el dividiria i estaria tachat. El que queda són els primers.",
+"s5.q":"«Si has premut el 2, el 3 i el 5, el primer nombre nou que tacha el 7 és el 49.»",
+"s5.h":"Els múltiples 7·2, 7·3, 7·4, 7·5 i 7·6 ja estan tachats.",
+"s5.e":"Sempre: 14, 21, 28, 35 i 42 ja tenen un factor 2, 3 o 5. El primer múltiple de 7 sense factor menor és 7 · 7 = 49.",
+"s6.q":"«Per a tachar tots els compostos menors que 500 cal prémer els 95 primers menors que 500.»",
+"s6.h":"Compta els botons.",
+"s6.e":"Mai: només cal prémer 8 primers (2 fins al 19). Hi ha 95 primers menors que 500, però no cal usar-los tots com a garbell.",
+"e1.ctx":"Per a acabar el garbell fins al 500, cal prémer també el <b>23</b>?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Sí, perquè el 23 també és primer.",
+"e1.s1":"No: 23² = 529 > 500, així que els compostos menors que 500 ja tenen un factor ≤ 19.",
+"e1.w0":"Pau té raó: el menor compost que només tacharia el 23 seria 23 · 23 = 529, que ja passa de 500. Per això el 23 és superflu.",
+"e1.w1":"Perquè el 23 no és primer.",
+"e1.w2":"Perquè el 23 tacharia massa nombres.",
+"e1.frame":"Marta, no cal prémer el 23 perquè…",
+"e1.model":"Marta, que el 23 siga primer és cert però no el fa necessari. Els múltiples de 23 menors que 500 són 23 · k amb k ≤ 21, i tots tenen un factor primer menor. El primer que només tacharia el 23 és 529 > 500.",
+"e2.ctx":"És <b>91</b> un nombre primer?",
+"e2.n0":"Rita","e2.n1":"Joan",
+"e2.s0":"No: 91 = 7 × 13.",
+"e2.s1":"Sí: no és parell, no acaba en 0 o 5 i les xifres sumen 10, que no és múltiple de 3.",
+"e2.w0":"Rita té raó. Joan ha provat 2, 3 i 5 però oblida el 7: 7 · 13 = 91, i en el garbell el 91 apareix tachat en vermell.",
+"e2.w1":"Perquè els nombres de dues xifres no poden ser primers.",
+"e2.w2":"Perquè 91 és múltiple de 2.",
+"e2.frame":"Joan, 91 no és primer perquè…",
+"e2.model":"Joan, has descartat 2, 3 i 5, però has de provar tots els primers fins a √91 ≈ 9,5, és a dir, també el 7. I 7 · 13 = 91, així que és compost. Al garbell queda tachat pel 7.",
+"e3.ctx":"Quants <b>primers</b> hi ha entre 1 i 20?",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"9: 2, 3, 5, 7, 9, 11, 13, 17 i 19.",
+"e3.s1":"7: tots els imparells primers, perquè el 2 és parell i no val.",
+"e3.w0":"Hi ha 8: 2, 3, 5, 7, 11, 13, 17 i 19. Àlex hi inclou el 9 (és 3 · 3) i Laia deixa fora el 2, que sí és primer.",
+"e3.w1":"Perquè només compten els primers imparells.",
+"e3.w2":"Perquè 20 també és primer.",
+"e3.frame":"Àlex i Laia, la resposta no és 9 ni 7 perquè…",
+"e3.model":"Àlex, el 9 = 3 · 3 és compost. Laia, el 2 és el primer parell i l'únic: només té dos divisors, 1 i ell mateix. Els primers fins a 20 són 8: 2, 3, 5, 7, 11, 13, 17 i 19.",
+"e4.ctx":"Per què comença tachat l'<b>1</b> a la graella?",
+"e4.n0":"Àlex","e4.n1":"Laia",
+"e4.s0":"Perquè l'1 no és primer.",
+"e4.s1":"Perquè l'1 tampoc és compost: té un únic divisor.",
+"e4.w0":"Les dues expliquen la mateixa idea des de dos angles: l'1 queda fora de tots dos grups.",
+"e4.w1":"Perquè només una de les dues és certa.",
+"e4.w2":"Perquè l'1 és múltiple del 2.",
+"e4.frame":"Àlex i Laia, les dues teniu raó perquè…",
+"e4.model":"Àlex i Laia, un primer té exactament dos divisors i un compost en té més de dos. L'1 només en té un, així que no és cap dels dos i es descarta.",
+"d1.q":"Si prems <b>només el 2 i el 3</b>, quants nombres del 2 al 500 queden <b>sense tachar</b>? (Compta el 2 i el 3 mateixos.)",
+"d1.l0":"Queden","d1_n":"Els que queden són els que no són múltiples de 2 ni de 3, a més del 2 i el 3.",
+"d1_ok":"✔ Ben decidit! Queden 168 nombres: 2 i 3 més els que no tenen el 2 ni el 3 com a factors.",
+"d1.more":"Quina fracció de nombres queda sense tachar? Compara-la amb (1 − 1/2)(1 − 1/3).",
+"d2.q":"Vols tachar el <b>49</b> amb un sol botó. Quin has de prémer?",
+"d2.lc":"Primer:",
+"d2_no":"49 no és múltiple de {0}.",
+"d2_ok":"✔ Ben decidit! 49 = 7 × 7.",
+"d2.more":"Hi ha algun altre nombre menor que 100 que només tache el 7 i no un primer menor?",
+"d3.q":"Si la graella arribara només a <b>200</b>, quin seria l'últim primer que caldria prémer?",
+"d3.lc":"Últim primer:",
+"d3_small":"Amb {0} com a últim primer, {1}² = {2} ≤ 200 quedaria sense tachar.",
+"d3_big":"No cal arribar a {0}: {0}² = {1} > 200.",
+"d3_ok":"✔ Ben decidit! √200 ≈ 14,1; el primer major que això és el 17, i 17² = 289 > 200, així que el 13 és l'últim.",
+"d3.more":"I si la graella arribara a 1000? Quin seria l'últim primer?"
+},
+es:{
+"title":"Criba de Eratóstenes",
+"eyebrow":"Matemáticas · 1.º ESO · Numérico",
+"h1":"Criba de Eratóstenes",
+"lede":"Tacha los múltiplos de los primos y lo que queda sin tachar son los primos.",
+"sim_title":"Los números del 1 al 500",
+"story":"Números del 1 al 500. Pulsa un primo y se tachan todos sus múltiplos. Al usar los ocho primos de la lista, lo que queda sin tachar son los primos menores que 500.",
+"aria.grid":"Tabla de números del 1 al 500",
+"plabel":"Primos hasta √500 ≈ 22,4",
+"play":"Reproducir criba","reset":"Reiniciar",
+"note":"El 1 no es primo ni compuesto, así que empieza tachado. Basta con llegar hasta el 19: el siguiente primo es el 23 y <code>23² = 529 &gt; 500</code>, de modo que todo compuesto menor que 500 tiene algún factor primo menor o igual que 19. Puedes pulsar los botones en el orden que quieras, y volver a pulsar uno para destacharlo.",
+"init":"Ejemplo con 2 y 3 ya tachados. Pulsa el siguiente primo: <b>5</b>.",
+"hint0":"Pulsa un primo para tachar sus múltiplos.",
+"left":"Sin tachar (del 2 al 500): <b>{0}</b>",
+"newm":"Múltiplos de {0}: <b>{1}</b> nuevos tachados. ",
+"all":"Sin tachar: <b>{0}</b> números. Son todos los primos menores que 500.",
+"idea":"<b>Para la clase:</b> antes de pulsar, pide a los alumnos que predigan cuántos números quedarán sin tachar. El primer golpe siempre sorprende: parece que dos botones eliminan la mitad.",
+"rng":"Escribe un número entero dentro del rango.",
+"f_n":"Número",
+"m1.q":"Escribe un número <b>compuesto menor que 500</b> que <b>no</b> sea múltiplo de 2, 3, 5 ni 7 (así solo lo tacharán los primos mayores).",
+"m1_prime":"{0} es primo: no se tacha nunca. Busca un compuesto.",
+"m1_small":"{0} = {1} × {2}: ya lo tacha el {1}.",
+"m1_ok":"✔ ¡Misión cumplida! {0} = {1} × {2}: solo lo tacha el {1}.",
+"m1.more":"¿Cuál es el más pequeño que cumple esto? ¿Por qué no puede ser menor que 121?",
+"m2.q":"Si pulsas <b>solo el 7</b>, ¿cuántos números se tachan? (No cuentes el 7, que queda marcado.)",
+"m2_inc":"Has contado el 7 mismo. El 7 queda marcado, no tachado.",
+"m2_f":"Los múltiplos de 7 hasta 500 son 7·1, 7·2… hasta 7·71. Descontando el 7, quedan 70.",
+"m2_ok":"✔ ¡Misión cumplida! 500 ÷ 7 ≈ 71,4: hay 71 múltiplos y, sin el 7, 70 números tachados.",
+"m2.more":"¿Y si pulsas solo el 2? ¿Y solo el 3? ¿Qué primo tacha más números y por qué?",
+"m3.q":"¿Cuál es el <b>primer número</b> que tachas <b>solo al pulsar el 13</b> (ningún primo menor que 13 lo tacha ya)?",
+"m3_f":"{0} no es múltiplo de 13.",
+"m3_small":"{0} = {1} × {2}: ya lo tacha el {1}, que es menor que 13.",
+"m3_ok":"✔ ¡Misión cumplida! 169 = 13 × 13: todos los múltiplos anteriores de 13 ya tienen un factor primo menor.",
+"m3.more":"¿Cuál es el primer número que solo tacharía el 17? ¿Y el 19? ¿Qué tienen en común?",
+"m4.q":"Escribe el <b>mayor primo</b> menor que 500.",
+"m4_comp":"{0} = {1} × {2} es compuesto.",
+"m4_less":"{0} es primo, pero hay uno mayor entre {0} y 500.",
+"m4_ok":"✔ ¡Misión cumplida! 499 no es múltiplo de ningún primo hasta el 19.",
+"m4.more":"Entre 1 y 500 hay 95 primos. ¿Se te ocurre una forma de estimar cuántos hay entre 1 y 1000?",
+"s1.q":"«Si un número menor que 500 es compuesto, alguno de los primos 2, 3, 5, 7, 11, 13, 17 o 19 lo divide.»",
+"s1.h":"Un compuesto n = a · b tiene un factor menor o igual que √n.",
+"s1.e":"Siempre: si n es compuesto tiene un divisor primo p con p² ≤ n < 500, y p ≤ 22. Así que p es uno de los ocho primos de la lista.",
+"s2.q":"«El 1 es un número primo, y por eso la criba lo deja sin tachar.»",
+"s2.h":"Un primo tiene exactamente dos divisores.",
+"s2.e":"Nunca: el 1 tiene un único divisor, así que no es primo ni compuesto. Por eso empieza tachado.",
+"s3.q":"«Después de pulsar el 2 y el 3, todos los números que quedan sin tachar son primos.»",
+"s3.h":"Busca un compuesto que no tenga el 2 ni el 3 como factores.",
+"s3.e":"A veces: 25 = 5 · 5 queda sin tachar y no es primo. Hay que pulsar el 5 y el resto de primos.",
+"s3_cx_no":"{0} ya lo tacha el 2 o el 3. Busca uno que no.",
+"s3_cx_prime":"{0} es primo: no es un contraejemplo.",
+"s4.q":"«Si un número ≤ 500 queda sin tachar después de pulsar todos los primos hasta el 19, es primo.»",
+"s4.h":"Ahora piensa qué dice la criba sobre los factores de los compuestos.",
+"s4.e":"Siempre: si fuera compuesto, algún primo hasta el 19 lo dividiría y estaría tachado. Lo que queda son los primos.",
+"s5.q":"«Si has pulsado el 2, el 3 y el 5, el primer número nuevo que tacha el 7 es el 49.»",
+"s5.h":"Los múltiplos 7·2, 7·3, 7·4, 7·5 y 7·6 ya están tachados.",
+"s5.e":"Siempre: 14, 21, 28, 35 y 42 ya tienen un factor 2, 3 o 5. El primer múltiplo de 7 sin factor menor es 7 · 7 = 49.",
+"s6.q":"«Para tachar todos los compuestos menores que 500 hay que pulsar los 95 primos menores que 500.»",
+"s6.h":"Cuenta los botones.",
+"s6.e":"Nunca: solo hace falta pulsar 8 primos (del 2 al 19). Hay 95 primos menores que 500, pero no hace falta usarlos todos como criba.",
+"e1.ctx":"Para terminar la criba hasta 500, ¿hay que pulsar también el <b>23</b>?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Sí, porque el 23 también es primo.",
+"e1.s1":"No: 23² = 529 > 500, así que los compuestos menores que 500 ya tienen un factor ≤ 19.",
+"e1.w0":"Pau tiene razón: el menor compuesto que solo tacharía el 23 sería 23 · 23 = 529, que ya pasa de 500. Por eso el 23 es superfluo.",
+"e1.w1":"Porque el 23 no es primo.",
+"e1.w2":"Porque el 23 tacharía demasiados números.",
+"e1.frame":"Marta, no hace falta pulsar el 23 porque…",
+"e1.model":"Marta, que el 23 sea primo es cierto pero no lo hace necesario. Los múltiplos de 23 menores que 500 son 23 · k con k ≤ 21, y todos tienen un factor primo menor. El primero que solo tacharía el 23 es 529 > 500.",
+"e2.ctx":"¿Es <b>91</b> un número primo?",
+"e2.n0":"Rita","e2.n1":"Joan",
+"e2.s0":"No: 91 = 7 × 13.",
+"e2.s1":"Sí: no es par, no acaba en 0 o 5 y las cifras suman 10, que no es múltiplo de 3.",
+"e2.w0":"Rita tiene razón. Joan ha probado 2, 3 y 5 pero olvida el 7: 7 · 13 = 91, y en la criba el 91 aparece tachado.",
+"e2.w1":"Porque los números de dos cifras no pueden ser primos.",
+"e2.w2":"Porque 91 es múltiplo de 2.",
+"e2.frame":"Joan, 91 no es primo porque…",
+"e2.model":"Joan, has descartado 2, 3 y 5, pero tienes que probar todos los primos hasta √91 ≈ 9,5, es decir, también el 7. Y 7 · 13 = 91, así que es compuesto. En la criba queda tachado por el 7.",
+"e3.ctx":"¿Cuántos <b>primos</b> hay entre 1 y 20?",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"9: 2, 3, 5, 7, 9, 11, 13, 17 y 19.",
+"e3.s1":"7: todos los impares primos, porque el 2 es par y no vale.",
+"e3.w0":"Hay 8: 2, 3, 5, 7, 11, 13, 17 y 19. Álex incluye el 9 (es 3 · 3) y Laia deja fuera el 2, que sí es primo.",
+"e3.w1":"Porque solo cuentan los primos impares.",
+"e3.w2":"Porque 20 también es primo.",
+"e3.frame":"Álex y Laia, la respuesta no es 9 ni 7 porque…",
+"e3.model":"Álex, el 9 = 3 · 3 es compuesto. Laia, el 2 es el primo par y el único: solo tiene dos divisores, 1 y él mismo. Los primos hasta 20 son 8: 2, 3, 5, 7, 11, 13, 17 y 19.",
+"e4.ctx":"¿Por qué empieza tachado el <b>1</b> en la cuadrícula?",
+"e4.n0":"Álex","e4.n1":"Laia",
+"e4.s0":"Porque el 1 no es primo.",
+"e4.s1":"Porque el 1 tampoco es compuesto: tiene un único divisor.",
+"e4.w0":"Las dos explican la misma idea desde dos ángulos: el 1 queda fuera de los dos grupos.",
+"e4.w1":"Porque solo una de las dos es cierta.",
+"e4.w2":"Porque el 1 es múltiplo del 2.",
+"e4.frame":"Álex y Laia, las dos tenéis razón porque…",
+"e4.model":"Álex y Laia, un primo tiene exactamente dos divisores y un compuesto tiene más de dos. El 1 solo tiene uno, así que no es ninguno de los dos y se descarta.",
+"d1.q":"Si pulsas <b>solo el 2 y el 3</b>, ¿cuántos números del 2 al 500 quedan <b>sin tachar</b>? (Cuenta el 2 y el 3 mismos.)",
+"d1.l0":"Quedan","d1_n":"Los que quedan son los que no son múltiplos de 2 ni de 3, además del 2 y el 3.",
+"d1_ok":"✔ ¡Bien decidido! Quedan 168 números: 2 y 3 más los que no tienen el 2 ni el 3 como factores.",
+"d1.more":"¿Qué fracción de números queda sin tachar? Compárala con (1 − 1/2)(1 − 1/3).",
+"d2.q":"Quieres tachar el <b>49</b> con un solo botón. ¿Cuál debes pulsar?",
+"d2.lc":"Primo:",
+"d2_no":"49 no es múltiplo de {0}.",
+"d2_ok":"✔ ¡Bien decidido! 49 = 7 × 7.",
+"d2.more":"¿Hay algún otro número menor que 100 que solo tache el 7 y no un primo menor?",
+"d3.q":"Si la cuadrícula llegara solo a <b>200</b>, ¿cuál sería el último primo que habría que pulsar?",
+"d3.lc":"Último primo:",
+"d3_small":"Con {0} como último primo, {1}² = {2} ≤ 200 quedaría sin tachar.",
+"d3_big":"No hace falta llegar a {0}: {0}² = {1} > 200.",
+"d3_ok":"✔ ¡Bien decidido! √200 ≈ 14,1; el primer primo mayor que eso es el 17, y 17² = 289 > 200, así que el 13 es el último.",
+"d3.more":"¿Y si la cuadrícula llegara a 1000? ¿Cuál sería el último primo?"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Garbell d'Eratòstenes ===== */
+const N=500,PR=[2,3,5,7,11,13,17,19];
+const HUE={2:8,3:212,5:135,7:275,11:335,13:45,17:180,19:95};
+let active=[],owner=new Array(N+1).fill(0),stat={k:'hint0',p:[]},doneTimer=null,playToken=0;
+const grid=$('#grid'),primesEl=$('#primes'),statusEl=$('#status'),playBtn=$('#play');
+const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cells=[],btns={};
+for(let n=1;n<=N;n++){
+  const d=document.createElement('div');d.className='c'+(n===1?' one':'');d.textContent=n;
+  grid.appendChild(d);cells[n]=d;
+}
+cells[1].style.setProperty('--h',0);
+PR.forEach(p=>{
+  const b=document.createElement('button');b.type='button';b.className='pbtn';
+  b.style.setProperty('--h',HUE[p]);b.setAttribute('aria-pressed','false');
+  b.innerHTML='<span class="n">'+p+'</span><span class="s"><i class="sw"></i>×'+p+'</span>';
+  b.addEventListener('click',()=>{playToken++;toggle(p);});
+  primesEl.appendChild(b);btns[p]=b;
+});
+const ownerOf=(m,act)=>{for(const p of act)if(m!==p&&m%p===0)return p;return 0;};
+function setStat(k,p){stat={k:k,p:p||[]};showStat();}
+function showStat(){
+  if(stat.k==='newmleft')statusEl.innerHTML=tt('newm',stat.p[0],stat.p[1])+tt('left',stat.p[2]);
+  else statusEl.innerHTML=tt(stat.k,...stat.p);
+}
+function refresh(focus,mark){
+  const fresh=[],next=new Array(N+1).fill(0);
+  for(let m=2;m<=N;m++){next[m]=ownerOf(m,active);if(next[m]&&!owner[m])fresh.push(m);}
+  const step=reduce?0:Math.min(30,1500/Math.max(fresh.length,1)),fi={};
+  fresh.forEach((v,i)=>{fi[v]=i;});
+  for(let k=2;k<=N;k++){
+    const el=cells[k],o=next[k];
+    if(o){el.style.setProperty('--h',HUE[o]);el.style.setProperty('--d',(fi[k]!==undefined?Math.round(fi[k]*step):0)+'ms');el.classList.add('x');el.title=k+' = '+o+' × '+(k/o);}
+    else{el.classList.remove('x');el.style.removeProperty('--d');el.removeAttribute('title');}
+    if(active.indexOf(k)!==-1){el.style.setProperty('--h',HUE[k]);el.classList.add('p');}else el.classList.remove('p');
+    el.classList.toggle('hl',k===mark);
+  }
+  owner=next;
+  PR.forEach(p=>btns[p].setAttribute('aria-pressed',active.indexOf(p)!==-1?'true':'false'));
+  const total=Math.round(fresh.length*step)+350;
+  let left=0;for(let m=2;m<=N;m++)if(!owner[m])left++;
+  clearTimeout(doneTimer);
+  if(active.length===PR.length){doneTimer=setTimeout(()=>grid.classList.add('done'),total);setStat('all',[left]);}
+  else{
+    grid.classList.remove('done');
+    if(focus&&active.indexOf(focus)!==-1)setStat('newmleft',[focus,fresh.length,left]);
+    else setStat('left',[left]);
+  }
+  return total;
+}
+function toggle(p){const i=active.indexOf(p);if(i===-1)active.push(p);else active.splice(i,1);return refresh(p);}
+function reset(){playToken++;active=[];grid.classList.remove('done');refresh(0);playBtn.disabled=false;setStat('hint0');}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function play(){
+  reset();const my=++playToken;playBtn.disabled=true;await sleep(300);
+  for(const p of PR){if(my!==playToken)return;const t0=toggle(p);await sleep(t0+(reduce?300:500));}
+  if(my===playToken)playBtn.disabled=false;
+}
+playBtn.addEventListener('click',play);$('#reset').addEventListener('click',reset);
+active=[2,3];refresh(0);setStat('init');
+App.hooks.push(showStat);
+/* ===== Raona-ho ===== */
+function show(act,mark){
+  playToken++;active=act.slice();owner=new Array(N+1).fill(0);grid.classList.remove('done');
+  refresh(0,mark);RZ.show($('#grid'));
+}
+const ALL=PR;
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const sp=n=>{for(let p=2;p*p<=n;p++)if(n%p===0)return p;return n;};
+const isPrime=n=>n>1&&sp(n)===n;
+const RNG={k:'rng'};
+const unstruck=act=>{let c=0;for(let m=2;m<=N;m++)if(!ownerOf(m,act))c++;return c;};
+RZ.init({
+ F:{n:{l:'f_n'}},
+ sim:v=>show(...v),
+ M:[
+  {id:'m1',f:['n'],sim:([n])=>show(ALL,isI(n,2,499)?n:121),ok:([n])=>({k:'m1_ok',p:()=>[n,sp(n),n/sp(n)]}),
+   chk:([n])=>!isI(n,2,499)?RNG:isPrime(n)?{k:'m1_prime',p:[n]}:[2,3,5,7].some(p=>n%p===0)?{k:'m1_small',p:()=>[n,sp(n),n/sp(n)]}:null},
+  {id:'m2',f:['n'],sim:()=>show([7]),ok:()=>({k:'m2_ok'}),
+   chk:([n])=>!isI(n,0,500)?RNG:n===71?{k:'m2_inc'}:n===70?null:{k:'m2_f'}},
+  {id:'m3',f:['n'],sim:()=>show([2,3,5,7,11,13],169),ok:()=>({k:'m3_ok'}),
+   chk:([n])=>!isI(n,2,499)?RNG:n%13!==0?{k:'m3_f',p:[n]}:n===169?null:{k:'m3_small',p:()=>{const q=sp(n);return [n,q,n/q];}}},
+  {id:'m4',f:['n'],sim:()=>show(ALL,499),ok:()=>({k:'m4_ok'}),
+   chk:([n])=>!isI(n,2,499)?RNG:!isPrime(n)?{k:'m4_comp',p:()=>{const q=sp(n);return [n,q,n/q];}}:n===499?null:{k:'m4_less',p:[n]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>show(ALL)},
+  {id:'s2',ans:'M',sim:()=>show([],1)},
+  {id:'s3',ans:'D',f:['n'],cxsim:([n])=>show([2,3],isI(n,2,499)?n:25),
+   cx:([n])=>!isI(n,2,499)?RNG:n%2===0||n%3===0?{k:'s3_cx_no',p:[n]}:isPrime(n)?{k:'s3_cx_prime',p:[n]}:null,
+   sim:()=>show([2,3],25)},
+  {id:'s4',ans:'S',sim:()=>show(ALL)},
+  {id:'s5',ans:'S',sim:()=>show([2,3,5,7],49)},
+  {id:'s6',ans:'M',sim:()=>show(ALL)}
+ ],
+ E:[{id:'e1',who:1,args:[ALL,23]},{id:'e2',who:0,args:[[7],91]},{id:'e3',who:3,args:[[2,3,5,7,11,13,17,19],20]},{id:'e4',who:2,args:[[],1]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0'}],sim:()=>show([2,3]),ok:()=>({k:'d1_ok'}),
+   chk:([n])=>n!==unstruck([2,3])?{k:'d1_n'}:null},
+  {id:'d2',chips:{vals:[2,3,5,7]},sim:()=>show([7],49),ok:()=>({k:'d2_ok'}),
+   chk:([p])=>p===7?null:{k:'d2_no',p:[p]}},
+  {id:'d3',chips:{vals:[7,11,13,17]},sim:null,ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p===13?null:p>13?{k:'d3_big',p:[p,p*p]}:{k:'d3_small',p:()=>{const nx=p===7?11:13;return [p,nx,nx*nx];}}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+</script>
+</body>
+</html>

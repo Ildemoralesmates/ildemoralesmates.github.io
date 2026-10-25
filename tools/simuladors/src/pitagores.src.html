@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pitàgores per àrees</title>
+<meta name="description" content="Quatre triangles iguals es recol·loquen dins d'un mateix quadrat. Els espais que queden lliures canvien de forma, però no d'àrea. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d'altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+#svg{display:block;width:100%;height:auto;max-height:min(72vh,580px);margin-inline:auto;background:var(--stage);border-radius:8px}
+#svg .frame{fill:var(--panel);stroke:var(--ink);stroke-width:2}
+#svg .sqa{fill:var(--ok);fill-opacity:.4;stroke:var(--ok);stroke-width:2}
+#svg .sqb{fill:var(--pb);fill-opacity:.4;stroke:var(--pb);stroke-width:2}
+#svg .sqc{fill:var(--pa);fill-opacity:.35;stroke:var(--pa);stroke-width:2}
+#svg .tri{fill:var(--muted);fill-opacity:.28;stroke:var(--ink);stroke-width:2.2;stroke-linejoin:round}
+#svg .lab{fill:var(--ink);font-family:var(--f-num);font-weight:600}
+#svg .edge{fill:var(--muted);font:600 14px var(--f-num)}
+.ta{color:var(--ok);font-weight:700}.tb{color:var(--pb);font-weight:700}.tc{color:var(--pa);font-weight:700}
+.formula{font-family:var(--f-num);font-size:clamp(16px,2vw,19px);line-height:1.6;color:var(--ink)}
+.formula .big{font-size:clamp(20px,2.6vw,26px);font-weight:700;margin-top:2px}
+.formula .note{font-family:var(--f-body);margin-top:4px;color:var(--muted)}
+.exlist{display:flex;flex-wrap:wrap;gap:6px}
+.side .ctl{margin:0}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="simgrid">
+<div class="simcv"><svg id="svg" viewBox="0 0 340 340" role="img" data-i18n-aria="aria.svg" aria-label=""></svg></div>
+<div class="side">
+<div id="ctl" style="display:grid;gap:8px"></div>
+<div id="ctl2" style="display:grid;gap:8px"><div class="row"><button class="btn primary" id="go" type="button"></button></div></div>
+<div class="exlist" id="exs" role="group" data-i18n-aria="aria.ex" aria-label=""></div>
+<div class="formula" id="out" aria-live="polite"></div>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Pitàgores per àrees",
+"eyebrow":"Matemàtiques · 2n ESO · Geometria",
+"h1":"Pitàgores per àrees",
+"lede":"Quatre triangles iguals es recol·loquen dins d'un mateix quadrat. Els espais que queden lliures canvien de forma, però no d'àrea.",
+"sim_title":"Recol·loca els triangles",
+"story":"El quadrat gran té costat <b>a + b</b>. Dins hi caben quatre triangles rectangles iguals i, segons com els col·loques, deixen lliures <b>dos quadrats</b> (d'àrees <b>a²</b> i <b>b²</b>) o <b>un sol quadrat</b> (d'àrea <b>c²</b>). Com que els triangles ocupen el mateix lloc en tots dos casos, l'àrea lliure és la mateixa.",
+"aria.svg":"Demostració de Pitàgores per recol·locació de triangles",
+"aria.ex":"Exemples",
+"l_a":"Catet a","l_b":"Catet b","l_re":"Recol·locació",
+"btn_go":"Recol·loca els triangles","btn_back":"Torna al principi",
+"note_int":"({0}, {1}, {2}) és una <b>terna pitagòrica</b>: els tres costats són nombres enters.",
+"note_irr":"√{0} no és enter: c és un nombre irracional.",
+"idea":"<b>Per a la classe:</b> abans de moure res, pensa quant val l'àrea del quadrat de la hipotenusa si els catets són 3 i 4. Després arrossega el control i comprova-ho.",
+"rng":"Escriu dos enters entre 1 i 12.",
+"s_cx_no":"Amb catets {0} i {1} la hipotenusa és {2}. Busca'n uns on no es complisca.",
+"m1.q":"Tria uns catets <b>enters</b> perquè la hipotenusa també siga un <b>nombre enter</b> i el quadrat de la hipotenusa tinga una <b>àrea major que 100</b>.",
+"m1_c":"c = √{0} ≈ {1}: la hipotenusa no és un nombre enter.",
+"m1_s":"La hipotenusa és {0}, però c² = {1} no passa de 100.",
+"m1_ok":"✔ Missió complida! ({0}, {1}, {2}) és una terna pitagòrica i c² = {3} &gt; 100.",
+"m1.more":"Amb catets fins a 12 només hi ha unes poques solucions. Pots trobar-les totes? Què tenen en comú?",
+"m2.q":"Busca uns catets <b>diferents</b> (a ≠ b) perquè c² valga exactament <b>50</b>.",
+"m2_eq":"Amb a = b = {0} també es fa c² = 50, però en vols uns de diferents.",
+"m2_f":"{0}² + {1}² = {2}, no 50.",
+"m2_ok":"✔ Missió complida! {0}² + {1}² = {2}, i la hipotenusa √50 ≈ 7,07 no és un enter.",
+"m2.more":"Hi ha dues maneres d'aconseguir c² = 50 amb catets enters. Quines són? Surt una terna pitagòrica en alguna?",
+"m3.q":"Troba uns catets enters perquè la hipotenusa siga <b>només un poc més llarga</b> que el catet major: que c − (catet major) siga <b>menor que 0,1</b>.",
+"m3_f":"c ≈ {0} i el catet major és {1}: la diferència és {2}, encara massa gran.",
+"m3_ok":"✔ Missió complida! c ≈ {0} i el catet major és {1}: només {2} de diferència.",
+"m3.more":"Fixa't en el catet xicotet de les solucions que has trobat. Per què calia que fos tan xicotet?",
+"m4.q":"Hi ha dos triangles rectangles diferents amb catets enters entre 1 i 12 i <b>c² = 85</b>. Troba'n un.",
+"m4_f":"{0}² + {1}² = {2}, no 85.",
+"m4_ok":"✔ Missió complida! {0}² + {1}² = {2}. La hipotenusa és √85 ≈ 9,22.",
+"m4.more":"Troba'n l'altre. Com pots estar segur que no n'hi ha un tercer?",
+"s1.q":"«La hipotenusa és sempre més llarga que cada catet.»",
+"s1.h":"Prova amb catets molt diferents, com 1 i 12.",
+"s1.e":"c² = a² + b² és més gran que a² i que b², així que c és més gran que a i que b. La hipotenusa és sempre el costat més llarg d'un triangle rectangle.",
+"s2.q":"«La hipotenusa val a + b, la suma dels catets.»",
+"s2.h":"Prova 3 i 4: quant val c i quant val a + b?",
+"s2.e":"Mai: (a + b)² = a² + 2ab + b² és sempre més gran que c² = a² + b². La hipotenusa és més curta que la suma dels catets (anar en línia recta costa menys que anar pels dos catets).",
+"s3.q":"«Si els dos catets són nombres enters, la hipotenusa també és un nombre enter.»",
+"s3.h":"Prova 3 i 4 i, després, 1 i 1.",
+"s3.e":"De vegades: (3, 4, 5) i (5, 12, 13) ho compleixen, però 1 i 1 donen √2 i 2 i 3 donen √13, que són irracionals. Només passa amb les ternes pitagòriques.",
+"s4.q":"«Si dupliquem els dos catets, el quadrat de la hipotenusa també es duplica.»",
+"s4.h":"Compara c² amb catets 3 i 4 (25) i amb catets 6 i 8.",
+"s4.e":"Mai: si els catets es multipliquen per 2, c² es multiplica per 2² = 4 (25 → 100). La hipotenusa sí que es duplica (5 → 10), però la seua àrea es quadruplica.",
+"s5.q":"«Si els dos catets són iguals, la hipotenusa és a·√2, uns 1,41 cops el catet.»",
+"s5.h":"Prova catets 1 i 1, 5 i 5 i 12 i 12.",
+"s5.e":"Sempre: c² = a² + a² = 2a², així que c = a·√2 ≈ 1,41·a. És la diagonal d'un quadrat de costat a.",
+"s6.q":"«Si els tres costats d'un triangle rectangle són enters, la hipotenusa és un nombre parell.»",
+"s6.h":"Prova 3 i 4, 5 i 12, i també 6 i 8.",
+"s6.e":"De vegades: (6, 8, 10) té la hipotenusa parella, però (3, 4, 5) i (5, 12, 13) la tenen senar.",
+"s6_no":"Amb catets {0} i {1}: c = {2}. Això no és una terna amb hipotenusa senar. Prova-ho de nou.",
+"e1.ctx":"Un triangle rectangle té catets de <b>6 i 8</b>. Quant mesura la hipotenusa?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"6 + 8 = 14, la hipotenusa mesura 14.",
+"e1.s1":"6² + 8² = 36 + 64 = 100 i √100 = 10: la hipotenusa mesura 10.",
+"e1.w0":"Marta ha sumat els <b>catets</b>, però el teorema suma els seus <b>quadrats</b>: c² = 6² + 8² = 100, i després cal fer l'arrel.",
+"e1.w1":"Perquè la hipotenusa sempre és igual al catet més llarg.",
+"e1.w2":"Perquè la hipotenusa sempre es calcula restant els catets.",
+"e1.frame":"Marta, la hipotenusa no és 14 perquè…",
+"e1.model":"Marta, el teorema no diu c = a + b, sinó c² = a² + b². Primer eleves cada catet al quadrat (36 i 64), els sumes (100) i al final fas l'arrel: √100 = 10. De fet, la hipotenusa sempre és més curta que la suma dels catets.",
+"e2.ctx":"Un triangle té costats de <b>5, 12 i 13</b>. És un triangle rectangle?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"Sí: 5² + 12² = 25 + 144 = 169 = 13².",
+"e2.s1":"No: 5 + 12 = 17, que no és 13.",
+"e2.w0":"Àlex comprova la relació de Pitàgores: el quadrat del costat llarg (169) és igual a la suma dels quadrats dels altres dos (25 + 144). Sumar els costats no serveix de res.",
+"e2.w1":"Perquè qualsevol triangle amb un costat de 13 és rectangle.",
+"e2.w2":"Perquè 5 + 12 és major que 13, i això prova que no pot ser rectangle.",
+"e2.frame":"Laia, el triangle sí és rectangle perquè…",
+"e2.model":"Laia, per saber si un triangle és rectangle cal mirar els quadrats, no les longituds. El costat més llarg és 13 i 13² = 169; els altres dos donen 5² + 12² = 25 + 144 = 169. Coincideixen, així que sí que és rectangle (és el recíproc del teorema de Pitàgores). Que 5 + 12 siga diferent de 13 no importa.",
+"e3.ctx":"En un triangle rectangle la hipotenusa mesura <b>13</b> i un catet mesura <b>5</b>. Quant mesura l'altre catet?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"13 − 5 = 8.",
+"e3.s1":"5² + 13² = 25 + 169 = 194, així que l'altre catet fa √194 ≈ 13,9.",
+"e3.w0":"La hipotenusa va a l'altra banda de la igualtat: b² = c² − a² = 169 − 25 = 144, i b = 12. Rita resta longituds i Joan suma com si 13 fora un catet.",
+"e3.w1":"Perquè l'altre catet ha de ser més llarg que la hipotenusa.",
+"e3.w2":"Perquè això només es pot saber amb una calculadora.",
+"e3.frame":"Rita i Joan, l'altre catet no és ni 8 ni 13,9 perquè…",
+"e3.model":"Rita i Joan, la hipotenusa és el costat que cal <b>aïllar</b>: c² = a² + b², així que b² = c² − a² = 169 − 25 = 144 i b = √144 = 12. Restar les longituds (13 − 5) no funciona, i sumar-hi 13² tampoc, perquè 13 no és un catet. Comprovació: 5² + 12² = 169 ✔.",
+"d1.q":"Una escala de <b>13 m</b> es recolza en una paret amb el peu a <b>5 m</b> de la paret (el terra és horitzontal i la paret, vertical). A quina altura arriba?",
+"d1.l0":"Altura",
+"d1_sum":"Has sumat 13 + 5. L'escala és la hipotenusa: el seu 13 és el costat llarg, no una suma.",
+"d1_plus":"Has fet √(5² + 13²), com si l'escala fóra un catet. L'escala és la hipotenusa: h² = 13² − 5².",
+"d1_big":"L'escala només mesura 13 m: no pot arribar més amunt que això.",
+"d1_no":"{0}² + 5² = {1}, i hauria de ser 13² = 169.",
+"d1_ok":"✔ Ben decidit! 5² + 12² = 13²: l'escala arriba a 12 m.",
+"d1.more":"I si el peu estiguera a 12 m de la paret? I si l'escala mesurara 5 m i el peu estiguera a 3 m?",
+"d2.q":"Un camp de futbol fa <b>30 m d'ample</b> i <b>40 m de llarg</b>. Un jugador va d'una cantonada a l'oposada per la diagonal, en comptes de vorejar el camp. Quant mesura la diagonal i quants metres s'estalvia?",
+"d2.l0":"Diagonal","d2.l1":"Estalvi",
+"d2_sum":"70 m és el camí vorejant el camp (30 + 40). La diagonal és la hipotenusa: c² = 30² + 40².",
+"d2_d":"Amb diagonal {0} m, {0}² = {1}, però 30² + 40² = 2.500.",
+"d2_s":"L'estalvi és la diferència entre vorejar el camp (30 + 40 = 70 m) i anar per la diagonal.",
+"d2_ok":"✔ Ben decidit! La diagonal mesura 50 m i s'estalvien 70 − 50 = 20 m. És el triangle 3-4-5 a escala 10.",
+"d2.more":"Quant s'estalviaria en un camp de 60 m × 80 m? Per quin factor es multipliquen la diagonal i l'estalvi quan es dupliquen les mesures?",
+"d3.q":"Vols guardar una canya de pescar dins d'una caixa rectangular de <b>2,4 m × 1,0 m</b> (pots posar-la en diagonal, damunt del fons). Quina és la canya <b>més llarga</b> d'aquestes que hi cap?",
+"d3.lc":"Canya:","d3.cu":"m",
+"d3_big":"Una canya de {0} m no hi cap: la diagonal de la caixa és més curta.",
+"d3_small":"Una canya de {0} m hi cap, però n'hi ha una de més llarga que també hi cap.",
+"d3_ok":"✔ Ben decidit! La diagonal és √(2,4² + 1,0²) = √6,76 = 2,6 m: la canya de 2,6 m hi cap just.",
+"d3.more":"I si volguessis guardar una canya de 3 m en una caixa de 2,4 m de llarg? Quin ample mínim necessitaries?"
+},
+es:{
+"title":"Pitágoras por áreas",
+"eyebrow":"Matemáticas · 2.º ESO · Geometría",
+"h1":"Pitágoras por áreas",
+"lede":"Cuatro triángulos iguales se recolocan dentro de un mismo cuadrado. Los espacios que quedan libres cambian de forma, pero no de área.",
+"sim_title":"Recoloca los triángulos",
+"story":"El cuadrado grande tiene lado <b>a + b</b>. Dentro caben cuatro triángulos rectángulos iguales y, según cómo los coloques, dejan libres <b>dos cuadrados</b> (de áreas <b>a²</b> y <b>b²</b>) o <b>un solo cuadrado</b> (de área <b>c²</b>). Como los triángulos ocupan el mismo sitio en ambos casos, el área libre es la misma.",
+"aria.svg":"Demostración de Pitágoras por recolocación de triángulos",
+"aria.ex":"Ejemplos",
+"l_a":"Cateto a","l_b":"Cateto b","l_re":"Recolocación",
+"btn_go":"Recoloca los triángulos","btn_back":"Vuelve al principio",
+"note_int":"({0}, {1}, {2}) es una <b>terna pitagórica</b>: los tres lados son números enteros.",
+"note_irr":"√{0} no es entero: c es un número irracional.",
+"idea":"<b>Para la clase:</b> antes de mover nada, piensa cuánto vale el área del cuadrado de la hipotenusa si los catetos son 3 y 4. Después arrastra el control y compruébalo.",
+"rng":"Escribe dos enteros entre 1 y 12.",
+"s_cx_no":"Con catetos {0} y {1} la hipotenusa es {2}. Busca unos donde no se cumpla.",
+"m1.q":"Elige unos catetos <b>enteros</b> para que la hipotenusa también sea un <b>número entero</b> y el cuadrado de la hipotenusa tenga un <b>área mayor que 100</b>.",
+"m1_c":"c = √{0} ≈ {1}: la hipotenusa no es un número entero.",
+"m1_s":"La hipotenusa es {0}, pero c² = {1} no pasa de 100.",
+"m1_ok":"✔ ¡Misión cumplida! ({0}, {1}, {2}) es una terna pitagórica y c² = {3} &gt; 100.",
+"m1.more":"Con catetos hasta 12 solo hay unas pocas soluciones. ¿Puedes encontrarlas todas? ¿Qué tienen en común?",
+"m2.q":"Busca unos catetos <b>distintos</b> (a ≠ b) para que c² valga exactamente <b>50</b>.",
+"m2_eq":"Con a = b = {0} también se consigue c² = 50, pero los quieres distintos.",
+"m2_f":"{0}² + {1}² = {2}, no 50.",
+"m2_ok":"✔ ¡Misión cumplida! {0}² + {1}² = {2}, y la hipotenusa √50 ≈ 7,07 no es un entero.",
+"m2.more":"Hay dos maneras de conseguir c² = 50 con catetos enteros. ¿Cuáles son? ¿Sale una terna pitagórica en alguna?",
+"m3.q":"Encuentra unos catetos enteros para que la hipotenusa sea <b>solo un poco más larga</b> que el cateto mayor: que c − (cateto mayor) sea <b>menor que 0,1</b>.",
+"m3_f":"c ≈ {0} y el cateto mayor es {1}: la diferencia es {2}, todavía demasiado grande.",
+"m3_ok":"✔ ¡Misión cumplida! c ≈ {0} y el cateto mayor es {1}: solo {2} de diferencia.",
+"m3.more":"Fíjate en el cateto pequeño de las soluciones que has encontrado. ¿Por qué hacía falta que fuera tan pequeño?",
+"m4.q":"Hay dos triángulos rectángulos distintos con catetos enteros entre 1 y 12 y <b>c² = 85</b>. Encuentra uno.",
+"m4_f":"{0}² + {1}² = {2}, no 85.",
+"m4_ok":"✔ ¡Misión cumplida! {0}² + {1}² = {2}. La hipotenusa es √85 ≈ 9,22.",
+"m4.more":"Encuentra el otro. ¿Cómo puedes estar seguro de que no hay un tercero?",
+"s1.q":"«La hipotenusa es siempre más larga que cada cateto.»",
+"s1.h":"Prueba con catetos muy distintos, como 1 y 12.",
+"s1.e":"c² = a² + b² es mayor que a² y que b², así que c es mayor que a y que b. La hipotenusa es siempre el lado más largo de un triángulo rectángulo.",
+"s2.q":"«La hipotenusa vale a + b, la suma de los catetos.»",
+"s2.h":"Prueba 3 y 4: ¿cuánto vale c y cuánto vale a + b?",
+"s2.e":"Nunca: (a + b)² = a² + 2ab + b² es siempre mayor que c² = a² + b². La hipotenusa es más corta que la suma de los catetos (ir en línea recta cuesta menos que ir por los dos catetos).",
+"s3.q":"«Si los dos catetos son números enteros, la hipotenusa también es un número entero.»",
+"s3.h":"Prueba 3 y 4 y, después, 1 y 1.",
+"s3.e":"A veces: (3, 4, 5) y (5, 12, 13) lo cumplen, pero 1 y 1 dan √2 y 2 y 3 dan √13, que son irracionales. Solo pasa con las ternas pitagóricas.",
+"s4.q":"«Si duplicamos los dos catetos, el cuadrado de la hipotenusa también se duplica.»",
+"s4.h":"Compara c² con catetos 3 y 4 (25) y con catetos 6 y 8.",
+"s4.e":"Nunca: si los catetos se multiplican por 2, c² se multiplica por 2² = 4 (25 → 100). La hipotenusa sí se duplica (5 → 10), pero su área se cuadruplica.",
+"s5.q":"«Si los dos catetos son iguales, la hipotenusa es a·√2, unas 1,41 veces el cateto.»",
+"s5.h":"Prueba catetos 1 y 1, 5 y 5 y 12 y 12.",
+"s5.e":"Siempre: c² = a² + a² = 2a², así que c = a·√2 ≈ 1,41·a. Es la diagonal de un cuadrado de lado a.",
+"s6.q":"«Si los tres lados de un triángulo rectángulo son enteros, la hipotenusa es un número par.»",
+"s6.h":"Prueba 3 y 4, 5 y 12, y también 6 y 8.",
+"s6.e":"A veces: (6, 8, 10) tiene la hipotenusa par, pero (3, 4, 5) y (5, 12, 13) la tienen impar.",
+"s6_no":"Con catetos {0} y {1}: c = {2}. Eso no es una terna con hipotenusa impar. Inténtalo de nuevo.",
+"e1.ctx":"Un triángulo rectángulo tiene catetos de <b>6 y 8</b>. ¿Cuánto mide la hipotenusa?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"6 + 8 = 14, la hipotenusa mide 14.",
+"e1.s1":"6² + 8² = 36 + 64 = 100 y √100 = 10: la hipotenusa mide 10.",
+"e1.w0":"Marta ha sumado los <b>catetos</b>, pero el teorema suma sus <b>cuadrados</b>: c² = 6² + 8² = 100, y luego hay que hacer la raíz.",
+"e1.w1":"Porque la hipotenusa siempre es igual al cateto más largo.",
+"e1.w2":"Porque la hipotenusa siempre se calcula restando los catetos.",
+"e1.frame":"Marta, la hipotenusa no es 14 porque…",
+"e1.model":"Marta, el teorema no dice c = a + b, sino c² = a² + b². Primero elevas cada cateto al cuadrado (36 y 64), los sumas (100) y al final haces la raíz: √100 = 10. De hecho, la hipotenusa siempre es más corta que la suma de los catetos.",
+"e2.ctx":"Un triángulo tiene lados de <b>5, 12 y 13</b>. ¿Es un triángulo rectángulo?",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"Sí: 5² + 12² = 25 + 144 = 169 = 13².",
+"e2.s1":"No: 5 + 12 = 17, que no es 13.",
+"e2.w0":"Álex comprueba la relación de Pitágoras: el cuadrado del lado largo (169) es igual a la suma de los cuadrados de los otros dos (25 + 144). Sumar los lados no sirve de nada.",
+"e2.w1":"Porque cualquier triángulo con un lado de 13 es rectángulo.",
+"e2.w2":"Porque 5 + 12 es mayor que 13, y eso prueba que no puede ser rectángulo.",
+"e2.frame":"Laia, el triángulo sí es rectángulo porque…",
+"e2.model":"Laia, para saber si un triángulo es rectángulo hay que mirar los cuadrados, no las longitudes. El lado más largo es 13 y 13² = 169; los otros dos dan 5² + 12² = 25 + 144 = 169. Coinciden, así que sí es rectángulo (es el recíproco del teorema de Pitágoras). Que 5 + 12 sea distinto de 13 no importa.",
+"e3.ctx":"En un triángulo rectángulo la hipotenusa mide <b>13</b> y un cateto mide <b>5</b>. ¿Cuánto mide el otro cateto?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"13 − 5 = 8.",
+"e3.s1":"5² + 13² = 25 + 169 = 194, así que el otro cateto mide √194 ≈ 13,9.",
+"e3.w0":"La hipotenusa va al otro lado de la igualdad: b² = c² − a² = 169 − 25 = 144, y b = 12. Rita resta longitudes y Joan suma como si 13 fuera un cateto.",
+"e3.w1":"Porque el otro cateto tiene que ser más largo que la hipotenusa.",
+"e3.w2":"Porque eso solo se puede saber con una calculadora.",
+"e3.frame":"Rita y Joan, el otro cateto no es ni 8 ni 13,9 porque…",
+"e3.model":"Rita y Joan, la hipotenusa es el lado que hay que <b>despejar</b>: c² = a² + b², así que b² = c² − a² = 169 − 25 = 144 y b = √144 = 12. Restar las longitudes (13 − 5) no funciona, y sumarle 13² tampoco, porque 13 no es un cateto. Comprobación: 5² + 12² = 169 ✔.",
+"d1.q":"Una escalera de <b>13 m</b> se apoya en una pared con el pie a <b>5 m</b> de la pared (el suelo es horizontal y la pared, vertical). ¿A qué altura llega?",
+"d1.l0":"Altura",
+"d1_sum":"Has sumado 13 + 5. La escalera es la hipotenusa: su 13 es el lado largo, no una suma.",
+"d1_plus":"Has hecho √(5² + 13²), como si la escalera fuera un cateto. La escalera es la hipotenusa: h² = 13² − 5².",
+"d1_big":"La escalera solo mide 13 m: no puede llegar más arriba que eso.",
+"d1_no":"{0}² + 5² = {1}, y debería ser 13² = 169.",
+"d1_ok":"✔ ¡Bien decidido! 5² + 12² = 13²: la escalera llega a 12 m.",
+"d1.more":"¿Y si el pie estuviera a 12 m de la pared? ¿Y si la escalera midiera 5 m y el pie estuviera a 3 m?",
+"d2.q":"Un campo de fútbol mide <b>30 m de ancho</b> y <b>40 m de largo</b>. Un jugador va de una esquina a la opuesta por la diagonal, en vez de bordear el campo. ¿Cuánto mide la diagonal y cuántos metros se ahorra?",
+"d2.l0":"Diagonal","d2.l1":"Ahorro",
+"d2_sum":"70 m es el camino bordeando el campo (30 + 40). La diagonal es la hipotenusa: c² = 30² + 40².",
+"d2_d":"Con diagonal {0} m, {0}² = {1}, pero 30² + 40² = 2.500.",
+"d2_s":"El ahorro es la diferencia entre bordear el campo (30 + 40 = 70 m) e ir por la diagonal.",
+"d2_ok":"✔ ¡Bien decidido! La diagonal mide 50 m y se ahorran 70 − 50 = 20 m. Es el triángulo 3-4-5 a escala 10.",
+"d2.more":"¿Cuánto se ahorraría en un campo de 60 m × 80 m? ¿Por qué factor se multiplican la diagonal y el ahorro cuando se duplican las medidas?",
+"d3.q":"Quieres guardar una caña de pescar dentro de una caja rectangular de <b>2,4 m × 1,0 m</b> (puedes ponerla en diagonal, sobre el fondo). ¿Cuál es la caña <b>más larga</b> de estas que cabe?",
+"d3.lc":"Caña:","d3.cu":"m",
+"d3_big":"Una caña de {0} m no cabe: la diagonal de la caja es más corta.",
+"d3_small":"Una caña de {0} m cabe, pero hay una más larga que también cabe.",
+"d3_ok":"✔ ¡Bien decidido! La diagonal es √(2,4² + 1,0²) = √6,76 = 2,6 m: la caña de 2,6 m cabe justa.",
+"d3.more":"¿Y si quisieras guardar una caña de 3 m en una caja de 2,4 m de largo? ¿Qué ancho mínimo necesitarías?"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Pitàgores per àrees ===== */
+const svg=$('#svg'),out=$('#out'),go=$('#go');
+let a=3,b=4,u=0,raf=0;
+const isInt=x=>Math.abs(x-Math.round(x))<1e-9;
+const sa=slider($('#ctl'),{id:'sa',key:'l_a',min:1,max:12,step:1,val:3,on:v=>{a=v;draw();}});
+const sb=slider($('#ctl'),{id:'sb',key:'l_b',min:1,max:12,step:1,val:4,on:v=>{b=v;draw();}});
+const su=slider($('#ctl2'),{id:'su',key:'l_re',min:0,max:1000,step:1,val:0,fmtv:v=>Math.round(v/10)+' %',on:v=>{cancelAnimationFrame(raf);u=v/1000;draw();}});
+$('#ctl2').prepend(su.el);
+[[3,4],[5,12],[6,8],[1,1]].forEach(([x,y])=>{
+  const c=Math.sqrt(x*x+y*y),bt=document.createElement('button');
+  bt.type='button';bt.className='chip';bt.textContent=x+' · '+y+' · '+(isInt(c)?c:'√'+(x*x+y*y));
+  bt.onclick=()=>setAB(x,y);$('#exs').appendChild(bt);
+});
+function setAB(x,y){a=clamp(Math.round(x),1,12);b=clamp(Math.round(y),1,12);sa.set(a);sb.set(b);draw();}
+function draw(){
+  const S=a+b,k=300/S,o=20,c2=a*a+b*b;
+  const P=(x,y)=>(o+x*k).toFixed(1)+','+(o+y*k).toFixed(1);
+  const poly=(pts,dx,dy)=>pts.map(p=>P(p[0]+(dx||0),p[1]+(dy||0))).join(' ');
+  const tri=(pts,dx,dy)=>'<polygon points="'+poly(pts,dx,dy)+'" class="tri"/>';
+  const txt=(x,y,str,op,size)=>'<text x="'+(o+x*k).toFixed(1)+'" y="'+(o+y*k).toFixed(1)+'" class="lab" text-anchor="middle" dominant-baseline="central" style="opacity:'+op.toFixed(2)+';font-size:'+size+'px">'+str+'</text>';
+  let s='';
+  s+='<polygon points="'+poly([[0,0],[S,0],[S,S],[0,S]])+'" class="frame"/>';
+  s+='<polygon points="'+poly([[0,0],[a,0],[a,a],[0,a]])+'" class="sqa" style="opacity:'+(1-u).toFixed(3)+'"/>';
+  s+='<polygon points="'+poly([[a,a],[S,a],[S,S],[a,S]])+'" class="sqb" style="opacity:'+(1-u).toFixed(3)+'"/>';
+  s+='<polygon points="'+poly([[a,0],[S,a],[b,S],[0,b]])+'" class="sqc" style="opacity:'+u.toFixed(3)+'"/>';
+  s+=tri([[a,0],[S,0],[S,a]],0,0);
+  s+=tri([[a,0],[a,a],[S,a]],-a*u,b*u);
+  s+=tri([[0,a],[a,a],[0,S]],0,-a*u);
+  s+=tri([[a,S],[0,S],[a,a]],b*u,0);
+  if(a*k>=26)s+=txt(a/2,a/2,a*k>=78?'a² = '+a*a:String(a*a),1-u,Math.min(18,a*k*0.22+6));
+  if(b*k>=26)s+=txt(a+b/2,a+b/2,b*k>=78?'b² = '+b*b:String(b*b),1-u,Math.min(18,b*k*0.22+6));
+  s+=txt(S/2,S/2,'c² = '+c2,Math.max(0,(u-0.55)/0.45),20);
+  const ex=(px,py,str)=>'<text x="'+px.toFixed(1)+'" y="'+py.toFixed(1)+'" class="edge" text-anchor="middle" dominant-baseline="central">'+str+'</text>';
+  s+=ex(o+a/2*k,11,'a')+ex(o+(a+b/2)*k,11,'b')+ex(9,o+a/2*k,'a')+ex(9,o+(a+b/2)*k,'b');
+  svg.innerHTML=s;
+  const c=Math.sqrt(c2),int=isInt(c);
+  out.innerHTML=
+    '<div><span class="ta">a²</span> + <span class="tb">b²</span> = <span class="tc">c²</span></div>'+
+    '<div><span class="ta">'+a*a+'</span> + <span class="tb">'+b*b+'</span> = <span class="tc">'+c2+'</span></div>'+
+    '<div class="big">c = √'+c2+' '+(int?'= '+c:'≈ '+nf(c,3))+'</div>'+
+    '<p class="note">'+(int?tt('note_int',a,b,c):tt('note_irr',c2))+'</p>';
+  go.textContent=t(u>=0.999?'btn_back':'btn_go');
+}
+function play(){
+  cancelAnimationFrame(raf);
+  const from=u,to=u>=0.999?0:1;
+  if(REDUCE){u=to;su.set(Math.round(u*1000));draw();return;}
+  const dur=2800*Math.max(0.25,Math.abs(to-from)),t0=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-t0)/dur),e=p*p*(3-2*p);
+    u=from+(to-from)*e;su.set(Math.round(u*1000));draw();
+    if(p<1)raf=requestAnimationFrame(step);
+  }
+  raf=requestAnimationFrame(step);
+}
+go.onclick=play;
+App.hooks.push(draw);
+/* ===== Raona-ho ===== */
+const inR=x=>Number.isInteger(x)&&x>=1&&x<=12;
+const ck=f=>([x,y])=>(inR(x)&&inR(y))?f(x,y):{k:'rng'};
+const hyp=(x,y)=>Math.sqrt(x*x+y*y);
+const load=(x,y)=>{cancelAnimationFrame(raf);u=1;su.set(1000);setAB(x,y);RZ.show($('#svg'));};
+RZ.init({
+ F:{a:{l:'l_a'},b:{l:'l_b'}},
+ sim:([x,y])=>load(x,y),
+ M:[
+  {id:'m1',f:['a','b'],ok:([x,y])=>({k:'m1_ok',p:[x,y,hyp(x,y),x*x+y*y]}),
+   chk:ck((x,y)=>!isInt(hyp(x,y))?{k:'m1_c',p:()=>[x*x+y*y,nf(hyp(x,y),2)]}:x*x+y*y<=100?{k:'m1_s',p:[hyp(x,y),x*x+y*y]}:null)},
+  {id:'m2',f:['a','b'],ok:([x,y])=>({k:'m2_ok',p:[x,y,x*x+y*y]}),
+   chk:ck((x,y)=>x*x+y*y!==50?{k:'m2_f',p:[x,y,x*x+y*y]}:x===y?{k:'m2_eq',p:[x]}:null)},
+  {id:'m3',f:['a','b'],ok:([x,y])=>({k:'m3_ok',p:()=>[nf(hyp(x,y),3),Math.max(x,y),nf(hyp(x,y)-Math.max(x,y),3)]}),
+   chk:ck((x,y)=>hyp(x,y)-Math.max(x,y)>=0.1?{k:'m3_f',p:()=>[nf(hyp(x,y),3),Math.max(x,y),nf(hyp(x,y)-Math.max(x,y),3)]}:null)},
+  {id:'m4',f:['a','b'],ok:([x,y])=>({k:'m4_ok',p:[x,y,x*x+y*y]}),
+   chk:ck((x,y)=>x*x+y*y!==85?{k:'m4_f',p:[x,y,x*x+y*y]}:null)}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load(1,12)},
+  {id:'s2',ans:'M',sim:()=>load(3,4)},
+  {id:'s3',ans:'D',f:['a','b'],cx:ck((x,y)=>isInt(hyp(x,y))?{k:'s_cx_no',p:()=>[x,y,nf(hyp(x,y),2)]}:null)},
+  {id:'s4',ans:'M',sim:()=>load(3,4)},
+  {id:'s5',ans:'S',sim:()=>load(5,5)},
+  {id:'s6',ans:'D',f:['a','b'],cx:ck((x,y)=>(isInt(hyp(x,y))&&Math.round(hyp(x,y))%2===1)?null:{k:'s6_no',p:()=>[x,y,nf(hyp(x,y),2)]})}
+ ],
+ E:[{id:'e1',who:1,args:[6,8]},{id:'e2',who:0,args:[5,12]},{id:'e3',who:3,args:[5,12]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'m'}],sim:()=>load(5,12),ok:()=>({k:'d1_ok'}),
+   chk:([h])=>h===12?null:h===18?{k:'d1_sum'}:Math.abs(h-Math.sqrt(194))<0.1?{k:'d1_plus'}:h>13?{k:'d1_big'}:{k:'d1_no',p:()=>[nf(h,2),nf(h*h+25,2)]}},
+  {id:'d2',f:[{l:'d2.l0',u:'m'},{l:'d2.l1',u:'m'}],sim:()=>load(3,4),ok:()=>({k:'d2_ok'}),
+   chk:([d,s])=>d!==50?(d===70?{k:'d2_sum'}:{k:'d2_d',p:()=>[nf(d,2),nf(d*d,0)]}):s!==20?{k:'d2_s'}:null},
+  {id:'d3',chips:{vals:[2.4,2.5,2.6,2.7],u:'d3.cu'},sim:()=>load(12,5),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p===2.6?null:p>2.6?{k:'d3_big',p:()=>[nf(p,1)]}:{k:'d3_small',p:()=>[nf(p,1)]}}
+ ]
+});
+initQuiz([]);
+setAB(3,4);
+initLang();applyLang();
+</script>
+</body>
+</html>

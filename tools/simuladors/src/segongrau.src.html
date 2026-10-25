@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Equacions de segon grau · Situacions i solucions</title>
+<meta name="description" content="Equacions de segon grau amb situacions reals (tir a cistella, salts d'animals, coets de falla, un pati...): discriminant, solucions, gràfica de la paràbola i resolució pas a pas. Amb mode lliure i activitats per a raonar.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+:root{--c1:#3a78d6;--c2:#e0523f;--c3:#2fa36b;--scd:#2a8a57;--sci:#c98a14;--si:#b23a3a;--math:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",Georgia,serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c1:#6ea2f0;--c2:#f0775f;--c3:#43c088;--scd:#43c088;--sci:#e0a93a;--si:#ee7a72}}
+.blk{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.blk:first-child{border-top:0;padding-top:0}
+.blk h3{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.scns{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.2rem,1fr));gap:.45rem}
+.scnb{font:inherit;display:flex;flex-direction:column;align-items:flex-start;gap:.05rem;text-align:left;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:.4rem .6rem;cursor:pointer}
+.scnb .ic{font-size:1.3rem;line-height:1.1}
+.scnb .nm{font-size:.84rem;font-weight:650}
+.scnb .tg{font-size:.7rem;color:var(--muted)}
+.scnb.on{border-color:var(--c1);box-shadow:0 0 0 2px var(--c1) inset;background:var(--panel)}
+.story{margin:.1rem 0 .3rem;font-size:15px}
+.sl{margin:.45rem 0}
+.sl label{display:block;font-size:.88rem;margin-bottom:.1rem}
+.sl input[type=range]{width:100%}
+.frow{display:grid;grid-template-columns:1.4rem 4.6rem 1fr;gap:.5rem;align-items:center;margin:.35rem 0}
+.frow label{font-family:var(--math);font-style:italic;font-size:1.15rem}
+.frow input[type=number]{font:inherit;width:100%;padding:.25rem .4rem;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.presets{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
+.presets .btn{font-size:.78rem;padding:.25rem .5rem;font-family:var(--math)}
+.bigEq{font-family:var(--math);font-size:1.6rem;text-align:center;padding:.3rem 0 .2rem}
+.bigEq small{display:block;font-family:system-ui,sans-serif;font-size:.74rem;color:var(--muted)}
+.deltaRow{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
+.dchip{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.2rem .65rem;color:var(--muted)}
+.dchip.on{color:#fff;font-weight:650;border-color:transparent}
+.dchip.on.scd{background:var(--scd)}.dchip.on.sci{background:var(--sci)}.dchip.on.si{background:var(--si)}
+.dval{text-align:center;font-family:var(--math);font-size:1.05rem;margin-top:.4rem}
+.stepctl{display:flex;align-items:center;gap:.7rem;margin-bottom:.4rem;font-size:.85rem;flex-wrap:wrap}
+.stp{border-top:1px solid var(--line);padding:.6rem 0}
+.stp:first-of-type{border-top:0;padding-top:0}
+.sh{display:flex;gap:.5rem;align-items:center;font-weight:650;margin-bottom:.25rem}
+.sn{display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:50%;background:var(--c1);color:#fff;font-size:.78rem}
+.sb p{margin:.3rem 0}
+.sb ul{margin:.3rem 0;padding-left:1.1rem}
+.sb li{margin:.25rem 0}
+.sb li.ok::marker{color:var(--scd)}.sb li.no::marker{color:var(--si)}
+.m{font-family:var(--math);font-size:1.1em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.15;margin:0 .15em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.rad{border-top:1.5px solid currentColor;padding:0 .12em}
+.tag{display:inline-block;font-size:.72rem;border-radius:6px;padding:.05rem .4rem;color:#fff;margin-right:.3rem}
+.tag.ok{background:var(--scd)}.tag.no{background:var(--si)}
+#right{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+#right:fullscreen{background:var(--bg);padding:1rem}
+.tbar{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.tbar input[type=range]{flex:1 1 8rem;min-width:6rem}
+.tbar select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radius:8px;padding:.28rem .4rem;background:var(--panel);color:var(--ink)}
+.tlabel{font-family:var(--math);font-size:1rem;min-width:11rem}
+.stg{position:relative;height:300px;background:var(--stage);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#stageG{height:340px}
+.stg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#right.freemode #stageS{display:none}
+#right.freemode #scrub,#right.freemode #tLabel,#right.freemode #viewBtn{display:none}
+#right:fullscreen .stg{flex:1 1 0;height:auto;min-height:180px}
+#right:fullscreen #stageG{flex:1.25 1 0}
+@media (max-width:820px){.tlabel{min-width:0;width:100%}}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv" id="right">
+<div class="stg" id="stageS"><canvas id="cvS"></canvas></div>
+<div class="tbar" id="bar">
+<button class="btn primary" id="playBtn" type="button"></button>
+<input type="range" id="scrub" min="0" max="1000" value="0" data-i18n-aria="aria.time" aria-label="">
+<span id="tLabel" class="tlabel"></span>
+<select id="spd" data-i18n-aria="aria.speed" aria-label="">
+<option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option>
+</select>
+<button class="btn" id="viewBtn" type="button"></button>
+<button class="btn" id="fullBtn" type="button"></button>
+</div>
+<div class="stg" id="stageG"><canvas id="cvG"></canvas></div>
+</div>
+<div class="side">
+<div class="blk"><h3 data-i18n="h_sit"></h3><div id="chips" class="scns"></div></div>
+<div class="blk">
+<h3 id="storyH"></h3>
+<p id="story" class="story"></p>
+<p id="phys" class="note"></p>
+<div id="controls"></div>
+<p id="hint" class="note"></p>
+</div>
+<div class="blk">
+<h3 data-i18n="h_eq"></h3>
+<div id="bigEq" class="bigEq"></div>
+<div id="deltaRow" class="deltaRow"></div>
+<div id="dval" class="dval"></div>
+</div>
+<div class="blk">
+<h3 data-i18n="h_steps"></h3>
+<div class="stepctl">
+<label><input type="checkbox" id="stepMode"> <span data-i18n="stepmode"></span></label>
+<button class="btn" id="nextStep" type="button"></button>
+</div>
+<div id="steps"></div>
+</div>
+<p class="note" data-i18n="foot"></p>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+"ca": {
+"title": "Equacions de segon grau · Situacions i solucions",
+"eyebrow": "Matemàtiques · 3r i 4t ESO · Àlgebra",
+"h1": "Equacions de segon grau",
+"lede": "Situacions, solucions i gràfica: el discriminant decideix quantes solucions té.",
+"sim_title": "Situacions, solucions i gràfica",
+"h_sit": "Situacions",
+"h_eq": "Equació",
+"h_steps": "Resolució pas a pas",
+"stepmode": "Revelar pas a pas",
+"foot": "Prenem g = 10 m/s² i menyspreem la resistència de l'aire.",
+"aria.time": "temps",
+"aria.speed": "velocitat",
+"idea": "<b>Per a la classe:</b> abans de moure res, demana quantes vegades creuarà la pilota l'altura de l'anella. Després mou els lliscadors: veuràs passar de 2 solucions a 1 i a cap just quan el punt més alt arriba a l'anella.",
+"rng": "Escriu un nombre enter.",
+"f_c": "c =",
+"f_n": "Nombre",
+"f_b": "b =",
+"f_a": "a =",
+"f_t": "t (s) =",
+"m1.q": "Escriu un valor de <b>c</b> perquè <b>x² − 4x + c = 0</b> tinga exactament <b>una solució</b> (doble).",
+"m1_f": "Amb c = {0}, Δ = 16 − 4·{0} = {1}: {2}",
+"m1_two": "hi ha dues solucions.",
+"m1_none": "no hi ha cap solució.",
+"m1_ok": "✔ Missió complida! Δ = 16 − 4·4 = 0: la paràbola només toca l'eix X en x = 2.",
+"m1.more": "I per a x² − 6x + c = 0? Troba una fórmula per a c en funció de b.",
+"m2.q": "El dofí surt de l'aigua i vol tocar una pilota penjada a <b>5 m</b>. Escriu la <b>velocitat inicial mínima</b> (m/s, nombre enter) que li ho permet.",
+"m2_f": "Amb {0} m/s l'altura màxima és {0}²/20 = {1} m: no arriba a 5 m.",
+"m2_more": "Amb {0} m/s sí que arriba, però n'hi ha una de menor que també funciona.",
+"m2_ok": "✔ Missió complida! Amb 10 m/s Δ = 0: l'altura màxima és exactament 5 m i només la toca.",
+"m2.more": "I si la pilota estiguera a 8 m? Quina velocitat mínima cal i per què deixa de ser un nombre enter?",
+"m3.q": "Escriu un valor <b>positiu</b> de <b>b</b> perquè <b>x² + bx + 9 = 0</b> tinga una sola solució.",
+"m3_neg": "b = −6 també ho compleix, però es demanava positiu.",
+"m3_f": "Amb b = {0}, Δ = {0}² − 36 = {1}: no val 0.",
+"m3_ok": "✔ Missió complida! Δ = 6² − 36 = 0. Fixa't que x² + 6x + 9 = (x + 3)².",
+"m3.more": "Per què hi ha dos valors de b? Què té a veure amb el quadrat perfecte?",
+"m4.q": "Amb una reixa de <b>40 m</b> de perímetre, quina és l'<b>àrea màxima</b> (m², nombre enter) d'un pati rectangular?",
+"m4_less": "Amb {0} m² encara es pot fer i hi ha dues solucions (rectangles diferents), però no és el màxim.",
+"m4_more": "Amb {0} m² no existeix cap rectangle: el màxim és menor.",
+"m4_ok": "✔ Missió complida! El màxim és el quadrat de 10 m × 10 m: 100 m², amb Δ = 0.",
+"m4.more": "I si el perímetre fóra 60 m? I si fóra P? Troba una fórmula per a l'àrea màxima.",
+"s1.q": "«Si Δ < 0, l'equació no té solucions reals.»",
+"s1.h": "Mira què passa amb la paràbola quan puja per damunt de l'eix X.",
+"s1.e": "Sempre: Δ < 0 vol dir que la paràbola no talla l'eix X, i les solucions de l'equació són els punts on el talla.",
+"s2.q": "«L'equació ax² + c = 0 (amb b = 0) sempre té dues solucions reals.»",
+"s2.h": "Prova amb a i c del mateix signe.",
+"s2.e": "De vegades: x² − 4 = 0 en té dues, però x² + 4 = 0 no en té cap. Depén del signe de a i c.",
+"s2_cx_no": "{0}x² + ({1}) = 0 sí que té dues solucions (a i c tenen signes oposats). Busca'n un amb el mateix signe.",
+"s3.q": "«Una equació de segon grau pot tindre tres solucions.»",
+"s3.h": "Compta quantes vegades pot tallar una paràbola l'eix X.",
+"s3.e": "Mai: una paràbola talla l'eix X com a molt dues vegades.",
+"s4.q": "«Si a ≠ 0 i Δ = 0, l'equació té exactament una solució.»",
+"s4.h": "Mira el vèrtex de la paràbola.",
+"s4.e": "Sempre: la paràbola només toca l'eix X en el vèrtex, x = −b/(2a): una solució doble.",
+"s5.q": "«Si a, b i c són enters i Δ > 0, les dues solucions són nombres enters.»",
+"s5.h": "Prova amb 2x² − 3x − 2 = 0.",
+"s5.e": "De vegades: x² − 5x + 6 = 0 té 2 i 3 (enters), però 2x² − 3x − 2 = 0 té 2 i −1/2.",
+"s5_cx_no": "{0}x² + ({1})x + ({2}) = 0 no és un contraexemple: Δ = {3} i les solucions són enteres o Δ no és positiu.",
+"s6.q": "«Si a = 0, la fórmula general dóna dues solucions.»",
+"s6.h": "Pensa què deixa de ser ax² + bx + c quan a = 0.",
+"s6.e": "Mai: si a = 0 l'equació és de primer grau (bx + c = 0), amb una sola solució, i la fórmula divideix per 2a = 0.",
+"e1.ctx": "Resol <b>x² − 5x + 6 = 0</b>.",
+"e1.n0": "Marta",
+"e1.n1": "Pau",
+"e1.s0": "Δ = 25 − 6 = 19, així que x = (5 ± √19)/2.",
+"e1.s1": "Δ = 25 − 24 = 1, així que x = (5 ± 1)/2: x = 3 o x = 2.",
+"e1.w0": "Pau té raó. Δ = b² − 4ac = 25 − 4·1·6 = 1. Marta ha oblidat multiplicar per 4a: 25 − 6 no és el discriminant.",
+"e1.w1": "Perquè Δ ha de ser sempre un nombre positiu.",
+"e1.w2": "Perquè a x² − 5x + 6 = 0 no es pot aplicar la fórmula.",
+"e1.frame": "Marta, Δ no és 19 perquè…",
+"e1.model": "Marta, el discriminant és Δ = b² − 4ac, i has fet b² − c. Cal multiplicar ac per 4: Δ = 25 − 24 = 1. Així x = (5 ± 1)/2, és a dir 3 i 2. Comprovem: 3² − 15 + 6 = 0.",
+"e2.ctx": "Resol <b>x² − 4 = 0</b>.",
+"e2.n0": "Rita",
+"e2.n1": "Joan",
+"e2.s0": "x = 2 i x = −2.",
+"e2.s1": "x = 2, perquè 2² = 4.",
+"e2.w0": "Rita té raó: x² = 4 té dues solucions, 2 i −2, perquè (−2)² = 4 també. Joan s'ha quedat amb l'arrel positiva.",
+"e2.w1": "Perquè x² = 4 només té solució positiva.",
+"e2.w2": "Perquè x² − 4 = 0 no té solució.",
+"e2.frame": "Joan, x = 2 no és l'única solució perquè…",
+"e2.model": "Joan, x² = 4 es compleix per 2 i per −2, perquè (−2)² = 4. La paràbola y = x² − 4 talla l'eix X en dos punts: x = −2 i x = 2.",
+"e3.ctx": "Resol <b>x² − 6x + 9 = 0</b>.",
+"e3.n0": "Àlex",
+"e3.n1": "Laia",
+"e3.s0": "Δ = 36 − 36 = 0: solució doble, x = 3.",
+"e3.s1": "x² − 6x + 9 = (x − 3)² = 0, així que x = 3.",
+"e3.w0": "Totes dues arriben a x = 3 pel seu camí: Δ = 0 equival a ser un quadrat perfecte, (x − 3)².",
+"e3.w1": "Perquè només una de les dues manera és vàlida.",
+"e3.w2": "Perquè x = 3 no compleix l'equació.",
+"e3.frame": "Àlex i Laia, les dues teniu raó perquè…",
+"e3.model": "Àlex i Laia, 9 − 18 + 9 = 0, així que x = 3. Que Δ = 0 i que el trinomi siga un quadrat perfecte és la mateixa cosa: la paràbola només toca l'eix X en el vèrtex.",
+"e4.ctx": "Resol <b>x² + 2x + 5 = 0</b>.",
+"e4.n0": "Carla",
+"e4.n1": "Dani",
+"e4.s0": "x = (−2 ± 4)/2: x = 1 o x = −3.",
+"e4.s1": "x = −1, que és la solució doble.",
+"e4.w0": "Cap: Δ = 4 − 20 = −16 < 0, així que no té solucions reals. Carla ha tret √16 de Δ = −16 i Dani ha confós el vèrtex amb una solució.",
+"e4.w1": "Perquè la solució és x = 5.",
+"e4.w2": "Perquè només cal canviar el signe de b.",
+"e4.frame": "Carla i Dani, l'equació no té solució real perquè…",
+"e4.model": "Carla i Dani, Δ = 2² − 4·1·5 = −16 és negatiu: no hi ha arrel quadrada real. La paràbola y = x² + 2x + 5 té el vèrtex en (−1, 4), per damunt de l'eix X, i no el talla. x = −1 és el vèrtex, no una solució.",
+"d1.q": "El dofí surt de l'aigua a <b>10 m/s</b> i l'entrenador penja la pilota a <b>6 m</b>. Pot tocar-la?",
+"d1.lc": "Pot tocar-la?",
+"yes": "Sí",
+"no": "No",
+"d1_no": "Amb 10 m/s l'altura màxima és 10²/20 = 5 m. Per a arribar a 6 m caldria més velocitat.",
+"d1_ok": "✔ Ben decidit! L'altura màxima és 5 m < 6 m, i Δ = 100 − 120 = −20 < 0: cap solució.",
+"d1.more": "Quina és la velocitat mínima perquè la toque? Dóna't un valor decimal.",
+"d2.q": "Es vol tancar un pati rectangular amb <b>40 m</b> de reixa i <b>96 m²</b>. Quant mesura el <b>costat menor</b>?",
+"d2.l0": "Costat menor (m)",
+"d2_big": "{0} m és el costat major; pregunta pel menor.",
+"d2_f": "{0} · (20 − {0}) = {1}, no 96.",
+"d2_ok": "✔ Ben decidit! x² − 20x + 96 = 0 → x = 8 o x = 12: el menor és 8 m.",
+"d2.more": "Per què el pati de 8 × 12 i el de 12 × 8 són el mateix pati?",
+"d3.q": "Un jugador llança la pilota des de 2 m amb 6 m/s i l'anella és a 3 m. A quin instant (s) passa per l'anella <b>pujant</b>?",
+"d3.l0": "t (s)",
+"d3_down": "A t = 1 s la pilota passa per l'anella, però baixant.",
+"d3_f": "A t = {0} s l'altura no és 3 m.",
+"d3_ok": "✔ Ben decidit! 5t² − 6t + 1 = 0 → t = 0,2 s (pujant) i t = 1 s (baixant).",
+"d3.more": "Quina és l'altura màxima? Comprova que l'anella és per davall."
+},
+"es": {
+"title": "Ecuaciones de segundo grado · Situaciones y soluciones",
+"eyebrow": "Matemáticas · 3.º y 4.º ESO · Álgebra",
+"h1": "Ecuaciones de segundo grado",
+"lede": "Situaciones, soluciones y gráfica: el discriminante decide cuántas soluciones tiene.",
+"sim_title": "Situaciones, soluciones y gráfica",
+"h_sit": "Situaciones",
+"h_eq": "Ecuación",
+"h_steps": "Resolución paso a paso",
+"stepmode": "Revelar paso a paso",
+"foot": "Tomamos g = 10 m/s² y despreciamos la resistencia del aire.",
+"aria.time": "tiempo",
+"aria.speed": "velocidad",
+"idea": "<b>Para la clase:</b> antes de mover nada, pregunta cuántas veces cruzará el balón la altura del aro. Después mueve los deslizadores: verás pasar de 2 soluciones a 1 y a ninguna justo cuando el punto más alto llega al aro.",
+"rng": "Escribe un número entero.",
+"f_c": "c =",
+"f_n": "Número",
+"f_b": "b =",
+"f_a": "a =",
+"f_t": "t (s) =",
+"m1.q": "Escribe un valor de <b>c</b> para que <b>x² − 4x + c = 0</b> tenga exactamente <b>una solución</b> (doble).",
+"m1_f": "Con c = {0}, Δ = 16 − 4·{0} = {1}: {2}",
+"m1_two": "hay dos soluciones.",
+"m1_none": "no hay ninguna solución.",
+"m1_ok": "✔ ¡Misión cumplida! Δ = 16 − 4·4 = 0: la parábola solo toca el eje X en x = 2.",
+"m1.more": "¿Y para x² − 6x + c = 0? Encuentra una fórmula para c en función de b.",
+"m2.q": "El delfín sale del agua y quiere tocar una pelota colgada a <b>5 m</b>. Escribe la <b>velocidad inicial mínima</b> (m/s, número entero) que se lo permite.",
+"m2_f": "Con {0} m/s la altura máxima es {0}²/20 = {1} m: no llega a 5 m.",
+"m2_more": "Con {0} m/s sí llega, pero hay una menor que también funciona.",
+"m2_ok": "✔ ¡Misión cumplida! Con 10 m/s Δ = 0: la altura máxima es exactamente 5 m y solo la toca.",
+"m2.more": "¿Y si la pelota estuviera a 8 m? ¿Qué velocidad mínima hace falta y por qué deja de ser un número entero?",
+"m3.q": "Escribe un valor <b>positivo</b> de <b>b</b> para que <b>x² + bx + 9 = 0</b> tenga una sola solución.",
+"m3_neg": "b = −6 también lo cumple, pero se pedía positivo.",
+"m3_f": "Con b = {0}, Δ = {0}² − 36 = {1}: no vale 0.",
+"m3_ok": "✔ ¡Misión cumplida! Δ = 6² − 36 = 0. Fíjate en que x² + 6x + 9 = (x + 3)².",
+"m3.more": "¿Por qué hay dos valores de b? ¿Qué tiene que ver con el cuadrado perfecto?",
+"m4.q": "Con una valla de <b>40 m</b> de perímetro, ¿cuál es el <b>área máxima</b> (m², número entero) de un patio rectangular?",
+"m4_less": "Con {0} m² todavía se puede hacer y hay dos soluciones (rectángulos distintos), pero no es el máximo.",
+"m4_more": "Con {0} m² no existe ningún rectángulo: el máximo es menor.",
+"m4_ok": "✔ ¡Misión cumplida! El máximo es el cuadrado de 10 m × 10 m: 100 m², con Δ = 0.",
+"m4.more": "¿Y si el perímetro fuera 60 m? ¿Y si fuera P? Encuentra una fórmula para el área máxima.",
+"s1.q": "«Si Δ < 0, la ecuación no tiene soluciones reales.»",
+"s1.h": "Mira qué pasa con la parábola cuando sube por encima del eje X.",
+"s1.e": "Siempre: Δ < 0 significa que la parábola no corta el eje X, y las soluciones de la ecuación son los puntos donde lo corta.",
+"s2.q": "«La ecuación ax² + c = 0 (con b = 0) siempre tiene dos soluciones reales.»",
+"s2.h": "Prueba con a y c del mismo signo.",
+"s2.e": "A veces: x² − 4 = 0 tiene dos, pero x² + 4 = 0 no tiene ninguna. Depende del signo de a y c.",
+"s2_cx_no": "{0}x² + ({1}) = 0 sí tiene dos soluciones (a y c tienen signos opuestos). Busca uno con el mismo signo.",
+"s3.q": "«Una ecuación de segundo grado puede tener tres soluciones.»",
+"s3.h": "Cuenta cuántas veces puede cortar una parábola el eje X.",
+"s3.e": "Nunca: una parábola corta el eje X como mucho dos veces.",
+"s4.q": "«Si a ≠ 0 y Δ = 0, la ecuación tiene exactamente una solución.»",
+"s4.h": "Mira el vértice de la parábola.",
+"s4.e": "Siempre: la parábola solo toca el eje X en el vértice, x = −b/(2a): una solución doble.",
+"s5.q": "«Si a, b y c son enteros y Δ > 0, las dos soluciones son números enteros.»",
+"s5.h": "Prueba con 2x² − 3x − 2 = 0.",
+"s5.e": "A veces: x² − 5x + 6 = 0 tiene 2 y 3 (enteros), pero 2x² − 3x − 2 = 0 tiene 2 y −1/2.",
+"s5_cx_no": "{0}x² + ({1})x + ({2}) = 0 no es un contraejemplo: Δ = {3} y las soluciones son enteras o Δ no es positivo.",
+"s6.q": "«Si a = 0, la fórmula general da dos soluciones.»",
+"s6.h": "Piensa en qué deja de ser ax² + bx + c cuando a = 0.",
+"s6.e": "Nunca: si a = 0 la ecuación es de primer grado (bx + c = 0), con una sola solución, y la fórmula divide entre 2a = 0.",
+"e1.ctx": "Resuelve <b>x² − 5x + 6 = 0</b>.",
+"e1.n0": "Marta",
+"e1.n1": "Pau",
+"e1.s0": "Δ = 25 − 6 = 19, así que x = (5 ± √19)/2.",
+"e1.s1": "Δ = 25 − 24 = 1, así que x = (5 ± 1)/2: x = 3 o x = 2.",
+"e1.w0": "Pau tiene razón. Δ = b² − 4ac = 25 − 4·1·6 = 1. Marta ha olvidado multiplicar por 4a: 25 − 6 no es el discriminante.",
+"e1.w1": "Porque Δ tiene que ser siempre un número positivo.",
+"e1.w2": "Porque en x² − 5x + 6 = 0 no se puede aplicar la fórmula.",
+"e1.frame": "Marta, Δ no es 19 porque…",
+"e1.model": "Marta, el discriminante es Δ = b² − 4ac, y has hecho b² − c. Hay que multiplicar ac por 4: Δ = 25 − 24 = 1. Así x = (5 ± 1)/2, es decir 3 y 2. Comprobamos: 3² − 15 + 6 = 0.",
+"e2.ctx": "Resuelve <b>x² − 4 = 0</b>.",
+"e2.n0": "Rita",
+"e2.n1": "Joan",
+"e2.s0": "x = 2 y x = −2.",
+"e2.s1": "x = 2, porque 2² = 4.",
+"e2.w0": "Rita tiene razón: x² = 4 tiene dos soluciones, 2 y −2, porque (−2)² = 4 también. Joan se ha quedado con la raíz positiva.",
+"e2.w1": "Porque x² = 4 solo tiene solución positiva.",
+"e2.w2": "Porque x² − 4 = 0 no tiene solución.",
+"e2.frame": "Joan, x = 2 no es la única solución porque…",
+"e2.model": "Joan, x² = 4 se cumple para 2 y para −2, porque (−2)² = 4. La parábola y = x² − 4 corta el eje X en dos puntos: x = −2 y x = 2.",
+"e3.ctx": "Resuelve <b>x² − 6x + 9 = 0</b>.",
+"e3.n0": "Álex",
+"e3.n1": "Laia",
+"e3.s0": "Δ = 36 − 36 = 0: solución doble, x = 3.",
+"e3.s1": "x² − 6x + 9 = (x − 3)² = 0, así que x = 3.",
+"e3.w0": "Las dos llegan a x = 3 por su camino: Δ = 0 equivale a ser un cuadrado perfecto, (x − 3)².",
+"e3.w1": "Porque solo una de las dos maneras es válida.",
+"e3.w2": "Porque x = 3 no cumple la ecuación.",
+"e3.frame": "Álex y Laia, las dos tenéis razón porque…",
+"e3.model": "Álex y Laia, 9 − 18 + 9 = 0, así que x = 3. Que Δ = 0 y que el trinomio sea un cuadrado perfecto es lo mismo: la parábola solo toca el eje X en el vértice.",
+"e4.ctx": "Resuelve <b>x² + 2x + 5 = 0</b>.",
+"e4.n0": "Carla",
+"e4.n1": "Dani",
+"e4.s0": "x = (−2 ± 4)/2: x = 1 o x = −3.",
+"e4.s1": "x = −1, que es la solución doble.",
+"e4.w0": "Ninguna: Δ = 4 − 20 = −16 < 0, así que no tiene soluciones reales. Carla ha sacado √16 de Δ = −16 y Dani ha confundido el vértice con una solución.",
+"e4.w1": "Porque la solución es x = 5.",
+"e4.w2": "Porque solo hay que cambiar el signo de b.",
+"e4.frame": "Carla y Dani, la ecuación no tiene solución real porque…",
+"e4.model": "Carla y Dani, Δ = 2² − 4·1·5 = −16 es negativo: no hay raíz cuadrada real. La parábola y = x² + 2x + 5 tiene el vértice en (−1, 4), por encima del eje X, y no lo corta. x = −1 es el vértice, no una solución.",
+"d1.q": "El delfín sale del agua a <b>10 m/s</b> y el entrenador cuelga la pelota a <b>6 m</b>. ¿Puede tocarla?",
+"d1.lc": "¿Puede tocarla?",
+"yes": "Sí",
+"no": "No",
+"d1_no": "Con 10 m/s la altura máxima es 10²/20 = 5 m. Para llegar a 6 m haría falta más velocidad.",
+"d1_ok": "✔ ¡Bien decidido! La altura máxima es 5 m < 6 m, y Δ = 100 − 120 = −20 < 0: ninguna solución.",
+"d1.more": "¿Cuál es la velocidad mínima para que la toque? Da un valor decimal.",
+"d2.q": "Se quiere vallar un patio rectangular con <b>40 m</b> de valla y <b>96 m²</b>. ¿Cuánto mide el <b>lado menor</b>?",
+"d2.l0": "Lado menor (m)",
+"d2_big": "{0} m es el lado mayor; pregunta por el menor.",
+"d2_f": "{0} · (20 − {0}) = {1}, no 96.",
+"d2_ok": "✔ ¡Bien decidido! x² − 20x + 96 = 0 → x = 8 o x = 12: el menor es 8 m.",
+"d2.more": "¿Por qué el patio de 8 × 12 y el de 12 × 8 son el mismo patio?",
+"d3.q": "Un jugador lanza el balón desde 2 m con 6 m/s y el aro está a 3 m. ¿En qué instante (s) pasa por el aro <b>subiendo</b>?",
+"d3.l0": "t (s)",
+"d3_down": "En t = 1 s el balón pasa por el aro, pero bajando.",
+"d3_f": "En t = {0} s la altura no es 3 m.",
+"d3_ok": "✔ ¡Bien decidido! 5t² − 6t + 1 = 0 → t = 0,2 s (subiendo) y t = 1 s (bajando).",
+"d3.more": "¿Cuál es la altura máxima? Comprueba que el aro está por debajo."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){'use strict';
+/*PURE-START*/
+const MINUS='\u2212';
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a};
+function red(n,d){ if(d<0){n=-n;d=-d} const g=gcd(n,d)||1; return [n/g,d/g]; }
+function sqrtParts(D){ let k=1,m=D; for(let f=2;f*f<=m;f++){ while(m%(f*f)===0){m/=f*f;k*=f;} } return {k,m}; }
+function isTerm(d){ while(d%2===0)d/=2; while(d%5===0)d/=5; return d===1; }
+function num(n){ return (n<0?MINUS:'')+Math.abs(n); }
+function par(n){ return n<0?'('+num(n)+')':String(n); }
+function dec(x,p){ if(p===undefined)p=2; let s=(Math.round(x*Math.pow(10,p))/Math.pow(10,p)).toFixed(p); if(s.indexOf('.')>=0) s=s.replace(/\.?0+$/,''); if(s===''||s==='-0')s='0'; return s.replace('.',',').replace('-',MINUS); }
+function fracH(n,d){ return '<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>'; }
+function fr(n,d){ const r=red(n,d); n=r[0]; d=r[1]; if(d===1) return num(n); return (n<0?MINUS:'')+fracH(Math.abs(n),d); }
+function sqrtH(m){ return '\u221a<span class="rad">'+m+'</span>'; }
+function term(c,pow,v,first){
+  if(c===0) return '';
+  const ab=Math.abs(c); let body;
+  if(pow===0) body=String(ab);
+  else body=(ab===1?'':String(ab))+'<i>'+v+'</i>'+(pow===2?'\u00b2':'');
+  if(first) return (c<0?MINUS:'')+body;
+  return '\u00a0'+(c<0?MINUS:'+')+'\u00a0'+body;
+}
+function poly(a,b,c,v){ v=v||'x'; let s='',first=true; const L=[[a,2],[b,1],[c,0]];
+  for(const e of L){ const t=term(e[0],e[1],v,first); if(t){s+=t;first=false;} }
+  return s||'0'; }
+function solve(a,b,c){
+  if(a===0){
+    const r={deg:1,a:a,b:b,c:c,roots:[],n:0,type:'lin'};
+    if(b!==0){ r.roots=[-c/b]; r.n=1; r.exact=[red(-c,b)]; } else r.all=(c===0);
+    return r;
+  }
+  const g=gcd(gcd(a,b),c), k=(a<0?-1:1)*g;
+  const A=a/k,B=b/k,C=c/k,D=B*B-4*A*C;
+  const r={deg:2,a:a,b:b,c:c,k:k,A:A,B:B,C:C,D:D,simp:k!==1};
+  if(D<0){ r.n=0; r.roots=[]; r.type='none'; }
+  else if(D===0){ r.n=1; r.type='double'; r.exact=[red(-B,2*A)]; r.roots=[-B/(2*A)]; }
+  else{
+    const sq=Math.sqrt(D); r.n=2;
+    if(Number.isInteger(sq)){ r.type='rational'; r.sq=sq; r.exact=[red(-B+sq,2*A),red(-B-sq,2*A)]; }
+    else { r.type='irr'; const p=sqrtParts(D); r.kk=p.k; r.m=p.m; const g2=gcd(gcd(B,p.k),2*A); r.pn=-B/g2; r.pk=p.k/g2; r.pd=2*A/g2; }
+    r.roots=[(-B+sq)/(2*A),(-B-sq)/(2*A)];
+  }
+  return r;
+}
+function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(raw))); const f=raw/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
+/*PURE-END*/
+
+const $=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+let lang=(LANG==='es'?'es':'ca');
+const L=(ca,es)=>lang==='ca'?ca:es;
+
+/* ---------- escenaris ---------- */
+const SCN=[
+ {id:'basquet',icon:'🏀',kind:'proj',h0:2,x0:1,vx:5,v:{min:0,max:12,val:6},H:{min:0,max:8,val:3},
+  name:{ca:'Tir a cistella',es:'Tiro a canasta'},tag:{ca:'2 solucions',es:'2 soluciones'},Hn:{ca:"altura de l'anella",es:'altura del aro'}},
+ {id:'dofi',icon:'🐬',kind:'proj',h0:0,x0:1,vx:3,v:{min:0,max:14,val:10},H:{min:0,max:12,val:5},
+  name:{ca:'Dofí saltador',es:'Delfín saltarín'},tag:{ca:'1 solució (doble)',es:'1 solución (doble)'},Hn:{ca:'altura de la pilota',es:'altura de la pelota'}},
+ {id:'gat',icon:'🐈',kind:'proj',h0:0,x0:1,vx:1.5,v:{min:0,max:10,val:6},H:{min:0,max:4,val:2},
+  name:{ca:'Gat al prestatge',es:'Gato a la estantería'},tag:{ca:'cap solució',es:'ninguna solución'},Hn:{ca:'altura del prestatge',es:'altura de la estantería'}},
+ {id:'coet',icon:'🎆',kind:'proj',h0:0,x0:3,vx:0.6,v:{min:0,max:30,val:20},H:{min:0,max:30,val:18},
+  name:{ca:'Coet de falla',es:'Cohete de falla'},tag:{ca:'solucions irracionals',es:'soluciones irracionales'},Hn:{ca:'altura',es:'altura'}},
+ {id:'cangur',icon:'🦘',kind:'proj',h0:0,x0:1,vx:6,v:{min:0,max:8,val:5},H:{min:0,max:3,val:0},
+  name:{ca:'Cangur',es:'Canguro'},tag:{ca:'incompleta (c = 0)',es:'incompleta (c = 0)'},Hn:{ca:'altura de la tanca',es:'altura de la valla'}},
+ {id:'clavadista',icon:'🏊',kind:'proj',h0:20,x0:1,vx:0.8,v:{min:0,max:6,val:0},H:null,
+  name:{ca:'Salt de penya-segat',es:'Salto de acantilado'},tag:{ca:'incompleta (b = 0)',es:'incompleta (b = 0)'}},
+ {id:'pati',icon:'🌳',kind:'rect',Pm:{min:8,max:60,val:40},A:{min:1,max:225,val:96},
+  name:{ca:'Pati rectangular',es:'Patio rectangular'},tag:{ca:"perímetre i àrea",es:'perímetro y área'}},
+ {id:'lliure',icon:'✏️',kind:'free',name:{ca:'Mode lliure',es:'Modo libre'},tag:{ca:'tu decideixes',es:'tú decides'}}
+];
+const TH={
+ basquet:{sky:['#bfe3f7','#eaf6fc'],gr:'#c88f55'},
+ dofi:{sky:['#a8dcf5','#e4f5fc'],water:'#2f86c2'},
+ gat:{sky:['#f1e4cd','#f7efe0'],gr:'#a97c50'},
+ coet:{sky:['#0c1430','#2b3a73'],gr:'#1d2a24',stars:true},
+ cangur:{sky:['#ffd9a3','#fdf0d8'],gr:'#c4703a'},
+ clavadista:{sky:['#9ed6f2','#e2f4fb'],water:'#2b7fb8',cliff:'#8a7f73'}
+};
+const PRESETS=[[1,-5,6],[1,-4,4],[1,2,5],[2,-3,-2],[1,-2,-1],[3,0,-12],[-1,4,0]];
+
+/* ---------- estat ---------- */
+let cur=SCN[0];
+let P={v:6,H:3,Pm:40,A:96};
+let F={a:1,b:-4,c:3};
+let view='inter';
+let model=null, sol=null, SI=null;
+let tau=0, playing=false, last=0, speed=1;
+let stepMode=false, stepN=1;
+let freeTimer=null, cDir=1;
+const cvS=$('cvS'), cvG=$('cvG');
+
+function getModel(){
+  if(cur.kind==='proj'){
+    const v=P.v, H=cur.H?P.H:0, h0=cur.h0;
+    const Tend=(v+Math.sqrt(v*v+20*h0))/10;
+    return {kind:'proj',a:-5,b:v,c:h0-H,v:v,H:H,h0:h0,Tend:Tend,tauMax:Math.max(Tend,0.4),hmax:h0+v*v/20,var:'t',
+      curve:{inter:[-5,v,h0],roots:[-5,v,h0-H]},L:{inter:H,roots:0}};
+  }
+  if(cur.kind==='rect'){
+    const s=P.Pm/2, A=P.A;
+    return {kind:'rect',a:1,b:-s,c:A,s:s,A:A,tauMax:s,amax:s*s/4,var:'x',
+      curve:{inter:[-1,s,0],roots:[1,-s,A]},L:{inter:A,roots:0}};
+  }
+  return {kind:'free',a:F.a,b:F.b,c:F.c,tauMax:null,var:'x',curve:{roots:[F.a,F.b,F.c]},L:{roots:0}};
+}
+function validRoot(M,r){
+  const e=1e-9;
+  if(M.kind==='proj') return r>=-e && r<=M.Tend+e;
+  if(M.kind==='rect') return r>e && r<M.s-e;
+  return true;
+}
+function hAt(M,t){ return M.h0+M.v*t-5*t*t; }
+function dur(){ return model.kind==='rect'?6:clamp(model.tauMax*2.5,3,7); }
+
+/* ---------- text ---------- */
+function storyText(){
+  const M=model;
+  switch(cur.id){
+   case 'basquet': return L(`Un jugador llança la pilota cap amunt des de <b>${M.h0} m</b> d'altura amb una velocitat inicial de <b>${M.v} m/s</b>. L'anella és a <b>${M.H} m</b>. En quins instants passa la pilota per l'altura de l'anella?`,
+     `Un jugador lanza el balón hacia arriba desde <b>${M.h0} m</b> de altura con una velocidad inicial de <b>${M.v} m/s</b>. El aro está a <b>${M.H} m</b>. ¿En qué instantes pasa el balón por la altura del aro?`);
+   case 'dofi': return L(`Un dofí surt de l'aigua amb una velocitat vertical de <b>${M.v} m/s</b>. L'entrenador penja una pilota a <b>${M.H} m</b> d'altura. Quan la toca el dofí?`,
+     `Un delfín sale del agua con una velocidad vertical de <b>${M.v} m/s</b>. El entrenador cuelga una pelota a <b>${M.H} m</b> de altura. ¿Cuándo la toca el delfín?`);
+   case 'gat': return L(`Un gat salta des del terra amb una velocitat vertical de <b>${M.v} m/s</b> per pujar a un prestatge que està a <b>${M.H} m</b>. Pot arribar-hi?`,
+     `Un gato salta desde el suelo con una velocidad vertical de <b>${M.v} m/s</b> para subir a una estantería que está a <b>${M.H} m</b>. ¿Puede llegar?`);
+   case 'coet': return L(`Es llança un coet de falla des del terra a <b>${M.v} m/s</b>. En quins instants es troba a <b>${M.H} m</b> d'altura?`,
+     `Se lanza un cohete de falla desde el suelo a <b>${M.v} m/s</b>. ¿En qué instantes se encuentra a <b>${M.H} m</b> de altura?`);
+   case 'cangur': return M.H===0
+     ? L(`Un cangur salta amb una velocitat vertical de <b>${M.v} m/s</b>. Quant de temps està a l'aire? (Busquem quan l'altura torna a ser 0.)`,
+         `Un canguro salta con una velocidad vertical de <b>${M.v} m/s</b>. ¿Cuánto tiempo está en el aire? (Buscamos cuándo la altura vuelve a ser 0.)`)
+     : L(`Un cangur salta amb una velocitat vertical de <b>${M.v} m/s</b> i hi ha una tanca de <b>${M.H} m</b>. Quan es troba a l'altura de la tanca?`,
+         `Un canguro salta con una velocidad vertical de <b>${M.v} m/s</b> y hay una valla de <b>${M.H} m</b>. ¿Cuándo está a la altura de la valla?`);
+   case 'clavadista': return L(`Una persona es llança des d'un penya-segat de <b>${M.h0} m</b> ${M.v===0?'deixant-se caure (v₀ = 0)':`amb una velocitat inicial de <b>${M.v} m/s</b> cap amunt`}. Quant tarda a arribar a l'aigua?`,
+     `Una persona se lanza desde un acantilado de <b>${M.h0} m</b> ${M.v===0?'dejándose caer (v₀ = 0)':`con una velocidad inicial de <b>${M.v} m/s</b> hacia arriba`}. ¿Cuánto tarda en llegar al agua?`);
+   case 'pati': return L(`Volem tancar un pati rectangular amb <b>${P.Pm} m</b> de reixa de manera que tinga <b>${P.A} m²</b> d'àrea. Quant han de mesurar els costats?`,
+     `Queremos vallar un patio rectangular con <b>${P.Pm} m</b> de valla de manera que tenga <b>${P.A} m²</b> de área. ¿Cuánto deben medir los lados?`);
+   default: return L('Escriu els coeficients (enters) de <i>ax² + bx + c = 0</i> i observa què passa amb la paràbola i amb les solucions.',
+     'Escribe los coeficientes (enteros) de <i>ax² + bx + c = 0</i> y observa qué pasa con la parábola y con las soluciones.');
+  }
+}
+function physText(){
+  if(cur.kind!=='proj') return '';
+  return L(`Altura: h(t) = h₀ + v₀·t − 5·t² (amb g = 10 m/s²). Ací h₀ = ${model.h0} m i v₀ = ${model.v} m/s.`,
+           `Altura: h(t) = h₀ + v₀·t − 5·t² (con g = 10 m/s²). Aquí h₀ = ${model.h0} m y v₀ = ${model.v} m/s.`);
+}
+function hintText(){
+  if(cur.kind==='proj') return L("Mou els lliscadors i fixa't en quan es passa de 2 solucions a 1 i a cap: depén del punt més alt que arriba.","Mueve los deslizadores y fíjate en cuándo se pasa de 2 soluciones a 1 y a ninguna: depende del punto más alto que alcanza.");
+  if(cur.kind==='rect') return L("Fes créixer l'àrea fins superar el màxim (el quadrat): les dues solucions s'ajunten i desapareixen.","Haz crecer el área hasta superar el máximo (el cuadrado): las dos soluciones se juntan y desaparecen.");
+  return L('Prova els exemples o inventa\'n un. Amb «Animar c» la paràbola puja i baixa: mira com canvia Δ.','Prueba los ejemplos o inventa uno. Con «Animar c» la parábola sube y baja: mira cómo cambia Δ.');
+}
+
+/* ---------- arrels en text ---------- */
+function rootExact(i){
+  const S=sol;
+  if(S.type==='irr'){
+    const sg=i===0?1:-1;
+    const nm=(S.pn!==0?num(S.pn)+(sg>0?'\u00a0+\u00a0':'\u00a0'+MINUS+'\u00a0'):(sg>0?'':MINUS))+(S.pk>1?S.pk:'')+sqrtH(S.m);
+    return S.pd===1?nm:fracH(nm,S.pd);
+  }
+  const e=S.exact[Math.min(i,S.exact.length-1)]; return fr(e[0],e[1]);
+}
+function rootHTML(i){
+  const S=sol, ap=dec(S.roots[i],3);
+  if(S.type==='irr') return rootExact(i)+' ≈ '+ap;
+  const e=S.exact[Math.min(i,S.exact.length-1)];
+  if(e[1]===1) return fr(e[0],1);
+  return fr(e[0],e[1])+(isTerm(e[1])?' = ':' ≈ ')+ap;
+}
+function rootShort(i){ return dec(sol.roots[i],2); }
+
+/* ---------- passos ---------- */
+function buildSteps(){
+  const M=model,S=sol,v=M.var,out=[];
+  const E=(a,b,c)=>poly(a,b,c,v);
+  // 1 plantejament
+  let s1='';
+  if(M.kind==='proj'){
+    s1=`<p>${L('Altura segons el temps','Altura según el tiempo')}: <span class="m">h(<i>t</i>) = ${poly(-5,M.v,M.h0,'t')}</span></p>
+        <p>${L('Volem que h(t) valga','Queremos que h(t) valga')} ${M.H} m: <span class="m">${poly(-5,M.v,M.h0,'t')} = ${M.H}</span></p>
+        <p>${L('Ho passem tot a un costat','Lo pasamos todo a un lado')}: <span class="m">${E(M.a,M.b,M.c)} = 0</span></p>`;
+  } else if(M.kind==='rect'){
+    s1=`<p>${L('Costats <i>x</i> i <i>y</i>. Perímetre','Lados <i>x</i> e <i>y</i>. Perímetro')}: <span class="m">2(<i>x</i> + <i>y</i>) = ${P.Pm}</span> → <span class="m"><i>y</i> = ${M.s} ${MINUS} <i>x</i></span></p>
+        <p>${L('Àrea','Área')}: <span class="m"><i>x</i>·<i>y</i> = ${M.A}</span> → <span class="m"><i>x</i>(${M.s} ${MINUS} <i>x</i>) = ${M.A}</span></p>
+        <p>${L('Ordenem','Ordenamos')}: <span class="m">${E(M.a,M.b,M.c)} = 0</span></p>`;
+  } else s1=`<p>${L('Equació','Ecuación')}: <span class="m">${E(M.a,M.b,M.c)} = 0</span></p>`;
+  out.push([L('Plantejament','Planteamiento'),s1]);
+  if(S.deg===1){
+    let t=`<p>${L('Com que a = 0, no és de segon grau: és una equació de primer grau.','Como a = 0, no es de segundo grado: es una ecuación de primer grado.')}</p>`;
+    if(S.b!==0) t+=`<p class="m">${E(0,S.b,S.c)} = 0 → <i>${v}</i> = ${fr(-S.c,S.b)}</p>`;
+    else t+=`<p>${S.all?L('Tots els nombres són solució.','Todos los números son solución.'):L('No té solució.','No tiene solución.')}</p>`;
+    out.push([L('Primer grau','Primer grado'),t]);
+    return out;
+  }
+  // 2 forma general
+  let s2='';
+  if(S.simp) s2+=`<p>${L("Dividim tota l'equació entre","Dividimos toda la ecuación entre")} <b>${num(S.k)}</b>${S.k<0?L(' (així a és positiva)',' (así a es positiva)'):''}. ${L('Les solucions no canvien','Las soluciones no cambian')}: <span class="m">${E(S.A,S.B,S.C)} = 0</span></p>`;
+  else s2+=`<p>${L('Ja està en la forma','Ya está en la forma')} <span class="m">a<i>${v}</i>² + b<i>${v}</i> + c = 0</span>.</p>`;
+  s2+=`<p class="m">a = ${num(S.A)},&ensp; b = ${num(S.B)},&ensp; c = ${num(S.C)}</p>`;
+  out.push([L('Forma general','Forma general'),s2]);
+  // 3 discriminant
+  const Dtxt=S.D<0?L('Δ &lt; 0: no hi ha solucions reals (cal l\'arrel d\'un negatiu).','Δ &lt; 0: no hay soluciones reales (haría falta la raíz de un negativo).')
+    :S.D===0?L('Δ = 0: una sola solució (doble). La paràbola només toca l\'eix.','Δ = 0: una sola solución (doble). La parábola solo toca el eje.')
+    :L('Δ &gt; 0: dues solucions reals diferents. La paràbola talla l\'eix en dos punts.','Δ &gt; 0: dos soluciones reales distintas. La parábola corta el eje en dos puntos.');
+  out.push([L('Discriminant','Discriminante'),`<p class="m">Δ = b² ${MINUS} 4ac = ${par(S.B)}² ${MINUS} 4·${par(S.A)}·${par(S.C)} = ${S.B*S.B} ${S.A*S.C<0?'+':MINUS} ${Math.abs(4*S.A*S.C)} = <b>${num(S.D)}</b></p><p>${Dtxt}</p>`]);
+  // 4 solucions
+  let s4=`<p class="m"><i>${v}</i> = ${fracH(MINUS+'b ± '+sqrtH('Δ'),'2a')}</p>`;
+  if(S.type==='none') s4+=`<p>${L('No hi ha solucions reals.','No hay soluciones reales.')}</p>`;
+  else if(S.type==='double') s4+=`<p class="m"><i>${v}</i> = ${fracH(num(-S.B)+' ± 0',2*S.A)} = <b>${rootHTML(0)}</b></p>`;
+  else if(S.type==='rational') s4+=`<p class="m"><i>${v}</i><sub>1</sub> = ${fracH(num(-S.B)+' + '+S.sq,2*S.A)} = <b>${rootHTML(0)}</b></p><p class="m"><i>${v}</i><sub>2</sub> = ${fracH(num(-S.B)+' '+MINUS+' '+S.sq,2*S.A)} = <b>${rootHTML(1)}</b></p>`;
+  else s4+=`<p class="m">${sqrtH(S.D)} = ${S.kk>1?S.kk:''}${sqrtH(S.m)}</p><p class="m"><i>${v}</i><sub>1</sub> = <b>${rootHTML(0)}</b></p><p class="m"><i>${v}</i><sub>2</sub> = <b>${rootHTML(1)}</b></p><p class="note">${L("Arrel no exacta: deixem-la en forma d'arrel i donem-ne l'aproximació decimal.","Raíz no exacta: la dejamos en forma de raíz y damos su aproximación decimal.")}</p>`;
+  out.push([L('Solucions (fórmula)','Soluciones (fórmula)'),s4]);
+  // 5 comprovacio
+  if(S.n>=1){
+    let s5='';
+    const ch=S.roots.map((r,i)=>{ const fv=S.A*r*r+S.B*r+S.C; return `<span class="m">f(<i>${v}</i><sub>${S.n===2?i+1:''}</sub>) ${Math.abs(fv)<1e-9?'= 0':'≈ '+dec(fv,4)} ✓</span>`; }).join(' &emsp; ');
+    s5+=`<p>${ch}</p>`;
+    if(S.n===2) s5+=`<p class="m">${L('Suma','Suma')}: <i>${v}</i><sub>1</sub>+<i>${v}</i><sub>2</sub> = ${fr(-S.B,S.A)} ✓ &emsp; ${L('Producte','Producto')}: <i>${v}</i><sub>1</sub>·<i>${v}</i><sub>2</sub> = ${fr(S.C,S.A)} ✓</p>`;
+    if(S.type==='rational'||S.type==='double'){
+      const lin=(e)=>{ const p=e[0],q=e[1]; if(p===0) return `<i>${v}</i>`; const co=q>1?q:''; return `(${co}<i>${v}</i> ${p>0?MINUS:'+'} ${Math.abs(p)})`; };
+      let fct;
+      if(S.type==='double'){ const e=S.exact[0]; const k=S.A/(e[1]*e[1]); fct=e[0]===0?`${k>1?k:''}<i>${v}</i>²`:`${k>1?k:''}${lin(e)}²`; }
+      else { const e1=S.exact[0],e2=S.exact[1]; const k=S.A/(e1[1]*e2[1]); fct=`${k===1?'':(Number.isInteger(k)?k:'')}${lin(e1)}${lin(e2)}`; }
+      s5+=`<p>${L('Factoritzada','Factorizada')}: <span class="m">${E(S.A,S.B,S.C)} = ${fct}</span></p>`;
+    }
+    out.push([L('Comprovació','Comprobación'),s5]);
+  }
+  // 6 incompletes
+  if(S.a!==0&&(S.b===0||S.c===0)){
+    let s6='';
+    if(S.b===0&&S.c===0) s6=`<p class="m">${S.a}<i>${v}</i>² = 0 → <i>${v}</i> = 0 (${L('doble','doble')})</p>`;
+    else if(S.c===0){ s6=`<p>${L('Traiem factor comú','Sacamos factor común')}: <span class="m"><i>${v}</i>·(${E(0,S.a,S.b)}) = 0</span></p><p class="m"><i>${v}</i> = 0 &emsp; ${L('o bé','o bien')} &emsp; ${E(0,S.a,S.b)} = 0 → <i>${v}</i> = ${fr(-S.b,S.a)}</p><p class="note">${L('Una de les solucions és sempre 0.','Una de las soluciones es siempre 0.')}</p>`; }
+    else { const q=-S.c/S.a; s6=`<p class="m">${E(S.a,0,S.c)} = 0 → <i>${v}</i>² = ${fr(-S.c,S.a)}</p>`;
+      if(q<0) s6+=`<p>${L("Un quadrat no pot ser negatiu: sense solucions reals.","Un cuadrado no puede ser negativo: sin soluciones reales.")}</p>`;
+      else s6+=`<p class="m"><i>${v}</i> = ± ${S.type==='irr'?'√'+dec(q,3):rootExact(0)}</p>`; }
+    out.push([L('Equació incompleta: un altre camí','Ecuación incompleta: otro camino'),s6]);
+  }
+  // 7 interpretacio
+  out.push(interpStep());
+  return out;
+}
+function interpStep(){
+  const M=model,S=sol,v=M.var;
+  const title=M.kind==='free'?L('La gràfica','La gráfica'):L('Interpretació en el context','Interpretación en el contexto');
+  let h='';
+  if(M.kind==='free'){
+    const a=M.a,b=M.b,c=M.c;
+    if(a!==0){
+      const D0=b*b-4*a*c;
+      h+=`<p>${a>0?L('a &gt; 0: la paràbola s\'obri cap amunt (té mínim).','a &gt; 0: la parábola se abre hacia arriba (tiene mínimo).'):L('a &lt; 0: la paràbola s\'obri cap avall (té màxim).','a &lt; 0: la parábola se abre hacia abajo (tiene máximo).')}</p>
+         <p>${L('Vèrtex','Vértice')}: <span class="m">V(${fr(-b,2*a)}, ${fr(-D0,4*a)})</span> &emsp; ${L("Talla l'eix Y en","Corta el eje Y en")} <span class="m">(0, ${num(c)})</span></p>
+         <p>${S.n===2?L("Talla l'eix X en dos punts: dues solucions.","Corta el eje X en dos puntos: dos soluciones."):S.n===1?L("Toca l'eix X en un sol punt (el vèrtex): solució doble.","Toca el eje X en un solo punto (el vértice): solución doble."):L("No talla l'eix X: cap solució real.","No corta el eje X: ninguna solución real.")}</p>`;
+    }
+    return [title,h];
+  }
+  if(S.n===0){
+    h+= M.kind==='proj'
+      ? `<p>${L(`No hi ha solucions reals: el punt més alt és <b>${dec(M.hmax)} m</b>, per sota de ${M.H} m. No hi arriba mai.`,`No hay soluciones reales: el punto más alto es <b>${dec(M.hmax)} m</b>, por debajo de ${M.H} m. Nunca llega.`)}</p>`
+      : `<p>${L(`No existeix cap rectangle amb eixe perímetre i eixa àrea: amb ${P.Pm} m de perímetre l'àrea màxima és <b>${dec(M.amax)} m²</b> (un quadrat de costat ${dec(M.s/2)} m).`,`No existe ningún rectángulo con ese perímetro y esa área: con ${P.Pm} m de perímetro el área máxima es <b>${dec(M.amax)} m²</b> (un cuadrado de lado ${dec(M.s/2)} m).`)}</p>`;
+    return [title,h];
+  }
+  const idx=S.roots.map((r,i)=>i).sort((p,q)=>S.roots[p]-S.roots[q]);
+  const items=idx.map(i=>{
+    const r=S.roots[i], ok=validRoot(M,r); let why='';
+    if(M.kind==='proj'){
+      if(!ok) why=r<0?L("temps negatiu: és abans de començar. No té sentit.","tiempo negativo: es antes de empezar. No tiene sentido."):L("passa després d'haver tocat terra. No té sentit.","ocurre después de tocar el suelo. No tiene sentido.");
+      else{
+        const d=M.v-10*r;
+        if(M.H===0&&Math.abs(r-M.Tend)<1e-9&&M.Tend>1e-9) why=L('torna a terra: aquest és el temps de vol.','vuelve al suelo: este es el tiempo de vuelo.');
+        else if(Math.abs(r)<1e-9&&Math.abs(M.h0-M.H)<1e-9) why=L('instant de la sortida.','instante de la salida.');
+        else if(Math.abs(d)<1e-9) why=L(`just al punt més alt (${dec(M.H)} m).`,`justo en el punto más alto (${dec(M.H)} m).`);
+        else why=d>0?L(`està a ${dec(M.H)} m mentre puja.`,`está a ${dec(M.H)} m mientras sube.`):L(`està a ${dec(M.H)} m mentre baixa.`,`está a ${dec(M.H)} m mientras baja.`);
+      }
+      return `<li class="${ok?'ok':'no'}"><span class="m"><i>t</i> = ${rootHTML(i)} s</span> — ${why}</li>`;
+    }
+    const other=M.s-r;
+    if(!ok) why=L('el costat ha de ser positiu i menor que '+M.s+'.','el lado debe ser positivo y menor que '+M.s+'.');
+    else why=L(`l'altre costat és ${M.s} ${MINUS} ${dec(r)} = ${dec(other)} m.`,`el otro lado es ${M.s} ${MINUS} ${dec(r)} = ${dec(other)} m.`);
+    return `<li class="${ok?'ok':'no'}"><span class="m"><i>x</i> = ${rootHTML(i)} m</span> — ${why}</li>`;
+  }).join('');
+  h+=`<ul>${items}</ul>`;
+  const nv=S.roots.filter(r=>validRoot(M,r)).length;
+  if(M.kind==='proj'){
+    if(S.n===1) h+=`<p>${L(`Solució doble: només la <b>toca</b>, en el punt més alt (${dec(M.hmax)} m). Un lleuger canvi i ja no hi arriba.`,`Solución doble: solo la <b>toca</b>, en el punto más alto (${dec(M.hmax)} m). Un pequeño cambio y ya no llega.`)}</p>`;
+    else if(nv===2&&M.H>0) h+=`<p>${L('Passa per aquesta altura dues vegades: una pujant i una altra baixant. Totes dues tenen sentit.','Pasa por esa altura dos veces: una subiendo y otra bajando. Las dos tienen sentido.')}</p>`;
+    else if(nv===1) h+=`<p>${L('Només una de les dues solucions té sentit en la situació real: cal descartar l\'altra.','Solo una de las dos soluciones tiene sentido en la situación real: hay que descartar la otra.')}</p>`;
+  } else {
+    if(S.n===1) h+=`<p>${L(`Només el <b>quadrat</b> de costat ${dec(M.s/2)} m té aquesta àrea, i és el màxim possible.`,`Solo el <b>cuadrado</b> de lado ${dec(M.s/2)} m tiene esa área, y es el máximo posible.`)}</p>`;
+    else if(nv===2) h+=`<p>${L("Les dues solucions donen <b>el mateix rectangle</b> (x i y s'intercanvien). Fixa't que x₁ + x₂ = "+M.s+", el semiperímetre.","Las dos soluciones dan <b>el mismo rectángulo</b> (x e y se intercambian). Fíjate en que x₁ + x₂ = "+M.s+", el semiperímetro.")}</p>`;
+  }
+  return [title,h];
+}
+
+/* ---------- render UI ---------- */
+function renderSteps(){
+  const st=buildSteps();
+  const n=stepMode?Math.min(stepN,st.length):st.length;
+  $('steps').innerHTML=st.slice(0,n).map((s,i)=>`<div class="stp"><div class="sh"><span class="sn">${i+1}</span>${s[0]}</div><div class="sb">${s[1]}</div></div>`).join('');
+  $('nextStep').hidden=!stepMode;
+  $('nextStep').disabled=n>=st.length;
+  $('nextStep').textContent=L('Següent pas ▸','Siguiente paso ▸');
+  return st.length;
+}
+function renderEq(){
+  const M=model,S=sol,v=M.var;
+  let h=`<span>${poly(M.a,M.b,M.c,v)} = 0</span>`;
+  if(S.deg===2&&S.simp) h+=`<small>${L('simplificada','simplificada')}: ${poly(S.A,S.B,S.C,v)} = 0</small>`;
+  $('bigEq').innerHTML=h;
+  const D=S.deg===2?S.D:null;
+  const cl=D===null?-1:(D>0?0:D===0?1:2);
+  $('deltaRow').innerHTML=[['Δ > 0',L('2 solucions','2 soluciones'),'scd'],['Δ = 0',L('1 solució','1 solución'),'sci'],['Δ < 0',L('cap solució','ninguna solución'),'si']]
+    .map((c,i)=>`<span class="dchip ${cl===i?'on '+c[2]:''}">${c[0]} · ${c[1]}</span>`).join('');
+  $('dval').innerHTML=D===null?L('(a = 0: primer grau)','(a = 0: primer grado)'):`Δ = ${num(D)}`;
+}
+function renderTexts(){
+  $('storyH').textContent=cur.name[lang];
+  $('story').innerHTML=storyText();
+  $('phys').innerHTML=physText();
+  $('hint').innerHTML=hintText();
+  renderEq();
+  renderSteps();
+  updateLabels();
+}
+function updateLabels(){
+  const M=model;
+  $('fullBtn').textContent=document.fullscreenElement?L('Eixir','Salir'):L('Pantalla completa','Pantalla completa');
+  $('viewBtn').textContent=view==='inter'?L('Veure arrels (f = 0)','Ver raíces (f = 0)'):L('Veure intersecció amb la recta','Ver intersección con la recta');
+  if(M.kind==='free'){
+    $('playBtn').textContent=freeTimer?L('⏸ Parar','⏸ Parar'):L('▶ Animar c','▶ Animar c');
+  } else {
+    $('playBtn').textContent=playing?L('⏸ Pausa','⏸ Pausa'):(tau>=M.tauMax-1e-9?L('↺ Repetir','↺ Repetir'):(tau>0?L('▶ Continuar','▶ Continuar'):(M.kind==='proj'?L('▶ Llançar','▶ Lanzar'):L('▶ Animar','▶ Animar'))));
+    if(M.kind==='proj') $('tLabel').innerHTML=`t = ${dec(tau,2)} s · h = ${dec(hAt(M,Math.min(tau,M.Tend)),2)} m`;
+    else { const x=clamp(tau,0,M.s); $('tLabel').innerHTML=`x = ${dec(x,1)} m · ${L('àrea','área')} = ${dec(x*(M.s-x),1)} m²`; }
+  }
+}
+function slider(k,label,min,max,step,unit,val){
+  return `<div class="sl"><label for="s_${k}">${label} = <b id="o_${k}">${val}</b> ${unit}</label><input id="s_${k}" data-k="${k}" type="range" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+function buildControls(){
+  const el=$('controls'); let h='';
+  if(cur.kind==='proj'){
+    h+=slider('v','v₀ ('+L('velocitat inicial','velocidad inicial')+')',cur.v.min,cur.v.max,1,'m/s',P.v);
+    if(cur.H) h+=slider('H',cur.Hn[lang],cur.H.min,cur.H.max,1,'m',P.H);
+  } else if(cur.kind==='rect'){
+    h+=slider('Pm',L('perímetre','perímetro'),cur.Pm.min,cur.Pm.max,2,'m',P.Pm);
+    h+=slider('A',L('àrea','área'),cur.A.min,cur.A.max,1,'m²',P.A);
+  } else {
+    [['a',-12,12],['b',-20,20],['c',-30,30]].forEach(r=>{
+      h+=`<div class="frow"><label>${r[0]}</label><input type="number" step="1" id="n_${r[0]}" value="${F[r[0]]}"><input type="range" id="r_${r[0]}" min="${r[1]}" max="${r[2]}" step="1" value="${F[r[0]]}"></div>`;
+    });
+    h+=`<div class="presets">${PRESETS.map((p,i)=>`<button class="btn" data-p="${i}">${poly(p[0],p[1],p[2],'x')}</button>`).join('')}</div>`;
+  }
+  el.innerHTML=h;
+  el.querySelectorAll('input[type=range][data-k]').forEach(i=>i.oninput=()=>{
+    const k=i.dataset.k; P[k]=+i.value; $('o_'+k).textContent=i.value; paramsChanged();
+  });
+  ['a','b','c'].forEach(k=>{
+    const n=$('n_'+k), r=$('r_'+k); if(!n) return;
+    n.oninput=()=>{ const x=parseInt(n.value,10); if(isNaN(x)) return; F[k]=clamp(x,-999,999); r.value=F[k]; paramsChanged(); };
+    r.oninput=()=>{ F[k]=+r.value; n.value=F[k]; paramsChanged(); };
+  });
+  el.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{
+    const p=PRESETS[+b.dataset.p]; F.a=p[0];F.b=p[1];F.c=p[2]; stopFree(); syncFree(); paramsChanged();
+  });
+}
+function syncFree(){ ['a','b','c'].forEach(k=>{ const n=$('n_'+k),r=$('r_'+k); if(n){n.value=F[k];r.value=F[k];} }); }
+function buildChips(){
+  $('chips').innerHTML=SCN.map(s=>`<button class="scnb${s===cur?' on':''}" data-id="${s.id}"><span class="ic">${s.icon}</span><span class="nm">${s.name[lang]}</span><span class="tg">${s.tag[lang]}</span></button>`).join('');
+  $('chips').querySelectorAll('.scnb').forEach(b=>b.onclick=()=>selectScenario(b.dataset.id));
+}
+
+/* ---------- escena: info ---------- */
+function computeSI(){
+  const M=model;
+  if(M.kind!=='proj'){ SI=null; return; }
+  const vr=sol.roots.filter(r=>validRoot(M,r));
+  const tArr=vr.length?Math.max.apply(null,vr):M.v/10;
+  const px=t=>cur.x0+cur.vx*Math.min(t,M.Tend);
+  const tx=px(tArr);
+  let xa=Math.min(cur.x0,tx)-1.3, xb=Math.max(cur.x0+cur.vx*M.Tend,tx)+1.5;
+  if(cur.id==='clavadista') xa=cur.x0-1.5;
+  if(xb-xa<4){ const m=(xa+xb)/2; xa=m-2; xb=m+2; }
+  SI={xa:xa,xb:xb,Ymax:Math.max(M.hmax,M.H,M.h0,1)*1.15+0.6,tx:tx,tArr:tArr,hasSol:vr.length>0};
+}
+
+/* ---------- escena: sprites ---------- */
+function ell(c,x,y,rx,ry,rot,fill){ c.beginPath(); c.ellipse(x,y,rx,ry,rot||0,0,Math.PI*2); if(fill!==false)c.fill(); }
+function sprBall(c,r,rot,col){
+  c.save(); c.rotate(rot); c.fillStyle=col||'#e8742a'; c.beginPath(); c.arc(0,0,r,0,7); c.fill();
+  c.strokeStyle='rgba(60,25,5,.8)'; c.lineWidth=Math.max(1,r*.12);
+  c.beginPath(); c.arc(0,0,r,0,7); c.moveTo(-r,0); c.lineTo(r,0); c.moveTo(0,-r); c.lineTo(0,r);
+  c.moveTo(-r*.7,-r*.7); c.quadraticCurveTo(0,-r*.2,r*.7,-r*.7); c.moveTo(-r*.7,r*.7); c.quadraticCurveTo(0,r*.2,r*.7,r*.7); c.stroke(); c.restore();
+}
+function sprDolphin(c,u){
+  c.fillStyle='#4f86b3'; ell(c,0,0,1.9*u,.65*u);
+  c.fillStyle='#e6f1f8'; ell(c,.2*u,.28*u,1.5*u,.3*u);
+  c.fillStyle='#4f86b3';
+  c.beginPath(); c.moveTo(1.7*u,-.15*u); c.lineTo(2.6*u,.05*u); c.lineTo(1.7*u,.3*u); c.fill();
+  c.beginPath(); c.moveTo(0,-.6*u); c.lineTo(-.5*u,-1.3*u); c.lineTo(-.9*u,-.5*u); c.fill();
+  c.beginPath(); c.moveTo(-1.8*u,0); c.lineTo(-2.7*u,-.9*u); c.lineTo(-2.4*u,0); c.lineTo(-2.7*u,.9*u); c.fill();
+  c.fillStyle='#10202c'; c.beginPath(); c.arc(1.2*u,-.15*u,.1*u,0,7); c.fill();
+}
+function sprCat(c,u){
+  c.translate(0,-.7*u);
+  c.fillStyle='#d9904a'; c.strokeStyle='#d9904a'; c.lineCap='round'; c.lineWidth=.32*u;
+  ell(c,0,0,1.2*u,.55*u);
+  c.beginPath(); c.arc(1.25*u,-.35*u,.55*u,0,7); c.fill();
+  c.beginPath(); c.moveTo(1.0*u,-.75*u); c.lineTo(1.1*u,-1.3*u); c.lineTo(1.4*u,-.8*u); c.fill();
+  c.beginPath(); c.moveTo(1.45*u,-.8*u); c.lineTo(1.7*u,-1.25*u); c.lineTo(1.78*u,-.65*u); c.fill();
+  c.beginPath(); c.moveTo(-1.1*u,-.1*u); c.quadraticCurveTo(-2*u,-.4*u,-1.7*u,-1.2*u); c.stroke();
+  c.beginPath(); c.moveTo(.8*u,.3*u); c.lineTo(1.6*u,.7*u); c.moveTo(-.8*u,.3*u); c.lineTo(-1.6*u,.7*u); c.stroke();
+  c.fillStyle='#222'; c.beginPath(); c.arc(1.5*u,-.4*u,.08*u,0,7); c.fill();
+}
+function sprRoo(c,u){
+  c.translate(0,-1.7*u);
+  c.fillStyle='#b9743c'; c.strokeStyle='#b9743c'; c.lineCap='round'; c.lineJoin='round';
+  ell(c,0,0,.8*u,1.2*u,.35);
+  c.beginPath(); c.arc(.7*u,-1.3*u,.4*u,0,7); c.fill();
+  c.beginPath(); c.moveTo(.95*u,-1.5*u); c.lineTo(1.05*u,-2.1*u); c.lineTo(.65*u,-1.7*u); c.fill();
+  c.beginPath(); c.moveTo(.95*u,-1.25*u); c.lineTo(1.35*u,-1.15*u); c.lineTo(.95*u,-1.05*u); c.fill();
+  c.lineWidth=.5*u; c.beginPath(); c.moveTo(-.5*u,.7*u); c.lineTo(-2.2*u,1.0*u); c.stroke();
+  c.lineWidth=.45*u; c.beginPath(); c.moveTo(-.2*u,1.0*u); c.lineTo(.5*u,1.7*u); c.lineTo(1.3*u,1.7*u); c.stroke();
+  c.lineWidth=.25*u; c.beginPath(); c.moveTo(.5*u,-.4*u); c.lineTo(1.0*u,.1*u); c.stroke();
+  c.fillStyle='#1b1b1b'; c.beginPath(); c.arc(.82*u,-1.38*u,.06*u,0,7); c.fill();
+}
+function sprRocket(c,u,flame){
+  c.fillStyle='#ece7dc'; c.fillRect(-1.2*u,-.35*u,2.2*u,.7*u);
+  c.fillStyle='#d94b3a';
+  c.beginPath(); c.moveTo(1*u,-.35*u); c.lineTo(1.9*u,0); c.lineTo(1*u,.35*u); c.fill();
+  c.beginPath(); c.moveTo(-1.2*u,-.35*u); c.lineTo(-1.7*u,-.9*u); c.lineTo(-.7*u,-.35*u); c.fill();
+  c.beginPath(); c.moveTo(-1.2*u,.35*u); c.lineTo(-1.7*u,.9*u); c.lineTo(-.7*u,.35*u); c.fill();
+  if(flame){ c.fillStyle='#ffb02e'; c.beginPath(); c.moveTo(-1.2*u,-.25*u); c.lineTo(-2.5*u,0); c.lineTo(-1.2*u,.25*u); c.fill(); }
+}
+function sprDiver(c,u){
+  c.translate(0,-.9*u);
+  c.strokeStyle='#243044'; c.lineWidth=.3*u; c.lineCap='round';
+  c.beginPath(); c.moveTo(0,-.9*u); c.lineTo(0,.7*u); c.moveTo(0,-.7*u); c.lineTo(-.7*u,-1.6*u); c.moveTo(0,-.7*u); c.lineTo(.7*u,-1.6*u);
+  c.moveTo(0,.7*u); c.lineTo(-.5*u,1.7*u); c.moveTo(0,.7*u); c.lineTo(.5*u,1.7*u); c.stroke();
+  c.fillStyle='#e8b88a'; c.beginPath(); c.arc(0,-1.25*u,.4*u,0,7); c.fill();
+}
+
+/* ---------- escena: dibuix ---------- */
+function fit(cv){
+  const dpr=window.devicePixelRatio||1, r=cv.parentElement.getBoundingClientRect();
+  const w=Math.max(10,r.width), h=Math.max(10,r.height);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){ cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); }
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); return {c:c,w:w,h:h};
+}
+function pill(c,text,x,y,col){
+  c.font='600 13px system-ui,sans-serif'; const tw=c.measureText(text).width+20;
+  c.fillStyle=col; c.beginPath(); if(c.roundRect) c.roundRect(x-tw/2,y-14,tw,26,13); else c.rect(x-tw/2,y-14,tw,26); c.fill();
+  c.fillStyle='#fff'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(text,x,y); c.textAlign='left';
+}
+function drawProj(c,w,h){
+  const M=model, th=TH[cur.id], night=!!th.stars;
+  const gy=h-24, top=14, ww=SI.xb-SI.xa;
+  const s=Math.min((w-24)/ww,(gy-top)/SI.Ymax), ox=(w-ww*s)/2-SI.xa*s;
+  const X=x=>ox+x*s, Y=y=>gy-y*s, u=clamp(s*0.42,10,20);
+  const ink=night?'#e8eefc':'#2b2f36';
+  const g=c.createLinearGradient(0,0,0,gy); g.addColorStop(0,th.sky[0]); g.addColorStop(1,th.sky[1]); c.fillStyle=g; c.fillRect(0,0,w,h);
+  if(th.stars){ c.fillStyle='rgba(255,255,255,.8)'; for(let i=0;i<40;i++){ c.fillRect((i*97%101)/101*w,(i*53%71)/71*(gy-10),1.6,1.6); } }
+  // terra / aigua / penya-segat
+  if(th.gr){ c.fillStyle=th.gr; c.fillRect(0,gy,w,h-gy); c.fillStyle='rgba(0,0,0,.12)'; c.fillRect(0,gy,w,2); }
+  if(th.water){
+    const wx0=cur.id==='clavadista'?X(cur.x0)+6:0;
+    c.fillStyle=th.water; c.fillRect(wx0,gy,w-wx0,h-gy);
+    c.strokeStyle='rgba(255,255,255,.55)'; c.lineWidth=2; c.beginPath();
+    for(let x=wx0;x<=w;x+=4){ const yy=gy+Math.sin(x/11)*2; if(x===wx0)c.moveTo(x,yy); else c.lineTo(x,yy); } c.stroke();
+    if(cur.id==='clavadista'){ c.fillStyle=th.cliff; c.fillRect(0,Y(M.h0),wx0,h-Y(M.h0)); c.fillStyle='#6f655b'; c.fillRect(0,Y(M.h0),wx0,4); }
+  }
+  // quadrícula d'alçades
+  const st=niceStep(SI.Ymax/5);
+  c.font='11px system-ui,sans-serif'; c.textBaseline='alphabetic';
+  for(let a=st;a<SI.Ymax;a+=st){
+    c.strokeStyle=night?'rgba(255,255,255,.14)':'rgba(0,0,0,.09)'; c.lineWidth=1; c.beginPath(); c.moveTo(0,Y(a)); c.lineTo(w,Y(a)); c.stroke();
+    c.fillStyle=night?'rgba(232,238,252,.7)':'rgba(40,44,50,.6)'; c.fillText(dec(a,2)+' m',6,Y(a)-3);
+  }
+  // línia H
+  const showH=cur.H&&M.H>0;
+  if(showH){
+    c.setLineDash([7,5]); c.strokeStyle='#e0523f'; c.lineWidth=1.6; c.beginPath(); c.moveTo(0,Y(M.H)); c.lineTo(w,Y(M.H)); c.stroke(); c.setLineDash([]);
+    c.fillStyle=night?'#ff9b87':'#c2402e'; c.font='600 12px system-ui,sans-serif'; c.textAlign='right'; c.fillText('H = '+M.H+' m',w-8,Y(M.H)-5); c.textAlign='left';
+  }
+  // objectiu
+  const tx=X(SI.tx), ty=Y(M.H);
+  if(cur.id==='basquet'){
+    c.fillStyle='#8c8f96'; c.fillRect(tx+u*1.2,ty-u*0.2,u*0.35,gy-ty+u*0.2);
+    c.fillStyle='#f4f4f6'; c.strokeStyle='#8c8f96'; c.lineWidth=2; c.fillRect(tx+u*0.95,ty-u*2.3,u*0.35,u*2.6); c.strokeRect(tx+u*0.95,ty-u*2.3,u*0.35,u*2.6);
+    c.strokeStyle='rgba(255,255,255,.85)'; c.lineWidth=1; c.beginPath(); for(let i=-2;i<=2;i++){ c.moveTo(tx+i*u*0.35,ty); c.lineTo(tx+i*u*0.2,ty+u*1.3);} c.moveTo(tx-u*0.7,ty+u*.6); c.lineTo(tx+u*0.7,ty+u*.6); c.stroke();
+    c.strokeStyle='#e0523f'; c.lineWidth=3; c.beginPath(); c.moveTo(tx-u*0.9,ty); c.lineTo(tx+u*0.95,ty); c.stroke();
+  } else if(cur.id==='dofi'){
+    c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=1.2; c.beginPath(); c.moveTo(tx,0); c.lineTo(tx,ty-u*.6); c.stroke();
+    c.save(); c.translate(tx,ty); sprBall(c,u*.6,0.5,'#ffcf3a'); c.restore();
+  } else if(cur.id==='gat'){
+    const sw=u*3.2; c.fillStyle='#8a5a34'; c.fillRect(tx-sw/2,ty,sw,u*.45);
+    c.fillStyle='#6d4526'; c.fillRect(tx-sw/2+4,ty+u*.45,u*.35,u*.9); c.fillRect(tx+sw/2-4-u*.35,ty+u*.45,u*.35,u*.9);
+    c.fillStyle='#b5523a'; c.fillRect(tx+sw/2-u*1.1,ty-u*.7,u*.8,u*.7); c.fillStyle='#4a9a52'; c.beginPath(); c.arc(tx+sw/2-u*.7,ty-u*1.0,u*.45,0,7); c.fill();
+  } else if(cur.id==='cangur'&&M.H>0){
+    c.fillStyle='#8a5a34'; c.fillRect(tx-u*1.4,ty,u*.3,gy-ty); c.fillRect(tx+u*1.1,ty,u*.3,gy-ty);
+    c.fillRect(tx-u*1.4,ty,u*2.8,u*.28); c.fillRect(tx-u*1.4,ty+(gy-ty)*.5,u*2.8,u*.22);
+  }
+  // traject
+  const NN=80; c.lineWidth=1.5; c.setLineDash([4,5]); c.strokeStyle=night?'rgba(255,255,255,.5)':'rgba(0,0,0,.32)'; c.beginPath();
+  for(let i=0;i<=NN;i++){ const t=M.Tend*i/NN; const x=X(cur.x0+cur.vx*t), y=Y(hAt(M,t)); if(i===0)c.moveTo(x,y); else c.lineTo(x,y); } c.stroke(); c.setLineDash([]);
+  const tc=Math.min(tau,M.Tend);
+  c.lineWidth=2.8; c.strokeStyle=night?'#8fb4ff':'#3a78d6'; c.beginPath();
+  const n2=Math.max(2,Math.round(NN*tc/Math.max(M.Tend,1e-6)));
+  for(let i=0;i<=n2;i++){ const t=tc*i/n2; const x=X(cur.x0+cur.vx*t), y=Y(hAt(M,t)); if(i===0)c.moveTo(x,y); else c.lineTo(x,y); } c.stroke();
+  // marques
+  const vr=sol.roots.filter(r=>validRoot(M,r));
+  const near=vr.find(r=>Math.abs(tau-r)<0.03*M.tauMax);
+  vr.forEach(r=>{ if(r<=tau+1e-9){ const x=X(cur.x0+cur.vx*Math.min(r,M.Tend)), y=Y(hAt(M,Math.min(r,M.Tend)));
+    c.strokeStyle='#2fa36b'; c.lineWidth=3; c.fillStyle='rgba(47,163,107,.25)'; c.beginPath(); c.arc(x,y,u*.9,0,7); c.fill(); c.stroke();
+    c.fillStyle=night?'#a6f0c9':'#1c6f47'; c.font='600 11px system-ui,sans-serif'; c.fillText('t = '+dec(r,2)+' s',x+u*1.0,y-u*.9); } });
+  // sprite
+  const sx=X(cur.x0+cur.vx*tc), sy=Y(hAt(M,tc));
+  c.save(); c.translate(sx,sy);
+  const vyS=-(M.v-10*tc)*s, vxS=cur.vx*s, ang=Math.atan2(vyS,vxS);
+  if(cur.id==='basquet') sprBall(c,u*.55,tau*9,'#e8742a');
+  else if(cur.id==='dofi'){ c.rotate(ang); sprDolphin(c,u); }
+  else if(cur.id==='gat'){ c.rotate(ang*0.35); sprCat(c,u); }
+  else if(cur.id==='coet'){ c.rotate(ang); sprRocket(c,u,(M.v-10*tc)>0&&tau<M.Tend); }
+  else if(cur.id==='cangur'){ sprRoo(c,u); }
+  else { c.rotate(tau*4); sprDiver(c,u); }
+  c.restore();
+  if(near!==undefined) pill(c,'✓ t = '+dec(near,2)+' s · h = '+dec(M.H,2)+' m',w/2,24,'#2fa36b');
+}
+function drawRect(c,w,h){
+  const M=model, s=M.s, x=clamp(tau,0,s), y=s-x, area=x*y;
+  c.fillStyle='#cfe6bd'; c.fillRect(0,0,w,h);
+  c.fillStyle='rgba(255,255,255,.18)'; for(let i=0;i<w;i+=40) c.fillRect(i,0,20,h);
+  const pad=18, box=Math.min(h-2*pad-18,w*.56), k=box/s, bx=pad+14, by=pad+14;
+  c.setLineDash([5,5]); c.strokeStyle='rgba(0,0,0,.28)'; c.lineWidth=1.3; c.strokeRect(bx,by,box,box); c.setLineDash([]);
+  const rw=x*k, rh=y*k;
+  c.fillStyle='rgba(125,185,95,.65)'; c.fillRect(bx,by,rw,rh);
+  c.strokeStyle='#7a4a21'; c.lineWidth=3; c.strokeRect(bx,by,rw,rh);
+  const step=k<6?2:1; c.fillStyle='#7a4a21';
+  for(let i=0;i<=x+1e-9;i+=step){ c.fillRect(bx+i*k-2,by-3,4,6); c.fillRect(bx+i*k-2,by+rh-3,4,6); }
+  for(let j=0;j<=y+1e-9;j+=step){ c.fillRect(bx-3,by+j*k-2,6,4); c.fillRect(bx+rw-3,by+j*k-2,6,4); }
+  c.font='600 13px system-ui,sans-serif'; c.fillStyle='#3d2a17'; c.textAlign='center';
+  c.fillText('x = '+dec(x,1)+' m',bx+rw/2,by-9);
+  c.textAlign='left'; c.fillText('y = '+dec(y,1)+' m',bx+rw+8,by+rh/2+4);
+  if(rw>70&&rh>26){ c.textAlign='center'; c.fillStyle='#2a4a1c'; c.fillText(dec(area,1)+' m²',bx+rw/2,by+rh/2+5); c.textAlign='left'; }
+  // mesurador d'àrea
+  const gx=bx+box+56, gw=34, gh=box, gmax=Math.max(M.amax,M.A)*1.12;
+  const vr=sol.roots.filter(r=>validRoot(M,r)); const near=vr.find(r=>Math.abs(tau-r)<0.02*s);
+  c.fillStyle='rgba(255,255,255,.55)'; c.fillRect(gx,by,gw,gh); c.strokeStyle='#5a5f66'; c.lineWidth=1.5; c.strokeRect(gx,by,gw,gh);
+  c.fillStyle=near!==undefined?'#2fa36b':'#3a78d6'; const fh=area/gmax*gh; c.fillRect(gx,by+gh-fh,gw,fh);
+  const ya=by+gh-M.A/gmax*gh; c.setLineDash([6,4]); c.strokeStyle='#e0523f'; c.lineWidth=2; c.beginPath(); c.moveTo(gx-8,ya); c.lineTo(gx+gw+8,ya); c.stroke(); c.setLineDash([]);
+  c.font='600 12px system-ui,sans-serif'; c.fillStyle='#b23a2a'; const lt='A = '+M.A+' m²'; const tw=c.measureText(lt).width;
+  c.fillText(lt,Math.min(gx+gw+12,w-tw-6),ya+4);
+  const ym=by+gh-M.amax/gmax*gh; c.fillStyle='#4a4f56'; c.font='11px system-ui,sans-serif'; c.fillText(L('màx ','máx ')+dec(M.amax,1),gx-4,Math.min(ym-4,ya-14)); 
+  c.fillStyle='#2b2f36'; c.font='600 12px system-ui,sans-serif'; c.textAlign='center'; c.fillText(dec(area,1)+' m²',gx+gw/2,by+gh+16); c.textAlign='left';
+  if(near!==undefined) pill(c,'✓ x = '+dec(near,2)+' m · '+L('àrea','área')+' = '+M.A+' m²',w/2,16,'#2fa36b');
+}
+function drawScene(){
+  const f=fit(cvS), c=f.c; c.clearRect(0,0,f.w,f.h);
+  if(model.kind==='proj'&&SI) drawProj(c,f.w,f.h); else if(model.kind==='rect') drawRect(c,f.w,f.h);
+}
+
+/* ---------- gràfica ---------- */
+function drawGraph(){
+  const f=fit(cvG), c=f.c, w=f.w, h=f.h; c.clearRect(0,0,w,h);
+  const cs=getComputedStyle(document.documentElement), css=n=>cs.getPropertyValue(n).trim();
+  const M=model, V=M.kind==='free'?'roots':view;
+  const cu=M.curve[V], pa=cu[0],pb=cu[1],pc=cu[2], L0=M.L[V];
+  const fn=x=>(pa*x+pb)*x+pc;
+  const roots=sol.roots.slice();
+  const xv=pa!==0?-pb/(2*pa):null, yv=xv!==null?fn(xv):null;
+  const dom=M.kind==='proj'?[0,M.Tend]:M.kind==='rect'?[0,M.s]:null;
+  const xs=[0].concat(roots); if(xv!==null)xs.push(xv); if(dom){xs.push(dom[0]);xs.push(dom[1]);}
+  let xmin=Math.min.apply(null,xs), xmax=Math.max.apply(null,xs);
+  if(xmax-xmin<2){ const m=(xmax+xmin)/2; xmin=m-1; xmax=m+1; }
+  const pdx=(xmax-xmin)*.12; xmin-=pdx; xmax+=pdx;
+  const ys=[0,L0,fn(0)]; if(yv!==null)ys.push(yv); if(pa===0){ys.push(fn(xmin));ys.push(fn(xmax));}
+  let ymin=Math.min.apply(null,ys), ymax=Math.max.apply(null,ys);
+  if(ymax-ymin<1){ymax+=.5;ymin-=.5;}
+  const pdy=(ymax-ymin)*.16; ymin-=pdy; ymax+=pdy;
+  const ml=48,mr=14,mt=18,mb=30, pw=w-ml-mr, ph=h-mt-mb;
+  const X=x=>ml+(x-xmin)/(xmax-xmin)*pw, Y=y=>mt+(ymax-y)/(ymax-ymin)*ph;
+  const muted=css('--muted'), line=css('--line'), ink=css('--ink'), c1=css('--c1'), c2=css('--c2'), c3=css('--c3');
+  c.font='11px system-ui,sans-serif';
+  // zones no vàlides
+  if(dom){
+    c.fillStyle='rgba(130,130,130,.14)';
+    c.fillRect(ml,mt,Math.max(0,X(dom[0])-ml),ph);
+    c.fillRect(X(dom[1]),mt,Math.max(0,ml+pw-X(dom[1])),ph);
+    c.fillStyle=muted; c.textAlign='center';
+    if(X(dom[0])-ml>34) c.fillText(M.kind==='proj'?'t < 0':'x < 0',(ml+X(dom[0]))/2,mt+34);
+    if(ml+pw-X(dom[1])>34) c.fillText(M.kind==='proj'?L('a terra','en el suelo'):'x > '+M.s,(X(dom[1])+ml+pw)/2,mt+34);
+    c.textAlign='left';
+  }
+  // graella
+  const sx=niceStep((xmax-xmin)/7), sy=niceStep((ymax-ymin)/5);
+  c.strokeStyle=line; c.lineWidth=1; c.fillStyle=muted;
+  c.textAlign='center'; c.textBaseline='alphabetic';
+  for(let x=Math.ceil(xmin/sx)*sx;x<=xmax+1e-9;x+=sx){ const xx=Math.round(x/sx)*sx; c.beginPath(); c.moveTo(X(xx),mt); c.lineTo(X(xx),mt+ph); c.stroke(); c.fillText(dec(xx,3),X(xx),h-mb+14); }
+  c.textAlign='right';
+  for(let y=Math.ceil(ymin/sy)*sy;y<=ymax+1e-9;y+=sy){ const yy=Math.round(y/sy)*sy; c.beginPath(); c.moveTo(ml,Y(yy)); c.lineTo(ml+pw,Y(yy)); c.stroke(); c.fillText(dec(yy,3),ml-5,Y(yy)+4); }
+  c.textAlign='left';
+  // eixos
+  c.strokeStyle=ink; c.lineWidth=1.6; c.globalAlpha=.7;
+  if(ymin<0&&ymax>0){ c.beginPath(); c.moveTo(ml,Y(0)); c.lineTo(ml+pw,Y(0)); c.stroke(); }
+  if(xmin<0&&xmax>0){ c.beginPath(); c.moveTo(X(0),mt); c.lineTo(X(0),mt+ph); c.stroke(); }
+  c.globalAlpha=1;
+  // noms dels eixos
+  c.fillStyle=muted; c.font='600 11px system-ui,sans-serif';
+  const xl=M.kind==='proj'?'t (s)':M.kind==='rect'?'x (m)':'x';
+  const yl=M.kind==='free'?'f(x)':(V==='inter'?(M.kind==='proj'?'h (m)':L('àrea (m²)','área (m²)')):(M.kind==='proj'?'f(t) = h(t) '+MINUS+' H':'f(x)'));
+  c.textAlign='right'; c.fillText(xl,w-mr,h-mb-6); c.textAlign='left'; c.fillText(yl,ml+6,mt+11);
+  // corba
+  c.save(); c.beginPath(); c.rect(ml,mt,pw,ph); c.clip();
+  const path=(a,b)=>{ c.beginPath(); const N=260; for(let i=0;i<=N;i++){ const x=a+(b-a)*i/N; const px=X(x),py=Y(fn(x)); if(i===0)c.moveTo(px,py); else c.lineTo(px,py); } c.stroke(); };
+  c.lineWidth=2.4; c.strokeStyle=c1;
+  if(dom){ c.globalAlpha=.35; path(xmin,xmax); c.globalAlpha=1; c.save(); c.beginPath(); c.rect(X(dom[0]),mt,X(dom[1])-X(dom[0]),ph); c.clip(); c.lineWidth=3.2; path(xmin,xmax); c.restore(); }
+  else path(xmin,xmax);
+  // tros recorregut
+  if(dom&&tau>0){ c.lineWidth=5; c.globalAlpha=.9; path(0,Math.min(tau,dom[1])); c.globalAlpha=1; }
+  c.restore();
+  // recta L
+  c.setLineDash([7,5]); c.strokeStyle=c2; c.lineWidth=1.8; c.beginPath(); c.moveTo(ml,Y(L0)); c.lineTo(ml+pw,Y(L0)); c.stroke(); c.setLineDash([]);
+  c.fillStyle=c2; c.font='600 11px system-ui,sans-serif'; c.textAlign='right';
+  const ll=V==='inter'?(M.kind==='proj'?'H = '+M.H:L('àrea = ','área = ')+M.A):'y = 0';
+  c.fillText(ll,ml+pw-4,Y(L0)-5); c.textAlign='left';
+  // vèrtex
+  if(xv!==null&&xv>=xmin&&xv<=xmax){
+    c.setLineDash([3,4]); c.strokeStyle=muted; c.lineWidth=1; c.beginPath(); c.moveTo(X(xv),Y(yv)); c.lineTo(X(xv),Y(Math.max(ymin,Math.min(ymax,0)))); c.stroke(); c.setLineDash([]);
+    c.fillStyle=css('--panel'); c.strokeStyle=ink; c.lineWidth=1.6; c.beginPath(); c.moveTo(X(xv),Y(yv)-5); c.lineTo(X(xv)+5,Y(yv)); c.lineTo(X(xv),Y(yv)+5); c.lineTo(X(xv)-5,Y(yv)); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle=ink; c.font='11px system-ui,sans-serif'; c.textAlign='center';
+    c.fillText('V('+dec(xv,2)+', '+dec(yv,2)+')',clamp(X(xv),ml+44,ml+pw-44),pa<0?Y(yv)-10:Y(yv)+19); c.textAlign='left';
+  }
+  // arrels
+  roots.forEach((r,i)=>{
+    const ok=validRoot(M,r), px=X(r), py=Y(L0);
+    if(ok){ c.fillStyle=c3; c.strokeStyle='#fff'; c.lineWidth=2; c.beginPath(); c.arc(px,py,6.5,0,7); c.fill(); c.stroke(); }
+    else { c.strokeStyle=css('--si'); c.lineWidth=2.6; c.beginPath(); c.moveTo(px-6,py-6); c.lineTo(px+6,py+6); c.moveTo(px+6,py-6); c.lineTo(px-6,py+6); c.stroke(); }
+    c.fillStyle=ok?c3:css('--si'); c.font='600 12px system-ui,sans-serif'; c.textAlign='center';
+    const side=(pa<0)?1:-1; // etiqueta cap al costat oposat a la corba
+    c.fillText(M.var+' = '+dec(r,2),clamp(px,ml+34,ml+pw-34),py+(side>0?22:-12)); c.textAlign='left';
+  });
+  // cursor
+  if(dom){
+    const tt=Math.min(tau,dom[1]), cx=X(tt), cy=Y(fn(tt));
+    c.setLineDash([3,3]); c.strokeStyle=c1; c.lineWidth=1; c.beginPath(); c.moveTo(cx,cy); c.lineTo(cx,Y(Math.max(ymin,Math.min(ymax,0)))); c.stroke(); c.setLineDash([]);
+    c.fillStyle=c1; c.strokeStyle='#fff'; c.lineWidth=2.5; c.beginPath(); c.arc(cx,cy,7,0,7); c.fill(); c.stroke();
+  }
+  // llegenda
+  c.font='11px system-ui,sans-serif'; c.fillStyle=muted; c.textAlign='right';
+  const leg=M.kind==='free'?'y = '+poly(M.a,M.b,M.c,'x').replace(/<[^>]+>/g,''):(V==='inter'?(M.kind==='proj'?'h(t) = '+poly(-5,M.v,M.h0,'t').replace(/<[^>]+>/g,''):L('àrea','área')+'(x) = x('+M.s+' '+MINUS+' x)'):'f = '+poly(M.a,M.b,M.c,M.var).replace(/<[^>]+>/g,''));
+  c.fillText(leg,w-mr,mt+11); c.textAlign='left';
+}
+function redraw(){ drawScene(); drawGraph(); updateLabels(); }
+
+/* ---------- control ---------- */
+function syncScrub(){ if(model.tauMax) $('scrub').value=Math.round(clamp(tau/model.tauMax,0,1)*1000); }
+function tick(ts){
+  if(!playing){ last=0; return; }
+  if(!last) last=ts;
+  const dt=Math.min(.1,(ts-last)/1000); last=ts;
+  tau+=dt*speed*model.tauMax/dur();
+  if(tau>=model.tauMax){ tau=model.tauMax; playing=false; }
+  syncScrub(); redraw();
+  if(playing) requestAnimationFrame(tick);
+}
+function play(){
+  if(model.kind==='free'){ toggleFree(); return; }
+  if(playing){ playing=false; updateLabels(); return; }
+  if(tau>=model.tauMax-1e-9) tau=0;
+  playing=true; last=0; requestAnimationFrame(tick); updateLabels();
+}
+function stopFree(){ if(freeTimer){ clearInterval(freeTimer); freeTimer=null; } }
+function toggleFree(){
+  if(freeTimer){ stopFree(); updateLabels(); return; }
+  freeTimer=setInterval(()=>{
+    F.c+=cDir; if(F.c>=15)cDir=-1; if(F.c<=-15)cDir=1; syncFree(); paramsChanged();
+  },Math.round(420/speed));
+  updateLabels();
+}
+function paramsChanged(){
+  model=getModel(); sol=solve(model.a,model.b,model.c); computeSI();
+  if(model.tauMax) tau=Math.min(tau,model.tauMax); else tau=0;
+  if(cur.kind!=='free') syncScrub();
+  renderTexts(); redraw();
+}
+function selectScenario(id){
+  cur=SCN.find(s=>s.id===id); stopFree(); playing=false; tau=0; stepN=1; view='inter';
+  if(cur.kind==='proj'){ P.v=cur.v.val; P.H=cur.H?cur.H.val:0; }
+  if(cur.kind==='rect'){ P.Pm=cur.Pm.val; P.A=cur.A.val; }
+  $('right').classList.toggle('freemode',cur.kind==='free');
+  buildChips(); buildControls(); paramsChanged(); syncScrub();
+}
+function applyPage(){
+  const dc=lang==='ca'?',':','; document.querySelectorAll('#spd option').forEach(o=>{ o.textContent=o.value.replace('.',dc)+'×'; });
+  buildChips(); buildControls(); renderTexts(); redraw();
+}
+
+$('playBtn').onclick=play;
+$('scrub').oninput=e=>{ playing=false; tau=(+e.target.value)/1000*model.tauMax; redraw(); };
+$('spd').onchange=e=>{ speed=+e.target.value; if(freeTimer){ stopFree(); toggleFree(); } };
+$('viewBtn').onclick=()=>{ view=view==='inter'?'roots':'inter'; redraw(); };
+$('stepMode').onchange=e=>{ stepMode=e.target.checked; stepN=1; renderSteps(); };
+$('nextStep').onclick=()=>{ stepN++; renderSteps(); };
+$('fullBtn').onclick=()=>{ if(document.fullscreenElement) document.exitFullscreen(); else if($('right').requestFullscreen) $('right').requestFullscreen(); };
+document.addEventListener('fullscreenchange',()=>{ updateLabels(); setTimeout(redraw,60); });
+if(window.ResizeObserver){ const ro=new ResizeObserver(()=>redraw()); ro.observe($('stageS')); ro.observe($('stageG')); } else window.addEventListener('resize',redraw);
+
+model=getModel(); sol=solve(model.a,model.b,model.c); computeSI();
+applyPage();
+selectScenario('basquet');
+
+/* ===== Raona-ho ===== */
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+function loadScn(id,vals){
+  selectScenario(id);
+  Object.assign(P,vals||{});
+  buildControls(); paramsChanged();
+  RZ.show($('stageG'));
+}
+function loadFree(a,b,c){
+  selectScenario('lliure');
+  F.a=a;F.b=b;F.c=c;
+  buildControls(); syncFree(); paramsChanged();
+  RZ.show($('stageG'));
+}
+const rootsInt=(a,b,c)=>{const D=b*b-4*a*c;if(D<=0)return true;const sq=Math.sqrt(D);if(!Number.isInteger(sq))return false;return Number.isInteger((-b+sq)/(2*a))&&Number.isInteger((-b-sq)/(2*a));};
+RZ.init({
+ F:{c:{l:'f_c'},n:{l:'f_n'},b:{l:'f_b'},a:{l:'f_a'},t:{l:'f_t'}},
+ sim:v=>v[0](),
+ M:[
+  {id:'m1',f:['c'],sim:([c])=>loadFree(1,-4,isI(c,-30,30)?c:4),ok:()=>({k:'m1_ok'}),
+   chk:([c])=>!isI(c,-30,30)?RNG:c===4?null:{k:'m1_f',p:()=>{const D=16-4*c;return [c,D,t(D>0?'m1_two':'m1_none')];}}},
+  {id:'m2',f:['n'],sim:([n])=>loadScn('dofi',{v:isI(n,0,14)?n:10,H:5}),ok:()=>({k:'m2_ok'}),
+   chk:([n])=>!isI(n,0,14)?RNG:n===10?null:n>10?{k:'m2_more',p:[n]}:{k:'m2_f',p:()=>[n,nf(n*n/20,2)]}},
+  {id:'m3',f:['b'],sim:([b])=>loadFree(1,isI(b,-20,20)?b:6,9),ok:()=>({k:'m3_ok'}),
+   chk:([b])=>!isI(b,-20,20)?RNG:b===6?null:b===-6?{k:'m3_neg'}:{k:'m3_f',p:[b,b*b-36]}},
+  {id:'m4',f:['n'],sim:([n])=>loadScn('pati',{Pm:40,A:isI(n,1,225)?n:100}),ok:()=>({k:'m4_ok'}),
+   chk:([n])=>!isI(n,1,225)?RNG:n===100?null:n<100?{k:'m4_less',p:[n]}:{k:'m4_more',p:[n]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>loadFree(1,2,5)},
+  {id:'s2',ans:'D',f:['a','c'],cxsim:([a,c])=>loadFree(isI(a,-12,12)&&a!==0?a:1,0,isI(c,-30,30)?c:4),
+   cx:([a,c])=>!(isI(a,-12,12)&&isI(c,-30,30)&&a!==0&&c!==0)?RNG:a*c<0?{k:'s2_cx_no',p:[a,c]}:null,
+   sim:()=>loadFree(1,0,-4)},
+  {id:'s3',ans:'M',sim:()=>loadFree(1,-5,6)},
+  {id:'s4',ans:'S',sim:()=>loadFree(1,-4,4)},
+  {id:'s5',ans:'D',f:['a','b','c'],cxsim:([a,b,c])=>loadFree(isI(a,-12,12)&&a!==0?a:2,isI(b,-20,20)?b:-3,isI(c,-30,30)?c:-2),
+   cx:([a,b,c])=>!(isI(a,-12,12)&&isI(b,-20,20)&&isI(c,-30,30)&&a!==0)?RNG:(b*b-4*a*c>0&&!rootsInt(a,b,c))?null:{k:'s5_cx_no',p:[a,b,c,b*b-4*a*c]},
+   sim:()=>loadFree(1,-5,6)},
+  {id:'s6',ans:'M',sim:()=>loadFree(0,3,-6)}
+ ],
+ E:[{id:'e1',who:1,args:[()=>loadFree(1,-5,6)]},{id:'e2',who:0,args:[()=>loadFree(1,0,-4)]},{id:'e3',who:2,args:[()=>loadFree(1,-6,9)]},{id:'e4',who:3,args:[()=>loadFree(1,2,5)]}],
+ D:[
+  {id:'d1',chips:{vals:[1,0],fmt:x=>t(x?'yes':'no')},sim:()=>loadScn('dofi',{v:10,H:6}),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===0?null:{k:'d1_no'}},
+  {id:'d2',f:[{l:'d2.l0'}],sim:()=>loadScn('pati',{Pm:40,A:96}),ok:()=>({k:'d2_ok'}),
+   chk:([n])=>Math.abs(n-8)<1e-9?null:Math.abs(n-12)<1e-9?{k:'d2_big',p:[n]}:{k:'d2_f',p:()=>[n,nf(n*(20-n),2)]}},
+  {id:'d3',f:[{l:'d3.l0'}],sim:()=>loadScn('basquet',{v:6,H:3}),ok:()=>({k:'d3_ok'}),
+   chk:([n])=>Math.abs(n-0.2)<0.011?null:Math.abs(n-1)<0.011?{k:'d3_down'}:{k:'d3_f',p:[n]}}
+ ]
+});
+})();
+initQuiz([]);
+initLang();applyLang();
+</script>
+</body>
+</html>

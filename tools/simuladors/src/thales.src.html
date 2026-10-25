@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thales i semblança</title>
+<meta name="description" content="Arrossega els vèrtexs A, B i C. La recta DE és sempre paral·lela a BC; mou el control per desplaçar-la. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d'altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+#svg{display:block;width:100%;height:auto;max-height:min(72vh,560px);margin-inline:auto;background:var(--stage);border-radius:8px}
+#svg .tri{fill:var(--pa);fill-opacity:.08;stroke:none}
+#svg .side0{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5}
+#svg .part{stroke:var(--ok);stroke-width:5;stroke-linecap:round}
+#svg .par{stroke:var(--pb);stroke-width:5;stroke-linecap:round}
+#svg .drag{fill:var(--panel);stroke:var(--ink);stroke-width:3;cursor:grab;touch-action:none}
+#svg .drag:hover{fill:var(--pa)}
+#svg .dot{fill:var(--pb);stroke:var(--ink);stroke-width:2}
+#svg .vl{fill:var(--ink);font:700 20px var(--f-display);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.side .tbl{font-size:14px}
+.side .tbl th{font:600 13px var(--f-num);text-align:left;white-space:nowrap;color:var(--ink)}
+.side .tbl td:last-child{font-weight:700}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="simgrid">
+<div class="simcv"><svg id="svg" viewBox="0 0 460 340" role="img" data-i18n-aria="aria.svg" aria-label=""></svg></div>
+<div class="side">
+<div id="ctl" style="display:grid;gap:8px"></div>
+<div class="row"><button class="btn" type="button" id="reset" data-i18n="reset"></button></div>
+<table class="tbl" data-i18n-aria="aria.tbl" aria-label=""><tbody id="tbl"></tbody></table>
+<p class="note" id="note" aria-live="polite"></p>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Thales i semblança",
+"eyebrow":"Matemàtiques · 2n ESO · Geometria",
+"h1":"Thales i semblança",
+"lede":"Arrossega els vèrtexs A, B i C. La recta DE és sempre paral·lela a BC; mou el control per desplaçar-la.",
+"sim_title":"El teorema de Thales",
+"story":"Si tracem una paral·lela <b>DE</b> al costat <b>BC</b>, el triangle <b>ADE</b> és una còpia reduïda d'<b>ABC</b>: tots els costats es redueixen en la mateixa proporció <b>k</b> i els angles no canvien. Arrossega els vèrtexs fins que el triangle et semble «lleig» i comprova que els quocients segueixen coincidint.",
+"aria.svg":"Triangle ABC amb un segment DE paral·lel a BC",
+"aria.tbl":"Quocients",
+"aria.vA":"Vèrtex A","aria.vB":"Vèrtex B","aria.vC":"Vèrtex C",
+"l_k":"Posició de DE (k)","reset":"Triangle inicial",
+"row_area":"Àrea ADE / ABC",
+"note":"Els tres quocients de longituds coincideixen (raó de semblança <b>k = {0}</b>). L'àrea es multiplica per k² = {1}.",
+"idea":"<b>Per a la classe:</b> deixa que arrosseguen els vèrtexs fins que el triangle semble «lleig» i comproven que els tres quocients segueixen coincidint. Després pregunta: si DE fa la meitat de BC, quina fracció de l'àrea té ADE?",
+"rng":"Escriu una k entre 0,05 i 1.",
+"l_de":"DE","l_kf":"k =",
+"s_cx_no":"Amb k = {0} sí que es compleix. Busca'n un altre valor.",
+"m1.q":"En el triangle <b>ABC</b> amb AB = AC = 10 cm i BC = 12 cm, col·loca DE perquè mesure <b>3 cm</b>. Quina posició <b>k</b> cal?",
+"m1_f":"Amb k = {0}, DE = k · 12 = {1} cm, no 3.",
+"m1_ok":"✔ Missió complida! k = 0,25 i DE = 0,25 · 12 = 3 cm.",
+"m1.more":"I perquè DE faça 9 cm? Quina relació hi ha sempre entre k i la mesura de DE?",
+"m2.q":"En el mateix triangle (AB = AC = 10 cm, BC = 12 cm), vols que <b>AD mesure 4 cm</b>. Quina k cal i quant mesura aleshores DE?",
+"m2_k":"Amb k = {0}, AD = k · 10 = {1} cm, no 4.",
+"m2_de":"DE es calcula com k · BC, no com AD ni com BC − AD. Torna-ho a provar.",
+"m2_ok":"✔ Missió complida! AD = 0,4 · 10 = 4 cm i DE = 0,4 · 12 = 4,8 cm.",
+"m2.more":"Quant mesura AE? I EC? Compara AD/DB amb AE/EC.",
+"m3.q":"Troba la posició <b>k</b> perquè l'<b>àrea</b> del triangle ADE siga la <b>quarta part</b> de l'àrea d'ABC.",
+"m3_lin":"k = 0,25 és la raó de les <b>longituds</b>. L'àrea es multiplica per k² = 0,0625, no per 0,25.",
+"m3_f":"Amb k = {0}, l'àrea es multiplica per k² = {1}, i en voldries 0,25.",
+"m3_ok":"✔ Missió complida! 0,5² = 0,25: DE fa la meitat de BC, però l'àrea només és la quarta part.",
+"m3.more":"I per a la novena part? I per a la meitat? Quina operació has de fer amb la raó d'àrees per a trobar k?",
+"m4.q":"L'àrea d'ABC és <b>48 cm²</b> (base 12 cm, altura 8 cm). Troba la k perquè l'àrea d'ADE siga <b>27 cm²</b>.",
+"m4_sq":"27/48 = 0,5625 és k², la raó de les <b>àrees</b>. Per a obtindre k cal fer-ne l'arrel quadrada.",
+"m4_f":"Amb k = {0}, l'àrea d'ADE és 48 · k² = {1} cm², no 27.",
+"m4_ok":"✔ Missió complida! 48 · 0,75² = 48 · 0,5625 = 27 cm².",
+"m4.more":"Quant mesura DE amb eixa k? I si volguéssim 12 cm²?",
+"s1.q":"«Si DE és paral·lela a BC, aleshores AD/AB = AE/AC.»",
+"s1.h":"Mou el control i mira les dues primeres files de la taula.",
+"s1.e":"Sempre: és el teorema de Thales. Les dues raons coincideixen amb DE/BC, que és la raó de semblança k.",
+"s2.q":"«Si DE és paral·lela a BC i D és el punt mitjà d'AB, E també és el punt mitjà d'AC.»",
+"s2.h":"Posa k = 0,5 i compara AD/AB amb AE/AC.",
+"s2.e":"Sempre: AD/AB = 1/2, així que AE/AC també val 1/2. Els dos punts divideixen els costats en la mateixa proporció.",
+"s3.q":"«Si k = 0,5, l'àrea del triangle ADE és la meitat de l'àrea d'ABC.»",
+"s3.h":"Mira la fila de l'àrea amb k = 0,5.",
+"s3.e":"Mai: l'àrea es multiplica per k² = 0,25, és a dir, és la quarta part. La meitat és només la raó de les longituds.",
+"s4.q":"«Si la raó entre els costats és k, la raó entre les àrees és k².»",
+"s4.h":"Prova k = 0,5, k = 0,3 i k = 0,8, i compara amb la fila de l'àrea.",
+"s4.e":"Sempre: l'àrea té dues dimensions (base i altura), i totes dues es multipliquen per k.",
+"s5.q":"«L'àrea del triangle ADE és k vegades l'àrea d'ABC.»",
+"s5.h":"Mira la fila de l'àrea amb k = 0,5 i amb k = 1.",
+"s5.e":"De vegades: només quan k = 1 (o k = 0). En general l'àrea és k² vegades l'original, i com que k és menor que 1, k² és menor que k.",
+"s6.q":"«El teorema de Thales només funciona amb triangles que s'assemblen a un equilàter.»",
+"s6.h":"Arrossega A, B o C fins que el triangle siga ben diferent i mira els quocients.",
+"s6.e":"Mai: el teorema no depèn de la forma del triangle, només cal que DE siga paral·lela a BC.",
+"e1.ctx":"En el triangle isòsceles (AB = AC = 10 cm, BC = 12 cm) hem posat DE amb k = 0,5, de manera que AD = 5 cm. Quant mesura <b>DE</b>?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"A AD li han tret 5 cm, així que a BC també: DE = 12 − 5 = 7 cm.",
+"e1.s1":"AD és la meitat d'AB, així que DE és la meitat de BC: DE = 6 cm.",
+"e1.w0":"Marta resta, però la relació és <b>multiplicativa</b>: si AD és la meitat d'AB, DE és la meitat de BC. Restar 5 a un costat de 12 i a un de 10 no manté la forma.",
+"e1.w1":"Perquè DE sempre mesura la meitat d'AD.",
+"e1.w2":"Perquè en un triangle isòsceles totes les paral·leles mesuren el mateix.",
+"e1.frame":"Marta, DE no és 7 perquè…",
+"e1.model":"Marta, la proporció és multiplicativa, no additiva. AD = 5 és la meitat d'AB = 10, així que DE és la meitat de BC = 12, és a dir, 6 cm. Si restàrem 5 cm a cada costat, el triangle resultant no tindria la mateixa forma.",
+"e2.ctx":"Amb k = 0,5, quina fracció de l'àrea d'ABC té el triangle <b>ADE</b>?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"La meitat, perquè k = 0,5.",
+"e2.s1":"La quarta part, perquè 0,5² = 0,25.",
+"e2.w0":"L'àrea té dues dimensions: es multiplica per k², no per k. ADE és 0,5² = 0,25 d'ABC; la meitat és només la raó de les longituds.",
+"e2.w1":"Perquè l'àrea sempre és la meitat de la raó.",
+"e2.w2":"Perquè ADE no té àrea quan DE és paral·lela a BC.",
+"e2.frame":"Àlex, l'àrea no és la meitat perquè…",
+"e2.model":"Àlex, k = 0,5 és la raó entre les <b>longituds</b>. Com que l'àrea depèn de dues longituds (base i altura) i totes dues es redueixen a la meitat, l'àrea es redueix a 0,5 · 0,5 = 0,25: la quarta part. Si fem DE la meitat, el triangle petit cap quatre vegades dins del gran.",
+"e3.ctx":"En un triangle AB = 6 cm, AD = 4 cm i DE = 5 cm, amb DE ∥ BC. Quant mesura <b>BC</b>?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"BC = DE + DB = 5 + 2 = 7 cm.",
+"e3.s1":"k = 4/6, així que BC = 5 · 4/6 ≈ 3,3 cm.",
+"e3.w0":"La raó és k = AD/AB = 4/6 = 2/3 i DE = k · BC, així que BC = DE : k = 5 : (2/3) = 7,5 cm. Rita suma longituds i Joan multiplica per k en comptes de dividir.",
+"e3.w1":"Perquè BC ha de ser més curt que DE.",
+"e3.w2":"Perquè això només es pot saber mesurant el dibuix.",
+"e3.frame":"Rita i Joan, BC no és ni 7 ni 3,3 perquè…",
+"e3.model":"Rita i Joan, DE és <b>més curt</b> que BC (el triangle petit està dins del gran), així que BC ha de ser més llarg que 5, i 3,3 no pot ser. La raó és k = 4/6 = 2/3 i DE = k · BC, d'on BC = 5 : (2/3) = 5 · 3/2 = 7,5 cm. Comprovació: 2/3 de 7,5 és 5 ✔.",
+"e4.ctx":"Sabem que DE ∥ BC. Ens diuen que AD/AB = AE/AC. Quines altres proporcions es compleixen?",
+"e4.n0":"Àlex","e4.n1":"Laia",
+"e4.s0":"AD/AB = AE/AC.",
+"e4.s1":"AD/DB = AE/EC.",
+"e4.w0":"Totes dues són correctes: si les raons AD/AB i AE/AC coincideixen, també coincideixen AD/DB i AE/EC (és la mateixa proporció escrita per parts).",
+"e4.w1":"Perquè DB és igual que AD.",
+"e4.w2":"Perquè només una de les dues pot ser una proporció.",
+"e4.frame":"Àlex i Laia, tots dos teniu raó perquè…",
+"e4.model":"Àlex i Laia, la primera proporció compara cada part amb el costat sencer (AD amb AB, AE amb AC). La segona compara una part amb l'altra (AD amb DB, AE amb EC). Si AD = k · AB, aleshores DB = (1 − k) · AB, i AD/DB = k/(1 − k), que val el mateix en tots dos costats.",
+"d1.q":"Una estaca d'<b>1,5 m</b> fa una ombra de <b>2 m</b> i, al mateix moment, un arbre fa una ombra de <b>12 m</b>. Quina altura té l'arbre?",
+"d1.l0":"Altura",
+"d1_add":"Has sumat: l'ombra de l'arbre és 10 m més llarga i li has afegit 10 m a l'altura. La relació és proporcional: multiplica, no sumes.",
+"d1_inv":"Has dividit al revés: l'ombra de l'arbre és <b>més llarga</b>, així que l'arbre ha de ser més alt que l'estaca, no més baix.",
+"d1_mul":"Has multiplicat 1,5 per l'ombra de l'arbre (12) i no per la raó 12/2.",
+"d1_no":"{0} m no manté la proporció: ombra/altura hauria de ser igual en els dos casos (2/1,5).",
+"d1_ok":"✔ Ben decidit! La raó és 12/2 = 6 i 1,5 · 6 = 9 m.",
+"d1.more":"Quina k relaciona el triangle de l'estaca amb el de l'arbre? Si l'ombra de l'arbre fóra de 8 m, quina altura tindria?",
+"d2.q":"Una banderola triangular té <b>60 cm de base</b> i <b>80 cm d'altura</b> (àrea 2.400 cm²). Es talla paral·lelament a la base a una quarta part de l'altura des del vèrtex superior. Quant mesura el tall DE i quina àrea té el triangle petit?",
+"d2.l0":"Tall DE","d2.l1":"Àrea",
+"d2_de":"DE és k vegades la base, amb k = 1/4: DE = 0,25 · 60.",
+"d2_lin":"600 és 0,25 · 2.400, però l'àrea no es multiplica per k sinó per k² = 0,0625.",
+"d2_a":"L'àrea del triangle petit és 2.400 · k². Revisa el càlcul amb k = 0,25.",
+"d2_ok":"✔ Ben decidit! DE = 15 cm i l'àrea és 2.400 · 0,0625 = 150 cm².",
+"d2.more":"Quina fracció de la banderola és el trapezi que queda? I si el tall estiguera a la meitat de l'altura?",
+"d3.q":"Vols dividir un triangle en dues parts de <b>la mateixa àrea</b> amb un tall paral·lel a la base. A quina posició k has de fer el tall (mesurada des del vèrtex superior)?",
+"d3.lc":"k =",
+"d3_lo":"Amb k = {0} el triangle de dalt només té un {1} de l'àrea: massa poc.",
+"d3_hi":"Amb k = {0} el triangle de dalt té un {1} de l'àrea: massa.",
+"d3_ok":"✔ Ben decidit! 0,7² = 0,49 ≈ 0,5: el tall no cau a la meitat de l'altura, sinó prop del 70 %.",
+"d3.more":"Quin seria el valor exacte de k? Pista: k² = 0,5."
+},
+es:{
+"title":"Thales y semejanza",
+"eyebrow":"Matemáticas · 2.º ESO · Geometría",
+"h1":"Thales y semejanza",
+"lede":"Arrastra los vértices A, B y C. La recta DE es siempre paralela a BC; mueve el control para desplazarla.",
+"sim_title":"El teorema de Thales",
+"story":"Si trazamos una paralela <b>DE</b> al lado <b>BC</b>, el triángulo <b>ADE</b> es una copia reducida de <b>ABC</b>: todos los lados se reducen en la misma proporción <b>k</b> y los ángulos no cambian. Arrastra los vértices hasta que el triángulo te parezca «feo» y comprueba que los cocientes siguen coincidiendo.",
+"aria.svg":"Triángulo ABC con un segmento DE paralelo a BC",
+"aria.tbl":"Cocientes",
+"aria.vA":"Vértice A","aria.vB":"Vértice B","aria.vC":"Vértice C",
+"l_k":"Posición de DE (k)","reset":"Triángulo inicial",
+"row_area":"Área ADE / ABC",
+"note":"Los tres cocientes de longitudes coinciden (razón de semejanza <b>k = {0}</b>). El área se multiplica por k² = {1}.",
+"idea":"<b>Para la clase:</b> deja que arrastren los vértices hasta que el triángulo parezca «feo» y comprueben que los tres cocientes siguen coincidiendo. Después pregunta: si DE mide la mitad de BC, ¿qué fracción del área tiene ADE?",
+"rng":"Escribe una k entre 0,05 y 1.",
+"l_de":"DE","l_kf":"k =",
+"s_cx_no":"Con k = {0} sí se cumple. Busca otro valor.",
+"m1.q":"En el triángulo <b>ABC</b> con AB = AC = 10 cm y BC = 12 cm, coloca DE para que mida <b>3 cm</b>. ¿Qué posición <b>k</b> hace falta?",
+"m1_f":"Con k = {0}, DE = k · 12 = {1} cm, no 3.",
+"m1_ok":"✔ ¡Misión cumplida! k = 0,25 y DE = 0,25 · 12 = 3 cm.",
+"m1.more":"¿Y para que DE mida 9 cm? ¿Qué relación hay siempre entre k y la medida de DE?",
+"m2.q":"En el mismo triángulo (AB = AC = 10 cm, BC = 12 cm), quieres que <b>AD mida 4 cm</b>. ¿Qué k hace falta y cuánto mide entonces DE?",
+"m2_k":"Con k = {0}, AD = k · 10 = {1} cm, no 4.",
+"m2_de":"DE se calcula como k · BC, no como AD ni como BC − AD. Vuelve a probar.",
+"m2_ok":"✔ ¡Misión cumplida! AD = 0,4 · 10 = 4 cm y DE = 0,4 · 12 = 4,8 cm.",
+"m2.more":"¿Cuánto mide AE? ¿Y EC? Compara AD/DB con AE/EC.",
+"m3.q":"Encuentra la posición <b>k</b> para que el <b>área</b> del triángulo ADE sea la <b>cuarta parte</b> del área de ABC.",
+"m3_lin":"k = 0,25 es la razón de las <b>longitudes</b>. El área se multiplica por k² = 0,0625, no por 0,25.",
+"m3_f":"Con k = {0}, el área se multiplica por k² = {1}, y querrías 0,25.",
+"m3_ok":"✔ ¡Misión cumplida! 0,5² = 0,25: DE mide la mitad de BC, pero el área solo es la cuarta parte.",
+"m3.more":"¿Y para la novena parte? ¿Y para la mitad? ¿Qué operación tienes que hacer con la razón de áreas para hallar k?",
+"m4.q":"El área de ABC es <b>48 cm²</b> (base 12 cm, altura 8 cm). Encuentra la k para que el área de ADE sea <b>27 cm²</b>.",
+"m4_sq":"27/48 = 0,5625 es k², la razón de las <b>áreas</b>. Para obtener k hay que hacer su raíz cuadrada.",
+"m4_f":"Con k = {0}, el área de ADE es 48 · k² = {1} cm², no 27.",
+"m4_ok":"✔ ¡Misión cumplida! 48 · 0,75² = 48 · 0,5625 = 27 cm².",
+"m4.more":"¿Cuánto mide DE con esa k? ¿Y si quisiéramos 12 cm²?",
+"s1.q":"«Si DE es paralela a BC, entonces AD/AB = AE/AC.»",
+"s1.h":"Mueve el control y mira las dos primeras filas de la tabla.",
+"s1.e":"Siempre: es el teorema de Thales. Las dos razones coinciden con DE/BC, que es la razón de semejanza k.",
+"s2.q":"«Si DE es paralela a BC y D es el punto medio de AB, E también es el punto medio de AC.»",
+"s2.h":"Pon k = 0,5 y compara AD/AB con AE/AC.",
+"s2.e":"Siempre: AD/AB = 1/2, así que AE/AC también vale 1/2. Los dos puntos dividen los lados en la misma proporción.",
+"s3.q":"«Si k = 0,5, el área del triángulo ADE es la mitad del área de ABC.»",
+"s3.h":"Mira la fila del área con k = 0,5.",
+"s3.e":"Nunca: el área se multiplica por k² = 0,25, es decir, es la cuarta parte. La mitad es solo la razón de las longitudes.",
+"s4.q":"«Si la razón entre los lados es k, la razón entre las áreas es k².»",
+"s4.h":"Prueba k = 0,5, k = 0,3 y k = 0,8, y compara con la fila del área.",
+"s4.e":"Siempre: el área tiene dos dimensiones (base y altura), y las dos se multiplican por k.",
+"s5.q":"«El área del triángulo ADE es k veces el área de ABC.»",
+"s5.h":"Mira la fila del área con k = 0,5 y con k = 1.",
+"s5.e":"A veces: solo cuando k = 1 (o k = 0). En general el área es k² veces la original, y como k es menor que 1, k² es menor que k.",
+"s6.q":"«El teorema de Thales solo funciona con triángulos que se parecen a uno equilátero.»",
+"s6.h":"Arrastra A, B o C hasta que el triángulo sea muy distinto y mira los cocientes.",
+"s6.e":"Nunca: el teorema no depende de la forma del triángulo, solo hace falta que DE sea paralela a BC.",
+"e1.ctx":"En el triángulo isósceles (AB = AC = 10 cm, BC = 12 cm) hemos puesto DE con k = 0,5, de modo que AD = 5 cm. ¿Cuánto mide <b>DE</b>?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"A AD le han quitado 5 cm, así que a BC también: DE = 12 − 5 = 7 cm.",
+"e1.s1":"AD es la mitad de AB, así que DE es la mitad de BC: DE = 6 cm.",
+"e1.w0":"Marta resta, pero la relación es <b>multiplicativa</b>: si AD es la mitad de AB, DE es la mitad de BC. Restar 5 a un lado de 12 y a uno de 10 no mantiene la forma.",
+"e1.w1":"Porque DE siempre mide la mitad de AD.",
+"e1.w2":"Porque en un triángulo isósceles todas las paralelas miden lo mismo.",
+"e1.frame":"Marta, DE no es 7 porque…",
+"e1.model":"Marta, la proporción es multiplicativa, no aditiva. AD = 5 es la mitad de AB = 10, así que DE es la mitad de BC = 12, es decir, 6 cm. Si restáramos 5 cm a cada lado, el triángulo resultante no tendría la misma forma.",
+"e2.ctx":"Con k = 0,5, ¿qué fracción del área de ABC tiene el triángulo <b>ADE</b>?",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"La mitad, porque k = 0,5.",
+"e2.s1":"La cuarta parte, porque 0,5² = 0,25.",
+"e2.w0":"El área tiene dos dimensiones: se multiplica por k², no por k. ADE es 0,5² = 0,25 de ABC; la mitad es solo la razón de las longitudes.",
+"e2.w1":"Porque el área siempre es la mitad de la razón.",
+"e2.w2":"Porque ADE no tiene área cuando DE es paralela a BC.",
+"e2.frame":"Álex, el área no es la mitad porque…",
+"e2.model":"Álex, k = 0,5 es la razón entre las <b>longitudes</b>. Como el área depende de dos longitudes (base y altura) y las dos se reducen a la mitad, el área se reduce a 0,5 · 0,5 = 0,25: la cuarta parte. Si hacemos DE la mitad, el triángulo pequeño cabe cuatro veces dentro del grande.",
+"e3.ctx":"En un triángulo AB = 6 cm, AD = 4 cm y DE = 5 cm, con DE ∥ BC. ¿Cuánto mide <b>BC</b>?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"BC = DE + DB = 5 + 2 = 7 cm.",
+"e3.s1":"k = 4/6, así que BC = 5 · 4/6 ≈ 3,3 cm.",
+"e3.w0":"La razón es k = AD/AB = 4/6 = 2/3 y DE = k · BC, así que BC = DE : k = 5 : (2/3) = 7,5 cm. Rita suma longitudes y Joan multiplica por k en vez de dividir.",
+"e3.w1":"Porque BC tiene que ser más corto que DE.",
+"e3.w2":"Porque eso solo se puede saber midiendo el dibujo.",
+"e3.frame":"Rita y Joan, BC no es ni 7 ni 3,3 porque…",
+"e3.model":"Rita y Joan, DE es <b>más corto</b> que BC (el triángulo pequeño está dentro del grande), así que BC tiene que ser más largo que 5, y 3,3 no puede ser. La razón es k = 4/6 = 2/3 y DE = k · BC, de donde BC = 5 : (2/3) = 5 · 3/2 = 7,5 cm. Comprobación: 2/3 de 7,5 es 5 ✔.",
+"e4.ctx":"Sabemos que DE ∥ BC. Nos dicen que AD/AB = AE/AC. ¿Qué otras proporciones se cumplen?",
+"e4.n0":"Álex","e4.n1":"Laia",
+"e4.s0":"AD/AB = AE/AC.",
+"e4.s1":"AD/DB = AE/EC.",
+"e4.w0":"Las dos son correctas: si las razones AD/AB y AE/AC coinciden, también coinciden AD/DB y AE/EC (es la misma proporción escrita por partes).",
+"e4.w1":"Porque DB es igual que AD.",
+"e4.w2":"Porque solo una de las dos puede ser una proporción.",
+"e4.frame":"Álex y Laia, los dos tenéis razón porque…",
+"e4.model":"Álex y Laia, la primera proporción compara cada parte con el lado entero (AD con AB, AE con AC). La segunda compara una parte con la otra (AD con DB, AE con EC). Si AD = k · AB, entonces DB = (1 − k) · AB, y AD/DB = k/(1 − k), que vale lo mismo en los dos lados.",
+"d1.q":"Una estaca de <b>1,5 m</b> hace una sombra de <b>2 m</b> y, en el mismo momento, un árbol hace una sombra de <b>12 m</b>. ¿Qué altura tiene el árbol?",
+"d1.l0":"Altura",
+"d1_add":"Has sumado: la sombra del árbol es 10 m más larga y le has añadido 10 m a la altura. La relación es proporcional: se multiplica, no se suma.",
+"d1_inv":"Has dividido al revés: la sombra del árbol es <b>más larga</b>, así que el árbol tiene que ser más alto que la estaca, no más bajo.",
+"d1_mul":"Has multiplicado 1,5 por la sombra del árbol (12) y no por la razón 12/2.",
+"d1_no":"{0} m no mantiene la proporción: sombra/altura tendría que ser igual en los dos casos (2/1,5).",
+"d1_ok":"✔ ¡Bien decidido! La razón es 12/2 = 6 y 1,5 · 6 = 9 m.",
+"d1.more":"¿Qué k relaciona el triángulo de la estaca con el del árbol? Si la sombra del árbol fuera de 8 m, ¿qué altura tendría?",
+"d2.q":"Una banderola triangular tiene <b>60 cm de base</b> y <b>80 cm de altura</b> (área 2.400 cm²). Se corta paralelamente a la base a una cuarta parte de la altura desde el vértice superior. ¿Cuánto mide el corte DE y qué área tiene el triángulo pequeño?",
+"d2.l0":"Corte DE","d2.l1":"Área",
+"d2_de":"DE es k veces la base, con k = 1/4: DE = 0,25 · 60.",
+"d2_lin":"600 es 0,25 · 2.400, pero el área no se multiplica por k sino por k² = 0,0625.",
+"d2_a":"El área del triángulo pequeño es 2.400 · k². Revisa el cálculo con k = 0,25.",
+"d2_ok":"✔ ¡Bien decidido! DE = 15 cm y el área es 2.400 · 0,0625 = 150 cm².",
+"d2.more":"¿Qué fracción de la banderola es el trapecio que queda? ¿Y si el corte estuviera a la mitad de la altura?",
+"d3.q":"Quieres dividir un triángulo en dos partes de <b>la misma área</b> con un corte paralelo a la base. ¿En qué posición k tienes que hacer el corte (medida desde el vértice superior)?",
+"d3.lc":"k =",
+"d3_lo":"Con k = {0} el triángulo de arriba solo tiene un {1} del área: muy poco.",
+"d3_hi":"Con k = {0} el triángulo de arriba tiene un {1} del área: demasiado.",
+"d3_ok":"✔ ¡Bien decidido! 0,7² = 0,49 ≈ 0,5: el corte no cae en la mitad de la altura, sino cerca del 70 %.",
+"d3.more":"¿Cuál sería el valor exacto de k? Pista: k² = 0,5."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Thales i semblança ===== */
+const svg=$('#svg'),U=25;
+const DEF={A:[230,46],B:[80,290],C:[390,290]};
+const T0={A:[230,90],B:[80,290],C:[380,290]}; /* triangle de les activitats: AB = AC = 10 cm, BC = 12 cm, àrea 48 cm² */
+const clone=o=>JSON.parse(JSON.stringify(o));
+let pts=clone(DEF),kk=0.45,drag=null;
+const lerpP=(p,q,s)=>[p[0]+(q[0]-p[0])*s,p[1]+(q[1]-p[1])*s];
+const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+const area=(p,q,r)=>Math.abs((q[0]-p[0])*(r[1]-p[1])-(r[0]-p[0])*(q[1]-p[1]))/2/(U*U);
+const sk=slider($('#ctl'),{id:'sk',key:'l_k',min:5,max:100,step:1,val:45,fmtv:v=>nf(v/100,2),on:v=>{kk=v/100;update();}});
+svg.innerHTML=
+  '<polygon id="tri" class="tri"/>'+
+  '<line id="l-AB" class="side0"/><line id="l-AC" class="side0"/>'+
+  '<line id="l-AD" class="part"/><line id="l-AE" class="part"/>'+
+  '<line id="l-DE" class="par"/><line id="l-BC" class="par"/>'+
+  '<circle id="pD" class="dot" r="6"/><circle id="pE" class="dot" r="6"/>'+
+  ['A','B','C'].map(n=>'<circle id="p'+n+'" class="drag" r="12" tabindex="0" aria-label="'+t('aria.v'+n)+'"/>').join('')+
+  ['A','B','C','D','E'].map(n=>'<text id="v'+n+'" class="vl">'+n+'</text>').join('');
+const setL=(id,p,q)=>{const e=$('#'+id);e.setAttribute('x1',p[0]);e.setAttribute('y1',p[1]);e.setAttribute('x2',q[0]);e.setAttribute('y2',q[1]);};
+const setC=(id,p)=>{const e=$('#'+id);e.setAttribute('cx',p[0]);e.setAttribute('cy',p[1]);};
+function update(){
+  const A=pts.A,B=pts.B,C=pts.C,D=lerpP(A,B,kk),E=lerpP(A,C,kk);
+  $('#tri').setAttribute('points',[A,B,C].map(p=>p.join(',')).join(' '));
+  setL('l-AB',A,B);setL('l-AC',A,C);setL('l-AD',A,D);setL('l-AE',A,E);setL('l-DE',D,E);setL('l-BC',B,C);
+  setC('pA',A);setC('pB',B);setC('pC',C);setC('pD',D);setC('pE',E);
+  const g=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+  const lab={A:A,B:B,C:C,D:D,E:E};
+  Object.keys(lab).forEach(n=>{
+    const p=lab[n],dx=p[0]-g[0],dy=p[1]-g[1],len=Math.hypot(dx,dy)||1,off=(n==='D'||n==='E')?20:26;
+    const e=$('#v'+n);e.setAttribute('x',clamp(p[0]+dx/len*off,12,448).toFixed(1));e.setAttribute('y',clamp(p[1]+dy/len*off,14,326).toFixed(1));
+  });
+  const ab=dist(A,B)/U,ac=dist(A,C)/U,bc=dist(B,C)/U,ad=dist(A,D)/U,ae=dist(A,E)/U,de=dist(D,E)/U;
+  const sA=area(A,B,C),sD=area(A,D,E);
+  const r=(n,x,y)=>'<tr><th>'+n+'</th><td>'+nf(x,1)+' / '+nf(y,1)+' cm</td><td>'+nf(x/y,2)+'</td></tr>';
+  $('#tbl').innerHTML=r('AD / AB',ad,ab)+r('AE / AC',ae,ac)+r('DE / BC',de,bc)+
+    '<tr><th>'+t('row_area')+'</th><td>'+nf(sD,1)+' / '+nf(sA,1)+' cm²</td><td>'+nf(sD/sA,2)+'</td></tr>';
+  $('#note').innerHTML=tt('note',nf(kk,2),nf(kk*kk,2));
+}
+function toSvg(e){
+  const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;
+  const m=svg.getScreenCTM();
+  return m?p.matrixTransform(m.inverse()):{x:p.x,y:p.y};
+}
+['A','B','C'].forEach(n=>{
+  const e=$('#p'+n);
+  e.addEventListener('pointerdown',ev=>{drag=n;try{e.setPointerCapture(ev.pointerId);}catch(x){}ev.preventDefault();});
+  e.addEventListener('pointermove',ev=>{
+    if(drag!==n)return;
+    const p=toSvg(ev);pts[n]=[clamp(p.x,16,444),clamp(p.y,16,324)];update();
+  });
+  e.addEventListener('pointerup',()=>{drag=null;});
+  e.addEventListener('pointercancel',()=>{drag=null;});
+  e.addEventListener('keydown',ev=>{
+    const d={ArrowLeft:[-6,0],ArrowRight:[6,0],ArrowUp:[0,-6],ArrowDown:[0,6]}[ev.key];
+    if(!d)return;ev.preventDefault();
+    pts[n]=[clamp(pts[n][0]+d[0],16,444),clamp(pts[n][1]+d[1],16,324)];update();
+  });
+});
+function setK(v){kk=clamp(Math.round(v*100)/100,0.05,1);sk.set(Math.round(kk*100));update();}
+$('#reset').onclick=()=>{pts=clone(DEF);update();};
+App.hooks.push(update);
+/* ===== Raona-ho ===== */
+const inK=x=>Number.isFinite(x)&&x>=0.05&&x<=1;
+const ck=f=>v=>inK(v[0])?f(...v):{k:'rng'};
+const eq=(x,y)=>Math.abs(x-y)<1e-9;
+const load=v=>{pts=clone(T0);setK(v);RZ.show($('#svg'));};
+RZ.init({
+ F:{k:{l:'l_kf'},de:{l:'l_de',u:'cm'}},
+ sim:([v])=>load(v),
+ M:[
+  {id:'m1',f:['k'],ok:()=>({k:'m1_ok'}),
+   chk:ck(x=>eq(x,0.25)?null:{k:'m1_f',p:()=>[nf(x,2),nf(12*x,2)]})},
+  {id:'m2',f:['k','de'],ok:()=>({k:'m2_ok'}),
+   chk:ck((x,de)=>!eq(x,0.4)?{k:'m2_k',p:()=>[nf(x,2),nf(10*x,2)]}:!eq(de,4.8)?{k:'m2_de'}:null)},
+  {id:'m3',f:['k'],ok:()=>({k:'m3_ok'}),
+   chk:ck(x=>eq(x,0.5)?null:eq(x,0.25)?{k:'m3_lin'}:{k:'m3_f',p:()=>[nf(x,2),nf(x*x,4)]})},
+  {id:'m4',f:['k'],ok:()=>({k:'m4_ok'}),
+   chk:ck(x=>eq(x,0.75)?null:Math.abs(x-0.5625)<0.006?{k:'m4_sq'}:{k:'m4_f',p:()=>[nf(x,2),nf(48*x*x,2)]})}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load(0.45)},
+  {id:'s2',ans:'S',sim:()=>load(0.5)},
+  {id:'s3',ans:'M',sim:()=>load(0.5)},
+  {id:'s4',ans:'S',sim:()=>load(0.5)},
+  {id:'s5',ans:'D',f:['k'],sim:()=>load(0.5),cx:ck(x=>x<1?null:{k:'s_cx_no',p:()=>[nf(x,2)]})},
+  {id:'s6',ans:'M',sim:()=>load(0.45)}
+ ],
+ E:[{id:'e1',who:1,args:[0.5]},{id:'e2',who:1,args:[0.5]},{id:'e3',who:3,sim:null},{id:'e4',who:2,args:[0.4]}],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'m'}],sim:null,ok:()=>({k:'d1_ok'}),
+   chk:([h])=>eq(h,9)?null:eq(h,11.5)?{k:'d1_add'}:eq(h,0.25)?{k:'d1_inv'}:eq(h,18)?{k:'d1_mul'}:{k:'d1_no',p:()=>[nf(h,2)]}},
+  {id:'d2',f:[{l:'d2.l0',u:'cm'},{l:'d2.l1',u:'cm²'}],sim:()=>load(0.25),ok:()=>({k:'d2_ok'}),
+   chk:([de,ar])=>!eq(de,15)?{k:'d2_de'}:eq(ar,600)?{k:'d2_lin'}:!eq(ar,150)?{k:'d2_a'}:null},
+  {id:'d3',chips:{vals:[0.5,0.6,0.7,0.8]},sim:()=>load(0.7),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>eq(p,0.7)?null:p<0.7?{k:'d3_lo',p:()=>[nf(p,1),nf(p*p*100,0)+' %']}:{k:'d3_hi',p:()=>[nf(p,1),nf(p*p*100,0)+' %']}}
+ ]
+});
+initQuiz([]);
+update();
+initLang();applyLang();
+</script>
+</body>
+</html>

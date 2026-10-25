@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fracciones con barras</title>
+<meta name="description" content="Las barras tienen la misma longitud por unidad, así que se comparan a ojo: fracciones equivalentes, comparar y sumar. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/fraccions-barres/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/fraccions-barres/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/fraccions-barres/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/fraccions-barres/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Fracciones con barras">
+<meta property="og:description" content="Las barras tienen la misma longitud por unidad, así que se comparan a ojo: fracciones equivalentes, comparar y sumar. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/fraccions-barres/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.fr{display:inline-grid;text-align:center;vertical-align:middle;line-height:1.15;margin-inline:3px;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.fr>span{padding-inline:5px}
+.fr>span:first-child{border-bottom:2px solid currentColor}
+.barsbox{display:grid;gap:14px;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:14px}
+.brow{display:grid;grid-template-columns:minmax(64px,auto) minmax(0,1fr);gap:14px;align-items:center}
+.brow .cap{font-size:18px;text-align:center}
+.brow .cap small{display:block;font:500 12px var(--f-num);color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.bar{display:block;width:100%;height:auto}
+.bar .fa{fill:var(--pa);fill-opacity:.85}
+.bar .fb{fill:var(--pb);fill-opacity:.9}
+.bar .tk{stroke:var(--ink);stroke-opacity:.35;stroke-width:1}
+.bar .tk.w{stroke-opacity:.95;stroke-width:2}
+.bar .out{fill:none;stroke:var(--ink);stroke-width:2}
+.ta{color:var(--pa);font-weight:700}.tb{color:var(--pb);font-weight:700}
+.read{display:grid;gap:8px;font-size:15px}
+.read .eq{margin:0;font-family:var(--f-num);font-size:15px;color:var(--ink)}
+.read .big{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.2}
+.read .steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:18px}
+@media (max-width:480px){.brow{grid-template-columns:minmax(0,1fr)}.brow .cap{text-align:left}}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 2.º ESO · Fracciones</p>
+      <h1 data-i18n="h1">Fracciones con barras</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Todas las barras tienen la misma longitud por unidad, así se pueden comparar a ojo.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Equivalentes, comparar y sumar</h2>
+<p data-i18n-html="story">Elige qué quieres hacer: encontrar <b>fracciones equivalentes</b>, <b>comparar</b> dos fracciones o <b>sumarlas</b>. Todas las barras miden lo mismo por unidad; lo que cambia es en cuántos trozos está cortada.</p>
+<div class="simgrid">
+<div class="simcv"><div class="barsbox" id="bars"></div></div>
+<div class="side">
+<div class="seg" id="modes" role="group" data-i18n-aria="aria.mode" aria-label="Modo">
+<button type="button" data-m="eq" aria-pressed="true" data-i18n="m_eq">Equivalentes</button>
+<button type="button" data-m="cmp" aria-pressed="false" data-i18n="m_cmp">Comparar</button>
+<button type="button" data-m="sum" aria-pressed="false" data-i18n="m_sum">Sumar</button>
+</div>
+<fieldset id="gA"><legend class="ta" data-i18n="gA">Fracción A</legend></fieldset>
+<fieldset id="gB" hidden><legend class="tb" data-i18n="gB">Fracción B</legend></fieldset>
+<fieldset id="gK"><legend data-i18n="gK">Multiplica arriba y abajo por</legend></fieldset>
+<div class="read" id="out" aria-live="polite"></div>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"><b>Para la clase:</b> antes de mover nada, pide a los alumnos que digan cuál de dos fracciones es mayor y por qué. Después compruébalo con las barras: las que se alargan más son las mayores, salga el número que salga.</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Fraccions amb barres",
+"eyebrow":"Matemàtiques · 2n ESO · Fraccions",
+"h1":"Fraccions amb barres",
+"lede":"Totes les barres tenen la mateixa longitud per unitat, així es poden comparar a ull.",
+"sim_title":"Equivalents, comparar i sumar",
+"story":"Tria què vols fer: trobar <b>fraccions equivalents</b>, <b>comparar</b> dues fraccions o <b>sumar-les</b>. Totes les barres mesuren el mateix per unitat; el que canvia és en quants trossos està tallada.",
+"aria.mode":"Mode","aria.bar":"Barra de fracció",
+"m_eq":"Equivalents","m_cmp":"Comparar","m_sum":"Sumar",
+"gA":"Fracció A","gB":"Fracció B","gK":"Multiplica dalt i baix per",
+"l_num":"Numerador","l_den":"Denominador","l_k":"Factor",
+"orig":"Original","equiv":"Equivalent","cA":"A","cB":"B","cAB":"A + B",
+"eq_note":"La part ombrejada no canvia: només l'hem tallada en trossos més petits.",
+"eq_irr":"Irreductible: {0}","eq_already":"ja ho és","eq_dec":"Valor decimal: {0}",
+"cmp_cross":"En creu: {0}·{1} = {2} &nbsp;{3}&nbsp; {4}·{5} = {6}",
+"cmp_eq":"Són fraccions equivalents.","cmp_A":"A és més gran que B.","cmp_B":"B és més gran que A.",
+"sum_den":"Denominador comú: mcm({0}, {1}) = <b>{2}</b>",
+"sum_note":"Només es poden sumar trossos de la mateixa mida; per això primer igualem els denominadors.",
+"idea":"<b>Per a la classe:</b> abans de moure res, demana als alumnes que diguen quina de dues fraccions és més gran i per què. Després comprova-ho amb les barres: les que s'allarguen més són les més grans, vinga el número que vinga.",
+"rng":"Escriu un nombre enter dins del rang.",
+"f_n":"Numerador","f_a":"a =","f_b":"b =","f_d":"Denominador","f_dif":"Diferència",
+"m1.q":"Escriu el <b>numerador</b> de la fracció equivalent a <b>2/3</b> que té <b>denominador 12</b>.",
+"m1_add":"Has sumat 9 als dos termes (2 + 9 = 11 i 3 + 9 = 12), però això canvia la fracció: 11/12 ≈ 0,92 i 2/3 ≈ 0,67. Per a mantindre-la cal <b>multiplicar</b> pel mateix nombre.",
+"m1_f":"{0}/12 val {1}, i 2/3 val 0,67. No són equivalents.",
+"m1_ok":"✔ Missió complida! 2/3 = (2 × 4)/(3 × 4) = 8/12.",
+"m1.more":"I amb denominador 24? I amb denominador 9? Amb quins denominadors és impossible trobar una fracció equivalent a 2/3?",
+"m2.q":"Escriu un numerador <b>n</b> perquè <b>n/7</b> estiga <b>entre 1/2 i 3/4</b> (més gran que 1/2 i més xicotet que 3/4).",
+"m2_lo":"{0}/7 ≈ {1} no passa de 1/2.",
+"m2_hi":"{0}/7 ≈ {1} és major que 3/4 = 0,75.",
+"m2_ok":"✔ Missió complida! {0}/7 ≈ {1}, entre 0,5 i 0,75.",
+"m2.more":"Quantes solucions hi ha? I si el denominador fóra 20? Compara els dos casos.",
+"m3.q":"Troba dos denominadors <b>diferents</b>, tots dos <b>de 3 a 12</b>, tals que <b>mcm(a, b) = 12</b>.",
+"m3_same":"Han de ser diferents: demanem dos denominadors distints.",
+"m3_f":"mcm({0}, {1}) = {2}, no 12.",
+"m3_ok":"✔ Missió complida! mcm({0}, {1}) = 12.",
+"m3.more":"Quantes parelles hi ha? Què tenen en comú? Compara 3 i 4 amb 4 i 12.",
+"m4.q":"Escriu un numerador <b>n</b> perquè <b>n/12</b> siga <b>més gran que 5/6</b> però <b>menor que 1</b>.",
+"m4_eq":"10/12 és equivalent a 5/6: igual, no més gran.",
+"m4_one":"{0}/12 val 1 o més: ha de ser menor que 1.",
+"m4_f":"{0}/12 ≈ {1} és menor que 5/6 ≈ 0,83.",
+"m4_ok":"✔ Missió complida! 11/12 ≈ 0,92 és més gran que 5/6 ≈ 0,83 i menor que 1.",
+"m4.more":"I amb denominador 24? Quantes fraccions de denominador 24 hi ha entre 5/6 i 1?",
+"s1.q":"«Si multipliques numerador i denominador pel mateix nombre, la fracció val el mateix.»",
+"s1.h":"Mira la barra d'una fracció i la de la seua equivalent.",
+"s1.e":"Sempre: la part ombrejada de la barra no canvia, només es talla en trossos més xicotets. Per això 2/3 = 4/6 = 6/9.",
+"s2.q":"«Si sumes 1 al numerador i al denominador, la fracció val el mateix.»",
+"s2.h":"Compara 1/2 amb 2/3 i 2/3 amb 3/4.",
+"s2.e":"De vegades: només si la fracció val 1 (3/3 = 4/4). En general canvia: 1/2 → 2/3 → 3/4… i cada vegada s'acosta més a 1.",
+"s2_cx_no":"{0}/{0} i ({1})/({1}) valen 1: aquest cas sí que ho compleix. Busca una fracció que no valga 1.",
+"s3.q":"«Entre dues fraccions amb el mateix numerador (diferent de 0), és més gran la que té el denominador més gran.»",
+"s3.h":"Compara 1/3 amb 1/4.",
+"s3.e":"Mai: amb el mateix numerador tens el mateix nombre de trossos, i com més gran és el denominador, més xicotets són. 1/4 és menor que 1/3.",
+"s4.q":"«Per a sumar 1/4 i 1/6 es pot usar com a denominador comú 12, però també 24.»",
+"s4.h":"Escriu cada fracció amb denominador 24 i suma.",
+"s4.e":"Sempre: qualsevol múltiple comú dels denominadors serveix. El mcm (12) només fa que els números siguen més xicotets i no cal simplificar tant.",
+"s5.q":"«Dues fraccions diferents amb el mateix numerador (no nul) poden ser equivalents.»",
+"s5.h":"Compara 2/3 amb 2/6 i pensa què passaria amb 2/3 i 2/4.",
+"s5.e":"Mai: si el numerador és el mateix, fraccions equivalents haurien de tindre el mateix denominador, és a dir, serien la mateixa fracció.",
+"s6.q":"«Si dues fraccions tenen el mateix denominador, és més gran la que té el numerador més gran.»",
+"s6.h":"Compara 3/8 amb 5/8.",
+"s6.e":"Sempre: els trossos són de la mateixa mida, i qui en té més, té més.",
+"e1.ctx":"Quina és més gran, <b>3/5</b> o <b>5/9</b>?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"5/9, perquè 5 és major que 3 i 9 és major que 5.",
+"e1.s1":"3/5, perquè 3 · 9 = 27 és major que 5 · 5 = 25.",
+"e1.w0":"Marta compara numeradors i denominadors per separat. Cal comparar els <b>trossos</b>: amb el mateix denominador, 3/5 = 27/45 i 5/9 = 25/45, i 27 és més que 25.",
+"e1.w1":"Perquè la fracció amb el denominador més gran sempre és la més gran.",
+"e1.w2":"Perquè 3/5 té el numerador més xicotet.",
+"e1.frame":"Marta, 5/9 no és més gran perquè…",
+"e1.model":"Marta, 5 és major que 3 i 9 és major que 5, però això no diu res: cal comparar fraccions, no numeradors i denominadors per separat. Si les escrivim amb el mateix denominador, 3/5 = 27/45 i 5/9 = 25/45. Com 27 > 25, 3/5 és més gran. A les barres, la de 3/5 s'allarga una mica més.",
+"e2.ctx":"Calculeu <b>1/2 + 1/3</b>.",
+"e2.n0":"Rita","e2.n1":"Joan",
+"e2.s0":"2/5, perquè 1 + 1 = 2 i 2 + 3 = 5.",
+"e2.s1":"1/6, perquè 2 · 3 = 6 i 1 · 1 = 1.",
+"e2.w0":"Per a sumar fraccions cal un denominador comú: 1/2 = 3/6 i 1/3 = 2/6, així que 1/2 + 1/3 = 5/6. Rita suma numeradors i denominadors per separat, i Joan multiplica.",
+"e2.w1":"Perquè 1/2 + 1/3 ha de ser més xicotet que cadascuna de les dues fraccions.",
+"e2.w2":"Perquè només es poden sumar fraccions que tinguen el mateix numerador.",
+"e2.frame":"Rita i Joan, 1/2 + 1/3 no és ni 2/5 ni 1/6 perquè…",
+"e2.model":"Rita i Joan, 1/2 i 1/3 són trossos de mides diferents; no es poden sumar fins que els tallem en trossos de la mateixa mida. El mcm de 2 i 3 és 6: 1/2 = 3/6 i 1/3 = 2/6, i 3/6 + 2/6 = 5/6. Com a comprovació, 2/5 = 0,4 és menor que 1/2, i la suma no pot ser menor que un dels sumands.",
+"e3.ctx":"Volem una fracció <b>equivalent a 2/3</b>.",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"4/5: he sumat 2 a dalt i a baix.",
+"e3.s1":"4/6: he multiplicat per 2 dalt i baix.",
+"e3.w0":"Sumar el mateix nombre als dos termes canvia la part ombrejada de la barra. Per a conservar el valor cal <b>multiplicar</b> (o dividir) tots dos termes pel mateix nombre.",
+"e3.w1":"Perquè 4/5 té un denominador major que 3.",
+"e3.w2":"Perquè 2/3 no té fraccions equivalents.",
+"e3.frame":"Àlex, 4/5 no és equivalent a 2/3 perquè…",
+"e3.model":"Àlex, mira les barres: 2/3 ≈ 0,67 i 4/5 = 0,8, i no són iguals. Sumar el mateix nombre als dos termes no manté la fracció. Per a conservar-la cal multiplicar els dos termes pel mateix nombre: 2/3 = (2 × 2)/(3 × 2) = 4/6.",
+"e4.ctx":"Són equivalents <b>3/4</b> i <b>6/8</b>?",
+"e4.n0":"Àlex","e4.n1":"Laia",
+"e4.s0":"Sí: 6/8 és 3/4 multiplicat per 2 dalt i baix.",
+"e4.s1":"Sí: 3 · 8 = 24 i 6 · 4 = 24, els productes en creu coincideixen.",
+"e4.w0":"Totes dues expliquen el mateix de maneres diferents: multiplicar per 2 és el mateix que veure que els productes en creu coincideixen (3 · 8 = 6 · 4).",
+"e4.w1":"Perquè 3 és la meitat de 6 i 4 és la meitat de 8, però això no és suficient per a dir que són equivalents.",
+"e4.w2":"Perquè només una de les dues maneres és correcta.",
+"e4.frame":"Àlex i Laia, tots dos teniu raó perquè…",
+"e4.model":"Àlex i Laia, tots dos mètodes són correctes. Multiplicar per 2 dalt i baix té una lectura geomètrica (la mateixa part ombrejada, tallada en trossos més xicotets) i els productes en creu són la mateixa idea escrita d'una altra manera: a/b = c/d quan a · d = c · b.",
+"d1.q":"La Marta ha llegit <b>3/5</b> d'un llibre i en Pau, <b>5/8</b> del mateix llibre. Qui n'ha llegit més i quants <b>quarantens</b> (1/40) de diferència hi ha?",
+"d1.lc":"Ha llegit més:","d1.p1":"Marta","d1.p2":"Pau",
+"d1_who":"Compara-les amb el mateix denominador: 3/5 = 24/40 i 5/8 = 25/40.",
+"d1_n":"La diferència és 25/40 − 24/40. Quants quarantens són?",
+"d1_ok":"✔ Ben decidit! 5/8 = 25/40 és més que 3/5 = 24/40: en Pau n'ha llegit més, per 1/40.",
+"d1.more":"I si el llibre té 200 pàgines? Quantes pàgines ha llegit cadascú i quantes de diferència hi ha?",
+"d2.q":"Una barra de xocolata té <b>12 quadrats</b>. En repartim <b>2/3</b> a Joan i <b>1/4</b> a Maria. Quants quadrats toquen a cadascú?",
+"d2.l0":"Joan (quadrats)","d2.l1":"Maria (quadrats)",
+"d2_j":"2/3 de 12 és (12 ÷ 3) · 2: troba primer un tros de 1/3 i després multiplica.",
+"d2_m":"1/4 de 12 és 12 ÷ 4.",
+"d2_ok":"✔ Ben decidit! A Joan li toquen 8 quadrats i a Maria 3; en total 11 i en sobra 1.",
+"d2.more":"Quina fracció de la barra queda sense repartir? Comprova-ho amb 2/3 + 1/4 i el denominador comú 12.",
+"d3.q":"Vols escriure <b>1/2</b>, <b>1/3</b> i <b>1/4</b> amb el mateix denominador, el <b>més xicotet possible</b>. Quin triaries?",
+"d3.lc":"Denominador:",
+"d3_no":"{0} no serveix: ha de ser múltiple de 2, de 3 i de 4 a la vegada.",
+"d3_big":"{0} serveix, però n'hi ha un de més xicotet que també ho fa.",
+"d3_ok":"✔ Ben decidit! mcm(2, 3, 4) = 12: 1/2 = 6/12, 1/3 = 4/12 i 1/4 = 3/12.",
+"d3.more":"I si afegim 1/6? Canvia el denominador? Per què?"
+},
+es:{
+"title":"Fracciones con barras",
+"eyebrow":"Matemáticas · 2.º ESO · Fracciones",
+"h1":"Fracciones con barras",
+"lede":"Todas las barras tienen la misma longitud por unidad, así se pueden comparar a ojo.",
+"sim_title":"Equivalentes, comparar y sumar",
+"story":"Elige qué quieres hacer: encontrar <b>fracciones equivalentes</b>, <b>comparar</b> dos fracciones o <b>sumarlas</b>. Todas las barras miden lo mismo por unidad; lo que cambia es en cuántos trozos está cortada.",
+"aria.mode":"Modo","aria.bar":"Barra de fracción",
+"m_eq":"Equivalentes","m_cmp":"Comparar","m_sum":"Sumar",
+"gA":"Fracción A","gB":"Fracción B","gK":"Multiplica arriba y abajo por",
+"l_num":"Numerador","l_den":"Denominador","l_k":"Factor",
+"orig":"Original","equiv":"Equivalente","cA":"A","cB":"B","cAB":"A + B",
+"eq_note":"La parte sombreada no cambia: solo la hemos cortado en trozos más pequeños.",
+"eq_irr":"Irreducible: {0}","eq_already":"ya lo es","eq_dec":"Valor decimal: {0}",
+"cmp_cross":"En cruz: {0}·{1} = {2} &nbsp;{3}&nbsp; {4}·{5} = {6}",
+"cmp_eq":"Son fracciones equivalentes.","cmp_A":"A es mayor que B.","cmp_B":"B es mayor que A.",
+"sum_den":"Denominador común: mcm({0}, {1}) = <b>{2}</b>",
+"sum_note":"Solo se pueden sumar trozos del mismo tamaño; por eso primero igualamos los denominadores.",
+"idea":"<b>Para la clase:</b> antes de mover nada, pide a los alumnos que digan cuál de dos fracciones es mayor y por qué. Después compruébalo con las barras: las que se alargan más son las mayores, salga el número que salga.",
+"rng":"Escribe un número entero dentro del rango.",
+"f_n":"Numerador","f_a":"a =","f_b":"b =","f_d":"Denominador","f_dif":"Diferencia",
+"m1.q":"Escribe el <b>numerador</b> de la fracción equivalente a <b>2/3</b> que tiene <b>denominador 12</b>.",
+"m1_add":"Has sumado 9 a los dos términos (2 + 9 = 11 y 3 + 9 = 12), pero eso cambia la fracción: 11/12 ≈ 0,92 y 2/3 ≈ 0,67. Para mantenerla hay que <b>multiplicar</b> por el mismo número.",
+"m1_f":"{0}/12 vale {1}, y 2/3 vale 0,67. No son equivalentes.",
+"m1_ok":"✔ ¡Misión cumplida! 2/3 = (2 × 4)/(3 × 4) = 8/12.",
+"m1.more":"¿Y con denominador 24? ¿Y con denominador 9? ¿Con qué denominadores es imposible encontrar una fracción equivalente a 2/3?",
+"m2.q":"Escribe un numerador <b>n</b> para que <b>n/7</b> esté <b>entre 1/2 y 3/4</b> (mayor que 1/2 y menor que 3/4).",
+"m2_lo":"{0}/7 ≈ {1} no pasa de 1/2.",
+"m2_hi":"{0}/7 ≈ {1} es mayor que 3/4 = 0,75.",
+"m2_ok":"✔ ¡Misión cumplida! {0}/7 ≈ {1}, entre 0,5 y 0,75.",
+"m2.more":"¿Cuántas soluciones hay? ¿Y si el denominador fuera 20? Compara los dos casos.",
+"m3.q":"Encuentra dos denominadores <b>distintos</b>, los dos <b>de 3 a 12</b>, tales que <b>mcm(a, b) = 12</b>.",
+"m3_same":"Tienen que ser distintos: pedimos dos denominadores diferentes.",
+"m3_f":"mcm({0}, {1}) = {2}, no 12.",
+"m3_ok":"✔ ¡Misión cumplida! mcm({0}, {1}) = 12.",
+"m3.more":"¿Cuántas parejas hay? ¿Qué tienen en común? Compara 3 y 4 con 4 y 12.",
+"m4.q":"Escribe un numerador <b>n</b> para que <b>n/12</b> sea <b>mayor que 5/6</b> pero <b>menor que 1</b>.",
+"m4_eq":"10/12 es equivalente a 5/6: igual, no mayor.",
+"m4_one":"{0}/12 vale 1 o más: tiene que ser menor que 1.",
+"m4_f":"{0}/12 ≈ {1} es menor que 5/6 ≈ 0,83.",
+"m4_ok":"✔ ¡Misión cumplida! 11/12 ≈ 0,92 es mayor que 5/6 ≈ 0,83 y menor que 1.",
+"m4.more":"¿Y con denominador 24? ¿Cuántas fracciones de denominador 24 hay entre 5/6 y 1?",
+"s1.q":"«Si multiplicas numerador y denominador por el mismo número, la fracción vale lo mismo.»",
+"s1.h":"Mira la barra de una fracción y la de su equivalente.",
+"s1.e":"Siempre: la parte sombreada de la barra no cambia, solo se corta en trozos más pequeños. Por eso 2/3 = 4/6 = 6/9.",
+"s2.q":"«Si sumas 1 al numerador y al denominador, la fracción vale lo mismo.»",
+"s2.h":"Compara 1/2 con 2/3 y 2/3 con 3/4.",
+"s2.e":"A veces: solo si la fracción vale 1 (3/3 = 4/4). En general cambia: 1/2 → 2/3 → 3/4… y cada vez se acerca más a 1.",
+"s2_cx_no":"{0}/{0} y ({1})/({1}) valen 1: ese caso sí lo cumple. Busca una fracción que no valga 1.",
+"s3.q":"«Entre dos fracciones con el mismo numerador (distinto de 0), es mayor la que tiene el denominador mayor.»",
+"s3.h":"Compara 1/3 con 1/4.",
+"s3.e":"Nunca: con el mismo numerador tienes el mismo número de trozos, y cuanto mayor es el denominador, más pequeños son. 1/4 es menor que 1/3.",
+"s4.q":"«Para sumar 1/4 y 1/6 se puede usar como denominador común 12, pero también 24.»",
+"s4.h":"Escribe cada fracción con denominador 24 y suma.",
+"s4.e":"Siempre: cualquier múltiplo común de los denominadores sirve. El mcm (12) solo hace que los números sean más pequeños y no haga falta simplificar tanto.",
+"s5.q":"«Dos fracciones distintas con el mismo numerador (no nulo) pueden ser equivalentes.»",
+"s5.h":"Compara 2/3 con 2/6 y piensa qué pasaría con 2/3 y 2/4.",
+"s5.e":"Nunca: si el numerador es el mismo, fracciones equivalentes tendrían que tener el mismo denominador, es decir, serían la misma fracción.",
+"s6.q":"«Si dos fracciones tienen el mismo denominador, es mayor la que tiene el numerador mayor.»",
+"s6.h":"Compara 3/8 con 5/8.",
+"s6.e":"Siempre: los trozos son del mismo tamaño, y quien tiene más trozos, tiene más.",
+"e1.ctx":"¿Cuál es mayor, <b>3/5</b> o <b>5/9</b>?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"5/9, porque 5 es mayor que 3 y 9 es mayor que 5.",
+"e1.s1":"3/5, porque 3 · 9 = 27 es mayor que 5 · 5 = 25.",
+"e1.w0":"Marta compara numeradores y denominadores por separado. Hay que comparar los <b>trozos</b>: con el mismo denominador, 3/5 = 27/45 y 5/9 = 25/45, y 27 es más que 25.",
+"e1.w1":"Porque la fracción con el denominador mayor siempre es la mayor.",
+"e1.w2":"Porque 3/5 tiene el numerador más pequeño.",
+"e1.frame":"Marta, 5/9 no es mayor porque…",
+"e1.model":"Marta, 5 es mayor que 3 y 9 es mayor que 5, pero eso no dice nada: hay que comparar fracciones, no numeradores y denominadores por separado. Si las escribimos con el mismo denominador, 3/5 = 27/45 y 5/9 = 25/45. Como 27 > 25, 3/5 es mayor. En las barras, la de 3/5 se alarga un poco más.",
+"e2.ctx":"Calculad <b>1/2 + 1/3</b>.",
+"e2.n0":"Rita","e2.n1":"Joan",
+"e2.s0":"2/5, porque 1 + 1 = 2 y 2 + 3 = 5.",
+"e2.s1":"1/6, porque 2 · 3 = 6 y 1 · 1 = 1.",
+"e2.w0":"Para sumar fracciones hace falta un denominador común: 1/2 = 3/6 y 1/3 = 2/6, así que 1/2 + 1/3 = 5/6. Rita suma numeradores y denominadores por separado, y Joan multiplica.",
+"e2.w1":"Porque 1/2 + 1/3 tiene que ser más pequeño que cada una de las dos fracciones.",
+"e2.w2":"Porque solo se pueden sumar fracciones que tengan el mismo numerador.",
+"e2.frame":"Rita y Joan, 1/2 + 1/3 no es ni 2/5 ni 1/6 porque…",
+"e2.model":"Rita y Joan, 1/2 y 1/3 son trozos de tamaños distintos; no se pueden sumar hasta que los cortemos en trozos del mismo tamaño. El mcm de 2 y 3 es 6: 1/2 = 3/6 y 1/3 = 2/6, y 3/6 + 2/6 = 5/6. Como comprobación, 2/5 = 0,4 es menor que 1/2, y la suma no puede ser menor que uno de los sumandos.",
+"e3.ctx":"Queremos una fracción <b>equivalente a 2/3</b>.",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"4/5: he sumado 2 arriba y abajo.",
+"e3.s1":"4/6: he multiplicado por 2 arriba y abajo.",
+"e3.w0":"Sumar el mismo número a los dos términos cambia la parte sombreada de la barra. Para conservar el valor hay que <b>multiplicar</b> (o dividir) los dos términos por el mismo número.",
+"e3.w1":"Porque 4/5 tiene un denominador mayor que 3.",
+"e3.w2":"Porque 2/3 no tiene fracciones equivalentes.",
+"e3.frame":"Álex, 4/5 no es equivalente a 2/3 porque…",
+"e3.model":"Álex, mira las barras: 2/3 ≈ 0,67 y 4/5 = 0,8, y no son iguales. Sumar el mismo número a los dos términos no mantiene la fracción. Para conservarla hay que multiplicar los dos términos por el mismo número: 2/3 = (2 × 2)/(3 × 2) = 4/6.",
+"e4.ctx":"¿Son equivalentes <b>3/4</b> y <b>6/8</b>?",
+"e4.n0":"Álex","e4.n1":"Laia",
+"e4.s0":"Sí: 6/8 es 3/4 multiplicado por 2 arriba y abajo.",
+"e4.s1":"Sí: 3 · 8 = 24 y 6 · 4 = 24, los productos en cruz coinciden.",
+"e4.w0":"Las dos explican lo mismo de maneras distintas: multiplicar por 2 es lo mismo que ver que los productos en cruz coinciden (3 · 8 = 6 · 4).",
+"e4.w1":"Porque 3 es la mitad de 6 y 4 es la mitad de 8, pero eso no basta para decir que son equivalentes.",
+"e4.w2":"Porque solo una de las dos maneras es correcta.",
+"e4.frame":"Álex y Laia, los dos tenéis razón porque…",
+"e4.model":"Álex y Laia, los dos métodos son correctos. Multiplicar por 2 arriba y abajo tiene una lectura geométrica (la misma parte sombreada, cortada en trozos más pequeños) y los productos en cruz son la misma idea escrita de otra manera: a/b = c/d cuando a · d = c · b.",
+"d1.q":"Marta ha leído <b>3/5</b> de un libro y Pau, <b>5/8</b> del mismo libro. ¿Quién ha leído más y cuántos <b>cuarentavos</b> (1/40) de diferencia hay?",
+"d1.lc":"Ha leído más:","d1.p1":"Marta","d1.p2":"Pau",
+"d1_who":"Compáralas con el mismo denominador: 3/5 = 24/40 y 5/8 = 25/40.",
+"d1_n":"La diferencia es 25/40 − 24/40. ¿Cuántos cuarentavos son?",
+"d1_ok":"✔ ¡Bien decidido! 5/8 = 25/40 es más que 3/5 = 24/40: Pau ha leído más, por 1/40.",
+"d1.more":"¿Y si el libro tiene 200 páginas? ¿Cuántas páginas ha leído cada uno y cuántas de diferencia hay?",
+"d2.q":"Una barra de chocolate tiene <b>12 cuadrados</b>. Repartimos <b>2/3</b> a Joan y <b>1/4</b> a Maria. ¿Cuántos cuadrados le tocan a cada uno?",
+"d2.l0":"Joan (cuadrados)","d2.l1":"Maria (cuadrados)",
+"d2_j":"2/3 de 12 es (12 ÷ 3) · 2: halla primero un trozo de 1/3 y después multiplica.",
+"d2_m":"1/4 de 12 es 12 ÷ 4.",
+"d2_ok":"✔ ¡Bien decidido! A Joan le tocan 8 cuadrados y a Maria 3; en total 11 y sobra 1.",
+"d2.more":"¿Qué fracción de la barra queda sin repartir? Compruébalo con 2/3 + 1/4 y el denominador común 12.",
+"d3.q":"Quieres escribir <b>1/2</b>, <b>1/3</b> y <b>1/4</b> con el mismo denominador, el <b>más pequeño posible</b>. ¿Cuál elegirías?",
+"d3.lc":"Denominador:",
+"d3_no":"{0} no sirve: tiene que ser múltiplo de 2, de 3 y de 4 a la vez.",
+"d3_big":"{0} sirve, pero hay uno más pequeño que también sirve.",
+"d3_ok":"✔ ¡Bien decidido! mcm(2, 3, 4) = 12: 1/2 = 6/12, 1/3 = 4/12 y 1/4 = 3/12.",
+"d3.more":"¿Y si añadimos 1/6? ¿Cambia el denominador? ¿Por qué?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../fraccions-barres/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* ===== Fraccions amb barres ===== */
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const fr=(n,d)=>'<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>';
+const S={};
+const mk=(grp,pre,key,min,max,val)=>slider($(grp),{id:pre,key:key,min:min,max:max,step:1,val:val,on:render});
+S.an=mk('#gA','an','l_num',0,12,2);S.ad=mk('#gA','ad','l_den',1,12,3);
+S.bn=mk('#gB','bn','l_num',0,12,3);S.bd=mk('#gB','bd','l_den',1,12,4);
+S.k=mk('#gK','kk','l_k',1,6,2);
+const bars=$('#bars'),out=$('#out');
+let mode='eq';
+function bar(ticks,fills,wholes){
+  const W=300*wholes,H=44,minor=ticks*wholes<=48;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" class="bar" role="img" aria-label="'+t('aria.bar')+'">';
+  fills.forEach(q=>{s+='<rect x="'+(q.s*300)+'" y="0" width="'+(q.l*300)+'" height="'+H+'" class="'+q.c+'"/>';});
+  for(let i=1;i<ticks*wholes;i++){
+    const w=i%ticks===0;
+    if(!w&&!minor)continue;
+    const x=i/ticks*300;
+    s+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+H+'" class="'+(w?'tk w':'tk')+'"/>';
+  }
+  for(let w=0;w<wholes;w++)s+='<rect x="'+(w*300+1)+'" y="1" width="298" height="'+(H-2)+'" class="out"/>';
+  return s+'</svg>';
+}
+const row=(cap,svg,label)=>'<div class="brow"><div class="cap">'+(label?'<small>'+label+'</small>':'')+cap+'</div>'+svg+'</div>';
+const kMax=d=>Math.max(1,Math.min(6,Math.floor(48/d)));
+function clampNums(){
+  S.an.inp.max=S.ad.get();if(S.an.get()>S.ad.get())S.an.set(S.ad.get());
+  S.bn.inp.max=S.bd.get();if(S.bn.get()>S.bd.get())S.bn.set(S.bd.get());
+  const km=kMax(S.ad.get());S.k.inp.max=km;if(S.k.get()>km)S.k.set(km);
+  Object.keys(S).forEach(key=>S[key].refresh());
+}
+function render(){
+  clampNums();
+  const an=S.an.get(),ad=S.ad.get(),bn=S.bn.get(),bd=S.bd.get(),k=S.k.get();
+  let b='',o='';
+  if(mode==='eq'){
+    const g=gcd(an,ad),simp=an===0?'0':(ad/g===1?String(an/g):fr(an/g,ad/g));
+    b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],1),t('orig'))+row(fr(an*k,ad*k),bar(ad*k,[{s:0,l:an/ad,c:'fa'}],1),t('equiv'));
+    o='<div class="steps">'+fr(an,ad)+' = '+fr(an+' × '+k,ad+' × '+k)+' = '+fr(an*k,ad*k)+'</div>'+
+      '<p class="note">'+t('eq_note')+'</p>'+
+      '<p class="eq">'+tt('eq_irr',(g>1||an===0)?simp:t('eq_already'))+'</p>'+
+      '<p class="eq">'+tt('eq_dec',nf(an/ad,3))+'</p>';
+  }else if(mode==='cmp'){
+    const x=an*bd,y=bn*ad,sym=x>y?'&gt;':(x<y?'&lt;':'=');
+    b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],1),t('cA'))+row(fr(bn,bd),bar(bd,[{s:0,l:bn/bd,c:'fb'}],1),t('cB'));
+    o='<div class="big">'+fr(an,ad)+' '+sym+' '+fr(bn,bd)+'</div>'+
+      '<p class="eq">'+nf(an/ad,3)+' '+sym+' '+nf(bn/bd,3)+'</p>'+
+      '<p class="eq">'+tt('cmp_cross',an,bd,x,sym,bn,ad,y)+'</p>'+
+      '<p class="note">'+t(x===y?'cmp_eq':(x>y?'cmp_A':'cmp_B'))+'</p>';
+  }else{
+    const m=lcm(ad,bd),na=an*m/ad,nb=bn*m/bd,ns=na+nb,g=gcd(ns,m);
+    b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],2),t('cA'))+
+      row(fr(bn,bd),bar(bd,[{s:0,l:bn/bd,c:'fb'}],2),t('cB'))+
+      row(fr(ns,m),bar(m,[{s:0,l:na/m,c:'fa'},{s:na/m,l:nb/m,c:'fb'}],2),t('cAB'));
+    const q=Math.floor(ns/m),r=ns-q*m,g2=gcd(r,m);
+    let simp='';
+    if(g>1)simp=' = '+(ns/g%(m/g)===0?String(ns/m):fr(ns/g,m/g));
+    const mixed=(q>=1&&r>0)?' = '+q+' '+fr(r/g2,m/g2):'';
+    o='<p class="eq">'+tt('sum_den',ad,bd,m)+'</p>'+
+      '<div class="steps">'+fr(an,ad)+' + '+fr(bn,bd)+' = '+fr(na,m)+' + '+fr(nb,m)+' = '+fr(ns,m)+simp+mixed+'</div>'+
+      '<p class="note">'+t('sum_note')+'</p>';
+  }
+  bars.innerHTML=b;out.innerHTML=o;
+  $('#gB').hidden=mode==='eq';$('#gK').hidden=mode!=='eq';
+}
+$$('#modes button').forEach(bt=>bt.addEventListener('click',()=>{setMode(bt.dataset.m);}));
+function setMode(m){mode=m;$$('#modes button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.m===m)));render();}
+App.hooks.push(render);
+/* ===== Raona-ho ===== */
+function load(m,an,ad,bn,bd,kv){
+  ad=clamp(Math.round(ad||1),1,12);bd=clamp(Math.round(bd||1),1,12);
+  an=clamp(Math.round(an||0),0,ad);bn=clamp(Math.round(bn||0),0,bd);
+  kv=clamp(Math.round(kv||1),1,kMax(ad));
+  S.an.inp.max=ad;S.bn.inp.max=bd;S.k.inp.max=kMax(ad);
+  S.ad.set(ad);S.bd.set(bd);S.an.set(an);S.bn.set(bn);S.k.set(kv);
+  setMode(m);RZ.show($('#bars'));
+}
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+RZ.init({
+ F:{n:{l:'f_n'},a:{l:'f_a'},b:{l:'f_b'}},
+ sim:v=>load(...v),
+ M:[
+  {id:'m1',f:['n'],sim:()=>load('eq',2,3,3,4,4),ok:()=>({k:'m1_ok'}),
+   chk:([n])=>!isI(n,0,24)?RNG:n===8?null:n===11?{k:'m1_add'}:{k:'m1_f',p:()=>[n,nf(n/12,2)]}},
+  {id:'m2',f:['n'],sim:([n])=>load('cmp',n,7,1,2),ok:([n])=>({k:'m2_ok',p:()=>[n,nf(n/7,2)]}),
+   chk:([n])=>!isI(n,0,7)?RNG:n<=3?{k:'m2_lo',p:()=>[n,nf(n/7,2)]}:n>=6?{k:'m2_hi',p:()=>[n,nf(n/7,2)]}:null},
+  {id:'m3',f:['a','b'],sim:([a,b])=>load('sum',1,a,1,b),ok:([a,b])=>({k:'m3_ok',p:[a,b]}),
+   chk:([a,b])=>!(isI(a,3,12)&&isI(b,3,12))?RNG:a===b?{k:'m3_same'}:lcm(a,b)!==12?{k:'m3_f',p:[a,b,lcm(a,b)]}:null},
+  {id:'m4',f:['n'],sim:([n])=>load('cmp',n,12,5,6),ok:()=>({k:'m4_ok'}),
+   chk:([n])=>!isI(n,0,12)?RNG:n===11?null:n===10?{k:'m4_eq'}:n>=12?{k:'m4_one',p:[n]}:{k:'m4_f',p:()=>[n,nf(n/12,2)]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load('eq',2,3,3,4,3)},
+  {id:'s2',ans:'D',f:['n','d'],cxsim:([n,d])=>load('cmp',n,d,n+1,d+1),
+   cx:([n,d])=>!(isI(d,1,11)&&isI(n,0,d))?RNG:n===d?{k:'s2_cx_no',p:[n,n+1]}:null,
+   sim:()=>load('cmp',1,2,2,3)},
+  {id:'s3',ans:'M',sim:()=>load('cmp',1,3,1,4)},
+  {id:'s4',ans:'S',sim:()=>load('sum',1,4,1,6)},
+  {id:'s5',ans:'M',sim:()=>load('cmp',2,3,2,6)},
+  {id:'s6',ans:'S',sim:()=>load('cmp',3,8,5,8)}
+ ],
+ E:[{id:'e1',who:1,args:['cmp',3,5,5,9]},{id:'e2',who:3,args:['sum',1,2,1,3]},{id:'e3',who:1,args:['eq',2,3,3,4,2]},{id:'e4',who:2,args:['eq',3,4,3,4,2]}],
+ D:[
+  {id:'d1',chips:{vals:[1,2],fmt:x=>t('d1.p'+x)},f:[{l:'f_dif',u:'/40'}],sim:()=>load('cmp',3,5,5,8),ok:()=>({k:'d1_ok'}),
+   chk:([p,n])=>p!==2?{k:'d1_who'}:n!==1?{k:'d1_n'}:null},
+  {id:'d2',f:[{l:'d2.l0'},{l:'d2.l1'}],sim:()=>load('sum',2,3,1,4),ok:()=>({k:'d2_ok'}),
+   chk:([j,m])=>j!==8?{k:'d2_j'}:m!==3?{k:'d2_m'}:null},
+  {id:'d3',chips:{vals:[6,8,12,24]},sim:()=>load('sum',1,3,1,4),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p===12?null:p===24?{k:'d3_big',p:[p]}:{k:'d3_no',p:[p]}}
+ ]
+});
+initQuiz([]);
+render();
+initLang();applyLang();
+</script>
+</body>
+</html>

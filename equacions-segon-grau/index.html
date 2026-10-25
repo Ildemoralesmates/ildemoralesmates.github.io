@@ -1,70 +1,212 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ca">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="canonical" href="https://ildemoralesmates.github.io/equacions-segon-grau/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Equacions de segon grau · Situacions i solucions</title>
+<meta name="description" content="Equacions de segon grau amb situacions reals (tir a cistella, salts d'animals, coets de falla, un pati...): discriminant, solucions, gràfica de la paràbola i resolució pas a pas. Amb mode lliure i activitats per a raonar.">
 <meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/equacions-segon-grau/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/equacions-segon-grau/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/equacions-segon-grau/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/equacions-segon-grau/">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
 <meta property="og:site_name" content="Recursos de matemàtiques">
-<meta property="og:title" content="Equacions de segon grau">
-<meta property="og:description" content="Equacions de segon grau amb situacions reals (tir a cistella, salts d'animals, coets de falla, un pati...): discriminant, solucions, gràfica de la paràbola i resolució pas a pas. Amb mode lliure.">
+<meta property="og:title" content="Equacions de segon grau · Situacions i solucions">
+<meta property="og:description" content="Equacions de segon grau amb situacions reals (tir a cistella, salts d'animals, coets de falla, un pati...): discriminant, solucions, gràfica de la paràbola i resolució pas a pas. Amb mode lliure i activitats per a raonar.">
 <meta property="og:url" content="https://ildemoralesmates.github.io/equacions-segon-grau/">
 <meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<title>Equacions de segon grau · Situacions i solucions</title>
-<meta name="description" content="Equacions de segon grau amb situacions reals (tir a cistella, salts d'animals, coets de falla, un pati...): discriminant, solucions, gràfica de la paràbola i resolució pas a pas. Amb mode lliure.">
+
 <style>
 :root{
-  --bg:#f3f0e8; --panel:#fffdf8; --ink:#1f2328; --muted:#6b6f76; --line:#ddd7ca; --stage:#fbf8f1;
-  --c1:#3a78d6; --c2:#e0523f; --c3:#2fa36b;
-  --scd:#2a8a57; --sci:#c98a14; --si:#b23a3a;
-  --math:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",Georgia,serif;
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme:dark){
-  :root{--bg:#16181b;--panel:#202327;--ink:#e9e7e2;--muted:#a0a4ab;--line:#363a41;--stage:#1a1d21;--c1:#6ea2f0;--c2:#f0775f;--c3:#43c088;--scd:#43c088;--sci:#e0a93a;--si:#ee7a72}
-}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
 *{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;line-height:1.45}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
 [hidden]{display:none!important}
-header{display:flex;align-items:center;gap:1rem;padding:.6rem 1.2rem;background:#1f2328;color:#f3f0e8;flex-wrap:wrap}
-header h1{font-size:1.15rem;margin:0;font-weight:650}
-header .back{color:#f3f0e8;opacity:.75;text-decoration:none;font-size:.85rem;font-weight:600}
-header .back:hover{opacity:1;text-decoration:underline}
-header .sub{opacity:.65;font-size:.85rem}
-header .tools{margin-left:auto;display:flex;gap:.5rem;align-items:center}
-.btn{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:.32rem .7rem;cursor:pointer;white-space:nowrap}
-.btn:hover{filter:brightness(.96)}
-.btn.pri{background:var(--c1);border-color:var(--c1);color:#fff;font-weight:600}
-header .btn{background:transparent;color:#f3f0e8;border-color:#555}
-.seg{display:inline-flex;border:1px solid #555;border-radius:8px;overflow:hidden}
-.seg button{font:inherit;font-size:.8rem;background:transparent;color:#f3f0e8;border:0;padding:.3rem .65rem;cursor:pointer}
-.seg button.on{background:#f3f0e8;color:#1f2328;font-weight:700}
-main{display:grid;grid-template-columns:minmax(340px,32rem) 1fr;gap:1rem;padding:1rem;height:calc(100vh - 3.2rem)}
-.left{overflow:auto;display:flex;flex-direction:column;gap:1rem;padding-right:.25rem}
-.right{display:flex;flex-direction:column;gap:.6rem;min-height:0}
-.right:fullscreen{background:var(--bg);padding:1rem}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.85rem 1rem}
-.card h2{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 .6rem;font-weight:700}
-.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.2rem,1fr));gap:.45rem}
-.chip{font:inherit;display:flex;flex-direction:column;align-items:flex-start;gap:.05rem;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:.45rem .6rem;cursor:pointer}
-.chip .ic{font-size:1.3rem;line-height:1.1}
-.chip .nm{font-size:.84rem;font-weight:650}
-.chip .tg{font-size:.7rem;color:var(--muted)}
-.chip.on{border-color:var(--c1);box-shadow:0 0 0 2px var(--c1) inset;background:var(--panel)}
-.story{margin:.1rem 0 .5rem;font-size:1.02rem}
-.note{font-size:.8rem;color:var(--muted);margin:.2rem 0 .6rem}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+:root{--c1:#3a78d6;--c2:#e0523f;--c3:#2fa36b;--scd:#2a8a57;--sci:#c98a14;--si:#b23a3a;--math:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",Georgia,serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c1:#6ea2f0;--c2:#f0775f;--c3:#43c088;--scd:#43c088;--sci:#e0a93a;--si:#ee7a72}}
+.blk{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.blk:first-child{border-top:0;padding-top:0}
+.blk h3{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.scns{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.2rem,1fr));gap:.45rem}
+.scnb{font:inherit;display:flex;flex-direction:column;align-items:flex-start;gap:.05rem;text-align:left;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:.4rem .6rem;cursor:pointer}
+.scnb .ic{font-size:1.3rem;line-height:1.1}
+.scnb .nm{font-size:.84rem;font-weight:650}
+.scnb .tg{font-size:.7rem;color:var(--muted)}
+.scnb.on{border-color:var(--c1);box-shadow:0 0 0 2px var(--c1) inset;background:var(--panel)}
+.story{margin:.1rem 0 .3rem;font-size:15px}
 .sl{margin:.45rem 0}
 .sl label{display:block;font-size:.88rem;margin-bottom:.1rem}
 .sl input[type=range]{width:100%}
 .frow{display:grid;grid-template-columns:1.4rem 4.6rem 1fr;gap:.5rem;align-items:center;margin:.35rem 0}
 .frow label{font-family:var(--math);font-style:italic;font-size:1.15rem}
-.frow input[type=number]{font:inherit;width:100%;padding:.25rem .4rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.frow input[type=number]{font:inherit;width:100%;padding:.25rem .4rem;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
 .presets{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
 .presets .btn{font-size:.78rem;padding:.25rem .5rem;font-family:var(--math)}
 .bigEq{font-family:var(--math);font-size:1.6rem;text-align:center;padding:.3rem 0 .2rem}
@@ -72,98 +214,636 @@ main{display:grid;grid-template-columns:minmax(340px,32rem) 1fr;gap:1rem;padding
 .deltaRow{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
 .dchip{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.2rem .65rem;color:var(--muted)}
 .dchip.on{color:#fff;font-weight:650;border-color:transparent}
-.dchip.on.scd{background:var(--scd)} .dchip.on.sci{background:var(--sci)} .dchip.on.si{background:var(--si)}
+.dchip.on.scd{background:var(--scd)}.dchip.on.sci{background:var(--sci)}.dchip.on.si{background:var(--si)}
 .dval{text-align:center;font-family:var(--math);font-size:1.05rem;margin-top:.4rem}
-.stepctl{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem;font-size:.85rem;flex-wrap:wrap}
-.step{border-top:1px solid var(--line);padding:.6rem 0}
-.step:first-of-type{border-top:0;padding-top:0}
+.stepctl{display:flex;align-items:center;gap:.7rem;margin-bottom:.4rem;font-size:.85rem;flex-wrap:wrap}
+.stp{border-top:1px solid var(--line);padding:.6rem 0}
+.stp:first-of-type{border-top:0;padding-top:0}
 .sh{display:flex;gap:.5rem;align-items:center;font-weight:650;margin-bottom:.25rem}
 .sn{display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:50%;background:var(--c1);color:#fff;font-size:.78rem}
 .sb p{margin:.3rem 0}
 .sb ul{margin:.3rem 0;padding-left:1.1rem}
 .sb li{margin:.25rem 0}
-.sb li.ok::marker{color:var(--scd)} .sb li.no::marker{color:var(--si)}
+.sb li.ok::marker{color:var(--scd)}.sb li.no::marker{color:var(--si)}
 .m{font-family:var(--math);font-size:1.1em}
 .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.15;margin:0 .15em}
 .fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
 .rad{border-top:1.5px solid currentColor;padding:0 .12em}
 .tag{display:inline-block;font-size:.72rem;border-radius:6px;padding:.05rem .4rem;color:#fff;margin-right:.3rem}
-.tag.ok{background:var(--scd)} .tag.no{background:var(--si)}
-.bar{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-.bar input[type=range]{flex:1 1 8rem;min-width:6rem}
-.bar select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radius:8px;padding:.28rem .4rem;background:var(--panel);color:var(--ink)}
+.tag.ok{background:var(--scd)}.tag.no{background:var(--si)}
+#right{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+#right:fullscreen{background:var(--bg);padding:1rem}
+.tbar{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.tbar input[type=range]{flex:1 1 8rem;min-width:6rem}
+.tbar select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radius:8px;padding:.28rem .4rem;background:var(--panel);color:var(--ink)}
 .tlabel{font-family:var(--math);font-size:1rem;min-width:11rem}
-.stage{position:relative;flex:1 1 0;min-height:180px;background:var(--stage);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-#stageG{flex:1.25 1 0}
-.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.right.freemode #stageS{display:none}
-.right.freemode #scrub,.right.freemode #tLabel,.right.freemode #viewBtn{display:none}
-footer.foot{font-size:.72rem;color:var(--muted);text-align:center;padding:.3rem 0 .8rem}
-@media (max-width:900px){
-  main{display:block;height:auto}
-  .left{overflow:visible}
-  .right{margin-top:1rem}
-  .stage{flex:none;height:300px}
-  #stageG{height:340px}
-  .tlabel{min-width:0;width:100%}
-}
-@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+.stg{position:relative;height:300px;background:var(--stage);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#stageG{height:340px}
+.stg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#right.freemode #stageS{display:none}
+#right.freemode #scrub,#right.freemode #tLabel,#right.freemode #viewBtn{display:none}
+#right:fullscreen .stg{flex:1 1 0;height:auto;min-height:180px}
+#right:fullscreen #stageG{flex:1.25 1 0}
+@media (max-width:820px){.tlabel{min-width:0;width:100%}}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
 </style>
 <script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
-<header>
+<div class="page">
   <a class="back" href="../">← Recursos de matemàtiques</a>
-  <h1 data-ca="Equacions de segon grau" data-es="Ecuaciones de segundo grado"></h1>
-  <span class="sub" data-ca="Situacions, solucions i gràfica" data-es="Situaciones, soluciones y gráfica"></span>
-  <div class="tools">
-    <div class="seg"><button id="lca">CA</button><button id="les">ES</button></div>
-    <button class="btn" id="fullBtn"></button>
-  </div>
-</header>
-<main>
-  <section class="left">
-    <div class="card"><h2 data-ca="Situacions" data-es="Situaciones"></h2><div id="chips" class="chips"></div></div>
-    <div class="card">
-      <h2 id="storyH"></h2>
-      <p id="story" class="story"></p>
-      <p id="phys" class="note"></p>
-      <div id="controls"></div>
-      <p id="hint" class="note"></p>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemàtiques · 3r i 4t ESO · Àlgebra</p>
+      <h1 data-i18n="h1">Equacions de segon grau</h1>
     </div>
-    <div class="card">
-      <h2 data-ca="Equació" data-es="Ecuación"></h2>
-      <div id="bigEq" class="bigEq"></div>
-      <div id="deltaRow" class="deltaRow"></div>
-      <div id="dval" class="dval"></div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Situacions, solucions i gràfica: el discriminant decideix quantes solucions té.</p>
     </div>
-    <div class="card">
-      <h2 data-ca="Resolució pas a pas" data-es="Resolución paso a paso"></h2>
-      <div class="stepctl">
-        <label><input type="checkbox" id="stepMode"> <span data-ca="Revelar pas a pas" data-es="Revelar paso a paso"></span></label>
-        <button class="btn" id="nextStep"></button>
-      </div>
-      <div id="steps"></div>
-    </div>
-    <footer class="foot" data-ca="Prenem g = 10 m/s² i menyspreem la resistència de l'aire." data-es="Tomamos g = 10 m/s² y despreciamos la resistencia del aire."></footer>
-  </section>
-  <section class="right" id="right">
-    <div class="stage" id="stageS"><canvas id="cvS"></canvas></div>
-    <div class="bar" id="bar">
-      <button class="btn pri" id="playBtn"></button>
-      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="temps">
-      <span id="tLabel" class="tlabel"></span>
-      <select id="spd" aria-label="velocitat">
-        <option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option>
-      </select>
-      <button class="btn" id="viewBtn"></button>
-    </div>
-    <div class="stage" id="stageG"><canvas id="cvG"></canvas></div>
-  </section>
-</main>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Situacions, solucions i gràfica</h2>
+<div class="simgrid">
+<div class="simcv" id="right">
+<div class="stg" id="stageS"><canvas id="cvS"></canvas></div>
+<div class="tbar" id="bar">
+<button class="btn primary" id="playBtn" type="button"></button>
+<input type="range" id="scrub" min="0" max="1000" value="0" data-i18n-aria="aria.time" aria-label="temps">
+<span id="tLabel" class="tlabel"></span>
+<select id="spd" data-i18n-aria="aria.speed" aria-label="velocitat">
+<option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option>
+</select>
+<button class="btn" id="viewBtn" type="button"></button>
+<button class="btn" id="fullBtn" type="button"></button>
+</div>
+<div class="stg" id="stageG"><canvas id="cvG"></canvas></div>
+</div>
+<div class="side">
+<div class="blk"><h3 data-i18n="h_sit">Situacions</h3><div id="chips" class="scns"></div></div>
+<div class="blk">
+<h3 id="storyH"></h3>
+<p id="story" class="story"></p>
+<p id="phys" class="note"></p>
+<div id="controls"></div>
+<p id="hint" class="note"></p>
+</div>
+<div class="blk">
+<h3 data-i18n="h_eq">Equació</h3>
+<div id="bigEq" class="bigEq"></div>
+<div id="deltaRow" class="deltaRow"></div>
+<div id="dval" class="dval"></div>
+</div>
+<div class="blk">
+<h3 data-i18n="h_steps">Resolució pas a pas</h3>
+<div class="stepctl">
+<label><input type="checkbox" id="stepMode"> <span data-i18n="stepmode">Revelar pas a pas</span></label>
+<button class="btn" id="nextStep" type="button"></button>
+</div>
+<div id="steps"></div>
+</div>
+<p class="note" data-i18n="foot">Prenem g = 10 m/s² i menyspreem la resistència de l'aire.</p>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"><b>Per a la classe:</b> abans de moure res, demana quantes vegades creuarà la pilota l'altura de l'anella. Després mou els lliscadors: veuràs passar de 2 solucions a 1 i a cap just quan el punt més alt arriba a l'anella.</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
 
 <script>
-'use strict';
+const I18N={
+"ca": {
+"title": "Equacions de segon grau · Situacions i solucions",
+"eyebrow": "Matemàtiques · 3r i 4t ESO · Àlgebra",
+"h1": "Equacions de segon grau",
+"lede": "Situacions, solucions i gràfica: el discriminant decideix quantes solucions té.",
+"sim_title": "Situacions, solucions i gràfica",
+"h_sit": "Situacions",
+"h_eq": "Equació",
+"h_steps": "Resolució pas a pas",
+"stepmode": "Revelar pas a pas",
+"foot": "Prenem g = 10 m/s² i menyspreem la resistència de l'aire.",
+"aria.time": "temps",
+"aria.speed": "velocitat",
+"idea": "<b>Per a la classe:</b> abans de moure res, demana quantes vegades creuarà la pilota l'altura de l'anella. Després mou els lliscadors: veuràs passar de 2 solucions a 1 i a cap just quan el punt més alt arriba a l'anella.",
+"rng": "Escriu un nombre enter.",
+"f_c": "c =",
+"f_n": "Nombre",
+"f_b": "b =",
+"f_a": "a =",
+"f_t": "t (s) =",
+"m1.q": "Escriu un valor de <b>c</b> perquè <b>x² − 4x + c = 0</b> tinga exactament <b>una solució</b> (doble).",
+"m1_f": "Amb c = {0}, Δ = 16 − 4·{0} = {1}: {2}",
+"m1_two": "hi ha dues solucions.",
+"m1_none": "no hi ha cap solució.",
+"m1_ok": "✔ Missió complida! Δ = 16 − 4·4 = 0: la paràbola només toca l'eix X en x = 2.",
+"m1.more": "I per a x² − 6x + c = 0? Troba una fórmula per a c en funció de b.",
+"m2.q": "El dofí surt de l'aigua i vol tocar una pilota penjada a <b>5 m</b>. Escriu la <b>velocitat inicial mínima</b> (m/s, nombre enter) que li ho permet.",
+"m2_f": "Amb {0} m/s l'altura màxima és {0}²/20 = {1} m: no arriba a 5 m.",
+"m2_more": "Amb {0} m/s sí que arriba, però n'hi ha una de menor que també funciona.",
+"m2_ok": "✔ Missió complida! Amb 10 m/s Δ = 0: l'altura màxima és exactament 5 m i només la toca.",
+"m2.more": "I si la pilota estiguera a 8 m? Quina velocitat mínima cal i per què deixa de ser un nombre enter?",
+"m3.q": "Escriu un valor <b>positiu</b> de <b>b</b> perquè <b>x² + bx + 9 = 0</b> tinga una sola solució.",
+"m3_neg": "b = −6 també ho compleix, però es demanava positiu.",
+"m3_f": "Amb b = {0}, Δ = {0}² − 36 = {1}: no val 0.",
+"m3_ok": "✔ Missió complida! Δ = 6² − 36 = 0. Fixa't que x² + 6x + 9 = (x + 3)².",
+"m3.more": "Per què hi ha dos valors de b? Què té a veure amb el quadrat perfecte?",
+"m4.q": "Amb una reixa de <b>40 m</b> de perímetre, quina és l'<b>àrea màxima</b> (m², nombre enter) d'un pati rectangular?",
+"m4_less": "Amb {0} m² encara es pot fer i hi ha dues solucions (rectangles diferents), però no és el màxim.",
+"m4_more": "Amb {0} m² no existeix cap rectangle: el màxim és menor.",
+"m4_ok": "✔ Missió complida! El màxim és el quadrat de 10 m × 10 m: 100 m², amb Δ = 0.",
+"m4.more": "I si el perímetre fóra 60 m? I si fóra P? Troba una fórmula per a l'àrea màxima.",
+"s1.q": "«Si Δ < 0, l'equació no té solucions reals.»",
+"s1.h": "Mira què passa amb la paràbola quan puja per damunt de l'eix X.",
+"s1.e": "Sempre: Δ < 0 vol dir que la paràbola no talla l'eix X, i les solucions de l'equació són els punts on el talla.",
+"s2.q": "«L'equació ax² + c = 0 (amb b = 0) sempre té dues solucions reals.»",
+"s2.h": "Prova amb a i c del mateix signe.",
+"s2.e": "De vegades: x² − 4 = 0 en té dues, però x² + 4 = 0 no en té cap. Depén del signe de a i c.",
+"s2_cx_no": "{0}x² + ({1}) = 0 sí que té dues solucions (a i c tenen signes oposats). Busca'n un amb el mateix signe.",
+"s3.q": "«Una equació de segon grau pot tindre tres solucions.»",
+"s3.h": "Compta quantes vegades pot tallar una paràbola l'eix X.",
+"s3.e": "Mai: una paràbola talla l'eix X com a molt dues vegades.",
+"s4.q": "«Si a ≠ 0 i Δ = 0, l'equació té exactament una solució.»",
+"s4.h": "Mira el vèrtex de la paràbola.",
+"s4.e": "Sempre: la paràbola només toca l'eix X en el vèrtex, x = −b/(2a): una solució doble.",
+"s5.q": "«Si a, b i c són enters i Δ > 0, les dues solucions són nombres enters.»",
+"s5.h": "Prova amb 2x² − 3x − 2 = 0.",
+"s5.e": "De vegades: x² − 5x + 6 = 0 té 2 i 3 (enters), però 2x² − 3x − 2 = 0 té 2 i −1/2.",
+"s5_cx_no": "{0}x² + ({1})x + ({2}) = 0 no és un contraexemple: Δ = {3} i les solucions són enteres o Δ no és positiu.",
+"s6.q": "«Si a = 0, la fórmula general dóna dues solucions.»",
+"s6.h": "Pensa què deixa de ser ax² + bx + c quan a = 0.",
+"s6.e": "Mai: si a = 0 l'equació és de primer grau (bx + c = 0), amb una sola solució, i la fórmula divideix per 2a = 0.",
+"e1.ctx": "Resol <b>x² − 5x + 6 = 0</b>.",
+"e1.n0": "Marta",
+"e1.n1": "Pau",
+"e1.s0": "Δ = 25 − 6 = 19, així que x = (5 ± √19)/2.",
+"e1.s1": "Δ = 25 − 24 = 1, així que x = (5 ± 1)/2: x = 3 o x = 2.",
+"e1.w0": "Pau té raó. Δ = b² − 4ac = 25 − 4·1·6 = 1. Marta ha oblidat multiplicar per 4a: 25 − 6 no és el discriminant.",
+"e1.w1": "Perquè Δ ha de ser sempre un nombre positiu.",
+"e1.w2": "Perquè a x² − 5x + 6 = 0 no es pot aplicar la fórmula.",
+"e1.frame": "Marta, Δ no és 19 perquè…",
+"e1.model": "Marta, el discriminant és Δ = b² − 4ac, i has fet b² − c. Cal multiplicar ac per 4: Δ = 25 − 24 = 1. Així x = (5 ± 1)/2, és a dir 3 i 2. Comprovem: 3² − 15 + 6 = 0.",
+"e2.ctx": "Resol <b>x² − 4 = 0</b>.",
+"e2.n0": "Rita",
+"e2.n1": "Joan",
+"e2.s0": "x = 2 i x = −2.",
+"e2.s1": "x = 2, perquè 2² = 4.",
+"e2.w0": "Rita té raó: x² = 4 té dues solucions, 2 i −2, perquè (−2)² = 4 també. Joan s'ha quedat amb l'arrel positiva.",
+"e2.w1": "Perquè x² = 4 només té solució positiva.",
+"e2.w2": "Perquè x² − 4 = 0 no té solució.",
+"e2.frame": "Joan, x = 2 no és l'única solució perquè…",
+"e2.model": "Joan, x² = 4 es compleix per 2 i per −2, perquè (−2)² = 4. La paràbola y = x² − 4 talla l'eix X en dos punts: x = −2 i x = 2.",
+"e3.ctx": "Resol <b>x² − 6x + 9 = 0</b>.",
+"e3.n0": "Àlex",
+"e3.n1": "Laia",
+"e3.s0": "Δ = 36 − 36 = 0: solució doble, x = 3.",
+"e3.s1": "x² − 6x + 9 = (x − 3)² = 0, així que x = 3.",
+"e3.w0": "Totes dues arriben a x = 3 pel seu camí: Δ = 0 equival a ser un quadrat perfecte, (x − 3)².",
+"e3.w1": "Perquè només una de les dues manera és vàlida.",
+"e3.w2": "Perquè x = 3 no compleix l'equació.",
+"e3.frame": "Àlex i Laia, les dues teniu raó perquè…",
+"e3.model": "Àlex i Laia, 9 − 18 + 9 = 0, així que x = 3. Que Δ = 0 i que el trinomi siga un quadrat perfecte és la mateixa cosa: la paràbola només toca l'eix X en el vèrtex.",
+"e4.ctx": "Resol <b>x² + 2x + 5 = 0</b>.",
+"e4.n0": "Carla",
+"e4.n1": "Dani",
+"e4.s0": "x = (−2 ± 4)/2: x = 1 o x = −3.",
+"e4.s1": "x = −1, que és la solució doble.",
+"e4.w0": "Cap: Δ = 4 − 20 = −16 < 0, així que no té solucions reals. Carla ha tret √16 de Δ = −16 i Dani ha confós el vèrtex amb una solució.",
+"e4.w1": "Perquè la solució és x = 5.",
+"e4.w2": "Perquè només cal canviar el signe de b.",
+"e4.frame": "Carla i Dani, l'equació no té solució real perquè…",
+"e4.model": "Carla i Dani, Δ = 2² − 4·1·5 = −16 és negatiu: no hi ha arrel quadrada real. La paràbola y = x² + 2x + 5 té el vèrtex en (−1, 4), per damunt de l'eix X, i no el talla. x = −1 és el vèrtex, no una solució.",
+"d1.q": "El dofí surt de l'aigua a <b>10 m/s</b> i l'entrenador penja la pilota a <b>6 m</b>. Pot tocar-la?",
+"d1.lc": "Pot tocar-la?",
+"yes": "Sí",
+"no": "No",
+"d1_no": "Amb 10 m/s l'altura màxima és 10²/20 = 5 m. Per a arribar a 6 m caldria més velocitat.",
+"d1_ok": "✔ Ben decidit! L'altura màxima és 5 m < 6 m, i Δ = 100 − 120 = −20 < 0: cap solució.",
+"d1.more": "Quina és la velocitat mínima perquè la toque? Dóna't un valor decimal.",
+"d2.q": "Es vol tancar un pati rectangular amb <b>40 m</b> de reixa i <b>96 m²</b>. Quant mesura el <b>costat menor</b>?",
+"d2.l0": "Costat menor (m)",
+"d2_big": "{0} m és el costat major; pregunta pel menor.",
+"d2_f": "{0} · (20 − {0}) = {1}, no 96.",
+"d2_ok": "✔ Ben decidit! x² − 20x + 96 = 0 → x = 8 o x = 12: el menor és 8 m.",
+"d2.more": "Per què el pati de 8 × 12 i el de 12 × 8 són el mateix pati?",
+"d3.q": "Un jugador llança la pilota des de 2 m amb 6 m/s i l'anella és a 3 m. A quin instant (s) passa per l'anella <b>pujant</b>?",
+"d3.l0": "t (s)",
+"d3_down": "A t = 1 s la pilota passa per l'anella, però baixant.",
+"d3_f": "A t = {0} s l'altura no és 3 m.",
+"d3_ok": "✔ Ben decidit! 5t² − 6t + 1 = 0 → t = 0,2 s (pujant) i t = 1 s (baixant).",
+"d3.more": "Quina és l'altura màxima? Comprova que l'anella és per davall."
+},
+"es": {
+"title": "Ecuaciones de segundo grado · Situaciones y soluciones",
+"eyebrow": "Matemáticas · 3.º y 4.º ESO · Álgebra",
+"h1": "Ecuaciones de segundo grado",
+"lede": "Situaciones, soluciones y gráfica: el discriminante decide cuántas soluciones tiene.",
+"sim_title": "Situaciones, soluciones y gráfica",
+"h_sit": "Situaciones",
+"h_eq": "Ecuación",
+"h_steps": "Resolución paso a paso",
+"stepmode": "Revelar paso a paso",
+"foot": "Tomamos g = 10 m/s² y despreciamos la resistencia del aire.",
+"aria.time": "tiempo",
+"aria.speed": "velocidad",
+"idea": "<b>Para la clase:</b> antes de mover nada, pregunta cuántas veces cruzará el balón la altura del aro. Después mueve los deslizadores: verás pasar de 2 soluciones a 1 y a ninguna justo cuando el punto más alto llega al aro.",
+"rng": "Escribe un número entero.",
+"f_c": "c =",
+"f_n": "Número",
+"f_b": "b =",
+"f_a": "a =",
+"f_t": "t (s) =",
+"m1.q": "Escribe un valor de <b>c</b> para que <b>x² − 4x + c = 0</b> tenga exactamente <b>una solución</b> (doble).",
+"m1_f": "Con c = {0}, Δ = 16 − 4·{0} = {1}: {2}",
+"m1_two": "hay dos soluciones.",
+"m1_none": "no hay ninguna solución.",
+"m1_ok": "✔ ¡Misión cumplida! Δ = 16 − 4·4 = 0: la parábola solo toca el eje X en x = 2.",
+"m1.more": "¿Y para x² − 6x + c = 0? Encuentra una fórmula para c en función de b.",
+"m2.q": "El delfín sale del agua y quiere tocar una pelota colgada a <b>5 m</b>. Escribe la <b>velocidad inicial mínima</b> (m/s, número entero) que se lo permite.",
+"m2_f": "Con {0} m/s la altura máxima es {0}²/20 = {1} m: no llega a 5 m.",
+"m2_more": "Con {0} m/s sí llega, pero hay una menor que también funciona.",
+"m2_ok": "✔ ¡Misión cumplida! Con 10 m/s Δ = 0: la altura máxima es exactamente 5 m y solo la toca.",
+"m2.more": "¿Y si la pelota estuviera a 8 m? ¿Qué velocidad mínima hace falta y por qué deja de ser un número entero?",
+"m3.q": "Escribe un valor <b>positivo</b> de <b>b</b> para que <b>x² + bx + 9 = 0</b> tenga una sola solución.",
+"m3_neg": "b = −6 también lo cumple, pero se pedía positivo.",
+"m3_f": "Con b = {0}, Δ = {0}² − 36 = {1}: no vale 0.",
+"m3_ok": "✔ ¡Misión cumplida! Δ = 6² − 36 = 0. Fíjate en que x² + 6x + 9 = (x + 3)².",
+"m3.more": "¿Por qué hay dos valores de b? ¿Qué tiene que ver con el cuadrado perfecto?",
+"m4.q": "Con una valla de <b>40 m</b> de perímetro, ¿cuál es el <b>área máxima</b> (m², número entero) de un patio rectangular?",
+"m4_less": "Con {0} m² todavía se puede hacer y hay dos soluciones (rectángulos distintos), pero no es el máximo.",
+"m4_more": "Con {0} m² no existe ningún rectángulo: el máximo es menor.",
+"m4_ok": "✔ ¡Misión cumplida! El máximo es el cuadrado de 10 m × 10 m: 100 m², con Δ = 0.",
+"m4.more": "¿Y si el perímetro fuera 60 m? ¿Y si fuera P? Encuentra una fórmula para el área máxima.",
+"s1.q": "«Si Δ < 0, la ecuación no tiene soluciones reales.»",
+"s1.h": "Mira qué pasa con la parábola cuando sube por encima del eje X.",
+"s1.e": "Siempre: Δ < 0 significa que la parábola no corta el eje X, y las soluciones de la ecuación son los puntos donde lo corta.",
+"s2.q": "«La ecuación ax² + c = 0 (con b = 0) siempre tiene dos soluciones reales.»",
+"s2.h": "Prueba con a y c del mismo signo.",
+"s2.e": "A veces: x² − 4 = 0 tiene dos, pero x² + 4 = 0 no tiene ninguna. Depende del signo de a y c.",
+"s2_cx_no": "{0}x² + ({1}) = 0 sí tiene dos soluciones (a y c tienen signos opuestos). Busca uno con el mismo signo.",
+"s3.q": "«Una ecuación de segundo grado puede tener tres soluciones.»",
+"s3.h": "Cuenta cuántas veces puede cortar una parábola el eje X.",
+"s3.e": "Nunca: una parábola corta el eje X como mucho dos veces.",
+"s4.q": "«Si a ≠ 0 y Δ = 0, la ecuación tiene exactamente una solución.»",
+"s4.h": "Mira el vértice de la parábola.",
+"s4.e": "Siempre: la parábola solo toca el eje X en el vértice, x = −b/(2a): una solución doble.",
+"s5.q": "«Si a, b y c son enteros y Δ > 0, las dos soluciones son números enteros.»",
+"s5.h": "Prueba con 2x² − 3x − 2 = 0.",
+"s5.e": "A veces: x² − 5x + 6 = 0 tiene 2 y 3 (enteros), pero 2x² − 3x − 2 = 0 tiene 2 y −1/2.",
+"s5_cx_no": "{0}x² + ({1})x + ({2}) = 0 no es un contraejemplo: Δ = {3} y las soluciones son enteras o Δ no es positivo.",
+"s6.q": "«Si a = 0, la fórmula general da dos soluciones.»",
+"s6.h": "Piensa en qué deja de ser ax² + bx + c cuando a = 0.",
+"s6.e": "Nunca: si a = 0 la ecuación es de primer grado (bx + c = 0), con una sola solución, y la fórmula divide entre 2a = 0.",
+"e1.ctx": "Resuelve <b>x² − 5x + 6 = 0</b>.",
+"e1.n0": "Marta",
+"e1.n1": "Pau",
+"e1.s0": "Δ = 25 − 6 = 19, así que x = (5 ± √19)/2.",
+"e1.s1": "Δ = 25 − 24 = 1, así que x = (5 ± 1)/2: x = 3 o x = 2.",
+"e1.w0": "Pau tiene razón. Δ = b² − 4ac = 25 − 4·1·6 = 1. Marta ha olvidado multiplicar por 4a: 25 − 6 no es el discriminante.",
+"e1.w1": "Porque Δ tiene que ser siempre un número positivo.",
+"e1.w2": "Porque en x² − 5x + 6 = 0 no se puede aplicar la fórmula.",
+"e1.frame": "Marta, Δ no es 19 porque…",
+"e1.model": "Marta, el discriminante es Δ = b² − 4ac, y has hecho b² − c. Hay que multiplicar ac por 4: Δ = 25 − 24 = 1. Así x = (5 ± 1)/2, es decir 3 y 2. Comprobamos: 3² − 15 + 6 = 0.",
+"e2.ctx": "Resuelve <b>x² − 4 = 0</b>.",
+"e2.n0": "Rita",
+"e2.n1": "Joan",
+"e2.s0": "x = 2 y x = −2.",
+"e2.s1": "x = 2, porque 2² = 4.",
+"e2.w0": "Rita tiene razón: x² = 4 tiene dos soluciones, 2 y −2, porque (−2)² = 4 también. Joan se ha quedado con la raíz positiva.",
+"e2.w1": "Porque x² = 4 solo tiene solución positiva.",
+"e2.w2": "Porque x² − 4 = 0 no tiene solución.",
+"e2.frame": "Joan, x = 2 no es la única solución porque…",
+"e2.model": "Joan, x² = 4 se cumple para 2 y para −2, porque (−2)² = 4. La parábola y = x² − 4 corta el eje X en dos puntos: x = −2 y x = 2.",
+"e3.ctx": "Resuelve <b>x² − 6x + 9 = 0</b>.",
+"e3.n0": "Álex",
+"e3.n1": "Laia",
+"e3.s0": "Δ = 36 − 36 = 0: solución doble, x = 3.",
+"e3.s1": "x² − 6x + 9 = (x − 3)² = 0, así que x = 3.",
+"e3.w0": "Las dos llegan a x = 3 por su camino: Δ = 0 equivale a ser un cuadrado perfecto, (x − 3)².",
+"e3.w1": "Porque solo una de las dos maneras es válida.",
+"e3.w2": "Porque x = 3 no cumple la ecuación.",
+"e3.frame": "Álex y Laia, las dos tenéis razón porque…",
+"e3.model": "Álex y Laia, 9 − 18 + 9 = 0, así que x = 3. Que Δ = 0 y que el trinomio sea un cuadrado perfecto es lo mismo: la parábola solo toca el eje X en el vértice.",
+"e4.ctx": "Resuelve <b>x² + 2x + 5 = 0</b>.",
+"e4.n0": "Carla",
+"e4.n1": "Dani",
+"e4.s0": "x = (−2 ± 4)/2: x = 1 o x = −3.",
+"e4.s1": "x = −1, que es la solución doble.",
+"e4.w0": "Ninguna: Δ = 4 − 20 = −16 < 0, así que no tiene soluciones reales. Carla ha sacado √16 de Δ = −16 y Dani ha confundido el vértice con una solución.",
+"e4.w1": "Porque la solución es x = 5.",
+"e4.w2": "Porque solo hay que cambiar el signo de b.",
+"e4.frame": "Carla y Dani, la ecuación no tiene solución real porque…",
+"e4.model": "Carla y Dani, Δ = 2² − 4·1·5 = −16 es negativo: no hay raíz cuadrada real. La parábola y = x² + 2x + 5 tiene el vértice en (−1, 4), por encima del eje X, y no lo corta. x = −1 es el vértice, no una solución.",
+"d1.q": "El delfín sale del agua a <b>10 m/s</b> y el entrenador cuelga la pelota a <b>6 m</b>. ¿Puede tocarla?",
+"d1.lc": "¿Puede tocarla?",
+"yes": "Sí",
+"no": "No",
+"d1_no": "Con 10 m/s la altura máxima es 10²/20 = 5 m. Para llegar a 6 m haría falta más velocidad.",
+"d1_ok": "✔ ¡Bien decidido! La altura máxima es 5 m < 6 m, y Δ = 100 − 120 = −20 < 0: ninguna solución.",
+"d1.more": "¿Cuál es la velocidad mínima para que la toque? Da un valor decimal.",
+"d2.q": "Se quiere vallar un patio rectangular con <b>40 m</b> de valla y <b>96 m²</b>. ¿Cuánto mide el <b>lado menor</b>?",
+"d2.l0": "Lado menor (m)",
+"d2_big": "{0} m es el lado mayor; pregunta por el menor.",
+"d2_f": "{0} · (20 − {0}) = {1}, no 96.",
+"d2_ok": "✔ ¡Bien decidido! x² − 20x + 96 = 0 → x = 8 o x = 12: el menor es 8 m.",
+"d2.more": "¿Por qué el patio de 8 × 12 y el de 12 × 8 son el mismo patio?",
+"d3.q": "Un jugador lanza el balón desde 2 m con 6 m/s y el aro está a 3 m. ¿En qué instante (s) pasa por el aro <b>subiendo</b>?",
+"d3.l0": "t (s)",
+"d3_down": "En t = 1 s el balón pasa por el aro, pero bajando.",
+"d3_f": "En t = {0} s la altura no es 3 m.",
+"d3_ok": "✔ ¡Bien decidido! 5t² − 6t + 1 = 0 → t = 0,2 s (subiendo) y t = 1 s (bajando).",
+"d3.more": "¿Cuál es la altura máxima? Comprueba que el aro está por debajo."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/equacions-segon-grau/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){'use strict';
 /*PURE-START*/
 const MINUS='\u2212';
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a};
@@ -211,8 +891,7 @@ function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(raw))); const 
 
 const $=id=>document.getElementById(id);
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-let lang='ca';
-try{ const l=localStorage.getItem('eq2g-lang'); if(l==='es'||l==='ca') lang=l; }catch(e){}
+let lang=(LANG==='es'?'es':'ca');
 const L=(ca,es)=>lang==='ca'?ca:es;
 
 /* ---------- escenaris ---------- */
@@ -458,7 +1137,7 @@ function interpStep(){
 function renderSteps(){
   const st=buildSteps();
   const n=stepMode?Math.min(stepN,st.length):st.length;
-  $('steps').innerHTML=st.slice(0,n).map((s,i)=>`<div class="step"><div class="sh"><span class="sn">${i+1}</span>${s[0]}</div><div class="sb">${s[1]}</div></div>`).join('');
+  $('steps').innerHTML=st.slice(0,n).map((s,i)=>`<div class="stp"><div class="sh"><span class="sn">${i+1}</span>${s[0]}</div><div class="sb">${s[1]}</div></div>`).join('');
   $('nextStep').hidden=!stepMode;
   $('nextStep').disabled=n>=st.length;
   $('nextStep').textContent=L('Següent pas ▸','Siguiente paso ▸');
@@ -528,8 +1207,8 @@ function buildControls(){
 }
 function syncFree(){ ['a','b','c'].forEach(k=>{ const n=$('n_'+k),r=$('r_'+k); if(n){n.value=F[k];r.value=F[k];} }); }
 function buildChips(){
-  $('chips').innerHTML=SCN.map(s=>`<button class="chip${s===cur?' on':''}" data-id="${s.id}"><span class="ic">${s.icon}</span><span class="nm">${s.name[lang]}</span><span class="tg">${s.tag[lang]}</span></button>`).join('');
-  $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>selectScenario(b.dataset.id));
+  $('chips').innerHTML=SCN.map(s=>`<button class="scnb${s===cur?' on':''}" data-id="${s.id}"><span class="ic">${s.icon}</span><span class="nm">${s.name[lang]}</span><span class="tg">${s.tag[lang]}</span></button>`).join('');
+  $('chips').querySelectorAll('.scnb').forEach(b=>b.onclick=()=>selectScenario(b.dataset.id));
 }
 
 /* ---------- escena: info ---------- */
@@ -852,17 +1531,11 @@ function selectScenario(id){
   $('right').classList.toggle('freemode',cur.kind==='free');
   buildChips(); buildControls(); paramsChanged(); syncScrub();
 }
-function applyLang(){
-  document.documentElement.lang=lang;
-  document.title=L('Equacions de segon grau · Situacions i solucions','Ecuaciones de segundo grado · Situaciones y soluciones');
-  document.querySelectorAll('[data-ca]').forEach(e=>{ e.textContent=lang==='ca'?e.dataset.ca:e.dataset.es; });
-  $('lca').classList.toggle('on',lang==='ca'); $('les').classList.toggle('on',lang==='es');
+function applyPage(){
   const dc=lang==='ca'?',':','; document.querySelectorAll('#spd option').forEach(o=>{ o.textContent=o.value.replace('.',dc)+'×'; });
   buildChips(); buildControls(); renderTexts(); redraw();
 }
-function setLang(l){ lang=l; try{localStorage.setItem('eq2g-lang',l);}catch(e){} applyLang(); }
 
-$('lca').onclick=()=>setLang('ca'); $('les').onclick=()=>setLang('es');
 $('playBtn').onclick=play;
 $('scrub').oninput=e=>{ playing=false; tau=(+e.target.value)/1000*model.tauMax; redraw(); };
 $('spd').onchange=e=>{ speed=+e.target.value; if(freeTimer){ stopFree(); toggleFree(); } };
@@ -874,9 +1547,63 @@ document.addEventListener('fullscreenchange',()=>{ updateLabels(); setTimeout(re
 if(window.ResizeObserver){ const ro=new ResizeObserver(()=>redraw()); ro.observe($('stageS')); ro.observe($('stageG')); } else window.addEventListener('resize',redraw);
 
 model=getModel(); sol=solve(model.a,model.b,model.c); computeSI();
-applyLang();
+applyPage();
 selectScenario('basquet');
+
+/* ===== Raona-ho ===== */
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+function loadScn(id,vals){
+  selectScenario(id);
+  Object.assign(P,vals||{});
+  buildControls(); paramsChanged();
+  RZ.show($('stageG'));
+}
+function loadFree(a,b,c){
+  selectScenario('lliure');
+  F.a=a;F.b=b;F.c=c;
+  buildControls(); syncFree(); paramsChanged();
+  RZ.show($('stageG'));
+}
+const rootsInt=(a,b,c)=>{const D=b*b-4*a*c;if(D<=0)return true;const sq=Math.sqrt(D);if(!Number.isInteger(sq))return false;return Number.isInteger((-b+sq)/(2*a))&&Number.isInteger((-b-sq)/(2*a));};
+RZ.init({
+ F:{c:{l:'f_c'},n:{l:'f_n'},b:{l:'f_b'},a:{l:'f_a'},t:{l:'f_t'}},
+ sim:v=>v[0](),
+ M:[
+  {id:'m1',f:['c'],sim:([c])=>loadFree(1,-4,isI(c,-30,30)?c:4),ok:()=>({k:'m1_ok'}),
+   chk:([c])=>!isI(c,-30,30)?RNG:c===4?null:{k:'m1_f',p:()=>{const D=16-4*c;return [c,D,t(D>0?'m1_two':'m1_none')];}}},
+  {id:'m2',f:['n'],sim:([n])=>loadScn('dofi',{v:isI(n,0,14)?n:10,H:5}),ok:()=>({k:'m2_ok'}),
+   chk:([n])=>!isI(n,0,14)?RNG:n===10?null:n>10?{k:'m2_more',p:[n]}:{k:'m2_f',p:()=>[n,nf(n*n/20,2)]}},
+  {id:'m3',f:['b'],sim:([b])=>loadFree(1,isI(b,-20,20)?b:6,9),ok:()=>({k:'m3_ok'}),
+   chk:([b])=>!isI(b,-20,20)?RNG:b===6?null:b===-6?{k:'m3_neg'}:{k:'m3_f',p:[b,b*b-36]}},
+  {id:'m4',f:['n'],sim:([n])=>loadScn('pati',{Pm:40,A:isI(n,1,225)?n:100}),ok:()=>({k:'m4_ok'}),
+   chk:([n])=>!isI(n,1,225)?RNG:n===100?null:n<100?{k:'m4_less',p:[n]}:{k:'m4_more',p:[n]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>loadFree(1,2,5)},
+  {id:'s2',ans:'D',f:['a','c'],cxsim:([a,c])=>loadFree(isI(a,-12,12)&&a!==0?a:1,0,isI(c,-30,30)?c:4),
+   cx:([a,c])=>!(isI(a,-12,12)&&isI(c,-30,30)&&a!==0&&c!==0)?RNG:a*c<0?{k:'s2_cx_no',p:[a,c]}:null,
+   sim:()=>loadFree(1,0,-4)},
+  {id:'s3',ans:'M',sim:()=>loadFree(1,-5,6)},
+  {id:'s4',ans:'S',sim:()=>loadFree(1,-4,4)},
+  {id:'s5',ans:'D',f:['a','b','c'],cxsim:([a,b,c])=>loadFree(isI(a,-12,12)&&a!==0?a:2,isI(b,-20,20)?b:-3,isI(c,-30,30)?c:-2),
+   cx:([a,b,c])=>!(isI(a,-12,12)&&isI(b,-20,20)&&isI(c,-30,30)&&a!==0)?RNG:(b*b-4*a*c>0&&!rootsInt(a,b,c))?null:{k:'s5_cx_no',p:[a,b,c,b*b-4*a*c]},
+   sim:()=>loadFree(1,-5,6)},
+  {id:'s6',ans:'M',sim:()=>loadFree(0,3,-6)}
+ ],
+ E:[{id:'e1',who:1,args:[()=>loadFree(1,-5,6)]},{id:'e2',who:0,args:[()=>loadFree(1,0,-4)]},{id:'e3',who:2,args:[()=>loadFree(1,-6,9)]},{id:'e4',who:3,args:[()=>loadFree(1,2,5)]}],
+ D:[
+  {id:'d1',chips:{vals:[1,0],fmt:x=>t(x?'yes':'no')},sim:()=>loadScn('dofi',{v:10,H:6}),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===0?null:{k:'d1_no'}},
+  {id:'d2',f:[{l:'d2.l0'}],sim:()=>loadScn('pati',{Pm:40,A:96}),ok:()=>({k:'d2_ok'}),
+   chk:([n])=>Math.abs(n-8)<1e-9?null:Math.abs(n-12)<1e-9?{k:'d2_big',p:[n]}:{k:'d2_f',p:()=>[n,nf(n*(20-n),2)]}},
+  {id:'d3',f:[{l:'d3.l0'}],sim:()=>loadScn('basquet',{v:6,H:3}),ok:()=>({k:'d3_ok'}),
+   chk:([n])=>Math.abs(n-0.2)<0.011?null:Math.abs(n-1)<0.011?{k:'d3_down'}:{k:'d3_f',p:[n]}}
+ ]
+});
+})();
+initQuiz([]);
+initLang();applyLang();
 </script>
-<footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
 </body>
 </html>
