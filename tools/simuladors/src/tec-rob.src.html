@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Robot en el laberint: programació per blocs</title>
+<meta name="description" content="Programa un robot amb blocs (avança, gira, repeteix, mentre, si-sinó) perquè arribe a la meta del laberint. Cinc nivells que introdueixen seqüències, bucles, sensors i condicionals, amb recompte de blocs. Per a Tecnologia de 2n i 3r d'ESO, amb test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@TEC_CSS@*/
+.pal2{display:flex;flex-wrap:wrap;gap:6px}
+.pal2 .btn{font-size:13px;padding:5px 9px}
+.prog{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px;min-height:5.5em;max-height:19rem;overflow:auto}
+.blist{display:grid;gap:4px;padding:3px;border-radius:6px;border:2px dashed transparent;min-height:1.6em}
+.blist.active{border-color:var(--pa)}
+.blist .em{color:var(--muted);font-size:12.5px;padding:2px 6px}
+.blk{display:grid;gap:3px}
+.blk .hd{display:flex;align-items:center;gap:6px;background:var(--chip);border:1px solid var(--line);border-left:5px solid var(--pa);border-radius:6px;padding:3px 6px;font-size:13.5px}
+.blk.cont>.hd{border-left-color:var(--pb)}
+.blk.run>.hd{background:var(--ok);color:var(--panel);border-color:var(--ok)}
+.blk .hd select,.blk .hd input{font:inherit;font-size:12.5px;padding:1px 3px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink)}
+.blk .hd input{width:3.2em}
+.blk .x{margin-left:auto;border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px;line-height:1}
+.blk .x:hover{color:var(--warn)}
+.blk .kid{margin-left:14px}
+.blk .lbl{font-size:12px;color:var(--muted);margin-left:14px}
+.lv{display:flex;flex-wrap:wrap;gap:6px}
+.task{font-size:13.5px;margin:0;color:var(--muted)}
+.task b{color:var(--ink)}
+.stars{font-size:20px;color:var(--warn)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px"></p></div>
+<div class="side">
+<div class="seg" id="lvsw" role="group" data-i18n-aria="aria.lv" aria-label=""></div>
+<p class="task" id="task"></p>
+<div class="pal2" id="pal2"></div>
+<div class="prog" id="prog" role="tree"></div>
+<div class="tbar">
+<button class="btn primary" id="run" type="button"></button>
+<button class="btn" id="stepb" type="button" data-i18n="stepb"></button>
+<button class="btn" id="rst" type="button" data-i18n="rst"></button>
+<button class="btn" id="clr" type="button" data-i18n="clr"></button>
+</div>
+<div class="ctl"><label for="spd" data-i18n="spd"></label><output id="spd-o"></output><input type="range" id="spd" min="1" max="10" step="1" value="5"></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<dl class="kv"><dt data-i18n="k_blk"></dt><dd class="hl" id="vB"></dd><dt data-i18n="k_min"></dt><dd id="vM"></dd><dt data-i18n="k_act"></dt><dd id="vA"></dd></dl>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Robot en el laberint: programació per blocs",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Programació i control",
+"h1":"Programa el robot perquè arribe a la meta",
+"lede":"Munta el programa amb blocs: seqüències, repeticions, sensors i condicions. Com un robot de debò!",
+"sim_title":"El laberint",
+"story":"El robot <b>no veu el mapa</b>: només executa les ordres, una darrere de l'altra. Afig blocs amb els botons; per a posar-ne <b>dins</b> d'un «repeteix», «mentre» o «si», fes clic primer sobre aquest bloc (queda marcat amb un contorn). Menys blocs vol dir un programa més elegant.",
+"aria.lv":"Nivell",
+"lv1":"1 · Seqüència","lv2":"2 · Repeteix","lv3":"3 · L'escala","lv4":"4 · Mentre","lv5":"5 · Sensors",
+"task1":"<b>Seqüència:</b> porta el robot fins a la bandera només amb «avança» i els girs.",
+"task2":"<b>Repeteix:</b> ara els passadissos són llargs. Usa «repeteix» per a no escriure 6 vegades «avança».",
+"task3":"<b>L'escala:</b> troba el patró que es repeteix i posa'l dins un sol «repeteix».",
+"task4":"<b>Mentre:</b> no saps quantes caselles hi ha! Usa «mentre hi haja camí lliure davant».",
+"task5":"<b>Sensors:</b> un laberint amb parets. Prova la regla de la mà dreta: «mentre no estiga a la meta: si hi ha camí a la dreta, gira a la dreta i avança; si no, si hi ha camí davant, avança; si no, gira a l'esquerra».",
+"b_F":"Avança","b_L":"Gira a l'esquerra ↺","b_R":"Gira a la dreta ↻","b_rep":"Repeteix","b_while":"Mentre","b_if":"Si",
+"times":"vegades","else":"sinó","then":"llavors",
+"c_front":"hi ha camí davant","c_right":"hi ha camí a la dreta","c_left":"hi ha camí a l'esquerra","c_goal":"estic a la meta",
+"c_no":"NO ",
+"empty":"Fes clic en un botó per a afegir un bloc.",
+"run":"▶ Executa","pause":"❚❚ Pausa","stepb":"⏭ Pas","rst":"↺ Reinicia","clr":"Buida el programa",
+"spd":"Velocitat",
+"k_blk":"Blocs usats","k_min":"Programa més curt que coneix","k_act":"Accions executades",
+"m_ready":"Prem «Executa» o fes-lo pas a pas.",
+"m_win":"✔ Meta aconseguida! Has usat {0} blocs.",
+"m_stars3":"Programa perfecte: igual que el més curt que coneix.",
+"m_stars2":"Molt bé. Es pot fer amb menys blocs: busca què es repeteix.",
+"m_stars1":"Funciona, però es pot fer amb molts menys blocs.",
+"m_crash":"💥 El robot ha xocat contra una paret. Revisa el programa i reinicia.",
+"m_end":"El programa ha acabat, però el robot no ha arribat a la meta.",
+"m_loop":"El programa dona massa voltes (bucle infinit?). S'ha aturat.",
+"m_empty":"El programa està buit: afig alguns blocs.",
+"idea_basic":"<b>Idea:</b> un programa és una llista d'ordres. Un <b>bucle</b> («repeteix», «mentre») estalvia escriure el mateix moltes vegades, i un <b>condicional</b> («si… sinó») deixa que el robot decidisca segons el que mesuren els seus <b>sensors</b>.",
+"idea_adv":"<b>Per a pensar:</b> en un robot real (per exemple amb Arduino) el bucle principal llig els sensors, decideix i mou els motors una vegada i una altra. La regla de la mà dreta no necessita mapa ni memòria: només un sensor a la dreta i un davant. Però només funciona si la meta està connectada a la paret exterior del laberint o el laberint no té bucles.",
+"q1.q":"Què fa el bloc «repeteix 3 vegades [avança]»?",
+"q1.o0":"Avança 1 casella","q1.o1":"Avança 3 caselles","q1.o2":"Gira 3 vegades","q1.o3":"No fa res",
+"q1.e":"El que hi ha dins del bucle s'executa tantes vegades com diu el número: 3 avanços.",
+"q2.q":"Per a què serveix un sensor en un robot?",
+"q2.o0":"Per a moure les rodes","q2.o1":"Per a mesurar l'entorn (distància, llum, paret…) i decidir","q2.o2":"Per a donar energia","q2.o3":"Per a fer soroll",
+"q2.e":"Els sensors donen informació al programa; els actuadors (motors, llums…) fan les accions.",
+"q3.q":"Quants blocs mínims calen per a fer avançar 10 caselles usant un «repeteix»?",
+"q3.u":"blocs","q3.e":"Dos: el bloc «repeteix 10 vegades» i, dins, un «avança».",
+"q4.q":"El robot ha de decidir entre dues accions segons el sensor. Quina estructura usa?",
+"q4.o0":"Una seqüència","q4.o1":"Un bucle «repeteix»","q4.o2":"Un condicional «si… sinó»","q4.o3":"Cap",
+"q4.e":"Un condicional tria entre dos camins segons una condició (si el sensor detecta paret, gira; si no, avança).",
+"q5.q":"Quan és millor «mentre» que «repeteix N vegades»?",
+"q5.o0":"Quan no sabem quantes vegades s'ha de repetir","q5.o1":"Quan volem repetir exactament 5 vegades","q5.o2":"Mai","q5.o3":"Quan no hi ha sensors",
+"q5.e":"«Mentre» repeteix fins que una condició deixa de complir-se, sense saber el nombre de voltes.",
+"q6.q":"Un robot té un sensor d'ultrasons al davant. Què mesura?",
+"q6.o0":"La temperatura","q6.o1":"La distància fins a un obstacle","q6.o2":"El color","q6.o3":"La humitat",
+"q6.e":"L'ultrasons emet un so i mesura el temps que tarda l'eco: així calcula la distància."
+},
+es:{
+"title":"Robot en el laberinto: programación por bloques",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Programación y control",
+"h1":"Programa el robot para que llegue a la meta",
+"lede":"Monta el programa con bloques: secuencias, repeticiones, sensores y condiciones. ¡Como un robot de verdad!",
+"sim_title":"El laberinto",
+"story":"El robot <b>no ve el mapa</b>: solo ejecuta las órdenes, una detrás de otra. Añade bloques con los botones; para poner alguno <b>dentro</b> de un «repite», «mientras» o «si», haz clic antes sobre ese bloque (queda marcado con un contorno). Menos bloques significa un programa más elegante.",
+"aria.lv":"Nivel",
+"lv1":"1 · Secuencia","lv2":"2 · Repite","lv3":"3 · La escalera","lv4":"4 · Mientras","lv5":"5 · Sensores",
+"task1":"<b>Secuencia:</b> lleva el robot hasta la bandera solo con «avanza» y los giros.",
+"task2":"<b>Repite:</b> ahora los pasillos son largos. Usa «repite» para no escribir 6 veces «avanza».",
+"task3":"<b>La escalera:</b> encuentra el patrón que se repite y ponlo dentro de un solo «repite».",
+"task4":"<b>Mientras:</b> ¡no sabes cuántas casillas hay! Usa «mientras haya camino libre delante».",
+"task5":"<b>Sensores:</b> un laberinto con paredes. Prueba la regla de la mano derecha: «mientras no esté en la meta: si hay camino a la derecha, gira a la derecha y avanza; si no, si hay camino delante, avanza; si no, gira a la izquierda».",
+"b_F":"Avanza","b_L":"Gira a la izquierda ↺","b_R":"Gira a la derecha ↻","b_rep":"Repite","b_while":"Mientras","b_if":"Si",
+"times":"veces","else":"si no","then":"entonces",
+"c_front":"hay camino delante","c_right":"hay camino a la derecha","c_left":"hay camino a la izquierda","c_goal":"estoy en la meta",
+"c_no":"NO ",
+"empty":"Haz clic en un botón para añadir un bloque.",
+"run":"▶ Ejecuta","pause":"❚❚ Pausa","stepb":"⏭ Paso","rst":"↺ Reinicia","clr":"Vacía el programa",
+"spd":"Velocidad",
+"k_blk":"Bloques usados","k_min":"Programa más corto que conozco","k_act":"Acciones ejecutadas",
+"m_ready":"Pulsa «Ejecuta» o hazlo paso a paso.",
+"m_win":"✔ ¡Meta conseguida! Has usado {0} bloques.",
+"m_stars3":"Programa perfecto: igual que el más corto que conozco.",
+"m_stars2":"Muy bien. Se puede hacer con menos bloques: busca qué se repite.",
+"m_stars1":"Funciona, pero se puede hacer con muchos menos bloques.",
+"m_crash":"💥 El robot ha chocado contra una pared. Revisa el programa y reinicia.",
+"m_end":"El programa ha terminado, pero el robot no ha llegado a la meta.",
+"m_loop":"El programa da demasiadas vueltas (¿bucle infinito?). Se ha detenido.",
+"m_empty":"El programa está vacío: añade algunos bloques.",
+"idea_basic":"<b>Idea:</b> un programa es una lista de órdenes. Un <b>bucle</b> («repite», «mientras») ahorra escribir lo mismo muchas veces, y un <b>condicional</b> («si… si no») deja que el robot decida según lo que miden sus <b>sensores</b>.",
+"idea_adv":"<b>Para pensar:</b> en un robot real (por ejemplo con Arduino) el bucle principal lee los sensores, decide y mueve los motores una y otra vez. La regla de la mano derecha no necesita mapa ni memoria: solo un sensor a la derecha y uno delante. Pero solo funciona si la meta está conectada a la pared exterior del laberinto o el laberinto no tiene bucles.",
+"q1.q":"¿Qué hace el bloque «repite 3 veces [avanza]»?",
+"q1.o0":"Avanza 1 casilla","q1.o1":"Avanza 3 casillas","q1.o2":"Gira 3 veces","q1.o3":"No hace nada",
+"q1.e":"Lo que hay dentro del bucle se ejecuta tantas veces como dice el número: 3 avances.",
+"q2.q":"¿Para qué sirve un sensor en un robot?",
+"q2.o0":"Para mover las ruedas","q2.o1":"Para medir el entorno (distancia, luz, pared…) y decidir","q2.o2":"Para dar energía","q2.o3":"Para hacer ruido",
+"q2.e":"Los sensores dan información al programa; los actuadores (motores, luces…) hacen las acciones.",
+"q3.q":"¿Cuántos bloques mínimos hacen falta para avanzar 10 casillas usando un «repite»?",
+"q3.u":"bloques","q3.e":"Dos: el bloque «repite 10 veces» y, dentro, un «avanza».",
+"q4.q":"El robot debe decidir entre dos acciones según el sensor. ¿Qué estructura usa?",
+"q4.o0":"Una secuencia","q4.o1":"Un bucle «repite»","q4.o2":"Un condicional «si… si no»","q4.o3":"Ninguna",
+"q4.e":"Un condicional elige entre dos caminos según una condición (si el sensor detecta pared, gira; si no, avanza).",
+"q5.q":"¿Cuándo es mejor «mientras» que «repite N veces»?",
+"q5.o0":"Cuando no sabemos cuántas veces hay que repetir","q5.o1":"Cuando queremos repetir exactamente 5 veces","q5.o2":"Nunca","q5.o3":"Cuando no hay sensores",
+"q5.e":"«Mientras» repite hasta que una condición deja de cumplirse, sin saber el número de vueltas.",
+"q6.q":"Un robot tiene un sensor de ultrasonidos delante. ¿Qué mide?",
+"q6.o0":"La temperatura","q6.o1":"La distancia hasta un obstáculo","q6.o2":"El color","q6.o3":"La humedad",
+"q6.e":"El ultrasonidos emite un sonido y mide el tiempo que tarda el eco: así calcula la distancia."
+}};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@TEC_JS@*/
+
+const W=640,H=420;
+const D=[[0,1],[1,0],[0,-1],[-1,0]];
+const LV=[
+ {rows:["#####","#S..#","###.#","#G..#","#####"],opt:8,allow:['F','L','R']},
+ {rows:["#########","#S......#","#######.#","#G......#","#########"],opt:8,allow:['F','L','R','rep']},
+ {rows:["#######","#S.####","##..###","###..##","####..#","#####G#","#######"],opt:5,allow:['F','L','R','rep']},
+ {rows:["#########","#S......#","#######.#","#######G#","#########"],opt:5,allow:['F','L','R','rep','while']},
+ {rows:["#########","#S....#.#","#####.#.#","#...#...#","#.#####.#","#......G#","#########"],opt:7,allow:['F','L','R','rep','while','if']}
+];
+const S={lv:0,run:false,done:false,acts:0,crash:0,bid:0};
+let PROG=[],ACTIVE=PROG,cur=null,gen=null,timer=0,speedDelay=500;
+const rob={r:1,c:1,d:0,x:0,y:0,a:0};
+let MAP=LV[0].rows.map(r=>r.split(""));S.sr=1;S.sc=1;
+function loadLevel(i){
+  S.lv=i;const L=LV[i];MAP=L.rows.map(r=>r.split(''));
+  PROG=[];ACTIVE=PROG;
+  for(let r=0;r<MAP.length;r++)for(let c=0;c<MAP[0].length;c++)if(MAP[r][c]==='S'){S.sr=r;S.sc=c;}
+  resetRun();buildPal();renderProg();task();
+}
+function resetRun(){
+  S.run=false;S.done=false;S.acts=0;S.crash=0;gen=null;cur=null;
+  rob.r=S.sr;rob.c=S.sc;rob.d=0;rob.x=rob.c;rob.y=rob.r;rob.a=0;
+  const m=$('#msg');m.className='msg';m.textContent=t('m_ready');setRunBtn();info();
+}
+function task(){$('#task').innerHTML=t('task'+(S.lv+1));}
+function free(r,c){return MAP[r]&&MAP[r][c]!==undefined&&MAP[r][c]!=='#';}
+function cond(b){
+  const [dr,dc]=D[rob.d];let v;
+  if(b.c==='front')v=free(rob.r+dr,rob.c+dc);
+  else if(b.c==='right'){const d=(rob.d+1)%4;v=free(rob.r+D[d][0],rob.c+D[d][1]);}
+  else if(b.c==='left'){const d=(rob.d+3)%4;v=free(rob.r+D[d][0],rob.c+D[d][1]);}
+  else v=MAP[rob.r][rob.c]==='G';
+  return b.neg?!v:v;
+}
+/* intèrpret amb generador: cada acció és un yield */
+function* exec(list){for(const b of list)yield* runB(b);}
+function* runB(b){
+  if(b.t==='F'||b.t==='L'||b.t==='R'){yield b;}
+  else if(b.t==='rep'){for(let i=0;i<b.n;i++)yield* exec(b.body);}
+  else if(b.t==='while'){let g=0;while(cond(b)){if(++g>300)throw 'loop';const before=S.acts;yield* exec(b.body);if(S.acts===before&&g>50)throw 'loop';}}
+  else if(b.t==='if'){yield* exec(cond(b)?b.body:b.els);}
+}
+function count(list){return list.reduce((n,b)=>n+1+(b.body?count(b.body):0)+(b.els?count(b.els):0),0);}
+function info(){$('#vB').textContent=count(PROG);$('#vM').textContent=LV[S.lv].opt;$('#vA').textContent=S.acts;}
+/* un pas del programa */
+function stepOnce(){
+  if(S.done)return;
+  if(!gen){if(!PROG.length){msg('m_empty','msg bad');return;}gen=exec(PROG);}
+  let nx;
+  try{nx=gen.next();}catch(e){S.done=true;S.run=false;msg('m_loop','msg bad');setRunBtn();return;}
+  if(nx.done){S.done=true;S.run=false;cur=null;
+    if(MAP[rob.r][rob.c]!=='G')msg('m_end','msg bad');setRunBtn();render();return;}
+  cur=nx.value.id;S.acts++;
+  const b=nx.value;
+  if(b.t==='L')rob.d=(rob.d+3)%4;else if(b.t==='R')rob.d=(rob.d+1)%4;
+  else{const nr=rob.r+D[rob.d][0],nc=rob.c+D[rob.d][1];
+    if(!free(nr,nc)){S.crash=1;S.done=true;S.run=false;msg('m_crash','msg bad');setRunBtn();render();info();return;}
+    rob.r=nr;rob.c=nc;}
+  if(MAP[rob.r][rob.c]==='G'){win();}
+  render();info();
+}
+function win(){
+  S.done=true;S.run=false;const n=count(PROG),opt=LV[S.lv].opt,st=n<=opt?3:n<=opt+2?2:1;
+  const m=$('#msg');m.className='msg good';m.innerHTML=tt('m_win',n)+' <span class="stars">'+'★'.repeat(st)+'☆'.repeat(3-st)+'</span><br>'+t('m_stars'+st);setRunBtn();
+}
+function msg(k,c){const m=$('#msg');m.className=c||'msg';m.textContent=t(k);}
+function setRunBtn(){$('#run').textContent=t(S.run?'pause':'run');}
+/* ---- editor de blocs ---- */
+const NAMES={F:'b_F',L:'b_L',R:'b_R'};
+function buildPal(){
+  const h=$('#pal2');h.innerHTML='';
+  LV[S.lv].allow.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=t(k==='rep'?'b_rep':k==='while'?'b_while':k==='if'?'b_if':NAMES[k]);b.onclick=()=>add(k);h.appendChild(b);});
+}
+function add(k){
+  if(count(PROG)>=40)return;
+  const b={t:k,id:++S.bid};
+  if(k==='rep'){b.n=3;b.body=[];}
+  if(k==='while'){b.c=S.lv===4?'goal':'front';b.neg=S.lv===4;b.body=[];}
+  if(k==='if'){b.c='right';b.neg=false;b.body=[];b.els=[];}
+  ACTIVE.push(b);
+  if(b.body)ACTIVE=b.body;
+  resetRunSoft();renderProg();
+}
+function resetRunSoft(){const s=$('#msg');gen=null;S.done=false;S.run=false;S.acts=0;rob.r=S.sr;rob.c=S.sc;rob.d=0;cur=null;s.className='msg';s.textContent=t('m_ready');setRunBtn();info();render();}
+function del(list,i){const b=list[i];list.splice(i,1);if(ACTIVE===b.body||ACTIVE===b.els)ACTIVE=list;resetRunSoft();renderProg();}
+function condSel(b){
+  const s=document.createElement('select');
+  [['front',0],['front',1],['right',0],['right',1],['left',0],['left',1],['goal',0],['goal',1]].forEach(([c,n])=>{const o=document.createElement('option');o.value=c+'|'+n;o.textContent=(n?t('c_no'):'')+t('c_'+c);if(b.c===c&&!!b.neg===!!n)o.selected=true;s.appendChild(o);});
+  s.onclick=e=>e.stopPropagation();s.onchange=()=>{const [c,n]=s.value.split('|');b.c=c;b.neg=n==='1';resetRunSoft();};return s;
+}
+function renderList(list){
+  const d=document.createElement('div');d.className='blist'+(list===ACTIVE?' active':'');
+  d.onclick=e=>{e.stopPropagation();ACTIVE=list;renderProg();};
+  if(!list.length){const em=document.createElement('div');em.className='em';em.textContent=t('empty');d.appendChild(em);}
+  list.forEach((b,i)=>d.appendChild(renderBlock(b,list,i)));return d;
+}
+function renderBlock(b,list,i){
+  const w=document.createElement('div');w.className='blk'+(b.body?' cont':'')+(cur===b.id?' run':'');w.dataset.id=b.id;
+  const hd=document.createElement('div');hd.className='hd';
+  const label=document.createElement('span');
+  if(b.t==='F'||b.t==='L'||b.t==='R')label.textContent=t(NAMES[b.t]);
+  else if(b.t==='rep'){label.textContent=t('b_rep');hd.appendChild(label);const inp=document.createElement('input');inp.type='number';inp.min=1;inp.max=20;inp.value=b.n;inp.onclick=e=>e.stopPropagation();inp.onchange=()=>{b.n=Math.max(1,Math.min(20,+inp.value||1));resetRunSoft();};hd.appendChild(inp);const tm=document.createElement('span');tm.textContent=t('times');hd.appendChild(tm);}
+  else if(b.t==='while'){label.textContent=t('b_while');hd.appendChild(label);hd.appendChild(condSel(b));}
+  else{label.textContent=t('b_if');hd.appendChild(label);hd.appendChild(condSel(b));}
+  if(!hd.contains(label))hd.appendChild(label);
+  const x=document.createElement('button');x.type='button';x.className='x';x.textContent='✕';x.setAttribute('aria-label','×');x.onclick=e=>{e.stopPropagation();del(list,i);};hd.appendChild(x);
+  w.appendChild(hd);
+  if(b.body){const k=document.createElement('div');k.className='kid';k.appendChild(renderList(b.body));w.appendChild(k);}
+  if(b.els){const l=document.createElement('div');l.className='lbl';l.textContent=t('else');w.appendChild(l);const k=document.createElement('div');k.className='kid';k.appendChild(renderList(b.els));w.appendChild(k);}
+  return w;
+}
+function renderProg(){const h=$('#prog');h.innerHTML='';h.appendChild(renderList(PROG));info();}
+function render(){draw(cvo);renderProgHL();}
+function renderProgHL(){$$('#prog .blk').forEach(e=>e.classList.toggle('run',+e.dataset.id===cur));}
+
+/* ---- dibuix ---- */
+const cvo=TEC.cv('#cv',W,H,draw);
+function draw(o){
+  const c=o.ctx,k=C(),R=MAP.length,Cn=MAP[0].length,s=Math.min((W-20)/Cn,(H-20)/R),ox=(W-s*Cn)/2,oy=(H-s*R)/2;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  for(let r=0;r<R;r++)for(let q=0;q<Cn;q++){
+    const x=ox+q*s,y=oy+r*s,ch=MAP[r][q];
+    if(ch==='#'){c.fillStyle=k.dark?'#2a3550':'#8892a8';c.fillRect(x,y,s,s);c.strokeStyle=k.dark?'#1a2338':'#6a7488';c.lineWidth=1;c.strokeRect(x+.5,y+.5,s-1,s-1);}
+    else{c.fillStyle=k.panel;c.fillRect(x,y,s,s);c.strokeStyle=k.line;c.lineWidth=1;c.strokeRect(x+.5,y+.5,s-1,s-1);}
+    if(ch==='G'){c.fillStyle=k.ok;c.globalAlpha=.25;c.fillRect(x,y,s,s);c.globalAlpha=1;TEC.line(c,[[x+s*.35,y+s*.8],[x+s*.35,y+s*.2]],k.ink,3);c.beginPath();c.moveTo(x+s*.35,y+s*.2);c.lineTo(x+s*.8,y+s*.35);c.lineTo(x+s*.35,y+s*.5);c.closePath();c.fillStyle=k.ok;c.fill();}
+    if(ch==='S'){c.fillStyle=k.pa;c.globalAlpha=.15;c.fillRect(x,y,s,s);c.globalAlpha=1;}
+  }
+  /* robot suau */
+  const tx=rob.c,ty=rob.r;rob.x+=(tx-rob.x)*(REDUCE?1:.3);rob.y+=(ty-rob.y)*(REDUCE?1:.3);
+  const ta=rob.d*Math.PI/2;let da=ta-rob.a;da=Math.atan2(Math.sin(da),Math.cos(da));rob.a+=da*(REDUCE?1:.35);
+  const cx=ox+(rob.x+.5)*s,cy=oy+(rob.y+.5)*s;
+  c.save();c.translate(cx,cy);c.rotate(rob.a);
+  c.beginPath();c.rect(-s*.32,-s*.28,s*.64,s*.56);c.fillStyle=S.crash?k.warn:k.pa;c.fill();c.strokeStyle=k.ink;c.lineWidth=2;c.stroke();
+  c.beginPath();c.moveTo(s*.42,0);c.lineTo(s*.2,-s*.14);c.lineTo(s*.2,s*.14);c.closePath();c.fillStyle='#fff';c.fill();
+  c.beginPath();c.arc(s*.02,-s*.14,s*.06,0,TAU);c.arc(s*.02,s*.14,s*.06,0,TAU);c.fillStyle='#fff';c.fill();
+  c.restore();
+}
+/* ---- control ---- */
+$('#run').onclick=()=>{
+  if(S.done){resetRun();}
+  S.run=!S.run;setRunBtn();if(S.run&&!gen&&!PROG.length){S.run=false;msg('m_empty','msg bad');setRunBtn();}
+};
+$('#stepb').onclick=()=>{if(S.done)resetRun();S.run=false;setRunBtn();stepOnce();};
+$('#rst').onclick=()=>{resetRun();renderProgHL();};
+$('#clr').onclick=()=>{PROG=[];ACTIVE=PROG;resetRun();renderProg();};
+const spd=$('#spd');const spdUpd=()=>{speedDelay=1100-spd.value*100;$('#spd-o').textContent=spd.value;};spd.oninput=spdUpd;spdUpd();
+let acc=0;
+TEC.loop(dt=>{
+  if(S.run){acc+=dt*1000;if(acc>=speedDelay){acc=0;stepOnce();}}
+  draw(cvo);
+});
+function buildLv(){TEC.seg($('#lvsw'),[0,1,2,3,4].map(i=>({v:String(i),key:'lv'+(i+1)})),String(S.lv),v=>loadLevel(+v));}
+const QDATA=[{"id":"q1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q3","lvl":"basic","type":"num","num":2,"tol":0,"u":1},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"adv","type":"mc","n":4,"ans":2},{"id":"q6","lvl":"adv","type":"mc","n":4,"ans":1}];
+App.hooks.push(()=>{buildLv();buildPal();renderProg();task();setRunBtn();const m=$('#msg');if(!S.done&&!S.run&&!S.acts)m.textContent=t('m_ready');});
+initQuiz(QDATA);
+loadLevel(0);
+initLang();applyLang();
+</script>
+</body>
+</html>

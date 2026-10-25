@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Codi de colors de les resistències</title>
+<meta name="description" content="Aprén el codi de colors de les resistències: tria el color de cada banda i mira el valor i la tolerància, escriu un valor i comprova quines bandes té, o resol reptes aleatoris. Resistències de 4 i 5 bandes. Per a Tecnologia de 2n i 3r d'ESO, amb test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@TEC_CSS@*/
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.sw{font:inherit;font-size:11.5px;border:2px solid var(--line);border-radius:8px;padding:14px 2px 4px;cursor:pointer;color:var(--ink);background:var(--panel);position:relative;line-height:1.1}
+.sw::before{content:"";position:absolute;left:6px;right:6px;top:4px;height:10px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.35)}
+.sw:disabled{opacity:.28;cursor:default}
+.sw:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.sw[aria-pressed=true]{border-color:var(--pa)}
+.sw b{display:block;font-family:var(--f-num);font-size:12.5px}
+.bandrow{display:flex;flex-wrap:wrap;gap:4px}
+.bandrow .chip{font-size:12.5px}
+.sol{font-family:var(--f-num);font-size:14px;line-height:1.7}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px"></p></div>
+<div class="side">
+<div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label=""></div>
+<div class="seg" id="nsw" role="group" data-i18n-aria="aria.n" aria-label=""></div>
+<div id="bandsel" class="bandrow" role="group" data-i18n-aria="aria.band" aria-label=""></div>
+<div class="pal" id="pal" role="group" data-i18n-aria="aria.pal" aria-label=""></div>
+<div id="vbox" hidden>
+<div class="predict"><label for="vin" data-i18n="vin_l"></label><input type="text" id="vin" autocomplete="off" placeholder="4k7" style="width:6.5em"><button class="btn" id="vgo" type="button" data-i18n="vgo"></button></div>
+</div>
+<div id="cbox" hidden>
+<div class="predict"><label for="cin" data-i18n="cin_l"></label><input type="text" id="cin" autocomplete="off" style="width:6.5em"><button class="btn" id="cgo" type="button" data-i18n="check"></button>
+<button class="btn" id="cnext" type="button" data-i18n="cnext"></button><button class="btn" id="cshow" type="button" data-i18n="cshow"></button></div>
+<p class="note" id="score"></p>
+</div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<h3 data-i18n="out_h"></h3>
+<dl class="kv" id="kv"></dl>
+<div class="formula sol" id="sol"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Codi de colors de les resistències",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Electrònica",
+"h1":"Resistències: llig el valor pels colors",
+"lede":"Cada banda de color és un dígit, un multiplicador o una tolerància. Aprén-ho jugant!",
+"sim_title":"La resistència",
+"story":"Les <b>dues primeres bandes</b> (tres en les de 5 bandes) són <b>dígits</b>; la següent és el <b>multiplicador</b> (potència de 10) i l'última, més separada, la <b>tolerància</b>. Exemple: groc-violeta-roig-daurat = 4 · 7 · 10² = 4 700 Ω = 4,7 kΩ amb ±5 %.",
+"aria.mode":"Mode","aria.n":"Nombre de bandes","aria.band":"Banda seleccionada","aria.pal":"Colors",
+"m_read":"Llig les bandes","m_write":"Escriu un valor","m_chal":"Repte",
+"n4":"4 bandes","n5":"5 bandes",
+"b_d1":"1r dígit","b_d2":"2n dígit","b_d3":"3r dígit","b_mul":"Multiplicador","b_tol":"Tolerància",
+"vin_l":"Valor (ex.: 4k7, 330, 2,2M):","vgo":"Mostra les bandes",
+"cin_l":"Quin és el valor?","check":"Comprova","cnext":"Una altra","cshow":"Mostra la solució",
+"chscore":"Encerts: {0} de {1}",
+"out_h":"Valor",
+"k_val":"Valor","k_tol":"Tolerància","k_rng":"El valor real està entre",
+"c_0":"negre","c_1":"marró","c_2":"roig","c_3":"taronja","c_4":"groc","c_5":"verd","c_6":"blau","c_7":"violeta","c_8":"gris","c_9":"blanc","c_10":"daurat","c_11":"plata",
+"s_dig":"{0}{1}{2} → {3}",
+"s_mul":"× {0}",
+"s_res":"{0} {1} = {2} Ω",
+"w_ok":"✔ Bandes colocades per a {0}.",
+"w_round":"{0} no es pot representar amb {1} xifres significatives: s'ha arredonit a {2}.",
+"w_bad":"Escriu un valor vàlid (entre 0,1 Ω i 99 GΩ), per exemple 4k7 o 330.",
+"w_rng":"Aquest valor està fora del rang del codi de colors.",
+"g_ok":"✔ Correcte! {0}.",
+"g_no":"No és {0}. El valor és {1}: {2}",
+"g_bad":"Escriu el valor (per exemple 4k7, 330 o 2,2M).",
+"g_show":"Solució: {0}.",
+"idea_basic":"<b>Truc:</b> per a recordar els colors de 0 a 9: <i>negre, marró, roig, taronja, groc, verd, blau, violeta, gris, blanc</i>. El daurat i la plata només apareixen com a tolerància (±5 %, ±10 %) i, a vegades, com a multiplicador de 0,1 i 0,01.",
+"idea_adv":"<b>Per a pensar:</b> la tolerància diu quant pot allunyar-se el valor real del nominal: una resistència de 100 Ω ±5 % és, en realitat, entre 95 Ω i 105 Ω. Les de 5 bandes (3 dígits) són de més precisió: 1 %, 0,5 %… Les resistències comercials seguen sèries de valors normalitzats (E12, E24…): 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82.",
+"q1.q":"Una resistència té les bandes marró, negre, taronja i daurat. Quin és el seu valor en ohms?",
+"q1.u":"Ω","q1.e":"Marró = 1, negre = 0, taronja = ×10³ → 10 · 1000 = 10 000 Ω = 10 kΩ (±5 %).",
+"q2.q":"Les bandes són groc, violeta i roig (i daurat). Quin valor té?",
+"q2.o0":"47 Ω","q2.o1":"470 Ω","q2.o2":"4,7 kΩ","q2.o3":"47 kΩ",
+"q2.e":"Groc = 4, violeta = 7, roig = ×10² → 47 · 100 = 4 700 Ω = 4,7 kΩ.",
+"q3.q":"Què indica la tercera banda d'una resistència de 4 bandes?",
+"q3.o0":"El tercer dígit","q3.o1":"El multiplicador","q3.o2":"La tolerància","q3.o3":"La potència",
+"q3.e":"En les de 4 bandes: dígit, dígit, multiplicador i tolerància. En les de 5: tres dígits, multiplicador i tolerància.",
+"q4.q":"Resistència de 5 bandes: roig, roig, negre, marró i marró. Quin valor té en ohms?",
+"q4.u":"Ω","q4.e":"Dígits 2, 2, 0 → 220; multiplicador marró = ×10 → 2 200 Ω = 2,2 kΩ (±1 %).",
+"q5.q":"Una banda daurada al final (la més separada) indica…",
+"q5.o0":"Una tolerància del ±5 %","q5.o1":"Un multiplicador de 100","q5.o2":"El dígit 5","q5.o3":"Que la resistència és de ferro",
+"q5.e":"L'última banda és la tolerància: daurat = ±5 %, plata = ±10 %.",
+"q6.q":"Una resistència de 330 Ω amb una tolerància del 10 %. Quin és el màxim valor que pot tindre realment? (en Ω)",
+"q6.u":"Ω","q6.e":"330 · 1,10 = 363 Ω."
+},
+es:{
+"title":"Código de colores de las resistencias",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Electrónica",
+"h1":"Resistencias: lee el valor por los colores",
+"lede":"Cada banda de color es un dígito, un multiplicador o una tolerancia. ¡Aprende jugando!",
+"sim_title":"La resistencia",
+"story":"Las <b>dos primeras bandas</b> (tres en las de 5 bandas) son <b>dígitos</b>; la siguiente es el <b>multiplicador</b> (potencia de 10) y la última, más separada, la <b>tolerancia</b>. Ejemplo: amarillo-violeta-rojo-dorado = 4 · 7 · 10² = 4 700 Ω = 4,7 kΩ con ±5 %.",
+"aria.mode":"Modo","aria.n":"Número de bandas","aria.band":"Banda seleccionada","aria.pal":"Colores",
+"m_read":"Lee las bandas","m_write":"Escribe un valor","m_chal":"Reto",
+"n4":"4 bandas","n5":"5 bandas",
+"b_d1":"1.er dígito","b_d2":"2.º dígito","b_d3":"3.er dígito","b_mul":"Multiplicador","b_tol":"Tolerancia",
+"vin_l":"Valor (ej.: 4k7, 330, 2,2M):","vgo":"Muestra las bandas",
+"cin_l":"¿Cuál es el valor?","check":"Comprueba","cnext":"Otra","cshow":"Muestra la solución",
+"chscore":"Aciertos: {0} de {1}",
+"out_h":"Valor",
+"k_val":"Valor","k_tol":"Tolerancia","k_rng":"El valor real está entre",
+"c_0":"negro","c_1":"marrón","c_2":"rojo","c_3":"naranja","c_4":"amarillo","c_5":"verde","c_6":"azul","c_7":"violeta","c_8":"gris","c_9":"blanco","c_10":"dorado","c_11":"plata",
+"s_dig":"{0}{1}{2} → {3}",
+"s_mul":"× {0}",
+"s_res":"{0} {1} = {2} Ω",
+"w_ok":"✔ Bandas colocadas para {0}.",
+"w_round":"{0} no se puede representar con {1} cifras significativas: se ha redondeado a {2}.",
+"w_bad":"Escribe un valor válido (entre 0,1 Ω y 99 GΩ), por ejemplo 4k7 o 330.",
+"w_rng":"Este valor está fuera del rango del código de colores.",
+"g_ok":"✔ ¡Correcto! {0}.",
+"g_no":"No es {0}. El valor es {1}: {2}",
+"g_bad":"Escribe el valor (por ejemplo 4k7, 330 o 2,2M).",
+"g_show":"Solución: {0}.",
+"idea_basic":"<b>Truco:</b> para recordar los colores de 0 a 9: <i>negro, marrón, rojo, naranja, amarillo, verde, azul, violeta, gris, blanco</i>. El dorado y la plata solo aparecen como tolerancia (±5 %, ±10 %) y, a veces, como multiplicador de 0,1 y 0,01.",
+"idea_adv":"<b>Para pensar:</b> la tolerancia dice cuánto puede alejarse el valor real del nominal: una resistencia de 100 Ω ±5 % es, en realidad, entre 95 Ω y 105 Ω. Las de 5 bandas (3 dígitos) son de más precisión: 1 %, 0,5 %… Las resistencias comerciales siguen series de valores normalizados (E12, E24…): 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82.",
+"q1.q":"Una resistencia tiene las bandas marrón, negro, naranja y dorado. ¿Cuál es su valor en ohmios?",
+"q1.u":"Ω","q1.e":"Marrón = 1, negro = 0, naranja = ×10³ → 10 · 1000 = 10 000 Ω = 10 kΩ (±5 %).",
+"q2.q":"Las bandas son amarillo, violeta y rojo (y dorado). ¿Qué valor tiene?",
+"q2.o0":"47 Ω","q2.o1":"470 Ω","q2.o2":"4,7 kΩ","q2.o3":"47 kΩ",
+"q2.e":"Amarillo = 4, violeta = 7, rojo = ×10² → 47 · 100 = 4 700 Ω = 4,7 kΩ.",
+"q3.q":"¿Qué indica la tercera banda de una resistencia de 4 bandas?",
+"q3.o0":"El tercer dígito","q3.o1":"El multiplicador","q3.o2":"La tolerancia","q3.o3":"La potencia",
+"q3.e":"En las de 4 bandas: dígito, dígito, multiplicador y tolerancia. En las de 5: tres dígitos, multiplicador y tolerancia.",
+"q4.q":"Resistencia de 5 bandas: rojo, rojo, negro, marrón y marrón. ¿Qué valor tiene en ohmios?",
+"q4.u":"Ω","q4.e":"Dígitos 2, 2, 0 → 220; multiplicador marrón = ×10 → 2 200 Ω = 2,2 kΩ (±1 %).",
+"q5.q":"Una banda dorada al final (la más separada) indica…",
+"q5.o0":"Una tolerancia del ±5 %","q5.o1":"Un multiplicador de 100","q5.o2":"El dígito 5","q5.o3":"Que la resistencia es de hierro",
+"q5.e":"La última banda es la tolerancia: dorado = ±5 %, plata = ±10 %.",
+"q6.q":"Una resistencia de 330 Ω con una tolerancia del 10 %. ¿Cuál es el valor máximo que puede tener realmente? (en Ω)",
+"q6.u":"Ω","q6.e":"330 · 1,10 = 363 Ω."
+}};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@TEC_JS@*/
+
+const W=640,H=275;
+const HEX=['#151515','#7b4a22','#d62d2d','#f08a1c','#f2d21c','#2f9e44','#2f6fd6','#7d3cc4','#8c8c8c','#f4f4f4','#c9a227','#bdbdbd'];
+const TOL={1:1,2:2,5:.5,6:.25,7:.1,8:.05,10:5,11:10};
+const S={mode:'read',n:4,sel:0,bands:[4,7,2,10],chal:null,ok:0,tot:0,shown:false};
+let selBand=0;
+const f3=x=>fmt(+x.toPrecision(4),4).replace(/,?0+$/,'').replace(/,$/,'');
+const mulOf=i=>i<=9?Math.pow(10,i):i===10?0.1:0.01;
+function slots(){return S.n===4?['b_d1','b_d2','b_mul','b_tol']:['b_d1','b_d2','b_d3','b_mul','b_tol'];}
+function allowed(slot){const k=slots()[slot];if(k==='b_mul')return [...Array(12).keys()];if(k==='b_tol')return Object.keys(TOL).map(Number);return [...Array(10).keys()];}
+function val(b,n){
+  const nd=n-2,d=b.slice(0,nd).reduce((a,x)=>a*10+x,0),m=mulOf(b[nd]);
+  return {R:d*m,tol:TOL[b[nd+1]],d,m,nd};
+}
+function convert(n){
+  const v=val(S.bands,S.bands.length),tol=S.bands[S.bands.length-1];
+  const r=toBands(v.R,n)||{b:n===4?[1,0,0]:[1,0,0,0]};
+  S.n=n;S.bands=[...r.b,tol];
+  if(S.sel>=slots().length)S.sel=slots().length-1;
+}
+function setN(n){convert(n);rebuild();}
+function fmtR(R){return TEC.si(R,'Ω');}
+function lbl(i){return t('c_'+i);}
+function buildBandSel(){
+  const h=$('#bandsel');h.innerHTML='';
+  slots().forEach((k,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t(k);b.setAttribute('aria-pressed',String(i===S.sel));b.onclick=()=>{S.sel=i;rebuild();};h.appendChild(b);});
+}
+function buildPal(){
+  const h=$('#pal');h.innerHTML='';const ok=allowed(S.sel);
+  for(let i=0;i<12;i++){
+    const b=document.createElement('button');b.type='button';b.className='sw';b.style.setProperty('--c',HEX[i]);
+    const slotKey=slots()[S.sel];
+    let sub=i<=9?String(i):'';
+    if(slotKey==='b_mul')sub='×'+(i<=9?'10'+(i?'<sup>'+i+'</sup>':'⁰'):(i===10?'0,1':'0,01'));
+    if(slotKey==='b_tol')sub='±'+TOL[i]+' %';
+    b.innerHTML=lbl(i)+'<b>'+sub+'</b>';b.disabled=!ok.includes(i)||(S.mode==='chal');
+    b.setAttribute('aria-pressed',String(S.bands[S.sel]===i));
+    b.onclick=()=>{S.bands[S.sel]=i;rebuild();};
+    h.appendChild(b);
+  }
+}
+function rebuild(){buildBandSel();buildPal();$('#pal').hidden=$('#bandsel').hidden=S.mode==='chal';out();draw(cvo);}
+function out(){
+  const v=val(S.bands,S.n);
+  const chalHide=S.mode==='chal'&&!S.shown;
+  const bandNames=S.bands.map(lbl).join(' · ');
+  if(chalHide){$('#kv').innerHTML='<dt>'+t('k_val')+'</dt><dd>?</dd>';$('#sol').innerHTML='';return;}
+  const dig=S.bands.slice(0,v.nd).join('');
+  $('#kv').innerHTML='<dt>'+t('k_val')+'</dt><dd class="hl">'+fmtR(v.R)+'</dd><dt>'+t('k_tol')+'</dt><dd>±'+fmt(v.tol,v.tol<1?2:0).replace(/,00$/,'')+' %</dd><dt>'+t('k_rng')+'</dt><dd>'+fmtR(v.R*(1-v.tol/100))+' – '+fmtR(v.R*(1+v.tol/100))+'</dd>';
+  const mi=S.bands[v.nd];
+  $('#sol').innerHTML=bandNames+'<br>'+dig.split('').map((d,i)=>'<span class="'+(i%2?'kb':'ka')+'">'+d+'</span>').join(' ')+' → '+v.d+'<br>'+tt('s_mul',(mi<=9?'10<sup>'+mi+'</sup>':mulOf(mi).toString().replace('.',',')))+'<br>'+tt('s_res',v.d,'× '+f3(v.m),f3(v.R));
+}
+/* ---- mode: escriu un valor ---- */
+function toBands(R,n){
+  const nd=n-2;if(!(R>=0.1&&R<9.9e10))return null;
+  let e=Math.floor(Math.log10(R)+1e-12)-(nd-1),m=Math.round(R/Math.pow(10,e));
+  if(m>=Math.pow(10,nd)){e++;m=Math.round(R/Math.pow(10,e));}
+  if(e<-2||e>9)return null;
+  if(m<Math.pow(10,nd-1)&&e>-2&&R>=Math.pow(10,nd-1)*0.01){/* de vegades cal baixar l'exponent */}
+  const digs=String(m).padStart(nd,'0').split('').map(Number);
+  const mi=e>=0?e:(e===-1?10:11);
+  const real=m*Math.pow(10,e);
+  return {b:[...digs,mi],real,exact:Math.abs(real-R)/R<1e-9};
+}
+$('#vgo').onclick=()=>{
+  const R=TEC.parse($('#vin').value),m=$('#msg');
+  if(!isFinite(R)||R<=0){m.className='msg bad';m.textContent=t('w_bad');return;}
+  const r=toBands(R,S.n);if(!r){m.className='msg bad';m.textContent=t('w_rng');return;}
+  const tol=S.bands[S.bands.length-1];S.bands=[...r.b,tol];
+  m.className=r.exact?'msg good':'msg';m.textContent=r.exact?tt('w_ok',fmtR(R)):tt('w_round',fmtR(R),S.n-2,fmtR(r.real));
+  rebuild();
+};
+$('#vin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#vgo').click();});
+/* ---- mode: repte ---- */
+const E12=[10,12,15,18,22,27,33,39,47,56,68,82];
+function newChal(){
+  const b=E12[Math.floor(Math.random()*12)],e=Math.floor(Math.random()*5)-(Math.random()<.25?1:0);
+  const R=b*Math.pow(10,Math.max(e,-1)),r=toBands(R,4)||toBands(R*10,4);
+  S.bands=[...r.b,[10,11,1][Math.floor(Math.random()*3)]];S.n=4;S.chal=val(S.bands,4).R;S.shown=false;
+  $('#cin').value='';$('#msg').textContent='';
+}
+$('#cgo').onclick=()=>{
+  const v=TEC.parse($('#cin').value),m=$('#msg');
+  if(!isFinite(v)){m.className='msg bad';m.textContent=t('g_bad');return;}
+  S.tot++;const R=S.chal,ok=Math.abs(v-R)<=R*.005;
+  if(ok){S.ok++;S.shown=true;m.className='msg good';m.textContent=tt('g_ok',fmtR(R));}
+  else{S.shown=true;m.className='msg bad';m.textContent=tt('g_no',fmtR(v),fmtR(R),S.bands.slice(0,2).join('')+' × '+f3(mulOf(S.bands[2])));}
+  rebuild();score();
+};
+$('#cin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#cgo').click();});
+$('#cnext').onclick=()=>{newChal();rebuild();};
+$('#cshow').onclick=()=>{S.shown=true;$('#msg').className='msg';$('#msg').textContent=tt('g_show',fmtR(S.chal));rebuild();};
+function score(){$('#score').textContent=tt('chscore',S.ok,S.tot);}
+function setMode(m){
+  S.mode=m;S.shown=false;$('#msg').textContent='';
+  $('#vbox').hidden=m!=='write';$('#cbox').hidden=m!=='chal';
+  if(m==='chal'){S.n=4;newChal();}
+  buildSegs();rebuild();score();
+}
+function buildSegs(){
+  TEC.seg($('#modesw'),[{v:'read',key:'m_read'},{v:'write',key:'m_write'},{v:'chal',key:'m_chal'}],S.mode,setMode);
+  const o=[{v:'4',key:'n4'}];if(App.level==='adv'&&S.mode!=='chal')o.push({v:'5',key:'n5'});
+  if(App.level!=='adv'&&S.n===5)convert(4);
+  TEC.seg($('#nsw'),o,String(S.n),v=>setN(+v));
+  $('#nsw').hidden=o.length<2;
+}
+
+/* ---- dibuix ---- */
+let bx=[];
+const cvo=TEC.cv('#cv',W,H,draw);
+function draw(o){
+  const c=o.ctx,k=C(),n=S.n,cy=118;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  TEC.line(c,[[30,cy],[600,cy]],k.muted,6);
+  /* cos */
+  const x0=170,x1=470;
+  c.beginPath();c.moveTo(x0+16,cy-44);c.lineTo(x1-16,cy-44);c.quadraticCurveTo(x1+4,cy-44,x1,cy-26);c.lineTo(x1,cy+26);c.quadraticCurveTo(x1+4,cy+44,x1-16,cy+44);c.lineTo(x0+16,cy+44);c.quadraticCurveTo(x0-4,cy+44,x0,cy+26);c.lineTo(x0,cy-26);c.quadraticCurveTo(x0-4,cy-44,x0+16,cy-44);c.closePath();
+  c.fillStyle=k.dark?'#c9a878':'#e6cfa0';c.fill();c.strokeStyle=k.ink;c.lineWidth=2;c.stroke();
+  /* bandes */
+  const xs=n===4?[212,256,300,422]:[208,240,272,304,422];
+  bx=xs;
+  const hide=S.mode==='chal'&&false;
+  xs.forEach((x,i)=>{
+    const col=HEX[S.bands[i]];
+    c.fillStyle=col;c.fillRect(x-9,cy-44,18,88);
+    c.strokeStyle='rgba(0,0,0,.45)';c.lineWidth=1;c.strokeRect(x-9,cy-44,18,88);
+    if(i===S.sel&&S.mode!=='chal'){c.strokeStyle=k.pa;c.lineWidth=3;c.strokeRect(x-14,cy-52,28,104);}
+    if(!(S.mode==='chal'&&!S.shown&&i<n-1))TEC.txt(c,i===n-1?'±'+TOL[S.bands[i]]+'%':S.bands[i]<=9?String(S.bands[i]):(S.bands[i]===10?'0,1':'0,01'),x,cy+72,{font:'bold 14px system-ui',col:i===S.sel&&S.mode!=='chal'?k.pa:k.ink});
+    TEC.txt(c,lbl(S.bands[i]),x,cy+92,{font:'12px system-ui',col:k.muted});
+    TEC.txt(c,i<n-2?(n===4?['1','2'][i]:['1','2','3'][i]):(i===n-2?'×':'±'),x,cy-64,{font:'bold 13px system-ui',col:k.muted});
+  });
+  const v=val(S.bands,n),hid=S.mode==='chal'&&!S.shown;
+  TEC.txt(c,hid?'? Ω':fmtR(v.R)+'  ±'+(v.tol)+' %',W/2,H-22,{font:'bold 22px system-ui',col:k.ink});
+}
+TEC.drag(cvo,{down(p){let b=-1,bd=24;bx.forEach((x,i)=>{const d=Math.abs(p.x-x);if(d<bd&&p.y>60&&p.y<180){bd=d;b=i;}});if(b>=0&&S.mode!=='chal'){S.sel=b;rebuild();}return false;}});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":10000,"tol":0,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":2},{"id":"q3","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"adv","type":"num","num":2200,"tol":0,"u":1},{"id":"q6","lvl":"adv","type":"num","num":363,"tol":0,"u":1}];
+App.hooks.push(()=>{buildSegs();rebuild();});
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

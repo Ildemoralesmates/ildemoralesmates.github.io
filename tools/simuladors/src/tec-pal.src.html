@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Palanques: la llei de la palanca</title>
+<meta name="description" content="Palanca de primer, segon i tercer gènere: mou la força i la càrrega, prediu quina força cal per a l'equilibri (F·d = R·d) i mira cap a on s'inclina. Amb exemples reals: balancí, carretó i pinces. Per a Tecnologia de 2n i 3r d'ESO, amb test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@TEC_CSS@*/
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px"></p></div>
+<div class="side">
+<div class="seg" id="gensw" role="group" data-i18n-aria="aria.gen" aria-label=""></div>
+<p class="note" id="examples"></p>
+<div id="ctls" style="display:grid;gap:2px"></div>
+<div class="predict">
+<label for="guess" data-i18n="guess_q"></label><input type="text" inputmode="decimal" id="guess" autocomplete="off" style="width:5.5em">
+<button class="btn" id="checkg" type="button" data-i18n="check"></button>
+</div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<h3 data-i18n="out_h"></h3>
+<dl class="kv">
+<dt data-i18n="k_mr"></dt><dd class="hb" id="vMr"></dd>
+<dt data-i18n="k_mf"></dt><dd class="hl" id="vMf"></dd>
+<dt data-i18n="k_state"></dt><dd id="vS"></dd>
+<dt data-i18n="k_need"></dt><dd id="vN"></dd>
+<dt data-i18n="k_adv"></dt><dd id="vA"></dd>
+</dl>
+<div class="formula" id="formula"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Palanques: la llei de la palanca",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Màquines simples",
+"h1":"Palanques: quanta força cal per a aixecar-ho?",
+"lede":"Mou la càrrega i la força al llarg de la barra i descobreix quan la palanca s'equilibra.",
+"sim_title":"La palanca",
+"story":"Una palanca és una barra que gira sobre un punt fix, el <b>punt de suport</b> (fulcre, triangle). La <b>càrrega R</b> (taronja) i la <b>força F</b> (blava) fan girar la barra cap a costats oposats. Equilibri quan <b>F · d<sub>F</sub> = R · d<sub>R</sub></b>: el que cada una multiplica la seua distància al suport. Pots arrossegar la càrrega i la força sobre la barra.",
+"aria.gen":"Gènere de la palanca",
+"g1":"1r gènere","g2":"2n gènere","g3":"3r gènere",
+"ex1":"Suport al <b>mig</b>: balancí, tisores, alicates, balança romana.",
+"ex2":"La <b>càrrega</b> entre el suport i la força: carretó, obri-ampolles, trencanous.",
+"ex3":"La <b>força</b> entre el suport i la càrrega: pinces, canya de pescar, avantbraç.",
+"R":"Càrrega R (N)","F":"Força F (N)","dR":"Distància de R al suport (dm)","dF":"Distància de F al suport (dm)",
+"guess_q":"Prediu: quina força F fa l'equilibri?",
+"check":"Comprova",
+"out_h":"Resultats",
+"k_mr":"Moment de la càrrega R · d","k_mf":"Moment de la força F · d","k_state":"Estat","k_need":"Força necessària per a l'equilibri","k_adv":"Avantatge mecànic R / F",
+"s_eq":"Equilibri ✔","s_r":"Guanya la càrrega","s_f":"Guanya la força",
+"msg_eq":"Equilibri: els dos moments són iguals ({0} N·dm).",
+"msg_r":"La barra s'inclina cap al costat de la <b>càrrega</b>: R · d és més gran que F · d. Cal més força o més distància per a F.",
+"msg_f":"La barra s'inclina cap al costat de la <b>força</b>: F · d és més gran. Pots aixecar la càrrega!",
+"fm":"F · d<sub>F</sub> = R · d<sub>R</sub><br>{0} · {1} = {2} · {3}<br>F = R · d<sub>R</sub> / d<sub>F</sub> = {4} N",
+"g_ok":"✔ Encertat! Cal una força de {0} N.",
+"g_no":"Havies predit {0} N, però calen {1} N: F = R · d<sub>R</sub> / d<sub>F</sub>.",
+"g_bad":"Escriu un nombre (N).",
+"idea_basic":"<b>Idea:</b> com més lluny del suport empenys, menys força fa falta. Una força xicoteta lluny del suport pot equilibrar una càrrega gran a prop.",
+"idea_adv":"<b>Per a pensar:</b> el 2n gènere sempre dona avantatge mecànic (R / F > 1) perquè la força està més lluny que la càrrega. El 3r gènere sempre fa «perdre» força (R / F < 1), però guanyes recorregut i velocitat: la mà es mou poc i l'extrem es mou molt. El 1r gènere pot fer qualsevol de les dues coses.",
+"q1.q":"Una càrrega de 60 N està a 2 dm del suport. A quina força s'equilibra si l'apliques a 6 dm del suport?",
+"q1.u":"N","q1.e":"F · 6 = 60 · 2 → F = 120/6 = 20 N.",
+"q2.q":"Un carretó és una palanca de quin gènere?",
+"q2.o0":"1r gènere","q2.o1":"2n gènere","q2.o2":"3r gènere","q2.o3":"No és una palanca",
+"q2.e":"El suport és la roda (a l'extrem), la càrrega està al mig i la força s'aplica a les manetes, a l'altre extrem: 2n gènere.",
+"q3.q":"Unes pinces per a depilar (o unes pinces del gel) són una palanca de…",
+"q3.o0":"1r gènere","q3.o1":"2n gènere","q3.o2":"3r gènere","q3.o3":"Cap",
+"q3.e":"El suport és l'extrem, la força s'aplica entre el suport i la càrrega (la punta): 3r gènere.",
+"q4.q":"En un balancí, un xiquet de 100 N està a 0,5 m del suport. Quina distància al suport ha de tindre una força de 25 N per a equilibrar-lo?",
+"q4.u":"m","q4.e":"25 · d = 100 · 0,5 → d = 50/25 = 2 m.",
+"q5.q":"Quin gènere de palanca sempre dona avantatge mecànic (R / F > 1)?",
+"q5.o0":"1r gènere","q5.o1":"2n gènere","q5.o2":"3r gènere","q5.o3":"Tots",
+"q5.e":"En el 2n gènere la força està més lluny del suport que la càrrega, així que per a equilibrar fa falta menys força que càrrega.",
+"q6.q":"Per què s'usa una palanca de 3r gènere (canya de pescar) si calen més forces?",
+"q6.o0":"Perquè amb un xicotet moviment de la mà l'extrem es mou molt i de pressa","q6.o1":"Perquè aixeca més pes","q6.o2":"Perquè no té punt de suport","q6.o3":"Perquè no cansa",
+"q6.e":"Perds força però guanyes recorregut i velocitat a l'extrem."
+},
+es:{
+"title":"Palancas: la ley de la palanca",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Máquinas simples",
+"h1":"Palancas: ¿cuánta fuerza hace falta para levantarlo?",
+"lede":"Mueve la carga y la fuerza a lo largo de la barra y descubre cuándo la palanca se equilibra.",
+"sim_title":"La palanca",
+"story":"Una palanca es una barra que gira sobre un punto fijo, el <b>punto de apoyo</b> (fulcro, triángulo). La <b>carga R</b> (naranja) y la <b>fuerza F</b> (azul) hacen girar la barra hacia lados opuestos. Equilibrio cuando <b>F · d<sub>F</sub> = R · d<sub>R</sub></b>: lo que cada una multiplica por su distancia al apoyo. Puedes arrastrar la carga y la fuerza sobre la barra.",
+"aria.gen":"Género de la palanca",
+"g1":"1.er género","g2":"2.º género","g3":"3.er género",
+"ex1":"Apoyo en el <b>medio</b>: balancín, tijeras, alicates, romana.",
+"ex2":"La <b>carga</b> entre el apoyo y la fuerza: carretilla, abrebotellas, cascanueces.",
+"ex3":"La <b>fuerza</b> entre el apoyo y la carga: pinzas, caña de pescar, antebrazo.",
+"R":"Carga R (N)","F":"Fuerza F (N)","dR":"Distancia de R al apoyo (dm)","dF":"Distancia de F al apoyo (dm)",
+"guess_q":"Predice: ¿qué fuerza F equilibra?",
+"check":"Comprueba",
+"out_h":"Resultados",
+"k_mr":"Momento de la carga R · d","k_mf":"Momento de la fuerza F · d","k_state":"Estado","k_need":"Fuerza necesaria para el equilibrio","k_adv":"Ventaja mecánica R / F",
+"s_eq":"Equilibrio ✔","s_r":"Gana la carga","s_f":"Gana la fuerza",
+"msg_eq":"Equilibrio: los dos momentos son iguales ({0} N·dm).",
+"msg_r":"La barra se inclina hacia el lado de la <b>carga</b>: R · d es mayor que F · d. Hace falta más fuerza o más distancia para F.",
+"msg_f":"La barra se inclina hacia el lado de la <b>fuerza</b>: F · d es mayor. ¡Puedes levantar la carga!",
+"fm":"F · d<sub>F</sub> = R · d<sub>R</sub><br>{0} · {1} = {2} · {3}<br>F = R · d<sub>R</sub> / d<sub>F</sub> = {4} N",
+"g_ok":"✔ ¡Acertaste! Hace falta una fuerza de {0} N.",
+"g_no":"Habías predicho {0} N, pero hacen falta {1} N: F = R · d<sub>R</sub> / d<sub>F</sub>.",
+"g_bad":"Escribe un número (N).",
+"idea_basic":"<b>Idea:</b> cuanto más lejos del apoyo empujas, menos fuerza hace falta. Una fuerza pequeña lejos del apoyo puede equilibrar una carga grande cerca.",
+"idea_adv":"<b>Para pensar:</b> el 2.º género siempre da ventaja mecánica (R / F > 1) porque la fuerza está más lejos que la carga. El 3.er género siempre «pierde» fuerza (R / F < 1), pero ganas recorrido y velocidad: la mano se mueve poco y el extremo se mueve mucho. El 1.er género puede hacer cualquiera de las dos cosas.",
+"q1.q":"Una carga de 60 N está a 2 dm del apoyo. ¿Con qué fuerza se equilibra si la aplicas a 6 dm del apoyo?",
+"q1.u":"N","q1.e":"F · 6 = 60 · 2 → F = 120/6 = 20 N.",
+"q2.q":"Una carretilla es una palanca de qué género?",
+"q2.o0":"1.er género","q2.o1":"2.º género","q2.o2":"3.er género","q2.o3":"No es una palanca",
+"q2.e":"El apoyo es la rueda (en el extremo), la carga está en medio y la fuerza se aplica en las manillas, en el otro extremo: 2.º género.",
+"q3.q":"Unas pinzas de depilar (o de hielo) son una palanca de…",
+"q3.o0":"1.er género","q3.o1":"2.º género","q3.o2":"3.er género","q3.o3":"Ninguna",
+"q3.e":"El apoyo es el extremo, la fuerza se aplica entre el apoyo y la carga (la punta): 3.er género.",
+"q4.q":"En un balancín, un niño de 100 N está a 0,5 m del apoyo. ¿Qué distancia al apoyo debe tener una fuerza de 25 N para equilibrarlo?",
+"q4.u":"m","q4.e":"25 · d = 100 · 0,5 → d = 50/25 = 2 m.",
+"q5.q":"¿Qué género de palanca siempre da ventaja mecánica (R / F > 1)?",
+"q5.o0":"1.er género","q5.o1":"2.º género","q5.o2":"3.er género","q5.o3":"Todos",
+"q5.e":"En el 2.º género la fuerza está más lejos del apoyo que la carga, así que para equilibrar hace falta menos fuerza que carga.",
+"q6.q":"¿Por qué se usa una palanca de 3.er género (caña de pescar) si hacen falta más fuerzas?",
+"q6.o0":"Porque con un pequeño movimiento de la mano el extremo se mueve mucho y deprisa","q6.o1":"Porque levanta más peso","q6.o2":"Porque no tiene punto de apoyo","q6.o3":"Porque no cansa",
+"q6.e":"Pierdes fuerza pero ganas recorrido y velocidad en el extremo."
+}};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@TEC_JS@*/
+
+const W=640,H=400;
+const S={gen:2,ang:0};
+const CT=$('#ctls'),SL={};
+SL.R=slider(CT,{id:'R',key:'R',min:10,max:200,step:10,val:120,on:upd});
+SL.F=slider(CT,{id:'F',key:'F',min:10,max:200,step:10,val:40,on:upd});
+SL.dR=slider(CT,{id:'dR',key:'dR',min:1,max:9,step:1,val:3,on:v=>clampPos('dR')});
+SL.dF=slider(CT,{id:'dF',key:'dF',min:1,max:10,step:1,val:9,on:v=>clampPos('dF')});
+const RANGES={1:{dR:[1,8],dF:[1,8]},2:{dR:[1,9],dF:[2,10]},3:{dR:[2,10],dF:[1,9]}};
+function clampPos(changed){
+  const g=S.gen;
+  if(g===2&&SL.dF.get()<=SL.dR.get()){if(changed==='dR')SL.dF.set(SL.dR.get()+1);else SL.dR.set(SL.dF.get()-1);}
+  if(g===3&&SL.dR.get()<=SL.dF.get()){if(changed==='dF')SL.dR.set(SL.dF.get()+1);else SL.dF.set(SL.dR.get()-1);}
+  upd();
+}
+function setGen(g,pre){
+  S.gen=g;
+  ['dR','dF'].forEach(k=>{const [a,b]=RANGES[g][k];SL[k].inp.min=a;SL[k].inp.max=b;});
+  const P=pre||{1:[80,3,40,6],2:[120,3,40,9],3:[15,10,50,3]}[g];
+  SL.R.set(P[0]);SL.dR.set(P[1]);SL.F.set(P[2]);SL.dF.set(P[3]);
+  $('#msg').textContent='';$('#guess').value='';
+  upd();
+}
+function buildSeg(){TEC.seg($('#gensw'),[{v:'1',key:'g1'},{v:'2',key:'g2'},{v:'3',key:'g3'}],String(S.gen),v=>setGen(+v));}
+function state(){
+  const R=SL.R.get(),F=SL.F.get(),dR=SL.dR.get(),dF=SL.dF.get(),mr=R*dR,mf=F*dF;
+  /* signe del moment total: positiu = costat dret avall */
+  let tau;
+  if(S.gen===1)tau=mf-mr;else tau=mr-mf;
+  return {R,F,dR,dF,mr,mf,tau};
+}
+function upd(){
+  const s=state();
+  $('#examples').innerHTML=t('ex'+S.gen);
+  $('#vMr').textContent=s.mr+' N·dm';$('#vMf').textContent=s.mf+' N·dm';
+  const eq=s.mr===s.mf;
+  $('#vS').textContent=eq?t('s_eq'):s.mr>s.mf?t('s_r'):t('s_f');
+  const need=s.R*s.dR/s.dF;
+  $('#vN').textContent=fmt(need,need%1?2:0)+' N';
+  $('#vA').textContent=fmt(s.R/need,2);
+  $('#formula').innerHTML=tt('fm',s.F,s.dF,s.R,s.dR,fmt(need,need%1?2:0));
+  const m=$('#msg');if(m.className.indexOf('guessmsg')<0){m.className='msg';m.innerHTML=eq?tt('msg_eq',s.mr):s.mr>s.mf?t('msg_r'):t('msg_f');}
+}
+$('#checkg').addEventListener('click',()=>{
+  const v=parseNum($('#guess').value),m=$('#msg'),s=state(),need=s.R*s.dR/s.dF;
+  if(!isFinite(v)||$('#guess').value.trim()===''){m.className='msg bad guessmsg';m.textContent=t('g_bad');return;}
+  if(Math.abs(v-need)<=need*.02+1e-9){m.className='msg good guessmsg';m.innerHTML=tt('g_ok',fmt(need,need%1?2:0));}
+  else{m.className='msg bad guessmsg';m.innerHTML=tt('g_no',fmt(v,2).replace(/,00$/,''),fmt(need,need%1?2:0));}
+});
+['R','F','dR','dF'].forEach(k=>SL[k].inp.addEventListener('input',()=>{$('#msg').className='msg';upd();}));
+
+/* ---- dibuix ---- */
+let geo={};
+const cvo=TEC.cv('#cv',W,H,draw);
+function layout(){
+  const g=S.gen,py=235;
+  if(g===1)return {u:32,px:W/2,py,x0:-9,x1:9};
+  return {u:52,px:62,py,x0:-.6,x1:10.6};
+}
+function pointOn(L,x){return [L.px+x*L.u*Math.cos(S.ang),L.py+x*L.u*Math.sin(S.ang)-0];}
+function draw(o){
+  const c=o.ctx,k=C(),L=layout(),s=state();
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  const target=Math.abs(s.tau)<1e-9?0:Math.max(-1,Math.min(1,s.tau/(Math.max(s.mr,s.mf)*0.6)))*0.22;
+  S.ang+=(target-S.ang)*(REDUCE?1:.12);
+  const a=S.ang;
+  /* terra */
+  TEC.line(c,[[10,L.py+66],[W-10,L.py+66]],k.line,3);
+  /* suport */
+  c.beginPath();c.moveTo(L.px,L.py+4);c.lineTo(L.px-24,L.py+66);c.lineTo(L.px+24,L.py+66);c.closePath();c.fillStyle=k.chip;c.fill();c.strokeStyle=k.ink;c.lineWidth=2.5;c.stroke();
+  /* barra */
+  c.save();c.translate(L.px,L.py);c.rotate(a);
+  c.beginPath();c.rect(L.x0*L.u,-8,(L.x1-L.x0)*L.u,16);c.fillStyle=k.panel;c.fill();c.globalAlpha=.3;c.fillStyle=k.muted;c.fill();c.globalAlpha=1;c.strokeStyle=k.ink;c.lineWidth=2.5;c.stroke();
+  for(let x=Math.ceil(L.x0);x<=Math.floor(L.x1);x++){c.beginPath();c.moveTo(x*L.u,-8);c.lineTo(x*L.u,x%5===0?-1:-4);c.strokeStyle=k.muted;c.lineWidth=1.2;c.stroke();}
+  c.restore();
+  c.beginPath();c.arc(L.px,L.py,7,0,TAU);c.fillStyle=k.ink;c.fill();
+  /* posicions segons gènere */
+  const xR=(S.gen===1?-s.dR:s.dR),xF=s.dF;
+  const pR=pointOn(L,xR),pF=pointOn(L,xF);
+  geo={L,pR,pF,xR,xF};
+  /* càrrega: pes penjat */
+  TEC.line(c,[[pR[0],pR[1]+8],[pR[0],pR[1]+34]],k.pb,2.5);
+  c.fillStyle=k.pb;c.globalAlpha=.9;c.fillRect(pR[0]-26,pR[1]+34,52,38);c.globalAlpha=1;c.strokeStyle=k.panel;c.lineWidth=2;c.strokeRect(pR[0]-26,pR[1]+34,52,38);
+  TEC.txt(c,'R',pR[0],pR[1]+46,{col:'#fff',font:'bold 14px system-ui'});TEC.txt(c,s.R+' N',pR[0],pR[1]+62,{col:'#fff',font:'12px system-ui'});
+  /* força */
+  const len=24+s.F*.35;
+  if(S.gen===1){TEC.arrow(c,pF[0],pF[1]-8-len,pF[0],pF[1]-8,k.pa,4);TEC.txt(c,'F = '+s.F+' N',pF[0],pF[1]-len-22,{col:k.pa,font:'bold 14px system-ui'});}
+  else{TEC.arrow(c,pF[0],pF[1]+8+len,pF[0],pF[1]+8,k.pa,4);TEC.txt(c,'F = '+s.F+' N',pF[0],pF[1]+len+24,{col:k.pa,font:'bold 14px system-ui'});}
+  /* cotes (distàncies) */
+  const yd=L.py+112;
+  TEC.line(c,[[L.px,yd],[pR[0],yd]],k.pb,2);TEC.line(c,[[L.px,yd+12],[pF[0],yd+12]],k.pa,2);
+  TEC.txt(c,'d_R = '+s.dR+' dm',(L.px+pR[0])/2,yd-9,{col:k.pb,font:'bold 12.5px system-ui'});TEC.txt(c,'d_F = '+s.dF+' dm',(L.px+pF[0])/2,yd+25,{col:k.pa,font:'bold 12.5px system-ui'});
+  TEC.txt(c,t('g'+S.gen),W/2,22,{font:'bold 15px system-ui'});
+  if(s.mr===s.mf)TEC.txt(c,t('s_eq'),W/2,48,{col:k.ok,font:'bold 16px system-ui'});
+}
+/* arrossegar R i F sobre la barra */
+let dragK=null;
+TEC.drag(cvo,{
+  down(p){if(!geo.pR)return false;const dR=Math.hypot(p.x-geo.pR[0],p.y-geo.pR[1]-50),dF=Math.hypot(p.x-geo.pF[0],p.y-geo.pF[1]);
+    if(Math.min(dR,dF)>48)return false;dragK=dR<dF?'dR':'dF';return true;},
+  move(p){const L=geo.L,x=(p.x-L.px)/L.u;let v=S.gen===1?(dragK==='dR'?-x:x):x;v=Math.round(v);const [a,b]=RANGES[S.gen][dragK];v=Math.max(a,Math.min(b,v));SL[dragK].set(v);clampPos(dragK);$('#msg').className='msg';upd();}
+});
+TEC.loop(()=>draw(cvo));
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":20,"tol":0,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q3","lvl":"basic","type":"mc","n":4,"ans":2},{"id":"q4","lvl":"basic","type":"num","num":2,"tol":0,"u":1},{"id":"q5","lvl":"adv","type":"mc","n":4,"ans":1},{"id":"q6","lvl":"adv","type":"mc","n":4,"ans":0}];
+App.hooks.push(()=>{upd();buildSeg();});
+initQuiz(QDATA);
+setGen(2);
+initLang();applyLang();
+</script>
+</body>
+</html>

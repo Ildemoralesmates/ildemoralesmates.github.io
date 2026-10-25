@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Robot en el laberinto: programación por bloques</title>
+<meta name="description" content="Programa un robot con bloques (avanza, gira, repite, mientras, si-si no) para que llegue a la meta del laberinto. Cinco niveles que introducen secuencias, bucles, sensores y condicionales, con recuento de bloques. Para Tecnología de 2.º y 3.º de ESO, con test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/robot-laberint/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/robot-laberint/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/robot-laberint/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/robot-laberint/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Robot en el laberinto: programación por bloques">
+<meta property="og:description" content="Programa un robot con bloques (avanza, gira, repite, mientras, si-si no) para que llegue a la meta del laberinto. Cinco niveles que introducen secuencias, bucles, sensores y condicionales, con recuento de bloques. Para Tecnología de 2.º y 3.º de ESO, con test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/robot-laberint/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació i components comuns de les animacions de Tecnologia ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{min-width:0}
+.simcv canvas{touch-action:none}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side h3{margin:2px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.msg:empty{display:none}
+.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv dd.hl{color:var(--pa);font-weight:700}
+.kv dd.hb{color:var(--pb);font-weight:700}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2px 18px}
+.formula{font-family:var(--f-num);font-size:14.5px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.formula .ka{color:var(--pa);font-weight:700}.formula .kb{color:var(--pb);font-weight:700}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tbar .btn.on{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.formula:empty{display:none}
+
+.pal2{display:flex;flex-wrap:wrap;gap:6px}
+.pal2 .btn{font-size:13px;padding:5px 9px}
+.prog{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px;min-height:5.5em;max-height:19rem;overflow:auto}
+.blist{display:grid;gap:4px;padding:3px;border-radius:6px;border:2px dashed transparent;min-height:1.6em}
+.blist.active{border-color:var(--pa)}
+.blist .em{color:var(--muted);font-size:12.5px;padding:2px 6px}
+.blk{display:grid;gap:3px}
+.blk .hd{display:flex;align-items:center;gap:6px;background:var(--chip);border:1px solid var(--line);border-left:5px solid var(--pa);border-radius:6px;padding:3px 6px;font-size:13.5px}
+.blk.cont>.hd{border-left-color:var(--pb)}
+.blk.run>.hd{background:var(--ok);color:var(--panel);border-color:var(--ok)}
+.blk .hd select,.blk .hd input{font:inherit;font-size:12.5px;padding:1px 3px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink)}
+.blk .hd input{width:3.2em}
+.blk .x{margin-left:auto;border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px;line-height:1}
+.blk .x:hover{color:var(--warn)}
+.blk .kid{margin-left:14px}
+.blk .lbl{font-size:12px;color:var(--muted);margin-left:14px}
+.lv{display:flex;flex-wrap:wrap;gap:6px}
+.task{font-size:13.5px;margin:0;color:var(--muted)}
+.task b{color:var(--ink)}
+.stars{font-size:20px;color:var(--warn)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Tecnología · 2.º y 3.º ESO · Programación y control</p>
+      <h1 data-i18n="h1">Programa el robot para que llegue a la meta</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Monta el programa con bloques: secuencias, repeticiones, sensores y condiciones. ¡Como un robot de verdad!</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">El laberinto</h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px">El robot <b>no ve el mapa</b>: solo ejecuta las órdenes, una detrás de otra. Añade bloques con los botones; para poner alguno <b>dentro</b> de un «repite», «mientras» o «si», haz clic antes sobre ese bloque (queda marcado con un contorno). Menos bloques significa un programa más elegante.</p></div>
+<div class="side">
+<div class="seg" id="lvsw" role="group" data-i18n-aria="aria.lv" aria-label="Nivel"></div>
+<p class="task" id="task"></p>
+<div class="pal2" id="pal2"></div>
+<div class="prog" id="prog" role="tree"></div>
+<div class="tbar">
+<button class="btn primary" id="run" type="button"></button>
+<button class="btn" id="stepb" type="button" data-i18n="stepb">⏭ Paso</button>
+<button class="btn" id="rst" type="button" data-i18n="rst">↺ Reinicia</button>
+<button class="btn" id="clr" type="button" data-i18n="clr">Vacía el programa</button>
+</div>
+<div class="ctl"><label for="spd" data-i18n="spd">Velocidad</label><output id="spd-o"></output><input type="range" id="spd" min="1" max="10" step="1" value="5"></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<dl class="kv"><dt data-i18n="k_blk">Bloques usados</dt><dd class="hl" id="vB"></dd><dt data-i18n="k_min">Programa más corto que conozco</dt><dd id="vM"></dd><dt data-i18n="k_act">Acciones ejecutadas</dt><dd id="vA"></dd></dl>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Idea:</b> un programa es una lista de órdenes. Un <b>bucle</b> («repite», «mientras») ahorra escribir lo mismo muchas veces, y un <b>condicional</b> («si… si no») deja que el robot decida según lo que miden sus <b>sensores</b>.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Para pensar:</b> en un robot real (por ejemplo con Arduino) el bucle principal lee los sensores, decide y mueve los motores una y otra vez. La regla de la mano derecha no necesita mapa ni memoria: solo un sensor a la derecha y uno delante. Pero solo funciona si la meta está conectada a la pared exterior del laberinto o el laberinto no tiene bucles.</div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Robot en el laberint: programació per blocs",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Programació i control",
+"h1":"Programa el robot perquè arribe a la meta",
+"lede":"Munta el programa amb blocs: seqüències, repeticions, sensors i condicions. Com un robot de debò!",
+"sim_title":"El laberint",
+"story":"El robot <b>no veu el mapa</b>: només executa les ordres, una darrere de l'altra. Afig blocs amb els botons; per a posar-ne <b>dins</b> d'un «repeteix», «mentre» o «si», fes clic primer sobre aquest bloc (queda marcat amb un contorn). Menys blocs vol dir un programa més elegant.",
+"aria.lv":"Nivell",
+"lv1":"1 · Seqüència","lv2":"2 · Repeteix","lv3":"3 · L'escala","lv4":"4 · Mentre","lv5":"5 · Sensors",
+"task1":"<b>Seqüència:</b> porta el robot fins a la bandera només amb «avança» i els girs.",
+"task2":"<b>Repeteix:</b> ara els passadissos són llargs. Usa «repeteix» per a no escriure 6 vegades «avança».",
+"task3":"<b>L'escala:</b> troba el patró que es repeteix i posa'l dins un sol «repeteix».",
+"task4":"<b>Mentre:</b> no saps quantes caselles hi ha! Usa «mentre hi haja camí lliure davant».",
+"task5":"<b>Sensors:</b> un laberint amb parets. Prova la regla de la mà dreta: «mentre no estiga a la meta: si hi ha camí a la dreta, gira a la dreta i avança; si no, si hi ha camí davant, avança; si no, gira a l'esquerra».",
+"b_F":"Avança","b_L":"Gira a l'esquerra ↺","b_R":"Gira a la dreta ↻","b_rep":"Repeteix","b_while":"Mentre","b_if":"Si",
+"times":"vegades","else":"sinó","then":"llavors",
+"c_front":"hi ha camí davant","c_right":"hi ha camí a la dreta","c_left":"hi ha camí a l'esquerra","c_goal":"estic a la meta",
+"c_no":"NO ",
+"empty":"Fes clic en un botó per a afegir un bloc.",
+"run":"▶ Executa","pause":"❚❚ Pausa","stepb":"⏭ Pas","rst":"↺ Reinicia","clr":"Buida el programa",
+"spd":"Velocitat",
+"k_blk":"Blocs usats","k_min":"Programa més curt que coneix","k_act":"Accions executades",
+"m_ready":"Prem «Executa» o fes-lo pas a pas.",
+"m_win":"✔ Meta aconseguida! Has usat {0} blocs.",
+"m_stars3":"Programa perfecte: igual que el més curt que coneix.",
+"m_stars2":"Molt bé. Es pot fer amb menys blocs: busca què es repeteix.",
+"m_stars1":"Funciona, però es pot fer amb molts menys blocs.",
+"m_crash":"💥 El robot ha xocat contra una paret. Revisa el programa i reinicia.",
+"m_end":"El programa ha acabat, però el robot no ha arribat a la meta.",
+"m_loop":"El programa dona massa voltes (bucle infinit?). S'ha aturat.",
+"m_empty":"El programa està buit: afig alguns blocs.",
+"idea_basic":"<b>Idea:</b> un programa és una llista d'ordres. Un <b>bucle</b> («repeteix», «mentre») estalvia escriure el mateix moltes vegades, i un <b>condicional</b> («si… sinó») deixa que el robot decidisca segons el que mesuren els seus <b>sensors</b>.",
+"idea_adv":"<b>Per a pensar:</b> en un robot real (per exemple amb Arduino) el bucle principal llig els sensors, decideix i mou els motors una vegada i una altra. La regla de la mà dreta no necessita mapa ni memòria: només un sensor a la dreta i un davant. Però només funciona si la meta està connectada a la paret exterior del laberint o el laberint no té bucles.",
+"q1.q":"Què fa el bloc «repeteix 3 vegades [avança]»?",
+"q1.o0":"Avança 1 casella","q1.o1":"Avança 3 caselles","q1.o2":"Gira 3 vegades","q1.o3":"No fa res",
+"q1.e":"El que hi ha dins del bucle s'executa tantes vegades com diu el número: 3 avanços.",
+"q2.q":"Per a què serveix un sensor en un robot?",
+"q2.o0":"Per a moure les rodes","q2.o1":"Per a mesurar l'entorn (distància, llum, paret…) i decidir","q2.o2":"Per a donar energia","q2.o3":"Per a fer soroll",
+"q2.e":"Els sensors donen informació al programa; els actuadors (motors, llums…) fan les accions.",
+"q3.q":"Quants blocs mínims calen per a fer avançar 10 caselles usant un «repeteix»?",
+"q3.u":"blocs","q3.e":"Dos: el bloc «repeteix 10 vegades» i, dins, un «avança».",
+"q4.q":"El robot ha de decidir entre dues accions segons el sensor. Quina estructura usa?",
+"q4.o0":"Una seqüència","q4.o1":"Un bucle «repeteix»","q4.o2":"Un condicional «si… sinó»","q4.o3":"Cap",
+"q4.e":"Un condicional tria entre dos camins segons una condició (si el sensor detecta paret, gira; si no, avança).",
+"q5.q":"Quan és millor «mentre» que «repeteix N vegades»?",
+"q5.o0":"Quan no sabem quantes vegades s'ha de repetir","q5.o1":"Quan volem repetir exactament 5 vegades","q5.o2":"Mai","q5.o3":"Quan no hi ha sensors",
+"q5.e":"«Mentre» repeteix fins que una condició deixa de complir-se, sense saber el nombre de voltes.",
+"q6.q":"Un robot té un sensor d'ultrasons al davant. Què mesura?",
+"q6.o0":"La temperatura","q6.o1":"La distància fins a un obstacle","q6.o2":"El color","q6.o3":"La humitat",
+"q6.e":"L'ultrasons emet un so i mesura el temps que tarda l'eco: així calcula la distància."
+},
+es:{
+"title":"Robot en el laberinto: programación por bloques",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Programación y control",
+"h1":"Programa el robot para que llegue a la meta",
+"lede":"Monta el programa con bloques: secuencias, repeticiones, sensores y condiciones. ¡Como un robot de verdad!",
+"sim_title":"El laberinto",
+"story":"El robot <b>no ve el mapa</b>: solo ejecuta las órdenes, una detrás de otra. Añade bloques con los botones; para poner alguno <b>dentro</b> de un «repite», «mientras» o «si», haz clic antes sobre ese bloque (queda marcado con un contorno). Menos bloques significa un programa más elegante.",
+"aria.lv":"Nivel",
+"lv1":"1 · Secuencia","lv2":"2 · Repite","lv3":"3 · La escalera","lv4":"4 · Mientras","lv5":"5 · Sensores",
+"task1":"<b>Secuencia:</b> lleva el robot hasta la bandera solo con «avanza» y los giros.",
+"task2":"<b>Repite:</b> ahora los pasillos son largos. Usa «repite» para no escribir 6 veces «avanza».",
+"task3":"<b>La escalera:</b> encuentra el patrón que se repite y ponlo dentro de un solo «repite».",
+"task4":"<b>Mientras:</b> ¡no sabes cuántas casillas hay! Usa «mientras haya camino libre delante».",
+"task5":"<b>Sensores:</b> un laberinto con paredes. Prueba la regla de la mano derecha: «mientras no esté en la meta: si hay camino a la derecha, gira a la derecha y avanza; si no, si hay camino delante, avanza; si no, gira a la izquierda».",
+"b_F":"Avanza","b_L":"Gira a la izquierda ↺","b_R":"Gira a la derecha ↻","b_rep":"Repite","b_while":"Mientras","b_if":"Si",
+"times":"veces","else":"si no","then":"entonces",
+"c_front":"hay camino delante","c_right":"hay camino a la derecha","c_left":"hay camino a la izquierda","c_goal":"estoy en la meta",
+"c_no":"NO ",
+"empty":"Haz clic en un botón para añadir un bloque.",
+"run":"▶ Ejecuta","pause":"❚❚ Pausa","stepb":"⏭ Paso","rst":"↺ Reinicia","clr":"Vacía el programa",
+"spd":"Velocidad",
+"k_blk":"Bloques usados","k_min":"Programa más corto que conozco","k_act":"Acciones ejecutadas",
+"m_ready":"Pulsa «Ejecuta» o hazlo paso a paso.",
+"m_win":"✔ ¡Meta conseguida! Has usado {0} bloques.",
+"m_stars3":"Programa perfecto: igual que el más corto que conozco.",
+"m_stars2":"Muy bien. Se puede hacer con menos bloques: busca qué se repite.",
+"m_stars1":"Funciona, pero se puede hacer con muchos menos bloques.",
+"m_crash":"💥 El robot ha chocado contra una pared. Revisa el programa y reinicia.",
+"m_end":"El programa ha terminado, pero el robot no ha llegado a la meta.",
+"m_loop":"El programa da demasiadas vueltas (¿bucle infinito?). Se ha detenido.",
+"m_empty":"El programa está vacío: añade algunos bloques.",
+"idea_basic":"<b>Idea:</b> un programa es una lista de órdenes. Un <b>bucle</b> («repite», «mientras») ahorra escribir lo mismo muchas veces, y un <b>condicional</b> («si… si no») deja que el robot decida según lo que miden sus <b>sensores</b>.",
+"idea_adv":"<b>Para pensar:</b> en un robot real (por ejemplo con Arduino) el bucle principal lee los sensores, decide y mueve los motores una y otra vez. La regla de la mano derecha no necesita mapa ni memoria: solo un sensor a la derecha y uno delante. Pero solo funciona si la meta está conectada a la pared exterior del laberinto o el laberinto no tiene bucles.",
+"q1.q":"¿Qué hace el bloque «repite 3 veces [avanza]»?",
+"q1.o0":"Avanza 1 casilla","q1.o1":"Avanza 3 casillas","q1.o2":"Gira 3 veces","q1.o3":"No hace nada",
+"q1.e":"Lo que hay dentro del bucle se ejecuta tantas veces como dice el número: 3 avances.",
+"q2.q":"¿Para qué sirve un sensor en un robot?",
+"q2.o0":"Para mover las ruedas","q2.o1":"Para medir el entorno (distancia, luz, pared…) y decidir","q2.o2":"Para dar energía","q2.o3":"Para hacer ruido",
+"q2.e":"Los sensores dan información al programa; los actuadores (motores, luces…) hacen las acciones.",
+"q3.q":"¿Cuántos bloques mínimos hacen falta para avanzar 10 casillas usando un «repite»?",
+"q3.u":"bloques","q3.e":"Dos: el bloque «repite 10 veces» y, dentro, un «avanza».",
+"q4.q":"El robot debe decidir entre dos acciones según el sensor. ¿Qué estructura usa?",
+"q4.o0":"Una secuencia","q4.o1":"Un bucle «repite»","q4.o2":"Un condicional «si… si no»","q4.o3":"Ninguna",
+"q4.e":"Un condicional elige entre dos caminos según una condición (si el sensor detecta pared, gira; si no, avanza).",
+"q5.q":"¿Cuándo es mejor «mientras» que «repite N veces»?",
+"q5.o0":"Cuando no sabemos cuántas veces hay que repetir","q5.o1":"Cuando queremos repetir exactamente 5 veces","q5.o2":"Nunca","q5.o3":"Cuando no hay sensores",
+"q5.e":"«Mientras» repite hasta que una condición deja de cumplirse, sin saber el número de vueltas.",
+"q6.q":"Un robot tiene un sensor de ultrasonidos delante. ¿Qué mide?",
+"q6.o0":"La temperatura","q6.o1":"La distancia hasta un obstáculo","q6.o2":"El color","q6.o3":"La humedad",
+"q6.e":"El ultrasonidos emite un sonido y mide el tiempo que tarda el eco: así calcula la distancia."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../robot-laberint/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== utilitats comunes de les animacions de Tecnologia (depén de common.js) ===== */
+const TEC={
+  /* bucle d'animació: fn(dt en segons) */
+  loop(fn){let last=performance.now();const f=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;fn(dt);requestAnimationFrame(f);};requestAnimationFrame(f);},
+  /* canvas lògic W×H que es torna a dibuixar quan canvia la mida o el tema */
+  cv(sel,W,H,draw){let o=null;o=makeCanvas($(sel),W,H,()=>{if(o)draw(o);});document.addEventListener('themechange',()=>draw(o));draw(o);return o;},
+  txt(c,s,x,y,o){o=o||{};c.font=o.font||'13px system-ui';c.fillStyle=o.col||C().ink;c.textAlign=o.al||'center';c.textBaseline=o.bl||'middle';c.fillText(s,x,y);},
+  line(c,pts,col,w,dash){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w||2;c.setLineDash(dash||[]);c.lineJoin='round';c.lineCap='round';c.stroke();c.setLineDash([]);},
+  arrow(c,x1,y1,x2,y2,col,w){
+    const a=Math.atan2(y2-y1,x2-x1),h=Math.max(7,(w||2)*3.4);
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);c.strokeStyle=col;c.lineWidth=w||2;c.lineCap='round';c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));c.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));c.closePath();c.fillStyle=col;c.fill();
+  },
+  /* roda dentada de mòdul m (px per dent): z dents, angle ang; la dent 0 apunta cap a ang */
+  gear(c,cx,cy,z,m,ang,col,markAng,alpha){
+    const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z,P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    c.beginPath();
+    for(let k=0;k<z;k++){
+      const a=ang+k*2*hp;
+      [P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)].forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+    }
+    c.closePath();
+    c.fillStyle=C().panel;c.fill();
+    c.globalAlpha=alpha||.2;c.fillStyle=col;c.fill();c.globalAlpha=1;
+    c.strokeStyle=col;c.lineWidth=2;c.setLineDash([]);c.stroke();
+    c.beginPath();c.arc(cx,cy,Math.max(4,m*0.55),0,TAU);c.fillStyle=col;c.fill();
+    if(markAng!==undefined){
+      const mx=cx+(R-m*0.3)*Math.cos(markAng),my=cy+(R-m*0.3)*Math.sin(markAng);
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.stroke();
+      c.beginPath();c.arc(mx,my,Math.max(4,m*0.4),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+    }
+  },
+  /* arrossegar sobre un canvas amb ratolí o dit: h={down(p)->bool, move(p), up()} */
+  drag(o,h){
+    let on=false;
+    o.cv.addEventListener('pointerdown',e=>{const p=o.pt(e);if(h.down(p,e)){on=true;o.cv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    o.cv.addEventListener('pointermove',e=>{const p=o.pt(e);if(on)h.move(p,e);else if(h.hover)h.hover(p,e);});
+    const end=e=>{if(on){on=false;h.up&&h.up(e);}};
+    o.cv.addEventListener('pointerup',end);o.cv.addEventListener('pointercancel',end);
+  },
+  /* prefix SI per a resistències i corrents: 4700 -> "4,7 kΩ" */
+  si(v,u){
+    if(!isFinite(v))return '∞ '+u;
+    const a=Math.abs(v);let k=0,p=['','k','M','G'],pm=['','m','µ'];
+    if(a>=1000){while(Math.abs(v)>=1000&&k<3){v/=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+p[k]+u;}
+    if(a<1&&a>0){while(Math.abs(v)<1&&k<2){v*=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+pm[k]+u;}
+    return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+u;
+  },
+  /* converteix text com "4,7k", "470", "2M2" en nombre */
+  parse(s){
+    s=String(s).trim().toLowerCase().replace(/\s/g,'').replace('ω','').replace('ohm','').replace('Ω','');
+    let m=s.match(/^(\d+)([kmr])(\d+)$/);
+    if(m){const mul={k:1e3,m:1e6,r:1}[m[2]];return parseFloat(m[1]+'.'+m[3])*mul;}
+    m=s.match(/^([\d.,]+)([km]?)$/);
+    if(!m)return NaN;
+    return parseFloat(m[1].replace(',','.'))*({'':1,k:1e3,m:1e6}[m[2]]);
+  },
+  seg(host,opts,cur,on){/* grup de botons exclusius; opts=[{v,key}] */
+    host.innerHTML='';const bs=opts.map(o=>{const b=document.createElement('button');b.type='button';b.dataset.v=o.v;b.setAttribute('data-i18n',o.key);b.textContent=t(o.key);b.setAttribute('aria-pressed',String(o.v===cur));
+      b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));on(o.v);};host.appendChild(b);return b;});
+    return bs;
+  }
+};
+
+
+const W=640,H=420;
+const D=[[0,1],[1,0],[0,-1],[-1,0]];
+const LV=[
+ {rows:["#####","#S..#","###.#","#G..#","#####"],opt:8,allow:['F','L','R']},
+ {rows:["#########","#S......#","#######.#","#G......#","#########"],opt:8,allow:['F','L','R','rep']},
+ {rows:["#######","#S.####","##..###","###..##","####..#","#####G#","#######"],opt:5,allow:['F','L','R','rep']},
+ {rows:["#########","#S......#","#######.#","#######G#","#########"],opt:5,allow:['F','L','R','rep','while']},
+ {rows:["#########","#S....#.#","#####.#.#","#...#...#","#.#####.#","#......G#","#########"],opt:7,allow:['F','L','R','rep','while','if']}
+];
+const S={lv:0,run:false,done:false,acts:0,crash:0,bid:0};
+let PROG=[],ACTIVE=PROG,cur=null,gen=null,timer=0,speedDelay=500;
+const rob={r:1,c:1,d:0,x:0,y:0,a:0};
+let MAP=LV[0].rows.map(r=>r.split(""));S.sr=1;S.sc=1;
+function loadLevel(i){
+  S.lv=i;const L=LV[i];MAP=L.rows.map(r=>r.split(''));
+  PROG=[];ACTIVE=PROG;
+  for(let r=0;r<MAP.length;r++)for(let c=0;c<MAP[0].length;c++)if(MAP[r][c]==='S'){S.sr=r;S.sc=c;}
+  resetRun();buildPal();renderProg();task();
+}
+function resetRun(){
+  S.run=false;S.done=false;S.acts=0;S.crash=0;gen=null;cur=null;
+  rob.r=S.sr;rob.c=S.sc;rob.d=0;rob.x=rob.c;rob.y=rob.r;rob.a=0;
+  const m=$('#msg');m.className='msg';m.textContent=t('m_ready');setRunBtn();info();
+}
+function task(){$('#task').innerHTML=t('task'+(S.lv+1));}
+function free(r,c){return MAP[r]&&MAP[r][c]!==undefined&&MAP[r][c]!=='#';}
+function cond(b){
+  const [dr,dc]=D[rob.d];let v;
+  if(b.c==='front')v=free(rob.r+dr,rob.c+dc);
+  else if(b.c==='right'){const d=(rob.d+1)%4;v=free(rob.r+D[d][0],rob.c+D[d][1]);}
+  else if(b.c==='left'){const d=(rob.d+3)%4;v=free(rob.r+D[d][0],rob.c+D[d][1]);}
+  else v=MAP[rob.r][rob.c]==='G';
+  return b.neg?!v:v;
+}
+/* intèrpret amb generador: cada acció és un yield */
+function* exec(list){for(const b of list)yield* runB(b);}
+function* runB(b){
+  if(b.t==='F'||b.t==='L'||b.t==='R'){yield b;}
+  else if(b.t==='rep'){for(let i=0;i<b.n;i++)yield* exec(b.body);}
+  else if(b.t==='while'){let g=0;while(cond(b)){if(++g>300)throw 'loop';const before=S.acts;yield* exec(b.body);if(S.acts===before&&g>50)throw 'loop';}}
+  else if(b.t==='if'){yield* exec(cond(b)?b.body:b.els);}
+}
+function count(list){return list.reduce((n,b)=>n+1+(b.body?count(b.body):0)+(b.els?count(b.els):0),0);}
+function info(){$('#vB').textContent=count(PROG);$('#vM').textContent=LV[S.lv].opt;$('#vA').textContent=S.acts;}
+/* un pas del programa */
+function stepOnce(){
+  if(S.done)return;
+  if(!gen){if(!PROG.length){msg('m_empty','msg bad');return;}gen=exec(PROG);}
+  let nx;
+  try{nx=gen.next();}catch(e){S.done=true;S.run=false;msg('m_loop','msg bad');setRunBtn();return;}
+  if(nx.done){S.done=true;S.run=false;cur=null;
+    if(MAP[rob.r][rob.c]!=='G')msg('m_end','msg bad');setRunBtn();render();return;}
+  cur=nx.value.id;S.acts++;
+  const b=nx.value;
+  if(b.t==='L')rob.d=(rob.d+3)%4;else if(b.t==='R')rob.d=(rob.d+1)%4;
+  else{const nr=rob.r+D[rob.d][0],nc=rob.c+D[rob.d][1];
+    if(!free(nr,nc)){S.crash=1;S.done=true;S.run=false;msg('m_crash','msg bad');setRunBtn();render();info();return;}
+    rob.r=nr;rob.c=nc;}
+  if(MAP[rob.r][rob.c]==='G'){win();}
+  render();info();
+}
+function win(){
+  S.done=true;S.run=false;const n=count(PROG),opt=LV[S.lv].opt,st=n<=opt?3:n<=opt+2?2:1;
+  const m=$('#msg');m.className='msg good';m.innerHTML=tt('m_win',n)+' <span class="stars">'+'★'.repeat(st)+'☆'.repeat(3-st)+'</span><br>'+t('m_stars'+st);setRunBtn();
+}
+function msg(k,c){const m=$('#msg');m.className=c||'msg';m.textContent=t(k);}
+function setRunBtn(){$('#run').textContent=t(S.run?'pause':'run');}
+/* ---- editor de blocs ---- */
+const NAMES={F:'b_F',L:'b_L',R:'b_R'};
+function buildPal(){
+  const h=$('#pal2');h.innerHTML='';
+  LV[S.lv].allow.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=t(k==='rep'?'b_rep':k==='while'?'b_while':k==='if'?'b_if':NAMES[k]);b.onclick=()=>add(k);h.appendChild(b);});
+}
+function add(k){
+  if(count(PROG)>=40)return;
+  const b={t:k,id:++S.bid};
+  if(k==='rep'){b.n=3;b.body=[];}
+  if(k==='while'){b.c=S.lv===4?'goal':'front';b.neg=S.lv===4;b.body=[];}
+  if(k==='if'){b.c='right';b.neg=false;b.body=[];b.els=[];}
+  ACTIVE.push(b);
+  if(b.body)ACTIVE=b.body;
+  resetRunSoft();renderProg();
+}
+function resetRunSoft(){const s=$('#msg');gen=null;S.done=false;S.run=false;S.acts=0;rob.r=S.sr;rob.c=S.sc;rob.d=0;cur=null;s.className='msg';s.textContent=t('m_ready');setRunBtn();info();render();}
+function del(list,i){const b=list[i];list.splice(i,1);if(ACTIVE===b.body||ACTIVE===b.els)ACTIVE=list;resetRunSoft();renderProg();}
+function condSel(b){
+  const s=document.createElement('select');
+  [['front',0],['front',1],['right',0],['right',1],['left',0],['left',1],['goal',0],['goal',1]].forEach(([c,n])=>{const o=document.createElement('option');o.value=c+'|'+n;o.textContent=(n?t('c_no'):'')+t('c_'+c);if(b.c===c&&!!b.neg===!!n)o.selected=true;s.appendChild(o);});
+  s.onclick=e=>e.stopPropagation();s.onchange=()=>{const [c,n]=s.value.split('|');b.c=c;b.neg=n==='1';resetRunSoft();};return s;
+}
+function renderList(list){
+  const d=document.createElement('div');d.className='blist'+(list===ACTIVE?' active':'');
+  d.onclick=e=>{e.stopPropagation();ACTIVE=list;renderProg();};
+  if(!list.length){const em=document.createElement('div');em.className='em';em.textContent=t('empty');d.appendChild(em);}
+  list.forEach((b,i)=>d.appendChild(renderBlock(b,list,i)));return d;
+}
+function renderBlock(b,list,i){
+  const w=document.createElement('div');w.className='blk'+(b.body?' cont':'')+(cur===b.id?' run':'');w.dataset.id=b.id;
+  const hd=document.createElement('div');hd.className='hd';
+  const label=document.createElement('span');
+  if(b.t==='F'||b.t==='L'||b.t==='R')label.textContent=t(NAMES[b.t]);
+  else if(b.t==='rep'){label.textContent=t('b_rep');hd.appendChild(label);const inp=document.createElement('input');inp.type='number';inp.min=1;inp.max=20;inp.value=b.n;inp.onclick=e=>e.stopPropagation();inp.onchange=()=>{b.n=Math.max(1,Math.min(20,+inp.value||1));resetRunSoft();};hd.appendChild(inp);const tm=document.createElement('span');tm.textContent=t('times');hd.appendChild(tm);}
+  else if(b.t==='while'){label.textContent=t('b_while');hd.appendChild(label);hd.appendChild(condSel(b));}
+  else{label.textContent=t('b_if');hd.appendChild(label);hd.appendChild(condSel(b));}
+  if(!hd.contains(label))hd.appendChild(label);
+  const x=document.createElement('button');x.type='button';x.className='x';x.textContent='✕';x.setAttribute('aria-label','×');x.onclick=e=>{e.stopPropagation();del(list,i);};hd.appendChild(x);
+  w.appendChild(hd);
+  if(b.body){const k=document.createElement('div');k.className='kid';k.appendChild(renderList(b.body));w.appendChild(k);}
+  if(b.els){const l=document.createElement('div');l.className='lbl';l.textContent=t('else');w.appendChild(l);const k=document.createElement('div');k.className='kid';k.appendChild(renderList(b.els));w.appendChild(k);}
+  return w;
+}
+function renderProg(){const h=$('#prog');h.innerHTML='';h.appendChild(renderList(PROG));info();}
+function render(){draw(cvo);renderProgHL();}
+function renderProgHL(){$$('#prog .blk').forEach(e=>e.classList.toggle('run',+e.dataset.id===cur));}
+
+/* ---- dibuix ---- */
+const cvo=TEC.cv('#cv',W,H,draw);
+function draw(o){
+  const c=o.ctx,k=C(),R=MAP.length,Cn=MAP[0].length,s=Math.min((W-20)/Cn,(H-20)/R),ox=(W-s*Cn)/2,oy=(H-s*R)/2;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  for(let r=0;r<R;r++)for(let q=0;q<Cn;q++){
+    const x=ox+q*s,y=oy+r*s,ch=MAP[r][q];
+    if(ch==='#'){c.fillStyle=k.dark?'#2a3550':'#8892a8';c.fillRect(x,y,s,s);c.strokeStyle=k.dark?'#1a2338':'#6a7488';c.lineWidth=1;c.strokeRect(x+.5,y+.5,s-1,s-1);}
+    else{c.fillStyle=k.panel;c.fillRect(x,y,s,s);c.strokeStyle=k.line;c.lineWidth=1;c.strokeRect(x+.5,y+.5,s-1,s-1);}
+    if(ch==='G'){c.fillStyle=k.ok;c.globalAlpha=.25;c.fillRect(x,y,s,s);c.globalAlpha=1;TEC.line(c,[[x+s*.35,y+s*.8],[x+s*.35,y+s*.2]],k.ink,3);c.beginPath();c.moveTo(x+s*.35,y+s*.2);c.lineTo(x+s*.8,y+s*.35);c.lineTo(x+s*.35,y+s*.5);c.closePath();c.fillStyle=k.ok;c.fill();}
+    if(ch==='S'){c.fillStyle=k.pa;c.globalAlpha=.15;c.fillRect(x,y,s,s);c.globalAlpha=1;}
+  }
+  /* robot suau */
+  const tx=rob.c,ty=rob.r;rob.x+=(tx-rob.x)*(REDUCE?1:.3);rob.y+=(ty-rob.y)*(REDUCE?1:.3);
+  const ta=rob.d*Math.PI/2;let da=ta-rob.a;da=Math.atan2(Math.sin(da),Math.cos(da));rob.a+=da*(REDUCE?1:.35);
+  const cx=ox+(rob.x+.5)*s,cy=oy+(rob.y+.5)*s;
+  c.save();c.translate(cx,cy);c.rotate(rob.a);
+  c.beginPath();c.rect(-s*.32,-s*.28,s*.64,s*.56);c.fillStyle=S.crash?k.warn:k.pa;c.fill();c.strokeStyle=k.ink;c.lineWidth=2;c.stroke();
+  c.beginPath();c.moveTo(s*.42,0);c.lineTo(s*.2,-s*.14);c.lineTo(s*.2,s*.14);c.closePath();c.fillStyle='#fff';c.fill();
+  c.beginPath();c.arc(s*.02,-s*.14,s*.06,0,TAU);c.arc(s*.02,s*.14,s*.06,0,TAU);c.fillStyle='#fff';c.fill();
+  c.restore();
+}
+/* ---- control ---- */
+$('#run').onclick=()=>{
+  if(S.done){resetRun();}
+  S.run=!S.run;setRunBtn();if(S.run&&!gen&&!PROG.length){S.run=false;msg('m_empty','msg bad');setRunBtn();}
+};
+$('#stepb').onclick=()=>{if(S.done)resetRun();S.run=false;setRunBtn();stepOnce();};
+$('#rst').onclick=()=>{resetRun();renderProgHL();};
+$('#clr').onclick=()=>{PROG=[];ACTIVE=PROG;resetRun();renderProg();};
+const spd=$('#spd');const spdUpd=()=>{speedDelay=1100-spd.value*100;$('#spd-o').textContent=spd.value;};spd.oninput=spdUpd;spdUpd();
+let acc=0;
+TEC.loop(dt=>{
+  if(S.run){acc+=dt*1000;if(acc>=speedDelay){acc=0;stepOnce();}}
+  draw(cvo);
+});
+function buildLv(){TEC.seg($('#lvsw'),[0,1,2,3,4].map(i=>({v:String(i),key:'lv'+(i+1)})),String(S.lv),v=>loadLevel(+v));}
+const QDATA=[{"id":"q1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q3","lvl":"basic","type":"num","num":2,"tol":0,"u":1},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"adv","type":"mc","n":4,"ans":2},{"id":"q6","lvl":"adv","type":"mc","n":4,"ans":1}];
+App.hooks.push(()=>{buildLv();buildPal();renderProg();task();setRunBtn();const m=$('#msg');if(!S.done&&!S.run&&!S.acts)m.textContent=t('m_ready');});
+initQuiz(QDATA);
+loadLevel(0);
+initLang();applyLang();
+</script>
+</body>
+</html>

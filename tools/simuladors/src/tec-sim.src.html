@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulador de circuits: munta i prova</title>
+<meta name="description" content="Munta circuits amb pila, bombetes, resistències, interruptors i pulsadors i comprova si funcionen: el simulador calcula el corrent, avisa dels circuits oberts i dels curtcircuits i fon les bombetes que reben massa voltatge. Per a Tecnologia de 2n i 3r d'ESO.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@TEC_CSS@*/
+.palette .btn{padding:5px 9px}
+.info{font-size:13.5px;min-height:3.6em;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--muted)}
+.info b{color:var(--ink)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px"></p></div>
+<div class="side">
+<div class="seg palette" id="tools" role="group" data-i18n-aria="aria.tool" aria-label=""></div>
+<div id="ctls" style="display:grid;gap:2px"></div>
+<div class="row"><span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div></div>
+<div class="tbar"><button class="btn" id="fixb" type="button" data-i18n="fixb"></button><button class="btn" id="clear" type="button" data-i18n="clear"></button></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<dl class="kv" id="kv"></dl>
+<div class="info" id="info"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Simulador de circuits: munta i prova",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Electricitat",
+"h1":"Munta el circuit i comprova si funciona",
+"lede":"Tria una peça, fes clic sobre un tram de la quadrícula i mira què passa. Se't fondrà alguna bombeta?",
+"sim_title":"Taller de circuits",
+"story":"Tria una peça i fes clic (o arrossega, si és un cable) sobre un <b>tram</b> de la quadrícula. Amb la <b>mà</b> pots tancar els interruptors i prémer els pulsadors. Una peça que ja hi és: la <b>pila</b> es gira i la <b>resistència</b> canvia de valor si hi tornes a fer clic; les altres es lleven. Les bombetes de 30 Ω s'han fet per a 6 V: amb més voltatge es fonen.",
+"aria.tool":"Peces",
+"t_hand":"Mà","t_wire":"Cable","t_bat":"Pila","t_bulb":"Bombeta","t_res":"Resistència","t_sw":"Interruptor","t_push":"Pulsador","t_erase":"Goma",
+"V":"Voltatge de la pila (V)",
+"presets":"Exemples:",
+"p_simple":"Circuit simple","p_series":"Dues bombetes en sèrie","p_par":"Dues bombetes en paral·lel","p_short":"Curtcircuit (prova-ho!)",
+"fixb":"Canvia les bombetes fosses","clear":"Esborra-ho tot",
+"hint":"Tria una peça i fes clic sobre un tram.",
+"k_V":"Voltatge de la pila","k_I":"Corrent que dona la pila","k_P":"Potència de la pila",
+"m_nobat":"Falta una pila: posa'n una amb l'eina «Pila».",
+"m_open":"Circuit obert: no passa corrent. Comprova que el camí estiga tancat (cables, interruptors).",
+"m_short":"CURTCIRCUIT! El corrent és enorme perquè no hi ha cap resistència entre els dos pols. En la realitat s'escalfaria i podria cremar-se.",
+"m_blown":"S'ha fos una bombeta: li ha arribat massa voltatge. Redueix el voltatge o posa-hi una resistència o altra bombeta en sèrie.",
+"m_ok":"El corrent circula pel circuit.",
+"m_lit":"El corrent circula i hi ha bombetes enceses.",
+"i_empty":"Passa el ratolí per damunt d'una peça per a veure la seua tensió, intensitat i potència.",
+"i_V":"Voltatge","i_I":"Intensitat","i_P":"Potència","i_R":"Resistència",
+"n_wire":"Cable","n_bat":"Pila","n_bulb":"Bombeta","n_res":"Resistència","n_sw":"Interruptor","n_push":"Pulsador",
+"blownlbl":"fosa",
+"open":"obert","closed":"tancat",
+"idea_basic":"<b>Idea:</b> per a que passe corrent cal un <b>circuit tancat</b>: del pol + de la pila, per les peces, fins al pol −. Un interruptor obert trenca el camí.",
+"idea_adv":"<b>Per a pensar:</b> una bombeta de 30 Ω a 6 V consumeix 0,2 A (1,2 W); a 9 V consumiria 0,3 A (2,7 W) i es fon. Dues piles posades una darrere de l'altra se sumen. Un curtcircuit és un camí amb resistència quasi nul·la entre els dos pols: pel corrent de la llei d'Ohm I = V / R, amb R → 0 la intensitat se dispara.",
+"q1.q":"Una bombeta de 30 Ω se connecta a una pila de 6 V. Quants mA hi passen?",
+"q1.u":"mA","q1.e":"I = V / R = 6 / 30 = 0,2 A = 200 mA.",
+"q2.q":"Què és un curtcircuit?",
+"q2.o0":"Un camí de resistència quasi zero entre els dos pols de la pila","q2.o1":"Un circuit amb moltes bombetes","q2.o2":"Un interruptor obert","q2.o3":"Una pila gastada",
+"q2.e":"Amb resistència quasi zero, el corrent I = V / R es dispara i pot escalfar els cables i cremar la pila.",
+"q3.q":"Dues bombetes iguals en sèrie amb una pila de 6 V. Quant voltatge rep cada una?",
+"q3.o0":"6 V cada una","q3.o1":"3 V cada una","q3.o2":"12 V cada una","q3.o3":"0 V",
+"q3.e":"En sèrie el voltatge es reparteix: si són iguals, cada bombeta rep la meitat (3 V).",
+"q4.q":"En un circuit has posat una pila, una bombeta i un cable, però la bombeta no s'encén. Quin és el motiu més probable?",
+"q4.o0":"El circuit no està tancat (falta un tram o hi ha un interruptor obert)","q4.o1":"La pila és massa gran","q4.o2":"Hi ha massa cables","q4.o3":"La bombeta és massa blava",
+"q4.e":"Perquè hi haja corrent el camí ha d'estar tancat del pol + al pol −.",
+"q5.q":"Quina diferència hi ha entre un interruptor i un pulsador?",
+"q5.o0":"L'interruptor manté la posició; el pulsador només tanca mentre el premem","q5.o1":"No n'hi ha cap","q5.o2":"El pulsador sempre està tancat","q5.o3":"L'interruptor només s'usa en corrent alterna",
+"q5.e":"L'interruptor té dos estats estables (obert/tancat). El pulsador tanca el circuit mentre el prems i torna sol a obert.",
+"q6.q":"Dues bombetes de 30 Ω en sèrie amb una pila de 6 V. Quants mA passen pel circuit?",
+"q6.u":"mA","q6.e":"R total = 60 Ω → I = 6 / 60 = 0,1 A = 100 mA."
+},
+es:{
+"title":"Simulador de circuitos: monta y prueba",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Electricidad",
+"h1":"Monta el circuito y comprueba si funciona",
+"lede":"Elige una pieza, haz clic en un tramo de la cuadrícula y mira qué pasa. ¿Se te fundirá alguna bombilla?",
+"sim_title":"Taller de circuitos",
+"story":"Elige una pieza y haz clic (o arrastra, si es un cable) sobre un <b>tramo</b> de la cuadrícula. Con la <b>mano</b> puedes cerrar los interruptores y pulsar los pulsadores. Una pieza que ya está: la <b>pila</b> se gira y la <b>resistencia</b> cambia de valor si vuelves a hacer clic; las demás se quitan. Las bombillas de 30 Ω están hechas para 6 V: con más voltaje se funden.",
+"aria.tool":"Piezas",
+"t_hand":"Mano","t_wire":"Cable","t_bat":"Pila","t_bulb":"Bombilla","t_res":"Resistencia","t_sw":"Interruptor","t_push":"Pulsador","t_erase":"Goma",
+"V":"Voltaje de la pila (V)",
+"presets":"Ejemplos:",
+"p_simple":"Circuito simple","p_series":"Dos bombillas en serie","p_par":"Dos bombillas en paralelo","p_short":"Cortocircuito (¡pruébalo!)",
+"fixb":"Cambia las bombillas fundidas","clear":"Borra todo",
+"hint":"Elige una pieza y haz clic sobre un tramo.",
+"k_V":"Voltaje de la pila","k_I":"Corriente que da la pila","k_P":"Potencia de la pila",
+"m_nobat":"Falta una pila: pon una con la herramienta «Pila».",
+"m_open":"Circuito abierto: no pasa corriente. Comprueba que el camino esté cerrado (cables, interruptores).",
+"m_short":"¡CORTOCIRCUITO! La corriente es enorme porque no hay ninguna resistencia entre los dos polos. En la realidad se calentaría y podría quemarse.",
+"m_blown":"Se ha fundido una bombilla: le ha llegado demasiado voltaje. Reduce el voltaje o pon una resistencia u otra bombilla en serie.",
+"m_ok":"La corriente circula por el circuito.",
+"m_lit":"La corriente circula y hay bombillas encendidas.",
+"i_empty":"Pasa el ratón por encima de una pieza para ver su tensión, intensidad y potencia.",
+"i_V":"Voltaje","i_I":"Intensidad","i_P":"Potencia","i_R":"Resistencia",
+"n_wire":"Cable","n_bat":"Pila","n_bulb":"Bombilla","n_res":"Resistencia","n_sw":"Interruptor","n_push":"Pulsador",
+"blownlbl":"fundida",
+"open":"abierto","closed":"cerrado",
+"idea_basic":"<b>Idea:</b> para que pase corriente hace falta un <b>circuito cerrado</b>: del polo + de la pila, por las piezas, hasta el polo −. Un interruptor abierto rompe el camino.",
+"idea_adv":"<b>Para pensar:</b> una bombilla de 30 Ω a 6 V consume 0,2 A (1,2 W); a 9 V consumiría 0,3 A (2,7 W) y se funde. Dos pilas puestas una tras otra se suman. Un cortocircuito es un camino con resistencia casi nula entre los dos polos: por la ley de Ohm I = V / R, con R → 0 la intensidad se dispara.",
+"q1.q":"Una bombilla de 30 Ω se conecta a una pila de 6 V. ¿Cuántos mA pasan por ella?",
+"q1.u":"mA","q1.e":"I = V / R = 6 / 30 = 0,2 A = 200 mA.",
+"q2.q":"¿Qué es un cortocircuito?",
+"q2.o0":"Un camino de resistencia casi cero entre los dos polos de la pila","q2.o1":"Un circuito con muchas bombillas","q2.o2":"Un interruptor abierto","q2.o3":"Una pila gastada",
+"q2.e":"Con resistencia casi cero, la corriente I = V / R se dispara y puede calentar los cables y quemar la pila.",
+"q3.q":"Dos bombillas iguales en serie con una pila de 6 V. ¿Cuánto voltaje recibe cada una?",
+"q3.o0":"6 V cada una","q3.o1":"3 V cada una","q3.o2":"12 V cada una","q3.o3":"0 V",
+"q3.e":"En serie el voltaje se reparte: si son iguales, cada bombilla recibe la mitad (3 V).",
+"q4.q":"En un circuito has puesto una pila, una bombilla y un cable, pero la bombilla no se enciende. ¿Cuál es el motivo más probable?",
+"q4.o0":"El circuito no está cerrado (falta un tramo o hay un interruptor abierto)","q4.o1":"La pila es demasiado grande","q4.o2":"Hay demasiados cables","q4.o3":"La bombilla es demasiado azul",
+"q4.e":"Para que haya corriente el camino debe estar cerrado del polo + al polo −.",
+"q5.q":"¿Qué diferencia hay entre un interruptor y un pulsador?",
+"q5.o0":"El interruptor mantiene la posición; el pulsador solo cierra mientras lo pulsamos","q5.o1":"Ninguna","q5.o2":"El pulsador siempre está cerrado","q5.o3":"El interruptor solo se usa en corriente alterna",
+"q5.e":"El interruptor tiene dos estados estables (abierto/cerrado). El pulsador cierra el circuito mientras lo pulsas y vuelve solo a abierto.",
+"q6.q":"Dos bombillas de 30 Ω en serie con una pila de 6 V. ¿Cuántos mA pasan por el circuito?",
+"q6.u":"mA","q6.e":"R total = 60 Ω → I = 6 / 60 = 0,1 A = 100 mA."
+}};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@TEC_JS@*/
+
+const W=640,H=420,COLS=9,ROWS=6,SPX=66,OX=56,OY=62;
+const nodeXY=i=>[OX+(i%COLS)*SPX,OY+Math.floor(i/COLS)*SPX];
+const EDGES=[],EID={};
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  if(c<COLS-1)EDGES.push({id:'h'+r+'_'+c,a:r*COLS+c,b:r*COLS+c+1,o:'h'});
+  if(r<ROWS-1)EDGES.push({id:'v'+r+'_'+c,a:r*COLS+c,b:(r+1)*COLS+c,o:'v'});
+}
+EDGES.forEach(e=>{[e.x1,e.y1]=nodeXY(e.a);[e.x2,e.y2]=nodeXY(e.b);EID[e.id]=e;e.I=0;e.dV=0;e.ph=0;});
+const comp={};
+const S={tool:'hand',V:6,hover:null,short:false,blownNow:0,vals:[]};
+const RES=[10,47,100,220],RB=30,PBLOW=2.4;
+const CT=$('#ctls');
+const sv=slider(CT,{id:'V',key:'V',min:3,max:12,step:1.5,val:6,fmtv:v=>fmt(v,1)+' V',on:v=>{S.V=v;solve();}});
+const f3=x=>fmt(+x.toPrecision(3),3).replace(/,?0+$/,'').replace(/,$/,'');
+const defPol=e=>e.o==='h'?1:-1;
+const resOf=c=>c.t==='wire'?0.01:c.t==='bulb'?(c.blown?1e7:RB):c.t==='res'?c.v:(c.t==='sw'||c.t==='push')?(c.closed?0.01:1e7):1e7;
+
+function solve(){
+  const N=COLS*ROWS;let Ib=0,hasBat=false,short=false,again=true,guard=0;
+  while(again&&guard++<6){
+    again=false;Ib=0;hasBat=false;
+    const A=Array.from({length:N},()=>new Float64Array(N+1));
+    for(let i=0;i<N;i++)A[i][i]+=1e-9;
+    const st=(a,b,g)=>{A[a][a]+=g;A[b][b]+=g;A[a][b]-=g;A[b][a]-=g;};
+    EDGES.forEach(e=>{const c=comp[e.id];if(!c)return;
+      if(c.t==='bat'){const pol=(c.flip?-1:1)*defPol(e),p=pol>0?e.b:e.a,n=pol>0?e.a:e.b;st(p,n,2);A[p][N]+=S.V/0.5;A[n][N]-=S.V/0.5;}
+      else st(e.a,e.b,1/resOf(c));});
+    /* eliminació de Gauss */
+    for(let i=0;i<N;i++){
+      let p=i;for(let r=i+1;r<N;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;
+      [A[i],A[p]]=[A[p],A[i]];
+      const d=A[i][i];for(let r=i+1;r<N;r++){const f=A[r][i]/d;if(f===0)continue;for(let k=i;k<=N;k++)A[r][k]-=f*A[i][k];}
+    }
+    const Vn=new Float64Array(N);
+    for(let i=N-1;i>=0;i--){let s=A[i][N];for(let k=i+1;k<N;k++)s-=A[i][k]*Vn[k];Vn[i]=s/A[i][i];}
+    EDGES.forEach(e=>{const c=comp[e.id];e.I=0;e.dV=Vn[e.a]-Vn[e.b];if(!c)return;
+      if(c.t==='bat'){const pol=(c.flip?-1:1)*defPol(e),p=pol>0?e.b:e.a,n=pol>0?e.a:e.b;const ib=S.V/0.5-2*(Vn[p]-Vn[n]);e.I=pol>0?ib:-ib;e.dV=Vn[p]-Vn[n];if(Math.abs(ib)>Math.abs(Ib))Ib=ib;hasBat=true;}
+      else{e.I=e.dV/resOf(c);}
+      if(c.t==='bulb'&&!c.blown&&e.I*e.I*RB>PBLOW){c.blown=true;again=true;S.blownNow=performance.now();}
+    });
+  }
+  S.hasBat=hasBat;S.Ib=Ib;S.short=hasBat&&Math.abs(Ib)>3;
+  report();
+}
+function anyBlown(){return EDGES.some(e=>comp[e.id]&&comp[e.id].blown);}
+function report(){
+  const m=$('#msg');let k='m_ok',cls='msg good';
+  const lit=EDGES.some(e=>comp[e.id]&&comp[e.id].t==='bulb'&&!comp[e.id].blown&&e.I*e.I*RB>0.02);
+  if(!S.hasBat){k='m_nobat';cls='msg';}
+  else if(S.short){k='m_short';cls='msg bad';}
+  else if(anyBlown()){k='m_blown';cls='msg bad';}
+  else if(Math.abs(S.Ib)<0.002){k='m_open';cls='msg';}
+  else if(lit)k='m_lit';
+  m.className=cls;m.textContent=t(k);
+  const ib=S.hasBat?Math.abs(S.Ib):0;
+  $('#kv').innerHTML='<dt>'+t('k_V')+'</dt><dd>'+fmt(S.V,1)+' V</dd><dt>'+t('k_I')+'</dt><dd class="hb">'+(ib>=1?f3(ib)+' A':f3(ib*1000)+' mA')+'</dd><dt>'+t('k_P')+'</dt><dd>'+f3(ib*S.V)+' W</dd>';
+  hoverInfo();
+}
+function hoverInfo(){
+  const e=S.hover&&EID[S.hover],c=e&&comp[S.hover],box=$('#info');
+  if(!c){box.innerHTML=t('i_empty');return;}
+  const R=resOf(c),I=Math.abs(e.I),V=Math.abs(e.dV);
+  let extra='';if(c.t==='bulb')extra=c.blown?' · '+t('blownlbl'):'';else if(c.t==='res')extra=' · '+c.v+' Ω';else if(c.t==='sw'||c.t==='push')extra=' · '+t(c.closed?'closed':'open');
+  box.innerHTML='<b>'+t('n_'+c.t)+extra+'</b><br>'+t('i_V')+': '+f3(V)+' V · '+t('i_I')+': '+(I>=1?f3(I)+' A':f3(I*1000)+' mA')+' · '+t('i_P')+': '+f3(V*I)+' W';
+}
+
+/* ---- peces i exemples ---- */
+function setC(id,o){comp[id]=Object.assign({},o);}
+function rect(r0,c0,r1,c1){for(let c=c0;c<c1;c++){setC('h'+r0+'_'+c,{t:'wire'});setC('h'+r1+'_'+c,{t:'wire'});}for(let r=r0;r<r1;r++){setC('v'+r+'_'+c0,{t:'wire'});setC('v'+r+'_'+c1,{t:'wire'});}}
+const PRESETS={
+ simple(){rect(1,1,4,5);setC('v2_1',{t:'bat'});setC('h1_2',{t:'sw',closed:true});setC('h1_3',{t:'bulb'});},
+ series(){rect(1,1,4,5);setC('v2_1',{t:'bat'});setC('h1_2',{t:'bulb'});setC('h1_3',{t:'bulb'});setC('h4_3',{t:'sw',closed:true});},
+ par(){rect(1,1,4,7);setC('v2_1',{t:'bat'});setC('h1_2',{t:'sw',closed:true});setC('v1_4',{t:'wire'});setC('v2_4',{t:'bulb'});setC('v3_4',{t:'wire'});setC('v2_7',{t:'bulb'});},
+ short(){rect(1,1,4,5);setC('v2_1',{t:'bat'});setC('h1_3',{t:'sw',closed:false});}
+};
+function loadPreset(k){Object.keys(comp).forEach(i=>delete comp[i]);PRESETS[k]();solve();}
+function buildChips(){
+  const h=$('#presets');h.innerHTML='';
+  ['simple','series','par','short'].forEach(k=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t('p_'+(k==='simple'?'simple':k==='series'?'series':k==='par'?'par':'short'));b.onclick=()=>loadPreset(k);h.appendChild(b);});
+}
+$('#fixb').onclick=()=>{EDGES.forEach(e=>{if(comp[e.id])delete comp[e.id].blown;});solve();};
+$('#clear').onclick=()=>{Object.keys(comp).forEach(i=>delete comp[i]);solve();};
+function buildTools(){
+  const L=['hand','wire','bat','bulb','res','sw','push','erase'].map(v=>({v,key:'t_'+v}));
+  TEC.seg($('#tools'),L,S.tool,v=>{S.tool=v;});
+}
+function apply(e,paint){
+  const id=e.id,c=comp[id],tl=S.tool;
+  if(tl==='hand')return;
+  if(tl==='erase'){delete comp[id];}
+  else if(tl==='wire'){if(c&&c.t==='wire'){if(!paint)delete comp[id];}else setC(id,{t:'wire'});}
+  else if(paint)return;
+  else if(c&&c.t===tl){
+    if(tl==='bat')c.flip=!c.flip;
+    else if(tl==='res')c.v=RES[(RES.indexOf(c.v)+1)%RES.length];
+    else delete comp[id];
+  }else{
+    if(tl==='bat')setC(id,{t:'bat'});else if(tl==='res')setC(id,{t:'res',v:100});else if(tl==='sw'||tl==='push')setC(id,{t:tl,closed:false});else setC(id,{t:tl});
+  }
+  solve();
+}
+function nearEdge(p){
+  let best=null,bd=24;
+  EDGES.forEach(e=>{
+    const dx=e.x2-e.x1,dy=e.y2-e.y1,l2=dx*dx+dy*dy;let u=((p.x-e.x1)*dx+(p.y-e.y1)*dy)/l2;u=Math.max(0,Math.min(1,u));
+    const d=Math.hypot(p.x-(e.x1+u*dx),p.y-(e.y1+u*dy));
+    if(d<bd){bd=d;best=e;}
+  });
+  return best;
+}
+let lastPaint=null;
+const cvo=TEC.cv('#cv',W,H,draw);
+TEC.drag(cvo,{
+  down(p){const e=nearEdge(p);if(!e)return false;
+    if(S.tool==='hand'){const c=comp[e.id];if(c&&c.t==='sw'){c.closed=!c.closed;solve();}else if(c&&c.t==='push'){c.closed=true;solve();return true;}return false;}
+    lastPaint=e.id;apply(e,false);return S.tool==='wire'||S.tool==='erase';},
+  move(p){const e=nearEdge(p);if(e&&e.id!==lastPaint&&(S.tool==='wire'||S.tool==='erase')){lastPaint=e.id;apply(e,true);}},
+  up(){let ch=false;EDGES.forEach(e=>{const c=comp[e.id];if(c&&c.t==='push'&&c.closed){c.closed=false;ch=true;}});lastPaint=null;if(ch)solve();},
+  hover(p){const e=nearEdge(p);const id=e&&comp[e.id]?e.id:null;if(id!==S.hover){S.hover=id;hoverInfo();}}
+});
+cvo.cv.addEventListener('pointerleave',()=>{if(S.hover){S.hover=null;hoverInfo();}});
+
+/* ---- dibuix ---- */
+function glyph(c,k,e,cm){
+  const L=Math.hypot(e.x2-e.x1,e.y2-e.y1),ang=Math.atan2(e.y2-e.y1,e.x2-e.x1),mx=(e.x1+e.x2)/2,my=(e.y1+e.y2)/2;
+  c.save();c.translate(mx,my);c.rotate(ang);
+  const wire=(a,b,col,w)=>{c.beginPath();c.moveTo(a,0);c.lineTo(b,0);c.strokeStyle=col||k.ink;c.lineWidth=w||4;c.lineCap='round';c.stroke();};
+  const hl=L/2;
+  if(cm.t==='wire'){wire(-hl,hl,k.ink,4.5);}
+  else{
+    wire(-hl,-18,k.ink,4.5);wire(18,hl,k.ink,4.5);
+    if(cm.t==='bulb'){
+      const P=e.I*e.I*RB,b=cm.blown?0:Math.max(0,Math.min(1,Math.sqrt(P/1.4)));
+      if(b>0){const g=c.createRadialGradient(0,0,3,0,0,46);g.addColorStop(0,'rgba(255,214,70,'+(.8*b)+')');g.addColorStop(1,'rgba(255,214,70,0)');c.fillStyle=g;c.fillRect(-48,-48,96,96);}
+      c.beginPath();c.arc(0,0,16,0,TAU);c.fillStyle=b>0?'rgba(255,225,110,'+(.35+.65*b)+')':k.panel;c.fill();c.strokeStyle=cm.blown?k.warn:k.ink;c.lineWidth=2.5;c.stroke();
+      c.beginPath();c.moveTo(-9,8);c.lineTo(-4,-3);c.lineTo(0,5);c.lineTo(4,-3);c.lineTo(9,8);c.strokeStyle=cm.blown?k.warn:k.ink;c.lineWidth=2;c.stroke();
+      if(cm.blown){c.beginPath();c.moveTo(-10,-10);c.lineTo(10,10);c.moveTo(10,-10);c.lineTo(-10,10);c.strokeStyle=k.warn;c.lineWidth=3;c.stroke();}
+    }else if(cm.t==='res'){
+      c.beginPath();c.rect(-18,-7,36,14);c.fillStyle=k.panel;c.fill();c.strokeStyle=k.ink;c.lineWidth=2.5;c.stroke();
+      c.save();c.rotate(-ang);c.fillStyle=k.ink;c.font='bold 11.5px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText(cm.v+' Ω',0,-17);c.restore();
+    }else if(cm.t==='bat'){
+      const pol=(cm.flip?-1:1)*defPol(e);
+      c.beginPath();c.rect(-18,-14,36,28);c.fillStyle=k.panel;c.fill();c.strokeStyle=k.muted;c.lineWidth=1.5;c.stroke();
+      const plate=(x,h,w,col)=>{c.beginPath();c.moveTo(x,-h);c.lineTo(x,h);c.strokeStyle=col;c.lineWidth=w;c.stroke();};
+      plate(pol*-5,12,5,k.pa);plate(pol*6,7,5,k.pb);
+      c.save();c.rotate(-ang);const qx=Math.cos(ang)*pol*14,qy=Math.sin(ang)*pol*14;c.fillStyle=k.pb;c.font='bold 13px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('+',qx*1.0+Math.sin(ang)*-0,qy-(e.o==='h'?19:0));c.restore();
+    }else if(cm.t==='sw'||cm.t==='push'){
+      c.beginPath();c.arc(-14,0,3.5,0,TAU);c.arc(14,0,3.5,0,TAU);c.fillStyle=k.ink;c.fill();
+      if(cm.t==='sw'){c.beginPath();c.moveTo(-14,0);c.lineTo(cm.closed?14:11,cm.closed?0:-16);c.strokeStyle=cm.closed?k.ink:k.warn;c.lineWidth=4;c.lineCap='round';c.stroke();}
+      else{const y=cm.closed?-3:-14;c.beginPath();c.moveTo(-14,y);c.lineTo(14,y);c.strokeStyle=k.pb;c.lineWidth=4;c.stroke();c.beginPath();c.moveTo(0,y);c.lineTo(0,y-10);c.strokeStyle=k.pb;c.lineWidth=3;c.stroke();c.beginPath();c.rect(-7,y-14,14,5);c.fillStyle=k.pb;c.fill();}
+    }
+  }
+  c.restore();
+}
+function draw(o){
+  const c=o.ctx,k=C();
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  /* quadrícula guia */
+  EDGES.forEach(e=>{if(comp[e.id])return;c.beginPath();c.moveTo(e.x1,e.y1);c.lineTo(e.x2,e.y2);c.strokeStyle=k.line;c.globalAlpha=e.id===S.hoverEdge?1:.55;c.lineWidth=1.2;c.setLineDash([3,5]);c.stroke();c.setLineDash([]);c.globalAlpha=1;});
+  for(let i=0;i<COLS*ROWS;i++){const [x,y]=nodeXY(i);c.beginPath();c.arc(x,y,2.8,0,TAU);c.fillStyle=k.line;c.fill();}
+  EDGES.forEach(e=>{const cm=comp[e.id];if(cm)glyph(c,k,e,cm);});
+  /* electrons: només en peces amb corrent */
+  EDGES.forEach(e=>{
+    if(!comp[e.id]||Math.abs(e.I)<0.003)return;
+    const L=Math.hypot(e.x2-e.x1,e.y2-e.y1),dir=e.I>0?-1:1;/* electrons en sentit contrari al corrent convencional */
+    for(let d=e.ph%16;d<L;d+=16){
+      const u=dir>0?d/L:1-d/L,x=e.x1+(e.x2-e.x1)*u,y=e.y1+(e.y2-e.y1)*u;
+      if(comp[e.id].t==='bulb'||comp[e.id].t==='res'||comp[e.id].t==='bat'||comp[e.id].t==='sw'||comp[e.id].t==='push'){if(Math.abs(u-.5)<.3)continue;}
+      c.beginPath();c.arc(x,y,3.4,0,TAU);c.fillStyle=k.pa;c.fill();
+    }
+  });
+  if(!Object.keys(comp).length)TEC.txt(c,t('hint'),W/2,H/2,{font:'15px system-ui',col:k.muted});
+  if(S.short){c.fillStyle='rgba(220,40,40,'+(.12+.1*Math.sin(performance.now()/120))+')';c.fillRect(0,0,W,H);TEC.txt(c,'⚠ '+t('m_short').split('!')[0]+'!',W/2,24,{font:'bold 18px system-ui',col:k.warn});}
+}
+TEC.loop(dt=>{
+  if(!REDUCE)EDGES.forEach(e=>{if(Math.abs(e.I)>=0.003)e.ph=(e.ph+Math.min(180,30+Math.abs(e.I)*300)*dt)%16;});
+  draw(cvo);
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":200,"tol":0.01,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q3","lvl":"adv","type":"mc","n":4,"ans":1},{"id":"q6","lvl":"adv","type":"num","num":100,"tol":0.01,"u":1}];
+App.hooks.push(()=>{buildTools();buildChips();report();});
+initQuiz(QDATA);
+loadPreset('simple');
+initLang();applyLang();
+</script>
+</body>
+</html>

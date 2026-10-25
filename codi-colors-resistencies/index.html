@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Codi de colors de les resistències</title>
+<meta name="description" content="Aprén el codi de colors de les resistències: tria el color de cada banda i mira el valor i la tolerància, escriu un valor i comprova quines bandes té, o resol reptes aleatoris. Resistències de 4 i 5 bandes. Per a Tecnologia de 2n i 3r d'ESO, amb test autocorregit.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/codi-colors-resistencies/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/codi-colors-resistencies/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/codi-colors-resistencies/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/codi-colors-resistencies/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Codi de colors de les resistències">
+<meta property="og:description" content="Aprén el codi de colors de les resistències: tria el color de cada banda i mira el valor i la tolerància, escriu un valor i comprova quines bandes té, o resol reptes aleatoris. Resistències de 4 i 5 bandes. Per a Tecnologia de 2n i 3r d'ESO, amb test autocorregit.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/codi-colors-resistencies/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació i components comuns de les animacions de Tecnologia ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{min-width:0}
+.simcv canvas{touch-action:none}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side h3{margin:2px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.msg:empty{display:none}
+.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv dd.hl{color:var(--pa);font-weight:700}
+.kv dd.hb{color:var(--pb);font-weight:700}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2px 18px}
+.formula{font-family:var(--f-num);font-size:14.5px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.formula .ka{color:var(--pa);font-weight:700}.formula .kb{color:var(--pb);font-weight:700}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tbar .btn.on{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.formula:empty{display:none}
+
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.sw{font:inherit;font-size:11.5px;border:2px solid var(--line);border-radius:8px;padding:14px 2px 4px;cursor:pointer;color:var(--ink);background:var(--panel);position:relative;line-height:1.1}
+.sw::before{content:"";position:absolute;left:6px;right:6px;top:4px;height:10px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.35)}
+.sw:disabled{opacity:.28;cursor:default}
+.sw:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.sw[aria-pressed=true]{border-color:var(--pa)}
+.sw b{display:block;font-family:var(--f-num);font-size:12.5px}
+.bandrow{display:flex;flex-wrap:wrap;gap:4px}
+.bandrow .chip{font-size:12.5px}
+.sol{font-family:var(--f-num);font-size:14px;line-height:1.7}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Tecnologia · 2n i 3r ESO · Electrònica</p>
+      <h1 data-i18n="h1">Resistències: llig el valor pels colors</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivell de la pàgina"><button type="button" data-level="basic" data-i18n="lvl_basic">Bàsic</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avançat</button></div>
+      <p class="lede" data-i18n="lede">Cada banda de color és un dígit, un multiplicador o una tolerància. Aprén-ho jugant!</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">La resistència</h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px">Les <b>dues primeres bandes</b> (tres en les de 5 bandes) són <b>dígits</b>; la següent és el <b>multiplicador</b> (potència de 10) i l'última, més separada, la <b>tolerància</b>. Exemple: groc-violeta-roig-daurat = 4 · 7 · 10² = 4 700 Ω = 4,7 kΩ amb ±5 %.</p></div>
+<div class="side">
+<div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label="Mode"></div>
+<div class="seg" id="nsw" role="group" data-i18n-aria="aria.n" aria-label="Nombre de bandes"></div>
+<div id="bandsel" class="bandrow" role="group" data-i18n-aria="aria.band" aria-label="Banda seleccionada"></div>
+<div class="pal" id="pal" role="group" data-i18n-aria="aria.pal" aria-label="Colors"></div>
+<div id="vbox" hidden>
+<div class="predict"><label for="vin" data-i18n="vin_l">Valor (ex.: 4k7, 330, 2,2M):</label><input type="text" id="vin" autocomplete="off" placeholder="4k7" style="width:6.5em"><button class="btn" id="vgo" type="button" data-i18n="vgo">Mostra les bandes</button></div>
+</div>
+<div id="cbox" hidden>
+<div class="predict"><label for="cin" data-i18n="cin_l">Quin és el valor?</label><input type="text" id="cin" autocomplete="off" style="width:6.5em"><button class="btn" id="cgo" type="button" data-i18n="check">Comprova</button>
+<button class="btn" id="cnext" type="button" data-i18n="cnext">Una altra</button><button class="btn" id="cshow" type="button" data-i18n="cshow">Mostra la solució</button></div>
+<p class="note" id="score"></p>
+</div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<h3 data-i18n="out_h">Valor</h3>
+<dl class="kv" id="kv"></dl>
+<div class="formula sol" id="sol"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Truc:</b> per a recordar els colors de 0 a 9: <i>negre, marró, roig, taronja, groc, verd, blau, violeta, gris, blanc</i>. El daurat i la plata només apareixen com a tolerància (±5 %, ±10 %) i, a vegades, com a multiplicador de 0,1 i 0,01.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Per a pensar:</b> la tolerància diu quant pot allunyar-se el valor real del nominal: una resistència de 100 Ω ±5 % és, en realitat, entre 95 Ω i 105 Ω. Les de 5 bandes (3 dígits) són de més precisió: 1 %, 0,5 %… Les resistències comercials seguen sèries de valors normalitzats (E12, E24…): 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82.</div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Codi de colors de les resistències",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Electrònica",
+"h1":"Resistències: llig el valor pels colors",
+"lede":"Cada banda de color és un dígit, un multiplicador o una tolerància. Aprén-ho jugant!",
+"sim_title":"La resistència",
+"story":"Les <b>dues primeres bandes</b> (tres en les de 5 bandes) són <b>dígits</b>; la següent és el <b>multiplicador</b> (potència de 10) i l'última, més separada, la <b>tolerància</b>. Exemple: groc-violeta-roig-daurat = 4 · 7 · 10² = 4 700 Ω = 4,7 kΩ amb ±5 %.",
+"aria.mode":"Mode","aria.n":"Nombre de bandes","aria.band":"Banda seleccionada","aria.pal":"Colors",
+"m_read":"Llig les bandes","m_write":"Escriu un valor","m_chal":"Repte",
+"n4":"4 bandes","n5":"5 bandes",
+"b_d1":"1r dígit","b_d2":"2n dígit","b_d3":"3r dígit","b_mul":"Multiplicador","b_tol":"Tolerància",
+"vin_l":"Valor (ex.: 4k7, 330, 2,2M):","vgo":"Mostra les bandes",
+"cin_l":"Quin és el valor?","check":"Comprova","cnext":"Una altra","cshow":"Mostra la solució",
+"chscore":"Encerts: {0} de {1}",
+"out_h":"Valor",
+"k_val":"Valor","k_tol":"Tolerància","k_rng":"El valor real està entre",
+"c_0":"negre","c_1":"marró","c_2":"roig","c_3":"taronja","c_4":"groc","c_5":"verd","c_6":"blau","c_7":"violeta","c_8":"gris","c_9":"blanc","c_10":"daurat","c_11":"plata",
+"s_dig":"{0}{1}{2} → {3}",
+"s_mul":"× {0}",
+"s_res":"{0} {1} = {2} Ω",
+"w_ok":"✔ Bandes colocades per a {0}.",
+"w_round":"{0} no es pot representar amb {1} xifres significatives: s'ha arredonit a {2}.",
+"w_bad":"Escriu un valor vàlid (entre 0,1 Ω i 99 GΩ), per exemple 4k7 o 330.",
+"w_rng":"Aquest valor està fora del rang del codi de colors.",
+"g_ok":"✔ Correcte! {0}.",
+"g_no":"No és {0}. El valor és {1}: {2}",
+"g_bad":"Escriu el valor (per exemple 4k7, 330 o 2,2M).",
+"g_show":"Solució: {0}.",
+"idea_basic":"<b>Truc:</b> per a recordar els colors de 0 a 9: <i>negre, marró, roig, taronja, groc, verd, blau, violeta, gris, blanc</i>. El daurat i la plata només apareixen com a tolerància (±5 %, ±10 %) i, a vegades, com a multiplicador de 0,1 i 0,01.",
+"idea_adv":"<b>Per a pensar:</b> la tolerància diu quant pot allunyar-se el valor real del nominal: una resistència de 100 Ω ±5 % és, en realitat, entre 95 Ω i 105 Ω. Les de 5 bandes (3 dígits) són de més precisió: 1 %, 0,5 %… Les resistències comercials seguen sèries de valors normalitzats (E12, E24…): 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82.",
+"q1.q":"Una resistència té les bandes marró, negre, taronja i daurat. Quin és el seu valor en ohms?",
+"q1.u":"Ω","q1.e":"Marró = 1, negre = 0, taronja = ×10³ → 10 · 1000 = 10 000 Ω = 10 kΩ (±5 %).",
+"q2.q":"Les bandes són groc, violeta i roig (i daurat). Quin valor té?",
+"q2.o0":"47 Ω","q2.o1":"470 Ω","q2.o2":"4,7 kΩ","q2.o3":"47 kΩ",
+"q2.e":"Groc = 4, violeta = 7, roig = ×10² → 47 · 100 = 4 700 Ω = 4,7 kΩ.",
+"q3.q":"Què indica la tercera banda d'una resistència de 4 bandes?",
+"q3.o0":"El tercer dígit","q3.o1":"El multiplicador","q3.o2":"La tolerància","q3.o3":"La potència",
+"q3.e":"En les de 4 bandes: dígit, dígit, multiplicador i tolerància. En les de 5: tres dígits, multiplicador i tolerància.",
+"q4.q":"Resistència de 5 bandes: roig, roig, negre, marró i marró. Quin valor té en ohms?",
+"q4.u":"Ω","q4.e":"Dígits 2, 2, 0 → 220; multiplicador marró = ×10 → 2 200 Ω = 2,2 kΩ (±1 %).",
+"q5.q":"Una banda daurada al final (la més separada) indica…",
+"q5.o0":"Una tolerància del ±5 %","q5.o1":"Un multiplicador de 100","q5.o2":"El dígit 5","q5.o3":"Que la resistència és de ferro",
+"q5.e":"L'última banda és la tolerància: daurat = ±5 %, plata = ±10 %.",
+"q6.q":"Una resistència de 330 Ω amb una tolerància del 10 %. Quin és el màxim valor que pot tindre realment? (en Ω)",
+"q6.u":"Ω","q6.e":"330 · 1,10 = 363 Ω."
+},
+es:{
+"title":"Código de colores de las resistencias",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Electrónica",
+"h1":"Resistencias: lee el valor por los colores",
+"lede":"Cada banda de color es un dígito, un multiplicador o una tolerancia. ¡Aprende jugando!",
+"sim_title":"La resistencia",
+"story":"Las <b>dos primeras bandas</b> (tres en las de 5 bandas) son <b>dígitos</b>; la siguiente es el <b>multiplicador</b> (potencia de 10) y la última, más separada, la <b>tolerancia</b>. Ejemplo: amarillo-violeta-rojo-dorado = 4 · 7 · 10² = 4 700 Ω = 4,7 kΩ con ±5 %.",
+"aria.mode":"Modo","aria.n":"Número de bandas","aria.band":"Banda seleccionada","aria.pal":"Colores",
+"m_read":"Lee las bandas","m_write":"Escribe un valor","m_chal":"Reto",
+"n4":"4 bandas","n5":"5 bandas",
+"b_d1":"1.er dígito","b_d2":"2.º dígito","b_d3":"3.er dígito","b_mul":"Multiplicador","b_tol":"Tolerancia",
+"vin_l":"Valor (ej.: 4k7, 330, 2,2M):","vgo":"Muestra las bandas",
+"cin_l":"¿Cuál es el valor?","check":"Comprueba","cnext":"Otra","cshow":"Muestra la solución",
+"chscore":"Aciertos: {0} de {1}",
+"out_h":"Valor",
+"k_val":"Valor","k_tol":"Tolerancia","k_rng":"El valor real está entre",
+"c_0":"negro","c_1":"marrón","c_2":"rojo","c_3":"naranja","c_4":"amarillo","c_5":"verde","c_6":"azul","c_7":"violeta","c_8":"gris","c_9":"blanco","c_10":"dorado","c_11":"plata",
+"s_dig":"{0}{1}{2} → {3}",
+"s_mul":"× {0}",
+"s_res":"{0} {1} = {2} Ω",
+"w_ok":"✔ Bandas colocadas para {0}.",
+"w_round":"{0} no se puede representar con {1} cifras significativas: se ha redondeado a {2}.",
+"w_bad":"Escribe un valor válido (entre 0,1 Ω y 99 GΩ), por ejemplo 4k7 o 330.",
+"w_rng":"Este valor está fuera del rango del código de colores.",
+"g_ok":"✔ ¡Correcto! {0}.",
+"g_no":"No es {0}. El valor es {1}: {2}",
+"g_bad":"Escribe el valor (por ejemplo 4k7, 330 o 2,2M).",
+"g_show":"Solución: {0}.",
+"idea_basic":"<b>Truco:</b> para recordar los colores de 0 a 9: <i>negro, marrón, rojo, naranja, amarillo, verde, azul, violeta, gris, blanco</i>. El dorado y la plata solo aparecen como tolerancia (±5 %, ±10 %) y, a veces, como multiplicador de 0,1 y 0,01.",
+"idea_adv":"<b>Para pensar:</b> la tolerancia dice cuánto puede alejarse el valor real del nominal: una resistencia de 100 Ω ±5 % es, en realidad, entre 95 Ω y 105 Ω. Las de 5 bandas (3 dígitos) son de más precisión: 1 %, 0,5 %… Las resistencias comerciales siguen series de valores normalizados (E12, E24…): 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82.",
+"q1.q":"Una resistencia tiene las bandas marrón, negro, naranja y dorado. ¿Cuál es su valor en ohmios?",
+"q1.u":"Ω","q1.e":"Marrón = 1, negro = 0, naranja = ×10³ → 10 · 1000 = 10 000 Ω = 10 kΩ (±5 %).",
+"q2.q":"Las bandas son amarillo, violeta y rojo (y dorado). ¿Qué valor tiene?",
+"q2.o0":"47 Ω","q2.o1":"470 Ω","q2.o2":"4,7 kΩ","q2.o3":"47 kΩ",
+"q2.e":"Amarillo = 4, violeta = 7, rojo = ×10² → 47 · 100 = 4 700 Ω = 4,7 kΩ.",
+"q3.q":"¿Qué indica la tercera banda de una resistencia de 4 bandas?",
+"q3.o0":"El tercer dígito","q3.o1":"El multiplicador","q3.o2":"La tolerancia","q3.o3":"La potencia",
+"q3.e":"En las de 4 bandas: dígito, dígito, multiplicador y tolerancia. En las de 5: tres dígitos, multiplicador y tolerancia.",
+"q4.q":"Resistencia de 5 bandas: rojo, rojo, negro, marrón y marrón. ¿Qué valor tiene en ohmios?",
+"q4.u":"Ω","q4.e":"Dígitos 2, 2, 0 → 220; multiplicador marrón = ×10 → 2 200 Ω = 2,2 kΩ (±1 %).",
+"q5.q":"Una banda dorada al final (la más separada) indica…",
+"q5.o0":"Una tolerancia del ±5 %","q5.o1":"Un multiplicador de 100","q5.o2":"El dígito 5","q5.o3":"Que la resistencia es de hierro",
+"q5.e":"La última banda es la tolerancia: dorado = ±5 %, plata = ±10 %.",
+"q6.q":"Una resistencia de 330 Ω con una tolerancia del 10 %. ¿Cuál es el valor máximo que puede tener realmente? (en Ω)",
+"q6.u":"Ω","q6.e":"330 · 1,10 = 363 Ω."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/codi-colors-resistencies/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== utilitats comunes de les animacions de Tecnologia (depén de common.js) ===== */
+const TEC={
+  /* bucle d'animació: fn(dt en segons) */
+  loop(fn){let last=performance.now();const f=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;fn(dt);requestAnimationFrame(f);};requestAnimationFrame(f);},
+  /* canvas lògic W×H que es torna a dibuixar quan canvia la mida o el tema */
+  cv(sel,W,H,draw){let o=null;o=makeCanvas($(sel),W,H,()=>{if(o)draw(o);});document.addEventListener('themechange',()=>draw(o));draw(o);return o;},
+  txt(c,s,x,y,o){o=o||{};c.font=o.font||'13px system-ui';c.fillStyle=o.col||C().ink;c.textAlign=o.al||'center';c.textBaseline=o.bl||'middle';c.fillText(s,x,y);},
+  line(c,pts,col,w,dash){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w||2;c.setLineDash(dash||[]);c.lineJoin='round';c.lineCap='round';c.stroke();c.setLineDash([]);},
+  arrow(c,x1,y1,x2,y2,col,w){
+    const a=Math.atan2(y2-y1,x2-x1),h=Math.max(7,(w||2)*3.4);
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);c.strokeStyle=col;c.lineWidth=w||2;c.lineCap='round';c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));c.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));c.closePath();c.fillStyle=col;c.fill();
+  },
+  /* roda dentada de mòdul m (px per dent): z dents, angle ang; la dent 0 apunta cap a ang */
+  gear(c,cx,cy,z,m,ang,col,markAng,alpha){
+    const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z,P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    c.beginPath();
+    for(let k=0;k<z;k++){
+      const a=ang+k*2*hp;
+      [P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)].forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+    }
+    c.closePath();
+    c.fillStyle=C().panel;c.fill();
+    c.globalAlpha=alpha||.2;c.fillStyle=col;c.fill();c.globalAlpha=1;
+    c.strokeStyle=col;c.lineWidth=2;c.setLineDash([]);c.stroke();
+    c.beginPath();c.arc(cx,cy,Math.max(4,m*0.55),0,TAU);c.fillStyle=col;c.fill();
+    if(markAng!==undefined){
+      const mx=cx+(R-m*0.3)*Math.cos(markAng),my=cy+(R-m*0.3)*Math.sin(markAng);
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.stroke();
+      c.beginPath();c.arc(mx,my,Math.max(4,m*0.4),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+    }
+  },
+  /* arrossegar sobre un canvas amb ratolí o dit: h={down(p)->bool, move(p), up()} */
+  drag(o,h){
+    let on=false;
+    o.cv.addEventListener('pointerdown',e=>{const p=o.pt(e);if(h.down(p,e)){on=true;o.cv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    o.cv.addEventListener('pointermove',e=>{const p=o.pt(e);if(on)h.move(p,e);else if(h.hover)h.hover(p,e);});
+    const end=e=>{if(on){on=false;h.up&&h.up(e);}};
+    o.cv.addEventListener('pointerup',end);o.cv.addEventListener('pointercancel',end);
+  },
+  /* prefix SI per a resistències i corrents: 4700 -> "4,7 kΩ" */
+  si(v,u){
+    if(!isFinite(v))return '∞ '+u;
+    const a=Math.abs(v);let k=0,p=['','k','M','G'],pm=['','m','µ'];
+    if(a>=1000){while(Math.abs(v)>=1000&&k<3){v/=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+p[k]+u;}
+    if(a<1&&a>0){while(Math.abs(v)<1&&k<2){v*=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+pm[k]+u;}
+    return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+u;
+  },
+  /* converteix text com "4,7k", "470", "2M2" en nombre */
+  parse(s){
+    s=String(s).trim().toLowerCase().replace(/\s/g,'').replace('ω','').replace('ohm','').replace('Ω','');
+    let m=s.match(/^(\d+)([kmr])(\d+)$/);
+    if(m){const mul={k:1e3,m:1e6,r:1}[m[2]];return parseFloat(m[1]+'.'+m[3])*mul;}
+    m=s.match(/^([\d.,]+)([km]?)$/);
+    if(!m)return NaN;
+    return parseFloat(m[1].replace(',','.'))*({'':1,k:1e3,m:1e6}[m[2]]);
+  },
+  seg(host,opts,cur,on){/* grup de botons exclusius; opts=[{v,key}] */
+    host.innerHTML='';const bs=opts.map(o=>{const b=document.createElement('button');b.type='button';b.dataset.v=o.v;b.setAttribute('data-i18n',o.key);b.textContent=t(o.key);b.setAttribute('aria-pressed',String(o.v===cur));
+      b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));on(o.v);};host.appendChild(b);return b;});
+    return bs;
+  }
+};
+
+
+const W=640,H=275;
+const HEX=['#151515','#7b4a22','#d62d2d','#f08a1c','#f2d21c','#2f9e44','#2f6fd6','#7d3cc4','#8c8c8c','#f4f4f4','#c9a227','#bdbdbd'];
+const TOL={1:1,2:2,5:.5,6:.25,7:.1,8:.05,10:5,11:10};
+const S={mode:'read',n:4,sel:0,bands:[4,7,2,10],chal:null,ok:0,tot:0,shown:false};
+let selBand=0;
+const f3=x=>fmt(+x.toPrecision(4),4).replace(/,?0+$/,'').replace(/,$/,'');
+const mulOf=i=>i<=9?Math.pow(10,i):i===10?0.1:0.01;
+function slots(){return S.n===4?['b_d1','b_d2','b_mul','b_tol']:['b_d1','b_d2','b_d3','b_mul','b_tol'];}
+function allowed(slot){const k=slots()[slot];if(k==='b_mul')return [...Array(12).keys()];if(k==='b_tol')return Object.keys(TOL).map(Number);return [...Array(10).keys()];}
+function val(b,n){
+  const nd=n-2,d=b.slice(0,nd).reduce((a,x)=>a*10+x,0),m=mulOf(b[nd]);
+  return {R:d*m,tol:TOL[b[nd+1]],d,m,nd};
+}
+function convert(n){
+  const v=val(S.bands,S.bands.length),tol=S.bands[S.bands.length-1];
+  const r=toBands(v.R,n)||{b:n===4?[1,0,0]:[1,0,0,0]};
+  S.n=n;S.bands=[...r.b,tol];
+  if(S.sel>=slots().length)S.sel=slots().length-1;
+}
+function setN(n){convert(n);rebuild();}
+function fmtR(R){return TEC.si(R,'Ω');}
+function lbl(i){return t('c_'+i);}
+function buildBandSel(){
+  const h=$('#bandsel');h.innerHTML='';
+  slots().forEach((k,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t(k);b.setAttribute('aria-pressed',String(i===S.sel));b.onclick=()=>{S.sel=i;rebuild();};h.appendChild(b);});
+}
+function buildPal(){
+  const h=$('#pal');h.innerHTML='';const ok=allowed(S.sel);
+  for(let i=0;i<12;i++){
+    const b=document.createElement('button');b.type='button';b.className='sw';b.style.setProperty('--c',HEX[i]);
+    const slotKey=slots()[S.sel];
+    let sub=i<=9?String(i):'';
+    if(slotKey==='b_mul')sub='×'+(i<=9?'10'+(i?'<sup>'+i+'</sup>':'⁰'):(i===10?'0,1':'0,01'));
+    if(slotKey==='b_tol')sub='±'+TOL[i]+' %';
+    b.innerHTML=lbl(i)+'<b>'+sub+'</b>';b.disabled=!ok.includes(i)||(S.mode==='chal');
+    b.setAttribute('aria-pressed',String(S.bands[S.sel]===i));
+    b.onclick=()=>{S.bands[S.sel]=i;rebuild();};
+    h.appendChild(b);
+  }
+}
+function rebuild(){buildBandSel();buildPal();$('#pal').hidden=$('#bandsel').hidden=S.mode==='chal';out();draw(cvo);}
+function out(){
+  const v=val(S.bands,S.n);
+  const chalHide=S.mode==='chal'&&!S.shown;
+  const bandNames=S.bands.map(lbl).join(' · ');
+  if(chalHide){$('#kv').innerHTML='<dt>'+t('k_val')+'</dt><dd>?</dd>';$('#sol').innerHTML='';return;}
+  const dig=S.bands.slice(0,v.nd).join('');
+  $('#kv').innerHTML='<dt>'+t('k_val')+'</dt><dd class="hl">'+fmtR(v.R)+'</dd><dt>'+t('k_tol')+'</dt><dd>±'+fmt(v.tol,v.tol<1?2:0).replace(/,00$/,'')+' %</dd><dt>'+t('k_rng')+'</dt><dd>'+fmtR(v.R*(1-v.tol/100))+' – '+fmtR(v.R*(1+v.tol/100))+'</dd>';
+  const mi=S.bands[v.nd];
+  $('#sol').innerHTML=bandNames+'<br>'+dig.split('').map((d,i)=>'<span class="'+(i%2?'kb':'ka')+'">'+d+'</span>').join(' ')+' → '+v.d+'<br>'+tt('s_mul',(mi<=9?'10<sup>'+mi+'</sup>':mulOf(mi).toString().replace('.',',')))+'<br>'+tt('s_res',v.d,'× '+f3(v.m),f3(v.R));
+}
+/* ---- mode: escriu un valor ---- */
+function toBands(R,n){
+  const nd=n-2;if(!(R>=0.1&&R<9.9e10))return null;
+  let e=Math.floor(Math.log10(R)+1e-12)-(nd-1),m=Math.round(R/Math.pow(10,e));
+  if(m>=Math.pow(10,nd)){e++;m=Math.round(R/Math.pow(10,e));}
+  if(e<-2||e>9)return null;
+  if(m<Math.pow(10,nd-1)&&e>-2&&R>=Math.pow(10,nd-1)*0.01){/* de vegades cal baixar l'exponent */}
+  const digs=String(m).padStart(nd,'0').split('').map(Number);
+  const mi=e>=0?e:(e===-1?10:11);
+  const real=m*Math.pow(10,e);
+  return {b:[...digs,mi],real,exact:Math.abs(real-R)/R<1e-9};
+}
+$('#vgo').onclick=()=>{
+  const R=TEC.parse($('#vin').value),m=$('#msg');
+  if(!isFinite(R)||R<=0){m.className='msg bad';m.textContent=t('w_bad');return;}
+  const r=toBands(R,S.n);if(!r){m.className='msg bad';m.textContent=t('w_rng');return;}
+  const tol=S.bands[S.bands.length-1];S.bands=[...r.b,tol];
+  m.className=r.exact?'msg good':'msg';m.textContent=r.exact?tt('w_ok',fmtR(R)):tt('w_round',fmtR(R),S.n-2,fmtR(r.real));
+  rebuild();
+};
+$('#vin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#vgo').click();});
+/* ---- mode: repte ---- */
+const E12=[10,12,15,18,22,27,33,39,47,56,68,82];
+function newChal(){
+  const b=E12[Math.floor(Math.random()*12)],e=Math.floor(Math.random()*5)-(Math.random()<.25?1:0);
+  const R=b*Math.pow(10,Math.max(e,-1)),r=toBands(R,4)||toBands(R*10,4);
+  S.bands=[...r.b,[10,11,1][Math.floor(Math.random()*3)]];S.n=4;S.chal=val(S.bands,4).R;S.shown=false;
+  $('#cin').value='';$('#msg').textContent='';
+}
+$('#cgo').onclick=()=>{
+  const v=TEC.parse($('#cin').value),m=$('#msg');
+  if(!isFinite(v)){m.className='msg bad';m.textContent=t('g_bad');return;}
+  S.tot++;const R=S.chal,ok=Math.abs(v-R)<=R*.005;
+  if(ok){S.ok++;S.shown=true;m.className='msg good';m.textContent=tt('g_ok',fmtR(R));}
+  else{S.shown=true;m.className='msg bad';m.textContent=tt('g_no',fmtR(v),fmtR(R),S.bands.slice(0,2).join('')+' × '+f3(mulOf(S.bands[2])));}
+  rebuild();score();
+};
+$('#cin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#cgo').click();});
+$('#cnext').onclick=()=>{newChal();rebuild();};
+$('#cshow').onclick=()=>{S.shown=true;$('#msg').className='msg';$('#msg').textContent=tt('g_show',fmtR(S.chal));rebuild();};
+function score(){$('#score').textContent=tt('chscore',S.ok,S.tot);}
+function setMode(m){
+  S.mode=m;S.shown=false;$('#msg').textContent='';
+  $('#vbox').hidden=m!=='write';$('#cbox').hidden=m!=='chal';
+  if(m==='chal'){S.n=4;newChal();}
+  buildSegs();rebuild();score();
+}
+function buildSegs(){
+  TEC.seg($('#modesw'),[{v:'read',key:'m_read'},{v:'write',key:'m_write'},{v:'chal',key:'m_chal'}],S.mode,setMode);
+  const o=[{v:'4',key:'n4'}];if(App.level==='adv'&&S.mode!=='chal')o.push({v:'5',key:'n5'});
+  if(App.level!=='adv'&&S.n===5)convert(4);
+  TEC.seg($('#nsw'),o,String(S.n),v=>setN(+v));
+  $('#nsw').hidden=o.length<2;
+}
+
+/* ---- dibuix ---- */
+let bx=[];
+const cvo=TEC.cv('#cv',W,H,draw);
+function draw(o){
+  const c=o.ctx,k=C(),n=S.n,cy=118;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  TEC.line(c,[[30,cy],[600,cy]],k.muted,6);
+  /* cos */
+  const x0=170,x1=470;
+  c.beginPath();c.moveTo(x0+16,cy-44);c.lineTo(x1-16,cy-44);c.quadraticCurveTo(x1+4,cy-44,x1,cy-26);c.lineTo(x1,cy+26);c.quadraticCurveTo(x1+4,cy+44,x1-16,cy+44);c.lineTo(x0+16,cy+44);c.quadraticCurveTo(x0-4,cy+44,x0,cy+26);c.lineTo(x0,cy-26);c.quadraticCurveTo(x0-4,cy-44,x0+16,cy-44);c.closePath();
+  c.fillStyle=k.dark?'#c9a878':'#e6cfa0';c.fill();c.strokeStyle=k.ink;c.lineWidth=2;c.stroke();
+  /* bandes */
+  const xs=n===4?[212,256,300,422]:[208,240,272,304,422];
+  bx=xs;
+  const hide=S.mode==='chal'&&false;
+  xs.forEach((x,i)=>{
+    const col=HEX[S.bands[i]];
+    c.fillStyle=col;c.fillRect(x-9,cy-44,18,88);
+    c.strokeStyle='rgba(0,0,0,.45)';c.lineWidth=1;c.strokeRect(x-9,cy-44,18,88);
+    if(i===S.sel&&S.mode!=='chal'){c.strokeStyle=k.pa;c.lineWidth=3;c.strokeRect(x-14,cy-52,28,104);}
+    if(!(S.mode==='chal'&&!S.shown&&i<n-1))TEC.txt(c,i===n-1?'±'+TOL[S.bands[i]]+'%':S.bands[i]<=9?String(S.bands[i]):(S.bands[i]===10?'0,1':'0,01'),x,cy+72,{font:'bold 14px system-ui',col:i===S.sel&&S.mode!=='chal'?k.pa:k.ink});
+    TEC.txt(c,lbl(S.bands[i]),x,cy+92,{font:'12px system-ui',col:k.muted});
+    TEC.txt(c,i<n-2?(n===4?['1','2'][i]:['1','2','3'][i]):(i===n-2?'×':'±'),x,cy-64,{font:'bold 13px system-ui',col:k.muted});
+  });
+  const v=val(S.bands,n),hid=S.mode==='chal'&&!S.shown;
+  TEC.txt(c,hid?'? Ω':fmtR(v.R)+'  ±'+(v.tol)+' %',W/2,H-22,{font:'bold 22px system-ui',col:k.ink});
+}
+TEC.drag(cvo,{down(p){let b=-1,bd=24;bx.forEach((x,i)=>{const d=Math.abs(p.x-x);if(d<bd&&p.y>60&&p.y<180){bd=d;b=i;}});if(b>=0&&S.mode!=='chal'){S.sel=b;rebuild();}return false;}});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":10000,"tol":0,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":2},{"id":"q3","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"adv","type":"num","num":2200,"tol":0,"u":1},{"id":"q6","lvl":"adv","type":"num","num":363,"tol":0,"u":1}];
+App.hooks.push(()=>{buildSegs();rebuild();});
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

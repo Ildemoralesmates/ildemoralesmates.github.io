@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Engranatges i politges: relació de transmissió</title>
+<meta name="description" content="Engranatges, trens compostos i politges amb corretja: canvia les dents o els diàmetres i mira com canvien la relació de transmissió, les rpm, el parell i el sentit de gir. Per a Tecnologia de 2n i 3r d'ESO, amb predicció i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@TEC_CSS@*/
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px"></p></div>
+<div class="side">
+<div class="tbar"><div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label=""></div>
+<label class="check" id="crosswrap" hidden><input type="checkbox" id="cross"><span data-i18n="crossed"></span></label></div>
+<div id="ctls" style="display:grid;gap:2px"></div>
+<div class="predict">
+<label for="guess" data-i18n="guess_q"></label><input type="text" inputmode="decimal" id="guess" autocomplete="off" style="width:5.5em">
+<button class="btn" id="checkg" type="button" data-i18n="check"></button>
+<button class="btn primary" id="play" type="button"></button>
+</div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<h3 data-i18n="out_h"></h3>
+<dl class="kv">
+<dt data-i18n="k_i"></dt><dd class="hl" id="vI"></dd>
+<dt data-i18n="k_type"></dt><dd id="vT"></dd>
+<dt data-i18n="k_nout"></dt><dd class="hb" id="vN"></dd>
+<dt data-i18n="k_mout"></dt><dd class="hb" id="vM"></dd>
+<dt data-i18n="k_dir"></dt><dd id="vD"></dd>
+<dt data-i18n="k_pow"></dt><dd id="vP"></dd>
+</dl>
+<div class="formula" id="formula"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Engranatges i politges: relació de transmissió",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Mecanismes",
+"h1":"Engranatges i politges: què passa amb les voltes i la força?",
+"lede":"Canvia les dents o els diàmetres i mira com canvien les voltes per minut, el parell i el sentit de gir.",
+"sim_title":"El mecanisme",
+"story":"La roda <b>A</b> (blava) és la <b>conductora</b>: la mou el motor. La roda <b>B</b> (taronja) és la <b>conduïda</b>. La <b>relació de transmissió</b> és <b>i = n<sub>sortida</sub> / n<sub>entrada</sub></b>. Si no hi ha pèrdues, la potència es conserva: el que guanyes en velocitat ho perds en força, i al revés.",
+"aria.mode":"Tipus de mecanisme",
+"m_g2":"Dos engranatges","m_g4":"Tren compost (4)","m_pol":"Politges i corretja",
+"crossed":"Corretja creuada",
+"z1":"Dents de la roda A (z₁)","z2":"Dents de la roda B (z₂)","z3":"Dents de la roda C (z₃, al mateix eix que B)","z4":"Dents de la roda D (z₄)",
+"d1":"Diàmetre de la politja A (mm)","d2":"Diàmetre de la politja B (mm)",
+"rpm":"Velocitat d'entrada (rpm)","par":"Parell d'entrada (N·m)",
+"guess_q":"La teua predicció: quantes rpm eixiran?",
+"check":"Comprova","play":"▶ Gira","pause":"❚❚ Pausa",
+"out_h":"Resultats",
+"k_i":"Relació de transmissió i","k_type":"Tipus","k_nout":"Velocitat de sortida","k_mout":"Parell de sortida","k_dir":"Sentit de gir de B","k_pow":"Potència (sense pèrdues)",
+"t_red":"Reductor (i < 1)","t_mul":"Multiplicador (i > 1)","t_one":"Transmissió 1 : 1",
+"d_same":"El mateix que A","d_opp":"Contrari al d'A",
+"fm_g2":"i = z₁ / z₂ = {0} / {1} = {2}",
+"fm_g4":"i = (z₁ · z₃) / (z₂ · z₄) = ({0} · {1}) / ({2} · {3}) = {4}",
+"fm_pol":"i = d₁ / d₂ = {0} / {1} = {2}",
+"fm_n":"n₂ = n₁ · i = {0} · {1} = {2} rpm",
+"fm_m":"M₂ = M₁ / i = {0} / {1} = {2} N·m",
+"g_ok":"✔ Encertat! Eixiran {0} rpm.",
+"g_no":"Ho havies predit en {0} rpm, però n'eixiran {1}. Recorda: n₂ = n₁ · i, amb i = {2}.",
+"g_bad":"Escriu un nombre (rpm).",
+"idea_basic":"<b>Idea:</b> la roda amb <b>més dents</b> (o més diàmetre) gira <b>més a poc a poc</b> però amb <b>més força</b>. La xicoteta gira de pressa però fa menys força.",
+"idea_adv":"<b>Per a pensar:</b> en un tren compost, i = (z₁·z₃)/(z₂·z₄): es multipliquen les relacions de cada parella. Amb dues parelles 1 : 4 s'arriba a 1 : 16 sense cap roda enorme. I la potència P = M·ω no canvia (sense pèrdues).",
+"unit_rpm":"rpm",
+"q1.q":"Un motor mou un engranatge de 10 dents a 90 rpm. Està engranat amb un altre de 30 dents. A quantes rpm gira el segon?",
+"q1.u":"rpm","q1.e":"i = 10/30 = 1/3, així que n₂ = 90 · 1/3 = 30 rpm.",
+"q2.q":"L'engranatge conductor té 20 dents i el conduït en té 10. Quin tipus de mecanisme és?",
+"q2.o0":"Reductor: el conduït gira més a poc a poc","q2.o1":"Multiplicador: el conduït gira més de pressa","q2.o2":"Transmissió 1 : 1","q2.o3":"No es pot saber sense el parell",
+"q2.e":"i = 20/10 = 2 > 1: el conduït dona dues voltes per cada volta del conductor. És un multiplicador.",
+"q3.q":"En un reductor (i < 1), què passa amb el parell de sortida respecte al d'entrada?",
+"q3.o0":"Augmenta","q3.o1":"Disminueix","q3.o2":"Es queda igual","q3.o3":"Depén només de les rpm",
+"q3.e":"Amb P = M·ω constant, si la velocitat baixa el parell puja: M₂ = M₁ / i.",
+"q4.q":"Dos engranatges engranats directament: com gira el segon respecte al primer?",
+"q4.o0":"En el mateix sentit","q4.o1":"En sentit contrari","q4.o2":"Depén del nombre de dents","q4.o3":"No gira",
+"q4.e":"Dos engranatges engranats giren en sentits contraris. Només amb una roda intermèdia o dues parelles (tren compost) torna el mateix sentit.",
+"q5.q":"Tren compost amb z₁ = 10, z₂ = 40, z₃ = 10 i z₄ = 30. L'entrada va a 1200 rpm. A quantes rpm gira la sortida?",
+"q5.u":"rpm","q5.e":"i = (10·10)/(40·30) = 100/1200 = 1/12 → n = 1200/12 = 100 rpm.",
+"q6.q":"Dues politges amb corretja oberta: A de 40 mm i B de 160 mm. L'A gira a 400 rpm. A quantes rpm gira B?",
+"q6.u":"rpm","q6.e":"i = d₁/d₂ = 40/160 = 1/4 → n₂ = 400/4 = 100 rpm, en el mateix sentit (corretja oberta)."
+},
+es:{
+"title":"Engranajes y poleas: relación de transmisión",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Mecanismos",
+"h1":"Engranajes y poleas: ¿qué pasa con las vueltas y la fuerza?",
+"lede":"Cambia los dientes o los diámetros y mira cómo cambian las vueltas por minuto, el par y el sentido de giro.",
+"sim_title":"El mecanismo",
+"story":"La rueda <b>A</b> (azul) es la <b>conductora</b>: la mueve el motor. La rueda <b>B</b> (naranja) es la <b>conducida</b>. La <b>relación de transmisión</b> es <b>i = n<sub>salida</sub> / n<sub>entrada</sub></b>. Si no hay pérdidas, la potencia se conserva: lo que ganas en velocidad lo pierdes en fuerza, y al revés.",
+"aria.mode":"Tipo de mecanismo",
+"m_g2":"Dos engranajes","m_g4":"Tren compuesto (4)","m_pol":"Poleas y correa",
+"crossed":"Correa cruzada",
+"z1":"Dientes de la rueda A (z₁)","z2":"Dientes de la rueda B (z₂)","z3":"Dientes de la rueda C (z₃, en el mismo eje que B)","z4":"Dientes de la rueda D (z₄)",
+"d1":"Diámetro de la polea A (mm)","d2":"Diámetro de la polea B (mm)",
+"rpm":"Velocidad de entrada (rpm)","par":"Par de entrada (N·m)",
+"guess_q":"Tu predicción: ¿cuántas rpm saldrán?",
+"check":"Comprueba","play":"▶ Gira","pause":"❚❚ Pausa",
+"out_h":"Resultados",
+"k_i":"Relación de transmisión i","k_type":"Tipo","k_nout":"Velocidad de salida","k_mout":"Par de salida","k_dir":"Sentido de giro de B","k_pow":"Potencia (sin pérdidas)",
+"t_red":"Reductor (i < 1)","t_mul":"Multiplicador (i > 1)","t_one":"Transmisión 1 : 1",
+"d_same":"El mismo que A","d_opp":"Contrario al de A",
+"fm_g2":"i = z₁ / z₂ = {0} / {1} = {2}",
+"fm_g4":"i = (z₁ · z₃) / (z₂ · z₄) = ({0} · {1}) / ({2} · {3}) = {4}",
+"fm_pol":"i = d₁ / d₂ = {0} / {1} = {2}",
+"fm_n":"n₂ = n₁ · i = {0} · {1} = {2} rpm",
+"fm_m":"M₂ = M₁ / i = {0} / {1} = {2} N·m",
+"g_ok":"✔ ¡Acertaste! Saldrán {0} rpm.",
+"g_no":"Lo habías predicho en {0} rpm, pero saldrán {1}. Recuerda: n₂ = n₁ · i, con i = {2}.",
+"g_bad":"Escribe un número (rpm).",
+"idea_basic":"<b>Idea:</b> la rueda con <b>más dientes</b> (o más diámetro) gira <b>más despacio</b> pero con <b>más fuerza</b>. La pequeña gira deprisa pero hace menos fuerza.",
+"idea_adv":"<b>Para pensar:</b> en un tren compuesto, i = (z₁·z₃)/(z₂·z₄): se multiplican las relaciones de cada pareja. Con dos parejas 1 : 4 se llega a 1 : 16 sin ninguna rueda enorme. Y la potencia P = M·ω no cambia (sin pérdidas).",
+"unit_rpm":"rpm",
+"q1.q":"Un motor mueve un engranaje de 10 dientes a 90 rpm. Está engranado con otro de 30 dientes. ¿A cuántas rpm gira el segundo?",
+"q1.u":"rpm","q1.e":"i = 10/30 = 1/3, así que n₂ = 90 · 1/3 = 30 rpm.",
+"q2.q":"El engranaje conductor tiene 20 dientes y el conducido tiene 10. ¿Qué tipo de mecanismo es?",
+"q2.o0":"Reductor: el conducido gira más despacio","q2.o1":"Multiplicador: el conducido gira más deprisa","q2.o2":"Transmisión 1 : 1","q2.o3":"No se puede saber sin el par",
+"q2.e":"i = 20/10 = 2 > 1: el conducido da dos vueltas por cada vuelta del conductor. Es un multiplicador.",
+"q3.q":"En un reductor (i < 1), ¿qué pasa con el par de salida respecto al de entrada?",
+"q3.o0":"Aumenta","q3.o1":"Disminuye","q3.o2":"Se queda igual","q3.o3":"Depende solo de las rpm",
+"q3.e":"Con P = M·ω constante, si la velocidad baja el par sube: M₂ = M₁ / i.",
+"q4.q":"Dos engranajes engranados directamente: ¿cómo gira el segundo respecto al primero?",
+"q4.o0":"En el mismo sentido","q4.o1":"En sentido contrario","q4.o2":"Depende del número de dientes","q4.o3":"No gira",
+"q4.e":"Dos engranajes engranados giran en sentidos contrarios. Solo con una rueda intermedia o dos parejas (tren compuesto) vuelve el mismo sentido.",
+"q5.q":"Tren compuesto con z₁ = 10, z₂ = 40, z₃ = 10 y z₄ = 30. La entrada va a 1200 rpm. ¿A cuántas rpm gira la salida?",
+"q5.u":"rpm","q5.e":"i = (10·10)/(40·30) = 100/1200 = 1/12 → n = 1200/12 = 100 rpm.",
+"q6.q":"Dos poleas con correa abierta: A de 40 mm y B de 160 mm. La A gira a 400 rpm. ¿A cuántas rpm gira B?",
+"q6.u":"rpm","q6.e":"i = d₁/d₂ = 40/160 = 1/4 → n₂ = 400/4 = 100 rpm, en el mismo sentido (correa abierta)."
+}};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@TEC_JS@*/
+
+const W=640,H=400;
+const S={mode:'g2',th:0,play:true,cross:false,dash:0};
+const CT=$('#ctls'),SL={};
+SL.z1=slider(CT,{id:'z1',key:'z1',min:8,max:40,step:1,val:12,on:upd});
+SL.z2=slider(CT,{id:'z2',key:'z2',min:8,max:40,step:1,val:24,on:upd});
+SL.z3=slider(CT,{id:'z3',key:'z3',min:8,max:40,step:1,val:10,on:upd});
+SL.z4=slider(CT,{id:'z4',key:'z4',min:8,max:40,step:1,val:30,on:upd});
+SL.d1=slider(CT,{id:'d1',key:'d1',min:20,max:200,step:5,val:60,on:upd});
+SL.d2=slider(CT,{id:'d2',key:'d2',min:20,max:200,step:5,val:120,on:upd});
+SL.rpm=slider(CT,{id:'rpm',key:'rpm',min:10,max:240,step:10,val:120,on:upd});
+SL.par=slider(CT,{id:'par',key:'par',min:1,max:50,step:1,val:5,on:upd});
+const SHOW={g2:['z1','z2','rpm','par'],g4:['z1','z2','z3','z4','rpm','par'],pol:['d1','d2','rpm','par']};
+
+function params(){
+  const g=k=>SL[k].get();
+  if(S.mode==='g2')return {i:g('z1')/g('z2'),dir:-1};
+  if(S.mode==='g4')return {i:g('z1')*g('z3')/(g('z2')*g('z4')),dir:1};
+  return {i:g('d1')/g('d2'),dir:S.cross?-1:1};
+}
+function f2(x){return fmt(+x.toPrecision(3),x<10?2:x<100?1:0).replace(/,?0+$/,'').replace(/,$/,'');}
+function upd(){
+  const P=params(),n1=SL.rpm.get(),M1=SL.par.get();
+  SHOW_all();
+  const n2=n1*P.i,M2=M1/P.i,pw=M1*n1*TAU/60;
+  $('#vI').textContent=f2(P.i);
+  $('#vT').textContent=Math.abs(P.i-1)<1e-9?t('t_one'):P.i<1?t('t_red'):t('t_mul');
+  $('#vN').textContent=f2(n2)+' rpm';
+  $('#vM').textContent=f2(M2)+' N·m';
+  $('#vD').textContent=P.dir>0?t('d_same'):t('d_opp');
+  $('#vP').textContent=f2(pw)+' W';
+  const g=k=>SL[k].get();let fm;
+  if(S.mode==='g2')fm=tt('fm_g2',g('z1'),g('z2'),f2(P.i));
+  else if(S.mode==='g4')fm=tt('fm_g4',g('z1'),g('z3'),g('z2'),g('z4'),f2(P.i));
+  else fm=tt('fm_pol',g('d1'),g('d2'),f2(P.i));
+  $('#formula').innerHTML=fm+'<br>'+tt('fm_n',n1,f2(P.i),f2(n2))+'<br>'+tt('fm_m',M1,f2(P.i),f2(M2));
+}
+function SHOW_all(){Object.keys(SL).forEach(k=>SL[k].el.hidden=!SHOW[S.mode].includes(k));$('#crosswrap').hidden=S.mode!=='pol';}
+function setMode(m){S.mode=m;$('#msg').textContent='';$('#guess').value='';upd();}
+function buildSeg(){TEC.seg($('#modesw'),[{v:'g2',key:'m_g2'},{v:'g4',key:'m_g4'},{v:'pol',key:'m_pol'}],S.mode,setMode);}
+$('#cross').addEventListener('change',e=>{S.cross=e.target.checked;upd();});
+$('#play').addEventListener('click',()=>{S.play=!S.play;setPlay();});
+function setPlay(){$('#play').textContent=t(S.play?'pause':'play');}
+$('#checkg').addEventListener('click',()=>{
+  const v=parseNum($('#guess').value),m=$('#msg');
+  if(!isFinite(v)||$('#guess').value.trim()===''){m.className='msg bad';m.textContent=t('g_bad');return;}
+  const P=params(),r=SL.rpm.get()*P.i;
+  if(Math.abs(v-r)<=Math.abs(r)*.02+1e-9){m.className='msg good';m.textContent=tt('g_ok',f2(r));}
+  else{m.className='msg bad';m.textContent=tt('g_no',f2(v),f2(r),f2(P.i));}
+});
+
+/* ---- dibuix ---- */
+const cvo=TEC.cv('#cv',W,H,draw);
+function fitLayout(pts){/* pts: [{x,y,r}] en unitats; torna escala i desplaçament */
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  pts.forEach(p=>{x0=Math.min(x0,p.x-p.r);x1=Math.max(x1,p.x+p.r);y0=Math.min(y0,p.y-p.r);y1=Math.max(y1,p.y+p.r);});
+  const sc=Math.min((W-50)/(x1-x0),(H-80)/(y1-y0));
+  return {sc,ox:(W-(x1-x0)*sc)/2-x0*sc,oy:(H-(y1-y0)*sc)/2+10-y0*sc};
+}
+function arrowRot(c,x,y,dir,col){/* ↻ (sentit horari) o ↺ */
+  c.font='bold 22px system-ui';c.fillStyle=col;c.textAlign='center';c.textBaseline='middle';c.fillText(dir>0?'↻':'↺',x,y);
+}
+function draw(o){
+  const c=o.ctx,k=C(),P=params(),th=S.th;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  const g=q=>SL[q].get();
+  if(S.mode==='g2'){
+    const z1=g('z1'),z2=g('z2'),L=fitLayout([{x:0,y:0,r:z1/2+1},{x:(z1+z2)/2,y:0,r:z2/2+1}]);
+    const m=L.sc,x1=L.ox,x2=L.ox+m*(z1+z2)/2,y=L.oy;
+    const a2=Math.PI-th*z1/z2;
+    TEC.gear(c,x1,y,z1,m,th,k.pa,th);
+    TEC.gear(c,x2,y,z2,m,a2+Math.PI/z2,k.pb,a2);
+    lab(c,'A · '+z1,x1,y+m*z1/2+m*2.4,k.pa);lab(c,'B · '+z2,x2,y+m*z2/2+m*2.4,k.pb);
+    arrowRot(c,x1,y-m*z1/2-m*2.6,1,k.pa);arrowRot(c,x2,y-m*z2/2-m*2.6,-1,k.pb);
+  }else if(S.mode==='g4'){
+    const z1=g('z1'),z2=g('z2'),z3=g('z3'),z4=g('z4'),phi=0.75,D=(z3+z4)/2;
+    const X2=(z1+z2)/2,X4=X2+D*Math.cos(phi),Y4=D*Math.sin(phi);
+    const L=fitLayout([{x:0,y:0,r:z1/2+1},{x:X2,y:0,r:z2/2+1},{x:X4,y:Y4,r:z4/2+1}]);
+    const m=L.sc,x1=L.ox,x2=L.ox+m*X2,y=L.oy,x4=L.ox+m*X4,y4=L.oy+m*Y4;
+    const a2=Math.PI-th*z1/z2;                /* eix de B i C */
+    const A2=a2+Math.PI/z2;
+    const u=(phi-A2)/(TAU/z3);                 /* dent de C que toca amb D */
+    const a4=phi+Math.PI-(TAU/z4)*(-u+.5);
+    const th4=a4;                             /* D engranada amb C */
+    TEC.gear(c,x1,y,z1,m,th,k.pa,th);
+    TEC.gear(c,x2,y,z2,m,A2,k.pb,a2);
+    TEC.gear(c,x2,y,z3,m,A2,k.pa,a2,.3);
+    TEC.gear(c,x4,y4,z4,m,th4,k.pb,th4);
+    TEC.line(c,[[x2-6,y-6],[x2+6,y+6]],k.ink,1);
+    lab(c,'A · '+z1,x1,y+m*z1/2+m*2.4,k.pa);lab(c,'B+C · '+z2+'/'+z3,x2,y-m*z2/2-m*1.8,k.ink);lab(c,'D · '+z4,x4,y4+m*z4/2+m*2.4,k.pb);
+  }else{
+    const d1=g('d1'),d2=g('d2'),Ld=190;
+    const r1=d1/2,r2=d2/2,L=fitLayout([{x:0,y:0,r:r1+4},{x:Ld,y:0,r:r2+4}]);
+    const m=L.sc,c1=[L.ox,L.oy],c2=[L.ox+Ld*m,L.oy],R1=r1*m,R2=r2*m,Lp=Ld*m;
+    const cr=S.cross,nx=cr?(R1+R2)/Lp:(R1-R2)/Lp,ny=Math.sqrt(Math.max(0,1-nx*nx));
+    const col=k.muted;c.setLineDash([]);
+    c.lineWidth=5;c.strokeStyle=col;c.lineCap='round';c.setLineDash([14,6]);c.lineDashOffset=-S.dash*(S.mode==='pol'?1:0);
+    const pt=(cc,r,s,sy)=>[cc[0]+r*s*nx,cc[1]+r*s*sy*ny];
+    const ang=(cc,p)=>Math.atan2(p[1]-cc[1],p[0]-cc[0]);
+    if(!cr){
+      const T1u=pt(c1,R1,1,-1),T2u=pt(c2,R2,1,-1),T1l=pt(c1,R1,1,1),T2l=pt(c2,R2,1,1);
+      c.beginPath();c.moveTo(T1u[0],T1u[1]);c.lineTo(T2u[0],T2u[1]);c.arc(c2[0],c2[1],R2,ang(c2,T2u),ang(c2,T2l),false);c.lineTo(T1l[0],T1l[1]);c.arc(c1[0],c1[1],R1,ang(c1,T1l),ang(c1,T1u)+TAU,false);c.stroke();
+    }else{
+      const T1a=pt(c1,R1,1,-1),T2a=pt(c2,R2,-1,-1),T1b=pt(c1,R1,1,1),T2b=pt(c2,R2,-1,1);
+      /* T2a és el punt inferior de B perquè -(-ny)=+ny */
+      c.beginPath();c.moveTo(T1a[0],T1a[1]);c.lineTo(T2a[0],T2a[1]);c.arc(c2[0],c2[1],R2,ang(c2,T2a),ang(c2,T2b),true);c.lineTo(T1b[0],T1b[1]);c.arc(c1[0],c1[1],R1,ang(c1,T1b),ang(c1,T1a)+TAU,false);c.stroke();
+    }
+    c.setLineDash([]);
+    const a1=th,a2=th*(r1/r2)*(cr?-1:1);
+    pulley(c,c1,R1,a1,k.pa);pulley(c,c2,R2,a2,k.pb);
+    lab(c,'A · Ø'+d1,c1[0],c1[1]+R1+22,k.pa);lab(c,'B · Ø'+d2,c2[0],c2[1]+R2+22,k.pb);
+    arrowRot(c,c1[0],c1[1]-R1-20,1,k.pa);arrowRot(c,c2[0],c2[1]-R2-20,cr?-1:1,k.pb);
+  }
+  const n2=SL.rpm.get()*P.i;
+  lab(c,'n₁ = '+SL.rpm.get()+' rpm',90,22,k.pa);lab(c,'n₂ = '+f2(n2)+' rpm',W-100,22,k.pb);
+}
+function lab(c,s,x,y,col){TEC.txt(c,s,x,y,{font:'bold 14px system-ui',col});}
+function pulley(c,cc,R,ang,col){
+  c.beginPath();c.arc(cc[0],cc[1],R,0,TAU);c.fillStyle=C().panel;c.fill();c.globalAlpha=.2;c.fillStyle=col;c.fill();c.globalAlpha=1;c.strokeStyle=col;c.lineWidth=2.5;c.stroke();
+  for(let j=0;j<3;j++){const a=ang+j*TAU/3;TEC.line(c,[[cc[0],cc[1]],[cc[0]+R*.82*Math.cos(a),cc[1]+R*.82*Math.sin(a)]],col,3);}
+  c.beginPath();c.arc(cc[0],cc[1],Math.max(4,R*.12),0,TAU);c.fillStyle=col;c.fill();
+  const mx=cc[0]+R*.82*Math.cos(ang),my=cc[1]+R*.82*Math.sin(ang);c.beginPath();c.arc(mx,my,Math.max(5,R*.09),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+}
+TEC.loop(dt=>{
+  if(S.play){const w=SL.rpm.get()/60*TAU*0.22;S.th+=REDUCE?0:w*dt;S.dash+=REDUCE?0:w*dt*18;}
+  draw(cvo);
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":30,"tol":0,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"q6","lvl":"basic","type":"num","num":100,"tol":0,"u":1},{"id":"q5","lvl":"adv","type":"num","num":100,"tol":0,"u":1}];
+App.hooks.push(()=>{upd();setPlay();buildSeg();});
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

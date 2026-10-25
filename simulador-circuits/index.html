@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulador de circuits: munta i prova</title>
+<meta name="description" content="Munta circuits amb pila, bombetes, resistències, interruptors i pulsadors i comprova si funcionen: el simulador calcula el corrent, avisa dels circuits oberts i dels curtcircuits i fon les bombetes que reben massa voltatge. Per a Tecnologia de 2n i 3r d'ESO.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/simulador-circuits/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/simulador-circuits/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/simulador-circuits/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/simulador-circuits/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Simulador de circuits: munta i prova">
+<meta property="og:description" content="Munta circuits amb pila, bombetes, resistències, interruptors i pulsadors i comprova si funcionen: el simulador calcula el corrent, avisa dels circuits oberts i dels curtcircuits i fon les bombetes que reben massa voltatge. Per a Tecnologia de 2n i 3r d'ESO.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/simulador-circuits/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació i components comuns de les animacions de Tecnologia ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{min-width:0}
+.simcv canvas{touch-action:none}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side h3{margin:2px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.msg:empty{display:none}
+.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv dd.hl{color:var(--pa);font-weight:700}
+.kv dd.hb{color:var(--pb);font-weight:700}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2px 18px}
+.formula{font-family:var(--f-num);font-size:14.5px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.formula .ka{color:var(--pa);font-weight:700}.formula .kb{color:var(--pb);font-weight:700}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tbar .btn.on{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.formula:empty{display:none}
+
+.palette .btn{padding:5px 9px}
+.info{font-size:13.5px;min-height:3.6em;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--muted)}
+.info b{color:var(--ink)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Tecnologia · 2n i 3r ESO · Electricitat</p>
+      <h1 data-i18n="h1">Munta el circuit i comprova si funciona</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivell de la pàgina"><button type="button" data-level="basic" data-i18n="lvl_basic">Bàsic</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avançat</button></div>
+      <p class="lede" data-i18n="lede">Tria una peça, fes clic sobre un tram de la quadrícula i mira què passa. Se't fondrà alguna bombeta?</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Taller de circuits</h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px">Tria una peça i fes clic (o arrossega, si és un cable) sobre un <b>tram</b> de la quadrícula. Amb la <b>mà</b> pots tancar els interruptors i prémer els pulsadors. Una peça que ja hi és: la <b>pila</b> es gira i la <b>resistència</b> canvia de valor si hi tornes a fer clic; les altres es lleven. Les bombetes de 30 Ω s'han fet per a 6 V: amb més voltatge es fonen.</p></div>
+<div class="side">
+<div class="seg palette" id="tools" role="group" data-i18n-aria="aria.tool" aria-label="Peces"></div>
+<div id="ctls" style="display:grid;gap:2px"></div>
+<div class="row"><span class="mut" data-i18n="presets">Exemples:</span><div class="chips" id="presets"></div></div>
+<div class="tbar"><button class="btn" id="fixb" type="button" data-i18n="fixb">Canvia les bombetes fosses</button><button class="btn" id="clear" type="button" data-i18n="clear">Esborra-ho tot</button></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<dl class="kv" id="kv"></dl>
+<div class="info" id="info"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Idea:</b> per a que passe corrent cal un <b>circuit tancat</b>: del pol + de la pila, per les peces, fins al pol −. Un interruptor obert trenca el camí.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Per a pensar:</b> una bombeta de 30 Ω a 6 V consumeix 0,2 A (1,2 W); a 9 V consumiria 0,3 A (2,7 W) i es fon. Dues piles posades una darrere de l'altra se sumen. Un curtcircuit és un camí amb resistència quasi nul·la entre els dos pols: pel corrent de la llei d'Ohm I = V / R, amb R → 0 la intensitat se dispara.</div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test d&#x27;autoavaluació"><h2><small data-i18n="quiz_eyebrow">Autoavaluació</small><span data-i18n="quiz_title">Posa't a prova</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Torna a començar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Simulador de circuits: munta i prova",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Electricitat",
+"h1":"Munta el circuit i comprova si funciona",
+"lede":"Tria una peça, fes clic sobre un tram de la quadrícula i mira què passa. Se't fondrà alguna bombeta?",
+"sim_title":"Taller de circuits",
+"story":"Tria una peça i fes clic (o arrossega, si és un cable) sobre un <b>tram</b> de la quadrícula. Amb la <b>mà</b> pots tancar els interruptors i prémer els pulsadors. Una peça que ja hi és: la <b>pila</b> es gira i la <b>resistència</b> canvia de valor si hi tornes a fer clic; les altres es lleven. Les bombetes de 30 Ω s'han fet per a 6 V: amb més voltatge es fonen.",
+"aria.tool":"Peces",
+"t_hand":"Mà","t_wire":"Cable","t_bat":"Pila","t_bulb":"Bombeta","t_res":"Resistència","t_sw":"Interruptor","t_push":"Pulsador","t_erase":"Goma",
+"V":"Voltatge de la pila (V)",
+"presets":"Exemples:",
+"p_simple":"Circuit simple","p_series":"Dues bombetes en sèrie","p_par":"Dues bombetes en paral·lel","p_short":"Curtcircuit (prova-ho!)",
+"fixb":"Canvia les bombetes fosses","clear":"Esborra-ho tot",
+"hint":"Tria una peça i fes clic sobre un tram.",
+"k_V":"Voltatge de la pila","k_I":"Corrent que dona la pila","k_P":"Potència de la pila",
+"m_nobat":"Falta una pila: posa'n una amb l'eina «Pila».",
+"m_open":"Circuit obert: no passa corrent. Comprova que el camí estiga tancat (cables, interruptors).",
+"m_short":"CURTCIRCUIT! El corrent és enorme perquè no hi ha cap resistència entre els dos pols. En la realitat s'escalfaria i podria cremar-se.",
+"m_blown":"S'ha fos una bombeta: li ha arribat massa voltatge. Redueix el voltatge o posa-hi una resistència o altra bombeta en sèrie.",
+"m_ok":"El corrent circula pel circuit.",
+"m_lit":"El corrent circula i hi ha bombetes enceses.",
+"i_empty":"Passa el ratolí per damunt d'una peça per a veure la seua tensió, intensitat i potència.",
+"i_V":"Voltatge","i_I":"Intensitat","i_P":"Potència","i_R":"Resistència",
+"n_wire":"Cable","n_bat":"Pila","n_bulb":"Bombeta","n_res":"Resistència","n_sw":"Interruptor","n_push":"Pulsador",
+"blownlbl":"fosa",
+"open":"obert","closed":"tancat",
+"idea_basic":"<b>Idea:</b> per a que passe corrent cal un <b>circuit tancat</b>: del pol + de la pila, per les peces, fins al pol −. Un interruptor obert trenca el camí.",
+"idea_adv":"<b>Per a pensar:</b> una bombeta de 30 Ω a 6 V consumeix 0,2 A (1,2 W); a 9 V consumiria 0,3 A (2,7 W) i es fon. Dues piles posades una darrere de l'altra se sumen. Un curtcircuit és un camí amb resistència quasi nul·la entre els dos pols: pel corrent de la llei d'Ohm I = V / R, amb R → 0 la intensitat se dispara.",
+"q1.q":"Una bombeta de 30 Ω se connecta a una pila de 6 V. Quants mA hi passen?",
+"q1.u":"mA","q1.e":"I = V / R = 6 / 30 = 0,2 A = 200 mA.",
+"q2.q":"Què és un curtcircuit?",
+"q2.o0":"Un camí de resistència quasi zero entre els dos pols de la pila","q2.o1":"Un circuit amb moltes bombetes","q2.o2":"Un interruptor obert","q2.o3":"Una pila gastada",
+"q2.e":"Amb resistència quasi zero, el corrent I = V / R es dispara i pot escalfar els cables i cremar la pila.",
+"q3.q":"Dues bombetes iguals en sèrie amb una pila de 6 V. Quant voltatge rep cada una?",
+"q3.o0":"6 V cada una","q3.o1":"3 V cada una","q3.o2":"12 V cada una","q3.o3":"0 V",
+"q3.e":"En sèrie el voltatge es reparteix: si són iguals, cada bombeta rep la meitat (3 V).",
+"q4.q":"En un circuit has posat una pila, una bombeta i un cable, però la bombeta no s'encén. Quin és el motiu més probable?",
+"q4.o0":"El circuit no està tancat (falta un tram o hi ha un interruptor obert)","q4.o1":"La pila és massa gran","q4.o2":"Hi ha massa cables","q4.o3":"La bombeta és massa blava",
+"q4.e":"Perquè hi haja corrent el camí ha d'estar tancat del pol + al pol −.",
+"q5.q":"Quina diferència hi ha entre un interruptor i un pulsador?",
+"q5.o0":"L'interruptor manté la posició; el pulsador només tanca mentre el premem","q5.o1":"No n'hi ha cap","q5.o2":"El pulsador sempre està tancat","q5.o3":"L'interruptor només s'usa en corrent alterna",
+"q5.e":"L'interruptor té dos estats estables (obert/tancat). El pulsador tanca el circuit mentre el prems i torna sol a obert.",
+"q6.q":"Dues bombetes de 30 Ω en sèrie amb una pila de 6 V. Quants mA passen pel circuit?",
+"q6.u":"mA","q6.e":"R total = 60 Ω → I = 6 / 60 = 0,1 A = 100 mA."
+},
+es:{
+"title":"Simulador de circuitos: monta y prueba",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Electricidad",
+"h1":"Monta el circuito y comprueba si funciona",
+"lede":"Elige una pieza, haz clic en un tramo de la cuadrícula y mira qué pasa. ¿Se te fundirá alguna bombilla?",
+"sim_title":"Taller de circuitos",
+"story":"Elige una pieza y haz clic (o arrastra, si es un cable) sobre un <b>tramo</b> de la cuadrícula. Con la <b>mano</b> puedes cerrar los interruptores y pulsar los pulsadores. Una pieza que ya está: la <b>pila</b> se gira y la <b>resistencia</b> cambia de valor si vuelves a hacer clic; las demás se quitan. Las bombillas de 30 Ω están hechas para 6 V: con más voltaje se funden.",
+"aria.tool":"Piezas",
+"t_hand":"Mano","t_wire":"Cable","t_bat":"Pila","t_bulb":"Bombilla","t_res":"Resistencia","t_sw":"Interruptor","t_push":"Pulsador","t_erase":"Goma",
+"V":"Voltaje de la pila (V)",
+"presets":"Ejemplos:",
+"p_simple":"Circuito simple","p_series":"Dos bombillas en serie","p_par":"Dos bombillas en paralelo","p_short":"Cortocircuito (¡pruébalo!)",
+"fixb":"Cambia las bombillas fundidas","clear":"Borra todo",
+"hint":"Elige una pieza y haz clic sobre un tramo.",
+"k_V":"Voltaje de la pila","k_I":"Corriente que da la pila","k_P":"Potencia de la pila",
+"m_nobat":"Falta una pila: pon una con la herramienta «Pila».",
+"m_open":"Circuito abierto: no pasa corriente. Comprueba que el camino esté cerrado (cables, interruptores).",
+"m_short":"¡CORTOCIRCUITO! La corriente es enorme porque no hay ninguna resistencia entre los dos polos. En la realidad se calentaría y podría quemarse.",
+"m_blown":"Se ha fundido una bombilla: le ha llegado demasiado voltaje. Reduce el voltaje o pon una resistencia u otra bombilla en serie.",
+"m_ok":"La corriente circula por el circuito.",
+"m_lit":"La corriente circula y hay bombillas encendidas.",
+"i_empty":"Pasa el ratón por encima de una pieza para ver su tensión, intensidad y potencia.",
+"i_V":"Voltaje","i_I":"Intensidad","i_P":"Potencia","i_R":"Resistencia",
+"n_wire":"Cable","n_bat":"Pila","n_bulb":"Bombilla","n_res":"Resistencia","n_sw":"Interruptor","n_push":"Pulsador",
+"blownlbl":"fundida",
+"open":"abierto","closed":"cerrado",
+"idea_basic":"<b>Idea:</b> para que pase corriente hace falta un <b>circuito cerrado</b>: del polo + de la pila, por las piezas, hasta el polo −. Un interruptor abierto rompe el camino.",
+"idea_adv":"<b>Para pensar:</b> una bombilla de 30 Ω a 6 V consume 0,2 A (1,2 W); a 9 V consumiría 0,3 A (2,7 W) y se funde. Dos pilas puestas una tras otra se suman. Un cortocircuito es un camino con resistencia casi nula entre los dos polos: por la ley de Ohm I = V / R, con R → 0 la intensidad se dispara.",
+"q1.q":"Una bombilla de 30 Ω se conecta a una pila de 6 V. ¿Cuántos mA pasan por ella?",
+"q1.u":"mA","q1.e":"I = V / R = 6 / 30 = 0,2 A = 200 mA.",
+"q2.q":"¿Qué es un cortocircuito?",
+"q2.o0":"Un camino de resistencia casi cero entre los dos polos de la pila","q2.o1":"Un circuito con muchas bombillas","q2.o2":"Un interruptor abierto","q2.o3":"Una pila gastada",
+"q2.e":"Con resistencia casi cero, la corriente I = V / R se dispara y puede calentar los cables y quemar la pila.",
+"q3.q":"Dos bombillas iguales en serie con una pila de 6 V. ¿Cuánto voltaje recibe cada una?",
+"q3.o0":"6 V cada una","q3.o1":"3 V cada una","q3.o2":"12 V cada una","q3.o3":"0 V",
+"q3.e":"En serie el voltaje se reparte: si son iguales, cada bombilla recibe la mitad (3 V).",
+"q4.q":"En un circuito has puesto una pila, una bombilla y un cable, pero la bombilla no se enciende. ¿Cuál es el motivo más probable?",
+"q4.o0":"El circuito no está cerrado (falta un tramo o hay un interruptor abierto)","q4.o1":"La pila es demasiado grande","q4.o2":"Hay demasiados cables","q4.o3":"La bombilla es demasiado azul",
+"q4.e":"Para que haya corriente el camino debe estar cerrado del polo + al polo −.",
+"q5.q":"¿Qué diferencia hay entre un interruptor y un pulsador?",
+"q5.o0":"El interruptor mantiene la posición; el pulsador solo cierra mientras lo pulsamos","q5.o1":"Ninguna","q5.o2":"El pulsador siempre está cerrado","q5.o3":"El interruptor solo se usa en corriente alterna",
+"q5.e":"El interruptor tiene dos estados estables (abierto/cerrado). El pulsador cierra el circuito mientras lo pulsas y vuelve solo a abierto.",
+"q6.q":"Dos bombillas de 30 Ω en serie con una pila de 6 V. ¿Cuántos mA pasan por el circuito?",
+"q6.u":"mA","q6.e":"R total = 60 Ω → I = 6 / 60 = 0,1 A = 100 mA."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/simulador-circuits/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== utilitats comunes de les animacions de Tecnologia (depén de common.js) ===== */
+const TEC={
+  /* bucle d'animació: fn(dt en segons) */
+  loop(fn){let last=performance.now();const f=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;fn(dt);requestAnimationFrame(f);};requestAnimationFrame(f);},
+  /* canvas lògic W×H que es torna a dibuixar quan canvia la mida o el tema */
+  cv(sel,W,H,draw){let o=null;o=makeCanvas($(sel),W,H,()=>{if(o)draw(o);});document.addEventListener('themechange',()=>draw(o));draw(o);return o;},
+  txt(c,s,x,y,o){o=o||{};c.font=o.font||'13px system-ui';c.fillStyle=o.col||C().ink;c.textAlign=o.al||'center';c.textBaseline=o.bl||'middle';c.fillText(s,x,y);},
+  line(c,pts,col,w,dash){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w||2;c.setLineDash(dash||[]);c.lineJoin='round';c.lineCap='round';c.stroke();c.setLineDash([]);},
+  arrow(c,x1,y1,x2,y2,col,w){
+    const a=Math.atan2(y2-y1,x2-x1),h=Math.max(7,(w||2)*3.4);
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);c.strokeStyle=col;c.lineWidth=w||2;c.lineCap='round';c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));c.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));c.closePath();c.fillStyle=col;c.fill();
+  },
+  /* roda dentada de mòdul m (px per dent): z dents, angle ang; la dent 0 apunta cap a ang */
+  gear(c,cx,cy,z,m,ang,col,markAng,alpha){
+    const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z,P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    c.beginPath();
+    for(let k=0;k<z;k++){
+      const a=ang+k*2*hp;
+      [P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)].forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+    }
+    c.closePath();
+    c.fillStyle=C().panel;c.fill();
+    c.globalAlpha=alpha||.2;c.fillStyle=col;c.fill();c.globalAlpha=1;
+    c.strokeStyle=col;c.lineWidth=2;c.setLineDash([]);c.stroke();
+    c.beginPath();c.arc(cx,cy,Math.max(4,m*0.55),0,TAU);c.fillStyle=col;c.fill();
+    if(markAng!==undefined){
+      const mx=cx+(R-m*0.3)*Math.cos(markAng),my=cy+(R-m*0.3)*Math.sin(markAng);
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.stroke();
+      c.beginPath();c.arc(mx,my,Math.max(4,m*0.4),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+    }
+  },
+  /* arrossegar sobre un canvas amb ratolí o dit: h={down(p)->bool, move(p), up()} */
+  drag(o,h){
+    let on=false;
+    o.cv.addEventListener('pointerdown',e=>{const p=o.pt(e);if(h.down(p,e)){on=true;o.cv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    o.cv.addEventListener('pointermove',e=>{const p=o.pt(e);if(on)h.move(p,e);else if(h.hover)h.hover(p,e);});
+    const end=e=>{if(on){on=false;h.up&&h.up(e);}};
+    o.cv.addEventListener('pointerup',end);o.cv.addEventListener('pointercancel',end);
+  },
+  /* prefix SI per a resistències i corrents: 4700 -> "4,7 kΩ" */
+  si(v,u){
+    if(!isFinite(v))return '∞ '+u;
+    const a=Math.abs(v);let k=0,p=['','k','M','G'],pm=['','m','µ'];
+    if(a>=1000){while(Math.abs(v)>=1000&&k<3){v/=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+p[k]+u;}
+    if(a<1&&a>0){while(Math.abs(v)<1&&k<2){v*=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+pm[k]+u;}
+    return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+u;
+  },
+  /* converteix text com "4,7k", "470", "2M2" en nombre */
+  parse(s){
+    s=String(s).trim().toLowerCase().replace(/\s/g,'').replace('ω','').replace('ohm','').replace('Ω','');
+    let m=s.match(/^(\d+)([kmr])(\d+)$/);
+    if(m){const mul={k:1e3,m:1e6,r:1}[m[2]];return parseFloat(m[1]+'.'+m[3])*mul;}
+    m=s.match(/^([\d.,]+)([km]?)$/);
+    if(!m)return NaN;
+    return parseFloat(m[1].replace(',','.'))*({'':1,k:1e3,m:1e6}[m[2]]);
+  },
+  seg(host,opts,cur,on){/* grup de botons exclusius; opts=[{v,key}] */
+    host.innerHTML='';const bs=opts.map(o=>{const b=document.createElement('button');b.type='button';b.dataset.v=o.v;b.setAttribute('data-i18n',o.key);b.textContent=t(o.key);b.setAttribute('aria-pressed',String(o.v===cur));
+      b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));on(o.v);};host.appendChild(b);return b;});
+    return bs;
+  }
+};
+
+
+const W=640,H=420,COLS=9,ROWS=6,SPX=66,OX=56,OY=62;
+const nodeXY=i=>[OX+(i%COLS)*SPX,OY+Math.floor(i/COLS)*SPX];
+const EDGES=[],EID={};
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  if(c<COLS-1)EDGES.push({id:'h'+r+'_'+c,a:r*COLS+c,b:r*COLS+c+1,o:'h'});
+  if(r<ROWS-1)EDGES.push({id:'v'+r+'_'+c,a:r*COLS+c,b:(r+1)*COLS+c,o:'v'});
+}
+EDGES.forEach(e=>{[e.x1,e.y1]=nodeXY(e.a);[e.x2,e.y2]=nodeXY(e.b);EID[e.id]=e;e.I=0;e.dV=0;e.ph=0;});
+const comp={};
+const S={tool:'hand',V:6,hover:null,short:false,blownNow:0,vals:[]};
+const RES=[10,47,100,220],RB=30,PBLOW=2.4;
+const CT=$('#ctls');
+const sv=slider(CT,{id:'V',key:'V',min:3,max:12,step:1.5,val:6,fmtv:v=>fmt(v,1)+' V',on:v=>{S.V=v;solve();}});
+const f3=x=>fmt(+x.toPrecision(3),3).replace(/,?0+$/,'').replace(/,$/,'');
+const defPol=e=>e.o==='h'?1:-1;
+const resOf=c=>c.t==='wire'?0.01:c.t==='bulb'?(c.blown?1e7:RB):c.t==='res'?c.v:(c.t==='sw'||c.t==='push')?(c.closed?0.01:1e7):1e7;
+
+function solve(){
+  const N=COLS*ROWS;let Ib=0,hasBat=false,short=false,again=true,guard=0;
+  while(again&&guard++<6){
+    again=false;Ib=0;hasBat=false;
+    const A=Array.from({length:N},()=>new Float64Array(N+1));
+    for(let i=0;i<N;i++)A[i][i]+=1e-9;
+    const st=(a,b,g)=>{A[a][a]+=g;A[b][b]+=g;A[a][b]-=g;A[b][a]-=g;};
+    EDGES.forEach(e=>{const c=comp[e.id];if(!c)return;
+      if(c.t==='bat'){const pol=(c.flip?-1:1)*defPol(e),p=pol>0?e.b:e.a,n=pol>0?e.a:e.b;st(p,n,2);A[p][N]+=S.V/0.5;A[n][N]-=S.V/0.5;}
+      else st(e.a,e.b,1/resOf(c));});
+    /* eliminació de Gauss */
+    for(let i=0;i<N;i++){
+      let p=i;for(let r=i+1;r<N;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;
+      [A[i],A[p]]=[A[p],A[i]];
+      const d=A[i][i];for(let r=i+1;r<N;r++){const f=A[r][i]/d;if(f===0)continue;for(let k=i;k<=N;k++)A[r][k]-=f*A[i][k];}
+    }
+    const Vn=new Float64Array(N);
+    for(let i=N-1;i>=0;i--){let s=A[i][N];for(let k=i+1;k<N;k++)s-=A[i][k]*Vn[k];Vn[i]=s/A[i][i];}
+    EDGES.forEach(e=>{const c=comp[e.id];e.I=0;e.dV=Vn[e.a]-Vn[e.b];if(!c)return;
+      if(c.t==='bat'){const pol=(c.flip?-1:1)*defPol(e),p=pol>0?e.b:e.a,n=pol>0?e.a:e.b;const ib=S.V/0.5-2*(Vn[p]-Vn[n]);e.I=pol>0?ib:-ib;e.dV=Vn[p]-Vn[n];if(Math.abs(ib)>Math.abs(Ib))Ib=ib;hasBat=true;}
+      else{e.I=e.dV/resOf(c);}
+      if(c.t==='bulb'&&!c.blown&&e.I*e.I*RB>PBLOW){c.blown=true;again=true;S.blownNow=performance.now();}
+    });
+  }
+  S.hasBat=hasBat;S.Ib=Ib;S.short=hasBat&&Math.abs(Ib)>3;
+  report();
+}
+function anyBlown(){return EDGES.some(e=>comp[e.id]&&comp[e.id].blown);}
+function report(){
+  const m=$('#msg');let k='m_ok',cls='msg good';
+  const lit=EDGES.some(e=>comp[e.id]&&comp[e.id].t==='bulb'&&!comp[e.id].blown&&e.I*e.I*RB>0.02);
+  if(!S.hasBat){k='m_nobat';cls='msg';}
+  else if(S.short){k='m_short';cls='msg bad';}
+  else if(anyBlown()){k='m_blown';cls='msg bad';}
+  else if(Math.abs(S.Ib)<0.002){k='m_open';cls='msg';}
+  else if(lit)k='m_lit';
+  m.className=cls;m.textContent=t(k);
+  const ib=S.hasBat?Math.abs(S.Ib):0;
+  $('#kv').innerHTML='<dt>'+t('k_V')+'</dt><dd>'+fmt(S.V,1)+' V</dd><dt>'+t('k_I')+'</dt><dd class="hb">'+(ib>=1?f3(ib)+' A':f3(ib*1000)+' mA')+'</dd><dt>'+t('k_P')+'</dt><dd>'+f3(ib*S.V)+' W</dd>';
+  hoverInfo();
+}
+function hoverInfo(){
+  const e=S.hover&&EID[S.hover],c=e&&comp[S.hover],box=$('#info');
+  if(!c){box.innerHTML=t('i_empty');return;}
+  const R=resOf(c),I=Math.abs(e.I),V=Math.abs(e.dV);
+  let extra='';if(c.t==='bulb')extra=c.blown?' · '+t('blownlbl'):'';else if(c.t==='res')extra=' · '+c.v+' Ω';else if(c.t==='sw'||c.t==='push')extra=' · '+t(c.closed?'closed':'open');
+  box.innerHTML='<b>'+t('n_'+c.t)+extra+'</b><br>'+t('i_V')+': '+f3(V)+' V · '+t('i_I')+': '+(I>=1?f3(I)+' A':f3(I*1000)+' mA')+' · '+t('i_P')+': '+f3(V*I)+' W';
+}
+
+/* ---- peces i exemples ---- */
+function setC(id,o){comp[id]=Object.assign({},o);}
+function rect(r0,c0,r1,c1){for(let c=c0;c<c1;c++){setC('h'+r0+'_'+c,{t:'wire'});setC('h'+r1+'_'+c,{t:'wire'});}for(let r=r0;r<r1;r++){setC('v'+r+'_'+c0,{t:'wire'});setC('v'+r+'_'+c1,{t:'wire'});}}
+const PRESETS={
+ simple(){rect(1,1,4,5);setC('v2_1',{t:'bat'});setC('h1_2',{t:'sw',closed:true});setC('h1_3',{t:'bulb'});},
+ series(){rect(1,1,4,5);setC('v2_1',{t:'bat'});setC('h1_2',{t:'bulb'});setC('h1_3',{t:'bulb'});setC('h4_3',{t:'sw',closed:true});},
+ par(){rect(1,1,4,7);setC('v2_1',{t:'bat'});setC('h1_2',{t:'sw',closed:true});setC('v1_4',{t:'wire'});setC('v2_4',{t:'bulb'});setC('v3_4',{t:'wire'});setC('v2_7',{t:'bulb'});},
+ short(){rect(1,1,4,5);setC('v2_1',{t:'bat'});setC('h1_3',{t:'sw',closed:false});}
+};
+function loadPreset(k){Object.keys(comp).forEach(i=>delete comp[i]);PRESETS[k]();solve();}
+function buildChips(){
+  const h=$('#presets');h.innerHTML='';
+  ['simple','series','par','short'].forEach(k=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t('p_'+(k==='simple'?'simple':k==='series'?'series':k==='par'?'par':'short'));b.onclick=()=>loadPreset(k);h.appendChild(b);});
+}
+$('#fixb').onclick=()=>{EDGES.forEach(e=>{if(comp[e.id])delete comp[e.id].blown;});solve();};
+$('#clear').onclick=()=>{Object.keys(comp).forEach(i=>delete comp[i]);solve();};
+function buildTools(){
+  const L=['hand','wire','bat','bulb','res','sw','push','erase'].map(v=>({v,key:'t_'+v}));
+  TEC.seg($('#tools'),L,S.tool,v=>{S.tool=v;});
+}
+function apply(e,paint){
+  const id=e.id,c=comp[id],tl=S.tool;
+  if(tl==='hand')return;
+  if(tl==='erase'){delete comp[id];}
+  else if(tl==='wire'){if(c&&c.t==='wire'){if(!paint)delete comp[id];}else setC(id,{t:'wire'});}
+  else if(paint)return;
+  else if(c&&c.t===tl){
+    if(tl==='bat')c.flip=!c.flip;
+    else if(tl==='res')c.v=RES[(RES.indexOf(c.v)+1)%RES.length];
+    else delete comp[id];
+  }else{
+    if(tl==='bat')setC(id,{t:'bat'});else if(tl==='res')setC(id,{t:'res',v:100});else if(tl==='sw'||tl==='push')setC(id,{t:tl,closed:false});else setC(id,{t:tl});
+  }
+  solve();
+}
+function nearEdge(p){
+  let best=null,bd=24;
+  EDGES.forEach(e=>{
+    const dx=e.x2-e.x1,dy=e.y2-e.y1,l2=dx*dx+dy*dy;let u=((p.x-e.x1)*dx+(p.y-e.y1)*dy)/l2;u=Math.max(0,Math.min(1,u));
+    const d=Math.hypot(p.x-(e.x1+u*dx),p.y-(e.y1+u*dy));
+    if(d<bd){bd=d;best=e;}
+  });
+  return best;
+}
+let lastPaint=null;
+const cvo=TEC.cv('#cv',W,H,draw);
+TEC.drag(cvo,{
+  down(p){const e=nearEdge(p);if(!e)return false;
+    if(S.tool==='hand'){const c=comp[e.id];if(c&&c.t==='sw'){c.closed=!c.closed;solve();}else if(c&&c.t==='push'){c.closed=true;solve();return true;}return false;}
+    lastPaint=e.id;apply(e,false);return S.tool==='wire'||S.tool==='erase';},
+  move(p){const e=nearEdge(p);if(e&&e.id!==lastPaint&&(S.tool==='wire'||S.tool==='erase')){lastPaint=e.id;apply(e,true);}},
+  up(){let ch=false;EDGES.forEach(e=>{const c=comp[e.id];if(c&&c.t==='push'&&c.closed){c.closed=false;ch=true;}});lastPaint=null;if(ch)solve();},
+  hover(p){const e=nearEdge(p);const id=e&&comp[e.id]?e.id:null;if(id!==S.hover){S.hover=id;hoverInfo();}}
+});
+cvo.cv.addEventListener('pointerleave',()=>{if(S.hover){S.hover=null;hoverInfo();}});
+
+/* ---- dibuix ---- */
+function glyph(c,k,e,cm){
+  const L=Math.hypot(e.x2-e.x1,e.y2-e.y1),ang=Math.atan2(e.y2-e.y1,e.x2-e.x1),mx=(e.x1+e.x2)/2,my=(e.y1+e.y2)/2;
+  c.save();c.translate(mx,my);c.rotate(ang);
+  const wire=(a,b,col,w)=>{c.beginPath();c.moveTo(a,0);c.lineTo(b,0);c.strokeStyle=col||k.ink;c.lineWidth=w||4;c.lineCap='round';c.stroke();};
+  const hl=L/2;
+  if(cm.t==='wire'){wire(-hl,hl,k.ink,4.5);}
+  else{
+    wire(-hl,-18,k.ink,4.5);wire(18,hl,k.ink,4.5);
+    if(cm.t==='bulb'){
+      const P=e.I*e.I*RB,b=cm.blown?0:Math.max(0,Math.min(1,Math.sqrt(P/1.4)));
+      if(b>0){const g=c.createRadialGradient(0,0,3,0,0,46);g.addColorStop(0,'rgba(255,214,70,'+(.8*b)+')');g.addColorStop(1,'rgba(255,214,70,0)');c.fillStyle=g;c.fillRect(-48,-48,96,96);}
+      c.beginPath();c.arc(0,0,16,0,TAU);c.fillStyle=b>0?'rgba(255,225,110,'+(.35+.65*b)+')':k.panel;c.fill();c.strokeStyle=cm.blown?k.warn:k.ink;c.lineWidth=2.5;c.stroke();
+      c.beginPath();c.moveTo(-9,8);c.lineTo(-4,-3);c.lineTo(0,5);c.lineTo(4,-3);c.lineTo(9,8);c.strokeStyle=cm.blown?k.warn:k.ink;c.lineWidth=2;c.stroke();
+      if(cm.blown){c.beginPath();c.moveTo(-10,-10);c.lineTo(10,10);c.moveTo(10,-10);c.lineTo(-10,10);c.strokeStyle=k.warn;c.lineWidth=3;c.stroke();}
+    }else if(cm.t==='res'){
+      c.beginPath();c.rect(-18,-7,36,14);c.fillStyle=k.panel;c.fill();c.strokeStyle=k.ink;c.lineWidth=2.5;c.stroke();
+      c.save();c.rotate(-ang);c.fillStyle=k.ink;c.font='bold 11.5px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText(cm.v+' Ω',0,-17);c.restore();
+    }else if(cm.t==='bat'){
+      const pol=(cm.flip?-1:1)*defPol(e);
+      c.beginPath();c.rect(-18,-14,36,28);c.fillStyle=k.panel;c.fill();c.strokeStyle=k.muted;c.lineWidth=1.5;c.stroke();
+      const plate=(x,h,w,col)=>{c.beginPath();c.moveTo(x,-h);c.lineTo(x,h);c.strokeStyle=col;c.lineWidth=w;c.stroke();};
+      plate(pol*-5,12,5,k.pa);plate(pol*6,7,5,k.pb);
+      c.save();c.rotate(-ang);const qx=Math.cos(ang)*pol*14,qy=Math.sin(ang)*pol*14;c.fillStyle=k.pb;c.font='bold 13px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('+',qx*1.0+Math.sin(ang)*-0,qy-(e.o==='h'?19:0));c.restore();
+    }else if(cm.t==='sw'||cm.t==='push'){
+      c.beginPath();c.arc(-14,0,3.5,0,TAU);c.arc(14,0,3.5,0,TAU);c.fillStyle=k.ink;c.fill();
+      if(cm.t==='sw'){c.beginPath();c.moveTo(-14,0);c.lineTo(cm.closed?14:11,cm.closed?0:-16);c.strokeStyle=cm.closed?k.ink:k.warn;c.lineWidth=4;c.lineCap='round';c.stroke();}
+      else{const y=cm.closed?-3:-14;c.beginPath();c.moveTo(-14,y);c.lineTo(14,y);c.strokeStyle=k.pb;c.lineWidth=4;c.stroke();c.beginPath();c.moveTo(0,y);c.lineTo(0,y-10);c.strokeStyle=k.pb;c.lineWidth=3;c.stroke();c.beginPath();c.rect(-7,y-14,14,5);c.fillStyle=k.pb;c.fill();}
+    }
+  }
+  c.restore();
+}
+function draw(o){
+  const c=o.ctx,k=C();
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  /* quadrícula guia */
+  EDGES.forEach(e=>{if(comp[e.id])return;c.beginPath();c.moveTo(e.x1,e.y1);c.lineTo(e.x2,e.y2);c.strokeStyle=k.line;c.globalAlpha=e.id===S.hoverEdge?1:.55;c.lineWidth=1.2;c.setLineDash([3,5]);c.stroke();c.setLineDash([]);c.globalAlpha=1;});
+  for(let i=0;i<COLS*ROWS;i++){const [x,y]=nodeXY(i);c.beginPath();c.arc(x,y,2.8,0,TAU);c.fillStyle=k.line;c.fill();}
+  EDGES.forEach(e=>{const cm=comp[e.id];if(cm)glyph(c,k,e,cm);});
+  /* electrons: només en peces amb corrent */
+  EDGES.forEach(e=>{
+    if(!comp[e.id]||Math.abs(e.I)<0.003)return;
+    const L=Math.hypot(e.x2-e.x1,e.y2-e.y1),dir=e.I>0?-1:1;/* electrons en sentit contrari al corrent convencional */
+    for(let d=e.ph%16;d<L;d+=16){
+      const u=dir>0?d/L:1-d/L,x=e.x1+(e.x2-e.x1)*u,y=e.y1+(e.y2-e.y1)*u;
+      if(comp[e.id].t==='bulb'||comp[e.id].t==='res'||comp[e.id].t==='bat'||comp[e.id].t==='sw'||comp[e.id].t==='push'){if(Math.abs(u-.5)<.3)continue;}
+      c.beginPath();c.arc(x,y,3.4,0,TAU);c.fillStyle=k.pa;c.fill();
+    }
+  });
+  if(!Object.keys(comp).length)TEC.txt(c,t('hint'),W/2,H/2,{font:'15px system-ui',col:k.muted});
+  if(S.short){c.fillStyle='rgba(220,40,40,'+(.12+.1*Math.sin(performance.now()/120))+')';c.fillRect(0,0,W,H);TEC.txt(c,'⚠ '+t('m_short').split('!')[0]+'!',W/2,24,{font:'bold 18px system-ui',col:k.warn});}
+}
+TEC.loop(dt=>{
+  if(!REDUCE)EDGES.forEach(e=>{if(Math.abs(e.I)>=0.003)e.ph=(e.ph+Math.min(180,30+Math.abs(e.I)*300)*dt)%16;});
+  draw(cvo);
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":200,"tol":0.01,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q3","lvl":"adv","type":"mc","n":4,"ans":1},{"id":"q6","lvl":"adv","type":"num","num":100,"tol":0.01,"u":1}];
+App.hooks.push(()=>{buildTools();buildChips();report();});
+initQuiz(QDATA);
+loadPreset('simple');
+initLang();applyLang();
+</script>
+</body>
+</html>

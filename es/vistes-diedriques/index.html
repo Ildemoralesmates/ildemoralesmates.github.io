@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vistas diédricas: alzado, planta y perfil</title>
+<meta name="description" content="Gira una pieza hecha de cubos y observa cómo se proyectan el alzado, la planta y el perfil izquierdo en el sistema diédrico europeo. Después dibuja tú las tres vistas y compruébalas. Para Tecnología y Dibujo de 2.º y 3.º de ESO, con test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/vistes-diedriques/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/vistes-diedriques/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/vistes-diedriques/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/vistes-diedriques/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Vistas diédricas: alzado, planta y perfil">
+<meta property="og:description" content="Gira una pieza hecha de cubos y observa cómo se proyectan el alzado, la planta y el perfil izquierdo en el sistema diédrico europeo. Después dibuja tú las tres vistas y compruébalas. Para Tecnología y Dibujo de 2.º y 3.º de ESO, con test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/vistes-diedriques/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació i components comuns de les animacions de Tecnologia ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{min-width:0}
+.simcv canvas{touch-action:none}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side h3{margin:2px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.msg:empty{display:none}
+.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv dd.hl{color:var(--pa);font-weight:700}
+.kv dd.hb{color:var(--pb);font-weight:700}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2px 18px}
+.formula{font-family:var(--f-num);font-size:14.5px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.formula .ka{color:var(--pa);font-weight:700}.formula .kb{color:var(--pb);font-weight:700}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tbar .btn.on{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.formula:empty{display:none}
+
+.sw{display:inline-block;width:.9em;height:.9em;border-radius:3px;vertical-align:-.1em;margin-right:4px;border:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+select.sel{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Tecnología · 2.º y 3.º ESO · Expresión gráfica</p>
+      <h1 data-i18n="h1">Alzado, planta y perfil de una pieza</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Gira la pieza de cubos y ve cómo se proyecta en cada vista. ¡Después dibuja tú las vistas!</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">La pieza y sus vistas</h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px">Miramos la pieza de <b>frente</b> (alzado), desde <b>arriba</b> (planta) y desde la <b>izquierda</b> (perfil izquierdo). En el sistema europeo, la planta se dibuja <b>debajo</b> del alzado y el perfil izquierdo <b>a la derecha</b> del alzado. Las líneas más gruesas entre dos cuadrados indican una arista visible (un cambio de profundidad).</p></div>
+<div class="side">
+<div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label="Modo"></div>
+<div class="row"><label for="piece" data-i18n="piece">Pieza</label><select class="sel" id="piece"></select><button class="btn" id="rnd" type="button" data-i18n="rnd">🎲 Pieza al azar</button></div>
+<div class="row"><button class="btn" id="rl" type="button" data-i18n="rl">↶ Gira</button><button class="btn" id="rr" type="button" data-i18n="rr">↷ Gira</button></div>
+<div class="row" id="toolrow"><span data-i18n="tool">Clic sobre un cubo:</span><div class="seg" id="toolsw" role="group"></div></div>
+<div class="row" id="chkrow"><button class="btn primary" id="chk" type="button" data-i18n="chk">Comprueba</button><button class="btn" id="sol" type="button" data-i18n="sol">Muestra la solución</button><button class="btn" id="clr" type="button" data-i18n="clr">Vacía</button></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<p class="legend2"><span class="sw" id="s1"></span><span data-i18n="l_front">cara del alzado</span> · <span class="sw" id="s2"></span><span data-i18n="l_left">cara del perfil</span> · <span class="sw" id="s3"></span><span data-i18n="l_top">cara de la planta</span></p>
+<dl class="kv"><dt data-i18n="k_cubes">Cubos de la pieza</dt><dd class="hl" id="vN"></dd><dt data-i18n="k_a">Cuadrados en el alzado</dt><dd id="vA"></dd><dt data-i18n="k_p">Cuadrados en la planta</dt><dd id="vP"></dd><dt data-i18n="k_f">Cuadrados en el perfil</dt><dd id="vF"></dd></dl>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Idea:</b> cada vista es la sombra de la pieza sobre un plano. El alzado y la planta comparten la <b>anchura</b>; el alzado y el perfil comparten la <b>altura</b>; la planta y el perfil comparten la <b>profundidad</b>.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Para pensar:</b> tres vistas <b>no siempre</b> determinan una pieza única: puede haber varias piezas con las mismas sombras. Por eso en dibujo técnico se añaden las aristas ocultas en línea discontinua, y a veces una cuarta vista. Prueba a quitar cubos y comprueba si las vistas cambian.</div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+<script>
+const I18N={
+ca:{
+"title":"Vistes dièdriques: alçat, planta i perfil",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Expressió gràfica",
+"h1":"Alçat, planta i perfil d'una peça",
+"lede":"Gira la peça de cubs i veges com es projecta en cada vista. Després dibuixa tu les vistes!",
+"sim_title":"La peça i les seues vistes",
+"story":"Mirem la peça de <b>davant</b> (alçat), des de <b>dalt</b> (planta) i des de l'<b>esquerra</b> (perfil esquerre). En el sistema europeu, la planta es dibuixa <b>davall</b> de l'alçat i el perfil esquerre <b>a la dreta</b> de l'alçat. Les línies més gruixudes entre dos quadrats indiquen una aresta visible (un canvi de profunditat).",
+"aria.mode":"Mode",
+"m_obs":"Observa","m_dr":"Dibuixa",
+"piece":"Peça","rnd":"🎲 Peça a l'atzar",
+"p0":"Escala","p1":"Cantonada","p2":"Pont","p3":"Pedestal","p4":"L",
+"rl":"↶ Gira","rr":"↷ Gira",
+"tool":"Clic sobre un cub:","t_add":"Afig cub","t_rem":"Lleva cub",
+"chk":"Comprova","sol":"Mostra la solució","clr":"Buida",
+"l_front":"cara de l'alçat","l_left":"cara del perfil","l_top":"cara de la planta",
+"v_a":"Alçat","v_p":"Planta","v_f":"Perfil esquerre",
+"hint_obs":"Fes clic en una cara de la peça per a afegir o llevar un cub.",
+"hint_dr":"Dibuixa la peça de la figura: fes clic en els quadrats de les tres vistes que veuries i prem «Comprova».",
+"k_cubes":"Cubs de la peça","k_a":"Quadrats a l'alçat","k_p":"Quadrats a la planta","k_f":"Quadrats al perfil",
+"m_ok":"✔ Perfecte! Les tres vistes coincideixen.",
+"m_bad":"Hi ha {0} quadrats mal posats (en roig). Pensa què veuries mirant des d'eixa direcció.",
+"m_sol":"Solució mostrada. Torna a provar amb una altra peça!",
+"idea_basic":"<b>Idea:</b> cada vista és l'ombra de la peça sobre un pla. L'alçat i la planta comparteixen l'<b>amplària</b>; l'alçat i el perfil comparteixen l'<b>altura</b>; la planta i el perfil comparteixen la <b>fondària</b>.",
+"idea_adv":"<b>Per a pensar:</b> tres vistes <b>no sempre</b> determinen una peça única: pot haver-hi diverses peces amb les mateixes ombres. Per això en dibuix tècnic s'afegeixen les arestes ocultes en línia discontínua, i de vegades una quarta vista. Prova a llevar cubs i comprova si les vistes canvien.",
+"q1.q":"On es dibuixa la planta respecte de l'alçat en el sistema europeu?",
+"q1.o0":"Damunt","q1.o1":"Davall","q1.o2":"A la dreta","q1.o3":"A l'esquerra",
+"q1.e":"La planta se situa davall de l'alçat, alineada amb ell en l'amplària.",
+"q2.q":"Des d'on s'observa el perfil esquerre?",
+"q2.o0":"Des de la dreta de la peça","q2.o1":"Des de dalt","q2.o2":"Des de l'esquerra de la peça","q2.o3":"Des de darrere",
+"q2.e":"El perfil esquerre és la vista que té un observador situat a l'esquerra de la peça.",
+"q3.q":"Quants quadrats té la planta d'un cub gran de 3 × 3 × 3 cubs (sense cap forat)?",
+"q3.u":"quadrats","q3.e":"Des de dalt es veu un quadrat de 3 × 3 = 9.",
+"q4.q":"Quines dues vistes tenen la mateixa altura?",
+"q4.o0":"Alçat i perfil","q4.o1":"Alçat i planta","q4.o2":"Planta i perfil","q4.o3":"Cap",
+"q4.e":"Alçat i perfil es dibuixen a la mateixa alçada i comparteixen l'altura de la peça.",
+"q5.q":"Què representa una línia contínua dins d'una vista?",
+"q5.o0":"Una aresta visible o un canvi de profunditat","q5.o1":"L'eix de la peça","q5.o2":"Una cota","q5.o3":"Res: només el contorn",
+"q5.e":"Les arestes que es veuen des d'eixe punt de vista es dibuixen en línia contínua.",
+"q6.q":"Si lleves un cub de dins d'una peça gran sense que es veja per cap costat, canvien les tres vistes?",
+"q6.o0":"Sí, totes","q6.o1":"No, cap de les tres","q6.o2":"Només la planta","q6.o3":"Només l'alçat",
+"q6.e":"Les vistes només mostren el que es veu des de fora: un cub amagat no canvia el contorn."
+},
+es:{
+"title":"Vistas diédricas: alzado, planta y perfil",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Expresión gráfica",
+"h1":"Alzado, planta y perfil de una pieza",
+"lede":"Gira la pieza de cubos y ve cómo se proyecta en cada vista. ¡Después dibuja tú las vistas!",
+"sim_title":"La pieza y sus vistas",
+"story":"Miramos la pieza de <b>frente</b> (alzado), desde <b>arriba</b> (planta) y desde la <b>izquierda</b> (perfil izquierdo). En el sistema europeo, la planta se dibuja <b>debajo</b> del alzado y el perfil izquierdo <b>a la derecha</b> del alzado. Las líneas más gruesas entre dos cuadrados indican una arista visible (un cambio de profundidad).",
+"aria.mode":"Modo",
+"m_obs":"Observa","m_dr":"Dibuja",
+"piece":"Pieza","rnd":"🎲 Pieza al azar",
+"p0":"Escalera","p1":"Esquina","p2":"Puente","p3":"Pedestal","p4":"L",
+"rl":"↶ Gira","rr":"↷ Gira",
+"tool":"Clic sobre un cubo:","t_add":"Añade cubo","t_rem":"Quita cubo",
+"chk":"Comprueba","sol":"Muestra la solución","clr":"Vacía",
+"l_front":"cara del alzado","l_left":"cara del perfil","l_top":"cara de la planta",
+"v_a":"Alzado","v_p":"Planta","v_f":"Perfil izquierdo",
+"hint_obs":"Haz clic en una cara de la pieza para añadir o quitar un cubo.",
+"hint_dr":"Dibuja la pieza de la figura: haz clic en los cuadrados de las tres vistas que verías y pulsa «Comprueba».",
+"k_cubes":"Cubos de la pieza","k_a":"Cuadrados en el alzado","k_p":"Cuadrados en la planta","k_f":"Cuadrados en el perfil",
+"m_ok":"✔ ¡Perfecto! Las tres vistas coinciden.",
+"m_bad":"Hay {0} cuadrados mal puestos (en rojo). Piensa qué verías mirando desde esa dirección.",
+"m_sol":"Solución mostrada. ¡Prueba de nuevo con otra pieza!",
+"idea_basic":"<b>Idea:</b> cada vista es la sombra de la pieza sobre un plano. El alzado y la planta comparten la <b>anchura</b>; el alzado y el perfil comparten la <b>altura</b>; la planta y el perfil comparten la <b>profundidad</b>.",
+"idea_adv":"<b>Para pensar:</b> tres vistas <b>no siempre</b> determinan una pieza única: puede haber varias piezas con las mismas sombras. Por eso en dibujo técnico se añaden las aristas ocultas en línea discontinua, y a veces una cuarta vista. Prueba a quitar cubos y comprueba si las vistas cambian.",
+"q1.q":"¿Dónde se dibuja la planta respecto del alzado en el sistema europeo?",
+"q1.o0":"Encima","q1.o1":"Debajo","q1.o2":"A la derecha","q1.o3":"A la izquierda",
+"q1.e":"La planta se sitúa debajo del alzado, alineada con él en la anchura.",
+"q2.q":"¿Desde dónde se observa el perfil izquierdo?",
+"q2.o0":"Desde la derecha de la pieza","q2.o1":"Desde arriba","q2.o2":"Desde la izquierda de la pieza","q2.o3":"Desde detrás",
+"q2.e":"El perfil izquierdo es la vista que tiene un observador situado a la izquierda de la pieza.",
+"q3.q":"¿Cuántos cuadrados tiene la planta de un cubo grande de 3 × 3 × 3 cubos (sin ningún hueco)?",
+"q3.u":"cuadrados","q3.e":"Desde arriba se ve un cuadrado de 3 × 3 = 9.",
+"q4.q":"¿Qué dos vistas tienen la misma altura?",
+"q4.o0":"Alzado y perfil","q4.o1":"Alzado y planta","q4.o2":"Planta y perfil","q4.o3":"Ninguna",
+"q4.e":"Alzado y perfil se dibujan a la misma altura y comparten la altura de la pieza.",
+"q5.q":"¿Qué representa una línea continua dentro de una vista?",
+"q5.o0":"Una arista visible o un cambio de profundidad","q5.o1":"El eje de la pieza","q5.o2":"Una cota","q5.o3":"Nada: solo el contorno",
+"q5.e":"Las aristas que se ven desde ese punto de vista se dibujan en línea continua.",
+"q6.q":"Si quitas un cubo del interior de una pieza grande sin que se vea por ningún lado, ¿cambian las tres vistas?",
+"q6.o0":"Sí, todas","q6.o1":"No, ninguna de las tres","q6.o2":"Solo la planta","q6.o3":"Solo el alzado",
+"q6.e":"Las vistas solo muestran lo que se ve desde fuera: un cubo oculto no cambia el contorno."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../vistes-diedriques/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== utilitats comunes de les animacions de Tecnologia (depén de common.js) ===== */
+const TEC={
+  /* bucle d'animació: fn(dt en segons) */
+  loop(fn){let last=performance.now();const f=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;fn(dt);requestAnimationFrame(f);};requestAnimationFrame(f);},
+  /* canvas lògic W×H que es torna a dibuixar quan canvia la mida o el tema */
+  cv(sel,W,H,draw){let o=null;o=makeCanvas($(sel),W,H,()=>{if(o)draw(o);});document.addEventListener('themechange',()=>draw(o));draw(o);return o;},
+  txt(c,s,x,y,o){o=o||{};c.font=o.font||'13px system-ui';c.fillStyle=o.col||C().ink;c.textAlign=o.al||'center';c.textBaseline=o.bl||'middle';c.fillText(s,x,y);},
+  line(c,pts,col,w,dash){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w||2;c.setLineDash(dash||[]);c.lineJoin='round';c.lineCap='round';c.stroke();c.setLineDash([]);},
+  arrow(c,x1,y1,x2,y2,col,w){
+    const a=Math.atan2(y2-y1,x2-x1),h=Math.max(7,(w||2)*3.4);
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);c.strokeStyle=col;c.lineWidth=w||2;c.lineCap='round';c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));c.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));c.closePath();c.fillStyle=col;c.fill();
+  },
+  /* roda dentada de mòdul m (px per dent): z dents, angle ang; la dent 0 apunta cap a ang */
+  gear(c,cx,cy,z,m,ang,col,markAng,alpha){
+    const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z,P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    c.beginPath();
+    for(let k=0;k<z;k++){
+      const a=ang+k*2*hp;
+      [P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)].forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+    }
+    c.closePath();
+    c.fillStyle=C().panel;c.fill();
+    c.globalAlpha=alpha||.2;c.fillStyle=col;c.fill();c.globalAlpha=1;
+    c.strokeStyle=col;c.lineWidth=2;c.setLineDash([]);c.stroke();
+    c.beginPath();c.arc(cx,cy,Math.max(4,m*0.55),0,TAU);c.fillStyle=col;c.fill();
+    if(markAng!==undefined){
+      const mx=cx+(R-m*0.3)*Math.cos(markAng),my=cy+(R-m*0.3)*Math.sin(markAng);
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.stroke();
+      c.beginPath();c.arc(mx,my,Math.max(4,m*0.4),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+    }
+  },
+  /* arrossegar sobre un canvas amb ratolí o dit: h={down(p)->bool, move(p), up()} */
+  drag(o,h){
+    let on=false;
+    o.cv.addEventListener('pointerdown',e=>{const p=o.pt(e);if(h.down(p,e)){on=true;o.cv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    o.cv.addEventListener('pointermove',e=>{const p=o.pt(e);if(on)h.move(p,e);else if(h.hover)h.hover(p,e);});
+    const end=e=>{if(on){on=false;h.up&&h.up(e);}};
+    o.cv.addEventListener('pointerup',end);o.cv.addEventListener('pointercancel',end);
+  },
+  /* prefix SI per a resistències i corrents: 4700 -> "4,7 kΩ" */
+  si(v,u){
+    if(!isFinite(v))return '∞ '+u;
+    const a=Math.abs(v);let k=0,p=['','k','M','G'],pm=['','m','µ'];
+    if(a>=1000){while(Math.abs(v)>=1000&&k<3){v/=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+p[k]+u;}
+    if(a<1&&a>0){while(Math.abs(v)<1&&k<2){v*=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+pm[k]+u;}
+    return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+u;
+  },
+  /* converteix text com "4,7k", "470", "2M2" en nombre */
+  parse(s){
+    s=String(s).trim().toLowerCase().replace(/\s/g,'').replace('ω','').replace('ohm','').replace('Ω','');
+    let m=s.match(/^(\d+)([kmr])(\d+)$/);
+    if(m){const mul={k:1e3,m:1e6,r:1}[m[2]];return parseFloat(m[1]+'.'+m[3])*mul;}
+    m=s.match(/^([\d.,]+)([km]?)$/);
+    if(!m)return NaN;
+    return parseFloat(m[1].replace(',','.'))*({'':1,k:1e3,m:1e6}[m[2]]);
+  },
+  seg(host,opts,cur,on){/* grup de botons exclusius; opts=[{v,key}] */
+    host.innerHTML='';const bs=opts.map(o=>{const b=document.createElement('button');b.type='button';b.dataset.v=o.v;b.setAttribute('data-i18n',o.key);b.textContent=t(o.key);b.setAttribute('aria-pressed',String(o.v===cur));
+      b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));on(o.v);};host.appendChild(b);return b;});
+    return bs;
+  }
+};
+
+
+const W=720,H=420,N=3,CS=44,SC=42,IX=170,IY=345;
+const VP={a:[370,50],f:[536,50],p:[370,222]};
+const box=(x0,x1,y0,y1,z0,z1)=>{const r=[];for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++)for(let z=z0;z<=z1;z++)r.push([x,y,z]);return r;};
+const PRESETS=[
+ [].concat(box(0,2,0,1,0,0),box(1,2,0,1,1,1),box(2,2,0,1,2,2)),
+ [].concat(box(0,2,0,0,0,0),box(0,0,0,2,0,0),box(0,0,0,0,0,2)),
+ [].concat(box(0,0,0,1,0,2),box(2,2,0,1,0,2),box(1,1,0,1,2,2)),
+ [].concat(box(0,2,0,2,0,0),box(1,1,1,1,1,2)),
+ [].concat(box(0,2,0,0,0,0),box(0,0,0,0,1,2))
+];
+const S={mode:'obs',yaw:0,tool:'add',pi:0,res:null,showSol:false};
+let vox=[],user=[[],[],[]],faces=[];
+const emptyG=()=>[0,1,2].map(()=>[0,1,2].map(()=>false));
+function setPiece(list){vox=[];for(let x=0;x<N;x++){vox.push([]);for(let y=0;y<N;y++)vox[x].push([false,false,false]);}list.forEach(([x,y,z])=>vox[x][y][z]=true);}
+function clearUser(){user=[emptyG(),emptyG(),emptyG()];S.res=null;S.showSol=false;}
+function cnt(){let n=0;vox.forEach(a=>a.forEach(b=>b.forEach(v=>{if(v)n++;})));return n;}
+function randPiece(){
+  const list=[[1,1,0]],has=(x,y,z)=>list.some(v=>v[0]===x&&v[1]===y&&v[2]===z),n=5+Math.floor(Math.random()*5);
+  let g=0;
+  while(list.length<n&&g++<200){
+    const b=list[Math.floor(Math.random()*list.length)],d=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]][Math.floor(Math.random()*6)];
+    const x=b[0]+d[0],y=b[1]+d[1],z=b[2]+d[2];
+    if(x<0||y<0||z<0||x>=N||y>=N||z>=N||has(x,y,z))continue;list.push([x,y,z]);
+  }
+  return list;
+}
+/* vistes: matriu 3x3 [fila][col] i profunditat */
+function views(){
+  const A={f:emptyG(),d:[[9,9,9],[9,9,9],[9,9,9]]},P={f:emptyG(),d:[[9,9,9],[9,9,9],[9,9,9]]},F={f:emptyG(),d:[[9,9,9],[9,9,9],[9,9,9]]};
+  for(let x=0;x<N;x++)for(let y=0;y<N;y++)for(let z=0;z<N;z++)if(vox[x][y][z]){
+    let r=2-z,c=x;A.f[r][c]=true;A.d[r][c]=Math.min(A.d[r][c],y);
+    r=2-y;c=x;P.f[r][c]=true;P.d[r][c]=Math.min(P.d[r][c],2-z);
+    r=2-z;c=2-y;F.f[r][c]=true;F.d[r][c]=Math.min(F.d[r][c],x);
+  }
+  return {a:A,p:P,f:F};
+}
+/* ---- 3D isomètric ---- */
+function rot(x,y,k){for(let i=0;i<k;i++){const nx=N-1-y;y=x;x=nx;}return [x,y];}
+function vrot(a,b,k){for(let i=0;i<k;i++){const na=-b;b=a;a=na;}return [a,b];}
+function vinv(a,b,k){for(let i=0;i<k;i++){const na=b;b=-a;a=na;}return [a,b];}
+const prj=(x,y,z)=>[IX+(x-y)*0.866*SC,IY-(x+y)*0.5*SC-z*SC];
+function iso(c,k){
+  faces=[];
+  const list=[];
+  for(let x=0;x<N;x++)for(let y=0;y<N;y++)for(let z=0;z<N;z++)if(vox[x][y][z]){const [rx,ry]=rot(x,y,S.yaw);list.push({x,y,z,rx,ry});}
+  list.sort((a,b)=>(a.z-a.rx-a.ry)-(b.z-b.rx-b.ry));
+  /* terra */
+  const g=[prj(0,0,0),prj(N,0,0),prj(N,N,0),prj(0,N,0)];
+  c.beginPath();g.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=k.panel;c.fill();c.strokeStyle=k.line;c.lineWidth=1;c.stroke();
+  const neutral=k.dark?'#47506a':'#b9c0d0';
+  list.forEach(v=>{
+    const X=v.rx,Y=v.ry,Z=v.z;
+    const P=(a,b,d)=>prj(X+a,Y+b,Z+d);
+    const defs=[ ['top',[P(0,0,1),P(1,0,1),P(1,1,1),P(0,1,1)],[0,0,1]],
+                 ['fr',[P(0,0,0),P(1,0,0),P(1,0,1),P(0,0,1)],[0,-1,0]],
+                 ['lf',[P(0,0,0),P(0,1,0),P(0,1,1),P(0,0,1)],[-1,0,0]] ];
+    defs.forEach(([nm,poly,n])=>{
+      /* normal original */
+      const o=vinv(n[0],n[1],S.yaw);const on=[o[0],o[1],n[2]];
+      let col=neutral;if(on[2]===1)col=k.ok;else if(on[1]===-1)col=k.pa;else if(on[0]===-1)col=k.pb;
+      c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();
+      c.globalAlpha=.88;c.fillStyle=col;c.fill();c.globalAlpha=1;c.strokeStyle=k.ink;c.lineWidth=1.3;c.lineJoin='round';c.stroke();
+      faces.push({poly,v:[v.x,v.y,v.z],n:on});
+    });
+  });
+}
+/* ---- vistes ---- */
+function drawGrid(c,k,ox,oy,V,edit,wrong,label){
+  const cs=CS;
+  for(let r=0;r<3;r++)for(let q=0;q<3;q++){
+    const x=ox+q*cs,y=oy+r*cs;
+    c.fillStyle=k.panel;c.fillRect(x,y,cs,cs);c.strokeStyle=k.line;c.lineWidth=1;c.strokeRect(x+.5,y+.5,cs-1,cs-1);
+  }
+  const fill=(r,q,col)=>{c.globalAlpha=.4;c.fillStyle=col;c.fillRect(ox+q*cs,oy+r*cs,cs,cs);c.globalAlpha=1;};
+  const col=label==='a'?k.pa:label==='f'?k.pb:k.ok;
+  const F=edit?edit:V.f;
+  for(let r=0;r<3;r++)for(let q=0;q<3;q++){if(F[r][q])fill(r,q,col);if(wrong&&wrong[r][q]){c.fillStyle='rgba(220,50,50,.35)';c.fillRect(ox+q*cs,oy+r*cs,cs,cs);c.strokeStyle='#d33';c.lineWidth=2;c.strokeRect(ox+q*cs+2,oy+r*cs+2,cs-4,cs-4);}}
+  if(!edit){
+    const f=(r,q)=>r>=0&&r<3&&q>=0&&q<3&&F[r][q];
+    for(let r=0;r<3;r++)for(let q=0;q<3;q++){
+      const x=ox+q*cs,y=oy+r*cs;
+      const e=(r2,q2,pts)=>{const a=f(r,q),b=f(r2,q2);let on=false;if(a!==b)on=true;else if(a&&b&&V.d[r][q]!==V.d[r2][q2])on=true;if(on)TEC.line(c,pts,k.ink,2.4);};
+      if(r===0||true)e(r-1,q,[[x,y],[x+cs,y]]);
+      e(r+1,q,[[x,y+cs],[x+cs,y+cs]]);
+      e(r,q-1,[[x,y],[x,y+cs]]);
+      e(r,q+1,[[x+cs,y],[x+cs,y+cs]]);
+    }
+  }else{c.strokeStyle=k.ink;c.lineWidth=1;c.strokeRect(ox+.5,oy+.5,3*cs-1,3*cs-1);}
+  TEC.txt(c,t('v_'+(label==='a'?'a':label==='p'?'p':'f')),ox+1.5*cs,oy+3*cs+14,{font:'600 13px system-ui',col:k.ink});
+}
+function draw(o){
+  const c=o.ctx,k=C();c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  iso(c,k);
+  const V=views();
+  const dr=S.mode==='dr';
+  /* línies de projecció */
+  const [ax,ay]=VP.a,[px,py]=VP.p,[fx,fy]=VP.f;
+  c.setLineDash([3,4]);c.strokeStyle=k.muted;c.lineWidth=1;
+  [0,3].forEach(i=>{c.beginPath();c.moveTo(ax+i*CS,ay+3*CS+22);c.lineTo(ax+i*CS,py);c.stroke();c.beginPath();c.moveTo(ax+3*CS,ay+i*CS);c.lineTo(fx,ay+i*CS);c.stroke();});
+  c.setLineDash([]);
+  const wr=S.res&&S.res.wrong;
+  if(dr&&!S.showSol){
+    drawGrid(c,k,ax,ay,V.a,user[0],wr&&wr[0],'a');drawGrid(c,k,px,py,V.p,user[1],wr&&wr[1],'p');drawGrid(c,k,fx,fy,V.f,user[2],wr&&wr[2],'f');
+  }else{
+    drawGrid(c,k,ax,ay,V.a,null,null,'a');drawGrid(c,k,px,py,V.p,null,null,'p');drawGrid(c,k,fx,fy,V.f,null,null,'f');
+  }
+}
+setPiece(PRESETS[0]);clearUser();
+const cvo=TEC.cv('#cv',W,H,draw);
+/* ---- clic ---- */
+function inPoly(p,poly){let ins=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>p.y)!==(b[1]>p.y)&&p.x<(b[0]-a[0])*(p.y-a[1])/(b[1]-a[1])+a[0])ins=!ins;}return ins;}
+cvo.cv.addEventListener('click',e=>{
+  const p=cvo.pt(e);
+  if(S.mode==='dr'){
+    [['a',0],['p',1],['f',2]].forEach(([nm,i])=>{
+      const [ox,oy]=VP[nm],q=Math.floor((p.x-ox)/CS),r=Math.floor((p.y-oy)/CS);
+      if(q>=0&&q<3&&r>=0&&r<3){user[i][r][q]=!user[i][r][q];S.res=null;S.showSol=false;msgReset();}
+    });
+    draw(cvo);return;
+  }
+  for(let i=faces.length-1;i>=0;i--){const f=faces[i];if(inPoly(p,f.poly)){
+    const [x,y,z]=f.v;
+    if(S.tool==='rem'){if(cnt()>1)vox[x][y][z]=false;}
+    else{const nx=x+f.n[0],ny=y+f.n[1],nz=z+f.n[2];if(nx>=0&&ny>=0&&nz>=0&&nx<N&&ny<N&&nz<N)vox[nx][ny][nz]=true;}
+    info();draw(cvo);return;}}
+});
+function msgReset(){const m=$('#msg');m.className='msg';m.textContent=t(S.mode==='obs'?'hint_obs':'hint_dr');}
+function info(){
+  const V=views(),sum=g=>g.reduce((n,r)=>n+r.filter(Boolean).length,0);
+  $('#vN').textContent=cnt();$('#vA').textContent=sum(V.a.f);$('#vP').textContent=sum(V.p.f);$('#vF').textContent=sum(V.f.f);
+}
+function setMode(m){S.mode=m;S.res=null;S.showSol=false;if(m==='dr')clearUser();$('#toolrow').hidden=m!=='obs';$('#chkrow').hidden=m!=='dr';msgReset();draw(cvo);}
+function buildPiece(){const s=$('#piece');s.innerHTML='';PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t('p'+i);s.appendChild(o);});s.value=S.pi<0?'0':S.pi;}
+$('#piece').onchange=e=>{S.pi=+e.target.value;setPiece(PRESETS[S.pi]);clearUser();info();msgReset();draw(cvo);};
+$('#rnd').onclick=()=>{setPiece(randPiece());clearUser();info();msgReset();draw(cvo);};
+$('#rl').onclick=()=>{S.yaw=(S.yaw+3)%4;draw(cvo);};
+$('#rr').onclick=()=>{S.yaw=(S.yaw+1)%4;draw(cvo);};
+$('#chk').onclick=()=>{
+  const V=views(),T=[V.a.f,V.p.f,V.f.f];let bad=0;const wrong=[emptyG(),emptyG(),emptyG()];
+  for(let i=0;i<3;i++)for(let r=0;r<3;r++)for(let q=0;q<3;q++)if(user[i][r][q]!==T[i][r][q]){wrong[i][r][q]=true;bad++;}
+  S.res={wrong};const m=$('#msg');
+  if(!bad){m.className='msg good';m.textContent=t('m_ok');}else{m.className='msg bad';m.textContent=tt('m_bad',bad);}
+  draw(cvo);
+};
+$('#sol').onclick=()=>{S.showSol=true;S.res=null;const m=$('#msg');m.className='msg';m.textContent=t('m_sol');draw(cvo);};
+$('#clr').onclick=()=>{clearUser();msgReset();draw(cvo);};
+function buildSegs(){
+  TEC.seg($('#modesw'),[{v:'obs',key:'m_obs'},{v:'dr',key:'m_dr'}],S.mode,setMode);
+  TEC.seg($('#toolsw'),[{v:'add',key:'t_add'},{v:'rem',key:'t_rem'}],S.tool,v=>{S.tool=v;});
+}
+const QDATA=[{"id":"q1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":2},{"id":"q3","lvl":"basic","type":"num","num":9,"tol":0,"u":1},{"id":"q4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q5","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"q6","lvl":"adv","type":"mc","n":4,"ans":1}];
+App.hooks.push(()=>{buildSegs();buildPiece();$('#toolrow').hidden=S.mode!=='obs';$('#chkrow').hidden=S.mode!=='dr';msgReset();draw(cvo);});
+initQuiz(QDATA);
+const kk=C();
+$('#s1').style.background='var(--pa)';$('#s2').style.background='var(--pb)';$('#s3').style.background='var(--ok)';
+info();initLang();applyLang();
+</script>
+</body>
+</html>

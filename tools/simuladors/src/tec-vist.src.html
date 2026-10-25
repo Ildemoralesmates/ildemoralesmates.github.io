@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vistes dièdriques: alçat, planta i perfil</title>
+<meta name="description" content="Gira una peça feta de cubs i observa com es projecten l'alçat, la planta i el perfil esquerre en el sistema dièdric europeu. Després dibuixa tu les tres vistes i comprova-les. Per a Tecnologia i Dibuix de 2n i 3r d'ESO, amb test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@TEC_CSS@*/
+.sw{display:inline-block;width:.9em;height:.9em;border-radius:3px;vertical-align:-.1em;margin-right:4px;border:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+select.sel{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px"></p></div>
+<div class="side">
+<div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label=""></div>
+<div class="row"><label for="piece" data-i18n="piece"></label><select class="sel" id="piece"></select><button class="btn" id="rnd" type="button" data-i18n="rnd"></button></div>
+<div class="row"><button class="btn" id="rl" type="button" data-i18n="rl"></button><button class="btn" id="rr" type="button" data-i18n="rr"></button></div>
+<div class="row" id="toolrow"><span data-i18n="tool"></span><div class="seg" id="toolsw" role="group"></div></div>
+<div class="row" id="chkrow"><button class="btn primary" id="chk" type="button" data-i18n="chk"></button><button class="btn" id="sol" type="button" data-i18n="sol"></button><button class="btn" id="clr" type="button" data-i18n="clr"></button></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<p class="legend2"><span class="sw" id="s1"></span><span data-i18n="l_front"></span> · <span class="sw" id="s2"></span><span data-i18n="l_left"></span> · <span class="sw" id="s3"></span><span data-i18n="l_top"></span></p>
+<dl class="kv"><dt data-i18n="k_cubes"></dt><dd class="hl" id="vN"></dd><dt data-i18n="k_a"></dt><dd id="vA"></dd><dt data-i18n="k_p"></dt><dd id="vP"></dd><dt data-i18n="k_f"></dt><dd id="vF"></dd></dl>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"></div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"></div>
+</section>
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+<script>
+const I18N={
+ca:{
+"title":"Vistes dièdriques: alçat, planta i perfil",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Expressió gràfica",
+"h1":"Alçat, planta i perfil d'una peça",
+"lede":"Gira la peça de cubs i veges com es projecta en cada vista. Després dibuixa tu les vistes!",
+"sim_title":"La peça i les seues vistes",
+"story":"Mirem la peça de <b>davant</b> (alçat), des de <b>dalt</b> (planta) i des de l'<b>esquerra</b> (perfil esquerre). En el sistema europeu, la planta es dibuixa <b>davall</b> de l'alçat i el perfil esquerre <b>a la dreta</b> de l'alçat. Les línies més gruixudes entre dos quadrats indiquen una aresta visible (un canvi de profunditat).",
+"aria.mode":"Mode",
+"m_obs":"Observa","m_dr":"Dibuixa",
+"piece":"Peça","rnd":"🎲 Peça a l'atzar",
+"p0":"Escala","p1":"Cantonada","p2":"Pont","p3":"Pedestal","p4":"L",
+"rl":"↶ Gira","rr":"↷ Gira",
+"tool":"Clic sobre un cub:","t_add":"Afig cub","t_rem":"Lleva cub",
+"chk":"Comprova","sol":"Mostra la solució","clr":"Buida",
+"l_front":"cara de l'alçat","l_left":"cara del perfil","l_top":"cara de la planta",
+"v_a":"Alçat","v_p":"Planta","v_f":"Perfil esquerre",
+"hint_obs":"Fes clic en una cara de la peça per a afegir o llevar un cub.",
+"hint_dr":"Dibuixa la peça de la figura: fes clic en els quadrats de les tres vistes que veuries i prem «Comprova».",
+"k_cubes":"Cubs de la peça","k_a":"Quadrats a l'alçat","k_p":"Quadrats a la planta","k_f":"Quadrats al perfil",
+"m_ok":"✔ Perfecte! Les tres vistes coincideixen.",
+"m_bad":"Hi ha {0} quadrats mal posats (en roig). Pensa què veuries mirant des d'eixa direcció.",
+"m_sol":"Solució mostrada. Torna a provar amb una altra peça!",
+"idea_basic":"<b>Idea:</b> cada vista és l'ombra de la peça sobre un pla. L'alçat i la planta comparteixen l'<b>amplària</b>; l'alçat i el perfil comparteixen l'<b>altura</b>; la planta i el perfil comparteixen la <b>fondària</b>.",
+"idea_adv":"<b>Per a pensar:</b> tres vistes <b>no sempre</b> determinen una peça única: pot haver-hi diverses peces amb les mateixes ombres. Per això en dibuix tècnic s'afegeixen les arestes ocultes en línia discontínua, i de vegades una quarta vista. Prova a llevar cubs i comprova si les vistes canvien.",
+"q1.q":"On es dibuixa la planta respecte de l'alçat en el sistema europeu?",
+"q1.o0":"Damunt","q1.o1":"Davall","q1.o2":"A la dreta","q1.o3":"A l'esquerra",
+"q1.e":"La planta se situa davall de l'alçat, alineada amb ell en l'amplària.",
+"q2.q":"Des d'on s'observa el perfil esquerre?",
+"q2.o0":"Des de la dreta de la peça","q2.o1":"Des de dalt","q2.o2":"Des de l'esquerra de la peça","q2.o3":"Des de darrere",
+"q2.e":"El perfil esquerre és la vista que té un observador situat a l'esquerra de la peça.",
+"q3.q":"Quants quadrats té la planta d'un cub gran de 3 × 3 × 3 cubs (sense cap forat)?",
+"q3.u":"quadrats","q3.e":"Des de dalt es veu un quadrat de 3 × 3 = 9.",
+"q4.q":"Quines dues vistes tenen la mateixa altura?",
+"q4.o0":"Alçat i perfil","q4.o1":"Alçat i planta","q4.o2":"Planta i perfil","q4.o3":"Cap",
+"q4.e":"Alçat i perfil es dibuixen a la mateixa alçada i comparteixen l'altura de la peça.",
+"q5.q":"Què representa una línia contínua dins d'una vista?",
+"q5.o0":"Una aresta visible o un canvi de profunditat","q5.o1":"L'eix de la peça","q5.o2":"Una cota","q5.o3":"Res: només el contorn",
+"q5.e":"Les arestes que es veuen des d'eixe punt de vista es dibuixen en línia contínua.",
+"q6.q":"Si lleves un cub de dins d'una peça gran sense que es veja per cap costat, canvien les tres vistes?",
+"q6.o0":"Sí, totes","q6.o1":"No, cap de les tres","q6.o2":"Només la planta","q6.o3":"Només l'alçat",
+"q6.e":"Les vistes només mostren el que es veu des de fora: un cub amagat no canvia el contorn."
+},
+es:{
+"title":"Vistas diédricas: alzado, planta y perfil",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Expresión gráfica",
+"h1":"Alzado, planta y perfil de una pieza",
+"lede":"Gira la pieza de cubos y ve cómo se proyecta en cada vista. ¡Después dibuja tú las vistas!",
+"sim_title":"La pieza y sus vistas",
+"story":"Miramos la pieza de <b>frente</b> (alzado), desde <b>arriba</b> (planta) y desde la <b>izquierda</b> (perfil izquierdo). En el sistema europeo, la planta se dibuja <b>debajo</b> del alzado y el perfil izquierdo <b>a la derecha</b> del alzado. Las líneas más gruesas entre dos cuadrados indican una arista visible (un cambio de profundidad).",
+"aria.mode":"Modo",
+"m_obs":"Observa","m_dr":"Dibuja",
+"piece":"Pieza","rnd":"🎲 Pieza al azar",
+"p0":"Escalera","p1":"Esquina","p2":"Puente","p3":"Pedestal","p4":"L",
+"rl":"↶ Gira","rr":"↷ Gira",
+"tool":"Clic sobre un cubo:","t_add":"Añade cubo","t_rem":"Quita cubo",
+"chk":"Comprueba","sol":"Muestra la solución","clr":"Vacía",
+"l_front":"cara del alzado","l_left":"cara del perfil","l_top":"cara de la planta",
+"v_a":"Alzado","v_p":"Planta","v_f":"Perfil izquierdo",
+"hint_obs":"Haz clic en una cara de la pieza para añadir o quitar un cubo.",
+"hint_dr":"Dibuja la pieza de la figura: haz clic en los cuadrados de las tres vistas que verías y pulsa «Comprueba».",
+"k_cubes":"Cubos de la pieza","k_a":"Cuadrados en el alzado","k_p":"Cuadrados en la planta","k_f":"Cuadrados en el perfil",
+"m_ok":"✔ ¡Perfecto! Las tres vistas coinciden.",
+"m_bad":"Hay {0} cuadrados mal puestos (en rojo). Piensa qué verías mirando desde esa dirección.",
+"m_sol":"Solución mostrada. ¡Prueba de nuevo con otra pieza!",
+"idea_basic":"<b>Idea:</b> cada vista es la sombra de la pieza sobre un plano. El alzado y la planta comparten la <b>anchura</b>; el alzado y el perfil comparten la <b>altura</b>; la planta y el perfil comparten la <b>profundidad</b>.",
+"idea_adv":"<b>Para pensar:</b> tres vistas <b>no siempre</b> determinan una pieza única: puede haber varias piezas con las mismas sombras. Por eso en dibujo técnico se añaden las aristas ocultas en línea discontinua, y a veces una cuarta vista. Prueba a quitar cubos y comprueba si las vistas cambian.",
+"q1.q":"¿Dónde se dibuja la planta respecto del alzado en el sistema europeo?",
+"q1.o0":"Encima","q1.o1":"Debajo","q1.o2":"A la derecha","q1.o3":"A la izquierda",
+"q1.e":"La planta se sitúa debajo del alzado, alineada con él en la anchura.",
+"q2.q":"¿Desde dónde se observa el perfil izquierdo?",
+"q2.o0":"Desde la derecha de la pieza","q2.o1":"Desde arriba","q2.o2":"Desde la izquierda de la pieza","q2.o3":"Desde detrás",
+"q2.e":"El perfil izquierdo es la vista que tiene un observador situado a la izquierda de la pieza.",
+"q3.q":"¿Cuántos cuadrados tiene la planta de un cubo grande de 3 × 3 × 3 cubos (sin ningún hueco)?",
+"q3.u":"cuadrados","q3.e":"Desde arriba se ve un cuadrado de 3 × 3 = 9.",
+"q4.q":"¿Qué dos vistas tienen la misma altura?",
+"q4.o0":"Alzado y perfil","q4.o1":"Alzado y planta","q4.o2":"Planta y perfil","q4.o3":"Ninguna",
+"q4.e":"Alzado y perfil se dibujan a la misma altura y comparten la altura de la pieza.",
+"q5.q":"¿Qué representa una línea continua dentro de una vista?",
+"q5.o0":"Una arista visible o un cambio de profundidad","q5.o1":"El eje de la pieza","q5.o2":"Una cota","q5.o3":"Nada: solo el contorno",
+"q5.e":"Las aristas que se ven desde ese punto de vista se dibujan en línea continua.",
+"q6.q":"Si quitas un cubo del interior de una pieza grande sin que se vea por ningún lado, ¿cambian las tres vistas?",
+"q6.o0":"Sí, todas","q6.o1":"No, ninguna de las tres","q6.o2":"Solo la planta","q6.o3":"Solo el alzado",
+"q6.e":"Las vistas solo muestran lo que se ve desde fuera: un cubo oculto no cambia el contorno."
+}};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@TEC_JS@*/
+
+const W=720,H=420,N=3,CS=44,SC=42,IX=170,IY=345;
+const VP={a:[370,50],f:[536,50],p:[370,222]};
+const box=(x0,x1,y0,y1,z0,z1)=>{const r=[];for(let x=x0;x<=x1;x++)for(let y=y0;y<=y1;y++)for(let z=z0;z<=z1;z++)r.push([x,y,z]);return r;};
+const PRESETS=[
+ [].concat(box(0,2,0,1,0,0),box(1,2,0,1,1,1),box(2,2,0,1,2,2)),
+ [].concat(box(0,2,0,0,0,0),box(0,0,0,2,0,0),box(0,0,0,0,0,2)),
+ [].concat(box(0,0,0,1,0,2),box(2,2,0,1,0,2),box(1,1,0,1,2,2)),
+ [].concat(box(0,2,0,2,0,0),box(1,1,1,1,1,2)),
+ [].concat(box(0,2,0,0,0,0),box(0,0,0,0,1,2))
+];
+const S={mode:'obs',yaw:0,tool:'add',pi:0,res:null,showSol:false};
+let vox=[],user=[[],[],[]],faces=[];
+const emptyG=()=>[0,1,2].map(()=>[0,1,2].map(()=>false));
+function setPiece(list){vox=[];for(let x=0;x<N;x++){vox.push([]);for(let y=0;y<N;y++)vox[x].push([false,false,false]);}list.forEach(([x,y,z])=>vox[x][y][z]=true);}
+function clearUser(){user=[emptyG(),emptyG(),emptyG()];S.res=null;S.showSol=false;}
+function cnt(){let n=0;vox.forEach(a=>a.forEach(b=>b.forEach(v=>{if(v)n++;})));return n;}
+function randPiece(){
+  const list=[[1,1,0]],has=(x,y,z)=>list.some(v=>v[0]===x&&v[1]===y&&v[2]===z),n=5+Math.floor(Math.random()*5);
+  let g=0;
+  while(list.length<n&&g++<200){
+    const b=list[Math.floor(Math.random()*list.length)],d=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]][Math.floor(Math.random()*6)];
+    const x=b[0]+d[0],y=b[1]+d[1],z=b[2]+d[2];
+    if(x<0||y<0||z<0||x>=N||y>=N||z>=N||has(x,y,z))continue;list.push([x,y,z]);
+  }
+  return list;
+}
+/* vistes: matriu 3x3 [fila][col] i profunditat */
+function views(){
+  const A={f:emptyG(),d:[[9,9,9],[9,9,9],[9,9,9]]},P={f:emptyG(),d:[[9,9,9],[9,9,9],[9,9,9]]},F={f:emptyG(),d:[[9,9,9],[9,9,9],[9,9,9]]};
+  for(let x=0;x<N;x++)for(let y=0;y<N;y++)for(let z=0;z<N;z++)if(vox[x][y][z]){
+    let r=2-z,c=x;A.f[r][c]=true;A.d[r][c]=Math.min(A.d[r][c],y);
+    r=2-y;c=x;P.f[r][c]=true;P.d[r][c]=Math.min(P.d[r][c],2-z);
+    r=2-z;c=2-y;F.f[r][c]=true;F.d[r][c]=Math.min(F.d[r][c],x);
+  }
+  return {a:A,p:P,f:F};
+}
+/* ---- 3D isomètric ---- */
+function rot(x,y,k){for(let i=0;i<k;i++){const nx=N-1-y;y=x;x=nx;}return [x,y];}
+function vrot(a,b,k){for(let i=0;i<k;i++){const na=-b;b=a;a=na;}return [a,b];}
+function vinv(a,b,k){for(let i=0;i<k;i++){const na=b;b=-a;a=na;}return [a,b];}
+const prj=(x,y,z)=>[IX+(x-y)*0.866*SC,IY-(x+y)*0.5*SC-z*SC];
+function iso(c,k){
+  faces=[];
+  const list=[];
+  for(let x=0;x<N;x++)for(let y=0;y<N;y++)for(let z=0;z<N;z++)if(vox[x][y][z]){const [rx,ry]=rot(x,y,S.yaw);list.push({x,y,z,rx,ry});}
+  list.sort((a,b)=>(a.z-a.rx-a.ry)-(b.z-b.rx-b.ry));
+  /* terra */
+  const g=[prj(0,0,0),prj(N,0,0),prj(N,N,0),prj(0,N,0)];
+  c.beginPath();g.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=k.panel;c.fill();c.strokeStyle=k.line;c.lineWidth=1;c.stroke();
+  const neutral=k.dark?'#47506a':'#b9c0d0';
+  list.forEach(v=>{
+    const X=v.rx,Y=v.ry,Z=v.z;
+    const P=(a,b,d)=>prj(X+a,Y+b,Z+d);
+    const defs=[ ['top',[P(0,0,1),P(1,0,1),P(1,1,1),P(0,1,1)],[0,0,1]],
+                 ['fr',[P(0,0,0),P(1,0,0),P(1,0,1),P(0,0,1)],[0,-1,0]],
+                 ['lf',[P(0,0,0),P(0,1,0),P(0,1,1),P(0,0,1)],[-1,0,0]] ];
+    defs.forEach(([nm,poly,n])=>{
+      /* normal original */
+      const o=vinv(n[0],n[1],S.yaw);const on=[o[0],o[1],n[2]];
+      let col=neutral;if(on[2]===1)col=k.ok;else if(on[1]===-1)col=k.pa;else if(on[0]===-1)col=k.pb;
+      c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();
+      c.globalAlpha=.88;c.fillStyle=col;c.fill();c.globalAlpha=1;c.strokeStyle=k.ink;c.lineWidth=1.3;c.lineJoin='round';c.stroke();
+      faces.push({poly,v:[v.x,v.y,v.z],n:on});
+    });
+  });
+}
+/* ---- vistes ---- */
+function drawGrid(c,k,ox,oy,V,edit,wrong,label){
+  const cs=CS;
+  for(let r=0;r<3;r++)for(let q=0;q<3;q++){
+    const x=ox+q*cs,y=oy+r*cs;
+    c.fillStyle=k.panel;c.fillRect(x,y,cs,cs);c.strokeStyle=k.line;c.lineWidth=1;c.strokeRect(x+.5,y+.5,cs-1,cs-1);
+  }
+  const fill=(r,q,col)=>{c.globalAlpha=.4;c.fillStyle=col;c.fillRect(ox+q*cs,oy+r*cs,cs,cs);c.globalAlpha=1;};
+  const col=label==='a'?k.pa:label==='f'?k.pb:k.ok;
+  const F=edit?edit:V.f;
+  for(let r=0;r<3;r++)for(let q=0;q<3;q++){if(F[r][q])fill(r,q,col);if(wrong&&wrong[r][q]){c.fillStyle='rgba(220,50,50,.35)';c.fillRect(ox+q*cs,oy+r*cs,cs,cs);c.strokeStyle='#d33';c.lineWidth=2;c.strokeRect(ox+q*cs+2,oy+r*cs+2,cs-4,cs-4);}}
+  if(!edit){
+    const f=(r,q)=>r>=0&&r<3&&q>=0&&q<3&&F[r][q];
+    for(let r=0;r<3;r++)for(let q=0;q<3;q++){
+      const x=ox+q*cs,y=oy+r*cs;
+      const e=(r2,q2,pts)=>{const a=f(r,q),b=f(r2,q2);let on=false;if(a!==b)on=true;else if(a&&b&&V.d[r][q]!==V.d[r2][q2])on=true;if(on)TEC.line(c,pts,k.ink,2.4);};
+      if(r===0||true)e(r-1,q,[[x,y],[x+cs,y]]);
+      e(r+1,q,[[x,y+cs],[x+cs,y+cs]]);
+      e(r,q-1,[[x,y],[x,y+cs]]);
+      e(r,q+1,[[x+cs,y],[x+cs,y+cs]]);
+    }
+  }else{c.strokeStyle=k.ink;c.lineWidth=1;c.strokeRect(ox+.5,oy+.5,3*cs-1,3*cs-1);}
+  TEC.txt(c,t('v_'+(label==='a'?'a':label==='p'?'p':'f')),ox+1.5*cs,oy+3*cs+14,{font:'600 13px system-ui',col:k.ink});
+}
+function draw(o){
+  const c=o.ctx,k=C();c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  iso(c,k);
+  const V=views();
+  const dr=S.mode==='dr';
+  /* línies de projecció */
+  const [ax,ay]=VP.a,[px,py]=VP.p,[fx,fy]=VP.f;
+  c.setLineDash([3,4]);c.strokeStyle=k.muted;c.lineWidth=1;
+  [0,3].forEach(i=>{c.beginPath();c.moveTo(ax+i*CS,ay+3*CS+22);c.lineTo(ax+i*CS,py);c.stroke();c.beginPath();c.moveTo(ax+3*CS,ay+i*CS);c.lineTo(fx,ay+i*CS);c.stroke();});
+  c.setLineDash([]);
+  const wr=S.res&&S.res.wrong;
+  if(dr&&!S.showSol){
+    drawGrid(c,k,ax,ay,V.a,user[0],wr&&wr[0],'a');drawGrid(c,k,px,py,V.p,user[1],wr&&wr[1],'p');drawGrid(c,k,fx,fy,V.f,user[2],wr&&wr[2],'f');
+  }else{
+    drawGrid(c,k,ax,ay,V.a,null,null,'a');drawGrid(c,k,px,py,V.p,null,null,'p');drawGrid(c,k,fx,fy,V.f,null,null,'f');
+  }
+}
+setPiece(PRESETS[0]);clearUser();
+const cvo=TEC.cv('#cv',W,H,draw);
+/* ---- clic ---- */
+function inPoly(p,poly){let ins=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>p.y)!==(b[1]>p.y)&&p.x<(b[0]-a[0])*(p.y-a[1])/(b[1]-a[1])+a[0])ins=!ins;}return ins;}
+cvo.cv.addEventListener('click',e=>{
+  const p=cvo.pt(e);
+  if(S.mode==='dr'){
+    [['a',0],['p',1],['f',2]].forEach(([nm,i])=>{
+      const [ox,oy]=VP[nm],q=Math.floor((p.x-ox)/CS),r=Math.floor((p.y-oy)/CS);
+      if(q>=0&&q<3&&r>=0&&r<3){user[i][r][q]=!user[i][r][q];S.res=null;S.showSol=false;msgReset();}
+    });
+    draw(cvo);return;
+  }
+  for(let i=faces.length-1;i>=0;i--){const f=faces[i];if(inPoly(p,f.poly)){
+    const [x,y,z]=f.v;
+    if(S.tool==='rem'){if(cnt()>1)vox[x][y][z]=false;}
+    else{const nx=x+f.n[0],ny=y+f.n[1],nz=z+f.n[2];if(nx>=0&&ny>=0&&nz>=0&&nx<N&&ny<N&&nz<N)vox[nx][ny][nz]=true;}
+    info();draw(cvo);return;}}
+});
+function msgReset(){const m=$('#msg');m.className='msg';m.textContent=t(S.mode==='obs'?'hint_obs':'hint_dr');}
+function info(){
+  const V=views(),sum=g=>g.reduce((n,r)=>n+r.filter(Boolean).length,0);
+  $('#vN').textContent=cnt();$('#vA').textContent=sum(V.a.f);$('#vP').textContent=sum(V.p.f);$('#vF').textContent=sum(V.f.f);
+}
+function setMode(m){S.mode=m;S.res=null;S.showSol=false;if(m==='dr')clearUser();$('#toolrow').hidden=m!=='obs';$('#chkrow').hidden=m!=='dr';msgReset();draw(cvo);}
+function buildPiece(){const s=$('#piece');s.innerHTML='';PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t('p'+i);s.appendChild(o);});s.value=S.pi<0?'0':S.pi;}
+$('#piece').onchange=e=>{S.pi=+e.target.value;setPiece(PRESETS[S.pi]);clearUser();info();msgReset();draw(cvo);};
+$('#rnd').onclick=()=>{setPiece(randPiece());clearUser();info();msgReset();draw(cvo);};
+$('#rl').onclick=()=>{S.yaw=(S.yaw+3)%4;draw(cvo);};
+$('#rr').onclick=()=>{S.yaw=(S.yaw+1)%4;draw(cvo);};
+$('#chk').onclick=()=>{
+  const V=views(),T=[V.a.f,V.p.f,V.f.f];let bad=0;const wrong=[emptyG(),emptyG(),emptyG()];
+  for(let i=0;i<3;i++)for(let r=0;r<3;r++)for(let q=0;q<3;q++)if(user[i][r][q]!==T[i][r][q]){wrong[i][r][q]=true;bad++;}
+  S.res={wrong};const m=$('#msg');
+  if(!bad){m.className='msg good';m.textContent=t('m_ok');}else{m.className='msg bad';m.textContent=tt('m_bad',bad);}
+  draw(cvo);
+};
+$('#sol').onclick=()=>{S.showSol=true;S.res=null;const m=$('#msg');m.className='msg';m.textContent=t('m_sol');draw(cvo);};
+$('#clr').onclick=()=>{clearUser();msgReset();draw(cvo);};
+function buildSegs(){
+  TEC.seg($('#modesw'),[{v:'obs',key:'m_obs'},{v:'dr',key:'m_dr'}],S.mode,setMode);
+  TEC.seg($('#toolsw'),[{v:'add',key:'t_add'},{v:'rem',key:'t_rem'}],S.tool,v=>{S.tool=v;});
+}
+const QDATA=[{"id":"q1","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":2},{"id":"q3","lvl":"basic","type":"num","num":9,"tol":0,"u":1},{"id":"q4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"q5","lvl":"adv","type":"mc","n":4,"ans":0},{"id":"q6","lvl":"adv","type":"mc","n":4,"ans":1}];
+App.hooks.push(()=>{buildSegs();buildPiece();$('#toolrow').hidden=S.mode!=='obs';$('#chkrow').hidden=S.mode!=='dr';msgReset();draw(cvo);});
+initQuiz(QDATA);
+const kk=C();
+$('#s1').style.background='var(--pa)';$('#s2').style.background='var(--pb)';$('#s3').style.background='var(--ok)';
+info();initLang();applyLang();
+</script>
+</body>
+</html>

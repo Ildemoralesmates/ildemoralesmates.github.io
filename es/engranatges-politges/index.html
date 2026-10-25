@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Engranajes y poleas: relación de transmisión</title>
+<meta name="description" content="Engranajes, trenes compuestos y poleas con correa: cambia los dientes o los diámetros y mira cómo cambian la relación de transmisión, las rpm, el par y el sentido de giro. Para Tecnología de 2.º y 3.º de ESO, con predicción y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/engranatges-politges/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/engranatges-politges/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/engranatges-politges/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/engranatges-politges/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Engranajes y poleas: relación de transmisión">
+<meta property="og:description" content="Engranajes, trenes compuestos y poleas con correa: cambia los dientes o los diámetros y mira cómo cambian la relación de transmisión, las rpm, el par y el sentido de giro. Para Tecnología de 2.º y 3.º de ESO, con predicción y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/engranatges-politges/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació i components comuns de les animacions de Tecnologia ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{min-width:0}
+.simcv canvas{touch-action:none}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side h3{margin:2px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.msg:empty{display:none}
+.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv dd.hl{color:var(--pa);font-weight:700}
+.kv dd.hb{color:var(--pb);font-weight:700}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2px 18px}
+.formula{font-family:var(--f-num);font-size:14.5px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.formula .ka{color:var(--pa);font-weight:700}.formula .kb{color:var(--pb);font-weight:700}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tbar .btn.on{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.formula:empty{display:none}
+
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Tecnología · 2.º y 3.º ESO · Mecanismos</p>
+      <h1 data-i18n="h1">Engranajes y poleas: ¿qué pasa con las vueltas y la fuerza?</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Cambia los dientes o los diámetros y mira cómo cambian las vueltas por minuto, el par y el sentido de giro.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">El mecanismo</h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px">La rueda <b>A</b> (azul) es la <b>conductora</b>: la mueve el motor. La rueda <b>B</b> (naranja) es la <b>conducida</b>. La <b>relación de transmisión</b> es <b>i = n<sub>salida</sub> / n<sub>entrada</sub></b>. Si no hay pérdidas, la potencia se conserva: lo que ganas en velocidad lo pierdes en fuerza, y al revés.</p></div>
+<div class="side">
+<div class="tbar"><div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label="Tipo de mecanismo"></div>
+<label class="check" id="crosswrap" hidden><input type="checkbox" id="cross"><span data-i18n="crossed">Correa cruzada</span></label></div>
+<div id="ctls" style="display:grid;gap:2px"></div>
+<div class="predict">
+<label for="guess" data-i18n="guess_q">Tu predicción: ¿cuántas rpm saldrán?</label><input type="text" inputmode="decimal" id="guess" autocomplete="off" style="width:5.5em">
+<button class="btn" id="checkg" type="button" data-i18n="check">Comprobar</button>
+<button class="btn primary" id="play" type="button"></button>
+</div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<h3 data-i18n="out_h">Resultados</h3>
+<dl class="kv">
+<dt data-i18n="k_i">Relación de transmisión i</dt><dd class="hl" id="vI"></dd>
+<dt data-i18n="k_type">Tipo</dt><dd id="vT"></dd>
+<dt data-i18n="k_nout">Velocidad de salida</dt><dd class="hb" id="vN"></dd>
+<dt data-i18n="k_mout">Par de salida</dt><dd class="hb" id="vM"></dd>
+<dt data-i18n="k_dir">Sentido de giro de B</dt><dd id="vD"></dd>
+<dt data-i18n="k_pow">Potencia (sin pérdidas)</dt><dd id="vP"></dd>
+</dl>
+<div class="formula" id="formula"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Idea:</b> la rueda con <b>más dientes</b> (o más diámetro) gira <b>más despacio</b> pero con <b>más fuerza</b>. La pequeña gira deprisa pero hace menos fuerza.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Para pensar:</b> en un tren compuesto, i = (z₁·z₃)/(z₂·z₄): se multiplican las relaciones de cada pareja. Con dos parejas 1 : 4 se llega a 1 : 16 sin ninguna rueda enorme. Y la potencia P = M·ω no cambia (sin pérdidas).</div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Engranatges i politges: relació de transmissió",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Mecanismes",
+"h1":"Engranatges i politges: què passa amb les voltes i la força?",
+"lede":"Canvia les dents o els diàmetres i mira com canvien les voltes per minut, el parell i el sentit de gir.",
+"sim_title":"El mecanisme",
+"story":"La roda <b>A</b> (blava) és la <b>conductora</b>: la mou el motor. La roda <b>B</b> (taronja) és la <b>conduïda</b>. La <b>relació de transmissió</b> és <b>i = n<sub>sortida</sub> / n<sub>entrada</sub></b>. Si no hi ha pèrdues, la potència es conserva: el que guanyes en velocitat ho perds en força, i al revés.",
+"aria.mode":"Tipus de mecanisme",
+"m_g2":"Dos engranatges","m_g4":"Tren compost (4)","m_pol":"Politges i corretja",
+"crossed":"Corretja creuada",
+"z1":"Dents de la roda A (z₁)","z2":"Dents de la roda B (z₂)","z3":"Dents de la roda C (z₃, al mateix eix que B)","z4":"Dents de la roda D (z₄)",
+"d1":"Diàmetre de la politja A (mm)","d2":"Diàmetre de la politja B (mm)",
+"rpm":"Velocitat d'entrada (rpm)","par":"Parell d'entrada (N·m)",
+"guess_q":"La teua predicció: quantes rpm eixiran?",
+"check":"Comprova","play":"▶ Gira","pause":"❚❚ Pausa",
+"out_h":"Resultats",
+"k_i":"Relació de transmissió i","k_type":"Tipus","k_nout":"Velocitat de sortida","k_mout":"Parell de sortida","k_dir":"Sentit de gir de B","k_pow":"Potència (sense pèrdues)",
+"t_red":"Reductor (i < 1)","t_mul":"Multiplicador (i > 1)","t_one":"Transmissió 1 : 1",
+"d_same":"El mateix que A","d_opp":"Contrari al d'A",
+"fm_g2":"i = z₁ / z₂ = {0} / {1} = {2}",
+"fm_g4":"i = (z₁ · z₃) / (z₂ · z₄) = ({0} · {1}) / ({2} · {3}) = {4}",
+"fm_pol":"i = d₁ / d₂ = {0} / {1} = {2}",
+"fm_n":"n₂ = n₁ · i = {0} · {1} = {2} rpm",
+"fm_m":"M₂ = M₁ / i = {0} / {1} = {2} N·m",
+"g_ok":"✔ Encertat! Eixiran {0} rpm.",
+"g_no":"Ho havies predit en {0} rpm, però n'eixiran {1}. Recorda: n₂ = n₁ · i, amb i = {2}.",
+"g_bad":"Escriu un nombre (rpm).",
+"idea_basic":"<b>Idea:</b> la roda amb <b>més dents</b> (o més diàmetre) gira <b>més a poc a poc</b> però amb <b>més força</b>. La xicoteta gira de pressa però fa menys força.",
+"idea_adv":"<b>Per a pensar:</b> en un tren compost, i = (z₁·z₃)/(z₂·z₄): es multipliquen les relacions de cada parella. Amb dues parelles 1 : 4 s'arriba a 1 : 16 sense cap roda enorme. I la potència P = M·ω no canvia (sense pèrdues).",
+"unit_rpm":"rpm",
+"q1.q":"Un motor mou un engranatge de 10 dents a 90 rpm. Està engranat amb un altre de 30 dents. A quantes rpm gira el segon?",
+"q1.u":"rpm","q1.e":"i = 10/30 = 1/3, així que n₂ = 90 · 1/3 = 30 rpm.",
+"q2.q":"L'engranatge conductor té 20 dents i el conduït en té 10. Quin tipus de mecanisme és?",
+"q2.o0":"Reductor: el conduït gira més a poc a poc","q2.o1":"Multiplicador: el conduït gira més de pressa","q2.o2":"Transmissió 1 : 1","q2.o3":"No es pot saber sense el parell",
+"q2.e":"i = 20/10 = 2 > 1: el conduït dona dues voltes per cada volta del conductor. És un multiplicador.",
+"q3.q":"En un reductor (i < 1), què passa amb el parell de sortida respecte al d'entrada?",
+"q3.o0":"Augmenta","q3.o1":"Disminueix","q3.o2":"Es queda igual","q3.o3":"Depén només de les rpm",
+"q3.e":"Amb P = M·ω constant, si la velocitat baixa el parell puja: M₂ = M₁ / i.",
+"q4.q":"Dos engranatges engranats directament: com gira el segon respecte al primer?",
+"q4.o0":"En el mateix sentit","q4.o1":"En sentit contrari","q4.o2":"Depén del nombre de dents","q4.o3":"No gira",
+"q4.e":"Dos engranatges engranats giren en sentits contraris. Només amb una roda intermèdia o dues parelles (tren compost) torna el mateix sentit.",
+"q5.q":"Tren compost amb z₁ = 10, z₂ = 40, z₃ = 10 i z₄ = 30. L'entrada va a 1200 rpm. A quantes rpm gira la sortida?",
+"q5.u":"rpm","q5.e":"i = (10·10)/(40·30) = 100/1200 = 1/12 → n = 1200/12 = 100 rpm.",
+"q6.q":"Dues politges amb corretja oberta: A de 40 mm i B de 160 mm. L'A gira a 400 rpm. A quantes rpm gira B?",
+"q6.u":"rpm","q6.e":"i = d₁/d₂ = 40/160 = 1/4 → n₂ = 400/4 = 100 rpm, en el mateix sentit (corretja oberta)."
+},
+es:{
+"title":"Engranajes y poleas: relación de transmisión",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Mecanismos",
+"h1":"Engranajes y poleas: ¿qué pasa con las vueltas y la fuerza?",
+"lede":"Cambia los dientes o los diámetros y mira cómo cambian las vueltas por minuto, el par y el sentido de giro.",
+"sim_title":"El mecanismo",
+"story":"La rueda <b>A</b> (azul) es la <b>conductora</b>: la mueve el motor. La rueda <b>B</b> (naranja) es la <b>conducida</b>. La <b>relación de transmisión</b> es <b>i = n<sub>salida</sub> / n<sub>entrada</sub></b>. Si no hay pérdidas, la potencia se conserva: lo que ganas en velocidad lo pierdes en fuerza, y al revés.",
+"aria.mode":"Tipo de mecanismo",
+"m_g2":"Dos engranajes","m_g4":"Tren compuesto (4)","m_pol":"Poleas y correa",
+"crossed":"Correa cruzada",
+"z1":"Dientes de la rueda A (z₁)","z2":"Dientes de la rueda B (z₂)","z3":"Dientes de la rueda C (z₃, en el mismo eje que B)","z4":"Dientes de la rueda D (z₄)",
+"d1":"Diámetro de la polea A (mm)","d2":"Diámetro de la polea B (mm)",
+"rpm":"Velocidad de entrada (rpm)","par":"Par de entrada (N·m)",
+"guess_q":"Tu predicción: ¿cuántas rpm saldrán?",
+"check":"Comprueba","play":"▶ Gira","pause":"❚❚ Pausa",
+"out_h":"Resultados",
+"k_i":"Relación de transmisión i","k_type":"Tipo","k_nout":"Velocidad de salida","k_mout":"Par de salida","k_dir":"Sentido de giro de B","k_pow":"Potencia (sin pérdidas)",
+"t_red":"Reductor (i < 1)","t_mul":"Multiplicador (i > 1)","t_one":"Transmisión 1 : 1",
+"d_same":"El mismo que A","d_opp":"Contrario al de A",
+"fm_g2":"i = z₁ / z₂ = {0} / {1} = {2}",
+"fm_g4":"i = (z₁ · z₃) / (z₂ · z₄) = ({0} · {1}) / ({2} · {3}) = {4}",
+"fm_pol":"i = d₁ / d₂ = {0} / {1} = {2}",
+"fm_n":"n₂ = n₁ · i = {0} · {1} = {2} rpm",
+"fm_m":"M₂ = M₁ / i = {0} / {1} = {2} N·m",
+"g_ok":"✔ ¡Acertaste! Saldrán {0} rpm.",
+"g_no":"Lo habías predicho en {0} rpm, pero saldrán {1}. Recuerda: n₂ = n₁ · i, con i = {2}.",
+"g_bad":"Escribe un número (rpm).",
+"idea_basic":"<b>Idea:</b> la rueda con <b>más dientes</b> (o más diámetro) gira <b>más despacio</b> pero con <b>más fuerza</b>. La pequeña gira deprisa pero hace menos fuerza.",
+"idea_adv":"<b>Para pensar:</b> en un tren compuesto, i = (z₁·z₃)/(z₂·z₄): se multiplican las relaciones de cada pareja. Con dos parejas 1 : 4 se llega a 1 : 16 sin ninguna rueda enorme. Y la potencia P = M·ω no cambia (sin pérdidas).",
+"unit_rpm":"rpm",
+"q1.q":"Un motor mueve un engranaje de 10 dientes a 90 rpm. Está engranado con otro de 30 dientes. ¿A cuántas rpm gira el segundo?",
+"q1.u":"rpm","q1.e":"i = 10/30 = 1/3, así que n₂ = 90 · 1/3 = 30 rpm.",
+"q2.q":"El engranaje conductor tiene 20 dientes y el conducido tiene 10. ¿Qué tipo de mecanismo es?",
+"q2.o0":"Reductor: el conducido gira más despacio","q2.o1":"Multiplicador: el conducido gira más deprisa","q2.o2":"Transmisión 1 : 1","q2.o3":"No se puede saber sin el par",
+"q2.e":"i = 20/10 = 2 > 1: el conducido da dos vueltas por cada vuelta del conductor. Es un multiplicador.",
+"q3.q":"En un reductor (i < 1), ¿qué pasa con el par de salida respecto al de entrada?",
+"q3.o0":"Aumenta","q3.o1":"Disminuye","q3.o2":"Se queda igual","q3.o3":"Depende solo de las rpm",
+"q3.e":"Con P = M·ω constante, si la velocidad baja el par sube: M₂ = M₁ / i.",
+"q4.q":"Dos engranajes engranados directamente: ¿cómo gira el segundo respecto al primero?",
+"q4.o0":"En el mismo sentido","q4.o1":"En sentido contrario","q4.o2":"Depende del número de dientes","q4.o3":"No gira",
+"q4.e":"Dos engranajes engranados giran en sentidos contrarios. Solo con una rueda intermedia o dos parejas (tren compuesto) vuelve el mismo sentido.",
+"q5.q":"Tren compuesto con z₁ = 10, z₂ = 40, z₃ = 10 y z₄ = 30. La entrada va a 1200 rpm. ¿A cuántas rpm gira la salida?",
+"q5.u":"rpm","q5.e":"i = (10·10)/(40·30) = 100/1200 = 1/12 → n = 1200/12 = 100 rpm.",
+"q6.q":"Dos poleas con correa abierta: A de 40 mm y B de 160 mm. La A gira a 400 rpm. ¿A cuántas rpm gira B?",
+"q6.u":"rpm","q6.e":"i = d₁/d₂ = 40/160 = 1/4 → n₂ = 400/4 = 100 rpm, en el mismo sentido (correa abierta)."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../engranatges-politges/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== utilitats comunes de les animacions de Tecnologia (depén de common.js) ===== */
+const TEC={
+  /* bucle d'animació: fn(dt en segons) */
+  loop(fn){let last=performance.now();const f=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;fn(dt);requestAnimationFrame(f);};requestAnimationFrame(f);},
+  /* canvas lògic W×H que es torna a dibuixar quan canvia la mida o el tema */
+  cv(sel,W,H,draw){let o=null;o=makeCanvas($(sel),W,H,()=>{if(o)draw(o);});document.addEventListener('themechange',()=>draw(o));draw(o);return o;},
+  txt(c,s,x,y,o){o=o||{};c.font=o.font||'13px system-ui';c.fillStyle=o.col||C().ink;c.textAlign=o.al||'center';c.textBaseline=o.bl||'middle';c.fillText(s,x,y);},
+  line(c,pts,col,w,dash){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w||2;c.setLineDash(dash||[]);c.lineJoin='round';c.lineCap='round';c.stroke();c.setLineDash([]);},
+  arrow(c,x1,y1,x2,y2,col,w){
+    const a=Math.atan2(y2-y1,x2-x1),h=Math.max(7,(w||2)*3.4);
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);c.strokeStyle=col;c.lineWidth=w||2;c.lineCap='round';c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));c.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));c.closePath();c.fillStyle=col;c.fill();
+  },
+  /* roda dentada de mòdul m (px per dent): z dents, angle ang; la dent 0 apunta cap a ang */
+  gear(c,cx,cy,z,m,ang,col,markAng,alpha){
+    const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z,P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    c.beginPath();
+    for(let k=0;k<z;k++){
+      const a=ang+k*2*hp;
+      [P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)].forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+    }
+    c.closePath();
+    c.fillStyle=C().panel;c.fill();
+    c.globalAlpha=alpha||.2;c.fillStyle=col;c.fill();c.globalAlpha=1;
+    c.strokeStyle=col;c.lineWidth=2;c.setLineDash([]);c.stroke();
+    c.beginPath();c.arc(cx,cy,Math.max(4,m*0.55),0,TAU);c.fillStyle=col;c.fill();
+    if(markAng!==undefined){
+      const mx=cx+(R-m*0.3)*Math.cos(markAng),my=cy+(R-m*0.3)*Math.sin(markAng);
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.stroke();
+      c.beginPath();c.arc(mx,my,Math.max(4,m*0.4),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+    }
+  },
+  /* arrossegar sobre un canvas amb ratolí o dit: h={down(p)->bool, move(p), up()} */
+  drag(o,h){
+    let on=false;
+    o.cv.addEventListener('pointerdown',e=>{const p=o.pt(e);if(h.down(p,e)){on=true;o.cv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    o.cv.addEventListener('pointermove',e=>{const p=o.pt(e);if(on)h.move(p,e);else if(h.hover)h.hover(p,e);});
+    const end=e=>{if(on){on=false;h.up&&h.up(e);}};
+    o.cv.addEventListener('pointerup',end);o.cv.addEventListener('pointercancel',end);
+  },
+  /* prefix SI per a resistències i corrents: 4700 -> "4,7 kΩ" */
+  si(v,u){
+    if(!isFinite(v))return '∞ '+u;
+    const a=Math.abs(v);let k=0,p=['','k','M','G'],pm=['','m','µ'];
+    if(a>=1000){while(Math.abs(v)>=1000&&k<3){v/=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+p[k]+u;}
+    if(a<1&&a>0){while(Math.abs(v)<1&&k<2){v*=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+pm[k]+u;}
+    return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+u;
+  },
+  /* converteix text com "4,7k", "470", "2M2" en nombre */
+  parse(s){
+    s=String(s).trim().toLowerCase().replace(/\s/g,'').replace('ω','').replace('ohm','').replace('Ω','');
+    let m=s.match(/^(\d+)([kmr])(\d+)$/);
+    if(m){const mul={k:1e3,m:1e6,r:1}[m[2]];return parseFloat(m[1]+'.'+m[3])*mul;}
+    m=s.match(/^([\d.,]+)([km]?)$/);
+    if(!m)return NaN;
+    return parseFloat(m[1].replace(',','.'))*({'':1,k:1e3,m:1e6}[m[2]]);
+  },
+  seg(host,opts,cur,on){/* grup de botons exclusius; opts=[{v,key}] */
+    host.innerHTML='';const bs=opts.map(o=>{const b=document.createElement('button');b.type='button';b.dataset.v=o.v;b.setAttribute('data-i18n',o.key);b.textContent=t(o.key);b.setAttribute('aria-pressed',String(o.v===cur));
+      b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));on(o.v);};host.appendChild(b);return b;});
+    return bs;
+  }
+};
+
+
+const W=640,H=400;
+const S={mode:'g2',th:0,play:true,cross:false,dash:0};
+const CT=$('#ctls'),SL={};
+SL.z1=slider(CT,{id:'z1',key:'z1',min:8,max:40,step:1,val:12,on:upd});
+SL.z2=slider(CT,{id:'z2',key:'z2',min:8,max:40,step:1,val:24,on:upd});
+SL.z3=slider(CT,{id:'z3',key:'z3',min:8,max:40,step:1,val:10,on:upd});
+SL.z4=slider(CT,{id:'z4',key:'z4',min:8,max:40,step:1,val:30,on:upd});
+SL.d1=slider(CT,{id:'d1',key:'d1',min:20,max:200,step:5,val:60,on:upd});
+SL.d2=slider(CT,{id:'d2',key:'d2',min:20,max:200,step:5,val:120,on:upd});
+SL.rpm=slider(CT,{id:'rpm',key:'rpm',min:10,max:240,step:10,val:120,on:upd});
+SL.par=slider(CT,{id:'par',key:'par',min:1,max:50,step:1,val:5,on:upd});
+const SHOW={g2:['z1','z2','rpm','par'],g4:['z1','z2','z3','z4','rpm','par'],pol:['d1','d2','rpm','par']};
+
+function params(){
+  const g=k=>SL[k].get();
+  if(S.mode==='g2')return {i:g('z1')/g('z2'),dir:-1};
+  if(S.mode==='g4')return {i:g('z1')*g('z3')/(g('z2')*g('z4')),dir:1};
+  return {i:g('d1')/g('d2'),dir:S.cross?-1:1};
+}
+function f2(x){return fmt(+x.toPrecision(3),x<10?2:x<100?1:0).replace(/,?0+$/,'').replace(/,$/,'');}
+function upd(){
+  const P=params(),n1=SL.rpm.get(),M1=SL.par.get();
+  SHOW_all();
+  const n2=n1*P.i,M2=M1/P.i,pw=M1*n1*TAU/60;
+  $('#vI').textContent=f2(P.i);
+  $('#vT').textContent=Math.abs(P.i-1)<1e-9?t('t_one'):P.i<1?t('t_red'):t('t_mul');
+  $('#vN').textContent=f2(n2)+' rpm';
+  $('#vM').textContent=f2(M2)+' N·m';
+  $('#vD').textContent=P.dir>0?t('d_same'):t('d_opp');
+  $('#vP').textContent=f2(pw)+' W';
+  const g=k=>SL[k].get();let fm;
+  if(S.mode==='g2')fm=tt('fm_g2',g('z1'),g('z2'),f2(P.i));
+  else if(S.mode==='g4')fm=tt('fm_g4',g('z1'),g('z3'),g('z2'),g('z4'),f2(P.i));
+  else fm=tt('fm_pol',g('d1'),g('d2'),f2(P.i));
+  $('#formula').innerHTML=fm+'<br>'+tt('fm_n',n1,f2(P.i),f2(n2))+'<br>'+tt('fm_m',M1,f2(P.i),f2(M2));
+}
+function SHOW_all(){Object.keys(SL).forEach(k=>SL[k].el.hidden=!SHOW[S.mode].includes(k));$('#crosswrap').hidden=S.mode!=='pol';}
+function setMode(m){S.mode=m;$('#msg').textContent='';$('#guess').value='';upd();}
+function buildSeg(){TEC.seg($('#modesw'),[{v:'g2',key:'m_g2'},{v:'g4',key:'m_g4'},{v:'pol',key:'m_pol'}],S.mode,setMode);}
+$('#cross').addEventListener('change',e=>{S.cross=e.target.checked;upd();});
+$('#play').addEventListener('click',()=>{S.play=!S.play;setPlay();});
+function setPlay(){$('#play').textContent=t(S.play?'pause':'play');}
+$('#checkg').addEventListener('click',()=>{
+  const v=parseNum($('#guess').value),m=$('#msg');
+  if(!isFinite(v)||$('#guess').value.trim()===''){m.className='msg bad';m.textContent=t('g_bad');return;}
+  const P=params(),r=SL.rpm.get()*P.i;
+  if(Math.abs(v-r)<=Math.abs(r)*.02+1e-9){m.className='msg good';m.textContent=tt('g_ok',f2(r));}
+  else{m.className='msg bad';m.textContent=tt('g_no',f2(v),f2(r),f2(P.i));}
+});
+
+/* ---- dibuix ---- */
+const cvo=TEC.cv('#cv',W,H,draw);
+function fitLayout(pts){/* pts: [{x,y,r}] en unitats; torna escala i desplaçament */
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  pts.forEach(p=>{x0=Math.min(x0,p.x-p.r);x1=Math.max(x1,p.x+p.r);y0=Math.min(y0,p.y-p.r);y1=Math.max(y1,p.y+p.r);});
+  const sc=Math.min((W-50)/(x1-x0),(H-80)/(y1-y0));
+  return {sc,ox:(W-(x1-x0)*sc)/2-x0*sc,oy:(H-(y1-y0)*sc)/2+10-y0*sc};
+}
+function arrowRot(c,x,y,dir,col){/* ↻ (sentit horari) o ↺ */
+  c.font='bold 22px system-ui';c.fillStyle=col;c.textAlign='center';c.textBaseline='middle';c.fillText(dir>0?'↻':'↺',x,y);
+}
+function draw(o){
+  const c=o.ctx,k=C(),P=params(),th=S.th;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  const g=q=>SL[q].get();
+  if(S.mode==='g2'){
+    const z1=g('z1'),z2=g('z2'),L=fitLayout([{x:0,y:0,r:z1/2+1},{x:(z1+z2)/2,y:0,r:z2/2+1}]);
+    const m=L.sc,x1=L.ox,x2=L.ox+m*(z1+z2)/2,y=L.oy;
+    const a2=Math.PI-th*z1/z2;
+    TEC.gear(c,x1,y,z1,m,th,k.pa,th);
+    TEC.gear(c,x2,y,z2,m,a2+Math.PI/z2,k.pb,a2);
+    lab(c,'A · '+z1,x1,y+m*z1/2+m*2.4,k.pa);lab(c,'B · '+z2,x2,y+m*z2/2+m*2.4,k.pb);
+    arrowRot(c,x1,y-m*z1/2-m*2.6,1,k.pa);arrowRot(c,x2,y-m*z2/2-m*2.6,-1,k.pb);
+  }else if(S.mode==='g4'){
+    const z1=g('z1'),z2=g('z2'),z3=g('z3'),z4=g('z4'),phi=0.75,D=(z3+z4)/2;
+    const X2=(z1+z2)/2,X4=X2+D*Math.cos(phi),Y4=D*Math.sin(phi);
+    const L=fitLayout([{x:0,y:0,r:z1/2+1},{x:X2,y:0,r:z2/2+1},{x:X4,y:Y4,r:z4/2+1}]);
+    const m=L.sc,x1=L.ox,x2=L.ox+m*X2,y=L.oy,x4=L.ox+m*X4,y4=L.oy+m*Y4;
+    const a2=Math.PI-th*z1/z2;                /* eix de B i C */
+    const A2=a2+Math.PI/z2;
+    const u=(phi-A2)/(TAU/z3);                 /* dent de C que toca amb D */
+    const a4=phi+Math.PI-(TAU/z4)*(-u+.5);
+    const th4=a4;                             /* D engranada amb C */
+    TEC.gear(c,x1,y,z1,m,th,k.pa,th);
+    TEC.gear(c,x2,y,z2,m,A2,k.pb,a2);
+    TEC.gear(c,x2,y,z3,m,A2,k.pa,a2,.3);
+    TEC.gear(c,x4,y4,z4,m,th4,k.pb,th4);
+    TEC.line(c,[[x2-6,y-6],[x2+6,y+6]],k.ink,1);
+    lab(c,'A · '+z1,x1,y+m*z1/2+m*2.4,k.pa);lab(c,'B+C · '+z2+'/'+z3,x2,y-m*z2/2-m*1.8,k.ink);lab(c,'D · '+z4,x4,y4+m*z4/2+m*2.4,k.pb);
+  }else{
+    const d1=g('d1'),d2=g('d2'),Ld=190;
+    const r1=d1/2,r2=d2/2,L=fitLayout([{x:0,y:0,r:r1+4},{x:Ld,y:0,r:r2+4}]);
+    const m=L.sc,c1=[L.ox,L.oy],c2=[L.ox+Ld*m,L.oy],R1=r1*m,R2=r2*m,Lp=Ld*m;
+    const cr=S.cross,nx=cr?(R1+R2)/Lp:(R1-R2)/Lp,ny=Math.sqrt(Math.max(0,1-nx*nx));
+    const col=k.muted;c.setLineDash([]);
+    c.lineWidth=5;c.strokeStyle=col;c.lineCap='round';c.setLineDash([14,6]);c.lineDashOffset=-S.dash*(S.mode==='pol'?1:0);
+    const pt=(cc,r,s,sy)=>[cc[0]+r*s*nx,cc[1]+r*s*sy*ny];
+    const ang=(cc,p)=>Math.atan2(p[1]-cc[1],p[0]-cc[0]);
+    if(!cr){
+      const T1u=pt(c1,R1,1,-1),T2u=pt(c2,R2,1,-1),T1l=pt(c1,R1,1,1),T2l=pt(c2,R2,1,1);
+      c.beginPath();c.moveTo(T1u[0],T1u[1]);c.lineTo(T2u[0],T2u[1]);c.arc(c2[0],c2[1],R2,ang(c2,T2u),ang(c2,T2l),false);c.lineTo(T1l[0],T1l[1]);c.arc(c1[0],c1[1],R1,ang(c1,T1l),ang(c1,T1u)+TAU,false);c.stroke();
+    }else{
+      const T1a=pt(c1,R1,1,-1),T2a=pt(c2,R2,-1,-1),T1b=pt(c1,R1,1,1),T2b=pt(c2,R2,-1,1);
+      /* T2a és el punt inferior de B perquè -(-ny)=+ny */
+      c.beginPath();c.moveTo(T1a[0],T1a[1]);c.lineTo(T2a[0],T2a[1]);c.arc(c2[0],c2[1],R2,ang(c2,T2a),ang(c2,T2b),true);c.lineTo(T1b[0],T1b[1]);c.arc(c1[0],c1[1],R1,ang(c1,T1b),ang(c1,T1a)+TAU,false);c.stroke();
+    }
+    c.setLineDash([]);
+    const a1=th,a2=th*(r1/r2)*(cr?-1:1);
+    pulley(c,c1,R1,a1,k.pa);pulley(c,c2,R2,a2,k.pb);
+    lab(c,'A · Ø'+d1,c1[0],c1[1]+R1+22,k.pa);lab(c,'B · Ø'+d2,c2[0],c2[1]+R2+22,k.pb);
+    arrowRot(c,c1[0],c1[1]-R1-20,1,k.pa);arrowRot(c,c2[0],c2[1]-R2-20,cr?-1:1,k.pb);
+  }
+  const n2=SL.rpm.get()*P.i;
+  lab(c,'n₁ = '+SL.rpm.get()+' rpm',90,22,k.pa);lab(c,'n₂ = '+f2(n2)+' rpm',W-100,22,k.pb);
+}
+function lab(c,s,x,y,col){TEC.txt(c,s,x,y,{font:'bold 14px system-ui',col});}
+function pulley(c,cc,R,ang,col){
+  c.beginPath();c.arc(cc[0],cc[1],R,0,TAU);c.fillStyle=C().panel;c.fill();c.globalAlpha=.2;c.fillStyle=col;c.fill();c.globalAlpha=1;c.strokeStyle=col;c.lineWidth=2.5;c.stroke();
+  for(let j=0;j<3;j++){const a=ang+j*TAU/3;TEC.line(c,[[cc[0],cc[1]],[cc[0]+R*.82*Math.cos(a),cc[1]+R*.82*Math.sin(a)]],col,3);}
+  c.beginPath();c.arc(cc[0],cc[1],Math.max(4,R*.12),0,TAU);c.fillStyle=col;c.fill();
+  const mx=cc[0]+R*.82*Math.cos(ang),my=cc[1]+R*.82*Math.sin(ang);c.beginPath();c.arc(mx,my,Math.max(5,R*.09),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+}
+TEC.loop(dt=>{
+  if(S.play){const w=SL.rpm.get()/60*TAU*0.22;S.th+=REDUCE?0:w*dt;S.dash+=REDUCE?0:w*dt*18;}
+  draw(cvo);
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":30,"tol":0,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":1},{"id":"q3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q4","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"q6","lvl":"basic","type":"num","num":100,"tol":0,"u":1},{"id":"q5","lvl":"adv","type":"num","num":100,"tol":0,"u":1}];
+App.hooks.push(()=>{upd();setPlay();buildSeg();});
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

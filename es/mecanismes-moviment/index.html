@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mecanismos de transformación del movimiento</title>
+<meta name="description" content="Biela-manivela, leva y seguidor, piñón-cremallera y tornillo sin fin en movimiento: cambia las medidas y la velocidad y mira la gráfica del movimiento que se obtiene. Para Tecnología de 2.º y 3.º de ESO, con test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/mecanismes-moviment/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/mecanismes-moviment/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/mecanismes-moviment/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/mecanismes-moviment/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Mecanismos de transformación del movimiento">
+<meta property="og:description" content="Biela-manivela, leva y seguidor, piñón-cremallera y tornillo sin fin en movimiento: cambia las medidas y la velocidad y mira la gráfica del movimiento que se obtiene. Para Tecnología de 2.º y 3.º de ESO, con test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/mecanismes-moviment/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació i components comuns de les animacions de Tecnologia ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{min-width:0}
+.simcv canvas{touch-action:none}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side h3{margin:2px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.msg:empty{display:none}
+.kv{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.kv dd.hl{color:var(--pa);font-weight:700}
+.kv dd.hb{color:var(--pb);font-weight:700}
+.big{font-family:var(--f-num);font-size:22px;font-weight:700;color:var(--ink)}
+.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.predict input,.numin input{font:inherit;font-size:15px;width:7em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numin{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.numin label{font-size:13.5px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2px 18px}
+.formula{font-family:var(--f-num);font-size:14.5px;line-height:1.7;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.formula .ka{color:var(--pa);font-weight:700}.formula .kb{color:var(--pb);font-weight:700}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tbar .btn.on{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.formula:empty{display:none}
+
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Tecnología · 2.º y 3.º ESO · Mecanismos</p>
+      <h1 data-i18n="h1">Del giro al vaivén: mecanismos que transforman el movimiento</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Un motor gira, pero una máquina a menudo necesita movimiento recto. Mira cómo lo resuelven cuatro mecanismos.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">El mecanismo en marcha</h2>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas><p data-i18n-html="story" style="margin-top:8px">El movimiento de entrada es siempre un <b>giro</b> (azul). El de salida (naranja) es un <b>movimiento lineal alternativo</b> o <b>lineal continuo</b> en la biela-manivela, la leva y el piñón-cremallera; el tornillo sin fin no transforma, <b>transmite</b> el giro reduciéndolo mucho.</p></div>
+<div class="side">
+<div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label="Mecanismo"></div>
+<div id="camsw" class="seg" role="group" data-i18n-aria="aria.cam" aria-label="Perfil de la leva" hidden></div>
+<div id="ctls" style="display:grid;gap:2px"></div>
+<div class="tbar"><button class="btn primary" id="play" type="button"></button></div>
+<p class="msg" id="what" style="color:var(--muted);font-size:13.5px"></p>
+<h3 data-i18n="plot_h">Gráfica del movimiento de salida</h3>
+<div class="plot"><canvas id="plot"></canvas></div>
+<dl class="kv" id="kv"></dl>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>Idea:</b> los mecanismos de transformación cambian el <b>tipo</b> de movimiento (circular ⇄ lineal). La biela-manivela y la leva dan movimiento <b>alternativo</b>: va y vuelve.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>Para pensar:</b> en la biela-manivela la posición es x = r·cos θ + √(L² − r²·sin² θ): solo <i>aproximadamente</i> sinusoidal. Cuando la biela es muy larga, se comporta como un movimiento armónico simple. Los tornillos sin fin son irreversibles: la rueda no puede mover el tornillo (el rozamiento lo bloquea).</div>
+</section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Mecanismes de transformació del moviment",
+"eyebrow":"Tecnologia · 2n i 3r ESO · Mecanismes",
+"h1":"Del gir al va-i-ve: mecanismes que transformen el moviment",
+"lede":"Un motor gira, però una màquina sovint necessita moviment recte. Mira com ho resolen quatre mecanismes.",
+"sim_title":"El mecanisme en marxa",
+"story":"El moviment d'entrada és sempre un <b>gir</b> (blau). El de sortida (taronja) és un <b>moviment lineal alternatiu</b> o <b>lineal continu</b> en la biela-manivela, la lleva i el pinyó-cremallera; el cargol sense fi no transforma, <b>transmet</b> el gir reduint-lo molt.",
+"aria.mode":"Mecanisme","aria.cam":"Perfil de la lleva",
+"m_bm":"Biela-manivela","m_ll":"Lleva i seguidor","m_pc":"Pinyó-cremallera","m_sf":"Cargol sense fi",
+"c_ex":"Excèntrica","c_ov":"Ovalada","c_co":"Cor",
+"rpm":"Velocitat d'entrada (rpm)",
+"r":"Radi de la manivela r (mm)","L":"Longitud de la biela L (mm)","z":"Dents del pinyó z","zw":"Dents de la roda z",
+"plot_h":"Gràfica del moviment de sortida",
+"what_bm":"La manivela dona voltes i el pistó va i ve: <b>una volta = una anada i una tornada</b>.",
+"what_ll":"El perfil de la lleva decideix com puja i baixa el seguidor: el seguidor <b>copia la forma</b> de la lleva.",
+"what_pc":"El pinyó gira i la cremallera avança en línia recta: cada volta la mou <b>π · m · z</b>.",
+"what_sf":"Per cada volta del cargol, la roda avança <b>una sola dent</b>: reducció enorme en poc d'espai.",
+"ax_t":"angle d'entrada (0–360°)","ax_y":"posició (mm)",
+"k_stroke":"Cursa (recorregut total)","k_pos":"Posició actual","k_cyc":"Cicles per minut",
+"k_lift":"Elevació màxima","k_h":"Alçada actual",
+"k_R":"Radi primitiu R = m·z/2","k_adv":"Avanç per volta π·m·z","k_v":"Velocitat de la cremallera",
+"k_z":"Dents de la roda","k_i":"Relació de transmissió i","k_n":"Velocitat de sortida","k_turns":"Voltes del cargol per volta de la roda",
+"mm":"mm","mms":"mm/s","rpmu":"rpm","sf_lbl":"1 volta del cargol → 1 dent de la roda",
+"idea_basic":"<b>Idea:</b> els mecanismes de transformació canvien el <b>tipus</b> de moviment (circular ⇄ lineal). La biela-manivela i la lleva donen moviment <b>alternatiu</b>: va i torna.",
+"idea_adv":"<b>Per a pensar:</b> en la biela-manivela la posició és x = r·cos θ + √(L² − r²·sin² θ): només <i>aproximadament</i> sinusoidal. Quan la biela és molt llarga, es comporta com un moviment harmònic simple. Els cargols sense fi són irreversibles: la roda no pot moure el cargol (el fregament ho bloqueja).",
+"q1.q":"Una manivela té un radi de 25 mm. Quina és la cursa del pistó d'una biela-manivela?",
+"q1.u":"mm","q1.e":"La cursa és el doble del radi de la manivela: 2 · 25 = 50 mm.",
+"q2.q":"Quin mecanisme converteix un gir continu en moviment lineal alternatiu?",
+"q2.o0":"Biela-manivela","q2.o1":"Cargol sense fi","q2.o2":"Engranatges rectes","q2.o3":"Politges amb corretja",
+"q2.e":"La biela-manivela (i també la lleva): un gir continu es converteix en un va-i-ve. Els altres tres només transmeten el gir.",
+"q3.q":"Un pinyó de 12 dents i mòdul 3 mm gira. Quant avança la cremallera en una volta? (π ≈ 3,14; resultat en mm)",
+"q3.u":"mm","q3.e":"Avanç = π · m · z = 3,14 · 3 · 12 ≈ 113 mm.",
+"q4.q":"Un cargol sense fi gira a 600 rpm i mou una roda de 30 dents. A quantes rpm gira la roda?",
+"q4.u":"rpm","q4.e":"i = 1/z = 1/30 → 600 / 30 = 20 rpm.",
+"q5.q":"Què determina el moviment del seguidor d'una lleva?",
+"q5.o0":"La velocitat del motor només","q5.o1":"La forma (perfil) de la lleva","q5.o2":"El color de la lleva","q5.o3":"El nombre de dents",
+"q5.e":"El seguidor copia el perfil de la lleva: una lleva circular excèntrica fa un moviment suau; una de perfil «cor» té zones de repòs.",
+"q6.q":"Per què el cargol sense fi és molt útil quan cal reduir molt la velocitat?",
+"q6.o0":"Perquè amb una sola volta fa avançar la roda una dent: i = 1/z","q6.o1":"Perquè la roda va més de pressa que el cargol","q6.o2":"Perquè no fa soroll","q6.o3":"Perquè només funciona amb dues dents",
+"q6.e":"Una volta del cargol mou la roda una dent, així que la reducció és 1/z en molt poc espai."
+},
+es:{
+"title":"Mecanismos de transformación del movimiento",
+"eyebrow":"Tecnología · 2.º y 3.º ESO · Mecanismos",
+"h1":"Del giro al vaivén: mecanismos que transforman el movimiento",
+"lede":"Un motor gira, pero una máquina a menudo necesita movimiento recto. Mira cómo lo resuelven cuatro mecanismos.",
+"sim_title":"El mecanismo en marcha",
+"story":"El movimiento de entrada es siempre un <b>giro</b> (azul). El de salida (naranja) es un <b>movimiento lineal alternativo</b> o <b>lineal continuo</b> en la biela-manivela, la leva y el piñón-cremallera; el tornillo sin fin no transforma, <b>transmite</b> el giro reduciéndolo mucho.",
+"aria.mode":"Mecanismo","aria.cam":"Perfil de la leva",
+"m_bm":"Biela-manivela","m_ll":"Leva y seguidor","m_pc":"Piñón-cremallera","m_sf":"Tornillo sin fin",
+"c_ex":"Excéntrica","c_ov":"Ovalada","c_co":"Corazón",
+"rpm":"Velocidad de entrada (rpm)",
+"r":"Radio de la manivela r (mm)","L":"Longitud de la biela L (mm)","z":"Dientes del piñón z","zw":"Dientes de la rueda z",
+"plot_h":"Gráfica del movimiento de salida",
+"what_bm":"La manivela da vueltas y el pistón va y viene: <b>una vuelta = una ida y una vuelta</b>.",
+"what_ll":"El perfil de la leva decide cómo sube y baja el seguidor: el seguidor <b>copia la forma</b> de la leva.",
+"what_pc":"El piñón gira y la cremallera avanza en línea recta: cada vuelta la mueve <b>π · m · z</b>.",
+"what_sf":"Por cada vuelta del tornillo, la rueda avanza <b>un solo diente</b>: reducción enorme en poco espacio.",
+"ax_t":"ángulo de entrada (0–360°)","ax_y":"posición (mm)",
+"k_stroke":"Carrera (recorrido total)","k_pos":"Posición actual","k_cyc":"Ciclos por minuto",
+"k_lift":"Elevación máxima","k_h":"Altura actual",
+"k_R":"Radio primitivo R = m·z/2","k_adv":"Avance por vuelta π·m·z","k_v":"Velocidad de la cremallera",
+"k_z":"Dientes de la rueda","k_i":"Relación de transmisión i","k_n":"Velocidad de salida","k_turns":"Vueltas del tornillo por vuelta de la rueda",
+"mm":"mm","mms":"mm/s","rpmu":"rpm","sf_lbl":"1 vuelta del tornillo → 1 diente de la rueda",
+"idea_basic":"<b>Idea:</b> los mecanismos de transformación cambian el <b>tipo</b> de movimiento (circular ⇄ lineal). La biela-manivela y la leva dan movimiento <b>alternativo</b>: va y vuelve.",
+"idea_adv":"<b>Para pensar:</b> en la biela-manivela la posición es x = r·cos θ + √(L² − r²·sin² θ): solo <i>aproximadamente</i> sinusoidal. Cuando la biela es muy larga, se comporta como un movimiento armónico simple. Los tornillos sin fin son irreversibles: la rueda no puede mover el tornillo (el rozamiento lo bloquea).",
+"q1.q":"Una manivela tiene un radio de 25 mm. ¿Cuál es la carrera del pistón de una biela-manivela?",
+"q1.u":"mm","q1.e":"La carrera es el doble del radio de la manivela: 2 · 25 = 50 mm.",
+"q2.q":"¿Qué mecanismo convierte un giro continuo en movimiento lineal alternativo?",
+"q2.o0":"Biela-manivela","q2.o1":"Tornillo sin fin","q2.o2":"Engranajes rectos","q2.o3":"Poleas con correa",
+"q2.e":"La biela-manivela (y también la leva): un giro continuo se convierte en un vaivén. Los otros tres solo transmiten el giro.",
+"q3.q":"Un piñón de 12 dientes y módulo 3 mm gira. ¿Cuánto avanza la cremallera en una vuelta? (π ≈ 3,14; resultado en mm)",
+"q3.u":"mm","q3.e":"Avance = π · m · z = 3,14 · 3 · 12 ≈ 113 mm.",
+"q4.q":"Un tornillo sin fin gira a 600 rpm y mueve una rueda de 30 dientes. ¿A cuántas rpm gira la rueda?",
+"q4.u":"rpm","q4.e":"i = 1/z = 1/30 → 600 / 30 = 20 rpm.",
+"q5.q":"¿Qué determina el movimiento del seguidor de una leva?",
+"q5.o0":"La velocidad del motor solo","q5.o1":"La forma (perfil) de la leva","q5.o2":"El color de la leva","q5.o3":"El número de dientes",
+"q5.e":"El seguidor copia el perfil de la leva: una leva circular excéntrica hace un movimiento suave; una de perfil «corazón» tiene zonas de reposo.",
+"q6.q":"¿Por qué el tornillo sin fin es muy útil cuando hay que reducir mucho la velocidad?",
+"q6.o0":"Porque con una sola vuelta hace avanzar la rueda un diente: i = 1/z","q6.o1":"Porque la rueda va más deprisa que el tornillo","q6.o2":"Porque no hace ruido","q6.o3":"Porque solo funciona con dos dientes",
+"q6.e":"Una vuelta del tornillo mueve la rueda un diente, así que la reducción es 1/z en muy poco espacio."
+}};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../mecanismes-moviment/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== utilitats comunes de les animacions de Tecnologia (depén de common.js) ===== */
+const TEC={
+  /* bucle d'animació: fn(dt en segons) */
+  loop(fn){let last=performance.now();const f=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;fn(dt);requestAnimationFrame(f);};requestAnimationFrame(f);},
+  /* canvas lògic W×H que es torna a dibuixar quan canvia la mida o el tema */
+  cv(sel,W,H,draw){let o=null;o=makeCanvas($(sel),W,H,()=>{if(o)draw(o);});document.addEventListener('themechange',()=>draw(o));draw(o);return o;},
+  txt(c,s,x,y,o){o=o||{};c.font=o.font||'13px system-ui';c.fillStyle=o.col||C().ink;c.textAlign=o.al||'center';c.textBaseline=o.bl||'middle';c.fillText(s,x,y);},
+  line(c,pts,col,w,dash){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w||2;c.setLineDash(dash||[]);c.lineJoin='round';c.lineCap='round';c.stroke();c.setLineDash([]);},
+  arrow(c,x1,y1,x2,y2,col,w){
+    const a=Math.atan2(y2-y1,x2-x1),h=Math.max(7,(w||2)*3.4);
+    c.beginPath();c.moveTo(x1,y1);c.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);c.strokeStyle=col;c.lineWidth=w||2;c.lineCap='round';c.stroke();
+    c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));c.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));c.closePath();c.fillStyle=col;c.fill();
+  },
+  /* roda dentada de mòdul m (px per dent): z dents, angle ang; la dent 0 apunta cap a ang */
+  gear(c,cx,cy,z,m,ang,col,markAng,alpha){
+    const R=m*z/2,Ra=R+m*0.9,Rf=R-m*1.1,hp=Math.PI/z,P=(r,t)=>[cx+r*Math.cos(t),cy+r*Math.sin(t)];
+    c.beginPath();
+    for(let k=0;k<z;k++){
+      const a=ang+k*2*hp;
+      [P(Rf,a-hp),P(Rf,a-0.6*hp),P(Ra,a-0.32*hp),P(Ra,a+0.32*hp),P(Rf,a+0.6*hp)].forEach((p,i)=>k===0&&i===0?c.moveTo(p[0],p[1]):c.lineTo(p[0],p[1]));
+    }
+    c.closePath();
+    c.fillStyle=C().panel;c.fill();
+    c.globalAlpha=alpha||.2;c.fillStyle=col;c.fill();c.globalAlpha=1;
+    c.strokeStyle=col;c.lineWidth=2;c.setLineDash([]);c.stroke();
+    c.beginPath();c.arc(cx,cy,Math.max(4,m*0.55),0,TAU);c.fillStyle=col;c.fill();
+    if(markAng!==undefined){
+      const mx=cx+(R-m*0.3)*Math.cos(markAng),my=cy+(R-m*0.3)*Math.sin(markAng);
+      c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.strokeStyle=col;c.lineWidth=3;c.lineCap='round';c.stroke();
+      c.beginPath();c.arc(mx,my,Math.max(4,m*0.4),0,TAU);c.fillStyle=col;c.fill();c.lineWidth=2;c.strokeStyle=C().panel;c.stroke();
+    }
+  },
+  /* arrossegar sobre un canvas amb ratolí o dit: h={down(p)->bool, move(p), up()} */
+  drag(o,h){
+    let on=false;
+    o.cv.addEventListener('pointerdown',e=>{const p=o.pt(e);if(h.down(p,e)){on=true;o.cv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    o.cv.addEventListener('pointermove',e=>{const p=o.pt(e);if(on)h.move(p,e);else if(h.hover)h.hover(p,e);});
+    const end=e=>{if(on){on=false;h.up&&h.up(e);}};
+    o.cv.addEventListener('pointerup',end);o.cv.addEventListener('pointercancel',end);
+  },
+  /* prefix SI per a resistències i corrents: 4700 -> "4,7 kΩ" */
+  si(v,u){
+    if(!isFinite(v))return '∞ '+u;
+    const a=Math.abs(v);let k=0,p=['','k','M','G'],pm=['','m','µ'];
+    if(a>=1000){while(Math.abs(v)>=1000&&k<3){v/=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+p[k]+u;}
+    if(a<1&&a>0){while(Math.abs(v)<1&&k<2){v*=1000;k++;}return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+pm[k]+u;}
+    return fmt(+v.toPrecision(3),2).replace(/,?0+$/,'').replace(/,$/,'')+' '+u;
+  },
+  /* converteix text com "4,7k", "470", "2M2" en nombre */
+  parse(s){
+    s=String(s).trim().toLowerCase().replace(/\s/g,'').replace('ω','').replace('ohm','').replace('Ω','');
+    let m=s.match(/^(\d+)([kmr])(\d+)$/);
+    if(m){const mul={k:1e3,m:1e6,r:1}[m[2]];return parseFloat(m[1]+'.'+m[3])*mul;}
+    m=s.match(/^([\d.,]+)([km]?)$/);
+    if(!m)return NaN;
+    return parseFloat(m[1].replace(',','.'))*({'':1,k:1e3,m:1e6}[m[2]]);
+  },
+  seg(host,opts,cur,on){/* grup de botons exclusius; opts=[{v,key}] */
+    host.innerHTML='';const bs=opts.map(o=>{const b=document.createElement('button');b.type='button';b.dataset.v=o.v;b.setAttribute('data-i18n',o.key);b.textContent=t(o.key);b.setAttribute('aria-pressed',String(o.v===cur));
+      b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));on(o.v);};host.appendChild(b);return b;});
+    return bs;
+  }
+};
+
+
+const W=640,H=400,K=1.6;
+const S={mode:'bm',cam:'ex',th:0,play:true};
+const CT=$('#ctls'),SL={};
+SL.rpm=slider(CT,{id:'rpm',key:'rpm',min:10,max:120,step:10,val:40,on:upd});
+SL.r=slider(CT,{id:'r',key:'r',min:20,max:60,step:5,val:40,on:upd});
+SL.L=slider(CT,{id:'L',key:'L',min:100,max:180,step:10,val:140,on:upd});
+SL.z=slider(CT,{id:'z',key:'z',min:8,max:30,step:1,val:12,on:upd});
+SL.zw=slider(CT,{id:'zw',key:'zw',min:10,max:60,step:1,val:30,on:upd});
+const SHOW={bm:['rpm','r','L'],ll:['rpm'],pc:['rpm','z'],sf:['rpm','zw']};
+const MOD=3;
+const f1=(x,d)=>fmt(x,d===undefined?1:d);
+const g=k=>SL[k].get();
+
+/* funcions de moviment de sortida (θ en rad); tornen mm */
+function bmX(th){const r=g('r'),L=g('L');return r*Math.cos(th)+Math.sqrt(L*L-r*r*Math.sin(th)**2);}
+const PROF={
+  ex:f=>{const e=12,R=30;return e*Math.cos(f)+Math.sqrt(R*R-e*e*Math.sin(f)**2);},
+  ov:f=>{const a=38,b=26;return a*b/Math.sqrt((b*Math.cos(f))**2+(a*Math.sin(f))**2);},
+  co:f=>20+20*((1+Math.cos(f))/2)**3
+};
+const camH=th=>PROF[S.cam](-Math.PI/2-th)-camMin();
+function camMin(){let m=1e9;for(let i=0;i<360;i++)m=Math.min(m,PROF[S.cam](i*Math.PI/180));return m;}
+function camMax(){let m=-1e9;for(let i=0;i<360;i++)m=Math.max(m,PROF[S.cam](i*Math.PI/180));return m;}
+function outFn(th){
+  if(S.mode==='bm')return bmX(th)-(g('L')-g('r'));
+  if(S.mode==='ll')return camH(th);
+  if(S.mode==='pc')return (MOD*g('z')/2)*(th%TAU);
+  return 0;
+}
+function plotMax(){
+  if(S.mode==='bm')return 2*g('r');
+  if(S.mode==='ll')return camMax()-camMin();
+  if(S.mode==='pc')return Math.PI*MOD*g('z');
+  return 1;
+}
+function upd(){
+  Object.keys(SL).forEach(k=>SL[k].el.hidden=!SHOW[S.mode].includes(k));
+  $('#camsw').hidden=S.mode!=='ll';
+  $('#what').innerHTML=t('what_'+S.mode);
+  const kv=[],rpm=g('rpm'),w=rpm*TAU/60;
+  if(S.mode==='bm'){kv.push(['k_stroke',f1(2*g('r'),0)+' mm','hl'],['k_pos',f1(outFn(S.th))+' mm','hb'],['k_cyc',rpm+' ','']);}
+  else if(S.mode==='ll'){kv.push(['k_lift',f1(camMax()-camMin())+' mm','hl'],['k_h',f1(camH(S.th))+' mm','hb'],['k_cyc',rpm+' ','']);}
+  else if(S.mode==='pc'){const R=MOD*g('z')/2;kv.push(['k_R',f1(R)+' mm',''],['k_adv',f1(Math.PI*MOD*g('z'),0)+' mm','hl'],['k_v',f1(w*R,0)+' mm/s','hb']);}
+  else{const z=g('zw');kv.push(['k_z',z,''],['k_i','1 / '+z,'hl'],['k_n',f1(rpm/z,2)+' rpm','hb'],['k_turns',z,'']);}
+  $('#kv').innerHTML=kv.map(r=>'<dt>'+t(r[0])+'</dt><dd class="'+r[2]+'">'+r[1]+'</dd>').join('');
+  plotO&&drawPlot(plotO);
+}
+function setMode(m){S.mode=m;upd();}
+function setCam(c){S.cam=c;upd();}
+function buildSeg(){
+  TEC.seg($('#modesw'),[{v:'bm',key:'m_bm'},{v:'ll',key:'m_ll'},{v:'pc',key:'m_pc'},{v:'sf',key:'m_sf'}],S.mode,setMode);
+  TEC.seg($('#camsw'),[{v:'ex',key:'c_ex'},{v:'ov',key:'c_ov'},{v:'co',key:'c_co'}],S.cam,setCam);
+}
+$('#play').addEventListener('click',()=>{S.play=!S.play;setPlay();});
+function setPlay(){$('#play').textContent=t(S.play?'pause':'play');}
+I18N.ca.play='▶ Gira';I18N.ca.pause='❚❚ Pausa';I18N.es.play='▶ Gira';I18N.es.pause='❚❚ Pausa';
+
+/* ---- dibuix principal ---- */
+const cvo=TEC.cv('#cv',W,H,draw);
+function draw(o){
+  const c=o.ctx,k=C(),th=S.th;
+  c.fillStyle=k.stage;c.fillRect(0,0,W,H);
+  if(S.mode==='bm')dBM(c,k,th);else if(S.mode==='ll')dLL(c,k,th);else if(S.mode==='pc')dPC(c,k,th);else dSF(c,k,th);
+}
+function dBM(c,k,th){
+  const r=g('r')*K,L=g('L')*K,cx=130,cy=210;
+  const px=cx+r*Math.cos(th),py=cy+r*Math.sin(th),sx=cx+bmX(th)*K;
+  c.fillStyle=k.chip;c.fillRect(cx+L-r-30,cy-34,2*r+60+80,12);c.fillRect(cx+L-r-30,cy+22,2*r+60+80,12);
+  TEC.line(c,[[cx-r-30,cy+r+46],[cx+L+r+90,cy+r+46]],k.line,2);
+  c.beginPath();c.arc(cx,cy,r,0,TAU);c.strokeStyle=k.muted;c.setLineDash([4,5]);c.lineWidth=1.2;c.stroke();c.setLineDash([]);
+  c.fillStyle=k.pb;c.globalAlpha=.9;c.fillRect(sx-18,cy-22,48,44);c.globalAlpha=1;c.strokeStyle=k.panel;c.lineWidth=2;c.strokeRect(sx-18,cy-22,48,44);
+  TEC.line(c,[[px,py],[sx,cy]],k.ink,7);TEC.line(c,[[cx,cy],[px,py]],k.pa,9);
+  [[cx,cy,k.pa],[px,py,k.ink],[sx,cy,k.ink]].forEach(([x,y,col])=>{c.beginPath();c.arc(x,y,7,0,TAU);c.fillStyle=k.panel;c.fill();c.strokeStyle=col;c.lineWidth=3;c.stroke();});
+  TEC.txt(c,t('m_bm'),W/2,24,{font:'bold 15px system-ui'});
+  /* cursa */
+  const x0=cx+g('L')*K-r,x1=cx+g('L')*K+r;
+  TEC.arrow(c,x0,cy+r+30,x1,cy+r+30,k.pb,2);TEC.arrow(c,x1,cy+r+30,x0,cy+r+30,k.pb,2);
+  TEC.txt(c,t('k_stroke')+' = 2r',(x0+x1)/2,cy+r+16,{col:k.pb,font:'bold 13px system-ui'});
+  TEC.txt(c,'r',(cx+px)/2-10,(cy+py)/2-12,{col:k.pa,font:'bold 14px system-ui'});TEC.txt(c,'L',(px+sx)/2,(py+cy)/2-14,{col:k.ink,font:'bold 14px system-ui'});
+}
+function dLL(c,k,th){
+  const cx=240,cy=262,u=2.6,prof=PROF[S.cam],mn=camMin();
+  const hS=camH(th);
+  c.beginPath();
+  for(let i=0;i<=180;i++){const f=i/180*TAU,rho=prof(f)*u,a=f+th;const x=cx+rho*Math.cos(a),y=cy+rho*Math.sin(a);i?c.lineTo(x,y):c.moveTo(x,y);}
+  c.closePath();c.fillStyle=k.panel;c.fill();c.globalAlpha=.25;c.fillStyle=k.pa;c.fill();c.globalAlpha=1;c.strokeStyle=k.pa;c.lineWidth=3;c.stroke();
+  c.beginPath();c.arc(cx,cy,6,0,TAU);c.fillStyle=k.pa;c.fill();
+  /* marca de la lleva */
+  const mf=Math.PI/2*0,ma=mf+th;TEC.line(c,[[cx,cy],[cx+prof(0)*u*0.8*Math.cos(ma),cy+prof(0)*u*0.8*Math.sin(ma)]],k.pa,2,[3,4]);
+  const tipY=cy-(hS+mn)*u;
+  c.fillStyle=k.chip;c.fillRect(cx-30,50,60,14);c.fillRect(cx-30,92,60,14);
+  c.fillStyle=k.pb;c.fillRect(cx-6,40,12,tipY-40);
+  c.fillStyle=k.pb;c.beginPath();c.moveTo(cx-10,tipY);c.lineTo(cx+10,tipY);c.lineTo(cx,tipY+14);c.fill();
+  /* ressort */
+  c.strokeStyle=k.muted;c.lineWidth=2;c.beginPath();const y0=66,y1=90;c.moveTo(cx-18,y0);for(let i=0;i<=8;i++)c.lineTo(cx+(i%2?18:-18),y0+(y1-y0)*i/8);c.stroke();
+  /* regla */
+  TEC.line(c,[[cx+110,cy-mn*u],[cx+110,cy-(camMax())*u]],k.muted,2);TEC.arrow(c,cx+110,cy-mn*u,cx+110,tipY,k.pb,2.5);
+  TEC.txt(c,f1(hS)+' mm',cx+150,(tipY+cy-mn*u)/2,{col:k.pb,font:'bold 14px system-ui'});
+  TEC.txt(c,t('m_ll')+' · '+t('c_'+S.cam),W/2,24,{font:'bold 15px system-ui'});
+}
+function dPC(c,k,th){
+  const z=g('z'),m=Math.min(11,150/z*1),R=m*z/2,cx=W/2,cy=170,p=TAU*R/z;
+  const ang=th+Math.PI/2;
+  /* cremallera */
+  const yTop=cy+R,off=-R*th;
+  c.fillStyle=k.panel;c.fillRect(20,yTop+m*1.0,W-40,38);c.strokeStyle=k.pb;c.lineWidth=2;c.strokeRect(20,yTop+m*1.0,W-40,38);
+  c.beginPath();
+  const x0=20,x1=W-20;let first=true;
+  const n0=Math.floor((x0-cx-p/2-off)/p)-1,n1=Math.ceil((x1-cx-p/2-off)/p)+1;
+  for(let n=n0;n<=n1;n++){
+    const tc=cx+p/2+n*p+off+p/2*0,hw=p*.17,ww=p*.33;
+    /* dent trapezoïdal centrada a tc (el buit queda a cx quan th=0) */
+    const pts=[[tc-ww,yTop+m*1.0],[tc-hw,yTop-m*0.9],[tc+hw,yTop-m*0.9],[tc+ww,yTop+m*1.0]];
+    pts.forEach((q,i)=>{const X=Math.min(x1,Math.max(x0,q[0]));first&&i===0?c.moveTo(X,q[1]):c.lineTo(X,q[1]);first=false;});
+  }
+  c.lineTo(x1,yTop+m*1.0);c.lineTo(x0,yTop+m*1.0);c.closePath();c.fillStyle=k.pb;c.globalAlpha=.25;c.fill();c.globalAlpha=1;c.strokeStyle=k.pb;c.lineWidth=2;c.stroke();
+  TEC.gear(c,cx,cy,z,m,ang,k.pa,ang,.25);
+  TEC.arrow(c,W-70,yTop+m+19,W-130,yTop+m+19,k.pb,3);
+  TEC.txt(c,t('m_pc'),W/2,24,{font:'bold 15px system-ui'});
+  TEC.txt(c,'z = '+z+' · m = '+MOD+' mm',cx,cy-R-m*2.4,{col:k.pa,font:'bold 13px system-ui'});
+}
+function dSF(c,k,th){
+  const z=g('zw'),m=Math.min(9,160/z*1),R=m*z/2,cx=W/2,cy=250,wr=Math.max(14,Math.min(28,R*.22));
+  const ang=-Math.PI/2+th/z*(-1)+0;           /* la roda avança una dent per volta del cargol */
+  TEC.gear(c,cx,cy,Math.min(z,60),m*Math.min(1,60/Math.max(z,1)),th/z+Math.PI/2*0,k.pb,th/z,.25);
+  /* cargol */
+  const Rr=R*0+m*Math.min(z,60)/2*Math.min(1,60/Math.max(z,1)),yc=cy-Rr-wr+4;
+  const x0=cx-130,x1=cx+130;
+  c.fillStyle=k.panel;c.fillRect(x0,yc-wr,x1-x0,wr*2);c.globalAlpha=.25;c.fillStyle=k.pa;c.fillRect(x0,yc-wr,x1-x0,wr*2);c.globalAlpha=1;
+  const pitch=26,ph=(th/TAU)*pitch;
+  c.save();c.beginPath();c.rect(x0,yc-wr,x1-x0,wr*2);c.clip();
+  for(let x=x0-pitch*2+(ph%pitch);x<x1+pitch;x+=pitch){TEC.line(c,[[x-wr*.8,yc+wr],[x+wr*.8,yc-wr]],k.pa,3);}
+  c.restore();c.strokeStyle=k.pa;c.lineWidth=2.5;c.strokeRect(x0,yc-wr,x1-x0,wr*2);
+  TEC.line(c,[[x0-26,yc],[x0,yc]],k.pa,5);TEC.line(c,[[x1,yc],[x1+26,yc]],k.pa,5);
+  TEC.txt(c,t('m_sf'),W/2,24,{font:'bold 15px system-ui'});
+  TEC.txt(c,'z = '+z,cx,cy+Rr+30,{col:k.pb,font:'bold 14px system-ui'});
+  TEC.txt(c,t('sf_lbl'),cx,yc-wr-22,{col:k.muted,font:'13px system-ui'});
+}
+
+/* ---- gràfica ---- */
+const plotO=TEC.cv('#plot',300,150,drawPlot);
+function drawPlot(o){
+  const c=o.ctx,k=C(),Wp=300,Hp=150,l=34,r=10,tp=12,b=24;
+  c.fillStyle=k.stage;c.fillRect(0,0,Wp,Hp);
+  if(S.mode==='sf'){TEC.txt(c,'1 / '+g('zw'),Wp/2,Hp/2,{font:'bold 28px system-ui',col:k.pb});TEC.txt(c,t('k_i'),Wp/2,Hp/2+28,{col:k.muted});return;}
+  const ymax=plotMax(),X=a=>l+(Wp-l-r)*a/TAU,Y=v=>Hp-b-(Hp-b-tp)*v/ymax;
+  c.strokeStyle=k.line;c.lineWidth=1;for(let i=0;i<=4;i++){const y=Y(ymax*i/4);c.beginPath();c.moveTo(l,y);c.lineTo(Wp-r,y);c.stroke();TEC.txt(c,String(Math.round(ymax*i/4)),l-4,y,{al:'right',font:'11px system-ui',col:k.muted});}
+  [0,90,180,270,360].forEach(d=>TEC.txt(c,d+'°',X(d*Math.PI/180),Hp-b+11,{font:'11px system-ui',col:k.muted}));
+  c.beginPath();for(let i=0;i<=360;i++){const a=i*Math.PI/180,v=S.mode==='pc'?outFn(a===TAU?TAU-1e-9:a):outFn(a);i?c.lineTo(X(a),Y(v)):c.moveTo(X(a),Y(v));}
+  c.strokeStyle=k.pb;c.lineWidth=2.5;c.stroke();
+  const a=S.th%TAU,v=outFn(a);c.beginPath();c.arc(X(a),Y(v),5,0,TAU);c.fillStyle=k.pa;c.fill();c.strokeStyle=k.panel;c.lineWidth=2;c.stroke();
+  TEC.txt(c,t('ax_y'),l+4,tp-3,{al:'left',font:'11px system-ui',col:k.muted});
+}
+TEC.loop(dt=>{
+  if(S.play&&!REDUCE){S.th+=g('rpm')/60*TAU*0.2*dt;}
+  draw(cvo);drawPlot(plotO);
+  if(S.mode==='bm'||S.mode==='ll'){const el=$('#kv dd.hb');if(el)el.textContent=f1(outFn(S.th))+' mm';}
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"num","num":50,"tol":0,"u":1},{"id":"q2","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q5","lvl":"basic","type":"mc","n":4,"ans":1},{"id":"q4","lvl":"basic","type":"num","num":20,"tol":0,"u":1},{"id":"q3","lvl":"adv","type":"num","num":113,"tol":0.02,"u":1},{"id":"q6","lvl":"adv","type":"mc","n":4,"ans":0}];
+App.hooks.push(()=>{upd();setPlay();buildSeg();});
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

@@ -13,6 +13,8 @@ scss = (S / "steps.css").read_text(encoding="utf-8")
 sjs = (S / "steps.js").read_text(encoding="utf-8")
 rcss = (S / "raona.css").read_text(encoding="utf-8")
 rjs = (S / "raona.js").read_text(encoding="utf-8")
+tcss = (S / "tec.css").read_text(encoding="utf-8")
+tjs = (S / "tec.js").read_text(encoding="utf-8")
 RAONA = ('<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow"></small><span data-i18n="rz_title"></span></h2><p data-i18n="rz_intro"></p>'
          '<div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label=""><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM"></button>'
          '<button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS"></button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE"></button>'
@@ -29,7 +31,7 @@ names = sys.argv[1:] or [p.name[:-9] for p in S.glob("*.src.html")]
 for n in names:
     s = (S / f"{n}.src.html").read_text(encoding="utf-8")
     s = s.replace("/*@COMMON_CSS@*/", css).replace("/*@COMMON_JS@*/", js)
-    s = s.replace("/*@QUIZ_CSS@*/", qcss).replace("/*@QUIZ_JS@*/", qjs).replace("/*@STEPS_CSS@*/", scss).replace("/*@STEPS_JS@*/", sjs).replace("/*@RAONA_CSS@*/", rcss).replace("/*@RAONA_JS@*/", rjs).replace("<!--@RAONA@-->", RAONA).replace("<!--@LVLSW@-->", LVLSW).replace("<!--@QUIZ@-->", QUIZ)
+    s = s.replace("/*@QUIZ_CSS@*/", qcss).replace("/*@QUIZ_JS@*/", qjs).replace("/*@STEPS_CSS@*/", scss).replace("/*@STEPS_JS@*/", sjs).replace("/*@RAONA_CSS@*/", rcss).replace("/*@TEC_CSS@*/", tcss).replace("/*@TEC_JS@*/", tjs).replace("/*@RAONA_JS@*/", rjs).replace("<!--@RAONA@-->", RAONA).replace("<!--@LVLSW@-->", LVLSW).replace("<!--@QUIZ@-->", QUIZ)
     s = s.replace("<!--@LANGSW@-->", LANGSW).replace("<!--@FOOTER@-->", FOOT).replace("<!--@GC@-->", GC)
     (OUT / f"{n}.html").write_text(s, encoding="utf-8")
     print("ok", n, len(s))
