@@ -26,8 +26,8 @@
   --bg: #f4f6fa; --surface: #ffffff; --ink: #14202e; --muted: #56677a; --line: #d5dde8;
   --grid: rgba(37, 99, 235, 0.07);
   /* Un color per matèria: --c (traç, text), --t (rajola de la icona) */
-  --c-mates: #2563eb; --c-fisica: #d9480f; --c-quimica: #0e7490; --c-biologia: #4d7c0f; --c-geologia: #92580f; --c-curio: #7c3aed; --c-misc: #be185d; --c-tecno: #0f766e;
-  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-quimica: #d9f1f6; --t-biologia: #e8f3d6; --t-geologia: #f6e8d2; --t-curio: #efe6ff; --t-misc: #fde2ee; --t-tecno: #d5f2ee;
+  --c-mates: #2563eb; --c-fisica: #d9480f; --c-quimica: #0e7490; --c-biologia: #4d7c0f; --c-geologia: #92580f; --c-curio: #7c3aed; --c-misc: #be185d; --c-tecno: #0f766e; --c-geo: #0369a1;
+  --t-mates: #e3ecff; --t-fisica: #ffe9dd; --t-quimica: #d9f1f6; --t-biologia: #e8f3d6; --t-geologia: #f6e8d2; --t-curio: #efe6ff; --t-misc: #fde2ee; --t-tecno: #d5f2ee; --t-geo: #dcf0fb;
   /* Pestanya activa: fons i color del text */
   --sel-mix: 88%; --on: #ffffff;
   --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
@@ -38,8 +38,8 @@
   :root {
     --bg: #0e141c; --surface: #172130; --ink: #e8eef6; --muted: #93a4b8; --line: #2a384b;
     --grid: rgba(122, 162, 255, 0.07);
-    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-quimica: #5fd3e8; --c-biologia: #a3d65c; --c-geologia: #e0a85c; --c-curio: #b799ff; --c-misc: #f472b6; --c-tecno: #4fd1c0;
-    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-quimica: #12353d; --t-biologia: #2a3a14; --t-geologia: #3d2c14; --t-curio: #2f2450; --t-misc: #4a1d36; --t-tecno: #123a36;
+    --c-mates: #7aa2ff; --c-fisica: #ff9a62; --c-quimica: #5fd3e8; --c-biologia: #a3d65c; --c-geologia: #e0a85c; --c-curio: #b799ff; --c-misc: #f472b6; --c-tecno: #4fd1c0; --c-geo: #5ab8f0;
+    --t-mates: #1c2b4d; --t-fisica: #4a2a1a; --t-quimica: #12353d; --t-biologia: #2a3a14; --t-geologia: #3d2c14; --t-curio: #2f2450; --t-misc: #4a1d36; --t-tecno: #123a36; --t-geo: #11324a;
     --sel-mix: 100%; --on: #0e141c;
   }
 }
@@ -307,6 +307,7 @@ const CATS = [
   { id: 'quimica',  n: 'Química',      ic: 'flask',    d: 'Simuladors de la matèria: de l\'àtom als gasos.' },
   { id: 'biologia', n: 'Biologia',     ic: 'sprout',   d: 'Genètica, evolució, cèl·lula i metabolisme.' },
   { id: 'geologia', n: 'Geologia',     ic: 'gem',      d: 'Terratrèmols, interior de la Terra, isostasia, datació, processos externs i temps geològic.' },
+  { id: 'geo',      n: 'Geografia',    ic: 'globe',    d: 'Mapes interactius per a aprendre on és cada lloc: comunitats autònomes, províncies i més.' },
   { id: 'tecno',    n: 'Tecnologia',   ic: 'wrench',   d: 'Mecanismes, electricitat, programació i expressió gràfica per a Tecnologia de 2n i 3r d\'ESO.' },
   { id: 'curio',    n: 'Cultura',      ic: 'landmark', d: 'Per a qui vol saber un poc més.' },
   { id: 'misc',     n: 'Contes',       ic: 'book',     d: 'Aventures interactives per a xiquets curiosos (8 a 10 anys): llibres-joc per a jugar a la tablet; tria el camí, resol candaus de mates i descobreix tots els finals.' },
@@ -390,7 +391,7 @@ const RES = [
   { cat: 'misc', href: 'maquina-temps-engranatges/', ic: 'bird', niv: ['Primària'], tipus: ['Aventura'], glyph: '🦜', t: 'La Màquina del Temps: Els tres engranatges perduts', d: 'Valentia romana, el paper de Xàtiva i la Llotja de la Seda: tria el camí, resol candaus de mates i troba els 8 finals amb el lloro Cronet.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
   { cat: 'misc', href: 'ultima-senyal/', ic: 'rocket', niv: ['Primària'], tipus: ['Aventura'], glyph: '🚀', t: 'L\'Última Senyal: Una aventura en l\'espai', d: 'Tres planetes, tres cristalls i un missatge misteriós: tria el camí, resol candaus de mates i ajuda les criatures amb la lluerna Lumi. Bilingüe VAL/CAS, 9 finals.', tag: 'Aventura interactiva · Candaus de 4t de Primària' },
   // Curiositats
-  { cat: 'curio', href: 'puzle-mapa-espanya/', ic: 'puzle', niv: ['Primària', '1r ESO', '3r ESO'], tipus: ['Joc'], glyph: '🧩', t: 'Puzle del mapa d\'Espanya', d: 'Arrossega les comunitats autònomes o les províncies fins al seu lloc, amb peces o amb noms, pistes i cronòmetre. Amb activitats per a raonar.', tag: 'Geografia d\'Espanya' },
+  { cat: 'geo', href: 'puzle-mapa-espanya/', ic: 'puzle', niv: ['Primària', '1r ESO', '3r ESO'], tipus: ['Joc'], glyph: '🧩', t: 'Puzle del mapa d\'Espanya', d: 'Arrossega les comunitats autònomes o les províncies fins al seu lloc, amb peces o amb noms, pistes i cronòmetre. Amb activitats per a raonar.', tag: 'Geografia d\'Espanya' },
   { cat: 'curio', href: 'atles-art-rupestre/', ic: 'map', niv: [], tipus: ['Línia del temps', 'Joc'], glyph: '✋', t: 'Atles de l\'art rupestre', d: 'Mapa amb 56 jaciments d\'art rupestre del món, amb fotos, línia del temps i un joc.', tag: 'Història · Geografia' },
 ];
 const $ = (s) => document.querySelector(s);

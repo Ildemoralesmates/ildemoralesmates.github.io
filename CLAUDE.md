@@ -10,7 +10,7 @@
   - El buscador de la portada indexa `t`, `d`, `tag`, `sub`, nom de categoria, `niv`, `bloc` i `tipus` (sense accents ni majúscules): convé que el text de la targeta continga els mots que un company buscaria.
   - Si cal un valor nou, afegir-lo també a les constants `NIVELLS`, `BLOCS` o `TIPUS` del script de la portada; si no, el filtre no el mostrarà.
   - `ic`: nom de la icona de la targeta, una clau de l'objecte `IC` del script de la portada (icones de línia, `viewBox` 24, trac 2). Cada recurs en du una de pròpia; si falta, la targeta mostra el `glyph`. Per a una icona nova, afegir-ne el contingut SVG a `IC`.
-- La portada té una pestanya per matèria (`CATS`), cadascuna amb el seu color (`--c-<id>`, `--t-<id>`, també en mode fosc) i la seua icona: Matemàtiques, Física, Química, Biologia, Geologia, Cultura (`id: 'curio'`) i Contes (`id: 'misc'`; aventures per a xiquets). Els ids no es canvien per no trencar enllaços (`#cat=misc`). Una matèria nova necessita color, icona i entrada a `CATS`.
+- La portada té una pestanya per matèria (`CATS`), cadascuna amb el seu color (`--c-<id>`, `--t-<id>`, també en mode fosc) i la seua icona: Matemàtiques, Física, Química, Biologia, Geologia, Geografia (`id: 'geo'`), Cultura (`id: 'curio'`) i Contes (`id: 'misc'`; aventures per a xiquets). Els ids no es canvien per no trencar enllaços (`#cat=misc`). Una matèria nova necessita color, icona i entrada a `CATS`.
 - Els subtítols (`sub`) només es mostren quan agrupen més d'una targeta dins de la matèria.
 
 # Versions en castellà (`es/`)
@@ -60,7 +60,7 @@
 - Les targetes (matèria `tecno`) i les 16 URLs del sitemap es mantenen a mà (ja hi són).
 
 
-# Puzle del mapa d'Espanya (`puzle-mapa-espanya`, matèria `curio`)
+# Puzle del mapa d'Espanya (`puzle-mapa-espanya`, matèria `geo`)
 
 - Font: `tools/simuladors/src/mapa.src.html` (amb «Raona-ho»); es genera amb `python3 tools/simuladors/genera.py` com els altres simuladors.
 - La geometria és `tools/simuladors/src/mapa.geo.js`, generada (no s'edita a mà) per `python3 tools/simuladors/geo/mapa_espanya.py <ne_10m_admin_1_states_provinces.geojson>` a partir de Natural Earth (domini públic). `build.py` l'insereix amb `/*@INC:mapa.geo.js@*/` (qualsevol font pot incloure un fitxer de `src/` així).
