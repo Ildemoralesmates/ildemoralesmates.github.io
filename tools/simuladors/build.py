@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Ensambla cada simulador (src/<nom>.src.html) amb el CSS/JS comú -> tools/simuladors/.build/<nom>.html (ho crida genera.py)"""
-import sys
+import re, sys
 from pathlib import Path
 R = Path(__file__).resolve().parent
 S = R / "src"
@@ -32,6 +32,7 @@ for n in names:
     s = (S / f"{n}.src.html").read_text(encoding="utf-8")
     s = s.replace("/*@COMMON_CSS@*/", css).replace("/*@COMMON_JS@*/", js)
     s = s.replace("/*@QUIZ_CSS@*/", qcss).replace("/*@QUIZ_JS@*/", qjs).replace("/*@STEPS_CSS@*/", scss).replace("/*@STEPS_JS@*/", sjs).replace("/*@RAONA_CSS@*/", rcss).replace("/*@TEC_CSS@*/", tcss).replace("/*@TEC_JS@*/", tjs).replace("/*@RAONA_JS@*/", rjs).replace("<!--@RAONA@-->", RAONA).replace("<!--@LVLSW@-->", LVLSW).replace("<!--@QUIZ@-->", QUIZ)
+    s = re.sub(r"/\*@INC:([\w.\-]+)@\*/", lambda m: (S / m.group(1)).read_text(encoding="utf-8"), s)
     s = s.replace("<!--@LANGSW@-->", LANGSW).replace("<!--@FOOTER@-->", FOOT).replace("<!--@GC@-->", GC)
     (OUT / f"{n}.html").write_text(s, encoding="utf-8")
     print("ok", n, len(s))

@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Puzle del mapa d'Espanya</title>
+<meta name="description" content="Puzle interactiu del mapa d'Espanya: arrossega les comunitats autònomes o les 50 províncies (més Ceuta i Melilla) fins al seu lloc, amb peces o amb noms, pistes i cronòmetre. Amb activitats per a raonar: missions, afirmacions per a desmuntar i errors d'altres.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+:root{--sea:#d6e6f2;--ctx:#e6e3dc;--ctxl:#c9c4b8;--slot:#f6f4ef;--slotl:#9aa3b3;--dock:#ffffffd9;--coast:#5d6b82}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--sea:#0c1a2b;--ctx:#161c28;--ctxl:#2b3446;--slot:#2a3550;--slotl:#5f6b84;--dock:#121929e6;--coast:#8a95ac}}
+#map{display:block;width:100%;height:auto;max-height:min(74vh,600px);margin-inline:auto;border-radius:8px;user-select:none;-webkit-user-select:none}
+#map .sea{fill:var(--sea)}
+#map .ctx{fill:var(--ctx);stroke:var(--ctxl);stroke-width:1}
+#map .ins{fill:var(--sea);stroke:var(--coast);stroke-width:1.2}
+#map .slot{fill:var(--slot);cursor:pointer;transition:fill .2s}
+#map .slot.other{fill:var(--ctx);cursor:default}
+#map .slot.sel:hover{fill:var(--chip)}
+#map .bd{fill:none;stroke:var(--slotl);stroke-width:1;stroke-linejoin:round;pointer-events:none}
+#map .coast{fill:none;stroke:var(--coast);stroke-width:1.4;stroke-linejoin:round;pointer-events:none}
+#map .placed{stroke:var(--panel);stroke-width:.8;stroke-linejoin:round;pointer-events:none}
+#map .pl-in{animation:pop .45s ease-out}
+@keyframes pop{0%{opacity:.2}100%{opacity:1}}
+#map .lbl{font:600 20px var(--f-body);fill:var(--ink);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+#map .lbl.p{font-size:15.5px}
+#map .dock{fill:var(--dock);stroke:var(--line);stroke-width:1.2}
+#map .dockt{font:700 17px var(--f-body);fill:var(--muted);letter-spacing:.08em}
+#map .piece{cursor:grab;touch-action:none}
+#map .piece:focus{outline:none}
+#map .piece:focus-visible .pc,#map .piece.on .pc{stroke:var(--pa);stroke-width:3}
+#map .piece:focus-visible .chipr,#map .piece.on .chipr{stroke:var(--pa);stroke-width:3}
+#map .pc{stroke:var(--ink);stroke-width:1;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#map .pn{font:600 16px var(--f-body);fill:var(--ink);text-anchor:middle;pointer-events:none}
+#map .chipr{fill:var(--panel);stroke:var(--ink);stroke-width:1.2}
+#map .chipt{font:600 20px var(--f-body);fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+#map .pin{fill:var(--pb);stroke:var(--panel);stroke-width:2}
+#map .halo{fill:none;stroke:var(--pb);stroke-width:1.6;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+#map .dragging{cursor:grabbing;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+#map .flash{animation:flash .5s ease-in-out 4 alternate}
+@keyframes flash{from{fill:var(--slot)}to{fill:var(--pb)}}
+#map .hl{fill:var(--pb);fill-opacity:.35;stroke:var(--pb);stroke-width:2.5;stroke-linejoin:round;pointer-events:none}
+#map .hl.b{fill:var(--pa);stroke:var(--pa)}
+@media (prefers-reduced-motion: reduce){#map .flash{animation:none;fill:var(--pb)}#map .pl-in{animation:none}}
+.side .stats{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;margin:0;font-size:14px}
+.side .stats dd{font-weight:700}
+.side .msg{margin:0;font-size:14.5px;min-height:1.4em}
+.side .msg.good{color:var(--ok);font-weight:600}
+.side .msg.bad{color:var(--warn);font-weight:600}
+.side .lbl2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0}
+.side select{width:100%}
+.prog{height:8px;border-radius:99px;background:var(--chip);overflow:hidden;border:1px solid var(--line)}
+.prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.fin{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink);margin:0}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="simgrid">
+<div class="simcv"><svg id="map" role="application" data-i18n-aria="aria.map" aria-label=""></svg></div>
+<div class="side">
+<p class="lbl2" data-i18n="l_level"></p>
+<div class="seg" id="lvsw" role="group" data-i18n-aria="l_level" aria-label=""><button type="button" data-v="comm" aria-pressed="true" data-i18n="lv_comm"></button><button type="button" data-v="prov" aria-pressed="false" data-i18n="lv_prov"></button></div>
+<div id="filtbox" hidden><label class="lbl2" for="filt" data-i18n="l_filt"></label><select id="filt"></select></div>
+<p class="lbl2" data-i18n="l_mode"></p>
+<div class="seg" id="mdsw" role="group" data-i18n-aria="l_mode" aria-label=""><button type="button" data-v="shape" aria-pressed="true" data-i18n="md_shape"></button><button type="button" data-v="name" aria-pressed="false" data-i18n="md_name"></button></div>
+<label class="check"><input type="checkbox" id="cbB" checked> <span data-i18n="cb_borders"></span></label>
+<label class="check"><input type="checkbox" id="cbN" checked> <span data-i18n="cb_names"></span></label>
+<div class="prog" aria-hidden="true"><i id="progb"></i></div>
+<dl class="stats">
+<dt data-i18n="st_placed"></dt><dd id="stP">0 / 0</dd>
+<dt data-i18n="st_first"></dt><dd id="stF">0</dd>
+<dt data-i18n="st_err"></dt><dd id="stE">0</dd>
+<dt data-i18n="st_time"></dt><dd id="stT">0:00</dd>
+</dl>
+<p class="msg" id="msg" aria-live="polite"></p>
+<div class="row">
+<button class="btn primary" type="button" id="bNext" data-i18n="b_next"></button>
+<button class="btn" type="button" id="bHint" data-i18n="b_hint"></button>
+<button class="btn" type="button" id="bNew" data-i18n="b_new"></button>
+</div>
+<p class="note" data-i18n="howto"></p>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Puzle del mapa d'Espanya",
+"eyebrow":"Geografia · Primària i ESO",
+"h1":"Puzle del mapa d'Espanya",
+"lede":"Arrossega les comunitats autònomes o les províncies fins al seu lloc. Pots jugar amb les peces del mapa o amb els noms.",
+"sim_title":"Col·loca cada peça al seu lloc",
+"story":"Espanya té <b>17 comunitats autònomes</b> i <b>2 ciutats autònomes</b> (Ceuta i Melilla), i les comunitats es divideixen en <b>50 províncies</b>. Tria el nivell, agafa una peça de la safata (a baix a la dreta) i deixa-la on toca. Si encertes, es queda fixa; si no, torna a la safata. Les Canàries estan en un requadre: en realitat són a uns 1.000 km de la península, davant de la costa d'Àfrica.",
+"aria.map":"Mapa d'Espanya per a completar arrossegant peces",
+"l_level":"Nivell","lv_comm":"Comunitats","lv_prov":"Províncies",
+"l_filt":"Províncies de…","f_all":"Tot Espanya",
+"l_mode":"Què arrossegues?","md_shape":"Peces del mapa","md_name":"Noms",
+"cb_borders":"Mostra les fronteres interiors","cb_names":"Mostra els noms",
+"st_placed":"Col·locades","st_first":"A la primera","st_err":"Errades","st_time":"Temps",
+"b_next":"Col·loca'n una","b_hint":"Pista","b_new":"Torna a començar",
+"howto":"També pots fer clic en una peça de la safata i després clic al mapa, on creus que va.",
+"tray":"PECES","tray_n":"NOMS","left":"queden {0}",
+"ok":"✔ {0}!","ok_first":"✔ {0}, a la primera!",
+"ko_on":"✘ «{0}» no va ací: això és {1}.","ko_near":"✘ «{0}» no va ací. Mira la forma i els veïns.","ko_sea":"Deixa la peça damunt del mapa.",
+"hint":"Pista: {0} va on parpelleja.","auto":"Col·locada: {0}.","pick":"Has triat «{0}». Ara fes clic al mapa.",
+"done":"🎉 Mapa complet! {0} peces en {1}, {2} a la primera i {3} errades.",
+"hl_note":"Al mapa tens marcat el que diu l'activitat. Quan tornes a jugar, la marca desapareix.",
+"idea":"<b>Per a la classe:</b> comenceu per les comunitats amb els noms visibles i, quan les tinguen, passeu a les províncies d'una sola comunitat (el selector «Províncies de…»). Per a nota, amagueu les fronteres i els noms. Pregunteu també per què Castella i Lleó és la comunitat amb més veïnes i per què les Canàries estan en un requadre.",
+"c.AN":"Andalusia","c.AR":"Aragó","c.AS":"Astúries","c.IB":"Illes Balears","c.CN":"Canàries","c.CB":"Cantàbria","c.CM":"Castella-la Manxa","c.CL":"Castella i Lleó","c.CT":"Catalunya","c.VC":"Comunitat Valenciana","c.EX":"Extremadura","c.GA":"Galícia","c.MD":"Comunitat de Madrid","c.MC":"Regió de Múrcia","c.NC":"Navarra","c.PV":"País Basc","c.RI":"la Rioja","c.CE":"Ceuta","c.ML":"Melilla",
+"cs.VC":"C. Valenciana","cs.MD":"Madrid","cs.MC":"Múrcia","cs.CM":"Castella-la Manxa",
+"p.C":"A Coruña","p.LU":"Lugo","p.OR":"Ourense","p.PO":"Pontevedra","p.O":"Astúries","p.S":"Cantàbria","p.BI":"Biscaia","p.SS":"Guipúscoa","p.VI":"Àlaba","p.NA":"Navarra","p.LO":"la Rioja","p.HU":"Osca","p.Z":"Saragossa","p.TE":"Terol","p.B":"Barcelona","p.GI":"Girona","p.L":"Lleida","p.T":"Tarragona","p.CS":"Castelló","p.V":"València","p.A":"Alacant","p.MU":"Múrcia","p.AL":"Almeria","p.CA":"Cadis","p.CO":"Còrdova","p.GR":"Granada","p.H":"Huelva","p.J":"Jaén","p.MA":"Màlaga","p.SE":"Sevilla","p.BA":"Badajoz","p.CC":"Càceres","p.AB":"Albacete","p.CR":"Ciutat Real","p.CU":"Conca","p.GU":"Guadalajara","p.TO":"Toledo","p.M":"Madrid","p.AV":"Àvila","p.BU":"Burgos","p.LE":"Lleó","p.P":"Palència","p.SA":"Salamanca","p.SG":"Segòvia","p.SO":"Sòria","p.VA":"Valladolid","p.ZA":"Zamora","p.PM":"Illes Balears","p.GC":"Las Palmas","p.TF":"Santa Cruz de Tenerife","p.CE":"Ceuta","p.ML":"Melilla",
+"l_n":"Nombre:",
+"m_no":"{0} no és correcte. Prem «Mostra-ho al simulador» i compta-ho al mapa.",
+"m1.q":"Quantes províncies té <b>Castella i Lleó</b>?",
+"m1_8":"8 en té Andalusia. Castella i Lleó és la comunitat amb més províncies: compta-les bé.",
+"m1_ok":"✔ Missió complida! Àvila, Burgos, Lleó, Palència, Salamanca, Segòvia, Sòria, Valladolid i Zamora: 9 províncies.",
+"m1.more":"I quina és la segona comunitat amb més províncies? Quantes en té?",
+"m2.q":"Quantes <b>comunitats autònomes</b> tenen una sola província (són <b>uniprovincials</b>)?",
+"m2_9":"Ceuta i Melilla no són comunitats autònomes ni províncies: són ciutats autònomes. Lleva-les del compte.",
+"m2_lo":"Te'n falta alguna. Recorda que les Illes Balears també són una sola província.",
+"m2_ok":"✔ Missió complida! Astúries, Cantàbria, la Rioja, Navarra, Madrid, Múrcia i les Illes Balears: 7.",
+"m2.more":"Les Canàries també són un arxipèlag. Per què no són uniprovincials?",
+"m3.q":"Amb quantes <b>comunitats autònomes</b> limita per terra <b>Castella i Lleó</b>?",
+"m3_10":"Portugal limita amb Castella i Lleó, però és un altre país, no una comunitat.",
+"m3_ok":"✔ Missió complida! Galícia, Astúries, Cantàbria, País Basc, la Rioja, Aragó, Castella-la Manxa, Madrid i Extremadura: 9, el rècord d'Espanya.",
+"m3.more":"Quina comunitat és la segona amb més veïnes? Mira Castella-la Manxa.",
+"m4.q":"Quantes <b>províncies</b> limiten amb la província de <b>València</b>?",
+"m4_6":"València no toca Múrcia: entre elles hi ha Alacant i Albacete.",
+"m4_ok":"✔ Missió complida! Castelló, Terol, Conca, Albacete i Alacant: 5. El Racó d'Ademús, la part de València que queda entre Terol i Conca, també compta.",
+"m4.more":"I amb quantes limita Alacant? I Castelló?",
+"l_np":"Províncies:","l_nc":"Comunitats veïnes:",
+"s1.q":"«Una comunitat autònoma té més d'una província.»",
+"s1.h":"Hi ha comunitats que són una sola província. Posa el nivell de províncies i compara.",
+"s1_cx":"Busca una comunitat amb menys províncies. Quantes en té?",
+"s1.e":"De vegades: Andalusia en té 8 i Castella i Lleó 9, però hi ha 7 comunitats uniprovincials (Madrid, Múrcia, Astúries…).",
+"s2.q":"«Una comunitat autònoma limita per terra amb almenys una altra comunitat.»",
+"s2.h":"Pensa en les comunitats que són illes.",
+"s2_cx":"Busca una comunitat que no toque cap altra per terra. Amb quantes limita?",
+"s2.e":"De vegades: quasi totes, però les Illes Balears i les Canàries estan envoltades de mar i no limiten per terra amb cap comunitat.",
+"s3.q":"«Si una comunitat té una sola província, totes les províncies veïnes d'eixa província són d'una altra comunitat.»",
+"s3.h":"Si la comunitat només té una província, pot haver-hi alguna altra província de la mateixa comunitat?",
+"s3.e":"Sempre: si la comunitat només té una província, no queda cap altra província seua que puga ser veïna. Totes les veïnes de Madrid, per exemple, són de Castella i Lleó o de Castella-la Manxa.",
+"s4.q":"«Hi ha alguna província que limita amb més de 8 províncies.»",
+"s4.h":"Prova amb les províncies més grans de l'interior, com Burgos o Saragossa, i compta-les.",
+"s4.e":"Mai: el rècord és de 8 veïnes, i el comparteixen Burgos i Saragossa.",
+"e1.ctx":"La professora pregunta quantes <b>comunitats autònomes</b> té Espanya.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"19, perquè al puzle de comunitats hi ha 19 peces.",
+"e1.s1":"17 comunitats autònomes i, a més, dues ciutats autònomes: Ceuta i Melilla.",
+"e1.w0":"Ceuta i Melilla tenen autonomia, però són ciutats autònomes, no comunitats. El puzle té 19 peces, però només 17 són comunitats.",
+"e1.w1":"Perquè Ceuta i Melilla són a Àfrica i no compten per a res.",
+"e1.w2":"Perquè les illes no són comunitats autònomes.",
+"e1.frame":"Marta, al puzle hi ha 19 peces, però…",
+"e1.model":"Marta, les peces són 19 perquè el puzle també posa Ceuta i Melilla, que tenen el seu propi govern. Però la Constitució les anomena ciutats autònomes, no comunitats. Comunitats autònomes n'hi ha 17.",
+"e2.ctx":"Ara pregunta quantes <b>províncies</b> té Espanya.",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"50 províncies. Ceuta i Melilla no són províncies, són ciutats autònomes.",
+"e2.s1":"52, perquè al puzle de províncies hi ha 52 peces.",
+"e2.w0":"Les províncies són 50; les dues peces que sobren són Ceuta i Melilla, que no són províncies sinó ciutats autònomes.",
+"e2.w1":"Perquè les Illes Balears i les Canàries no compten com a províncies.",
+"e2.w2":"Perquè Madrid és la capital i no és una província.",
+"e2.frame":"Laia, el puzle té 52 peces, però…",
+"e2.model":"Laia, no totes les peces del puzle són províncies. Ceuta i Melilla hi són perquè formen part d'Espanya, però són ciutats autònomes. Si les lleves, queden 50 províncies.",
+"e3.ctx":"Mirant el mapa, dues alumnes parlen de les <b>Canàries</b>.",
+"e3.n0":"Rita","e3.n1":"Joana",
+"e3.s0":"Les Canàries estan al costat de Portugal i de Cadis, ho diu el mapa.",
+"e3.s1":"Estan en un requadre: en realitat són a uns 1.000 km de la península, davant de la costa d'Àfrica.",
+"e3.w0":"El requadre és un truc del mapa per a no fer-lo enorme: les illes estan molt més al sud, a uns 100 km de la costa d'Àfrica, i el requadre no respecta la seua posició real.",
+"e3.w1":"Perquè les Canàries són a la mar Mediterrània.",
+"e3.w2":"Perquè les illes es mouen i cada mapa les posa en un lloc.",
+"e3.frame":"Rita, el requadre del mapa…",
+"e3.model":"Rita, si dibuixàrem les Canàries al seu lloc de veritat, el mapa hauria de ser molt més gran i quasi tot seria mar. Per això les posen en un requadre a part, sense respectar la distància. De veritat estan a l'oceà Atlàntic, davant del Marroc i del Sàhara.",
+"d1.q":"Vas en cotxe de <b>Gandia</b> (província de València) fins a <b>Madrid</b>. Com a mínim, per quantes províncies has de passar entre la de València i la de Madrid (sense comptar-les)?",
+"d1_0":"València i Madrid no limiten: almenys has de travessar una província.",
+"d1_2":"Hi ha un camí més curt. Busca una província que toque alhora València i Madrid.",
+"d1_ok":"✔ Ben decidit! Només cal travessar Conca (per l'autovia A-3).",
+"d1.more":"I de València a Sevilla, quantes províncies travessaries com a mínim?",
+"d2.q":"Vols anar del <b>País Basc</b> a <b>Andalusia</b> per terra. Com a mínim, per quantes <b>comunitats</b> has de passar entre les dues (sense comptar-les)?",
+"d2_1":"Castella i Lleó no toca Andalusia: entre elles hi ha Extremadura o Castella-la Manxa.",
+"d2_3":"Hi ha un camí més curt. Prova a passar per Castella i Lleó.",
+"d2_ok":"✔ Ben decidit! Per exemple, Castella i Lleó i Extremadura, o Castella i Lleó i Castella-la Manxa: 2 comunitats.",
+"d2.more":"I de Galícia a Catalunya? Quantes comunitats, com a mínim?",
+"d3.q":"Quantes províncies té <b>Andalusia</b>?",
+"d3.lc":"Províncies:",
+"d3_no":"No. Posa el nivell de províncies, tria «Províncies de… Andalusia» i compta-les.",
+"d3_ok":"✔ Ben decidit! Almeria, Cadis, Còrdova, Granada, Huelva, Jaén, Màlaga i Sevilla: 8.",
+"d3.more":"Quina és la província andalusa més gran? I quina té costa a la mar Mediterrània i a l'oceà Atlàntic alhora?"
+},
+es:{
+"title":"Puzle del mapa de España",
+"eyebrow":"Geografía · Primaria y ESO",
+"h1":"Puzle del mapa de España",
+"lede":"Arrastra las comunidades autónomas o las provincias hasta su sitio. Puedes jugar con las piezas del mapa o con los nombres.",
+"sim_title":"Coloca cada pieza en su sitio",
+"story":"España tiene <b>17 comunidades autónomas</b> y <b>2 ciudades autónomas</b> (Ceuta y Melilla), y las comunidades se dividen en <b>50 provincias</b>. Elige el nivel, coge una pieza de la bandeja (abajo a la derecha) y déjala donde toca. Si aciertas, se queda fija; si no, vuelve a la bandeja. Las Canarias están en un recuadro: en realidad están a unos 1.000 km de la península, frente a la costa de África.",
+"aria.map":"Mapa de España para completar arrastrando piezas",
+"l_level":"Nivel","lv_comm":"Comunidades","lv_prov":"Provincias",
+"l_filt":"Provincias de…","f_all":"Toda España",
+"l_mode":"¿Qué arrastras?","md_shape":"Piezas del mapa","md_name":"Nombres",
+"cb_borders":"Muestra las fronteras interiores","cb_names":"Muestra los nombres",
+"st_placed":"Colocadas","st_first":"A la primera","st_err":"Fallos","st_time":"Tiempo",
+"b_next":"Coloca una","b_hint":"Pista","b_new":"Volver a empezar",
+"howto":"También puedes hacer clic en una pieza de la bandeja y después clic en el mapa, donde crees que va.",
+"tray":"PIEZAS","tray_n":"NOMBRES","left":"quedan {0}",
+"ok":"✔ ¡{0}!","ok_first":"✔ ¡{0}, a la primera!",
+"ko_on":"✘ «{0}» no va aquí: esto es {1}.","ko_near":"✘ «{0}» no va aquí. Mira la forma y los vecinos.","ko_sea":"Deja la pieza encima del mapa.",
+"hint":"Pista: {0} va donde parpadea.","auto":"Colocada: {0}.","pick":"Has elegido «{0}». Ahora haz clic en el mapa.",
+"done":"🎉 ¡Mapa completo! {0} piezas en {1}, {2} a la primera y {3} fallos.",
+"hl_note":"En el mapa tienes marcado lo que dice la actividad. Cuando vuelvas a jugar, la marca desaparece.",
+"idea":"<b>Para la clase:</b> empezad por las comunidades con los nombres visibles y, cuando las dominen, pasad a las provincias de una sola comunidad (el selector «Provincias de…»). Para nota, ocultad las fronteras y los nombres. Preguntad también por qué Castilla y León es la comunidad con más vecinas y por qué las Canarias están en un recuadro.",
+"c.AN":"Andalucía","c.AR":"Aragón","c.AS":"Asturias","c.IB":"Illes Balears","c.CN":"Canarias","c.CB":"Cantabria","c.CM":"Castilla-La Mancha","c.CL":"Castilla y León","c.CT":"Cataluña","c.VC":"Comunitat Valenciana","c.EX":"Extremadura","c.GA":"Galicia","c.MD":"Comunidad de Madrid","c.MC":"Región de Murcia","c.NC":"Navarra","c.PV":"País Vasco","c.RI":"La Rioja","c.CE":"Ceuta","c.ML":"Melilla",
+"cs.VC":"C. Valenciana","cs.MD":"Madrid","cs.MC":"Murcia","cs.CM":"Castilla-La Mancha",
+"p.C":"A Coruña","p.LU":"Lugo","p.OR":"Ourense","p.PO":"Pontevedra","p.O":"Asturias","p.S":"Cantabria","p.BI":"Bizkaia","p.SS":"Gipuzkoa","p.VI":"Álava","p.NA":"Navarra","p.LO":"La Rioja","p.HU":"Huesca","p.Z":"Zaragoza","p.TE":"Teruel","p.B":"Barcelona","p.GI":"Girona","p.L":"Lleida","p.T":"Tarragona","p.CS":"Castellón","p.V":"Valencia","p.A":"Alicante","p.MU":"Murcia","p.AL":"Almería","p.CA":"Cádiz","p.CO":"Córdoba","p.GR":"Granada","p.H":"Huelva","p.J":"Jaén","p.MA":"Málaga","p.SE":"Sevilla","p.BA":"Badajoz","p.CC":"Cáceres","p.AB":"Albacete","p.CR":"Ciudad Real","p.CU":"Cuenca","p.GU":"Guadalajara","p.TO":"Toledo","p.M":"Madrid","p.AV":"Ávila","p.BU":"Burgos","p.LE":"León","p.P":"Palencia","p.SA":"Salamanca","p.SG":"Segovia","p.SO":"Soria","p.VA":"Valladolid","p.ZA":"Zamora","p.PM":"Illes Balears","p.GC":"Las Palmas","p.TF":"Santa Cruz de Tenerife","p.CE":"Ceuta","p.ML":"Melilla",
+"l_n":"Número:",
+"m_no":"{0} no es correcto. Pulsa «Muéstralo en el simulador» y cuéntalo en el mapa.",
+"m1.q":"¿Cuántas provincias tiene <b>Castilla y León</b>?",
+"m1_8":"8 tiene Andalucía. Castilla y León es la comunidad con más provincias: cuéntalas bien.",
+"m1_ok":"✔ ¡Misión cumplida! Ávila, Burgos, León, Palencia, Salamanca, Segovia, Soria, Valladolid y Zamora: 9 provincias.",
+"m1.more":"¿Y cuál es la segunda comunidad con más provincias? ¿Cuántas tiene?",
+"m2.q":"¿Cuántas <b>comunidades autónomas</b> tienen una sola provincia (son <b>uniprovinciales</b>)?",
+"m2_9":"Ceuta y Melilla no son comunidades autónomas ni provincias: son ciudades autónomas. Quítalas de la cuenta.",
+"m2_lo":"Te falta alguna. Recuerda que las Illes Balears también son una sola provincia.",
+"m2_ok":"✔ ¡Misión cumplida! Asturias, Cantabria, La Rioja, Navarra, Madrid, Murcia y las Illes Balears: 7.",
+"m2.more":"Las Canarias también son un archipiélago. ¿Por qué no son uniprovinciales?",
+"m3.q":"¿Con cuántas <b>comunidades autónomas</b> limita por tierra <b>Castilla y León</b>?",
+"m3_10":"Portugal limita con Castilla y León, pero es otro país, no una comunidad.",
+"m3_ok":"✔ ¡Misión cumplida! Galicia, Asturias, Cantabria, País Vasco, La Rioja, Aragón, Castilla-La Mancha, Madrid y Extremadura: 9, el récord de España.",
+"m3.more":"¿Qué comunidad es la segunda con más vecinas? Mira Castilla-La Mancha.",
+"m4.q":"¿Cuántas <b>provincias</b> limitan con la provincia de <b>Valencia</b>?",
+"m4_6":"Valencia no toca Murcia: entre ellas están Alicante y Albacete.",
+"m4_ok":"✔ ¡Misión cumplida! Castellón, Teruel, Cuenca, Albacete y Alicante: 5. El Rincón de Ademuz, la parte de Valencia que queda entre Teruel y Cuenca, también cuenta.",
+"m4.more":"¿Y con cuántas limita Alicante? ¿Y Castellón?",
+"l_np":"Provincias:","l_nc":"Comunidades vecinas:",
+"s1.q":"«Una comunidad autónoma tiene más de una provincia.»",
+"s1.h":"Hay comunidades que son una sola provincia. Pon el nivel de provincias y compara.",
+"s1_cx":"Busca una comunidad con menos provincias. ¿Cuántas tiene?",
+"s1.e":"A veces: Andalucía tiene 8 y Castilla y León 9, pero hay 7 comunidades uniprovinciales (Madrid, Murcia, Asturias…).",
+"s2.q":"«Una comunidad autónoma limita por tierra con al menos otra comunidad.»",
+"s2.h":"Piensa en las comunidades que son islas.",
+"s2_cx":"Busca una comunidad que no toque ninguna otra por tierra. ¿Con cuántas limita?",
+"s2.e":"A veces: casi todas, pero las Illes Balears y las Canarias están rodeadas de mar y no limitan por tierra con ninguna comunidad.",
+"s3.q":"«Si una comunidad tiene una sola provincia, todas las provincias vecinas de esa provincia son de otra comunidad.»",
+"s3.h":"Si la comunidad solo tiene una provincia, ¿puede haber otra provincia de la misma comunidad?",
+"s3.e":"Siempre: si la comunidad solo tiene una provincia, no queda ninguna otra provincia suya que pueda ser vecina. Todas las vecinas de Madrid, por ejemplo, son de Castilla y León o de Castilla-La Mancha.",
+"s4.q":"«Hay alguna provincia que limita con más de 8 provincias.»",
+"s4.h":"Prueba con las provincias más grandes del interior, como Burgos o Zaragoza, y cuéntalas.",
+"s4.e":"Nunca: el récord es de 8 vecinas, y lo comparten Burgos y Zaragoza.",
+"e1.ctx":"La profesora pregunta cuántas <b>comunidades autónomas</b> tiene España.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"19, porque en el puzle de comunidades hay 19 piezas.",
+"e1.s1":"17 comunidades autónomas y, además, dos ciudades autónomas: Ceuta y Melilla.",
+"e1.w0":"Ceuta y Melilla tienen autonomía, pero son ciudades autónomas, no comunidades. El puzle tiene 19 piezas, pero solo 17 son comunidades.",
+"e1.w1":"Porque Ceuta y Melilla están en África y no cuentan para nada.",
+"e1.w2":"Porque las islas no son comunidades autónomas.",
+"e1.frame":"Marta, en el puzle hay 19 piezas, pero…",
+"e1.model":"Marta, las piezas son 19 porque el puzle también pone Ceuta y Melilla, que tienen su propio gobierno. Pero la Constitución las llama ciudades autónomas, no comunidades. Comunidades autónomas hay 17.",
+"e2.ctx":"Ahora pregunta cuántas <b>provincias</b> tiene España.",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"50 provincias. Ceuta y Melilla no son provincias, son ciudades autónomas.",
+"e2.s1":"52, porque en el puzle de provincias hay 52 piezas.",
+"e2.w0":"Las provincias son 50; las dos piezas que sobran son Ceuta y Melilla, que no son provincias sino ciudades autónomas.",
+"e2.w1":"Porque las Illes Balears y las Canarias no cuentan como provincias.",
+"e2.w2":"Porque Madrid es la capital y no es una provincia.",
+"e2.frame":"Laia, el puzle tiene 52 piezas, pero…",
+"e2.model":"Laia, no todas las piezas del puzle son provincias. Ceuta y Melilla están porque forman parte de España, pero son ciudades autónomas. Si las quitas, quedan 50 provincias.",
+"e3.ctx":"Mirando el mapa, dos alumnas hablan de las <b>Canarias</b>.",
+"e3.n0":"Rita","e3.n1":"Juana",
+"e3.s0":"Las Canarias están al lado de Portugal y de Cádiz, lo dice el mapa.",
+"e3.s1":"Están en un recuadro: en realidad están a unos 1.000 km de la península, frente a la costa de África.",
+"e3.w0":"El recuadro es un truco del mapa para no hacerlo enorme: las islas están mucho más al sur, a unos 100 km de la costa de África, y el recuadro no respeta su posición real.",
+"e3.w1":"Porque las Canarias están en el mar Mediterráneo.",
+"e3.w2":"Porque las islas se mueven y cada mapa las pone en un sitio.",
+"e3.frame":"Rita, el recuadro del mapa…",
+"e3.model":"Rita, si dibujáramos las Canarias en su sitio de verdad, el mapa tendría que ser mucho más grande y casi todo sería mar. Por eso las ponen en un recuadro aparte, sin respetar la distancia. De verdad están en el océano Atlántico, frente a Marruecos y el Sáhara.",
+"d1.q":"Vas en coche de <b>Gandia</b> (provincia de Valencia) a <b>Madrid</b>. Como mínimo, ¿por cuántas provincias tienes que pasar entre la de Valencia y la de Madrid (sin contarlas)?",
+"d1_0":"Valencia y Madrid no limitan: al menos tienes que atravesar una provincia.",
+"d1_2":"Hay un camino más corto. Busca una provincia que toque a la vez Valencia y Madrid.",
+"d1_ok":"✔ ¡Bien decidido! Solo hay que atravesar Cuenca (por la autovía A-3).",
+"d1.more":"¿Y de Valencia a Sevilla, cuántas provincias atravesarías como mínimo?",
+"d2.q":"Quieres ir del <b>País Vasco</b> a <b>Andalucía</b> por tierra. Como mínimo, ¿por cuántas <b>comunidades</b> tienes que pasar entre las dos (sin contarlas)?",
+"d2_1":"Castilla y León no toca Andalucía: entre ellas están Extremadura o Castilla-La Mancha.",
+"d2_3":"Hay un camino más corto. Prueba a pasar por Castilla y León.",
+"d2_ok":"✔ ¡Bien decidido! Por ejemplo, Castilla y León y Extremadura, o Castilla y León y Castilla-La Mancha: 2 comunidades.",
+"d2.more":"¿Y de Galicia a Cataluña? ¿Cuántas comunidades, como mínimo?",
+"d3.q":"¿Cuántas provincias tiene <b>Andalucía</b>?",
+"d3.lc":"Provincias:",
+"d3_no":"No. Pon el nivel de provincias, elige «Provincias de… Andalucía» y cuéntalas.",
+"d3_ok":"✔ ¡Bien decidido! Almería, Cádiz, Córdoba, Granada, Huelva, Jaén, Málaga y Sevilla: 8.",
+"d3.more":"¿Cuál es la provincia andaluza más grande? ¿Y cuál tiene costa en el mar Mediterráneo y en el océano Atlántico a la vez?"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/*@INC:mapa.geo.js@*/
+/* ===== Puzle del mapa d'Espanya ===== */
+const NS='http://www.w3.org/2000/svg', svg=$('#map');
+const [,,VW,VH]=GEO.vb, DK=GEO.dock, IN=GEO.ins;
+svg.setAttribute('viewBox','0 0 '+VW+' '+VH);
+const HUE={GA:205,AS:150,CB:95,PV:350,NC:28,RI:300,AR:48,CT:8,CL:262,MD:330,CM:72,VC:180,EX:120,AN:105,MC:20,IB:225,CN:40,CE:280,ML:280};
+const COMMS=Object.keys(GEO.comm);
+const el=(tag,at,par)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e;};
+const G={};['sea','ctx','ins','slots','bd','placed','lbl','hl','dock','drag'].forEach(n=>{G[n]=el('g',{id:'g-'+n},svg);});
+el('rect',{x:0,y:0,width:VW,height:VH,class:'sea'},G.sea);
+el('path',{d:GEO.ctx,class:'ctx'},G.ctx);
+el('rect',{x:IN[0],y:IN[1],width:IN[2],height:IN[3],rx:6,class:'ins'},G.ins);
+el('rect',{x:DK[0],y:DK[1],width:DK[2],height:DK[3],rx:10,class:'dock'},G.dock);
+const dockT=el('text',{x:DK[0]+12,y:DK[1]+22,class:'dockt'},G.dock);
+const dockN=el('text',{x:DK[0]+DK[2]-12,y:DK[1]+22,class:'dockt','text-anchor':'end'},G.dock);
+const gItems=el('g',{},G.dock);
+
+let LV='comm',MODE='shape',FILT='all',SHOWB=true,SHOWN=true;
+let ids=[],queue=[],placed=new Set(),tried=new Set(),errors=0,t0=null,tEnd=null,sel=null,lastMsg=null,drag=null;
+const geo=id=>LV==='comm'?GEO.comm[id]:GEO.prov[id];
+const commOf=id=>LV==='comm'?id:GEO.prov[id].c;
+const nm=id=>t((LV==='comm'?'c.':'p.')+id);
+const lblName=id=>LV==='comm'&&I18N[LANG]['cs.'+id]?t('cs.'+id):nm(id);
+function color(id){
+  const c=commOf(id),h=HUE[c],dk=C().dark;
+  if(LV==='comm') return 'hsl('+h+' '+(dk?42:55)+'% '+(dk?38:72)+'%)';
+  const ps=GEO.comm[c].p,i=ps.indexOf(id),n=ps.length,dl=n>1?(i/(n-1)-.5)*16:0;
+  return 'hsl('+h+' '+(dk?42:55)+'% '+((dk?38:72)+dl)+'%)';
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function fmtT(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+
+/* ---------- mapa: forats per omplir ---------- */
+function drawSlots(){
+  G.slots.innerHTML='';G.bd.innerHTML='';
+  if(LV==='comm') COMMS.forEach(c=>el('path',{d:GEO.comm[c].d,class:'slot sel','data-id':c},G.slots));
+  else Object.keys(GEO.prov).forEach(p=>el('path',{d:GEO.prov[p].d,class:'slot '+(ids.includes(p)?'sel':'other'),'data-id':ids.includes(p)?p:''},G.slots));
+  if(SHOWB) el('path',{d:LV==='comm'?GEO.bComm:GEO.bProv,class:'bd'},G.bd);
+  else if(LV==='prov'&&FILT!=='all') el('path',{d:GEO.comm[FILT].d,class:'bd'},G.bd);
+  el('path',{d:GEO.land,class:'coast'},G.bd);
+  el('path',{d:GEO.bNat,class:'coast'},G.bd);
+}
+function drawPlaced(anim){
+  G.placed.innerHTML='';G.lbl.innerHTML='';
+  placed.forEach(id=>{
+    const g=geo(id);
+    el('path',{d:g.d,class:'placed'+(anim===id?' pl-in':''),fill:color(id)},G.placed);
+    if(SHOWN){const tx=el('text',{x:g.lp[0],y:g.lp[1],class:'lbl'+(LV==='prov'?' p':'')},G.lbl);tx.textContent=lblName(id);
+      if(id==='CE'||id==='ML'){tx.setAttribute('y',g.lp[1]-(id==='CE'?14:-14));}}
+  });
+}
+/* ---------- safata ---------- */
+const NSLOT=6;
+function cells(){
+  const top=DK[1]+32,cols=2,rows=MODE==='shape'?2:4;
+  const cw=(DK[2]-16)/cols,ch=(DK[3]-top+DK[1]-8)/rows,out=[];
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)out.push([DK[0]+8+cw*(c+.5),top+ch*(r+.5),cw,ch]);
+  return out;
+}
+function dockFit(id,cell){
+  const [x,y,w,h]=geo(id).bb,[cx,cy,cw,ch]=cell,ext=SHOWN?24:6;
+  const s=Math.min((cw-12)/w,(ch-ext-8)/h,3.2);
+  return {s,tx:cx-(x+w/2)*s,ty:cy-ext/2-(y+h/2)*s+2,cx,cy,ch};
+}
+function setTf(g,tx,ty,s){g.setAttribute('transform','translate('+tx.toFixed(1)+' '+ty.toFixed(1)+') scale('+s.toFixed(3)+')');}
+function drawDock(){
+  gItems.innerHTML='';G.drag.innerHTML='';
+  dockT.textContent=t(MODE==='shape'?'tray':'tray_n');
+  dockN.textContent=queue.length?tt('left',queue.length):'';
+  const cs=cells();
+  queue.slice(0,cs.length).forEach((id,i)=>{
+    const g=el('g',{class:'piece'+(sel===id?' on':''),tabindex:0,role:'button','data-id':id,'aria-label':nm(id)},gItems);
+    g._cell=cs[i];
+    if(MODE==='shape'){
+      const f=dockFit(id,cs[i]),inner=el('g',{},g);
+      el('path',{d:geo(id).d,class:'pc',fill:color(id)},inner);
+      const [,,w,h]=geo(id).bb;
+      if(Math.max(w,h)<26){const [x,y]=geo(id).bb;el('circle',{cx:x+w/2,cy:y+h/2,r:Math.max(w,h)/2+7,class:'halo'},inner);}
+      setTf(inner,f.tx,f.ty,f.s);g._inner=inner;g._f=f;
+      if(SHOWN){const tx=el('text',{x:f.cx,y:f.cy+f.ch/2-9,class:'pn'},g);tx.textContent=nm(id);}
+      el('rect',{x:f.cx-cs[i][2]/2+4,y:f.cy-f.ch/2+2,width:cs[i][2]-8,height:f.ch-4,fill:'transparent'},g).style.pointerEvents='all';
+    }else{
+      const [cx,cy,cw]=cs[i],txt=nm(id),fs=txt.length>17?15:txt.length>12?17.5:20;
+      const inner=el('g',{},g);
+      const wv=Math.min(cw-10,txt.length*fs*.56+24);
+      el('rect',{x:-wv/2,y:-19,width:wv,height:38,rx:19,class:'chipr'},inner);
+      const tx=el('text',{x:0,y:0,class:'chipt'},inner);tx.textContent=txt;tx.style.fontSize=fs+'px';
+      el('circle',{cx:0,cy:26,r:5.5,class:'pin'},inner);
+      setTf(inner,cx,cy-6,1);g._inner=inner;g._home=[cx,cy-6];
+    }
+    g.addEventListener('pointerdown',ev=>startDrag(ev,g,id));
+    g.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();choose(id);}});
+  });
+}
+function updStats(){
+  const n=ids.length,p=placed.size,first=[...placed].filter(i=>!tried.has(i)).length;
+  $('#stP').textContent=p+' / '+n;$('#stF').textContent=first;$('#stE').textContent=errors;
+  $('#progb').style.width=(n?100*p/n:0)+'%';
+  $('#stT').textContent=fmtT(t0?((tEnd||Date.now())-t0):0);
+}
+setInterval(()=>{if(t0&&!tEnd)updStats();},1000);
+function say(k,args,cls){lastMsg={k,args,cls};renderMsg();}
+function renderMsg(){
+  const m=$('#msg');if(!lastMsg){m.textContent='';m.className='msg';return;}
+  const a=(lastMsg.args||[]).map(x=>typeof x==='function'?x():x);
+  m.innerHTML=tt(lastMsg.k,...a);m.className='msg'+(lastMsg.cls?' '+lastMsg.cls:'');
+}
+/* ---------- joc ---------- */
+function newGame(){
+  ids=LV==='comm'?COMMS.slice():Object.keys(GEO.prov).filter(p=>FILT==='all'||GEO.prov[p].c===FILT);
+  queue=shuffle(ids.slice());placed=new Set();tried=new Set();errors=0;t0=null;tEnd=null;sel=null;lastMsg=null;
+  clearHl();drawSlots();drawPlaced();drawDock();updStats();renderMsg();
+}
+function begin(){if(!t0)t0=Date.now();}
+function place(id,auto){
+  placed.add(id);queue=queue.filter(q=>q!==id);if(sel===id)sel=null;
+  if(auto)tried.add(id);
+  drawPlaced(id);drawDock();
+  const name=()=>nm(id);
+  if(auto)say('auto',[name]);else say(tried.has(id)?'ok':'ok_first',[name],'good');
+  if(!queue.length){tEnd=Date.now();const first=[...placed].filter(i=>!tried.has(i)).length;
+    say('done',[ids.length,fmtT(tEnd-(t0||tEnd)),first,errors],'good');}
+  updStats();
+}
+function miss(id,on){
+  errors++;tried.add(id);
+  if(on&&on!==id) say('ko_on',[()=>nm(id),()=>nm(on)],'bad'); else say('ko_near',[()=>nm(id)],'bad');
+  updStats();
+}
+function slotAt(cx,cy){
+  const hide=G.drag.style.pointerEvents;G.drag.style.pointerEvents='none';
+  const e=document.elementFromPoint(cx,cy);G.drag.style.pointerEvents=hide;
+  return e&&e.classList&&e.classList.contains('sel')&&e.dataset.id?e.dataset.id:null;
+}
+function toSvg(cx,cy){const p=svg.createSVGPoint();p.x=cx;p.y=cy;const m=svg.getScreenCTM();return m?p.matrixTransform(m.inverse()):{x:cx,y:cy};}
+function toScreen(x,y){const p=svg.createSVGPoint();p.x=x;p.y=y;const m=svg.getScreenCTM();return m?p.matrixTransform(m):{x,y};}
+const inDock=p=>p.x>=DK[0]&&p.x<=DK[0]+DK[2]&&p.y>=DK[1]&&p.y<=DK[1]+DK[3];
+function nearSmall(id,p){const [x,y,w,h]=geo(id).bb;return Math.max(w,h)<26&&Math.hypot(p.x-(x+w/2),p.y-(y+h/2))<22;}
+
+function startDrag(ev,g,id){
+  if(ev.button>0)return;ev.preventDefault();clearHl();begin();
+  const p=toSvg(ev.clientX,ev.clientY);
+  drag={g,id,x0:ev.clientX,y0:ev.clientY,moved:false,pid:ev.pointerId,p};
+}
+/* els esdeveniments es lligen a window: en moure la peça a la capa superior el navegador perdria la captura */
+window.addEventListener('pointermove',e=>{if(drag&&e.pointerId===drag.pid){e.preventDefault();moveDrag(e);}},{passive:false});
+window.addEventListener('pointerup',e=>{if(drag&&e.pointerId===drag.pid)endDrag(e);});
+window.addEventListener('pointercancel',e=>{if(drag&&e.pointerId===drag.pid){drag=null;drawDock();}});
+function moveDrag(e){
+  if(!drag)return;
+  if(!drag.moved){if(Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<5)return;
+    drag.moved=true;G.drag.appendChild(drag.g);drag.g.classList.add('dragging');
+    const pn=drag.g.querySelector('.pn');if(pn)pn.remove();}
+  const p=toSvg(e.clientX,e.clientY);drag.p=p;
+  if(MODE==='shape'){const [x,y,w,h]=geo(drag.id).bb;setTf(drag.g._inner,p.x-(x+w/2),p.y-(y+h/2),1);}
+  else setTf(drag.g._inner,p.x,p.y-26,1);
+}
+function endDrag(e){
+  if(!drag)return;const d=drag;drag=null;
+  if(!d.moved){choose(d.id);return;}
+  const p=toSvg(e.clientX,e.clientY);
+  if(inDock(p)){drawDock();return;}
+  if(MODE==='shape'){
+    const [x,y,w,h]=geo(d.id).bb,off=Math.hypot(p.x-(x+w/2),p.y-(y+h/2)),tol=clamp(.16*Math.max(w,h),13,34);
+    if(off<=tol){place(d.id);return;}
+    const sc=toScreen(p.x,p.y),on=slotAt(sc.x,sc.y);
+    if(on===null){say('ko_sea',[],'bad');drawDock();return;}
+    miss(d.id,on);drawDock();
+  }else{
+    const on=slotAt(e.clientX,e.clientY);
+    if(on===d.id||nearSmall(d.id,p)){place(d.id);return;}
+    if(on===null){say('ko_sea',[],'bad');drawDock();return;}
+    miss(d.id,on);drawDock();
+  }
+}
+function choose(id){sel=sel===id?null:id;drawDock();if(sel)say('pick',[()=>nm(sel)]);}
+svg.addEventListener('click',e=>{
+  const s=e.target.closest&&e.target.closest('.slot.sel');clearHl();
+  if(!s||!sel||placed.has(s.dataset.id))return;begin();
+  const id=sel;if(s.dataset.id===id)place(id);else{miss(id,s.dataset.id);}
+});
+function current(){return sel||queue[0];}
+$('#bHint').onclick=()=>{
+  const id=current();if(!id)return;begin();clearHl();
+  const s=G.slots.querySelector('[data-id="'+id+'"]');if(!s)return;
+  s.classList.remove('flash');void s.getBBox();s.classList.add('flash');tried.add(id);
+  setTimeout(()=>s.classList.remove('flash'),2200);
+  say('hint',[()=>nm(id)]);updStats();
+};
+$('#bNext').onclick=()=>{const id=current();if(!id)return;begin();clearHl();place(id,true);};
+$('#bNew').onclick=newGame;
+/* ---------- controls ---------- */
+function seg(sel_,cur,on){$$(sel_+' button').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.v===cur));b.onclick=()=>{on(b.dataset.v);$$(sel_+' button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));};});}
+seg('#lvsw',LV,v=>{LV=v;$('#filtbox').hidden=v!=='prov';newGame();});
+seg('#mdsw',MODE,v=>{MODE=v;sel=null;drawDock();});
+$('#cbB').onchange=e=>{SHOWB=e.target.checked;drawSlots();};
+$('#cbN').onchange=e=>{SHOWN=e.target.checked;drawPlaced();drawDock();};
+function fillFilt(){
+  const s=$('#filt'),v=FILT;
+  s.innerHTML='<option value="all">'+t('f_all')+'</option>'+COMMS.filter(c=>GEO.comm[c].p.length>1).sort((a,b)=>t('c.'+a).localeCompare(t('c.'+b),LANG)).map(c=>'<option value="'+c+'">'+t('c.'+c)+' ('+GEO.comm[c].p.length+')</option>').join('');
+  s.value=v;
+}
+$('#filt').onchange=e=>{FILT=e.target.value;newGame();};
+/* ---------- marques per a «Raona-ho» ---------- */
+function clearHl(){G.hl.innerHTML='';}
+function hl(spec){
+  clearHl();
+  (spec.c||[]).forEach(c=>el('path',{d:GEO.comm[c].d,class:'hl'},G.hl));
+  (spec.p||[]).forEach(p=>el('path',{d:GEO.prov[p].d,class:'hl'},G.hl));
+  (spec.b||[]).forEach(c=>el('path',{d:(GEO.comm[c]||GEO.prov[c]).d,class:'hl b'},G.hl));
+  const lab=(spec.c||[]).map(c=>[GEO.comm[c],'c.'+c]).concat((spec.p||[]).map(p=>[GEO.prov[p],'p.'+p]),(spec.b||[]).map(c=>[GEO.comm[c]||GEO.prov[c],(GEO.comm[c]?'c.':'p.')+c]));
+  lab.forEach(([g,k])=>{const tx=el('text',{x:g.lp[0],y:g.lp[1],class:'lbl'},G.hl);tx.textContent=t(k);});
+  say('hl_note',[]);RZ.show(svg);
+}
+document.addEventListener('langchange',()=>{fillFilt();drawPlaced();drawDock();renderMsg();updStats();});
+document.addEventListener('themechange',()=>{drawPlaced();drawDock();});
+/* ===== Raona-ho ===== */
+const NB=(()=>{const P=GEO.prov,o={};for(const p in GEO.adj)GEO.adj[p].forEach(q=>{const a=P[p].c,b=P[q].c;if(a!==b)(o[a]=o[a]||new Set()).add(b);});return o;})();
+const isN=(v,n)=>Math.abs(v-n)<1e-9;
+const bad=v=>({k:'m_no',p:()=>[nf(v,2)]});
+RZ.init({
+ F:{n:{l:'l_n'},np:{l:'l_np'},nc:{l:'l_nc'}},
+ sim:null,
+ M:[
+  {id:'m1',f:['n'],ok:()=>({k:'m1_ok'}),sim:()=>hl({p:GEO.comm.CL.p}),
+   chk:([v])=>isN(v,9)?null:isN(v,8)?{k:'m1_8'}:bad(v)},
+  {id:'m2',f:['n'],ok:()=>({k:'m2_ok'}),sim:()=>hl({c:COMMS.filter(c=>GEO.comm[c].p.length===1&&c!=='CE'&&c!=='ML')}),
+   chk:([v])=>isN(v,7)?null:isN(v,9)?{k:'m2_9'}:v<7&&v>=4?{k:'m2_lo'}:bad(v)},
+  {id:'m3',f:['n'],ok:()=>({k:'m3_ok'}),sim:()=>hl({b:['CL'],c:[...NB.CL]}),
+   chk:([v])=>isN(v,9)?null:isN(v,10)?{k:'m3_10'}:bad(v)},
+  {id:'m4',f:['n'],ok:()=>({k:'m4_ok'}),sim:()=>hl({b:['V'],p:GEO.adj.V}),
+   chk:([v])=>isN(v,5)?null:isN(v,6)?{k:'m4_6'}:bad(v)}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:['np'],sim:()=>hl({c:['MD','MC','AS']}),cx:([v])=>isN(v,1)?null:{k:'s1_cx'}},
+  {id:'s2',ans:'D',f:['nc'],sim:()=>hl({c:['IB','CN']}),cx:([v])=>isN(v,0)?null:{k:'s2_cx'}},
+  {id:'s3',ans:'S',sim:()=>hl({b:['M'],p:GEO.adj.M})},
+  {id:'s4',ans:'M',sim:()=>hl({b:['BU','Z'],p:[...new Set(GEO.adj.BU.concat(GEO.adj.Z))]})}
+ ],
+ E:[{id:'e1',who:1,sim:()=>hl({c:['CE','ML']})},{id:'e2',who:0,sim:()=>hl({c:['CE','ML']})},{id:'e3',who:1,sim:()=>hl({c:['CN']})}],
+ D:[
+  {id:'d1',f:['n'],ok:()=>({k:'d1_ok'}),sim:()=>hl({b:['V','M'],p:['CU']}),
+   chk:([v])=>isN(v,1)?null:isN(v,0)?{k:'d1_0'}:v>=2?{k:'d1_2'}:bad(v)},
+  {id:'d2',f:['n'],ok:()=>({k:'d2_ok'}),sim:()=>hl({b:['PV','AN'],c:['CL','EX']}),
+   chk:([v])=>isN(v,2)?null:isN(v,1)?{k:'d2_1'}:v>=3?{k:'d2_3'}:bad(v)},
+  {id:'d3',chips:{vals:[5,7,8,9]},ok:()=>({k:'d3_ok'}),sim:()=>hl({p:GEO.comm.AN.p}),
+   chk:([p])=>isN(p,8)?null:{k:'d3_no'}}
+ ]
+});
+initQuiz([]);
+fillFilt();newGame();
+initLang();applyLang();
+</script>
+</body>
+</html>

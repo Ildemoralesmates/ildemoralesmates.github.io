@@ -59,3 +59,9 @@
 - **Totes porten «Raona-ho»** (regla general: cada animació nova, siga de la matèria que siga). La funció `ld(...)` de cada font carrega un cas al simulador des de les tasques; es prova amb Playwright (cada tasca bé i mal, ca i es, sense claus sense traduir).
 - Les targetes (matèria `tecno`) i les 16 URLs del sitemap es mantenen a mà (ja hi són).
 
+
+# Puzle del mapa d'Espanya (`puzle-mapa-espanya`, matèria `curio`)
+
+- Font: `tools/simuladors/src/mapa.src.html` (amb «Raona-ho»); es genera amb `python3 tools/simuladors/genera.py` com els altres simuladors.
+- La geometria és `tools/simuladors/src/mapa.geo.js`, generada (no s'edita a mà) per `python3 tools/simuladors/geo/mapa_espanya.py <ne_10m_admin_1_states_provinces.geojson>` a partir de Natural Earth (domini públic). `build.py` l'insereix amb `/*@INC:mapa.geo.js@*/` (qualsevol font pot incloure un fitxer de `src/` així).
+- La targeta i les 2 URLs del sitemap es mantenen a mà (ja hi són).
