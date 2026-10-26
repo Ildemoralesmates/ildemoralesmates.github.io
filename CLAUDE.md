@@ -52,3 +52,10 @@
 - Cada animació només aporta contingut: `RZ.init({F, sim, M, S, E, D})` abans de `const QDATA` i les cadenes al seu `I18N` (ca i es). Quatre pestanyes: **M** missions inverses (`chk(v)` torna `null` o `{k,p}`), **S** sempre/de vegades/mai (`ans` `S|D|M`; si és `D` demana contraexemple amb `f`+`cx`), **E** qui té raó (`who` 0/1/2/3 i la raó correcta sempre és `w0`; ordre barrejat en pantalla), **D** decideix (camps `f`, opcions `chips`).
 - Claus per tasca `<id>`: `.q`, `.more`, `.h`/`.e` (S), `.ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model` (E), `.l0..` (camps de D). Els textos comuns (títols, «Missió», «Mostra-ho al simulador»…) els posa el motor; no es repeteixen.
 - Cada tasca amb botó «Mostra-ho al simulador» ha de carregar el cas al dibuix (`sim`). Regles de contingut: respostes úniques o rangs comprovables per codi, errors típics reals d'1r ESO, una pregunta `.more` que obligue a generalitzar. Es prova amb Playwright: cada tasca bé i mal, ca i es, sense claus sense traduir.
+
+# Tecnologia (pestanya `tecno`, 8 animacions `tec-*`)
+
+- Fonts a `tools/simuladors/src/tec-*.src.html` (engr, mec, pal, circ, sim, res, rob, vist) amb ajudes compartides `tec.js` (`TEC.cv`, `TEC.loop`, `TEC.seg`, `TEC.gear`…) i `tec.css` (`.simgrid`, `.side`, `.kv`…), cridades des de `build.py` amb `/*@TEC_JS@*/` i `/*@TEC_CSS@*/`. Es generen amb `python3 tools/simuladors/genera.py`; no s'editen les pàgines generades.
+- **Totes porten «Raona-ho»** (regla general: cada animació nova, siga de la matèria que siga). La funció `ld(...)` de cada font carrega un cas al simulador des de les tasques; es prova amb Playwright (cada tasca bé i mal, ca i es, sense claus sense traduir).
+- Les targetes (matèria `tecno`) i les 16 URLs del sitemap es mantenen a mà (ja hi són).
+
