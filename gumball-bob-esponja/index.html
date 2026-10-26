@@ -1,0 +1,1047 @@
+<!doctype html>
+<!--
+Gumball i Bob Esponja - Aventura al Canal Mesclat. Aventura interactiva bilingüe (VAL/CAS) basada en la plantilla del motor.
+Mecánicas: 3 piezas del mando, 3 cartas coleccionables, 1 objeto en la mochila, 6 candados de geometría (fallar no bloquea), glosario "Aa".
+-->
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gumball i Bob Esponja: Aventura al Canal Mesclat</title>
+<meta name="description" content="Aventura interactiva: tria el camí, resol sis candaus de geometria, guanya tres cartes ajudant i recupera les tres peces del comandament amb Gumball. 9 finals.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/gumball-bob-esponja/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/gumball-bob-esponja/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/gumball-bob-esponja/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/gumball-bob-esponja/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Gumball i Bob Esponja: Aventura al Canal Mesclat">
+<meta property="og:description" content="Aventura interactiva: tria el camí, resol sis candaus de geometria, guanya tres cartes ajudant i recupera les tres peces del comandament amb Gumball. 9 finals.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/gumball-bob-esponja/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Courier+Prime:wght@400;700&family=Grandstander:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6ec; --ink:#241a12; --card:#fffdf8; --muted:#6b5a4a; --line:#e5d8c3;
+  --accent:#6b44a8; --on-accent:#ffffff; --danger:#a3361f;
+  --font-title:"Grandstander","Trebuchet MS",system-ui,sans-serif;
+  --font-read:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --font-dial:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+}
+body[data-era="elmore"]{--accent:#b45309}
+body[data-era="fondo"]{--accent:#0e7490}
+body[data-era="canal"]{--accent:#6b44a8}
+body[data-era="casa"]{--accent:#6b44a8}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-read);line-height:1.55;transition:background .3s}
+.top{max-width:42rem;margin:0 auto;padding:.75rem 1rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between}
+.brand{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.05rem}
+.tools{display:flex;gap:.4rem;align-items:center}
+.pill{font-family:var(--font-title);font-weight:700;font-size:.9rem;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:.35rem .8rem;cursor:pointer;min-height:2.4rem}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pill:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:42rem;margin:0 auto;padding:0 1rem 3rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:1.2rem;padding:1.1rem 1.1rem 1.3rem;box-shadow:0 2px 0 var(--line)}
+.plate{display:flex;gap:.8rem;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:.7rem;margin-bottom:.8rem}
+.plate svg{flex:0 0 auto;width:5.5rem;height:3.4rem;color:var(--accent)}
+.plate .pn{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.1rem;line-height:1.2}
+.hud{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.2rem 0 1rem;font-size:.95rem}
+.hud .grp{display:flex;align-items:center;gap:.4rem}
+.hud .lbl{font-family:var(--font-title);font-weight:700;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.hud svg{width:1.7rem;height:1.7rem;color:var(--accent)}
+.hud svg.card{width:1.2rem;height:1.6rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{font-size:.9rem;border:2px solid var(--line);border-radius:999px;padding:.1rem .6rem;background:var(--bg)}
+.chip.empty{color:var(--muted);border-style:dashed}
+.txt p{font-size:1.2rem;margin:.7rem 0}
+.txt p.dlg{padding-left:.9rem;border-left:4px solid var(--accent)}
+.txt p.riddle{font-family:var(--font-title);font-weight:700;background:color-mix(in srgb,var(--accent) 14%,var(--card));border-radius:.8rem;padding:.7rem .9rem}
+.txt p.hint{color:var(--muted);font-style:italic;font-size:1.05rem}
+.choices{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+.btn{font-family:var(--font-title);font-weight:700;font-size:1.15rem;line-height:1.3;text-align:left;border:3px solid var(--accent);background:var(--card);color:var(--ink);border-radius:1rem;padding:.8rem 1rem;min-height:3.4rem;cursor:pointer;transition:transform .08s,background .15s}
+.btn:hover{background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.btn:active{transform:scale(.985)}
+.btn.main{background:var(--accent);color:var(--on-accent);text-align:center}
+.btn.main:hover{background:var(--accent);filter:brightness(1.08)}
+.btn.ghost{border-color:var(--line);font-size:1rem;min-height:2.8rem;font-weight:500;text-align:center}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.undo{margin-top:1rem;text-align:center}
+h1{font-family:var(--font-title);font-weight:800;font-size:2rem;line-height:1.1;margin:.2rem 0 .3rem;color:var(--accent)}
+h2{font-family:var(--font-title);font-weight:800;font-size:1.6rem;line-height:1.15;margin:.2rem 0 .6rem;color:var(--accent)}
+.sub{font-family:var(--font-title);font-size:1.2rem;color:var(--muted);margin:.1rem 0 1rem}
+.intro ul{padding-left:1.2rem;font-size:1.1rem}
+.intro li{margin:.4rem 0}
+.intro label{display:block;font-family:var(--font-title);font-weight:700;font-size:1.1rem;margin:1.1rem 0 .4rem}
+.intro input{width:100%;font:inherit;font-size:1.3rem;padding:.7rem .9rem;border:3px solid var(--line);border-radius:.9rem;background:var(--bg);color:var(--ink)}
+.intro input:focus{border-color:var(--accent)}
+.err{color:var(--danger);font-weight:700;margin:.5rem 0 0}
+.counter{margin-top:1rem;text-align:center;color:var(--muted);font-family:var(--font-dial);font-size:.95rem}
+.endnote{font-family:var(--font-dial);color:var(--muted);margin-top:1rem;font-size:.95rem}
+.gloss dl{margin:0}
+.gloss dt{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.15rem;margin-top:.9rem}
+.gloss dd{margin:.1rem 0 0;font-size:1.1rem}
+#plof{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:color-mix(in srgb,var(--accent) 88%,#000);color:#fff;text-align:center;padding:1rem}
+#plof .big{font-family:var(--font-title);font-weight:800;font-size:3.4rem;animation:pop .5s ease-out both}
+#plof svg{width:6rem;height:6rem;animation:spin 1.4s linear infinite}
+#plof .dial{font-family:var(--font-dial);font-size:1.15rem;border:2px solid #fff;border-radius:.6rem;padding:.4rem .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  #plof svg,#plof .big{animation:none}
+  .btn{transition:none}
+}
+@media (max-width:30rem){
+  h1{font-size:1.7rem}
+  .plate svg{width:4.4rem}
+}
+a.pill{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-era="casa">
+<header class="top">
+  <div class="brand" id="brand">Gumball i Bob Esponja</div>
+  <div class="tools">
+    <a class="pill home" href="/" aria-label="Tornar a la portada" title="Tornar a la portada">⌂</a>
+    <button class="pill" id="lang-ca" aria-pressed="true" type="button">VAL</button>
+    <button class="pill" id="lang-es" aria-pressed="false" type="button">CAS</button>
+    <button class="pill" id="gloss-btn" aria-pressed="false" type="button" aria-label="Paraules noves">Aa</button>
+    <button class="pill" id="restart" type="button" aria-label="Començar de nou">↻</button>
+  </div>
+</header>
+<main id="app"><section class="card intro"><h1>Gumball i Bob Esponja</h1><p class="sub">Aventura al Canal Mesclat</p><p style="font-size:1.15rem">Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs.</p><ul><li><b>Peces del comandament:</b> n'hi ha tres i cal trobar-les totes. Les veuràs a dalt de cada pantalla.</li><li><b>Cartes:</b> si ajudes qui ho necessita, pots guanyar cartes de col·lecció. Es queden a la teua mà i poden ser molt útils.</li><li><b>Motxilla:</b> ací guardes l'objecte que triïs al principi. Alguns obrin camins i d'altres es poden gastar.</li><li><b>Cadenats:</b> de vegades hi ha reptes de geometria. Si falles, no passa res: prova una altra vegada.</li><li><b>Finals:</b> hi ha 9 finals diferents. A veure quants descobreixes!</li><li>Pots tornar a l'última decisió amb el botó ↶ i consultar les paraules noves amb el botó Aa de dalt.</li></ul><label for="nom">Com et diuen?</label><input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="El teu nom"><p class="err" id="nom-err" hidden="">Escriu el teu nom per a començar.</p><div class="choices"><button class="btn main" id="go-start" type="button">Començar l'aventura</button></div><p class="counter">Finals descoberts: 0 de 9</p></section></main>
+<div id="plof" hidden role="status" aria-live="polite">
+  <div class="big">¡PLOF!</div>
+  <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="45" cy="45" r="30" fill="none" stroke="#fff" stroke-width="7"/><line x1="67" y1="67" x2="92" y2="92" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="45" cy="45" r="4" fill="#fff"/></svg>
+  <div class="dial" id="plof-dial"></div>
+</div>
+
+<script>
+/* ============ DADES ============ */
+const KEY = 'gumball-bob-esponja-canal-mesclat-v1';
+const x = (ca, es) => ({ ca: ca, es: es });
+
+const TITLE = x(`Gumball i Bob Esponja`, `Gumball y Bob Esponja`);
+const DESC  = x(`Aventura al Canal Mesclat`, `Aventura en el Canal Mezclado`);
+const TITLE_FULL = x(`Gumball i Bob Esponja: Aventura al Canal Mesclat`, `Gumball y Bob Esponja: Aventura en el Canal Mezclado`);
+
+const ON = {
+  goma: x(`la goma d'esborrar`, `la goma de borrar`),
+  lapiz: x(`el llapis de colors`, `el lápiz de colores`),
+  regla: x(`la regla`, `la regla`)
+};
+const OCHIP = {
+  goma: x(`Goma d'esborrar`, `Goma de borrar`),
+  lapiz: x(`Llapis de colors`, `Lápiz de colores`),
+  regla: x(`Regla`, `Regla`)
+};
+const ERA = {
+  casa:   { ch: false, n: x(`Pròleg · La teua casa`, `Prólogo · Tu casa`) },
+  elmore: { ch: true,  n: x(`Capítol 1 · L'institut d'Elmore`, `Capítulo 1 · El instituto de Elmore`) },
+  fondo:  { ch: true,  n: x(`Capítol 2 · Fons de Bikini`, `Capítulo 2 · Fondo de Bikini`) },
+  canal:  { ch: true,  n: x(`Capítol 3 · El Canal Mesclat`, `Capítulo 3 · El Canal Mezclado`) }
+};
+
+const ALL_ENDINGS = ['fin_ojos', 'fin_cafe', 'fin_choque', 'fin_burbuja', 'fin_platos', 'fin_teletienda', 'fin_tiempo'];   // todos los finales salvo 'bo' y 'heroi'
+const TOTAL_FINALS = ALL_ENDINGS.length + 2;
+
+const U = {
+  start: x(`Començar l'aventura`, `Empezar la aventura`),
+  nameQ: x(`Com et diuen?`, `¿Cómo te llamas?`),
+  nameErr: x(`Escriu el teu nom per a començar.`, `Escribe tu nombre para empezar.`),
+  namePh: x(`El teu nom`, `Tu nombre`),
+  pieces: x(`Peces del comandament`, `Piezas del mando`),
+  cards: x(`Cartes`, `Cartas`),
+  pack: x(`Motxilla`, `Mochila`),
+  empty: x(`buida`, `vacía`),
+  undo: x(`↶ Tornar a la decisió anterior`, `↶ Volver a la decisión anterior`),
+  backLast: x(`Tornar a l'última decisió`, `Volver a la última decisión`),
+  again: x(`Començar de nou`, `Empezar de nuevo`),
+  playAgain: x(`Tornar a jugar`, `Jugar otra vez`),
+  restartAsk: x(`Toca de nou per a reiniciar`, `Toca de nuevo para reiniciar`),
+  restartLbl: x(`Començar de nou`, `Empezar de nuevo`),
+  finalsCount: (n) => x(`Finals descoberts: ${n} de ${TOTAL_FINALS}`, `Finales descubiertos: ${n} de ${TOTAL_FINALS}`),
+  newEnd: x(`Final descobert!`, `¡Final descubierto!`),
+  glossLbl: x(`Paraules noves`, `Palabras nuevas`),
+  glossTitle: x(`Paraules noves`, `Palabras nuevas`),
+  glossBack: x(`Tornar a l'aventura`, `Volver a la aventura`)
+};
+
+const GLOSS = [
+  { w: x(`perímetre`, `perímetro`), d: x(`La longitud de la volta completa d'una figura.`, `La longitud de la vuelta completa de una figura.`) },
+  { w: x(`angle recte`, `ángulo recto`), d: x(`L'angle de la cantonada d'un full de paper: 90 graus, un quart de volta.`, `El ángulo de la esquina de un folio: 90 grados, un cuarto de vuelta.`) },
+  { w: x(`eix de simetria`, `eje de simetría`), d: x(`Una línia que parteix una figura en dues meitats iguals, com si fóra un mirall.`, `Una línea que parte una figura en dos mitades iguales, como si fuera un espejo.`) },
+  { w: x(`polígon`, `polígono`), d: x(`Una figura plana i tancada, amb tots els costats rectes.`, `Una figura plana y cerrada, con todos los lados rectos.`) },
+  { w: x(`hexàgon`, `hexágono`), d: x(`Un polígon de sis costats, com les cel·les d'un rusc d'abelles.`, `Un polígono de seis lados, como las celdas de un panal de abejas.`) },
+  { w: x(`vèrtex`, `vértice`), d: x(`La cantonada d'una figura o d'un cos geomètric.`, `La esquina de una figura o de un cuerpo geométrico.`) },
+  { w: x(`cos geomètric`, `cuerpo geométrico`), d: x(`Una figura amb volum: el cub, la piràmide, l'esfera...`, `Una figura con volumen: el cubo, la pirámide, la esfera...`) },
+  { w: x(`esfera`, `esfera`), d: x(`Un cos rodó, sense cares planes ni cantonades, com una pilota.`, `Un cuerpo redondo, sin caras planas ni esquinas, como una pelota.`) },
+  { w: x(`estàtica`, `estática`), d: x(`Els puntets blancs i negres que fa la tele quan no té senyal.`, `Los puntitos blancos y negros que hace la tele cuando no tiene señal.`) },
+  { w: x(`zapping`, `zapping`), d: x(`Canviar de canal sense parar.`, `Cambiar de canal sin parar.`) }
+];
+
+/* Ayudantes de los candados: fallar no bloquea. Cada respuesta equivocada se esconde tras probarla;
+   con 2 fallos aparece la opción "chapuza" de Gumball. */
+const nF = (s, k) => (s.tried || '').split(',').filter(function (t) { return t.indexOf(k) === 0 && t.length > k.length; }).length;
+const bad = (ca, es, id, k) => ({
+  t: x(ca, es),
+  if: s => (s.tried || '').split(',').indexOf(k) < 0,
+  go: id,
+  set: s => { s.tried = (s.tried || '') + k + ','; }
+});
+const giveUp = (k, dest) => ({
+  t: x(`Deixar que Gumball ho resolga a la seua manera (una xicoteta xapussa)`, `Dejar que Gumball lo resuelva a su manera (una pequeña chapuza)`),
+  if: s => nF(s, k) >= 2,
+  go: dest,
+  set: s => { s.chap += 1; }
+});
+
+const S = {
+
+intro: { era: 'casa', text: [], choices: [] },
+
+/* ---------- PRÒLEG ---------- */
+pro: { era: 'casa',
+  text: [
+    x(`És divendres a la vesprada i estàs al sofà amb el comandament de la tele a la mà. Al canal 4, un gat blau corre per un passadís d'institut. Al canal 5, una esponja groga somriu com si li haguera tocat la loteria.`,
+      `Es viernes por la tarde y estás en el sofá con el mando de la tele en la mano. En el canal 4, un gato azul corre por el pasillo de un instituto. En el canal 5, una esponja amarilla sonríe como si le hubiera tocado la lotería.`),
+    x(`Prems dos botons a la vegada. ¡ZAS! Una espurna salta del comandament, que es parteix en tres peces, i les tres volen cap a la pantalla. Després, la pantalla t'engoleix amb un ¡SLURP!`,
+      `Pulsas dos botones a la vez. ¡ZAS! Una chispa salta del mando, que se parte en tres piezas, y las tres salen volando hacia la pantalla. Después, la pantalla te traga con un ¡SLURP!`),
+    x(`Quan obris els ulls, ets un dibuix animat: línies gruixudes, colors plans i un peu que fa boing cada vegada que camines. Fins i tot el teu nom, {nom}, flota damunt del cap dins d'una bafarada de còmic.`,
+      `Cuando abres los ojos, eres un dibujo animado: líneas gruesas, colores planos y un pie que hace boing cada vez que caminas. Hasta tu nombre, {nom}, flota sobre tu cabeza dentro de un bocadillo de cómic.`),
+    x(`>—¡Ei, tu! —diu un gat blau que ix de la tele amb tot el cos—. Soc Gumball. Has partit el comandament que mantenia separats els meus canals i els de l'esponja. Si no el muntem de nou, un monstre d'estàtica anomenat Zapping canviarà de canal l'univers sencer, i et prometo que no vols veure-ho.`,
+      `>—¡Eh, tú! —dice un gato azul que sale de la tele con todo el cuerpo—. Soy Gumball. Has partido el mando que mantenía separados mis canales y los de la esponja. Si no lo montamos de nuevo, un monstruo de estática llamado Zapping cambiará de canal el universo entero, y te aseguro que no quieres verlo.`),
+    x(`>—Les peces han caigut a tres llocs: el meu institut, el fons del mar i el Canal Mesclat —continua Gumball—. Vindràs amb mi, {nom}, però només pots emportar-te una cosa de la butxaca de dibuix.`,
+      `>—Las piezas han caído en tres sitios: mi instituto, el fondo del mar y el Canal Mezclado —sigue Gumball—. Vendrás conmigo, {nom}, pero solo puedes llevarte una cosa del bolsillo de dibujo.`),
+    x(`!Tria bé: cada cosa servirà en un lloc diferent.`, `!Elige bien: cada cosa servirá en un sitio distinto.`)
+  ],
+  choices: [
+    { t: x(`Una goma d'esborrar (esborra el que estorbe)`, `Una goma de borrar (borra lo que estorbe)`), go: 'c1_ini', set: s => { s.obj = 'goma'; } },
+    { t: x(`Un llapis de colors (dibuixa el que falte)`, `Un lápiz de colores (dibuja lo que falte)`), go: 'c1_ini', set: s => { s.obj = 'lapiz'; } },
+    { t: x(`Una regla (mesura i traça rectes)`, `Una regla (mide y traza rectas)`), go: 'c1_ini', set: s => { s.obj = 'regla'; } },
+    { t: x(`Apagar la tele i fer com si no haguera passat res`, `Apagar la tele y hacer como si no hubiera pasado nada`), go: 'fin_ojos' }
+  ] },
+
+/* ---------- CAPÍTOL 1 · ELMORE ---------- */
+c1_ini: { era: 'elmore',
+  text: [
+    x(`¡PLOF! Aterres en un passadís de l'Institut d'Elmore. Les taquilles són de colors cridaners, el sòl fa olor de mitjó i de fotocòpia calenta, i del sostre penja un cartell: «Prohibit córrer (excepte quan ve el director)».`,
+      `¡PLOF! Aterrizas en un pasillo del Instituto de Elmore. Las taquillas son de colores chillones, el suelo huele a calcetín y a fotocopia caliente, y del techo cuelga un cartel: «Prohibido correr (excepto cuando viene el director)».`),
+    x(`>—Et dic el mateix que a tots els dibuixos nous, {nom}: ¡no toques res! —diu Gumball—. La primera peça va caure dins d'una taquilla, però no recorde quina.`,
+      `>—Te digo lo mismo que a todos los dibujos nuevos, {nom}: ¡no toques nada! —dice Gumball—. La primera pieza cayó dentro de una taquilla, pero no recuerdo cuál.`),
+    x(`Al fons del passadís, una taquilla té un paper enganxat amb una fletxa que diu «AQUÍ». Per l'altre costat arriba una olor de pizza que et fa rugir la panxa.`,
+      `Al fondo del pasillo, una taquilla tiene pegado un papel con una flecha que dice «AQUÍ». Por el otro lado llega un olor a pizza que te hace rugir la barriga.`)
+  ],
+  choices: [
+    { t: x(`Anar a la taquilla de la fletxa`, `Ir a la taquilla de la flecha`), go: 'c1_taquilla' },
+    { t: x(`Seguir l'olor de pizza fins a la cafeteria`, `Seguir el olor a pizza hasta la cafetería`), go: 'fin_cafe' }
+  ] },
+
+c1_taquilla: { era: 'elmore',
+  text: s => [
+    x(`La taquilla té un cadenat que no demana números, sinó figures. Hi ha quatre botons dibuixats: un triangle, un rombe, un quadrat i un rectangle.`,
+      `La taquilla tiene un candado que no pide números, sino figuras. Hay cuatro botones dibujados: un triángulo, un rombo, un cuadrado y un rectángulo.`),
+    x(`?El cartell diu: «Prem la figura que té 4 costats iguals i 4 angles rectes.»`,
+      `?El cartel dice: «Pulsa la figura que tiene 4 lados iguales y 4 ángulos rectos.»`)
+  ].concat(nF(s, 'p1') >= 1 ? [
+    x(`¡BZZZZ! El cadenat t'ensenya la llengua.`, `¡BZZZZ! El candado te saca la lengua.`),
+    x(`!Pista: un rombe té els costats iguals, però les cantonades no són rectes. Un rectangle té angles rectes, però no tots els costats són iguals.`,
+      `!Pista: un rombo tiene los lados iguales, pero sus esquinas no son rectas. Un rectángulo tiene ángulos rectos, pero no todos sus lados son iguales.`)
+  ] : []),
+  choices: [
+    bad(`El triangle`, `El triángulo`, 'c1_taquilla', 'p1a'),
+    bad(`El rombe`, `El rombo`, 'c1_taquilla', 'p1b'),
+    { t: x(`El quadrat`, `El cuadrado`), go: 'c1_dentro' },
+    bad(`El rectangle`, `El rectángulo`, 'c1_taquilla', 'p1c'),
+    giveUp('p1', 'c1_dentro')
+  ] },
+
+c1_dentro: { era: 'elmore',
+  text: [
+    x(`¡CLIC! La porta de la taquilla s'obri i, en lloc de llibres, hi ha un túnel de papers arrugats: deures d'altres anys, exàmens amb dibuixets i un entrepà de fa tres cursos.`,
+      `¡CLIC! La puerta de la taquilla se abre y, en lugar de libros, hay un túnel de papeles arrugados: deberes de otros años, exámenes con dibujitos y un bocadillo de hace tres cursos.`),
+    x(`Al final del túnel, algú plora fluixet. És Anais, la germana menuda de Gumball, una conilleta rosa amb ulleres.`,
+      `Al final del túnel, alguien llora bajito. Es Anais, la hermana pequeña de Gumball, una coneja rosa con gafas.`),
+    x(`>—Gumball, pots no ser tan dramàtic? —diu Anais, eixugant-se una llàgrima—. He perdut el meu compàs i el treball de geometria és per a demà.`,
+      `>—Gumball, ¿puedes no ser tan dramático? —dice Anais, secándose una lágrima—. He perdido mi compás y el trabajo de geometría es para mañana.`)
+  ],
+  choices: [
+    { t: x(`Ajudar Anais a buscar el compàs`, `Ayudar a Anais a buscar el compás`), go: 'c1_anais', set: s => { s.cA = 1; } },
+    { t: x(`Seguir endavant: la peça és el més important`, `Seguir adelante: la pieza es lo más importante`), go: 'c1_gym' }
+  ] },
+
+c1_anais: { era: 'elmore',
+  text: [
+    x(`Busqueu entre els papers. El compàs estava... dins de l'esmolallapis, fent de pal d'una banderola. ¡Clin!`,
+      `Buscáis entre los papeles. El compás estaba... dentro del sacapuntas, haciendo de mástil de una banderita. ¡Clin!`),
+    x(`>—¡Gràcies! —diu Anais, i et dona una carta del seu mazo—. És la Carta d'Anais. Té un compàs dibuixat i guarda un poc del seu saber de geometria per a quan el necessites.`,
+      `>—¡Gracias! —dice Anais, y te da una carta de su mazo—. Es la Carta de Anais. Tiene un compás dibujado y guarda un poco de su saber de geometría para cuando lo necesites.`),
+    x(`Guardes la carta a la mà, com en una partida de cartes. Anais assenyala una porta: ho porta al gimnàs.`,
+      `Guardas la carta en la mano, como en una partida de cartas. Anais señala una puerta: lleva al gimnasio.`)
+  ],
+  choices: [
+    { t: x(`Eixir del túnel cap al gimnàs`, `Salir del túnel hacia el gimnasio`), go: 'c1_gym' }
+  ] },
+
+c1_gym: { era: 'elmore',
+  text: [
+    x(`El túnel desemboca al gimnàs. Al fons, penjada d'una barra, hi ha una copa daurada amb la primera peça dins: un botó roig i redó que brilla com un caramel.`,
+      `El túnel desemboca en el gimnasio. Al fondo, colgada de una barra, hay una copa dorada con la primera pieza dentro: un botón rojo y redondo que brilla como un caramelo.`),
+    x(`Al voltant de la copa, una cinta groga pintada al terra forma un rectangle. Un cartell diu: «NO PASSAR (de veres, ho dic en serio)».`,
+      `Alrededor de la copa, una cinta amarilla pintada en el suelo forma un rectángulo. Un cartel dice: «NO PASAR (de verdad, lo digo en serio)».`),
+    x(`>—Jo no he dit res —diu Gumball—, però si fóra tu, ja haguera saltat de cap.`,
+      `>—Yo no he dicho nada —dice Gumball—, pero si fuera tú, ya habría saltado de cabeza.`)
+  ],
+  choices: [
+    { t: x(`Esborrar la cinta amb la goma`, `Borrar la cinta con la goma`), if: s => s.obj === 'goma', go: 'c1_borra' },
+    { t: x(`Mesurar la cinta i traure-la sense que sone l'alarma`, `Medir la cinta y quitarla sin que suene la alarma`), go: 'c1_perimetro' },
+    { t: x(`Saltar la cinta de cap, com diu Gumball`, `Saltar la cinta de cabeza, como dice Gumball`), go: 'fin_choque' }
+  ] },
+
+c1_perimetro: { era: 'elmore',
+  text: s => [
+    x(`Per a traure la cinta sense que sone l'alarma, has de tallar-ne exactament la longitud que dona la volta a tot el rectangle. El rectangle mesura 6 metres de llarg i 4 d'ample.`,
+      `Para quitar la cinta sin que suene la alarma, tienes que cortar exactamente la longitud que da la vuelta a todo el rectángulo. El rectángulo mide 6 metros de largo y 4 de ancho.`),
+    x(`?Quants metres fa la cinta sencera? Això es diu el perímetre.`,
+      `?¿Cuántos metros mide la cinta entera? Eso se llama el perímetro.`)
+  ].concat(nF(s, 'p2') >= 1 ? [
+    x(`¡BIIIIP! L'alarma xiula un segon, com un avís.`, `¡BIIIIP! La alarma pita un segundo, como un aviso.`),
+    x(`!Pista: el perímetre és la volta completa: dos costats llargs i dos d'amples.`,
+      `!Pista: el perímetro es la vuelta completa: dos lados largos y dos anchos.`)
+  ] : []),
+  choices: [
+    bad(`10 metres`, `10 metros`, 'c1_perimetro', 'p2a'),
+    { t: x(`20 metres`, `20 metros`), go: 'c1_pieza' },
+    bad(`24 metres`, `24 metros`, 'c1_perimetro', 'p2b'),
+    giveUp('p2', 'c1_pieza')
+  ] },
+
+c1_borra: { era: 'elmore',
+  text: [
+    x(`La goma recorre la cinta: ¡FRIIIIC, FRIIIIC! La línia groga desapareix del terra com si no haguera existit mai. La goma es queda feta un xurro de tant treballar.`,
+      `La goma recorre la cinta: ¡FRIIIIC, FRIIIIC! La línea amarilla desaparece del suelo como si nunca hubiera existido. La goma se queda hecha un churro de tanto trabajar.`),
+    x(`>—Això és fer trampes... però amb estil —diu Gumball.`, `>—Esto es hacer trampa... pero con estilo —dice Gumball.`)
+  ],
+  choices: [
+    { t: x(`Agafar la peça de la copa`, `Coger la pieza de la copa`), go: 'c1_pieza', set: s => { s.obj = null; } }
+  ] },
+
+c1_pieza: { era: 'elmore',
+  onEnter: s => { s.f1 = 1; },
+  text: s => [
+    x(`El botó roig cau a les teues mans: ¡CLONC! La primera peça del comandament brilla un instant.`,
+      `El botón rojo cae en tus manos: ¡CLONC! La primera pieza del mando brilla un instante.`)
+  ].concat(s.cA ? [
+    x(`Des del fons del gimnàs, Anais t'ensenya el seu compàs i et fa un gest d'ànim.`,
+      `Desde el fondo del gimnasio, Anais te enseña su compás y te hace un gesto de ánimo.`)
+  ] : []).concat([
+    x(`>—¡Primera peça! —diu Gumball—. La segona va caure al mar... espere que els dibuixos sapiguem respirar davall de l'aigua.`,
+      `>—¡Primera pieza! —dice Gumball—. La segunda cayó en el mar... espero que los dibujos sepamos respirar bajo el agua.`),
+    x(`Darrere teu s'obri una pantalla plena de bombolles.`, `Detrás de ti se abre una pantalla llena de burbujas.`)
+  ]),
+  choices: [
+    { t: x(`Saltar a la pantalla de les bombolles`, `Saltar a la pantalla de las burbujas`), go: 'c2_ini' }
+  ] },
+
+/* ---------- CAPÍTOL 2 · FONS DE BIKINI ---------- */
+c2_ini: { era: 'fondo',
+  text: [
+    x(`¡GLUP! Caus en un carrer del fons del mar. Els dibuixos no es mullen, només es posen una miqueta ondulats, així que respires sense problema. Una de les cases és una pinya enorme, i una altra, una pedra amb xemeneia.`,
+      `¡GLUP! Caes en una calle del fondo del mar. Los dibujos no se mojan, solo se ponen un poco ondulados, así que respiras sin problema. Una de las casas es una piña enorme, y otra, una piedra con chimenea.`),
+    x(`>—¡Hola, hola, HOLAAA! —crida Bob Esponja des d'una finestra—. ¡Visites! ¡Un gat blau i un dibuix acabat d'estrenar! Este va a ser el millor dia... ¡dels dimarts!`,
+      `>—¡Hola, hola, HOLAAA! —grita Bob Esponja desde una ventana—. ¡Visitas! ¡Un gato azul y un dibujo recién estrenado! Este va a ser el mejor día... ¡de los martes!`),
+    x(`Gumball et xiuxiueja que la segona peça la té Don Cangrejo a la caixa registradora, convençut que és una moneda.`,
+      `Gumball te susurra que la segunda pieza la tiene Don Cangrejo en su caja registradora, convencido de que es una moneda.`),
+    x(`Per un costat queda la Cangreburguer. Per l'altre, unes bombolles gegants suren com si et convidaren a jugar.`,
+      `Por un lado queda la Cangreburguer. Por el otro, unas burbujas gigantes flotan como si te invitaran a jugar.`)
+  ],
+  choices: [
+    { t: x(`Anar a la Cangreburguer amb Bob`, `Ir a la Cangreburguer con Bob`), go: 'c2_puerta' },
+    { t: x(`Quedar-te a jugar amb les bombolles gegants`, `Quedarte a jugar con las burbujas gigantes`), go: 'fin_burbuja' }
+  ] },
+
+c2_puerta: { era: 'fondo',
+  text: [
+    x(`A la porta del restaurant, Don Cangrejo vigila amb les pinces creuades i els ulls brillants com a monedes.`,
+      `En la puerta del restaurante, Don Cangrejo vigila con las pinzas cruzadas y los ojos brillantes como monedas.`),
+    x(`>—¡Alto! Per a entrar cal pagar l'entrada —diu Don Cangrejo—. Una moneda... o alguna cosa que brille més que una moneda.`,
+      `>—¡Alto! Para entrar hay que pagar la entrada —dice Don Cangrejo—. Una moneda... o algo que brille más que una moneda.`),
+    x(`Al cartell de la porta hi ha un enigma: «Qui el resolga, entra gratis».`,
+      `En el cartel de la puerta hay un acertijo: «Quien lo resuelva, entra gratis».`)
+  ],
+  choices: [
+    { t: s => x(`Donar-li ${ON[s.obj].ca}`, `Darle ${ON[s.obj].es}`), if: s => !!s.obj, go: 'c2_dentro', set: s => { s.pagat = s.obj; s.obj = null; } },
+    { t: x(`Resoldre l'enigma del cartell`, `Resolver el acertijo del cartel`), go: 'c2_angulo' }
+  ] },
+
+c2_angulo: { era: 'fondo',
+  text: s => [
+    x(`El cartell de la porta té dibuixada una maneta de rellotge i un cadenat que s'obri quan la maneta forma un angle recte amb la base.`,
+      `El cartel de la puerta tiene dibujada una manecilla de reloj y un candado que se abre cuando la manecilla forma un ángulo recto con la base.`),
+    x(`?Quants graus té un angle recte?`, `?¿Cuántos grados tiene un ángulo recto?`)
+  ].concat(s.cA ? [
+    x(`!La Carta d'Anais vibra a la teua mà: «L'angle recte és el de la cantonada d'un full. Un quart de volta.»`,
+      `!La Carta de Anais vibra en tu mano: «El ángulo recto es el de la esquina de un folio. Un cuarto de vuelta.»`)
+  ] : []).concat(nF(s, 'p3') >= 1 ? [
+    x(`¡TONG! La maneta rebota. Don Cangrejo es fregue les pinces: espera que acabes pagant.`,
+      `¡TONG! La manecilla rebota. Don Cangrejo se frota las pinzas: espera que acabes pagando.`),
+    x(`!Pista: mira la cantonada d'un full de paper o d'una pissarra.`,
+      `!Pista: mira la esquina de un folio o de una pizarra.`)
+  ] : []),
+  choices: [
+    bad(`45 graus`, `45 grados`, 'c2_angulo', 'p3a'),
+    bad(`180 graus`, `180 grados`, 'c2_angulo', 'p3b'),
+    { t: x(`90 graus`, `90 grados`), go: 'c2_dentro' },
+    giveUp('p3', 'c2_dentro')
+  ] },
+
+c2_dentro: { era: 'fondo',
+  text: s => [
+    x(`Dins de la Cangreburguer tot fa olor de pa torrat. Bob gira les hamburgueses amb tanta alegria que de vegades isquen volant. Calamardo, darrere de la caixa, mira el rellotge amb cara de dilluns.`,
+      `Dentro de la Cangreburguer todo huele a pan tostado. Bob da la vuelta a las hamburguesas con tanta alegría que a veces salen volando. Calamardo, detrás de la caja, mira el reloj con cara de lunes.`)
+  ].concat((s.pagat && ON[s.pagat]) ? [
+    x(`Don Cangrejo ha guardat ${ON[s.pagat].ca} en un calaix amb tres cadenats.`,
+      `Don Cangrejo ha guardado ${ON[s.pagat].es} en un cajón con tres candados.`)
+  ] : []).concat([
+    x(`>—¿Heu sentit un miol al carreró? —pregunta Bob, de sobte preocupat—. ¡És Gary! ¡Crec que s'ha quedat atrapat! ¡Ajuda'm a buscar-lo, {nom}!`,
+      `>—¿Habéis oído un maullido en el callejón? —pregunta Bob, de repente preocupado—. ¡Es Gary! ¡Creo que se ha quedado atrapado! ¡Ayúdame a buscarlo, {nom}!`)
+  ]),
+  choices: [
+    { t: x(`Ajudar Bob a buscar Gary`, `Ayudar a Bob a buscar a Gary`), go: 'c2_gary',
+      set: s => { s.cG = 1; if (s.pagat) { s.obj = s.pagat; s.pagat = null; s.retornat = 1; } } },
+    { t: x(`Anar directament a la caixa registradora`, `Ir directo a la caja registradora`), go: 'c2_caja' }
+  ] },
+
+c2_gary: { era: 'fondo',
+  text: s => [
+    x(`Al carreró, entre dos contenidors, una llauna de conserves es mou sola. Dins hi ha Gary, el caragol de Bob, amb només els ulls fora: «Miau».`,
+      `En el callejón, entre dos contenedores, una lata de conservas se mueve sola. Dentro está Gary, el caracol de Bob, con solo los ojos fuera: «Miau».`),
+    x(`Entre Gumball, Bob i tu feu rodar la llauna i Gary ix disparat: ¡PLOP! Bob l'abraça tan fort que en sorti aigua.`,
+      `Entre Gumball, Bob y tú hacéis rodar la lata y Gary sale disparado: ¡PLOP! Bob lo abraza tan fuerte que sale agua.`),
+    x(`>—¡Gràcies, {nom}! —diu Bob—. Gary vol donar-te una cosa.`,
+      `>—¡Gracias, {nom}! —dice Bob—. Gary quiere darte algo.`),
+    x(`A la teua mà apareix una carta nova: la Carta de Gary, amb un caragol de closca en espiral.`,
+      `En tu mano aparece una carta nueva: la Carta de Gary, con un caracol de concha en espiral.`)
+  ].concat(s.retornat ? [
+    x(`Don Cangrejo, que ho ha vist tot des de la finestra, sospira i et torna ${s.obj && ON[s.obj] ? ON[s.obj].ca : 'el que li havies donat'}. —Un bon amic de Gary és un bon client —diu—. Però només per hui.`,
+      `Don Cangrejo, que lo ha visto todo desde la ventana, suspira y te devuelve ${s.obj && ON[s.obj] ? ON[s.obj].es : 'lo que le habías dado'}. —Un buen amigo de Gary es un buen cliente —dice—. Pero solo por hoy.`)
+  ] : []),
+  choices: [
+    { t: x(`Tornar a dins, cap a la caixa registradora`, `Volver dentro, hacia la caja registradora`), go: 'c2_caja' }
+  ] },
+
+c2_caja: { era: 'fondo',
+  text: s => [
+    x(`La caixa registradora té un cadenat amb forma de quadrat i quatre fletxes dibuixades. Al costat, Don Cangrejo ronca (només una miqueta) en una cadira.`,
+      `La caja registradora tiene un candado con forma de cuadrado y cuatro flechas dibujadas. Al lado, Don Cangrejo ronca (solo un poquito) en una silla.`),
+    x(`?Quants eixos de simetria té un quadrat? És a dir, de quantes maneres pots plegar-lo per la meitat perquè les dues meitats coincidisquen?`,
+      `?¿Cuántos ejes de simetría tiene un cuadrado? Es decir, ¿de cuántas maneras puedes doblarlo por la mitad para que las dos mitades coincidan?`)
+  ].concat(nF(s, 'p4') >= 1 ? [
+    x(`¡CLINC-CLONC! La caixa sona com si l'haguessis ofesa.`, `¡CLINC-CLONC! La caja suena como si la hubieras ofendido.`),
+    x(`!Pista: plega un full quadrat de dalt a baix, de costat a costat i per les dues diagonals.`,
+      `!Pista: dobla un folio cuadrado de arriba abajo, de lado a lado y por las dos diagonales.`)
+  ] : []),
+  choices: [
+    bad(`2 eixos`, `2 ejes`, 'c2_caja', 'p4a'),
+    { t: x(`4 eixos`, `4 ejes`), go: 'c2_pieza' },
+    bad(`8 eixos`, `8 ejes`, 'c2_caja', 'p4b'),
+    { t: x(`Dibuixar amb el llapis la meitat que falta`, `Dibujar con el lápiz la mitad que falta`), if: s => s.obj === 'lapiz', go: 'c2_dibuja' },
+    { t: x(`Obrir la caixa a colps d'espàtula`, `Abrir la caja a golpes de espátula`), go: 'fin_platos' },
+    giveUp('p4', 'c2_pieza')
+  ] },
+
+c2_dibuja: { era: 'fondo',
+  text: [
+    x(`Amb el llapis dibuixes damunt del cadenat la meitat que li falta al quadrat. El cadenat, creient que ja és simètric, s'obri sol: ¡CLIC! El llapis es queda reduït a un tros diminut.`,
+      `Con el lápiz dibujas encima del candado la mitad que le falta al cuadrado. El candado, creyendo que ya es simétrico, se abre solo: ¡CLIC! El lápiz queda reducido a un tocón diminuto.`),
+    x(`>—Això és pensar amb la punta del llapis —diu Gumball.`, `>—Eso es pensar con la punta del lápiz —dice Gumball.`)
+  ],
+  choices: [
+    { t: x(`Agafar la peça`, `Coger la pieza`), go: 'c2_pieza', set: s => { s.obj = null; } }
+  ] },
+
+c2_pieza: { era: 'fondo',
+  onEnter: s => { s.f2 = 1; },
+  text: [
+    x(`Dins de la caixa, entre dues monedes, brilla la segona peça: una pila redona i groga, com Bob.`,
+      `Dentro de la caja, entre dos monedas, brilla la segunda pieza: una pila redonda y amarilla, como Bob.`),
+    x(`>—¡La meua moneda de la sort! —es desperta Don Cangrejo—. Un moment... té piles. ¿Des de quan les monedes porten piles?`,
+      `>—¡Mi moneda de la suerte! —se despierta Don Cangrejo—. Un momento... tiene pilas. ¿Desde cuándo las monedas llevan pilas?`),
+    x(`Bob vos acomiada amb un adéu tan gran que alça ones.`,
+      `Bob os despide con un adiós tan grande que levanta olas.`),
+    x(`>—Només falta la tercera peça —diu Gumball—. I està al Canal Mesclat, on van a parar tots els canals que es perden.`,
+      `>—Solo falta la tercera pieza —dice Gumball—. Y está en el Canal Mezclado, adonde van a parar todos los canales que se pierden.`)
+  ],
+  choices: [
+    { t: x(`Entrar a la pantalla plena de neu`, `Entrar en la pantalla llena de nieve`), go: 'c3_ini' }
+  ] },
+
+/* ---------- CAPÍTOL 3 · EL CANAL MESCLAT ---------- */
+c3_ini: { era: 'canal',
+  text: [
+    x(`¡ZZZZZZZ! Aterres en un lloc on el terra és neu de televisor: puntets blancs i negres que fan «shhhhh». Els arbres són antenes, el cel canvia de color cada pocs segons i, de tant en tant, sona un anunci de matalassos. És l'estàtica del Canal Mesclat.`,
+      `¡ZZZZZZZ! Aterrizas en un sitio donde el suelo es nieve de televisor: puntitos blancos y negros que hacen «shhhhh». Los árboles son antenas, el cielo cambia de color cada pocos segundos y, de vez en cuando, suena un anuncio de colchones. Es la estática del Canal Mezclado.`),
+    x(`>—Ací van a parar tots els canals que ningú no mira —diu Gumball—. I ací viu Zapping, el monstre que canvia de canal tot el que toca.`,
+      `>—Aquí van a parar todos los canales que nadie mira —dice Gumball—. Y aquí vive Zapping, el monstruo que cambia de canal todo lo que toca.`),
+    x(`Al lluny hi ha un abisme sense senyal i, més enllà, una antena clavada en una roca: la tercera peça. Entre la neu et sembla sentir unes veus que discuteixen. I en una pantalla flotant, un anunci d'una paella...`,
+      `A lo lejos hay un abismo sin señal y, más allá, una antena clavada en una roca: la tercera pieza. Entre la nieve te parece oír unas voces que discuten. Y en una pantalla flotante, un anuncio de una sartén...`)
+  ],
+  choices: [
+    { t: x(`Seguir les empremtes cap a l'abisme`, `Seguir las huellas hacia el abismo`), go: 'c3_puente' },
+    { t: x(`Acostar-te a les veus perdudes entre la neu`, `Acercarte a las voces perdidas entre la nieve`), go: 'c3_perdidos', set: s => { s.cD = 1; } },
+    { t: x(`Quedar-te mirant l'anunci de la paella màgica`, `Quedarte mirando el anuncio de la sartén mágica`), go: 'fin_teletienda' }
+  ] },
+
+c3_perdidos: { era: 'canal',
+  text: [
+    x(`>—¿Açò és el fons del mar? —diu una veu ronca—. Hi ha massa pintura.`,
+      `>—¿Esto es el fondo del mar? —dice una voz ronca—. Hay demasiada pintura.`),
+    x(`Són Darwin, el peix taronja amb potes, i Patricio, una estrella de mar rosa. Han canviat de canal sense voler i fa una hora que donen voltes.`,
+      `Son Darwin, el pez naranja con patas, y Patricio, una estrella de mar rosa. Han cambiado de canal sin querer y llevan una hora dando vueltas.`),
+    x(`>—¡Germà! —li diu Darwin a Gumball—. ¡Patricio diu que açò és un museu!`,
+      `>—¡Hermano! —le dice Darwin a Gumball—. ¡Patricio dice que esto es un museo!`),
+    x(`>—Un museu de neu —diu Patricio—. Em quede a viure.`,
+      `>—Un museo de nieve —dice Patricio—. Me quedo a vivir.`),
+    x(`Entre tots feu un camí de pedres blanques i els traieu de la neu. Per a donar-te les gràcies, et regalen la Carta de Darwin i Patricio: un peix i una estrella fent el ruc.`,
+      `Entre todos hacéis un camino de piedras blancas y los sacáis de la nieve. Para darte las gracias, te regalan la Carta de Darwin y Patricio: un pez y una estrella haciendo el tonto.`)
+  ],
+  choices: [
+    { t: x(`Tornar al camí de l'abisme`, `Volver al camino del abismo`), go: 'c3_puente' }
+  ] },
+
+c3_puente: { era: 'canal',
+  text: [
+    x(`L'Abisme Sense Senyal és un forat amb forma de pantalla apagada, tan ample que no es veu l'altre costat. La tercera peça brilla allà dalt, en una antena.`,
+      `El Abismo Sin Señal es un agujero con forma de pantalla apagada, tan ancho que no se ve el otro lado. La tercera pieza brilla allí arriba, en una antena.`),
+    x(`>—¡Seria fàcil si tinguérem un pont! —diu Gumball, que ho sap tot, però ho sap tard.`,
+      `>—¡Sería fácil si tuviéramos un puente! —dice Gumball, que lo sabe todo, pero lo sabe tarde.`)
+  ],
+  choices: [
+    { t: x(`Estendre la regla com un pont`, `Extender la regla como un puente`), if: s => s.obj === 'regla', go: 'c3_regla' },
+    { t: x(`Fer rodar una roca gegant per a fer un pont`, `Hacer rodar una roca gigante para hacer un puente`), go: 'c3_rodar' },
+    { t: x(`Agafar carrera i saltar l'abisme`, `Coger carrerilla y saltar el abismo`), go: 'fin_tiempo' }
+  ] },
+
+c3_regla: { era: 'canal',
+  text: [
+    x(`La regla s'allarga com si fóra de goma, de tant de dibuixar rectes en tantes pantalles. ¡FIUUUU! Un pont perfecte, recte i amb mil marques per a no caure.`,
+      `La regla se alarga como si fuera de goma, de tanto dibujar rectas en tantas pantallas. ¡FIUUUU! Un puente perfecto, recto y con mil marcas para no caerse.`),
+    x(`>—Això és una regla amb caràcter —diu Gumball.`, `>—Eso es una regla con carácter —dice Gumball.`)
+  ],
+  choices: [
+    { t: x(`Creuar el pont`, `Cruzar el puente`), go: 'c3_zapping' }
+  ] },
+
+c3_rodar: { era: 'canal',
+  text: s => [
+    x(`Per a creuar, fareu rodar una roca gegant fins a l'abisme, de manera que en caure forme un pont de pedra. Però la roca ha de rodar fins al final sense encallar-se en els seus vèrtexs (les cantonades).`,
+      `Para cruzar, haréis rodar una roca gigante hasta el abismo, de modo que al caer forme un puente de piedra. Pero la roca tiene que rodar hasta el final sin encallarse en sus vértices (las esquinas).`),
+    x(`?Quin cos geomètric rodola millor: el cub, la piràmide o l'esfera?`,
+      `?¿Qué cuerpo geométrico rueda mejor: el cubo, la pirámide o la esfera?`)
+  ].concat(nF(s, 'p5') >= 1 ? [
+    x(`¡TONC! La roca es queda clavada d'una cantonada, com un mal dia.`, `¡TONC! La roca se queda clavada de una esquina, como un mal día.`),
+    x(`!Pista: pensa en una pilota. Té cantonades? Té cares planes?`, `!Pista: piensa en una pelota. ¿Tiene esquinas? ¿Tiene caras planas?`)
+  ] : []),
+  choices: [
+    bad(`El cub`, `El cubo`, 'c3_rodar', 'p5a'),
+    { t: x(`L'esfera`, `La esfera`), go: 'c3_zapping' },
+    bad(`La piràmide`, `La pirámide`, 'c3_rodar', 'p5b'),
+    giveUp('p5', 'c3_zapping')
+  ] },
+
+c3_zapping: { era: 'canal',
+  text: [
+    x(`Quan poses els peus a l'altre costat, la neu s'alça com una muntanya: Zapping apareix davant teu, un munt de puntets amb una boca de pantalla. A la panxa, com una medalla, porta la tercera peça: l'antena.`,
+      `Cuando pones los pies al otro lado, la nieve se levanta como una montaña: Zapping aparece ante ti, un montón de puntitos con una bocaza de pantalla. En la barriga, como una medalla, lleva la tercera pieza: la antena.`),
+    x(`>—ZZZZZ... ¡Canvi de canal! —diu Zapping amb veu de ràdio mal sintonitzada—. {nom}, ¡no hi ha res que m'agrade més que canviar de canal als dibuixos nous!`,
+      `>—ZZZZZ... ¡Cambio de canal! —dice Zapping con voz de radio mal sintonizada—. {nom}, ¡no hay nada que me guste más que cambiar de canal a los dibujos nuevos!`),
+    x(`¡ZAP! Abans que puguis dir res, el terra canvia i ixes volant.`,
+      `¡ZAP! Antes de que puedas decir nada, el suelo cambia y sales volando.`)
+  ],
+  choices: [
+    { t: x(`Intentar tornar corrents`, `Intentar volver corriendo`), go: s => s.cG ? 'c3_gary' : 'c3_desvio' }
+  ] },
+
+c3_gary: { era: 'canal',
+  text: [
+    x(`¡ZAP! Aterres en un concurs de cuina, entre un cuiner i un munt d'arròs. De sobte, per la senyal, arriba una cosa menuda i lenta: ¡Gary!`,
+      `¡ZAP! Aterrizas en un concurso de cocina, entre un cocinero y un montón de arroz. De pronto, por la señal, llega algo pequeño y lento: ¡Gary!`),
+    x(`Gary, el caragol de Bob, ha notat per la senyal de la tele que et passava alguna cosa i ha vingut lliscant per les ones. «Miau», diu, i es llança amb la closca contra la pantalla de Zapping: ¡PLOF!`,
+      `Gary, el caracol de Bob, ha notado por la señal de la tele que te pasaba algo y ha venido deslizándose por las ondas. «Miau», dice, y se lanza con su concha contra la pantalla de Zapping: ¡PLOF!`),
+    x(`La Carta de Gary brilla a la teua mà. Zapping, marejat, rebota com una pilota de goma i deixa caure l'antena.`,
+      `La Carta de Gary brilla en tu mano. Zapping, mareado, rebota como una pelota de goma y deja caer la antena.`)
+  ],
+  choices: [
+    { t: x(`Agafar l'antena del terra`, `Coger la antena del suelo`), go: 'c3_mando' }
+  ] },
+
+c3_desvio: { era: 'canal',
+  text: [
+    x(`¡ZAP! Aterres en un programa de teletienda. Un presentador de dents massa blanques t'ofereix una paella: —¡La Paella Màgica! ¡Cuina sola, canta sola i només costa tres pagaments de tres pagaments!`,
+      `¡ZAP! Aterrizas en un programa de teletienda. Un presentador de dientes demasiado blancos te ofrece una sartén: —¡La Sartén Mágica! ¡Cocina sola, canta sola y solo cuesta tres pagos de tres pagos!`),
+    x(`>—No, no, no —murmura Gumball, que ha arribat sense saber com—. Açò sempre acaba amb tu pagant i jo sense paella.`,
+      `>—No, no, no —murmura Gumball, que ha llegado sin saber cómo—. Esto siempre acaba con tú pagando y yo sin sartén.`)
+  ],
+  choices: [
+    { t: x(`Cridar «¡NO COMPRE!» i córrer cap a l'eixida`, `Gritar «¡NO COMPRO!» y correr hacia la salida`), go: 'c3_mando' },
+    { t: x(`Preguntar-li quant costa la paella`, `Preguntarle cuánto cuesta la sartén`), go: 'fin_teletienda' }
+  ] },
+
+c3_mando: { era: 'canal',
+  text: s => [
+    s.cG
+      ? x(`Amb Zapping marejat, tens les tres peces a les mans: el botó roig, la pila groga i l'antena.`,
+          `Con Zapping mareado, tienes las tres piezas en las manos: el botón rojo, la pila amarilla y la antena.`)
+      : x(`Després de passar per uns quants canals (un concurs, un telenotícies, un documental de foques), has aconseguit tornar. Zapping, marejat de tant canviar, deixa caure l'antena, i ara tens les tres peces: el botó roig, la pila groga i l'antena.`,
+          `Después de pasar por unos cuantos canales (un concurso, un telediario, un documental de focas), has conseguido volver. Zapping, mareado de tanto cambiar, deja caer la antena, y ahora tienes las tres piezas: el botón rojo, la pila amarilla y la antena.`),
+    x(`>—¡{nom}, ara o mai! —crida Gumball—. El suport del comandament només encaixa si dius la seua forma exacta.`,
+      `>—¡{nom}, ahora o nunca! —grita Gumball—. El soporte del mando solo encaja si dices su forma exacta.`),
+    x(`?El suport és un polígon de sis costats. Com es diu?`,
+      `?El soporte es un polígono de seis lados. ¿Cómo se llama?`)
+  ].concat(s.cA ? [
+    x(`!La Carta d'Anais s'il·lumina: «Els polígons es nomenen pel nombre de costats: penta és cinc, hexa és sis, octo és huit.»`,
+      `!La Carta de Anais se ilumina: «Los polígonos se nombran por su número de lados: penta es cinco, hexa es seis, octo es ocho.»`)
+  ] : []).concat(nF(s, 'p6') >= 1 ? [
+    x(`¡BZZT! El suport vibra i solta espurnes: eixe no era.`, `¡BZZT! El soporte vibra y suelta chispas: ese no era.`),
+    x(`!Pista: «hexa» vol dir sis, com les cel·les d'un rusc d'abelles.`, `!Pista: «hexa» significa seis, como las celdas de un panal de abejas.`)
+  ] : []),
+  choices: [
+    bad(`Pentàgon`, `Pentágono`, 'c3_mando', 'p6a'),
+    bad(`Octògon`, `Octógono`, 'c3_mando', 'p6b'),
+    { t: x(`Hexàgon`, `Hexágono`), go: 'c3_cierre' },
+    giveUp('p6', 'c3_cierre')
+  ] },
+
+c3_cierre: { era: 'canal',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`¡CLIC, CLIC, CLIC! Les tres peces encaixen i el comandament sencer brilla amb tots els colors dels dos mons. Zapping, que ja es recupera, s'inquieta i canvia de canal tan de pressa que fa fum.`,
+      `¡CLIC, CLIC, CLIC! Las tres piezas encajan y el mando entero brilla con todos los colores de los dos mundos. Zapping, que ya se recupera, se pone nervioso y cambia de canal tan deprisa que echa humo.`),
+    x(`>—¡Prem PAUSA! —crida Gumball.`, `>—¡Pulsa PAUSA! —grita Gumball.`)
+  ],
+  choices: [
+    { t: x(`Prémer PAUSA`, `Pulsar PAUSA`), go: s => (s.cA && s.cG && s.cD) ? 'fi_heroi' : 'fi_bo' }
+  ] },
+
+/* ---------- FINALS ---------- */
+fin_ojos: { era: 'casa', ending: 'fin_ojos', title: x(`Ulls quadrats`, `Ojos cuadrados`),
+  text: [
+    x(`Apagues la tele i et poses a mirar el sostre, com si no haguera passat res. Però la tele s'encén sola amb un ¡CLIC! i comença un anunci. I un altre. I un altre.`,
+      `Apagas la tele y te pones a mirar el techo, como si no hubiera pasado nada. Pero la tele se enciende sola con un ¡CLIC! y empieza un anuncio. Y otro. Y otro.`),
+    x(`Tres hores després, els teus ulls s'han tornat quadrats de tant mirar la pantalla. Dins de la tele, Gumball et ho diu amb la veu més baixeta que pot: —Açò no és ben bé una aventura...`,
+      `Tres horas después, tus ojos se han vuelto cuadrados de tanto mirar la pantalla. Dentro de la tele, Gumball te lo dice con la voz más bajita que puede: —Esto no es exactamente una aventura...`)
+  ] },
+
+fin_cafe: { era: 'elmore', ending: 'fin_cafe', title: x(`La cua infinita`, `La cola infinita`),
+  text: [
+    x(`Segueixes l'olor de pizza. La cua de la cafeteria fa tres voltes al passadís i una més pel pati. Esperes. I esperes. I Gumball també espera, però amb molta més queixa.`,
+      `Sigues el olor a pizza. La cola de la cafetería da tres vueltas al pasillo y una más por el patio. Esperas. Y esperas. Y Gumball también espera, pero con muchas más quejas.`),
+    x(`Quan arribes al taulell, la pizza s'ha acabat. T'entreguen un got de suc i un carnet de «Campió de la cua». —Jo et deia que anàrem a la taquilla —murmura Gumball.`,
+      `Cuando llegas al mostrador, la pizza se ha acabado. Te entregan un vaso de zumo y un carné de «Campeón de la cola». —Yo te decía que fuéramos a la taquilla —murmura Gumball.`)
+  ] },
+
+fin_choque: { era: 'elmore', ending: 'fin_choque', title: x(`Pla com un full`, `Plano como un folio`),
+  text: [
+    x(`Salts la cinta de cap, com diu Gumball. ¡PLAF! Contra el mur. Un dibuix no es fa mal, però es queda pla com un full de paper.`,
+      `Saltas la cinta de cabeza, como dice Gumball. ¡PLAF! Contra el muro. Un dibujo no se hace daño, pero se queda plano como un folio de papel.`),
+    x(`Els del gimnàs et dobleguen en forma d'avioneta i et llancen per tota la sala fins a l'hora d'eixida. —¡Has volat cinc metres! —aplaudeix Gumball—. ¡Rècord de l'institut!`,
+      `Los del gimnasio te doblan en forma de avioneta y te lanzan por toda la sala hasta la hora de salida. —¡Has volado cinco metros! —aplaude Gumball—. ¡Récord del instituto!`)
+  ] },
+
+fin_burbuja: { era: 'fondo', ending: 'fin_burbuja', title: x(`Bombolles fins divendres`, `Burbujas hasta el viernes`),
+  text: [
+    x(`Jugues amb una bombolla gegant, entres a dins per a veure com és... ¡PLOF! La bombolla puja sense parar cap a la superfície del mar.`,
+      `Juegas con una burbuja gigante, entras dentro para ver cómo es... ¡PLOF! La burbuja sube sin parar hacia la superficie del mar.`),
+    x(`Una gavina passa i et saluda. Abaix, Gumball i Bob t'agiten els braços. No sabràs tornar fins divendres, però almenys la vista és preciosa.`,
+      `Una gaviota pasa y te saluda. Abajo, Gumball y Bob te agitan los brazos. No sabrás volver hasta el viernes, pero al menos la vista es preciosa.`)
+  ] },
+
+fin_platos: { era: 'fondo', ending: 'fin_platos', title: x(`Fregaplats d'honor`, `Friegaplatos de honor`),
+  text: [
+    x(`Don Cangrejo et sent donar colps a la caixa i apareix en un tres i no res. —¡Un lladre! No, espera... ¡un treballador nou! —diu, i li brillen els ulls.`,
+      `Don Cangrejo te oye dar golpes a la caja y aparece en un santiamén. —¡Un ladrón! No, espera... ¡un trabajador nuevo! —dice, y le brillan los ojos.`),
+    x(`Passes la vesprada fregant plats amb Bob, que canta mentre frega. Al final et donen un diploma que diu «Fregaplats d'honor». Gumball, amb una tovallola al muscle: —La pròxima vegada, ho fem a la meua manera... espera, no.`,
+      `Pasas la tarde fregando platos con Bob, que canta mientras friega. Al final te dan un diploma que dice «Friegaplatos de honor». Gumball, con un paño al hombro: —La próxima vez, lo hacemos a mi manera... espera, no.`)
+  ] },
+
+fin_teletienda: { era: 'canal', ending: 'fin_teletienda', title: x(`La paella màgica`, `La sartén mágica`),
+  text: [
+    x(`Compres la paella màgica. Tres pagaments de tres pagaments. Una setmana després, la paella canta sola... i no vol callar.`,
+      `Compras la sartén mágica. Tres pagos de tres pagos. Una semana después, la sartén canta sola... y no quiere callarse.`),
+    x(`Gumball es tapa les orelles amb les dues mans. —La pròxima vegada comprem una de normal —diu—. O millor, no comprem res.`,
+      `Gumball se tapa las orejas con las dos manos. —La próxima vez compramos una normal —dice—. O mejor, no compramos nada.`)
+  ] },
+
+fin_tiempo: { era: 'canal', ending: 'fin_tiempo', title: x(`Previsió: neu de tele`, `Previsión: nieve de tele`),
+  text: [
+    x(`Agafes carrera i saltes l'abisme. ¡FUIIIIT! No arribes a l'altre costat, però aterres en un estudi de televisió, amb llums i càmeres.`,
+      `Coges carrerilla y saltas el abismo. ¡FUIIIIT! No llegas al otro lado, pero aterrizas en un estudio de televisión, con luces y cámaras.`),
+    x(`>—¡I ara, la previsió del temps! —diu una veu. T'entreguen un punter i passes una setmana dient: «Hui, neu de tele i possibles anuncis». Gumball, des del públic: —Almenys no ho fas malament.`,
+      `—¡Y ahora, la previsión del tiempo! —dice una voz. Te entregan un puntero y pasas una semana diciendo: «Hoy, nieve de tele y posibles anuncios». Gumball, desde el público: —Al menos no lo haces mal.`)
+  ] },
+
+fi_bo: { era: 'canal', ending: 'bo', title: x(`Pausa i fi de la neu`, `Pausa y fin de la nieve`),
+  text: s => {
+    const t = [
+      x(`¡CLIC! Zapping s'atura al mig d'un canal qualsevol, amb la boca oberta, i la neu del terra fa «shhhh» una vegada més i s'apaga. Els dos mons tornen cadascun al seu lloc.`,
+        `¡CLIC! Zapping se detiene en medio de un canal cualquiera, con la boca abierta, y la nieve del suelo hace «shhhh» una vez más y se apaga. Los dos mundos vuelven cada uno a su sitio.`),
+      x(`>—Ho has aconseguit, {nom} —diu Gumball—. Mai ningú no havia arreglat un comandament sense trencar res més... de pressa.`,
+        `>—Lo has conseguido, {nom} —dice Gumball—. Nadie había arreglado nunca un mando sin romper nada más... tan deprisa.`)
+    ];
+    if (s.cA) t.push(x(`Anais t'ensenya el compàs des de la porta del gimnàs.`, `Anais te enseña el compás desde la puerta del gimnasio.`));
+    if (s.cG) t.push(x(`Gary et mira un moment i diu: «Miau».`, `Gary te mira un momento y dice: «Miau».`));
+    if (s.cD) t.push(x(`Darwin i Patricio se't acomiaden movent un peix i una estrella.`, `Darwin y Patricio se despiden de ti moviendo un pez y una estrella.`));
+    t.push(x(`De sobte, tornes a estar al sofà. El comandament, un poc xafat, és a la teua mà, i la tele diu: «Fi».`,
+             `De pronto, vuelves a estar en el sofá. El mando, un poco aplastado, está en tu mano, y la tele dice: «Fin».`));
+    if (s.chap > 0) t.push(x(`>—Jo prefereix la meua manera de fer les coses —diu Gumball des de la tele—. A colps. —Ningú no t'ho ha preguntat —murmura Anais.`,
+                             `>—Yo prefiero mi manera de hacer las cosas —dice Gumball desde la tele—. A golpes. —Nadie te lo ha preguntado —murmura Anais.`));
+    t.push(x(`!Pista: hi ha qui encara camina perdut per algun dels tres llocs. Potser, si ho tornes a provar, algú t'ajudarà a fer un final més gran.`,
+             `!Pista: hay quien todavía anda perdido por alguno de los tres sitios. Quizá, si lo vuelves a intentar, alguien te ayude a conseguir un final más grande.`));
+    return t;
+  } },
+
+fi_heroi: { era: 'canal', ending: 'heroi', title: x(`Ronda de cartes`, `Ronda de cartas`),
+  text: [
+    x(`¡CLIC! Zapping s'atura. Aleshores les tres cartes de la teua mà s'il·luminen com en un joc de taula: la d'Anais, la de Gary i la de Darwin i Patricio.`,
+      `¡CLIC! Zapping se detiene. Entonces las tres cartas de tu mano se iluminan como en un juego de mesa: la de Anais, la de Gary y la de Darwin y Patricio.`),
+    x(`S'obri un portal de colors i tots els que has ajudat hi apareixen: Anais amb el compàs, Gary lliscant, Darwin i Patricio fent el ruc. Bob Esponja crida des del fons del mar i Gumball riu tan fort que li cauen les orelles.`,
+      `Se abre un portal de colores y todos los que has ayudado aparecen en él: Anais con el compás, Gary deslizándose, Darwin y Patricio haciendo el tonto. Bob Esponja grita desde el fondo del mar y Gumball se ríe tan fuerte que se le caen las orejas.`),
+    x(`Zapping, per primera vegada, no vol canviar de canal: vol quedar-se a jugar. Des d'aquell dia, hi ha un canal especial per als dos mons. Als crèdits, el teu nom apareix en lletres enormes: {nom}.`,
+      `Zapping, por primera vez, no quiere cambiar de canal: quiere quedarse a jugar. Desde ese día, hay un canal especial para los dos mundos. En los créditos, tu nombre aparece en letras enormes: {nom}.`),
+    x(`Quan tornes al sofà, la tele posa: «Continuarà...».`, `Cuando vuelves al sofá, la tele pone: «Continuará...».`)
+  ] }
+
+};
+
+/* ============ MOTOR ============ */
+function initState() {
+  return { nom: '', obj: null, pagat: null, f1: 0, f2: 0, f3: 0,
+           cA: 0, cG: 0, cD: 0, retornat: 0, chap: 0, tried: '' };
+}
+const st = { scene: 'intro', s: initState(), hist: [], found: {}, lang: 'ca', era: 'casa', gloss: false };
+let locked = false;
+let restartArmed = false;
+let restartTimer = null;
+
+function T(v) { return (v && typeof v === 'object') ? v[st.lang] : v; }
+function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function hn(text) {
+  let t = esc(text);
+  t = t.replace(/\{([^{}|]+)\|([^{}|]+)\}/g, function (m, a, b) { return st.s.gen === 'f' ? b : a; });
+  t = t.replace(/\{nom\}/g, '<b>' + esc(String(st.s.nom || '').toUpperCase()) + '</b>');
+  t = t.replace(/\b(Gumball|Darwin|Anais|Bob Esponja|Bob|Patricio|Don Cangrejo|Gary|Zapping|Calamardo)\b/g, function (m) { return '<b>' + m.toUpperCase() + '</b>'; });
+  return t;
+}
+
+function foundCount() {
+  let n = 0;
+  ALL_ENDINGS.forEach(function (k) { if (st.found[k]) n++; });
+  if (st.found.bo) n++;
+  if (st.found.heroi) n++;
+  return n;
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ scene: st.scene, s: st.s, hist: st.hist.slice(-40), found: st.found, lang: st.lang, era: st.era }));
+  } catch (e) { /* sense emmagatzematge */ }
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.found && typeof d.found === 'object') st.found = d.found;
+    if (d.scene && S[d.scene]) {
+      st.scene = d.scene;
+      st.s = Object.assign(initState(), d.s || {});
+      st.hist = Array.isArray(d.hist) ? d.hist : [];
+      st.era = (d.era && ERA[d.era]) ? d.era : (S[d.scene].era || 'casa');
+    }
+  } catch (e) { /* res */ }
+}
+
+function plateSVG(era) {
+  const a = 'currentColor';
+  if (era === 'elmore') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><rect x="6" y="10" width="98" height="52" rx="3" opacity=".35"/><rect x="12" y="18" width="14" height="40" rx="2" opacity=".9"/><rect x="30" y="18" width="14" height="40" rx="2" opacity=".6"/><rect x="48" y="18" width="14" height="40" rx="2" opacity=".9"/><rect x="66" y="18" width="14" height="40" rx="2" opacity=".6"/><rect x="84" y="18" width="14" height="40" rx="2" opacity=".9"/></g><g fill="none" stroke="' + a + '" stroke-width="2"><circle cx="19" cy="38" r="2"/><circle cx="55" cy="38" r="2"/><circle cx="91" cy="38" r="2"/></g></svg>';
+  }
+  if (era === 'fondo') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="none" stroke="' + a + '" stroke-width="3" stroke-linecap="round"><path d="M4 50 q9-12 18 0 t18 0 t18 0 t18 0 t18 0 t14 0"/><path d="M4 62 q9-12 18 0 t18 0 t18 0 t18 0 t18 0 t14 0" opacity=".6"/></g><g fill="none" stroke="' + a + '" stroke-width="3"><circle cx="30" cy="22" r="7"/><circle cx="52" cy="10" r="4"/><circle cx="78" cy="26" r="9"/><circle cx="96" cy="12" r="3"/></g></svg>';
+  }
+  if (era === 'canal') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="none" stroke="' + a + '" stroke-width="3" stroke-linecap="round"><rect x="18" y="20" width="74" height="44" rx="8"/><path d="M40 20 L30 6 M70 20 L82 6"/></g><g fill="' + a + '"><circle cx="34" cy="34" r="2"/><circle cx="50" cy="42" r="2"/><circle cx="66" cy="32" r="2"/><circle cx="78" cy="48" r="2"/><circle cx="42" cy="54" r="2"/><circle cx="60" cy="52" r="2"/><circle cx="28" cy="48" r="2"/><circle cx="74" cy="40" r="2"/></g></svg>';
+  }
+  return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M10 34 L55 6 L100 34 Z" opacity=".85"/><rect x="20" y="34" width="70" height="28" opacity=".5"/><rect x="48" y="44" width="14" height="18" opacity=".9"/><rect x="26" y="40" width="12" height="12" opacity=".9"/><rect x="72" y="40" width="12" height="12" opacity=".9"/></g></svg>';
+}
+
+function slotSVG(kind, on) {
+  const a = 'currentColor';
+  const fill = on ? a : 'none';
+  const props = 'stroke="' + a + '" stroke-width="3"' + (on ? '' : ' stroke-dasharray="4 3" opacity=".5"');
+  let shape;
+  if (kind === 1) shape = '<circle cx="16" cy="16" r="10" fill="' + fill + '" ' + props + '/>';
+  else if (kind === 2) shape = '<circle cx="16" cy="16" r="10" fill="none" ' + props + '/><circle cx="16" cy="16" r="4" fill="' + fill + '"/>';
+  else shape = '<rect x="12" y="3" width="8" height="26" rx="3" fill="' + fill + '" ' + props + '/>';
+  return '<svg viewBox="0 0 32 32" aria-hidden="true">' + shape + '</svg>';
+}
+
+function cardSVG(on) {
+  const a = 'currentColor';
+  const props = 'stroke="' + a + '" stroke-width="3"' + (on ? '' : ' stroke-dasharray="4 3" opacity=".5"');
+  return '<svg class="card" viewBox="0 0 24 32" aria-hidden="true"><rect x="3" y="3" width="18" height="26" rx="4" fill="' + (on ? a : 'none') + '" ' + props + '/></svg>';
+}
+
+function hudHTML() {
+  const s = st.s;
+  const chips = [];
+  if (s.obj && OCHIP[s.obj]) chips.push('<span class="chip">' + esc(T(OCHIP[s.obj])) + '</span>');
+  if (!chips.length) chips.push('<span class="chip empty">' + esc(T(U.empty)) + '</span>');
+  const nCards = (s.cA ? 1 : 0) + (s.cG ? 1 : 0) + (s.cD ? 1 : 0);
+  return '<div class="hud">' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pieces)) + '</span>' + slotSVG(1, s.f1) + slotSVG(2, s.f2) + slotSVG(3, s.f3) + '</div>' +
+    '<div class="grp" aria-label="' + esc(T(U.cards)) + ' ' + nCards + '/3"><span class="lbl">' + esc(T(U.cards)) + '</span>' + cardSVG(s.cA) + cardSVG(s.cG) + cardSVG(s.cD) + '</div>' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pack)) + '</span><span class="chips">' + chips.join('') + '</span></div>' +
+    '</div>';
+}
+
+function textHTML(arr) {
+  return arr.map(function (item) {
+    let line = T(item);
+    let cls = '';
+    const c = line.charAt(0);
+    if (c === '>') { cls = 'dlg'; line = line.slice(1); }
+    else if (c === '?') { cls = 'riddle'; line = line.slice(1); }
+    else if (c === '!') { cls = 'hint'; line = line.slice(1); }
+    return '<p' + (cls ? ' class="' + cls + '"' : '') + '>' + hn(line) + '</p>';
+  }).join('');
+}
+
+function renderIntro() {
+  const app = document.getElementById('app');
+  const l = st.lang;
+  const body = {
+    ca: {
+      hola: `Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs.`,
+      li: [
+        `<b>Peces del comandament:</b> n'hi ha tres i cal trobar-les totes. Les veuràs a dalt de cada pantalla.`,
+        `<b>Cartes:</b> si ajudes qui ho necessita, pots guanyar cartes de col·lecció. Es queden a la teua mà i poden ser molt útils.`,
+        `<b>Motxilla:</b> ací guardes l'objecte que triïs al principi. Alguns obrin camins i d'altres es poden gastar.`,
+        `<b>Cadenats:</b> de vegades hi ha reptes de geometria. Si falles, no passa res: prova una altra vegada.`,
+        `<b>Finals:</b> hi ha ${TOTAL_FINALS} finals diferents. A veure quants descobreixes!`,
+        `Pots tornar a l'última decisió amb el botó ↶ i consultar les paraules noves amb el botó Aa de dalt.`
+      ]
+    },
+    es: {
+      hola: `¡Hola! Aquí decides tú qué pasa. Al final de cada escena elegirás qué hacer, y la historia cambiará según lo que elijas.`,
+      li: [
+        `<b>Piezas del mando:</b> hay tres y hay que encontrarlas todas. Las verás arriba en cada pantalla.`,
+        `<b>Cartas:</b> si ayudas a quien lo necesita, puedes ganar cartas de colección. Se quedan en tu mano y pueden ser muy útiles.`,
+        `<b>Mochila:</b> aquí guardas el objeto que elijas al principio. Algunos abren caminos y otros se pueden gastar.`,
+        `<b>Candados:</b> a veces hay retos de geometría. Si fallas, no pasa nada: prueba otra vez.`,
+        `<b>Finales:</b> hay ${TOTAL_FINALS} finales distintos. ¡A ver cuántos descubres!`,
+        `Puedes volver a la última decisión con el botón ↶ y consultar las palabras nuevas con el botón Aa de arriba.`
+      ]
+    }
+  }[l];
+  app.innerHTML =
+    '<section class="card intro">' +
+    '<h1>' + esc(T(TITLE)) + '</h1>' +
+    '<p class="sub">' + esc(T(DESC)) + '</p>' +
+    '<p style="font-size:1.15rem">' + body.hola + '</p>' +
+    '<ul>' + body.li.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>' +
+    '<label for="nom">' + esc(T(U.nameQ)) + '</label>' +
+    '<input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="' + esc(T(U.namePh)) + '">' +
+    '<p class="err" id="nom-err" hidden>' + esc(T(U.nameErr)) + '</p>' +
+    '<div class="choices"><button class="btn main" id="go-start" type="button">' + esc(T(U.start)) + '</button></div>' +
+    '<p class="counter">' + esc(T(U.finalsCount(foundCount()))) + '</p>' +
+    '</section>';
+  const input = document.getElementById('nom');
+  const err = document.getElementById('nom-err');
+  function go() {
+    const v = input.value.replace(/[<>&"'`{}|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+    if (!v) { err.hidden = false; input.focus(); return; }
+    st.s = initState();
+    st.s.nom = v;
+    st.hist = [];
+    enter('pro');
+  }
+  document.getElementById('go-start').addEventListener('click', go);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  input.addEventListener('input', function () { err.hidden = true; });
+}
+
+function renderGloss() {
+  const app = document.getElementById('app');
+  let h = '<section class="card gloss"><h2>' + esc(T(U.glossTitle)) + '</h2><dl>';
+  GLOSS.forEach(function (g) { h += '<dt>' + esc(T(g.w)) + '</dt><dd>' + esc(T(g.d)) + '</dd>'; });
+  h += '</dl><div class="choices"><button class="btn main" id="gloss-back" type="button">' + esc(T(U.glossBack)) + '</button></div></section>';
+  app.innerHTML = h;
+  document.getElementById('gloss-back').addEventListener('click', function () { st.gloss = false; render(); });
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const sc = S[st.scene];
+  document.body.dataset.era = st.era;
+  document.documentElement.lang = st.lang === 'es' ? 'es' : 'ca';
+  document.title = T(TITLE_FULL);
+  document.getElementById('brand').textContent = T(TITLE);
+  document.getElementById('lang-ca').setAttribute('aria-pressed', String(st.lang === 'ca'));
+  document.getElementById('lang-es').setAttribute('aria-pressed', String(st.lang === 'es'));
+  document.getElementById('gloss-btn').setAttribute('aria-pressed', String(st.gloss));
+  document.getElementById('gloss-btn').setAttribute('aria-label', T(U.glossLbl));
+  document.getElementById('restart').setAttribute('aria-label', T(U.restartLbl));
+  if (st.gloss) { renderGloss(); return; }
+  if (st.scene === 'intro') { renderIntro(); window.scrollTo(0, 0); return; }
+
+  const tx = typeof sc.text === 'function' ? sc.text(st.s) : sc.text;
+  let html = '<section class="card">';
+  if (ERA[sc.era] && !sc.ending) {
+    html += '<div class="plate">' + plateSVG(sc.era) + '<div class="pn">' + esc(T(ERA[sc.era].n)) + '</div></div>';
+  }
+  if (!sc.ending) html += hudHTML();
+  if (sc.ending) html += '<h2>' + esc(T(sc.title)) + '</h2>';
+  html += '<div class="txt">' + textHTML(tx) + '</div>';
+
+  if (sc.ending) {
+    html += '<p class="endnote">' + esc(T(U.newEnd)) + ' · ' + esc(T(U.finalsCount(foundCount()))) + '</p>';
+    html += '<div class="choices">';
+    if (sc.ending === 'bo' || sc.ending === 'heroi') {
+      html += '<button class="btn main" data-act="again" type="button">' + esc(T(U.playAgain)) + '</button>';
+    } else {
+      html += '<button class="btn main" data-act="undo" type="button">' + esc(T(U.backLast)) + '</button>';
+      html += '<button class="btn ghost" data-act="again" type="button">' + esc(T(U.again)) + '</button>';
+    }
+    html += '</div>';
+  } else {
+    const ch = sc.choices.filter(function (c) { return !c.if || c.if(st.s); });
+    html += '<div class="choices">';
+    ch.forEach(function (c, i) {
+      const label = typeof c.t === 'function' ? c.t(st.s) : c.t;
+      html += '<button class="btn" data-i="' + i + '" type="button">' + hn(T(label)) + '</button>';
+    });
+    html += '</div>';
+    if (st.hist.length) html += '<div class="undo"><button class="btn ghost" data-act="undo" type="button">' + esc(T(U.undo)) + '</button></div>';
+    app.innerHTML = html + '</section>';
+    app.querySelectorAll('button[data-i]').forEach(function (b) {
+      b.addEventListener('click', function () { choose(ch[Number(b.dataset.i)]); });
+    });
+    bindActs(app);
+    window.scrollTo(0, 0);
+    return;
+  }
+  app.innerHTML = html + '</section>';
+  bindActs(app);
+  window.scrollTo(0, 0);
+}
+
+function bindActs(app) {
+  app.querySelectorAll('button[data-act]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.act === 'undo') undo();
+      else resetGame();
+    });
+  });
+}
+
+function choose(c) {
+  if (locked) return;
+  st.hist.push({ scene: st.scene, s: clone(st.s), era: st.era });
+  if (st.hist.length > 80) st.hist.shift();
+  if (c.set) c.set(st.s);
+  const target = typeof c.go === 'function' ? c.go(st.s) : c.go;
+  enter(target);
+}
+
+function enter(id) {
+  const prevEra = st.era;
+  const sc = S[id];
+  st.scene = id;
+  if (sc.onEnter) sc.onEnter(st.s);
+  if (sc.era) st.era = sc.era;
+  if (sc.ending) st.found[sc.ending] = 1;
+  render();
+  save();
+  if (!sc.ending && sc.era && sc.era !== prevEra && ERA[sc.era] && ERA[sc.era].ch) plof(sc.era);
+}
+
+function undo() {
+  if (locked) return;
+  const h = st.hist.pop();
+  if (!h) { resetGame(); return; }
+  st.scene = h.scene;
+  st.s = Object.assign(initState(), h.s);
+  st.era = h.era || (S[h.scene].era || st.era);
+  render();
+  save();
+}
+
+function resetGame() {
+  st.s = initState();
+  st.hist = [];
+  st.scene = 'intro';
+  st.era = 'casa';
+  st.gloss = false;
+  render();
+  save();
+}
+
+function plof(eraKey) {
+  const el = document.getElementById('plof');
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('plof-dial').textContent = T(ERA[eraKey].n);
+  locked = true;
+  el.hidden = false;
+  setTimeout(function () { el.hidden = true; locked = false; }, reduced ? 500 : 1400);
+}
+
+function setLang(l) {
+  if (l === st.lang) return;
+  save();
+  location.href = l === 'es' ? '/es/gumball-bob-esponja/' : '/gumball-bob-esponja/';
+}
+
+document.getElementById('lang-ca').addEventListener('click', function () { setLang('ca'); });
+document.getElementById('lang-es').addEventListener('click', function () { setLang('es'); });
+document.getElementById('gloss-btn').addEventListener('click', function () { st.gloss = !st.gloss; render(); });
+document.getElementById('restart').addEventListener('click', function () {
+  const b = document.getElementById('restart');
+  if (!restartArmed) {
+    restartArmed = true;
+    b.textContent = T(U.restartAsk);
+    restartTimer = setTimeout(function () { restartArmed = false; b.textContent = '↻'; }, 2500);
+  } else {
+    clearTimeout(restartTimer);
+    restartArmed = false;
+    b.textContent = '↻';
+    resetGame();
+  }
+});
+
+if (new URLSearchParams(location.search).get('lang') === 'es') location.replace('/es/gumball-bob-esponja/');
+load();
+render();
+</script>
+</body>
+</html>

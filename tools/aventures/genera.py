@@ -71,6 +71,24 @@ AVENTURES = {
             "home": "Volver a la portada",
             "homeurl": "/es/",
         },
+    },
+    "gumball-bob-esponja": {
+        "ca": {
+            "title": "Gumball i Bob Esponja: Aventura al Canal Mesclat",
+            "brand": "Gumball i Bob Esponja",
+            "desc": "Aventura interactiva: tria el camí, resol sis candaus de geometria, guanya tres cartes ajudant i recupera les tres peces del comandament amb Gumball. 9 finals.",
+            "restart": "Començar de nou",
+            "home": "Tornar a la portada",
+            "homeurl": "/",
+        },
+        "es": {
+            "title": "Gumball y Bob Esponja: Aventura en el Canal Mezclado",
+            "brand": "Gumball y Bob Esponja",
+            "desc": "Aventura interactiva: elige el camino, resuelve seis candados de geometría, gana tres cartas ayudando y recupera las tres piezas del mando con Gumball. 9 finales.",
+            "restart": "Empezar de nuevo",
+            "home": "Volver a la portada",
+            "homeurl": "/es/",
+        },
     }
 }
 
