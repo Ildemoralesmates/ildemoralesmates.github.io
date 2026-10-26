@@ -35,6 +35,24 @@ AVENTURES = {
             "home": "Volver a la portada",
             "homeurl": "/es/",
         },
+    },
+    "missio-zefir": {
+        "ca": {
+            "title": "Missió Zèfir: Aventura als tres planetes",
+            "brand": "Missió Zèfir",
+            "desc": "Aventura interactiva a l'espai: tria el camí, resol candaus de mates, tira el dau i recupera les tres peces del motor amb l'alienígena Zumet, que només parla en refranys. 8 finals.",
+            "restart": "Començar de nou",
+            "home": "Tornar a la portada",
+            "homeurl": "/",
+        },
+        "es": {
+            "title": "Misión Céfiro: Aventura en los tres planetas",
+            "brand": "Misión Céfiro",
+            "desc": "Aventura interactiva en el espacio: elige el camino, resuelve candados de mates, tira el dado y recupera las tres piezas del motor con el alienígena Zumet, que solo habla en refranes. 8 finales.",
+            "restart": "Empezar de nuevo",
+            "home": "Volver a la portada",
+            "homeurl": "/es/",
+        },
     }
 }
 
@@ -75,7 +93,8 @@ def pagina(src, slug, L):
     gc = '<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>\n</head>'
     s = una(s, "</head>", gc, "</head>")
     # capçalera estàtica en l'idioma de la pàgina
-    s = una(s, '<div class="brand" id="brand">Els números perduts</div>', f'<div class="brand" id="brand">{d["brand"]}</div>', "brand")
+    s, nb = re.subn(r'<div class="brand" id="brand">[^<]*</div>', lambda m: f'<div class="brand" id="brand">{d["brand"]}</div>', s, count=1)
+    assert nb == 1, "brand"
     s = una(s, 'aria-label="Començar de nou"', f'aria-label="{d["restart"]}"', "aria restart")
     # enllaç de tornada a la portada (convenció del lloc), a la capçalera
     s = una(s, '<div class="tools">\n', f'<div class="tools">\n    <a class="pill home" href="{d["homeurl"]}" aria-label="{d["home"]}" title="{d["home"]}">⌂</a>\n', "tools")
@@ -84,7 +103,8 @@ def pagina(src, slug, L):
         s = una(s, 'id="lang-ca" aria-pressed="true"', 'id="lang-ca" aria-pressed="false"', "pill ca")
         s = una(s, 'id="lang-es" aria-pressed="false"', 'id="lang-es" aria-pressed="true"', "pill es")
     # l'idioma el fixa la URL: llengua inicial, sense recuperar-la de la partida guardada
-    s = una(s, "lang: 'ca', era: 'casa' };", f"lang: '{L}', era: 'casa' }};", "st.lang")
+    s, nl = re.subn(r"lang: 'ca', era: '(\w+)'", lambda m: f"lang: '{L}', era: '{m.group(1)}'", s, count=1)
+    assert nl == 1, "st.lang"
     s = una(s, "    if (d.lang === 'ca' || d.lang === 'es') st.lang = d.lang;\n", "", "load lang")
     s = una(s, "function setLang(l) {\n  st.lang = l;\n  render();\n  save();\n}",
             f"function setLang(l) {{\n  if (l === st.lang) return;\n  save();\n  location.href = l === 'es' ? '/es/{slug}/' : '/{slug}/';\n}}", "setLang")

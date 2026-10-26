@@ -1,0 +1,1205 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misión Céfiro: Aventura en los tres planetas</title>
+<meta name="description" content="Aventura interactiva en el espacio: elige el camino, resuelve candados de mates, tira el dado y recupera las tres piezas del motor con el alienígena Zumet, que solo habla en refranes. 8 finales.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/missio-zefir/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/missio-zefir/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/missio-zefir/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/missio-zefir/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Misión Céfiro: Aventura en los tres planetas">
+<meta property="og:description" content="Aventura interactiva en el espacio: elige el camino, resuelve candados de mates, tira el dado y recupera las tres piezas del motor con el alienígena Zumet, que solo habla en refranes. 8 finales.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/missio-zefir/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Courier+Prime:wght@400;700&family=Grandstander:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6ec; --ink:#241a12; --card:#fffdf8; --muted:#6b5a4a; --line:#e5d8c3;
+  --accent:#6b44a8; --on-accent:#ffffff; --danger:#a3361f;
+  --font-title:"Grandstander","Trebuchet MS",system-ui,sans-serif;
+  --font-read:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --font-dial:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+}
+body[data-era="nau"]{--accent:#6b44a8}
+body[data-era="glacia"]{--accent:#1f6f9a}
+body[data-era="fongaria"]{--accent:#1f7a4a}
+body[data-era="estacio"]{--accent:#a35a12}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-read);line-height:1.55;transition:background .3s}
+.top{max-width:42rem;margin:0 auto;padding:.75rem 1rem;display:flex;gap:.5rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.05rem}
+.tools{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.pill{font-family:var(--font-title);font-weight:700;font-size:.9rem;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:.35rem .8rem;cursor:pointer;min-height:2.4rem}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pill:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:42rem;margin:0 auto;padding:0 1rem 3rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:1.2rem;padding:1.1rem 1.1rem 1.3rem;box-shadow:0 2px 0 var(--line)}
+.plate{display:flex;gap:.8rem;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:.7rem;margin-bottom:.8rem}
+.plate svg{flex:0 0 auto;width:5.5rem;height:3.4rem;color:var(--accent)}
+.plate .pn{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.1rem;line-height:1.2}
+.hud{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.2rem 0 1rem;font-size:.95rem}
+.hud .grp{display:flex;align-items:center;gap:.4rem}
+.hud .lbl{font-family:var(--font-title);font-weight:700;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.hud svg{width:1.7rem;height:1.7rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{font-size:.9rem;border:2px solid var(--line);border-radius:999px;padding:.1rem .6rem;background:var(--bg)}
+.chip.empty{color:var(--muted);border-style:dashed}
+.txt p{font-size:1.2rem;margin:.7rem 0}
+.txt p.dlg{padding-left:.9rem;border-left:4px solid var(--accent)}
+.txt p.riddle{font-family:var(--font-title);font-weight:700;background:color-mix(in srgb,var(--accent) 14%,var(--card));border-radius:.8rem;padding:.7rem .9rem}
+.txt p.hint{color:var(--muted);font-style:italic;font-size:1.05rem}
+.gl{text-decoration:underline dotted;text-decoration-thickness:2px;text-underline-offset:.2em}
+.dieWrap{display:flex;justify-content:center;margin:.2rem 0 .6rem;color:var(--accent)}
+.die{width:5.5rem;height:5.5rem;animation:roll .7s ease-out both}
+@keyframes roll{0%{transform:rotate(-220deg) scale(.4);opacity:0}100%{transform:none;opacity:1}}
+.glos dt{font-family:var(--font-title);font-weight:800;color:var(--accent);margin-top:.9rem;font-size:1.15rem}
+.glos dd{margin:.1rem 0 0;font-size:1.1rem}
+.choices{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+.btn{font-family:var(--font-title);font-weight:700;font-size:1.15rem;line-height:1.3;text-align:left;border:3px solid var(--accent);background:var(--card);color:var(--ink);border-radius:1rem;padding:.8rem 1rem;min-height:3.4rem;cursor:pointer;transition:transform .08s,background .15s}
+.btn:hover{background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.btn:active{transform:scale(.985)}
+.btn.main{background:var(--accent);color:var(--on-accent);text-align:center}
+.btn.main:hover{background:var(--accent);filter:brightness(1.08)}
+.btn.ghost{border-color:var(--line);font-size:1rem;min-height:2.8rem;font-weight:500;text-align:center}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.undo{margin-top:1rem;text-align:center}
+h1{font-family:var(--font-title);font-weight:800;font-size:2rem;line-height:1.1;margin:.2rem 0 .3rem;color:var(--accent)}
+h2{font-family:var(--font-title);font-weight:800;font-size:1.6rem;line-height:1.15;margin:.2rem 0 .6rem;color:var(--accent)}
+.sub{font-family:var(--font-title);font-size:1.2rem;color:var(--muted);margin:.1rem 0 1rem}
+.intro ul{padding-left:1.2rem;font-size:1.1rem}
+.intro li{margin:.4rem 0}
+.intro label{display:block;font-family:var(--font-title);font-weight:700;font-size:1.1rem;margin:1.1rem 0 .4rem}
+.intro input{width:100%;font:inherit;font-size:1.3rem;padding:.7rem .9rem;border:3px solid var(--line);border-radius:.9rem;background:var(--bg);color:var(--ink)}
+.intro input:focus{border-color:var(--accent)}
+.err{color:var(--danger);font-weight:700;margin:.5rem 0 0}
+.counter{margin-top:1rem;text-align:center;color:var(--muted);font-family:var(--font-dial);font-size:.95rem}
+.endnote{font-family:var(--font-dial);color:var(--muted);margin-top:1rem;font-size:.95rem}
+#plof{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:color-mix(in srgb,var(--accent) 88%,#000);color:#fff;text-align:center;padding:1rem}
+#plof .big{font-family:var(--font-title);font-weight:800;font-size:3.4rem;animation:pop .5s ease-out both}
+#plof svg{width:6rem;height:6rem;animation:spin 1.4s linear infinite}
+#plof .dial{font-family:var(--font-dial);font-size:1.15rem;border:2px solid #fff;border-radius:.6rem;padding:.4rem .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  #plof svg,#plof .big,.die{animation:none}
+  .btn{transition:none}
+}
+@media (max-width:30rem){
+  h1{font-size:1.7rem}
+  .plate svg{width:4.4rem}
+}
+a.pill{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-era="nau">
+<header class="top">
+  <div class="brand" id="brand">Misión Céfiro</div>
+  <div class="tools">
+    <a class="pill home" href="/es/" aria-label="Volver a la portada" title="Volver a la portada">⌂</a>
+    <button class="pill" id="glos" type="button" aria-pressed="false">Paraules</button>
+    <button class="pill" id="lang-ca" aria-pressed="false" type="button">VAL</button>
+    <button class="pill" id="lang-es" aria-pressed="true" type="button">CAS</button>
+    <button class="pill" id="restart" type="button" aria-label="Empezar de nuevo">↻</button>
+  </div>
+</header>
+<main id="app"><section class="card intro"><h1>Misión Céfiro</h1><p class="sub">Aventura en los tres planetas</p><p style="font-size:1.15rem">¡Hola! Aquí decides tú qué pasa. Al final de cada escena elegirás qué hacer, y la historia cambiará según lo que elijas.</p><ul><li><b>Piezas del motor:</b> hay tres y tienes que encontrarlas todas. Las verás arriba en cada pantalla.</li><li><b>Mochila:</b> aquí se guardan la carta de herramienta que elegirás al principio y los amigos que hagas por el camino. Algunas cartas abren caminos.</li><li><b>Dado:</b> de vez en cuando tirarás un dado. Si sale un número bajo, el camino se complica, pero eso no te hace perder.</li><li><b>Cálculo:</b> hay muchas pruebas de matemáticas. Si fallas, recibirás una pista y podrás volver a intentarlo.</li><li><b>Palabras nuevas:</b> las palabras con puntitos por debajo se explican en el botón «Palabras», arriba a la derecha.</li><li><b>Finales:</b> hay 8 finales distintos. ¡A ver cuántos descubres!</li><li>Siempre puedes volver a la última decisión con el botón ↶.</li></ul><label for="nom">¿Cómo te llamas?</label><input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Tu nombre"><p class="err" id="nom-err" hidden="">Escribe tu nombre para empezar.</p><div class="choices"><button class="btn main" id="go-start" type="button">Empezar la aventura</button></div><p class="counter">Finales descubiertos: 0 de 8</p></section></main>
+<div id="plof" hidden role="status" aria-live="polite">
+  <div class="big">¡PLOF!</div>
+  <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="45" cy="45" r="30" fill="none" stroke="#fff" stroke-width="7"/><line x1="67" y1="67" x2="92" y2="92" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="45" cy="45" r="4" fill="#fff"/></svg>
+  <div class="dial" id="plof-dial"></div>
+</div>
+
+<script>
+/* ============ DADES ============ */
+const KEY = 'mision-zefir-tres-planetas-v1';
+const x = (ca, es) => ({ ca: ca, es: es });
+const num = (v) => x(String(v), String(v));
+
+const TITLE = x(`Missió Zèfir`, `Misión Céfiro`);
+const DESC  = x(`Aventura als tres planetes`, `Aventura en los tres planetas`);
+const TITLE_FULL = x(`Missió Zèfir: Aventura als tres planetes`, `Misión Céfiro: Aventura en los tres planetas`);
+
+const ON = {
+  imant: x(`la carta Imant`, `la carta Imán`),
+  tradu: x(`la carta Traductor`, `la carta Traductor`),
+  escut: x(`la carta Escut`, `la carta Escudo`)
+};
+const OCHIP = {
+  imant: x(`Carta Imant`, `Carta Imán`),
+  tradu: x(`Carta Traductor`, `Carta Traductor`),
+  escut: x(`Carta Escut`, `Carta Escudo`)
+};
+const ERA = {
+  nau:      { ch: false, n: x(`Pròleg · La nau Zèfir`, `Prólogo · La nave Céfiro`) },
+  glacia:   { ch: true,  n: x(`Capítol 1 · Glàcia, el planeta de gel`, `Capítulo 1 · Glacia, el planeta de hielo`) },
+  fongaria: { ch: true,  n: x(`Capítol 2 · Fongària, el bosc de bolets`, `Capítulo 2 · Fongaria, el bosque de setas`) },
+  estacio:  { ch: true,  n: x(`Capítol 3 · L'Estació Rellotge`, `Capítulo 3 · La Estación Reloj`) }
+};
+
+const ALL_ENDINGS = ['fin_sesta', 'fin_gel', 'fin_melassa', 'fin_bolet', 'fin_flama', 'fin_bucle'];   // todos los finales salvo 'bo' y 'heroi'
+const TOTAL_FINALS = ALL_ENDINGS.length + 2;
+
+const GLOS = [
+  { ca: { t: `asteroide`, re: `asteroides?`, d: `Roca gran que viatja per l'espai.` },
+    es: { t: `asteroide`, re: `asteroides?`, d: `Roca grande que viaja por el espacio.` } },
+  { ca: { t: `nucli`, re: `nucli`, d: `La part central i més important d'una cosa.` },
+    es: { t: `núcleo`, re: `núcleo`, d: `La parte central y más importante de algo.` } },
+  { ca: { t: `òrbita`, re: `òrbita`, d: `Camí corbat que fa una nau o un astre al voltant d'un planeta o d'una estrella.` },
+    es: { t: `órbita`, re: `órbitas?`, d: `Camino curvo que sigue una nave o un astro alrededor de un planeta o de una estrella.` } },
+  { ca: { t: `glacera`, re: `glacer(?:a|es)`, d: `Riu enorme de gel que es mou molt a poc a poc.` },
+    es: { t: `glaciar`, re: `glaciar(?:es)?`, d: `Río enorme de hielo que se mueve muy despacio.` } },
+  { ca: { t: `múltiple`, re: `múltiples?`, d: `Nombre que ix de la taula d'un altre: 6, 12, 18... són múltiples de 6.` },
+    es: { t: `múltiplo`, re: `múltiplos?`, d: `Número que sale de la tabla de otro: 6, 12, 18... son múltiplos de 6.` } },
+  { ca: { t: `bioluminescent`, re: `bioluminescents?`, d: `Que fa llum pròpia, com les cuques de llum.`},
+    es: { t: `bioluminiscente`, re: `bioluminiscentes?`, d: `Que produce luz propia, como las luciérnagas.` } },
+  { ca: { t: `espora`, re: `espor(?:a|es)`, d: `Gra menut amb què es reprodueixen els bolets.` },
+    es: { t: `espora`, re: `esporas?`, d: `Grano diminuto con el que se reproducen las setas.` } },
+  { ca: { t: `peatge`, re: `peatge`, d: `Pagament per a poder passar per un camí.` },
+    es: { t: `peaje`, re: `peaje`, d: `Pago por poder pasar por un camino.` } },
+  { ca: { t: `perímetre`, re: `perímetre`, d: `Mesura del voltant d'una figura: la suma de tots els seus costats.` },
+    es: { t: `perímetro`, re: `perímetro`, d: `Medida del contorno de una figura: la suma de todos sus lados.` } },
+  { ca: { t: `reactor`, re: `reactor`, d: `Màquina que produeix l'energia d'una nau o d'una estació.` },
+    es: { t: `reactor`, re: `reactor`, d: `Máquina que produce la energía de una nave o de una estación.` } }
+];
+
+const U = {
+  start: x(`Començar l'aventura`, `Empezar la aventura`),
+  nameQ: x(`Com et diuen?`, `¿Cómo te llamas?`),
+  nameErr: x(`Escriu el teu nom per a començar.`, `Escribe tu nombre para empezar.`),
+  namePh: x(`El teu nom`, `Tu nombre`),
+  pieces: x(`Peces del motor`, `Piezas del motor`),
+  pack: x(`Motxilla`, `Mochila`),
+  empty: x(`buida`, `vacía`),
+  undo: x(`↶ Tornar a la decisió anterior`, `↶ Volver a la decisión anterior`),
+  backLast: x(`Tornar a l'última decisió`, `Volver a la última decisión`),
+  again: x(`Començar de nou`, `Empezar de nuevo`),
+  playAgain: x(`Tornar a jugar`, `Jugar otra vez`),
+  restartAsk: x(`Toca de nou per a reiniciar`, `Toca de nuevo para reiniciar`),
+  restartLbl: x(`Començar de nou`, `Empezar de nuevo`),
+  finalsCount: (n) => x(`Finals descoberts: ${n} de ${TOTAL_FINALS}`, `Finales descubiertos: ${n} de ${TOTAL_FINALS}`),
+  newEnd: x(`Final descobert!`, `¡Final descubierto!`),
+  glosBtn: x(`Paraules`, `Palabras`),
+  glosTitle: x(`Paraules noves`, `Palabras nuevas`),
+  glosBack: x(`Tornar a l'aventura`, `Volver a la aventura`),
+  dieLbl: x(`Dau`, `Dado`)
+};
+
+/* Pistes de les proves de càlcul (es mostren si falles; no bloquegen) */
+const OOPS = {
+  m6: x(`Pista: els múltiples de 6 són els de la taula del 6: 6, 12, 18, 24, 30. Ni el 16 ni el 20 hi són.`,
+        `Pista: los múltiplos de 6 son los de la tabla del 6: 6, 12, 18, 24, 30. Ni el 16 ni el 20 están.`),
+  m56: x(`Pista: 8 files de 7 és 8 × 7. Prova amb 7 × 10 − 7 × 2.`,
+         `Pista: 8 filas de 7 es 8 × 7. Prueba con 7 × 10 − 7 × 2.`),
+  m185: x(`Pista: suma primer les unitats: 8 + 7 = 15. Escrius 5 i te'n portes 1; després, les desenes.`,
+          `Pista: suma primero las unidades: 8 + 7 = 15. Escribes 5 y te llevas 1; después, las decenas.`),
+  m25: x(`Pista: primer calcula 5 × 9 = 45, i després resta els 20 que s'han venut.`,
+         `Pista: primero calcula 5 × 9 = 45, y después resta los 20 que se han vendido.`),
+  m36: x(`Pista: 3 cordes de 12 nusos és 3 × 12. Pensa en 3 × 10 i 3 × 2.`,
+         `Pista: 3 cuerdas de 12 nudos es 3 × 12. Piensa en 3 × 10 y 3 × 2.`),
+  m30: x(`Pista: el perímetre és la suma de tots els costats: 9 + 6 + 9 + 6.`,
+         `Pista: el perímetro es la suma de todos los lados: 9 + 6 + 9 + 6.`),
+  mhora: x(`Pista: de les 3:45 a les 4:00 passen 15 minuts. Encara et falten 40 − 15 minuts.`,
+           `Pista: de las 3:45 a las 4:00 pasan 15 minutos. Todavía te faltan 40 − 15 minutos.`),
+  mflames: x(`Pista: compta de 12 en 12 fins arribar al 60: 12, 24, 36...`,
+             `Pista: cuenta de 12 en 12 hasta llegar al 60: 12, 24, 36...`),
+  mpalpes: x(`Pista: a cada pas se sumen 7 més: 7, 14, 21, i després...`,
+             `Pista: en cada paso se suman 7 más: 7, 14, 21, y después...`),
+  mhora2: x(`Pista: les 9:00 més una hora són les 10:00. Falta només mitja hora.`,
+            `Pista: las 9:00 más una hora son las 10:00. Falta solo media hora.`),
+  m100: x(`Pista: repartir 100 entre 4 és dividir 100 ÷ 4. Quin nombre repetit quatre vegades fa 100?`,
+          `Pista: repartir 100 entre 4 es dividir 100 ÷ 4. ¿Qué número repetido cuatro veces da 100?`)
+};
+const bad = (k, back) => (s => { s.oops = k; s.back = back; });
+function lliure(s) {
+  s.llum = 1;
+  if (s.pagat) { s.obj = s.pagat; s.pagat = null; s.retornat = 1; }
+}
+
+const S = {
+
+intro: { era: 'nau', text: [], choices: [] },
+
+/* ---------- PRÒLEG ---------- */
+pro: { era: 'nau',
+  text: [
+    x(`La nau ZÈFIR viatja en silenci entre les estrelles. De sobte, ¡BRRRUM! Un asteroide enorme passa tan prop del casc que tota la nau tremola.`,
+      `La nave CÉFIRO viaja en silencio entre las estrellas. De repente, ¡BRRRUM! Un asteroide enorme pasa tan cerca del casco que toda la nave tiembla.`),
+    x(`Quan s'acaba el terrabastall, el nucli del motor estel·lar s'ha trencat en tres peces. Les tres han eixit disparades cap a tres planetes diferents. Sense motor, la nau només pot donar voltes i voltes en una òrbita.`,
+      `Cuando termina el estruendo, el núcleo del motor estelar se ha roto en tres piezas. Las tres han salido disparadas hacia tres planetas distintos. Sin motor, la nave solo puede dar vueltas y vueltas en una órbita.`),
+    x(`{nom}, l'alarma roja parpelleja. Alguna cosa es belluga darrere d'una caixa de càrrega.`,
+      `{nom}, la alarma roja parpadea. Algo se mueve detrás de una caja de carga.`),
+    x(`>—Ai, ai, ai! Qui la fa, l'espera... però si jo no he fet res! —diu una veueta.`,
+      `>—¡Ay, ay, ay! Quien la hace, la paga... ¡pero si yo no he hecho nada! —dice una vocecita.`),
+    x(`Té tres ulls, dues antenes i un cinturó ple de butxaques. És ZUMET, un alienígena menut que es va colar a la bodega perquè allà hi havia galetes.`,
+      `Tiene tres ojos, dos antenas y un cinturón lleno de bolsillos. Es ZUMET, un alienígena pequeñito que se coló en la bodega porque allí había galletas.`),
+    x(`>—Sóc Zumet! Qui té un amic, té un tresor, i tu acabes de guanyar un tresor.`,
+      `>—¡Soy Zumet! Quien tiene un amigo, tiene un tesoro, y tú acabas de ganar un tesoro.`),
+    x(`Zumet sap moltes coses, però només parla en refranys. Al costat hi ha una caixa amb tres cartes d'eina i una butaca molt còmoda que sembla dir-te: «Seu un poquet, ja ho arreglarà algú».`,
+      `Zumet sabe muchas cosas, pero solo habla en refranes. Al lado hay una caja con tres cartas de herramienta y una butaca muy cómoda que parece decirte: «Siéntate un ratito, ya lo arreglará alguien».`)
+  ],
+  choices: [
+    { t: x(`Obrir la caixa de cartes`, `Abrir la caja de cartas`), go: 'cartes' },
+    { t: x(`Fer una becaineta a la butaca`, `Echar una cabezadita en la butaca`), go: 'fin_sesta' }
+  ] },
+
+cartes: { era: 'nau',
+  text: [
+    x(`Dins de la caixa hi ha tres cartes brillants. Només en pots portar una. Tria bé!`,
+      `Dentro de la caja hay tres cartas brillantes. Solo puedes llevarte una. ¡Elige bien!`),
+    x(`CARTA IMANT: atrau tot el que és de metall, de lluny i amb molta força.`,
+      `CARTA IMÁN: atrae todo lo que es de metal, desde lejos y con mucha fuerza.`),
+    x(`CARTA TRADUCTOR: entén qualsevol idioma, fins i tot el dels bolets.`,
+      `CARTA TRADUCTOR: entiende cualquier idioma, incluso el de las setas.`),
+    x(`CARTA ESCUT: crea un camp de força que aguanta la calor i els colps.`,
+      `CARTA ESCUDO: crea un campo de fuerza que aguanta el calor y los golpes.`),
+    x(`>—Cada cosa al seu temps, i cada carta al seu planeta —diu Zumet, tocant-se el nas amb una antena.`,
+      `>—Cada cosa a su tiempo, y cada carta en su planeta —dice Zumet, tocándose la nariz con una antena.`)
+  ],
+  choices: [
+    { t: x(`Agafar la carta Imant`, `Coger la carta Imán`), go: 'c1_arribada', set: s => { s.obj = 'imant'; } },
+    { t: x(`Agafar la carta Traductor`, `Coger la carta Traductor`), go: 'c1_arribada', set: s => { s.obj = 'tradu'; } },
+    { t: x(`Agafar la carta Escut`, `Coger la carta Escudo`), go: 'c1_arribada', set: s => { s.obj = 'escut'; } }
+  ] },
+
+/* ---------- CAPÍTOL 1 · GLÀCIA ---------- */
+c1_arribada: { era: 'glacia',
+  text: [
+    x(`¡PLOF! La nau aterra a GLÀCIA, un planeta cobert de gel blau. Fa tant de fred que l'alé es converteix en núvols menuts.`,
+      `¡PLOF! La nave aterriza en GLACIA, un planeta cubierto de hielo azul. Hace tanto frío que el aliento se convierte en nubecitas.`),
+    x(`Lluny hi ha una glacera immensa, com un riu de gel que no es mou. Més avall, un llac gelat brilla davall dos sols.`,
+      `A lo lejos hay un glaciar inmenso, como un río de hielo que no se mueve. Más abajo, un lago helado brilla bajo dos soles.`),
+    x(`>—A poc a poc s'anirà lluny, però els peus em tremolen més de pressa —diu Zumet, saltant d'una cama a l'altra.`,
+      `>—Despacio se va lejos, pero los pies me tiemblan más deprisa —dice Zumet, saltando de una pierna a otra.`),
+    x(`El detector de la nau marca que la primera peça està dins d'una cova de gel, al fons de la vall. Hi ha dos camins.`,
+      `El detector de la nave marca que la primera pieza está dentro de una cueva de hielo, al fondo del valle. Hay dos caminos.`)
+  ],
+  choices: [
+    { t: x(`Pujar per la glacera`, `Subir por el glaciar`), go: 'c1_glacera' },
+    { t: x(`Creuar el llac gelat`, `Cruzar el lago helado`), go: 'c1_llac' }
+  ] },
+
+c1_glacera: { era: 'glacia',
+  text: [
+    x(`La glacera té bretxes fondes i, entre elles, lloses de gel amb nombres gravats, com un joc de taula gegant.`,
+      `El glaciar tiene grietas profundas y, entre ellas, losas de hielo con números grabados, como un juego de mesa gigante.`),
+    x(`Una veu de gel sona entre les roques: ¡CRIIIIC!`,
+      `Una voz de hielo suena entre las rocas: ¡CRIIIIC!`),
+    x(`?Només pots pisar les lloses amb múltiples de 6. Quina fila és la bona?`,
+      `?Solo puedes pisar las losas con múltiplos de 6. ¿Qué fila es la buena?`),
+    x(`!Pista: els múltiples de 6 van de 6 en 6.`,
+      `!Pista: los múltiplos de 6 van de 6 en 6.`)
+  ],
+  choices: [
+    { t: num(`6 · 16 · 24`), go: 'oops', set: bad('m6', 'c1_glacera') },
+    { t: num(`12 · 18 · 30`), go: 'c1_bretxa' },
+    { t: num(`12 · 20 · 30`), go: 'oops', set: bad('m6', 'c1_glacera') }
+  ] },
+
+c1_bretxa: { era: 'glacia',
+  text: [
+    x(`Salteu l'última bretxa i, ¡BIP, BIP!, alguna cosa xicoteta pita davall del gel.`,
+      `Saltáis la última grieta y, ¡BIP, BIP!, algo pequeñito pita bajo el hielo.`),
+    x(`És un robotet de neu amb un sol ull encés i una insígnia: «Manteniment · Estació Rellotge». Està encaixat en un forat.`,
+      `Es un robotito de nieve con un solo ojo encendido y una insignia: «Mantenimiento · Estación Reloj». Está encajado en un agujero.`),
+    x(`>—Bip... em vaig escapar del trasllat i m'he quedat encallat —diu el robotet—. Em diuen FLOC. Em pots traure?`,
+      `>—Bip... me escapé del traslado y me he quedado atascado —dice el robotito—. Me llaman FLOC. ¿Me puedes sacar?`),
+    x(`>—Qui no s'arrisca, no pisca —mormola Zumet—. Però si el treus, tens un amic.`,
+      `>—El que no arriesga, no gana —murmura Zumet—. Pero si lo sacas, tienes un amigo.`)
+  ],
+  choices: [
+    { t: x(`Alçar Floc amb la carta Imant`, `Levantar a Floc con la carta Imán`), if: s => s.obj === 'imant', go: 'c1_floc_ok', set: s => { s.floc = 1; } },
+    { t: x(`Tirar de Floc amb les mans (tirar el dau)`, `Tirar de Floc con las manos (tirar el dado)`), go: 'c1_dau', roll: true },
+    { t: x(`Deixar-lo i seguir cap a la cova`, `Dejarlo y seguir hacia la cueva`), go: 'c1_cova' }
+  ] },
+
+c1_floc_ok: { era: 'glacia',
+  text: [
+    x(`La carta Imant brilla i, ¡TCLAC!, Floc ix volant del forat com un tap d'ampolla.`,
+      `La carta Imán brilla y, ¡TCLAC!, Floc sale volando del agujero como un corcho de botella.`),
+    x(`>—Bip, bip! Gràcies! —diu Floc—. El meu germà treballa a l'Estació Rellotge. Si el trobes, digues-li que ets amic meu.`,
+      `>—¡Bip, bip! ¡Gracias! —dice Floc—. Mi hermano trabaja en la Estación Reloj. Si lo encuentras, dile que eres amigo mío.`)
+  ],
+  choices: [ { t: x(`Continuar cap a la cova`, `Continuar hacia la cueva`), go: 'c1_cova' } ] },
+
+c1_dau: { era: 'glacia', die: true,
+  onEnter: s => { if (s.dado >= 3) s.floc = 1; },
+  text: s => s.dado >= 3 ? [
+    x(`Tires amb totes les forces, ¡CRRRAC!, i el gel deixa anar el robotet.`,
+      `Tiras con todas tus fuerzas, ¡CRRRAC!, y el hielo suelta al robotito.`),
+    x(`>—Bip, bip! Gràcies! —diu Floc—. El meu germà treballa a l'Estació Rellotge. Si el trobes, digues-li que ets amic meu.`,
+      `>—¡Bip, bip! ¡Gracias! —dice Floc—. Mi hermano trabaja en la Estación Reloj. Si lo encuentras, dile que eres amigo mío.`)
+  ] : [
+    x(`Tires, però el gel és molt relliscós: ¡ZIIIIP! Floc llisca glaçera avall i es perd entre la neu, fent «bip, bip» cada vegada més fluix.`,
+      `Tiras, pero el hielo resbala mucho: ¡ZIIIIP! Floc se desliza glaciar abajo y se pierde entre la nieve, haciendo «bip, bip» cada vez más flojito.`),
+    x(`>—Cada cosa al seu temps —diu Zumet—. Hui no tocava.`,
+      `>—Cada cosa a su tiempo —dice Zumet—. Hoy no tocaba.`)
+  ],
+  choices: [ { t: x(`Continuar cap a la cova`, `Continuar hacia la cueva`), go: 'c1_cova' } ] },
+
+c1_llac: { era: 'glacia',
+  text: [
+    x(`El gel del llac és net com un vidre, i dos metres més avall es veuen peixos de llum.`,
+      `El hielo del lago es limpio como un cristal, y dos metros más abajo se ven peces de luz.`),
+    x(`¡CRRRAC! Al mig del llac, el gel parla. Hi ha llosetes fosques que aguanten i llosetes clares que s'esquerden.`,
+      `¡CRRRAC! En medio del lago, el hielo habla. Hay losetas oscuras que aguantan y losetas claras que se agrietan.`),
+    x(`Les llosetes segures formen 8 files de 7 llosetes.`,
+      `Las losetas seguras forman 8 filas de 7 losetas.`),
+    x(`?Quantes llosetes segures hi ha en total?`,
+      `?¿Cuántas losetas seguras hay en total?`),
+    x(`!Pista: és 8 × 7. I recorda: com més pressa, més cruix.`,
+      `!Pista: es 8 × 7. Y recuerda: cuanta más prisa, más cruje.`)
+  ],
+  choices: [
+    { t: num(`54`), go: 'oops', set: bad('m56', 'c1_llac') },
+    { t: num(`56`), go: 'c1_cova' },
+    { t: num(`63`), go: 'oops', set: bad('m56', 'c1_llac') },
+    { t: x(`Córrer en línia recta pel mig, sense mirar`, `Correr en línea recta por el medio, sin mirar`), go: 'fin_gel' }
+  ] },
+
+c1_cova: { era: 'glacia',
+  text: [
+    x(`Tots els camins porten a la mateixa cova. Dins, el silenci és blau i el vent fa «uuuuuh».`,
+      `Todos los caminos llevan a la misma cueva. Dentro, el silencio es azul y el viento hace «uuuuuh».`),
+    x(`La primera peça del nucli brilla darrere d'una reixa de gel. A la reixa hi ha un visor amb una suma.`,
+      `La primera pieza del núcleo brilla detrás de una reja de hielo. En la reja hay un visor con una suma.`),
+    x(`Darrere teu es belluga una ombra enorme... és només la teua pròpia ombra, però el cor et batega ben fort.`,
+      `Detrás de ti se mueve una sombra enorme... es solo tu propia sombra, pero el corazón te late muy fuerte.`),
+    x(`?Per a obrir-la: 148 + 37 = ?`,
+      `?Para abrirla: 148 + 37 = ?`),
+    x(`!Pista: suma primer les unitats: 8 + 7.`,
+      `!Pista: suma primero las unidades: 8 + 7.`)
+  ],
+  choices: [
+    { t: x(`Usar la carta Imant: la peça és de metall`, `Usar la carta Imán: la pieza es de metal`), if: s => s.obj === 'imant', go: 'c1_cierre' },
+    { t: num(`175`), go: 'oops', set: bad('m185', 'c1_cova') },
+    { t: num(`185`), go: 'c1_cierre' },
+    { t: num(`195`), go: 'oops', set: bad('m185', 'c1_cova') }
+  ] },
+
+c1_cierre: { era: 'glacia',
+  onEnter: s => { s.f1 = 1; },
+  text: s => {
+    const t = [
+      x(`¡CLING! La primera peça del nucli vola a les teues mans i s'encaixa al panell de la nau amb un «clic» molt satisfactori.`,
+        `¡CLING! La primera pieza del núcleo vuela a tus manos y encaja en el panel de la nave con un «clic» muy satisfactorio.`),
+      x(`>—De mica en mica s'omple la pica —diu Zumet—. Una peça menys, dues per anar, {nom}.`,
+        `>—Grano a grano se llena el granero —dice Zumet—. Una pieza menos, faltan dos, {nom}.`)
+    ];
+    if (s.floc) t.push(x(`Un xiuletet llunyà fa «bip, bip!». Ja tens un amic a Glàcia.`,
+                         `Un silbidito lejano hace «¡bip, bip!». Ya tienes un amigo en Glacia.`));
+    return t;
+  },
+  choices: [ { t: x(`Posar rumb a Fongària`, `Poner rumbo a Fongaria`), go: 'c2_arribada' } ] },
+
+/* ---------- CAPÍTOL 2 · FONGÀRIA ---------- */
+c2_arribada: { era: 'fongaria',
+  text: [
+    x(`¡PLOF! FONGÀRIA és un bosc de bolets gegants. Les cúpules són bioluminescents: parpellegen en verd, blau i rosa, i l'aire va ple d'espores que brillen com purpurina.`,
+      `¡PLOF! FONGARIA es un bosque de setas gigantes. Las cúpulas son bioluminiscentes: parpadean en verde, azul y rosa, y el aire va lleno de esporas que brillan como purpurina.`),
+    x(`És preciós... però entre els bolets hi ha racons molt foscos, i alguna cosa cruix darrere teu. ¡CRIC! ¡CRAC! (Pot ser una branca. Pot ser.)`,
+      `Es precioso... pero entre las setas hay rincones muy oscuros, y algo cruje detrás de ti. ¡CRIC! ¡CRAC! (Puede ser una rama. Puede ser.)`),
+    x(`>—Qui molt abraça, poc estreny, i jo no vull abraçar res que cruix —diu Zumet, amagat darrere de les teues cames.`,
+      `>—Quien mucho abarca, poco aprieta, y yo no quiero abrazar nada que cruja —dice Zumet, escondido detrás de tus piernas.`),
+    x(`El detector marca la segona peça al cor del bosc. Un camí de bolets encesos va cap allà. Però, d'un costat, entre les lianes, sona un gemec fi.`,
+      `El detector marca la segunda pieza en el corazón del bosque. Un camino de setas encendidas va hacia allí. Pero, a un lado, entre las lianas, suena un gemido fino.`)
+  ],
+  choices: [
+    { t: x(`Seguir el camí il·luminat`, `Seguir el camino iluminado`), go: 'c2_peatge' },
+    { t: x(`Entrar entre les lianes, d'on ve el gemec`, `Entrar entre las lianas, de donde viene el gemido`), go: 'c2_xarxa' }
+  ] },
+
+c2_peatge: { era: 'fongaria',
+  text: s => {
+    const t = [
+      x(`Enmig del camí hi ha una cabana de bolets, i davant, un venedor molt ample amb un barret rovellat: MESTRE ROVELLÓ.`,
+        `En medio del camino hay una cabaña de setas, y delante, un vendedor muy anchote con un sombrero oxidado: MAESTRO ROVELLÓ.`)
+    ];
+    if (s.llum) {
+      t.push(x(`Quan Rovelló veu Lluerna sobre la teua espatla, el barret li cau de la sorpresa.`,
+               `Cuando Rovelló ve a Lluerna sobre tu hombro, el sombrero se le cae de la sorpresa.`));
+      t.push(x(`>—La meua Lluerna! Per a vosaltres, el camí és lliure —diu, emocionat.`,
+               `>—¡Mi Lluerna! Para vosotros, el camino es libre —dice, emocionado.`));
+    } else {
+      t.push(x(`>—Peatge per a creuar el bosc! —diu, amb veu de tap de suro—. O pagueu, o feu la meua prova.`,
+               `>—¡Peaje para cruzar el bosque! —dice, con voz de corcho—. O pagáis, o hacéis mi prueba.`));
+    }
+    return t;
+  },
+  choices: [
+    { t: x(`Passar: Rovelló ja us deixa via lliure`, `Pasar: Rovelló ya os deja vía libre`), if: s => s.llum, go: 'c2_cami', set: s => { s.peat = 1; } },
+    { t: x(`Parlar-li en el seu idioma (carta Traductor)`, `Hablarle en su idioma (carta Traductor)`), if: s => s.obj === 'tradu', go: 'c2_tradu', set: s => { s.peat = 1; } },
+    { t: x(`Pagar el peatge amb la teua carta`, `Pagar el peaje con tu carta`), if: s => !!s.obj, go: 'c2_cami', set: s => { s.pagat = s.obj; s.obj = null; s.peat = 1; } },
+    { t: x(`Fer la prova de càlcul de Rovelló`, `Hacer la prueba de cálculo de Rovelló`), go: 'c2_prova' },
+    { t: x(`Saltar el peatge i córrer entre els bolets`, `Saltarse el peaje y correr entre las setas`), go: 'fin_melassa' }
+  ] },
+
+c2_tradu: { era: 'fongaria',
+  text: [
+    x(`La carta Traductor fa «bip-pop». De sobte entens que Rovelló no parla: fa «ploc, ploc» com un bolet.`,
+      `La carta Traductor hace «bip-pop». De pronto entiendes que Rovelló no habla: hace «ploc, ploc» como una seta.`),
+    x(`>—El peatge no és de monedes —diu—. És de companyia. Fa mil anys que ningú no m'explica una història.`,
+      `>—El peaje no es de monedas —dice—. Es de compañía. Hace mil años que nadie me cuenta una historia.`),
+    x(`Li expliques què heu vist a Glàcia. Rovelló riu tan fort que el barret li dona voltes. Us deixa passar.`,
+      `Le cuentas lo que habéis visto en Glacia. Rovelló se ríe tan fuerte que el sombrero le da vueltas. Os deja pasar.`)
+  ],
+  choices: [ { t: x(`Continuar pel camí`, `Continuar por el camino`), go: 'c2_cami' } ] },
+
+c2_prova: { era: 'fongaria',
+  text: [
+    x(`Rovelló obri un quadern cobert d'espores i escriu amb un bolígraf-bolet.`,
+      `Rovelló abre un cuaderno cubierto de esporas y escribe con un bolígrafo-seta.`),
+    x(`?Tinc 5 caixes amb 9 bolets en cada una. Si en venc 20, quants me'n queden?`,
+      `?Tengo 5 cajas con 9 setas en cada una. Si vendo 20, ¿cuántas me quedan?`),
+    x(`!Pista: primer 5 × 9, després resta els 20.`,
+      `!Pista: primero 5 × 9, después resta los 20.`)
+  ],
+  choices: [
+    { t: num(`14`), go: 'oops', set: bad('m25', 'c2_prova') },
+    { t: num(`25`), go: 'c2_cami', set: s => { s.peat = 1; } },
+    { t: num(`29`), go: 'oops', set: bad('m25', 'c2_prova') }
+  ] },
+
+c2_cami: { era: 'fongaria',
+  text: s => {
+    const t = [
+      x(`Passeu per davall d'un arc de bolets, i el camí es fa més fosc i més estret.`,
+        `Pasáis por debajo de un arco de setas, y el camino se vuelve más oscuro y más estrecho.`)
+    ];
+    if (s.pagat) t.push(x(`Rovelló s'ha quedat la teua carta. Ja no la tens a la motxilla.`,
+                          `Rovelló se ha quedado tu carta. Ya no la tienes en la mochila.`));
+    if (s.llum) t.push(x(`Lluerna il·lumina el camí amb la seua llum menuda: el bosc ja no fa tanta por.`,
+                         `Lluerna ilumina el camino con su lucecita: el bosque ya no da tanto miedo.`));
+    else t.push(x(`Un poc més enllà, el gemec se sent més fort: ¡pip, pip! Ve de les lianes, a l'esquerra. A la dreta, un resplendor rosat: el cor del bosc.`,
+                  `Un poco más allá, el gemido se oye más fuerte: ¡pip, pip! Viene de las lianas, a la izquierda. A la derecha, un resplandor rosado: el corazón del bosque.`));
+    return t;
+  },
+  choices: [
+    { t: x(`Anar cap al cor del bosc`, `Ir hacia el corazón del bosque`), go: 'c2_cor' },
+    { t: x(`Anar a mirar d'on ve el gemec`, `Ir a mirar de dónde viene el gemido`), if: s => !s.llum, go: 'c2_xarxa' }
+  ] },
+
+c2_xarxa: { era: 'fongaria',
+  text: [
+    x(`Entre dues lianes penja una xarxa, i dins hi ha una cuca de llum xicoteta que parpelleja de pena. Té una cinteta amb una «R».`,
+      `Entre dos lianas cuelga una red, y dentro hay una luciérnaga pequeñita que parpadea de pena. Lleva una cintita con una «R».`),
+    x(`>—Pip, pip! Em dic LLUERNA. Em vaig enredar buscant espores per a Mestre Rovelló. Ajuda'm, si us plau!`,
+      `>—¡Pip, pip! Me llamo LLUERNA. Me enredé buscando esporas para el maestro Rovelló. ¡Ayúdame, por favor!`),
+    x(`Les lianes semblen moure's soles... Cal fer-ho ràpid.`,
+      `Las lianas parecen moverse solas... Hay que hacerlo rápido.`)
+  ],
+  choices: [
+    { t: x(`Desfer els nusos de la xarxa`, `Deshacer los nudos de la red`), go: 'c2_nusos' },
+    { t: x(`Enfilar-te per les lianes (tirar el dau)`, `Trepar por las lianas (tirar el dado)`), go: 'c2_dau2', roll: true },
+    { t: x(`Passar de llarg`, `Pasar de largo`), go: s => s.peat ? 'c2_cor' : 'c2_peatge' }
+  ] },
+
+c2_nusos: { era: 'fongaria',
+  text: [
+    x(`La xarxa té 3 cordes, i cada corda té 12 nusos.`,
+      `La red tiene 3 cuerdas, y cada cuerda tiene 12 nudos.`),
+    x(`?Quants nusos hi ha en total?`,
+      `?¿Cuántos nudos hay en total?`),
+    x(`!Pista: és 3 × 12.`,
+      `!Pista: es 3 × 12.`)
+  ],
+  choices: [
+    { t: num(`15`), go: 'oops', set: bad('m36', 'c2_nusos') },
+    { t: num(`36`), go: 'c2_lliure' },
+    { t: num(`24`), go: 'oops', set: bad('m36', 'c2_nusos') }
+  ] },
+
+c2_dau2: { era: 'fongaria', die: true,
+  text: s => s.dado >= 3 ? [
+    x(`T'enfiles com un mico per les lianes, ¡ZIP!, i arribes al nus de dalt de la xarxa.`,
+      `Trepas como un mono por las lianas, ¡ZIP!, y llegas al nudo de arriba de la red.`)
+  ] : [
+    x(`Et penges d'una lliana, però el bolet on et recolzes és tou: ¡BOING! Tornes a baix, rebotant com una pilota rosa.`,
+      `Te cuelgas de una liana, pero la seta donde te apoyas es blanda: ¡BOING! Vuelves abajo, rebotando como una pelota rosa.`)
+  ],
+  choices: [ { t: x(`Continuar`, `Continuar`), go: s => s.dado >= 3 ? 'c2_lliure' : 'c2_xarxa' } ] },
+
+c2_lliure: { era: 'fongaria',
+  onEnter: s => { lliure(s); },
+  text: s => {
+    const t = [
+      x(`¡CLIC, CLIC, CLIC! La xarxa cau i Lluerna ix volant, fent voltes d'alegria.`,
+        `¡CLIC, CLIC, CLIC! La red cae y Lluerna sale volando, dando vueltas de alegría.`),
+      x(`>—Pip, pip! Gràcies! Seré el teu fanalet fins que acabes la missió.`,
+        `>—¡Pip, pip! ¡Gracias! Seré tu farolillo hasta que termines la misión.`)
+    ];
+    if (s.retornat) {
+      t.push(x(`En això arriba Mestre Rovelló, amb el barret torts: Lluerna era seua.`,
+               `En eso llega el maestro Rovelló, con el sombrero torcido: Lluerna era suya.`));
+      t.push(x(`>—La meua Lluerna! —crida—. Tinc un deute amb tu. Pren, torna't la carta que vas pagar.`,
+               `>—¡Mi Lluerna! —grita—. Tengo una deuda contigo. Toma, te devuelvo la carta que pagaste.`));
+    } else if (s.peat) {
+      t.push(x(`Mestre Rovelló arriba, content de veure-la, i us fa un gest d'agraïment amb el barret.`,
+               `El maestro Rovelló llega, contento de verla, y os hace un gesto de agradecimiento con el sombrero.`));
+    } else {
+      t.push(x(`Lluerna et diu a cau d'orella: «Segueix el camí il·luminat. El venedor és el meu amo. Digues-li que em coneixes».`,
+               `Lluerna te susurra al oído: «Sigue el camino iluminado. El vendedor es mi amo. Dile que me conoces».`));
+    }
+    t.push(x(`>—Qui té un amic, té un tresor —diu Zumet.`,
+             `>—Quien tiene un amigo, tiene un tesoro —dice Zumet.`));
+    return t;
+  },
+  choices: [ { t: x(`Continuar`, `Continuar`), go: s => s.peat ? 'c2_cor' : 'c2_peatge' } ] },
+
+c2_cor: { era: 'fongaria',
+  text: [
+    x(`El cor del bosc és una sala immensa de bolets. La segona peça llueix dins d'un bolet de vidre. Al voltant, un cercle d'espores dorm suspés en l'aire: sssssh.`,
+      `El corazón del bosque es una sala inmensa de setas. La segunda pieza luce dentro de una seta de cristal. Alrededor, un círculo de esporas duerme suspendido en el aire: sssssh.`),
+    x(`Si les despertes, tot el bosc es posa a esternudar.`,
+      `Si las despiertas, todo el bosque se pone a estornudar.`),
+    x(`Una tanca de llum rectangular guarda la peça: fa 9 metres de llarg i 6 d'ample.`,
+      `Una valla de luz rectangular guarda la pieza: mide 9 metros de largo y 6 de ancho.`),
+    x(`?Quants metres fa el perímetre de la tanca?`,
+      `?¿Cuántos metros mide el perímetro de la valla?`),
+    x(`!Pista: suma tots els costats: 9 + 6 + 9 + 6.`,
+      `!Pista: suma todos los lados: 9 + 6 + 9 + 6.`)
+  ],
+  choices: [
+    { t: num(`15`), go: 'oops', set: bad('m30', 'c2_cor') },
+    { t: num(`30`), go: 'c2_cierre' },
+    { t: num(`54`), go: 'oops', set: bad('m30', 'c2_cor') },
+    { t: x(`Menjar-te un bolet lluminós, que fa bona pinta`, `Comerte una seta luminosa, que tiene buena pinta`), go: 'fin_bolet' }
+  ] },
+
+c2_cierre: { era: 'fongaria',
+  onEnter: s => { s.f2 = 1; },
+  text: [
+    x(`¡CLING! La segona peça salta a les teues mans. El bosc sencer fa «ooooh» i les cúpules parpellegen en tots els colors alhora.`,
+      `¡CLING! La segunda pieza salta a tus manos. El bosque entero hace «ooooh» y las cúpulas parpadean en todos los colores a la vez.`),
+    x(`>—Només en falta una —diu Zumet—. Cada cosa al seu temps, i ara toca l'últim planeta.`,
+      `>—Solo falta una —dice Zumet—. Cada cosa a su tiempo, y ahora toca el último planeta.`)
+  ],
+  choices: [ { t: x(`Posar rumb a l'Estació Rellotge`, `Poner rumbo a la Estación Reloj`), go: 'c3_arribada' } ] },
+
+/* ---------- CAPÍTOL 3 · ESTACIÓ RELLOTGE ---------- */
+c3_arribada: { era: 'estacio',
+  text: [
+    x(`¡PLOF! L'ESTACIÓ RELLOTGE flota prop d'un sol roig, com una roda enorme. Per tot arreu hi ha rellotges: grans, menuts, parats, i alguns que fan TIC-TAC-TOC-TAC fora de ritme.`,
+      `¡PLOF! La ESTACIÓN RELOJ flota cerca de un sol rojo, como una rueda enorme. Por todas partes hay relojes: grandes, pequeños, parados, y algunos que hacen TIC-TAC-TOC-TAC fuera de ritmo.`),
+    x(`Les llums parpellegen i una sirena llunyana fa «uuuuuh». Zumet es tapa els tres ulls.`,
+      `Las luces parpadean y una sirena lejana hace «uuuuuh». Zumet se tapa los tres ojos.`),
+    x(`>—Més val prevenir que curar... però ja és tard per a prevenir —murmura.`,
+      `>—Más vale prevenir que curar... pero ya es tarde para prevenir —murmura.`),
+    x(`A la porta, un rellotge gegant marca les 3:45 i un cartell diu:`,
+      `En la puerta, un reloj gigante marca las 3:45 y un cartel dice:`),
+    x(`?Quina hora serà d'ací a 40 minuts?`,
+      `?¿Qué hora será dentro de 40 minutos?`),
+    x(`!Pista: de les 3:45 a les 4:00 passen 15 minuts.`,
+      `!Pista: de las 3:45 a las 4:00 pasan 15 minutos.`)
+  ],
+  choices: [
+    { t: x(`Dir a la porta que ets amic de Floc`, `Decirle a la puerta que eres amigo de Floc`), if: s => !!s.floc, go: 'c3_robots' },
+    { t: num(`4:15`), go: 'oops', set: bad('mhora', 'c3_arribada') },
+    { t: num(`4:25`), go: 'c3_passadis' },
+    { t: num(`5:25`), go: 'oops', set: bad('mhora', 'c3_arribada') }
+  ] },
+
+c3_robots: { era: 'estacio',
+  text: [
+    x(`Un grup de robotets de neu, germans de Floc, apareix entre els rellotges: «Bip, bip!». Han sentit dir que has ajudat el seu germà.`,
+      `Un grupo de robotitos de nieve, hermanos de Floc, aparece entre los relojes: «¡Bip, bip!». Han oído que has ayudado a su hermano.`),
+    x(`La porta s'obri i et guien per un passadís segur, lluny de les flames i de la foscor, fins al cor de l'estació.`,
+      `La puerta se abre y te guían por un pasillo seguro, lejos de las llamas y de la oscuridad, hasta el corazón de la estación.`)
+  ],
+  choices: [ { t: x(`Seguir els robotets`, `Seguir a los robotitos`), go: 'c3_nucli' } ] },
+
+c3_passadis: { era: 'estacio',
+  text: [
+    x(`Darrere de la porta hi ha un passadís llarg amb finestrons. Cada poc, ¡FUUUUSH!, una flama del sol passa pel finestró i ho pinta tot de roig.`,
+      `Detrás de la puerta hay un pasillo largo con ventanucos. Cada poco, ¡FUUUUSH!, una llamarada del sol pasa por el ventanuco y lo pinta todo de rojo.`),
+    x(`Les flames passen sempre al mateix ritme: una cada 12 segons. Zumet les compta amb els dits dels peus.`,
+      `Las llamaradas pasan siempre al mismo ritmo: una cada 12 segundos. Zumet las cuenta con los dedos de los pies.`)
+  ],
+  choices: [
+    { t: x(`Creuar tranquil·lament amb la carta Escut`, `Cruzar tranquilamente con la carta Escudo`), if: s => s.obj === 'escut', go: 'c3_fosc' },
+    { t: x(`Esperar entre flames i calcular el ritme`, `Esperar entre llamaradas y calcular el ritmo`), go: 'c3_flames' },
+    { t: x(`Córrer sense mirar`, `Correr sin mirar`), go: 'fin_flama' }
+  ] },
+
+c3_flames: { era: 'estacio',
+  text: [
+    x(`T'enganxes a la paret i compteu: una flama, ¡FUUUUSH!; una altra, ¡FUUUUSH!...`,
+      `Te pegas a la pared y contáis: una llamarada, ¡FUUUUSH!; otra, ¡FUUUUSH!...`),
+    x(`?Si passa una flama cada 12 segons, quantes en passen en 60 segons?`,
+      `?Si pasa una llamarada cada 12 segundos, ¿cuántas pasan en 60 segundos?`),
+    x(`!Pista: compta de 12 en 12 fins al 60.`,
+      `!Pista: cuenta de 12 en 12 hasta el 60.`)
+  ],
+  choices: [
+    { t: num(`6`), go: 'oops', set: bad('mflames', 'c3_flames') },
+    { t: num(`5`), go: 'c3_fosc' },
+    { t: num(`4`), go: 'oops', set: bad('mflames', 'c3_flames') }
+  ] },
+
+c3_fosc: { era: 'estacio',
+  text: s => [
+    x(`Al final del passadís s'apaguen totes les llums. Foscor completa. Només se sent TIC... TAC... TIC... TAC...`,
+      `Al final del pasillo se apagan todas las luces. Oscuridad completa. Solo se oye TIC... TAC... TIC... TAC...`),
+    s.llum
+      ? x(`Per sort, Lluerna s'encén com un fanalet i el camí es veu clar: una porta de ferro enmig d'un mur de rellotges.`,
+          `Por suerte, Lluerna se enciende como un farolillo y el camino se ve claro: una puerta de hierro en medio de un muro de relojes.`)
+      : x(`No es veu res. Zumet t'agafa de la mà, i et sembla que li tremola.`,
+          `No se ve nada. Zumet te coge de la mano, y te parece que le tiembla.`)
+  ],
+  choices: [
+    { t: x(`Deixar que Lluerna il·lumine el camí`, `Dejar que Lluerna ilumine el camino`), if: s => !!s.llum, go: 'c3_nucli' },
+    { t: x(`Avançar a palpentes comptant els passos`, `Avanzar a tientas contando los pasos`), go: 'c3_palpes' }
+  ] },
+
+c3_palpes: { era: 'estacio',
+  text: [
+    x(`Vas pel passadís palpant unes lloses amb números gravats: 7, 14, 21...`,
+      `Vas por el pasillo palpando unas losas con números grabados: 7, 14, 21...`),
+    x(`?Quin nombre ve després?`,
+      `?¿Qué número viene después?`),
+    x(`!Pista: a cada llosa se sumen 7 més.`,
+      `!Pista: en cada losa se suman 7 más.`)
+  ],
+  choices: [
+    { t: num(`27`), go: 'oops', set: bad('mpalpes', 'c3_palpes') },
+    { t: num(`28`), go: 'c3_nucli' },
+    { t: num(`35`), go: 'oops', set: bad('mpalpes', 'c3_palpes') }
+  ] },
+
+c3_nucli: { era: 'estacio',
+  text: [
+    x(`La sala del reactor és una esfera de vidre amb un nucli que pulsa. La tercera peça està al seu costat, sobre un coixí de cables.`,
+      `La sala del reactor es una esfera de cristal con un núcleo que late. La tercera pieza está a su lado, sobre un cojín de cables.`),
+    x(`A la paret, un rellotge-cara gegant fa pampallugues: és TICTAC, el cervell de l'estació, repetint sempre el mateix.`,
+      `En la pared, un reloj-cara gigante hace destellos: es TICTAC, el cerebro de la estación, repitiendo siempre lo mismo.`),
+    x(`>—Són les 12... són les 12... són les 12... —diu una veu cansada.`,
+      `>—Son las 12... son las 12... son las 12... —dice una voz cansada.`),
+    x(`>—Algú l'ha deixat penjat en un moment —diu Zumet—. Potser et necessita.`,
+      `>—Alguien lo ha dejado colgado en un momento —dice Zumet—. Quizá te necesita.`)
+  ],
+  choices: [
+    { t: x(`Parar a ajudar Tictac`, `Parar a ayudar a Tictac`), go: 'c3_tictac' },
+    { t: x(`Agafar la peça i anar al reactor`, `Coger la pieza e ir al reactor`), go: 'c3_reactor' },
+    { t: x(`Girar les agulles de tots els rellotges a l'atzar`, `Girar las agujas de todos los relojes al azar`), go: 'fin_bucle' }
+  ] },
+
+c3_tictac: { era: 'estacio',
+  text: [
+    x(`Tictac fa un «ding» d'esperança.`,
+      `Tictac hace un «ding» de esperanza.`),
+    x(`>—Ajuda'm a eixir del bucle. Si ara són les 9:00 i ha passat una hora i mitja, quina hora és?`,
+      `>—Ayúdame a salir del bucle. Si ahora son las 9:00 y ha pasado una hora y media, ¿qué hora es?`),
+    x(`!Pista: les 9:00 més una hora són les 10:00.`,
+      `!Pista: las 9:00 más una hora son las 10:00.`)
+  ],
+  choices: [
+    { t: num(`9:30`), go: 'oops', set: bad('mhora2', 'c3_tictac') },
+    { t: num(`10:30`), go: 'c3_tictac_ok', set: s => { s.rell = 1; } },
+    { t: num(`11:00`), go: 'oops', set: bad('mhora2', 'c3_tictac') }
+  ] },
+
+c3_tictac_ok: { era: 'estacio',
+  text: [
+    x(`Tictac fa «ding-dong» i tots els rellotges de l'estació s'ajusten a l'hora correcta, un darrere l'altre.`,
+      `Tictac hace «ding-dong» y todos los relojes de la estación se ajustan a la hora correcta, uno tras otro.`),
+    x(`>—Gràcies —diu—. Un consell d'amic: el reactor reparteix l'energia en quatre ports iguals.`,
+      `>—Gracias —dice—. Un consejo de amigo: el reactor reparte la energía en cuatro puertos iguales.`)
+  ],
+  choices: [ { t: x(`Anar al reactor`, `Ir al reactor`), go: 'c3_reactor' } ] },
+
+c3_reactor: { era: 'estacio',
+  text: [
+    x(`El reactor tremola i les llums grogues es tornen roges: ¡BIP, BIP, BIP! Cal repartir 100 unitats d'energia entre 4 ports iguals.`,
+      `El reactor tiembla y las luces amarillas se vuelven rojas: ¡BIP, BIP, BIP! Hay que repartir 100 unidades de energía entre 4 puertos iguales.`),
+    x(`?Quantes unitats han d'anar a cada port?`,
+      `?¿Cuántas unidades tienen que ir a cada puerto?`),
+    x(`!Pista: és dividir 100 entre 4.`,
+      `!Pista: es dividir 100 entre 4.`)
+  ],
+  choices: [
+    { t: num(`20`), go: 'oops', set: bad('m100', 'c3_reactor') },
+    { t: num(`25`), go: 'c3_cierre' },
+    { t: num(`40`), go: 'oops', set: bad('m100', 'c3_reactor') }
+  ] },
+
+c3_cierre: { era: 'estacio',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`¡CLING! La tercera peça vola a les teues mans. Les tres encaixen amb un «clac» perfecte i el nucli del motor torna a brillar.`,
+      `¡CLING! La tercera pieza vuela a tus manos. Las tres encajan con un «clac» perfecto y el núcleo del motor vuelve a brillar.`),
+    x(`La nau Zèfir ronroneja com un gat enorme. L'estació sencera repica a l'uníson: ¡DING-DONG!`,
+      `La nave Céfiro ronronea como un gato enorme. La estación entera repica al unísono: ¡DING-DONG!`),
+    x(`>—Cada cosa al seu temps —diu Zumet—, i el temps de tornar a casa ja ha arribat.`,
+      `>—Cada cosa a su tiempo —dice Zumet—, y el tiempo de volver a casa ya ha llegado.`)
+  ],
+  choices: [ { t: x(`Posar rumb a casa`, `Poner rumbo a casa`), go: s => (s.floc && s.llum && s.rell) ? 'fi_heroi' : 'fi_bo' } ] },
+
+/* ---------- ESCENA DE PISTA (qualsevol prova fallada) ---------- */
+oops: {
+  text: s => [
+    x(`>—Qui no s'arrisca, no pisca, però un poc de calma no fa mal. Torna-ho a provar!`,
+      `>—El que no arriesga, no gana, pero un poco de calma no viene mal. ¡Vuelve a probar!`),
+    OOPS[s.oops] ? x(`!` + OOPS[s.oops].ca, `!` + OOPS[s.oops].es) : x(`!Pista: pensa-ho amb calma.`, `!Pista: piénsalo con calma.`)
+  ],
+  choices: [ { t: x(`Tornar-ho a provar`, `Volver a probarlo`), go: s => s.back || 'pro' } ] },
+
+/* ---------- FINALS ---------- */
+fin_sesta: { ending: 'fin_sesta', title: x(`La becaineta més llarga de la galàxia`, `La cabezadita más larga de la galaxia`),
+  text: [
+    x(`Et fiques a la butaca, tanques els ulls i... ZZZzzz. La nau Zèfir segueix donant voltes en òrbita, i tu dorms, dorms i dorms.`,
+      `Te acomodas en la butaca, cierras los ojos y... ZZZzzz. La nave Céfiro sigue dando vueltas en órbita, y tú duermes, duermes y duermes.`),
+    x(`Quan et despertes, han passat tres-cents anys. La nau s'ha convertit en l'atracció d'un parc: «La nau que va fer la becaineta». Zumet ven galetes als visitants.`,
+      `Cuando te despiertas, han pasado trescientos años. La nave se ha convertido en la atracción de un parque: «La nave que echó la cabezadita». Zumet vende galletas a los visitantes.`),
+    x(`>—Cada cosa al seu temps —diu—, però crec que aquest no era el temps de dormir.`,
+      `>—Cada cosa a su tiempo —dice—, pero creo que este no era el momento de dormir.`),
+    x(`!Pista: les naus no s'arreglen soles. Obri la caixa de cartes: cada carta serveix en un planeta diferent.`,
+      `!Pista: las naves no se arreglan solas. Abre la caja de cartas: cada carta sirve en un planeta distinto.`)
+  ] },
+
+fin_gel: { ending: 'fin_gel', title: x(`La mascota de Glàcia`, `La mascota de Glacia`),
+  text: [
+    x(`Corres en línia recta pel mig del llac. ¡CRRRAC! El gel s'obri i caus per un tobogan de gel que no s'acaba mai.`,
+      `Corres en línea recta por el medio del lago. ¡CRRRAC! El hielo se abre y caes por un tobogán de hielo que no se acaba nunca.`),
+    x(`Surts disparat en un poblet de pingüins. El consell de pingüins et nomena MASCOTA OFICIAL de Glàcia: has de dir «bon dia» dos-cents vegades cada matí.`,
+      `Sales disparado en un pueblecito de pingüinos. El consejo de pingüinos te nombra MASCOTA OFICIAL de Glacia: tienes que decir «buenos días» doscientas veces cada mañana.`),
+    x(`!Pista: al llac, les llosetes segures formen files i columnes: es compten, no s'endevinen. I a la glacera hi ha algú que necessita una mà.`,
+      `!Pista: en el lago, las losetas seguras forman filas y columnas: se cuentan, no se adivinan. Y en el glaciar hay alguien que necesita una mano.`)
+  ] },
+
+fin_melassa: { ending: 'fin_melassa', title: x(`Postres galàctics`, `Postre galáctico`),
+  text: [
+    x(`Saltes el peatge i corres entre els bolets. ¡SPLATCH! Caus de ple en una bassa de melmelada de baia lluminosa.`,
+      `Te saltas el peaje y corres entre las setas. ¡SPLATCH! Caes de lleno en un charco de mermelada de baya luminosa.`),
+    x(`Quedes enganxat com una mosca. Mestre Rovelló arriba, riu, i et posa un cartell: «Postre del dia».`,
+      `Te quedas pegado como una mosca. El maestro Rovelló llega, se ríe, y te pone un cartel: «Postre del día».`),
+    x(`>—Qui la fa, l'espera —diu Zumet, llepant-se un dit.`,
+      `>—Quien la hace, la paga —dice Zumet, chupándose un dedo.`),
+    x(`!Pista: Rovelló accepta una carta o una prova de càlcul. I té una cuca de llum que potser està en perill.`,
+      `!Pista: Rovelló acepta una carta o una prueba de cálculo. Y tiene una luciérnaga que quizá está en apuros.`)
+  ] },
+
+fin_bolet: { ending: 'fin_bolet', title: x(`Globus de colors`, `Globo de colores`),
+  text: [
+    x(`Mastegues un bolet lluminós. Sap a gominola de maduixa... i, de colp, ¡HIC! Fas una bambolla rosa, després una blava, després una verda.`,
+      `Masticas una seta luminosa. Sabe a gominola de fresa... y, de repente, ¡HIC! Haces una burbuja rosa, luego una azul, luego una verde.`),
+    x(`Comences a pujar com un globus. Zumet et subjecta pel cordill dels cordons de les sabates i passa tota la tarda al cel de Fongària.`,
+      `Empiezas a subir como un globo. Zumet te sujeta por el cordón de los zapatos y pasa toda la tarde en el cielo de Fongaria.`),
+    x(`!Pista: a Fongària, els bolets lluminosos són per a mirar, no per a menjar. Per a obrir la tanca, compta el perímetre.`,
+      `!Pista: en Fongaria, las setas luminosas son para mirar, no para comer. Para abrir la valla, cuenta el perímetro.`)
+  ] },
+
+fin_flama: { ending: 'fin_flama', title: x(`Entrepà torrat`, `Bocadillo tostado`),
+  text: [
+    x(`Corres pel passadís sense mirar. ¡FUUUUSH! La flama del sol passa justament pel teu costat.`,
+      `Corres por el pasillo sin mirar. ¡FUUUUSH! La llamarada del sol pasa justo a tu lado.`),
+    x(`Per sort només es torra l'entrepà que duies a la butxaca, i el cabell et queda com un pompó de crispetes.`,
+      `Por suerte solo se tuesta el bocadillo que llevabas en el bolsillo, y el pelo te queda como un pompón de palomitas.`),
+    x(`>—Més val prevenir que curar —diu Zumet, menjant-se l'entrepà torrat.`,
+      `>—Más vale prevenir que curar —dice Zumet, comiéndose el bocadillo tostado.`),
+    x(`!Pista: les flames passen cada 12 segons. La carta Escut les aguanta; sense ella, compta quantes en passen en un minut.`,
+      `!Pista: las llamaradas pasan cada 12 segundos. La carta Escudo las aguanta; sin ella, cuenta cuántas pasan en un minuto.`)
+  ] },
+
+fin_bucle: { ending: 'fin_bucle', title: x(`L'hora eterna`, `La hora eterna`),
+  text: [
+    x(`Gires les agulles de tots els rellotges a l'atzar. ¡DING-DONG-DING-DONG! Tota l'estació repica alhora.`,
+      `Giras las agujas de todos los relojes al azar. ¡DING-DONG-DING-DONG! Toda la estación repica a la vez.`),
+    x(`De sobte són les 12:00. I després, altra vegada les 12:00. I altra vegada. Tu i Zumet repeteixeu el mateix dinar cent vegades seguides.`,
+      `De pronto son las 12:00. Y luego, otra vez las 12:00. Y otra vez. Tú y Zumet repetís la misma comida cien veces seguidas.`),
+    x(`>—Roda el món i torna al Born —sospira Zumet—. I el nostre dinar, també.`,
+      `>—El mundo da muchas vueltas —suspira Zumet—. Y nuestra comida, también.`),
+    x(`!Pista: Tictac només necessita saber l'hora correcta. Si has ajudat Floc, els seus germans de l'estació et seran de gran ajuda.`,
+      `!Pista: Tictac solo necesita saber la hora correcta. Si has ayudado a Floc, sus hermanos de la estación te serán de gran ayuda.`)
+  ] },
+
+fi_bo: { ending: 'bo', title: x(`Missió complida`, `Misión cumplida`),
+  text: s => {
+    const t = [
+      x(`La nau Zèfir deixa l'estació enrere i s'enfila cap a casa. Pel finestró, les estrelles s'allarguen com fils de llum.`,
+        `La nave Céfiro deja la estación atrás y se encamina hacia casa. Por el ventanal, las estrellas se alargan como hilos de luz.`),
+      x(`{nom}, has creuat tres planetes, has resolt moltes proves de càlcul i has portat les tres peces del motor. No és poc!`,
+        `{nom}, has cruzado tres planetas, has resuelto muchas pruebas de cálculo y has traído las tres piezas del motor. ¡No es poco!`)
+    ];
+    if (s.floc) t.push(x(`Des de Glàcia et arriba un «bip, bip» d'agraïment de Floc.`,
+                         `Desde Glacia te llega un «bip, bip» de agradecimiento de Floc.`));
+    if (s.llum) t.push(x(`Lluerna s'ha quedat dormint com un fanalet dins de la nau.`,
+                         `Lluerna se ha quedado dormida como un farolillo dentro de la nave.`));
+    if (s.rell) t.push(x(`Tictac fa sonar totes les campanes de l'estació per a acomiadar-te.`,
+                         `Tictac hace sonar todas las campanas de la estación para despedirte.`));
+    t.push(x(`>—Qui té un amic, té un tresor —diu Zumet—. I a l'espai encara hi ha molts amics per fer.`,
+             `>—Quien tiene un amigo, tiene un tesoro —dice Zumet—. Y en el espacio aún hay muchos amigos por hacer.`));
+    t.push(x(`!Pista: hi ha un final especial per a qui ajude Floc a Glàcia, allibere Lluerna a Fongària i desencalle Tictac a l'Estació.`,
+             `!Pista: hay un final especial para quien ayude a Floc en Glacia, libere a Lluerna en Fongaria y desatasque a Tictac en la Estación.`));
+    return t;
+  } },
+
+fi_heroi: { ending: 'heroi', title: x(`Llegenda de les estrelles`, `Leyenda de las estrellas`),
+  text: [
+    x(`La nau Zèfir ix de l'estació amb tots els rellotges repicant al compàs. ¡DING-DONG, DING-DONG!`,
+      `La nave Céfiro sale de la estación con todos los relojes repicando al compás. ¡DING-DONG, DING-DONG!`),
+    x(`Pel finestró arriben senyals de tots els planetes: un «bip, bip» de Floc des de Glàcia, un «pip, pip» de Lluerna que no vol separar-se de tu, i una caixa de bolets-focs-d'artifici que Mestre Rovelló llança a l'espai: ¡POP, POP, POP!`,
+      `Por el ventanal llegan señales de todos los planetas: un «bip, bip» de Floc desde Glacia, un «pip, pip» de Lluerna que no quiere separarse de ti, y una caja de setas-fuegos-artificiales que el maestro Rovelló lanza al espacio: ¡POP, POP, POP!`),
+    x(`{nom}, ja ets una llegenda galàctica: no només has reparat la nau, sinó que has fet amics a tres planetes.`,
+      `{nom}, ya eres una leyenda galáctica: no solo has reparado la nave, sino que has hecho amigos en tres planetas.`),
+    x(`>—Qui té un amic, té un tresor —diu Zumet, abraçant-te amb les quatre mans—. I tu, ara, en tens quatre.`,
+      `>—Quien tiene un amigo, tiene un tesoro —dice Zumet, abrazándote con las cuatro manos—. Y tú, ahora, tienes cuatro.`)
+  ] }
+
+};
+
+/* ============ MOTOR ============ */
+function initState() {
+  return { nom: '', obj: null, pagat: null, f1: 0, f2: 0, f3: 0,
+           floc: 0, llum: 0, rell: 0, peat: 0, retornat: 0, dado: 0,
+           oops: '', back: '' };
+}
+const st = { scene: 'intro', s: initState(), hist: [], found: {}, lang: 'es', era: 'nau', glos: false };
+let locked = false;
+let restartArmed = false;
+let restartTimer = null;
+
+function T(v) { return (v && typeof v === 'object') ? v[st.lang] : v; }
+function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function glossHL(t) {
+  GLOS.forEach(function (g) {
+    const re = new RegExp('(?<![\\p{L}])(' + g[st.lang].re + ')(?![\\p{L}])', 'giu');
+    t = t.replace(re, '<span class="gl">$1</span>');
+  });
+  return t;
+}
+
+function hn(text) {
+  let t = esc(text);
+  t = t.replace(/\{([^{}|]+)\|([^{}|]+)\}/g, function (m, a, b) { return st.s.gen === 'f' ? b : a; });
+  t = t.replace(/\{nom\}/g, '<b>' + esc(String(st.s.nom || '').toUpperCase()) + '</b>');
+  t = t.replace(/(?<![\p{L}])(Zumet|Floc|Rovelló|Lluerna|Tictac)(?![\p{L}])/gu, function (m) { return '<b>' + m.toUpperCase() + '</b>'; });
+  return glossHL(t);
+}
+
+function foundCount() {
+  let n = 0;
+  ALL_ENDINGS.forEach(function (k) { if (st.found[k]) n++; });
+  if (st.found.bo) n++;
+  if (st.found.heroi) n++;
+  return n;
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ scene: st.scene, s: st.s, hist: st.hist.slice(-40), found: st.found, lang: st.lang, era: st.era }));
+  } catch (e) { /* sense emmagatzematge */ }
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.found && typeof d.found === 'object') st.found = d.found;
+    if (d.scene && S[d.scene]) {
+      st.scene = d.scene;
+      st.s = Object.assign(initState(), d.s || {});
+      st.hist = Array.isArray(d.hist) ? d.hist : [];
+      st.era = (d.era && ERA[d.era]) ? d.era : (S[d.scene].era || 'nau');
+    }
+  } catch (e) { /* res */ }
+}
+
+function plateSVG(era) {
+  const a = 'currentColor';
+  if (era === 'glacia') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M4 62 L28 22 L42 46 L58 14 L84 62 Z" opacity=".85"/><path d="M58 14 L50 30 L58 26 L64 32 Z" fill="var(--card)" opacity=".9"/><path d="M84 62 L96 38 L106 62 Z" opacity=".55"/><circle cx="14" cy="12" r="3" opacity=".6"/><circle cx="96" cy="14" r="2" opacity=".6"/></g><rect x="2" y="62" width="106" height="4" fill="' + a + '"/></svg>';
+  }
+  if (era === 'fongaria') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M14 42 Q34 10 54 42 Z" opacity=".9"/><rect x="30" y="42" width="8" height="20" opacity=".6"/><path d="M60 52 Q76 26 92 52 Z" opacity=".75"/><rect x="72" y="52" width="6" height="10" opacity=".6"/><circle cx="30" cy="30" r="3" fill="var(--card)"/><circle cx="42" cy="26" r="2.4" fill="var(--card)"/><circle cx="78" cy="42" r="2.2" fill="var(--card)"/></g><rect x="2" y="62" width="106" height="4" fill="' + a + '"/></svg>';
+  }
+  if (era === 'estacio') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="none" stroke="' + a + '" stroke-linecap="round"><circle cx="55" cy="34" r="22" stroke-width="5"/><path d="M55 34 L55 20 M55 34 L66 40" stroke-width="4"/><ellipse cx="55" cy="34" rx="46" ry="12" stroke-width="3" opacity=".5" transform="rotate(-18 55 34)"/></g></svg>';
+  }
+  return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M55 4 C70 16 72 34 66 48 L44 48 C38 34 40 16 55 4 Z" opacity=".9"/><circle cx="55" cy="26" r="6" fill="var(--card)"/><path d="M44 40 L30 56 L44 52 Z" opacity=".7"/><path d="M66 40 L80 56 L66 52 Z" opacity=".7"/><path d="M48 52 L55 66 L62 52 Z" opacity=".45"/><circle cx="14" cy="14" r="2"/><circle cx="96" cy="20" r="2"/><circle cx="90" cy="54" r="1.6"/><circle cx="18" cy="48" r="1.6"/></g></svg>';
+}
+
+function slotSVG(kind, on) {
+  const a = 'currentColor';
+  const fill = on ? a : 'none';
+  const props = 'stroke="' + a + '" stroke-width="3"' + (on ? '' : ' stroke-dasharray="4 3" opacity=".5"');
+  let shape;
+  if (kind === 1) shape = '<circle cx="16" cy="16" r="10" fill="' + fill + '" ' + props + '/>';
+  else if (kind === 2) shape = '<circle cx="16" cy="16" r="10" fill="none" ' + props + '/><circle cx="16" cy="16" r="4" fill="' + fill + '"/>';
+  else shape = '<rect x="12" y="3" width="8" height="26" rx="3" fill="' + fill + '" ' + props + '/>';
+  return '<svg viewBox="0 0 32 32" aria-hidden="true">' + shape + '</svg>';
+}
+
+function dieHTML(n) {
+  const P = {
+    1: [[50, 50]],
+    2: [[28, 28], [72, 72]],
+    3: [[28, 28], [50, 50], [72, 72]],
+    4: [[28, 28], [72, 28], [28, 72], [72, 72]],
+    5: [[28, 28], [72, 28], [50, 50], [28, 72], [72, 72]],
+    6: [[28, 24], [72, 24], [28, 50], [72, 50], [28, 76], [72, 76]]
+  }[n] || [];
+  return '<div class="dieWrap" role="img" aria-label="' + esc(T(U.dieLbl)) + ' ' + n + '"><svg class="die" viewBox="0 0 100 100"><rect x="6" y="6" width="88" height="88" rx="16" fill="var(--card)" stroke="currentColor" stroke-width="5"/>' +
+    P.map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="8" fill="currentColor"/>'; }).join('') + '</svg></div>';
+}
+
+function hudHTML() {
+  const s = st.s;
+  const chips = [];
+  if (s.obj) chips.push('<span class="chip">' + esc(T(OCHIP[s.obj])) + '</span>');
+  if (s.floc) chips.push('<span class="chip">Floc</span>');
+  if (s.llum) chips.push('<span class="chip">Lluerna</span>');
+  if (s.rell) chips.push('<span class="chip">Tictac</span>');
+  if (!chips.length) chips.push('<span class="chip empty">' + esc(T(U.empty)) + '</span>');
+  return '<div class="hud">' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pieces)) + '</span>' + slotSVG(1, s.f1) + slotSVG(2, s.f2) + slotSVG(3, s.f3) + '</div>' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pack)) + '</span><span class="chips">' + chips.join('') + '</span></div>' +
+    '</div>';
+}
+
+function textHTML(arr) {
+  return arr.map(function (item) {
+    let line = T(item);
+    let cls = '';
+    const c = line.charAt(0);
+    if (c === '>') { cls = 'dlg'; line = line.slice(1); }
+    else if (c === '?') { cls = 'riddle'; line = line.slice(1); }
+    else if (c === '!') { cls = 'hint'; line = line.slice(1); }
+    return '<p' + (cls ? ' class="' + cls + '"' : '') + '>' + hn(line) + '</p>';
+  }).join('');
+}
+
+function renderIntro() {
+  const app = document.getElementById('app');
+  const l = st.lang;
+  const body = {
+    ca: {
+      hola: `Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs.`,
+      li: [
+        `<b>Peces del motor:</b> n'hi ha tres i les has de trobar totes. Les veuràs a dalt de cada pantalla.`,
+        `<b>Motxilla:</b> ací es guarden la carta d'eina que triaràs a l'inici i els amics que faces pel camí. Algunes cartes obrin camins.`,
+        `<b>Dau:</b> de tant en tant tiraràs un dau. Si la tirada és baixa, el camí es complica, però això no et fa perdre.`,
+        `<b>Càlcul:</b> hi ha moltes proves de matemàtiques. Si falles, rebràs una pista i ho podràs tornar a provar.`,
+        `<b>Paraules noves:</b> les paraules amb puntets per baix s'expliquen al botó «Paraules», dalt a la dreta.`,
+        `<b>Finals:</b> hi ha ${TOTAL_FINALS} finals diferents. A veure quants descobreixes!`,
+        `Sempre pots tornar a l'última decisió amb el botó ↶.`
+      ]
+    },
+    es: {
+      hola: `¡Hola! Aquí decides tú qué pasa. Al final de cada escena elegirás qué hacer, y la historia cambiará según lo que elijas.`,
+      li: [
+        `<b>Piezas del motor:</b> hay tres y tienes que encontrarlas todas. Las verás arriba en cada pantalla.`,
+        `<b>Mochila:</b> aquí se guardan la carta de herramienta que elegirás al principio y los amigos que hagas por el camino. Algunas cartas abren caminos.`,
+        `<b>Dado:</b> de vez en cuando tirarás un dado. Si sale un número bajo, el camino se complica, pero eso no te hace perder.`,
+        `<b>Cálculo:</b> hay muchas pruebas de matemáticas. Si fallas, recibirás una pista y podrás volver a intentarlo.`,
+        `<b>Palabras nuevas:</b> las palabras con puntitos por debajo se explican en el botón «Palabras», arriba a la derecha.`,
+        `<b>Finales:</b> hay ${TOTAL_FINALS} finales distintos. ¡A ver cuántos descubres!`,
+        `Siempre puedes volver a la última decisión con el botón ↶.`
+      ]
+    }
+  }[l];
+  app.innerHTML =
+    '<section class="card intro">' +
+    '<h1>' + esc(T(TITLE)) + '</h1>' +
+    '<p class="sub">' + esc(T(DESC)) + '</p>' +
+    '<p style="font-size:1.15rem">' + body.hola + '</p>' +
+    '<ul>' + body.li.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>' +
+    '<label for="nom">' + esc(T(U.nameQ)) + '</label>' +
+    '<input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="' + esc(T(U.namePh)) + '">' +
+    '<p class="err" id="nom-err" hidden>' + esc(T(U.nameErr)) + '</p>' +
+    '<div class="choices"><button class="btn main" id="go-start" type="button">' + esc(T(U.start)) + '</button></div>' +
+    '<p class="counter">' + esc(T(U.finalsCount(foundCount()))) + '</p>' +
+    '</section>';
+  const input = document.getElementById('nom');
+  const err = document.getElementById('nom-err');
+  function go() {
+    const v = input.value.replace(/[<>&"'`{}|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+    if (!v) { err.hidden = false; input.focus(); return; }
+    st.s = initState();
+    st.s.nom = v;
+    st.hist = [];
+    enter('pro');
+  }
+  document.getElementById('go-start').addEventListener('click', go);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  input.addEventListener('input', function () { err.hidden = true; });
+}
+
+function renderGlos() {
+  const app = document.getElementById('app');
+  app.innerHTML = '<section class="card"><h2>' + esc(T(U.glosTitle)) + '</h2><dl class="glos">' +
+    GLOS.map(function (g) { return '<dt>' + esc(g[st.lang].t) + '</dt><dd>' + esc(g[st.lang].d) + '</dd>'; }).join('') +
+    '</dl><div class="choices"><button class="btn main" id="glos-close" type="button">' + esc(T(U.glosBack)) + '</button></div></section>';
+  document.getElementById('glos-close').addEventListener('click', function () { st.glos = false; render(); });
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const sc = S[st.scene];
+  document.body.dataset.era = st.era;
+  document.documentElement.lang = st.lang === 'es' ? 'es' : 'ca';
+  document.title = T(TITLE_FULL);
+  document.getElementById('brand').textContent = T(TITLE);
+  document.getElementById('lang-ca').setAttribute('aria-pressed', String(st.lang === 'ca'));
+  document.getElementById('lang-es').setAttribute('aria-pressed', String(st.lang === 'es'));
+  document.getElementById('restart').setAttribute('aria-label', T(U.restartLbl));
+  const gb = document.getElementById('glos');
+  gb.textContent = T(U.glosBtn);
+  gb.setAttribute('aria-pressed', String(st.glos));
+  if (st.glos) { renderGlos(); return; }
+  if (st.scene === 'intro') { renderIntro(); window.scrollTo(0, 0); return; }
+
+  const tx = typeof sc.text === 'function' ? sc.text(st.s) : sc.text;
+  let html = '<section class="card">';
+  if (ERA[sc.era] && !sc.ending) {
+    html += '<div class="plate">' + plateSVG(sc.era) + '<div class="pn">' + esc(T(ERA[sc.era].n)) + '</div></div>';
+  }
+  if (!sc.ending) html += hudHTML();
+  if (sc.ending) html += '<h2>' + esc(T(sc.title)) + '</h2>';
+  if (sc.die && st.s.dado) html += dieHTML(st.s.dado);
+  html += '<div class="txt">' + textHTML(tx) + '</div>';
+
+  if (sc.ending) {
+    html += '<p class="endnote">' + esc(T(U.newEnd)) + ' · ' + esc(T(U.finalsCount(foundCount()))) + '</p>';
+    html += '<div class="choices">';
+    if (sc.ending === 'bo' || sc.ending === 'heroi') {
+      html += '<button class="btn main" data-act="again" type="button">' + esc(T(U.playAgain)) + '</button>';
+    } else {
+      html += '<button class="btn main" data-act="undo" type="button">' + esc(T(U.backLast)) + '</button>';
+      html += '<button class="btn ghost" data-act="again" type="button">' + esc(T(U.again)) + '</button>';
+    }
+    html += '</div>';
+  } else {
+    const ch = sc.choices.filter(function (c) { return !c.if || c.if(st.s); });
+    html += '<div class="choices">';
+    ch.forEach(function (c, i) {
+      const label = typeof c.t === 'function' ? c.t(st.s) : c.t;
+      html += '<button class="btn" data-i="' + i + '" type="button">' + hn(T(label)) + '</button>';
+    });
+    html += '</div>';
+    if (st.hist.length) html += '<div class="undo"><button class="btn ghost" data-act="undo" type="button">' + esc(T(U.undo)) + '</button></div>';
+    app.innerHTML = html + '</section>';
+    app.querySelectorAll('button[data-i]').forEach(function (b) {
+      b.addEventListener('click', function () { choose(ch[Number(b.dataset.i)]); });
+    });
+    bindActs(app);
+    window.scrollTo(0, 0);
+    return;
+  }
+  app.innerHTML = html + '</section>';
+  bindActs(app);
+  window.scrollTo(0, 0);
+}
+
+function bindActs(app) {
+  app.querySelectorAll('button[data-act]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.act === 'undo') undo();
+      else resetGame();
+    });
+  });
+}
+
+function choose(c) {
+  if (locked) return;
+  st.hist.push({ scene: st.scene, s: clone(st.s), era: st.era });
+  if (st.hist.length > 80) st.hist.shift();
+  if (c.roll) st.s.dado = 1 + Math.floor(Math.random() * 6);
+  if (c.set) c.set(st.s);
+  const target = typeof c.go === 'function' ? c.go(st.s) : c.go;
+  enter(target);
+}
+
+function enter(id) {
+  const prevEra = st.era;
+  const sc = S[id];
+  st.scene = id;
+  if (sc.onEnter) sc.onEnter(st.s);
+  if (sc.era) st.era = sc.era;
+  if (sc.ending) st.found[sc.ending] = 1;
+  render();
+  save();
+  if (!sc.ending && sc.era && sc.era !== prevEra && ERA[sc.era] && ERA[sc.era].ch) plof(sc.era);
+}
+
+function undo() {
+  if (locked) return;
+  const h = st.hist.pop();
+  if (!h) { resetGame(); return; }
+  st.scene = h.scene;
+  st.s = Object.assign(initState(), h.s);
+  st.era = h.era || (S[h.scene].era || st.era);
+  render();
+  save();
+}
+
+function resetGame() {
+  st.s = initState();
+  st.hist = [];
+  st.scene = 'intro';
+  st.era = 'nau';
+  st.glos = false;
+  render();
+  save();
+}
+
+function plof(eraKey) {
+  const el = document.getElementById('plof');
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('plof-dial').textContent = T(ERA[eraKey].n);
+  locked = true;
+  el.hidden = false;
+  setTimeout(function () { el.hidden = true; locked = false; }, reduced ? 500 : 1400);
+}
+
+function setLang(l) {
+  if (l === st.lang) return;
+  save();
+  location.href = l === 'es' ? '/es/missio-zefir/' : '/missio-zefir/';
+}
+
+document.getElementById('lang-ca').addEventListener('click', function () { setLang('ca'); });
+document.getElementById('lang-es').addEventListener('click', function () { setLang('es'); });
+document.getElementById('glos').addEventListener('click', function () { st.glos = !st.glos; render(); });
+document.getElementById('restart').addEventListener('click', function () {
+  const b = document.getElementById('restart');
+  if (!restartArmed) {
+    restartArmed = true;
+    b.textContent = T(U.restartAsk);
+    restartTimer = setTimeout(function () { restartArmed = false; b.textContent = '↻'; }, 2500);
+  } else {
+    clearTimeout(restartTimer);
+    restartArmed = false;
+    b.textContent = '↻';
+    resetGame();
+  }
+});
+
+load();
+render();
+</script>
+</body>
+</html>
