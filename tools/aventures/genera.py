@@ -24,12 +24,16 @@ AVENTURES = {
             "brand": "Els números perduts",
             "desc": "Aventura interactiva amb reptes de nombres: tria el camí, resol candaus de mates, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. 10 finals.",
             "restart": "Començar de nou",
+            "home": "Tornar a la portada",
+            "homeurl": "/",
         },
         "es": {
             "title": "Los números perdidos: Expedición a Calmara",
             "brand": "Los números perdidos",
             "desc": "Aventura interactiva con retos de números: elige el camino, resuelve candados de mates, ayuda a Tamu y a Oxo y recupera los tres fragmentos de la tablilla con el robot Zum. 10 finales.",
             "restart": "Empezar de nuevo",
+            "home": "Volver a la portada",
+            "homeurl": "/es/",
         },
     }
 }
@@ -73,6 +77,9 @@ def pagina(src, slug, L):
     # capçalera estàtica en l'idioma de la pàgina
     s = una(s, '<div class="brand" id="brand">Els números perduts</div>', f'<div class="brand" id="brand">{d["brand"]}</div>', "brand")
     s = una(s, 'aria-label="Començar de nou"', f'aria-label="{d["restart"]}"', "aria restart")
+    # enllaç de tornada a la portada (convenció del lloc), a la capçalera
+    s = una(s, '<div class="tools">\n', f'<div class="tools">\n    <a class="pill home" href="{d["homeurl"]}" aria-label="{d["home"]}" title="{d["home"]}">⌂</a>\n', "tools")
+    s = una(s, "</style>", "a.pill{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}\n</style>", "css pill")
     if L == "es":
         s = una(s, 'id="lang-ca" aria-pressed="true"', 'id="lang-ca" aria-pressed="false"', "pill ca")
         s = una(s, 'id="lang-es" aria-pressed="false"', 'id="lang-es" aria-pressed="true"', "pill es")
