@@ -22,7 +22,7 @@ AVENTURES = {
         "ca": {
             "title": "Els números perduts: Expedició a Calmara",
             "brand": "Els números perduts",
-            "desc": "Aventura interactiva amb reptes de nombres: tria el camí, resol candaus de mates, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. 10 finals.",
+            "desc": "Aventura interactiva amb reptes de nombres: tria el camí, resol reptes de successions, càlcul i numeració, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. 10 finals.",
             "restart": "Començar de nou",
             "home": "Tornar a la portada",
             "homeurl": "/",
@@ -30,7 +30,7 @@ AVENTURES = {
         "es": {
             "title": "Los números perdidos: Expedición a Calmara",
             "brand": "Los números perdidos",
-            "desc": "Aventura interactiva con retos de números: elige el camino, resuelve candados de mates, ayuda a Tamu y a Oxo y recupera los tres fragmentos de la tablilla con el robot Zum. 10 finales.",
+            "desc": "Aventura interactiva con retos de números: elige el camino, resuelve retos de sucesiones, cálculo y numeración, ayuda a Tamu y a Oxo y recupera los tres fragmentos de la tablilla con el robot Zum. 10 finales.",
             "restart": "Empezar de nuevo",
             "home": "Volver a la portada",
             "homeurl": "/es/",
@@ -40,7 +40,7 @@ AVENTURES = {
         "ca": {
             "title": "Missió Zèfir: Aventura als tres planetes",
             "brand": "Missió Zèfir",
-            "desc": "Aventura interactiva a l'espai: tria el camí, resol candaus de mates, tira el dau i recupera les tres peces del motor amb l'alienígena Zumet, que només parla en refranys. 8 finals.",
+            "desc": "Aventura interactiva a l'espai: tria el camí, resol reptes de càlcul i problemes, tira el dau i recupera les tres peces del motor amb l'alienígena Zumet, que només parla en refranys. 8 finals.",
             "restart": "Començar de nou",
             "home": "Tornar a la portada",
             "homeurl": "/",
@@ -48,7 +48,7 @@ AVENTURES = {
         "es": {
             "title": "Misión Céfiro: Aventura en los tres planetas",
             "brand": "Misión Céfiro",
-            "desc": "Aventura interactiva en el espacio: elige el camino, resuelve candados de mates, tira el dado y recupera las tres piezas del motor con el alienígena Zumet, que solo habla en refranes. 8 finales.",
+            "desc": "Aventura interactiva en el espacio: elige el camino, resuelve retos de cálculo y problemas, tira el dado y recupera las tres piezas del motor con el alienígena Zumet, que solo habla en refranes. 8 finales.",
             "restart": "Empezar de nuevo",
             "home": "Volver a la portada",
             "homeurl": "/es/",
