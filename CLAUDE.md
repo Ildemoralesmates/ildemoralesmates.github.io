@@ -66,3 +66,10 @@
 - Font: `tools/simuladors/src/mapa.src.html` (amb «Raona-ho»); es genera amb `python3 tools/simuladors/genera.py` com els altres simuladors.
 - La geometria és `tools/simuladors/src/mapa.geo.js`, generada (no s'edita a mà) per `python3 tools/simuladors/geo/mapa_espanya.py <ne_10m_admin_1_states_provinces.geojson>` a partir de Natural Earth (domini públic). `build.py` l'insereix amb `/*@INC:mapa.geo.js@*/` (qualsevol font pot incloure un fitxer de `src/` així).
 - La targeta i les 2 URLs del sitemap es mantenen a mà (ja hi són).
+
+# Portada en castellà (`es/index.html`)
+
+- `es/index.html` és generat: **no s'edita a mà**. Es crea amb `python3 tools/genera_portada_es.py` a partir de `index.html` (estructura, filtres i codi) i `i18n/portada-es.json` (matèries `cats`, subtítols `subs` i, per recurs, `t`, `d`, `tag` i `nv`). `--check` només comprova si cal regenerar.
+- Només hi apareixen els recursos que tenen `es/<recurs>/`; Cultura i Contes no tenen pestanya fins que hi haja un recurs en castellà. Un recurs castellà nou **sense** entrada al JSON no apareix i l'script ho avisa.
+- Cada vegada que es canvie `index.html` (targetes, filtres, text) o s'afegisca/traduïsca un recurs: actualitzar `i18n/portada-es.json` si cal i executar l'script. També actualitza el sitemap (portada ca + es amb `hreflang`).
+- `nv` és la frase curta del bloc «Últimes pàgines» en castellà; si es canvia la descripció a `novetats.json`, convé revisar-la.
