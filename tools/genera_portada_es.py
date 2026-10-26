@@ -7,7 +7,7 @@
 - L'original valencià (index.html) és l'única font de l'estructura, els filtres i el codi.
 - Els textos castellans estan a i18n/portada-es.json: matèries (`cats`), subtítols (`subs`) i,
   per a cada recurs (clau = href), `t`, `d`, `tag` i `nv` (frase curta per al bloc de novetats).
-- Només apareixen els recursos que tenen versió castellana (carpeta es/<slug>/). Les matèries
+- Només apareixen els recursos que tenen versió castellana (carpeta es/<slug>/) o una entrada amb "url" al JSON (pàgines bilingües en una sola URL, com ultima-senyal: s'obrin amb ?lang=es). Les matèries
   sense cap recurs castellà (Cultura, Contes) no tenen pestanya.
 - Si un recurs té es/<slug>/ però no entrada al JSON, s'avisa i no apareix (cal traduir-lo).
 - Les targetes i el bloc «Últimes pàgines» enllacen a /es/<slug>/.
@@ -91,9 +91,9 @@ for l in src[a:b].split("\n"):
     if not l.strip().startswith("{ cat:"):
         continue  # comentaris i línies buides
     href = re.search(r"href: '([^']+)'", l).group(1)
-    if not (ARREL / "es" / href.rstrip("/") / "index.html").exists():
-        continue  # sense versió castellana: no apareix
     e = T["res"].get(href)
+    if not (ARREL / "es" / href.rstrip("/") / "index.html").exists() and not (e and e.get("url")):
+        continue  # sense versió castellana (ni pàgina bilingüe amb "url"): no apareix
     if not e:
         avisos.append(f"  ⚠ {href} té versió castellana però no entrada a i18n/portada-es.json (no apareix)")
         continue
@@ -108,6 +108,8 @@ for l in src[a:b].split("\n"):
     l = camp(l, "t", e["t"])
     l = camp(l, "d", e["d"])
     l = camp(l, "tag", e["tag"])
+    if e.get("url"):  # pàgina bilingüe en una sola URL: s'obri ja en castellà
+        l = l.replace("{ cat:", "{ u: '" + js(e["url"]) + "', cat:", 1)
     l = llista(l, "niv", NIV)
     l = llista(l, "tipus", TIPUS)
     bl = re.search(r"bloc: '([^']+)'", l)
@@ -115,6 +117,8 @@ for l in src[a:b].split("\n"):
         l = camp(l, "bloc", BLOC.get(bl.group(1), bl.group(1)))
     linies_res.append(l)
     esx[href] = {"t": e["t"], "s": e["nv"]}
+    if e.get("url"):
+        esx[href]["u"] = e["url"]
 res_js = "\n".join(linies_res)
 
 # ---------- CATS ----------
@@ -186,8 +190,8 @@ un("label: 'Nivell',", "label: 'Nivel',")
 un("label: 'Bloc de mates',", "label: 'Bloque de mates',")
 un("label: 'Tipus de recurs',", "label: 'Tipo de recurso',")
 un("v !== 'Primària'", "v !== 'Primaria'")
-un('href="${BASE}${r.href}"', 'href="${BASE}es/${r.href}"')
-un('href="${BASE}${esc(x.href)}"', 'href="${BASE}es/${esc(x.href)}"')
+un('href="${BASE}${r.href}"', 'href="${r.u || BASE + \'es/\' + r.href}"')
+un('href="${BASE}${esc(x.href)}"', 'href="${ESX[x.href].u || BASE + \'es/\' + esc(x.href)}"')
 un("Obri →", "Abrir →")
 un("Cap recurs amb esta combinació de filtres. Prova de llevar-ne algun.",
    "Ningún recurso con esta combinación de filtros. Prueba a quitar alguno.")
