@@ -116,11 +116,15 @@ header h1{font-family:var(--font-title);font-size:1.2rem;color:var(--accent)}
 @keyframes lumiGlow{0%,100%{filter:drop-shadow(0 0 4px var(--accent))}50%{filter:drop-shadow(0 0 12px var(--accent))}}
 .lumi-icon{animation:lumiGlow 2s infinite;display:inline-block}
 #confirm-restart{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bad);color:#fff;padding:.6rem 1.2rem;border-radius:.5rem;font-family:var(--font-title);font-size:.9rem;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+a.home-link{display:inline-block;font-family:var(--font-body);font-size:.85rem;color:var(--accent);text-decoration:none;padding:.35rem 0;opacity:.9}
+a.home-link:hover{text-decoration:underline}
+a.home-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 <script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <div id="app">
+  <a class="home-link" id="home-link" href="/" title="Tornar a la portada">⌂ Portada</a>
   <div id="intro-screen">
     <h1>🚀 <span id="intro-title"></span></h1>
     <p class="subtitle" id="intro-sub"></p>
@@ -235,6 +239,7 @@ function setLang(l){
   document.getElementById('btn-val').className = l==='ca' ? 'lang-active' : '';
   document.getElementById('btn-cas').className = l==='es' ? 'lang-active' : '';
   document.getElementById('hdr-title').textContent = T(TITLE);
+  { const hl = document.getElementById('home-link'); hl.href = l === 'es' ? '/es/' : '/'; hl.title = l === 'es' ? 'Volver a la portada' : 'Tornar a la portada'; }
   if(!document.getElementById('game-screen').hidden) renderScene();
   else renderIntro();
   saveGame();
