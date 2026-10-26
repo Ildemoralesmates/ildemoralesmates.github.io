@@ -53,6 +53,24 @@ AVENTURES = {
             "home": "Volver a la portada",
             "homeurl": "/es/",
         },
+    },
+    "asterix-percy-jackson": {
+        "ca": {
+            "title": "Astèrix i Percy Jackson: Un embolic de poció i de déus",
+            "brand": "Astèrix i Percy Jackson",
+            "desc": "Aventura interactiva còmica: tria el camí, usa tres cartes de poder, guanya insígnies amb bones accions i troba els tres ingredients de l'antídot amb Mr. D. 9 finals.",
+            "restart": "Començar de nou",
+            "home": "Tornar a la portada",
+            "homeurl": "/",
+        },
+        "es": {
+            "title": "Astérix y Percy Jackson: Un lío de poción y de dioses",
+            "brand": "Astérix y Percy Jackson",
+            "desc": "Aventura interactiva cómica: elige el camino, usa tres cartas de poder, gana insignias con buenas acciones y encuentra los tres ingredientes del antídoto con Mr. D. 9 finales.",
+            "restart": "Empezar de nuevo",
+            "home": "Volver a la portada",
+            "homeurl": "/es/",
+        },
     }
 }
 
