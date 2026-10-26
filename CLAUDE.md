@@ -3,6 +3,7 @@
 - Cada pàgina HTML nova ha de portar, just abans de `</head>`, el comptador de visites:
   `<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>`
 - Afegir cada recurs nou a `index.html` (targeta) i a `sitemap.xml`.
+- **Últimes pàgines afegides:** la portada mostra les 8 pàgines amb la data més recent de `novetats.json` (un bloc que el llig amb `fetch`; sense el fitxer no apareix). Cada vegada que s'afegeix un recurs nou **o es retoca** un d'existent, cal actualitzar-lo: `python3 tools/novetats.py <slug>` (retocat: data = avui i puja al capdamunt) o `python3 tools/novetats.py <slug> --t "Títol" --d "Descripció breu" --cat <id>` (nou). La data és la del dia en què es fa el canvi, no la de modificació del fitxer. La descripció és d'una frase (~100 caràcters). Només compta un canvi de contingut: no s'actualitza per canvis massius de manteniment (llicència, comptador, estils comuns). `python3 tools/novetats.py --check` avisa de recursos de la portada que falten al JSON.
 - Cada entrada de `RES` a `index.html` du metadades per als filtres de la portada, just després de `href`:
   - `niv`: llista de nivells entre `Primària`, `1r ESO`, `2n ESO`, `3r ESO`, `4t ESO`, `Batxillerat`. Si s'omet o és `[]`, el recurs és general i apareix en tots els nivells d'ESO i Batxillerat (no en Primària).
   - `bloc`: només per als recursos de mates, un dels blocs del currículum: `Numèric`, `Algebraic`, `Funcions`, `Espacial i geometria`.

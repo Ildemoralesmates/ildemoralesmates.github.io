@@ -82,6 +82,30 @@ h1 em { font-style: normal; color: var(--c-mates); }
 .search .clear:hover { color: var(--ink); }
 .search input:focus-visible { outline-offset: 2px; }
 
+/* Últimes pàgines afegides (es llig de novetats.json) */
+.nvbox { margin: 0 0 1.1rem; background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 0.85rem 1rem 0.35rem; }
+.nvbox[hidden] { display: none; }
+.nvbox h2 { display: flex; align-items: center; gap: 0.5rem; font-family: var(--f-display); font-weight: 800; font-size: 1.1rem; line-height: 1.2; margin: 0 0 0.3rem; }
+.nvbox h2 svg { width: 1.2rem; height: 1.2rem; color: var(--c-mates); flex: none; }
+.nvl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; column-gap: 1.6rem; }
+.nv { display: grid; grid-template-columns: 3.3rem minmax(0, 1fr) auto; column-gap: 0.7rem; align-items: baseline; padding: 0.55rem 0.25rem; border-top: 1px solid var(--line); border-radius: 6px; text-decoration: none; color: inherit; }
+.nv .nd { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+.nv .nt { display: block; font-weight: 700; font-size: 0.92rem; line-height: 1.25; }
+.nv .nm { display: block; margin-top: 0.1rem; color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
+.nv .nc { font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 0.35rem; color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
+.nv .nb { font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; padding: 0.1rem 0.5rem; border-radius: 999px; background: color-mix(in srgb, var(--c-mates) 14%, var(--surface)); color: color-mix(in srgb, var(--c-mates) 80%, var(--ink)); }
+.nv .nb.nova { background: color-mix(in srgb, var(--c-biologia) 16%, var(--surface)); color: color-mix(in srgb, var(--c-biologia) 80%, var(--ink)); }
+.nv:hover .nt, .nv:focus-visible .nt { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px; }
+.nvmore { display: none; font: inherit; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: none; border: 0; border-top: 1px solid var(--line); width: 100%; min-height: 2.75rem; color: var(--c-mates); }
+@media (max-width: 700px) {
+  .nvbox { padding-inline: 0.8rem; }
+  .nvl { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; }
+  .nvl:not(.open) .nv:nth-child(n+5) { display: none; }
+  .nv { grid-template-columns: 3rem minmax(0, 1fr); }
+  .nv .nb { grid-column: 2; justify-self: start; margin-top: 0.3rem; }
+  .nvmore { display: block; }
+}
+
 /* Pestanyes de matèria */
 .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.9rem; position: relative; }
 .tab {
@@ -204,6 +228,8 @@ footer p { margin: 0 0 0.4rem; max-width: 46rem; }
     </div>
   </header>
 
+  <section class="nvbox" id="novetats" aria-labelledby="nv-h" hidden></section>
+
   <div class="tabs" id="tabs" role="tablist" aria-label="Matèries"></div>
   <div class="filters" id="filters"></div>
   <div class="more" id="more" hidden></div>
@@ -281,6 +307,7 @@ const IC = {
   lorentz: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.3"/><path d="M12 4l3.2 2.2L12 8.4"/>',
   acel: '<circle cx="12" cy="12" r="8"/><path d="M20 12V6m0 0l-1.8 1.8M20 6l1.8 1.8"/><path d="M20 12h-6m0 0l1.8-1.8M14 12l1.8 1.8"/>',
   lissajous: '<path d="M12 12c-3-5-8-5-8 0s5 5 8 0 8-5 8 0-5 5-8 0z"/>',
+  spark: '<path d="M11 3l2 5.5L18.5 10.5 13 12.5 11 18l-2-5.5L3.5 10.5 9 8.5z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/>',
   sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
   split: '<circle cx="7.2" cy="12" r="4.7"/><circle cx="16.8" cy="12" r="4.7"/><path d="M7.2 12h.01M16.8 12h.01"/>',
   sprout: '<path d="M12 21V11"/><path d="M12 11C12 7 9 5 4 5c0 4 3 6 8 6z"/><path d="M12 15c0-3.5 2.5-6 8-6 0 3.5-2.5 6-8 6z"/>',
@@ -523,13 +550,41 @@ function writeHash() {
   const p = new URLSearchParams();
   for (const g of Object.keys(F)) if (F[g] && !(g === 'cat' && F.cat === DEFAULT_CAT) && (g !== 'q' || F.q.trim())) p.set(g, F[g]);
   const h = p.toString();
-  history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : ''));
+  try { history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : '')); } catch (e) { /* visor aïllat (previsualització): no es pot tocar l'historial */ }
 }
 function syncSearch() {
   const i = $('#q'); if (i.value !== F.q) i.value = F.q;
   $('#qclear').hidden = !F.q;
 }
-function render() { syncSearch(); renderTabs(); renderFilters(); renderStatus(); renderSections(); writeHash(); }
+// Últimes pàgines afegides. `novetats.json`: per recurs, `alta` (primera publicació) i `data` (última vegada que s'ha afegit o retocat).
+// Es mostren les NV_N amb `data` més recent; si `data` és posterior a `alta`, l'etiqueta és «Retocada». Si el fitxer no es pot llegir, el bloc no apareix.
+const NV_N = 8;
+const MESOS = ['gen', 'febr', 'març', 'abr', 'maig', 'juny', 'jul', 'ag', 'set', 'oct', 'nov', 'des'];
+const ISO = /^\d{4}-\d{2}-\d{2}$/;
+let NV = [], nvOpen = false;
+const nvDia = (iso) => { const [y, m, d] = iso.split('-').map(Number); return `${d} ${MESOS[m - 1]}${y === new Date().getFullYear() ? '' : ' ' + y}`; };
+function renderNovetats() {
+  const box = $('#novetats');
+  if (!NV.length || searching()) { box.hidden = true; return; }
+  const items = NV.slice(0, NV_N);
+  box.innerHTML = `<h2 id="nv-h">${svg('spark')}Últimes pàgines afegides</h2>
+    <div class="nvl${nvOpen ? ' open' : ''}" id="nvl">${items.map((x) => {
+      const nova = !x.alta || x.alta >= x.data;
+      return `<a class="nv" href="${BASE}${esc(x.href)}" style="--c:var(--c-${x.cat})"><span class="nd">${nvDia(x.data)}</span><span><span class="nt">${esc(x.t)}</span><span class="nm"><span class="nc">${esc(cat[x.cat].n)}</span>${esc(x.d || '')}</span></span><span class="nb${nova ? ' nova' : ''}">${nova ? 'Nova' : 'Retocada'}</span></a>`;
+    }).join('')}</div>
+    ${items.length > 4 ? `<button class="nvmore" id="nvmore" type="button" aria-expanded="${nvOpen}" aria-controls="nvl">${nvOpen ? 'Mostra\'n menys' : `Mostra'n ${items.length - 4} més`}</button>` : ''}`;
+  box.hidden = false;
+}
+function loadNovetats() {
+  fetch(BASE + 'novetats.json', { cache: 'no-cache' })
+    .then((r) => (r.ok ? r.json() : Promise.reject()))
+    .then((d) => {
+      NV = (Array.isArray(d) ? d : []).filter((x) => x && x.href && x.t && cat[x.cat] && ISO.test(x.data || '')).sort((a, b) => (a.data < b.data ? 1 : a.data > b.data ? -1 : 0));
+      renderNovetats();
+    })
+    .catch(() => {});
+}
+function render() { syncSearch(); renderTabs(); renderFilters(); renderStatus(); renderSections(); renderNovetats(); writeHash(); }
 function selectCat(id, focus) {
   F.cat = id; F.q = ''; if (id !== 'mates') F.bloc = '';
   render();
@@ -538,6 +593,7 @@ function selectCat(id, focus) {
 
 document.addEventListener('click', (e) => {
   if (e.target.closest('#reset')) { Object.assign(F, { niv: '', bloc: '', tipus: '', q: '' }); render(); return; }
+  if (e.target.closest('#nvmore')) { nvOpen = !nvOpen; renderNovetats(); $('#nvmore').focus({ preventScroll: true }); return; }
   if (e.target.closest('#morebtn')) { moreOpen = !moreOpen; render(); $('#morebtn').focus({ preventScroll: true }); return; }
   const t = e.target.closest('.tab[data-cat]');
   if (t) { selectCat(t.dataset.cat, true); return; }
@@ -562,7 +618,7 @@ $('#q').addEventListener('input', (e) => { F.q = e.target.value.slice(0, 80); re
 $('#q').addEventListener('keydown', (e) => { if (e.key === 'Escape' && F.q) { F.q = ''; render(); } });
 $('#qclear').addEventListener('click', () => { F.q = ''; render(); $('#q').focus(); });
 window.addEventListener('hashchange', () => { readHash(); render(); });
-readHash(); render();
+readHash(); render(); loadNovetats();
 </script>
 </body>
 </html>
