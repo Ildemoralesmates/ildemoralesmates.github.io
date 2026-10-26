@@ -109,6 +109,7 @@ def render(lang, slug, meta, body, css_extra="", js_extra="", js_lib=""):
         "canonical": url(lang, slug),
         "hreflang": hre,
         "og_locale": OG[lang],
+        "og_image": f"{BASE}/og-image.png",
         "jsonld": jsjson(jsonld),
         "css": css_common + css_extra,
         "home": rel(here, "." if CFG.get("home_root") else page_dir(lang, "")),
