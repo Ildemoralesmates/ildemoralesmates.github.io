@@ -45,7 +45,7 @@ def estructurals(s, slug):
         ('<a class="back" href="../">', '<a class="back" href="../../">'),
     ]
     for a, b in canvis:
-        if a not in s:
+        if a not in s and not a.startswith('<a class="back"'):
             print(f"  ⚠ estructura no trobada: {a[:70]}")
         s = s.replace(a, b)
     return s

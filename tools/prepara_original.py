@@ -18,7 +18,13 @@ for slug in sys.argv[1:]:
         s = s.replace(can, can + f'\n<link rel="alternate" hreflang="ca" href="{BASE}/{slug}/">\n<link rel="alternate" hreflang="es" href="{BASE}/es/{slug}/">\n<link rel="alternate" hreflang="x-default" href="{BASE}/{slug}/">', 1)
     if 'class="navtop"' not in s:
         m = re.search(r'([ \t]*)<a class="back" href="\.\./">([^<]*)</a>', s)
-        assert m, f"{slug}: sense enllaç .back"
+        if not m:   # pàgines sense enllaç .back: només el selector d'idioma, a l'inici del body
+            mb = re.search(r'<body[^>]*>', s); assert mb, f"{slug}: sense <body>"
+            nav = f'\n  <nav class="navtop"><a class="lang" href="../es/{slug}/" hreflang="es" lang="es">Castellano</a></nav>'
+            s = s[:mb.end()] + nav + s[mb.end():]
+            j = s.find("</style>"); assert j > 0, f"{slug}: sense <style>"
+            s = s[:j] + CSS + s[j:]
+            p.write_text(s, encoding="utf-8"); print("preparat (sense back)", slug); continue
         ind = m.group(1)
         nou = (f'{ind}<nav class="navtop">\n{ind}  <a class="back" href="../">{m.group(2)}</a>\n'
                f'{ind}  <a class="lang" href="../es/{slug}/" hreflang="es" lang="es">Castellano</a>\n{ind}</nav>')
