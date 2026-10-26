@@ -1,0 +1,993 @@
+<!doctype html>
+<!--
+Els números perduts: Expedició a Calmara. Aventura interactiva bilingüe (VAL/CAS) basada en la plantilla del motor.
+Mecànica: sense energia; tria d'un sol objecte; 3 fragments de tauleta; 8 reptes de números; 8 finals dolents + bo + heroi.
+Convencions: x(ca,es) bilingüe; línies ">" diàleg, "?" endevinalla/repte, "!" pista; {nom} = nom del jugador (obligatori, sense valor per defecte);
+noms fixos de personatges a la regex de hn(): Zum, Tamu, Oxo. Narració i títols de final neutres quant al gènere.
+-->
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Els números perduts: Expedició a Calmara</title>
+<meta name="description" content="Expedició a Calmara: aventura interactiva amb reptes de números / Expedición a Calmara: aventura interactiva con retos de números">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Courier+Prime:wght@400;700&family=Grandstander:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6ec; --ink:#241a12; --card:#fffdf8; --muted:#6b5a4a; --line:#e5d8c3;
+  --accent:#6b44a8; --on-accent:#ffffff; --danger:#a3361f;
+  --font-title:"Grandstander","Trebuchet MS",system-ui,sans-serif;
+  --font-read:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --font-dial:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+}
+body[data-era="selva"]{--accent:#1f7a4a}
+body[data-era="laberint"]{--accent:#a35a12}
+body[data-era="temple"]{--accent:#2563a8}
+body[data-era="casa"]{--accent:#6b44a8}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-read);line-height:1.55;transition:background .3s}
+.top{max-width:42rem;margin:0 auto;padding:.75rem 1rem;display:flex;gap:.5rem;align-items:center;justify-content:space-between}
+.brand{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.05rem}
+.tools{display:flex;gap:.4rem;align-items:center}
+.pill{font-family:var(--font-title);font-weight:700;font-size:.9rem;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:.35rem .8rem;cursor:pointer;min-height:2.4rem}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pill:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:42rem;margin:0 auto;padding:0 1rem 3rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:1.2rem;padding:1.1rem 1.1rem 1.3rem;box-shadow:0 2px 0 var(--line)}
+.plate{display:flex;gap:.8rem;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:.7rem;margin-bottom:.8rem}
+.plate svg{flex:0 0 auto;width:5.5rem;height:3.4rem;color:var(--accent)}
+.plate .pn{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.1rem;line-height:1.2}
+.hud{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.2rem 0 1rem;font-size:.95rem}
+.hud .grp{display:flex;align-items:center;gap:.4rem}
+.hud .lbl{font-family:var(--font-title);font-weight:700;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.hud svg{width:1.7rem;height:1.7rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{font-size:.9rem;border:2px solid var(--line);border-radius:999px;padding:.1rem .6rem;background:var(--bg)}
+.chip.empty{color:var(--muted);border-style:dashed}
+.txt p{font-size:1.2rem;margin:.7rem 0}
+.txt p.dlg{padding-left:.9rem;border-left:4px solid var(--accent)}
+.txt p.riddle{font-family:var(--font-title);font-weight:700;background:color-mix(in srgb,var(--accent) 14%,var(--card));border-radius:.8rem;padding:.7rem .9rem}
+.txt p.hint{color:var(--muted);font-style:italic;font-size:1.05rem}
+.choices{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+.btn{font-family:var(--font-title);font-weight:700;font-size:1.15rem;line-height:1.3;text-align:left;border:3px solid var(--accent);background:var(--card);color:var(--ink);border-radius:1rem;padding:.8rem 1rem;min-height:3.4rem;cursor:pointer;transition:transform .08s,background .15s}
+.btn:hover{background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.btn:active{transform:scale(.985)}
+.btn.main{background:var(--accent);color:var(--on-accent);text-align:center}
+.btn.main:hover{background:var(--accent);filter:brightness(1.08)}
+.btn.ghost{border-color:var(--line);font-size:1rem;min-height:2.8rem;font-weight:500;text-align:center}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.undo{margin-top:1rem;text-align:center}
+h1{font-family:var(--font-title);font-weight:800;font-size:2rem;line-height:1.1;margin:.2rem 0 .3rem;color:var(--accent)}
+h2{font-family:var(--font-title);font-weight:800;font-size:1.6rem;line-height:1.15;margin:.2rem 0 .6rem;color:var(--accent)}
+.sub{font-family:var(--font-title);font-size:1.2rem;color:var(--muted);margin:.1rem 0 1rem}
+.intro ul{padding-left:1.2rem;font-size:1.1rem}
+.intro li{margin:.4rem 0}
+.intro label{display:block;font-family:var(--font-title);font-weight:700;font-size:1.1rem;margin:1.1rem 0 .4rem}
+.intro input{width:100%;font:inherit;font-size:1.3rem;padding:.7rem .9rem;border:3px solid var(--line);border-radius:.9rem;background:var(--bg);color:var(--ink)}
+.intro input:focus{border-color:var(--accent)}
+.err{color:var(--danger);font-weight:700;margin:.5rem 0 0}
+.counter{margin-top:1rem;text-align:center;color:var(--muted);font-family:var(--font-dial);font-size:.95rem}
+.endnote{font-family:var(--font-dial);color:var(--muted);margin-top:1rem;font-size:.95rem}
+#plof{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:color-mix(in srgb,var(--accent) 88%,#000);color:#fff;text-align:center;padding:1rem}
+#plof .big{font-family:var(--font-title);font-weight:800;font-size:3.4rem;animation:pop .5s ease-out both}
+#plof svg{width:6rem;height:6rem;animation:spin 1.4s linear infinite}
+#plof .dial{font-family:var(--font-dial);font-size:1.15rem;border:2px solid #fff;border-radius:.6rem;padding:.4rem .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  #plof svg,#plof .big{animation:none}
+  .btn{transition:none}
+}
+@media (max-width:30rem){
+  h1{font-size:1.7rem}
+  .plate svg{width:4.4rem}
+}
+</style>
+</head>
+<body data-era="casa">
+<header class="top">
+  <div class="brand" id="brand">Els números perduts</div>
+  <div class="tools">
+    <button class="pill" id="lang-ca" aria-pressed="true" type="button">VAL</button>
+    <button class="pill" id="lang-es" aria-pressed="false" type="button">CAS</button>
+    <button class="pill" id="restart" type="button" aria-label="Començar de nou">↻</button>
+  </div>
+</header>
+<main id="app"></main>
+<div id="plof" hidden role="status" aria-live="polite">
+  <div class="big">¡PLOF!</div>
+  <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="45" cy="45" r="30" fill="none" stroke="#fff" stroke-width="7"/><line x1="67" y1="67" x2="92" y2="92" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="45" cy="45" r="4" fill="#fff"/></svg>
+  <div class="dial" id="plof-dial"></div>
+</div>
+
+<script>
+/* ============ DADES ============ */
+const KEY = 'els-numeros-perduts-calmara-v1';
+const x = (ca, es) => ({ ca: ca, es: es });
+
+const TITLE = x(`Els números perduts`, `Los números perdidos`);
+const DESC  = x(`Expedició a Calmara`, `Expedición a Calmara`);
+const TITLE_FULL = x(`Els números perduts: Expedició a Calmara`, `Los números perdidos: Expedición a Calmara`);
+
+const ON = {
+  llanterna: x(`la llanterna`, `la linterna`),
+  corda: x(`la corda`, `la cuerda`),
+  guix: x(`el guix`, `la tiza`)
+};
+const OCHIP = {
+  llanterna: x(`Llanterna de clauer`, `Linterna de llavero`),
+  corda: x(`Corda de saltar`, `Cuerda de saltar`),
+  guix: x(`Guix de colors`, `Tiza de colores`)
+};
+const ERA = {
+  casa:     { ch: false, n: x(`Pròleg · El paquet misteriós`, `Prólogo · El paquete misterioso`) },
+  selva:    { ch: true,  n: x(`Capítol 1 · La selva i el riu`, `Capítulo 1 · La selva y el río`) },
+  laberint: { ch: true,  n: x(`Capítol 2 · El laberint de les lloses`, `Capítulo 2 · El laberinto de las losas`) },
+  temple:   { ch: true,  n: x(`Capítol 3 · El temple dels nombres`, `Capítulo 3 · El templo de los números`) }
+};
+
+const ALL_ENDINGS = ['fin_tele', 'fin_riu', 'fin_porta', 'fin_trampa', 'fin_fosc', 'fin_segell', 'fin_or', 'fin_tauleta'];   // todos los finales salvo 'bo' y 'heroi'
+const TOTAL_FINALS = ALL_ENDINGS.length + 2;
+
+const U = {
+  start: x(`Començar l'aventura`, `Empezar la aventura`),
+  nameQ: x(`Com et diuen?`, `¿Cómo te llamas?`),
+  nameErr: x(`Escriu el teu nom per a començar.`, `Escribe tu nombre para empezar.`),
+  namePh: x(`El teu nom`, `Tu nombre`),
+  pieces: x(`Fragments de la tauleta`, `Fragmentos de la tablilla`),
+  pack: x(`Motxilla`, `Mochila`),
+  empty: x(`buida`, `vacía`),
+  undo: x(`↶ Tornar a la decisió anterior`, `↶ Volver a la decisión anterior`),
+  backLast: x(`Tornar a l'última decisió`, `Volver a la última decisión`),
+  again: x(`Començar de nou`, `Empezar de nuevo`),
+  playAgain: x(`Tornar a jugar`, `Jugar otra vez`),
+  restartAsk: x(`Toca de nou per a reiniciar`, `Toca de nuevo para reiniciar`),
+  restartLbl: x(`Començar de nou`, `Empezar de nuevo`),
+  finalsCount: (n) => x(`Finals descoberts: ${n} de ${TOTAL_FINALS}`, `Finales descubiertos: ${n} de ${TOTAL_FINALS}`),
+  newEnd: x(`Final descobert!`, `¡Final descubierto!`),
+  buttonChip: x(`Tamu, el micotet`, `Tamu, el monito`)
+};
+
+const S = {
+
+intro: { era: 'casa', text: [], choices: [] },
+
+/* ---------- PRÒLEG ---------- */
+pro: { era: 'casa',
+  text: [
+    x(`Tornes de l'escola un dilluns qualsevol i, damunt de la taula, hi ha un paquet que ningú no ha demanat. Porta el teu nom: {nom}. No té remitent, només un segell amb uns signes estranys.`,
+      `Vuelves del cole un lunes cualquiera y, encima de la mesa, hay un paquete que nadie ha pedido. Lleva tu nombre: {nom}. No tiene remitente, solo un sello con unos signos extraños.`),
+    x(`En moure'l, per dins sona un "clinc, clonc, zuuum". La tapa salta i en ix rodant una cosa redona i grisa, amb dos ullets de llum i una trompa d'aspirador.`,
+      `Al moverlo, por dentro suena "clinc, clonc, zuuum". La tapa salta y sale rodando algo redondo y gris, con dos ojitos de luz y una trompa de aspirador.`),
+    x(`>—Bon dia, {nom}! Sóc Zum, robot de neteja de la Societat d'Exploradors. Estava netejant la caixa i... m'he empassat el mapa. Un segon! —diu Zum, i escup un paper arrugat.`,
+      `>—¡Buenos días, {nom}! Soy Zum, robot de limpieza de la Sociedad de Exploradores. Estaba limpiando la caja y... me he tragado el mapa. ¡Un segundo! —dice Zum, y escupe un papel arrugado.`),
+    x(`El mapa mostra una selva, un laberint i un temple. A dalt hi ha escrit: "CALMARA, la ciutat que va perdre els seus nombres. Només qui en trobe els tres fragments podrà obrir-la."`,
+      `El mapa muestra una selva, un laberinto y un templo. Arriba está escrito: "CALMARA, la ciudad que perdió sus números. Solo quien encuentre sus tres fragmentos podrá abrirla."`),
+    x(`El paper fa pampallugues, com si tinguera pressa.`, `El papel parpadea, como si tuviera prisa.`)
+  ],
+  choices: [
+    { t: x(`Preparar la motxilla i seguir el mapa`, `Preparar la mochila y seguir el mapa`), go: 'pro_obj' },
+    { t: x(`Tancar el paquet i anar a vore dibuixos`, `Cerrar el paquete y ponerte a ver dibujos`), go: 'fin_tele' }
+  ] },
+
+pro_obj: { era: 'casa',
+  text: [
+    x(`Zum obri la teua motxilla. Només hi cap una cosa més, i la selva és molt gran.`,
+      `Zum abre tu mochila. Solo cabe una cosa más, y la selva es muy grande.`),
+    x(`>—Tria bé! Una sola, que jo no sóc un camió de mudances —diu Zum, just abans d'aspirar-se una pedreta del terra.`,
+      `>—¡Elige bien! Una sola, que yo no soy un camión de mudanzas —dice Zum, justo antes de aspirarse una piedrecita del suelo.`),
+    x(`!Cada objecte serveix en un lloc diferent de l'aventura.`, `!Cada objeto sirve en un lugar distinto de la aventura.`)
+  ],
+  choices: [
+    { t: x(`La llanterna de clauer`, `La linterna de llavero`), go: 'c1_arribada', set: s => { s.obj = 'llanterna'; } },
+    { t: x(`La corda de saltar`, `La cuerda de saltar`), go: 'c1_arribada', set: s => { s.obj = 'corda'; } },
+    { t: x(`El guix de colors`, `La tiza de colores`), go: 'c1_arribada', set: s => { s.obj = 'guix'; } }
+  ] },
+
+/* ---------- CAPÍTOL 1 · SELVA ---------- */
+c1_arribada: { era: 'selva',
+  text: [
+    x(`El mapa es plega solet. Zum aspira la xinxeta que el subjectava i... ¡PLOF! Un aire calent i humit t'omple els pulmons. Ets enmig d'una selva enorme, amb arbres tan alts que no se'n veu la punta.`,
+      `El mapa se pliega solo. Zum aspira la chincheta que lo sujetaba y... ¡PLOF! Un aire caliente y húmedo te llena los pulmones. Estás en medio de una selva enorme, con árboles tan altos que no se les ve la punta.`),
+    x(`Al fons, damunt d'un turó, es veu una torre de pedra. Cal arribar-hi. Davant teu hi ha dos camins: un baixa cap al soroll d'un riu; l'altre puja entre els arbres, d'on arriba un xillit fi.`,
+      `Al fondo, sobre una colina, se ve una torre de piedra. Hay que llegar hasta ella. Delante de ti hay dos caminos: uno baja hacia el ruido de un río; el otro sube entre los árboles, de donde llega un chillido fino.`),
+    x(`>—Jo diria el riu —fa Zum—. Els xillits em recorden la meua cosina, la batedora.`,
+      `>—Yo diría el río —dice Zum—. Los chillidos me recuerdan a mi prima, la batidora.`)
+  ],
+  choices: [
+    { t: x(`Seguir el xillit entre els arbres`, `Seguir el chillido entre los árboles`), go: 'c1_arbres' },
+    { t: x(`Baixar cap al riu`, `Bajar hacia el río`), go: 'c1_riu' }
+  ] },
+
+c1_arbres: { era: 'selva',
+  text: [
+    x(`Entre dues arrels gegants hi ha una xarxa de lianes i, atrapat dins, un xicotet mico gris que xilla amb totes les seues forces. Du un collaret de fusta amb quatre lletres tallades: TAMU.`,
+      `Entre dos raíces gigantes hay una red de lianas y, atrapado dentro, un monito gris que chilla con todas sus fuerzas. Lleva un collar de madera con cuatro letras talladas: TAMU.`),
+    x(`Darrere teu, entre els arbres, alguna cosa gran es mou. Les fulles tremolen. No tens gaire temps.`,
+      `Detrás de ti, entre los árboles, algo grande se mueve. Las hojas tiemblan. No tienes mucho tiempo.`)
+  ],
+  choices: [
+    { t: x(`Ajudar Tamu a deslliurar-se`, `Ayudar a Tamu a soltarse`), go: 'c1_tamu', set: s => { s.tamu = 1; } },
+    { t: x(`Deixar-ho estar i córrer cap al riu`, `Dejarlo estar y correr hacia el río`), go: 'c1_riu' }
+  ] },
+
+c1_tamu: { era: 'selva',
+  text: [
+    x(`Amb molta paciència, desfeu nus per nus. ¡CLAC! La xarxa cedeix. Tamu et salta a l'espatlla, et pessiga l'orella i et fa un petó humit al nas.`,
+      `Con mucha paciencia, deshacéis nudo por nudo. ¡CLAC! La red cede. Tamu te salta al hombro, te pellizca la oreja y te da un beso húmedo en la nariz.`),
+    x(`Allò gran que es movia era només un tapir curiós, que se'n va com si res. Quin ensurt.`,
+      `Eso grande que se movía era solo un tapir curioso, que se va como si nada. Vaya susto.`),
+    x(`>—Has fet un amic —diu Zum—. Jo, un soroll. Perdó, m'he aspirat un cargol.`,
+      `>—Has hecho un amigo —dice Zum—. Yo, un ruido. Perdón, me he aspirado un caracol.`),
+    x(`Tamu es queda a prop teu. Alguna cosa et diu que no serà l'última vegada que el veges.`,
+      `Tamu se queda cerca de ti. Algo te dice que no será la última vez que lo veas.`)
+  ],
+  choices: [
+    { t: x(`Baixar cap al riu`, `Bajar hacia el río`), go: 'c1_riu' }
+  ] },
+
+c1_riu: { era: 'selva',
+  text: s => [
+    x(`El riu és ample, fosc i corre molt de pressa. Més avall, un pont de cordes i taules es gronxa entre dos arbres. A l'altra riba, el turó amb la torre.`,
+      `El río es ancho, oscuro y corre muy deprisa. Más abajo, un puente de cuerdas y tablas se balancea entre dos árboles. En la otra orilla, la colina con la torre.`),
+    x(`A la vora hi ha una canoa i un barquer menut que et mira amb els braços creuats: es diu Oxo.`,
+      `Junto al agua hay una canoa y un barquero pequeño que te mira con los brazos cruzados: se llama Oxo.`),
+    x(`>—Passar costa una cosa de la teua motxilla —diu Oxo—. No vull diners: ací no hi ha botigues. Les regles són les regles.`,
+      `>—Pasar cuesta algo de tu mochila —dice Oxo—. No quiero dinero: aquí no hay tiendas. Las reglas son las reglas.`),
+    x(`Si no, queda el pont. Les taules duen nombres pintats, i algunes tenen molt mala cara.`,
+      `Si no, queda el puente. Las tablas llevan números pintados, y algunas tienen muy mala cara.`),
+    s.obj === 'corda'
+      ? x(`Amb la corda de saltar podries gronxar-te fins a l'altra riba, com als llibres d'aventures.`,
+          `Con la cuerda de saltar podrías columpiarte hasta la otra orilla, como en los libros de aventuras.`)
+      : null,
+    !s.obj
+      ? x(`La teua motxilla està buida: no podràs pagar Oxo.`, `Tu mochila está vacía: no podrás pagar a Oxo.`)
+      : null
+  ].filter(Boolean),
+  choices: [
+    { t: s => x(`Pagar Oxo amb ${ON[s.obj].ca} i creuar en canoa`, `Pagar a Oxo con ${ON[s.obj].es} y cruzar en canoa`),
+      if: s => !!s.obj && !!ON[s.obj], go: 'c1_porta', set: s => { s.pagat = s.obj; s.obj = null; s.via1 = 'barca'; } },
+    { t: x(`Llançar la corda a una branca i gronxar-te`, `Lanzar la cuerda a una rama y columpiarte`),
+      if: s => s.obj === 'corda', go: 'c1_porta', set: s => { s.obj = null; s.via1 = 'corda'; } },
+    { t: x(`Provar el pont de taules`, `Probar el puente de tablas`), go: 'c1_pont' }
+  ] },
+
+c1_pont: { era: 'selva',
+  text: [
+    x(`El pont gronxa i, per baix, el riu rugeix. Al primer pal hi ha un gravat: "Només aguanten les taules que són de la taula del 3."`,
+      `El puente se balancea y, por debajo, el río ruge. En el primer poste hay un grabado: "Solo aguantan las tablas que son de la tabla del 3."`),
+    x(`Hi ha tres camins de taules. Has de triar-ne un, i has de triar bé.`,
+      `Hay tres caminos de tablas. Tienes que elegir uno, y tienes que elegir bien.`),
+    x(`?Camí A: 6 · 9 · 14 · 15`, `?Camino A: 6 · 9 · 14 · 15`),
+    x(`?Camí B: 6 · 9 · 12 · 15`, `?Camino B: 6 · 9 · 12 · 15`),
+    x(`?Camí C: 3 · 8 · 12 · 15`, `?Camino C: 3 · 8 · 12 · 15`),
+    x(`!Un nombre és de la taula del 3 si el pots dir comptant de 3 en 3: 3, 6, 9, 12, 15…`,
+      `!Un número es de la tabla del 3 si lo puedes decir contando de 3 en 3: 3, 6, 9, 12, 15…`),
+    x(`>—Jo vaig pel C —diu Zum—. M'agrada el 8. Té forma de ninot de neu.`,
+      `>—Yo voy por el C —dice Zum—. Me gusta el 8. Tiene forma de muñeco de nieve.`)
+  ],
+  choices: [
+    { t: x(`Pujar pel camí A`, `Subir por el camino A`), go: 'fin_riu' },
+    { t: x(`Pujar pel camí B`, `Subir por el camino B`), go: 'c1_porta', set: s => { s.via1 = 'pont'; } },
+    { t: x(`Pujar pel camí C`, `Subir por el camino C`), go: 'fin_riu' }
+  ] },
+
+c1_porta: { era: 'selva',
+  text: s => [
+    s.via1 === 'barca'
+      ? (s.braca
+          ? x(`Oxo et saluda des de la canoa, amb el braçalet posat i un somriure d'orella a orella.`,
+              `Oxo te saluda desde la canoa, con la pulsera puesta y una sonrisa de oreja a oreja.`)
+          : x(`La canoa d'Oxo et deixa a l'altra riba. Ell es queda mirant l'aigua i rondinant: "He perdut el braçalet de la sort entre les canyes. Sense ell, res no em ix bé."`,
+              `La canoa de Oxo te deja en la otra orilla. Él se queda mirando el agua y refunfuñando: "He perdido la pulsera de la suerte entre las cañas. Sin ella, nada me sale bien."`))
+      : s.via1 === 'corda'
+        ? x(`Et gronxes... ¡ZUUUM! Aterres a l'altra riba amb els genolls tremolant. La corda es queda penjada de la branca, massa lluny per a recuperar-la.`,
+            `Te columpias... ¡ZUUUM! Aterrizas en la otra orilla con las rodillas temblando. La cuerda se queda colgada de la rama, demasiado lejos para recuperarla.`)
+        : s.via1 === 'pont'
+          ? x(`El pont gronxa fins a l'últim pas, però t'aguanta. Respires fondo.`,
+              `El puente se balancea hasta el último paso, pero te aguanta. Respiras hondo.`)
+          : x(`Arribes al peu del turó.`, `Llegas al pie de la colina.`),
+    x(`Al peu del turó hi ha una torre de pedra coberta de molsa. La porta és enorme i, damunt, hi ha una placa de bronze plena de signes.`,
+      `Al pie de la colina hay una torre de piedra cubierta de musgo. La puerta es enorme y, encima, hay una placa de bronce llena de signos.`),
+    x(`Zum neteja la placa amb la trompa i apareix la clau dels signes: el punt ● val 1 i la barra ▬ val 5.`,
+      `Zum limpia la placa con la trompa y aparece la clave de los signos: el punto ● vale 1 y la barra ▬ vale 5.`),
+    x(`?Sobre la porta, escrit en signes: ▬ ▬ ● ● ●`, `?Sobre la puerta, escrito en signos: ▬ ▬ ● ● ●`),
+    x(`!Compta primer les barres i després els punts.`, `!Cuenta primero las barras y después los puntos.`),
+    x(`>—Jo diria... set? —diu Zum, que no ha entés res.`, `>—Yo diría... ¿siete? —dice Zum, que no ha entendido nada.`)
+  ],
+  choices: [
+    { t: x(`Buscar el braçalet d'Oxo entre les canyes`, `Buscar la pulsera de Oxo entre las cañas`),
+      if: s => s.via1 === 'barca' && !s.braca, go: 'c1_braca' },
+    { t: x(`Escriure el 8 al panell`, `Escribir el 8 en el panel`), go: 'fin_porta' },
+    { t: x(`Escriure el 23 al panell`, `Escribir el 23 en el panel`), go: 'fin_porta' },
+    { t: x(`Escriure el 13 al panell`, `Escribir el 13 en el panel`), go: 'c1_cierre' }
+  ] },
+
+c1_braca: { era: 'selva',
+  onEnter: s => { s.braca = 1; if (s.pagat) { s.obj = s.pagat; s.pagat = null; s.retornat = 1; } },
+  text: s => [
+    x(`Entre les canyes, l'aigua t'arriba fins als genolls. Alguna cosa lluu al fons, enmig del fang. A uns metres, dos ulls grocs sobresurten de l'aigua i no parpellegen.`,
+      `Entre las cañas, el agua te llega hasta las rodillas. Algo brilla al fondo, en medio del barro. A unos metros, dos ojos amarillos sobresalen del agua y no parpadean.`),
+    x(`Zum es posa davant, encén la trompa a tota potència i crida: "ZZZUUUUM!" L'aigua bull i els ulls grocs s'enfonsen sense fer cap soroll.`,
+      `Zum se pone delante, enciende la trompa a toda potencia y grita: "ZZZUUUUM!" El agua hierve y los ojos amarillos se hunden sin hacer ruido.`),
+    x(`Agafes el braçalet: és de fil trenat, amb una conxeta xicoteta. Quan l'hi entregues, Oxo riu per primera vegada.`,
+      `Coges la pulsera: es de hilo trenzado, con una conchita. Cuando se la entregas, Oxo se ríe por primera vez.`),
+    x(`>—Mira que n'ets, de valent! —diu Oxo—. Una deuda és una deuda.`,
+      `>—¡Qué valiente eres! —dice Oxo—. Una deuda es una deuda.`),
+    s.obj && ON[s.obj]
+      ? x(`I et torna ${ON[s.obj].ca}, que li havies pagat.`, `Y te devuelve ${ON[s.obj].es}, que le habías pagado.`)
+      : x(`I et dona les gràcies tres vegades seguides.`, `Y te da las gracias tres veces seguidas.`)
+  ],
+  choices: [
+    { t: x(`Tornar a la porta de la torre`, `Volver a la puerta de la torre`), go: 'c1_porta' }
+  ] },
+
+c1_cierre: { era: 'selva',
+  onEnter: s => { s.f1 = 1; },
+  text: s => [
+    x(`¡CLONC! Els signes s'il·luminen i la porta s'obri soleta. A dins, damunt d'un pedestal, hi ha un tros de pedra tallada: el primer fragment de la tauleta. Quan l'agafes, et calfa les mans com si estiguera viu.`,
+      `¡CLONC! Los signos se iluminan y la puerta se abre sola. Dentro, sobre un pedestal, hay un trozo de piedra tallada: el primer fragmento de la tablilla. Cuando lo coges, te calienta las manos como si estuviera vivo.`),
+    s.tamu
+      ? x(`Entre les fulles brillen uns ullets: Tamu us ha seguit i et saluda amb un xiscle alegre.`,
+          `Entre las hojas brillan unos ojitos: Tamu os ha seguido y te saluda con un chillido alegre.`)
+      : null,
+    !s.obj
+      ? x(`La motxilla et pesa menys del que voldries: ara no tens cap objecte.`,
+          `La mochila te pesa menos de lo que querrías: ahora no tienes ningún objeto.`)
+      : null,
+    x(`>—Un trosset, {nom}! —diu Zum—. Falten dos. I tinc ganes d'aspirar alguna cosa.`,
+      `>—¡Un trocito, {nom}! —dice Zum—. Faltan dos. Y tengo ganas de aspirar algo.`),
+    x(`El mapa torna a lluir: ara assenyala un lloc sota terra. Un laberint.`,
+      `El mapa vuelve a brillar: ahora señala un lugar bajo tierra. Un laberinto.`)
+  ].filter(Boolean),
+  choices: [
+    { t: x(`Seguir el mapa fins al laberint`, `Seguir el mapa hasta el laberinto`), go: 'c2_arribada' }
+  ] },
+
+/* ---------- CAPÍTOL 2 · LABERINT ---------- */
+c2_arribada: { era: 'laberint',
+  text: s => [
+    x(`El mapa s'enrotlla com una serp i... ¡PLOF! Baixes unes escales de pedra molt llargues, fins que l'aire fa olor de terra mullada i de coses molt velles.`,
+      `El mapa se enrolla como una serpiente y... ¡PLOF! Bajas unas escaleras de piedra muy largas, hasta que el aire huele a tierra mojada y a cosas muy viejas.`),
+    x(`Davant teu, un laberint de passadissos de pedra. A les parets hi ha marques: ratlles, cercles i nombres. Algú va voler que ho pensaren abans de passar.`,
+      `Delante de ti, un laberinto de pasillos de piedra. En las paredes hay marcas: rayas, círculos y números. Alguien quiso que lo pensaran antes de pasar.`),
+    s.tamu
+      ? x(`Tamu s'ha enganxat a la teua motxilla; ha vingut sense que ningú el convidara, i mira cap a tots costats.`,
+          `Tamu se ha agarrado a tu mochila; ha venido sin que nadie lo invitara, y mira hacia todos lados.`)
+      : null,
+    x(`Molt lluny se sent un esgarrapat. I després un grunyit baix, que fa vibrar el terra.`,
+      `Muy lejos se oye un arañazo. Y después un gruñido grave, que hace vibrar el suelo.`)
+  ].filter(Boolean),
+  choices: [
+    { t: x(`Marcar el camí amb el guix`, `Marcar el camino con la tiza`), if: s => s.obj === 'guix', go: 'c2_guix', set: s => { s.obj = null; } },
+    { t: x(`Llegir les marques de la paret`, `Leer las marcas de la pared`), go: 'c2_marques' },
+    { t: x(`Seguir la paret de la dreta, sense pensar`, `Seguir la pared de la derecha, sin pensar`), go: 'c2_dreta' }
+  ] },
+
+c2_guix: { era: 'laberint',
+  text: [
+    x(`Dibuixes una fletxa de guix a cada cantonada: així sempre podràs tornar enrere. El guix grinyola sobre la pedra i els teus passos fan eco.`,
+      `Dibujas una flecha de tiza en cada esquina: así siempre podrás volver atrás. La tiza chirría sobre la piedra y tus pasos hacen eco.`),
+    x(`Gràcies a les fletxes descobreixes que tres passadissos donen voltes al mateix lloc, i que només un porta al fons. El guix s'ha acabat, però el camí està clar.`,
+      `Gracias a las flechas descubres que tres pasillos dan vueltas al mismo sitio, y que solo uno lleva al fondo. La tiza se ha acabado, pero el camino está claro.`),
+    x(`>—Perdó per les fletxes —diu Zum—. Pareixien galetes.`,
+      `>—Perdón por las flechas —dice Zum—. Parecían galletas.`)
+  ],
+  choices: [
+    { t: x(`Entrar a la sala del fons`, `Entrar en la sala del fondo`), go: 'c2_sala' }
+  ] },
+
+c2_marques: { era: 'laberint',
+  text: [
+    x(`Les marques de la paret formen una fila. A sota hi ha una placa: "Per a continuar, endevina el nombre que ve a continuació."`,
+      `Las marcas de la pared forman una fila. Debajo hay una placa: "Para continuar, adivina el número que viene a continuación."`),
+    x(`?2 · 4 · 8 · 16 · ?`, `?2 · 4 · 8 · 16 · ?`),
+    x(`!Mira com passa d'un nombre al següent: cada pas fa el mateix.`,
+      `!Mira cómo pasa de un número al siguiente: cada paso hace lo mismo.`),
+    x(`>—Jo diria vint-i-quatre —diu Zum—. O potser és el meu número de sèrie.`,
+      `>—Yo diría veinticuatro —dice Zum—. O quizá es mi número de serie.`)
+  ],
+  choices: [
+    { t: x(`Tocar la marca 32`, `Tocar la marca 32`), go: 'c2_sala' },
+    { t: x(`Tocar la marca 24`, `Tocar la marca 24`), go: 'c2_dreta' },
+    { t: x(`Tocar la marca 20`, `Tocar la marca 20`), go: 'c2_dreta' }
+  ] },
+
+c2_dreta: { era: 'laberint',
+  text: s => [
+    x(`El passadís de la dreta és estret i fosc, i cada pas fa més olor de bestiola. Al fons, dos ulls grocs s'obrin i et miren.`,
+      `El pasillo de la derecha es estrecho y oscuro, y cada paso huele más a bicho. Al fondo, dos ojos amarillos se abren y te miran.`),
+    x(`Un jaguar, gran i silenciós, es va acostant. El cor et fa bum, bum, bum.`,
+      `Un jaguar, grande y silencioso, se va acercando. El corazón te hace bum, bum, bum.`),
+    s.tamu
+      ? x(`Tamu pega un bot, corre per una escletxa de la paret i tira d'una palanca amagada. ¡CRAC! Un racó de pedra s'obri. El jaguar mira Tamu, mira la porta nova... i se'n va a fer la migdiada, tan tranquil. Era el guardià, i Tamu és de la casa.`,
+          `Tamu pega un salto, corre por una grieta de la pared y tira de una palanca escondida. ¡CRAC! Un rincón de piedra se abre. El jaguar mira a Tamu, mira la puerta nueva... y se va a echar la siesta, tan tranquilo. Era el guardián, y Tamu es de la casa.`)
+      : x(`No hi ha cap escletxa, ni palanca, ni res. Només el grunyit, cada vegada més fort. Corres, corres, i el passadís es tanca darrere teu amb un colp sec. Quan t'atures, tornes a ser a l'entrada.`,
+          `No hay ninguna grieta, ni palanca, ni nada. Solo el gruñido, cada vez más fuerte. Corres, corres, y el pasillo se cierra detrás de ti con un golpe seco. Cuando te paras, estás otra vez en la entrada.`),
+    s.tamu
+      ? null
+      : x(`>—Si l'aspire, potser diu que no! —diu Zum, apuntant amb la trompa. No és una bona idea.`,
+          `>—¡Si lo aspiro, quizá dice que no! —dice Zum, apuntando con la trompa. No es una buena idea.`)
+  ].filter(Boolean),
+  choices: [
+    { t: s => s.tamu ? x(`Entrar per la porta nova`, `Entrar por la puerta nueva`) : x(`Tornar a l'entrada i pensar-ho de nou`, `Volver a la entrada y pensarlo de nuevo`),
+      go: s => s.tamu ? 'c2_sala' : 'c2_arribada' }
+  ] },
+
+c2_sala: { era: 'laberint',
+  text: [
+    x(`Per fi, una sala gran i quadrada, amb el terra fet de lloses. N'hi ha set files de huit lloses cadascuna. A l'altra banda, una porta de bronze amb un panell que demana un nombre.`,
+      `Por fin, una sala grande y cuadrada, con el suelo hecho de losas. Hay siete filas de ocho losas cada una. Al otro lado, una puerta de bronce con un panel que pide un número.`),
+    x(`Una veu de pedra avisa: "Si pises una llosa que no toca, el terra s'enfonsarà."`,
+      `Una voz de piedra avisa: "Si pisas una losa que no toca, el suelo se hundirá."`),
+    x(`?Quantes lloses té el terra en total? (7 files de 8 lloses)`,
+      `?¿Cuántas losas tiene el suelo en total? (7 filas de 8 losas)`),
+    x(`!Pensa en la taula del 7 o en la del 8: 7 · 8.`, `!Piensa en la tabla del 7 o en la del 8: 7 · 8.`),
+    x(`>—Jo les compte aspirant-les —diu Zum—. Una, dues... Quiet, que no val.`,
+      `>—Yo las cuento aspirándolas —dice Zum—. Una, dos... Quieto, que no vale.`)
+  ],
+  choices: [
+    { t: x(`Escriure 54 al panell`, `Escribir 54 en el panel`), go: 'fin_trampa' },
+    { t: x(`Escriure 56 al panell`, `Escribir 56 en el panel`), go: 'c2_fragment' },
+    { t: x(`Escriure 63 al panell`, `Escribir 63 en el panel`), go: 'fin_trampa' }
+  ] },
+
+c2_fragment: { era: 'laberint',
+  text: s => [
+    x(`La porta s'obri i dins hi ha una sala redona amb una balança gegant de pedra. En un plat, el segon fragment de la tauleta. A l'altre, un cartell: "Posa-hi justament 24 quilos."`,
+      `La puerta se abre y dentro hay una sala redonda con una balanza gigante de piedra. En un plato, el segundo fragmento de la tablilla. En el otro, un cartel: "Pon exactamente 24 kilos."`),
+    x(`Al costat tens pedres de 5 quilos i de 3 quilos. Has de triar quantes en poses al plat buit.`,
+      `Al lado tienes piedras de 5 kilos y de 3 kilos. Tienes que elegir cuántas pones en el plato vacío.`),
+    x(`?A: 4 pedres de 5 i 1 de 3 · B: 3 pedres de 5 i 3 de 3 · C: 2 pedres de 5 i 4 de 3`,
+      `?A: 4 piedras de 5 y 1 de 3 · B: 3 piedras de 5 y 3 de 3 · C: 2 piedras de 5 y 4 de 3`),
+    x(`!Calcula cada opció: les pedres de 5 més les pedres de 3.`,
+      `!Calcula cada opción: las piedras de 5 más las piedras de 3.`),
+    s.via2 === 'mal'
+      ? x(`La balança tremola, però no s'obri. Pots provar-ho de nou.`, `La balanza tiembla, pero no se abre. Puedes probar de nuevo.`)
+      : null
+  ].filter(Boolean),
+  choices: [
+    { t: x(`Posar l'opció A`, `Poner la opción A`), go: 'c2_fragment', set: s => { s.via2 = 'mal'; } },
+    { t: x(`Posar l'opció B`, `Poner la opción B`), go: 'c2_cierre', set: s => { s.via2 = ''; } },
+    { t: x(`Posar l'opció C`, `Poner la opción C`), go: 'c2_fragment', set: s => { s.via2 = 'mal'; } }
+  ] },
+
+c2_cierre: { era: 'laberint',
+  onEnter: s => { s.f2 = 1; },
+  text: s => [
+    x(`El plat s'inclina amb un "clonc" suau i el segon fragment cau a les teues mans. El terra tremola: el laberint es plega i, de sobte, veus una escala que puja cap a la llum.`,
+      `El plato se inclina con un "clonc" suave y el segundo fragmento cae en tus manos. El suelo tiembla: el laberinto se pliega y, de pronto, ves una escalera que sube hacia la luz.`),
+    s.tamu ? x(`Tamu corre davant, content com unes pasqües.`, `Tamu corre delante, contento como unas castañuelas.`) : null,
+    x(`>—Dos de tres! —xiscla Zum—. He aspirat una aranya, per cert. Pensava que era una pansa.`,
+      `>—¡Dos de tres! —chilla Zum—. He aspirado una araña, por cierto. Pensaba que era una pasa.`),
+    x(`El mapa assenyala el tercer lloc, a dalt de tot: un temple escalonat.`,
+      `El mapa señala el tercer lugar, arriba del todo: un templo escalonado.`)
+  ].filter(Boolean),
+  choices: [
+    { t: x(`Pujar fins al temple`, `Subir hasta el templo`), go: 'c3_arribada', set: s => { s.via2 = ''; } }
+  ] },
+
+/* ---------- CAPÍTOL 3 · TEMPLE ---------- */
+c3_arribada: { era: 'temple',
+  text: [
+    x(`L'escala acaba al cim d'una piràmide escalonada, enmig de la selva. Davant teu s'obri l'entrada d'un corredor negre com la nit. El vent en ix amb un xiulet greu.`,
+      `La escalera acaba en la cima de una pirámide escalonada, en medio de la selva. Delante de ti se abre la entrada de un corredor negro como la noche. El viento sale de él con un silbido grave.`),
+    x(`Sobre la porta hi ha gravat: "Ací resta tot el que ens queda dels nombres. Qui entre, que pense."`,
+      `Sobre la puerta hay grabado: "Aquí queda todo lo que nos resta de los números. Quien entre, que piense."`),
+    x(`Dins, alguna cosa fa tic... tac... tic... tac...`, `Dentro, algo hace tic... tac... tic... tac...`)
+  ],
+  choices: [
+    { t: x(`Encendre la llanterna`, `Encender la linterna`), if: s => s.obj === 'llanterna', go: 'c3_llum' },
+    { t: x(`Deixar que Tamu et guie`, `Dejar que Tamu te guíe`), if: s => !!s.tamu, go: 'c3_porta' },
+    { t: x(`Entrar a les palpentes, tocant la paret`, `Entrar a tientas, tocando la pared`), go: 'c3_fosc' }
+  ] },
+
+c3_llum: { era: 'temple',
+  text: [
+    x(`El feix de la llanterna rellisca per les parets i mostra pintures d'un poble que comptava amb punts i barres: gent sembrant, gent jugant amb pedretes, gent fent cua per a comprar fruita.`,
+      `El haz de la linterna resbala por las paredes y muestra pinturas de un pueblo que contaba con puntos y barras: gente sembrando, gente jugando con piedrecitas, gente haciendo cola para comprar fruta.`),
+    x(`Al darrer mural, una persona amb tres fragments a les mans. A sota, una frase: "Els nombres es perden quan ningú no els usa."`,
+      `En el último mural, una persona con tres fragmentos en las manos. Debajo, una frase: "Los números se pierden cuando nadie los usa."`),
+    x(`La llum et deixa vore els forats del terra a temps. Arribes a una porta immensa sense cap ensurt.`,
+      `La luz te deja ver los agujeros del suelo a tiempo. Llegas a una puerta inmensa sin ningún susto.`),
+    x(`>—Això sí que és neteja de llum —diu Zum, mirant-ho tot amb admiració.`,
+      `>—Esto sí que es limpieza de luz —dice Zum, mirándolo todo con admiración.`)
+  ],
+  choices: [
+    { t: x(`Anar fins a la gran porta`, `Ir hasta la gran puerta`), go: 'c3_porta' }
+  ] },
+
+c3_fosc: { era: 'temple',
+  text: [
+    x(`La foscor és tan espessa que sembla que es puga tocar. Zum encén un llumet dèbil, que no arriba ni als teus peus. El terra té forats, i només hi ha un camí segur.`,
+      `La oscuridad es tan espesa que parece que se pueda tocar. Zum enciende una lucecita débil, que no llega ni a tus pies. El suelo tiene agujeros, y solo hay un camino seguro.`),
+    x(`A l'entrada, tocant la paret amb els dits, llegeixes una inscripció gravada: "Tres passadissos de 8 passos, i després l'escala."`,
+      `En la entrada, tocando la pared con los dedos, lees una inscripción grabada: "Tres pasillos de 8 pasos, y después la escalera."`),
+    x(`?Quants passos has de comptar en total?`, `?¿Cuántos pasos tienes que contar en total?`),
+    x(`!Tres vegades huit.`, `!Tres veces ocho.`),
+    x(`Al fons se sent un "clac", i de seguida un altre. Millor no equivocar-se.`,
+      `Al fondo se oye un "clac", y enseguida otro. Mejor no equivocarse.`)
+  ],
+  choices: [
+    { t: x(`Comptar 32 passos`, `Contar 32 pasos`), go: 'fin_fosc' },
+    { t: x(`Comptar 11 passos`, `Contar 11 pasos`), go: 'fin_fosc' },
+    { t: x(`Comptar 24 passos`, `Contar 24 pasos`), go: 'c3_porta' }
+  ] },
+
+c3_porta: { era: 'temple',
+  text: s => [
+    x(`Arribes a una porta immensa amb dos cercles de pedra: un amb un sol dibuixat, l'altre amb una lluna. Darrere teu, el camí per on has vingut es tanca amb un crit de pedra. Ja no hi ha tornada.`,
+      `Llegas a una puerta inmensa con dos círculos de piedra: uno con un sol dibujado, el otro con una luna. Detrás de ti, el camino por donde has venido se cierra con un grito de piedra. Ya no hay vuelta atrás.`),
+    s.tamu ? x(`Tamu s'agafa ben fort a la teua espatlla.`, `Tamu se agarra fuerte a tu hombro.`) : null,
+    x(`Sobre els cercles, dues línies de signes: "Sol + Sol = 10" i "Sol + Lluna = 7".`,
+      `Sobre los círculos, dos líneas de signos: "Sol + Sol = 10" y "Sol + Luna = 7".`),
+    x(`?Quant val la Lluna?`, `?¿Cuánto vale la Luna?`),
+    x(`!Primer descobreix quant val un Sol. Després, mira la segona línia.`,
+      `!Primero descubre cuánto vale un Sol. Después, mira la segunda línea.`),
+    x(`>—Jo diria... un gat —diu Zum—. Els gats són molt de lluna.`,
+      `>—Yo diría... un gato —dice Zum—. Los gatos son muy de luna.`)
+  ].filter(Boolean),
+  choices: [
+    { t: x(`La Lluna val 5`, `La Luna vale 5`), go: 'fin_segell' },
+    { t: x(`La Lluna val 2`, `La Luna vale 2`), go: 'c3_cambra' },
+    { t: x(`La Lluna val 3`, `La Luna vale 3`), go: 'fin_segell' }
+  ] },
+
+c3_cambra: { era: 'temple',
+  text: [
+    x(`La porta s'obri. Una cambra enorme, amb el sostre ple de xicotetes finestres per on entra la llum de la lluna. Al mig hi ha una tauleta de pedra amb tres forats. Els dos fragments que portes lluen dins la motxilla, com si sabessen que han arribat a casa.`,
+      `La puerta se abre. Una cámara enorme, con el techo lleno de ventanitas por donde entra la luz de la luna. En el centro hay una tablilla de piedra con tres huecos. Los dos fragmentos que llevas brillan dentro de la mochila, como si supieran que han llegado a casa.`),
+    x(`Al voltant hi ha un munt d'or: màscares, collarets, plats lluents. Tot brilla. I damunt d'un pedestal, el tercer fragment.`,
+      `Alrededor hay un montón de oro: máscaras, collares, platos relucientes. Todo brilla. Y sobre un pedestal, el tercer fragmento.`),
+    x(`La veu de la porta, més suau: "Només pots emportar-te una cosa: l'or o els nombres."`,
+      `La voz de la puerta, más suave: "Solo puedes llevarte una cosa: el oro o los números."`),
+    x(`>—Jo ja m'he aspirat un collaret —diu Zum—. Era sense voler. Bé, un poc volent.`,
+      `>—Yo ya me he aspirado un collar —dice Zum—. Sin querer. Bueno, un poco queriendo.`)
+  ],
+  choices: [
+    { t: x(`Posar el tercer fragment a la tauleta`, `Poner el tercer fragmento en la tablilla`), go: 'c3_tauleta', set: s => { s.f3 = 1; } },
+    { t: x(`Omplir la motxilla d'or`, `Llenar la mochila de oro`), go: 'fin_or' }
+  ] },
+
+c3_tauleta: { era: 'temple',
+  text: [
+    x(`Poses els tres fragments a la tauleta i encaixen amb un clic. Tres línies de signes s'encenen, una darrere l'altra.`,
+      `Pones los tres fragmentos en la tablilla y encajan con un clic. Tres líneas de signos se encienden, una detrás de otra.`),
+    x(`?Primera línia: ▬ ▬ ●`, `?Primera línea: ▬ ▬ ●`),
+    x(`?Segona línia: ▬ ● ● ●`, `?Segunda línea: ▬ ● ● ●`),
+    x(`?Tercera línia: ▬ ▬ ▬ ● ●`, `?Tercera línea: ▬ ▬ ▬ ● ●`),
+    x(`La tauleta demana, amb veu de campana: "{nom}, quant sumen les tres línies?"`,
+      `La tablilla pregunta, con voz de campana: "{nom}, ¿cuánto suman las tres líneas?"`),
+    x(`!Recorda que ● val 1 i ▬ val 5. Primer traduïx cada línia a un nombre.`,
+      `!Recuerda que ● vale 1 y ▬ vale 5. Primero traduce cada línea a un número.`)
+  ],
+  choices: [
+    { t: x(`Dir 35`, `Decir 35`), go: 'fin_tauleta' },
+    { t: x(`Dir 36`, `Decir 36`), go: 'c3_final' },
+    { t: x(`Dir 38`, `Decir 38`), go: 'fin_tauleta' }
+  ] },
+
+c3_final: { era: 'temple',
+  text: s => [
+    x(`La tauleta s'il·lumina. Dins de la pedra apareixen, un darrere l'altre, tots els nombres: de l'u fins als milers. Fora, la selva sencera respira i Calmara es desperta.`,
+      `La tablilla se ilumina. Dentro de la piedra aparecen, uno tras otro, todos los números: del uno hasta los miles. Fuera, la selva entera respira y Calmara se despierta.`),
+    x(`Del sostre baixa una veu amable: "Gràcies, {nom}. Heu tornat els nombres a qui els necessitava. L'or no ens feia falta; ens feien falta ells."`,
+      `Del techo baja una voz amable: "Gracias, {nom}. Habéis devuelto los números a quien los necesitaba. No nos hacía falta el oro; nos hacían falta ellos."`),
+    x(`A la vora de la tauleta hi ha una xicoteta gerra buida: l'ofrena. Qui deixa una cosa seua a Calmara, esdevé part de la ciutat.`,
+      `Junto a la tablilla hay una pequeña jarra vacía: la ofrenda. Quien deja algo suyo en Calmara, pasa a formar parte de la ciudad.`),
+    s.obj && ON[s.obj]
+      ? x(`Podries deixar-hi ${ON[s.obj].ca}.`, `Podrías dejar ahí ${ON[s.obj].es}.`)
+      : x(`No tens cap objecte, però podries deixar-hi una fruita de la selva o una pedreta bonica.`,
+          `No tienes ningún objeto, pero podrías dejar una fruta de la selva o una piedrecita bonita.`),
+    x(`>—Jo hi deixaria un mitjó —diu Zum—. Però no en tinc cap.`,
+      `>—Yo dejaría un calcetín —dice Zum—. Pero no tengo ninguno.`)
+  ],
+  choices: [
+    { t: x(`Deixar una ofrena a Calmara i partir`, `Dejar una ofrenda a Calmara y partir`),
+      set: s => { s.ofrena = 1; }, go: s => (s.tamu && s.braca && s.ofrena) ? 'fi_heroi' : 'fi_bo' },
+    { t: x(`Agrair-ho en veu alta i partir`, `Darlo a gracias en voz alta y partir`), go: 'fi_bo' }
+  ] },
+
+/* ---------- FINALS ---------- */
+fin_tele: { ending: 'fin_tele', title: x(`Un paquet sense obrir`, `Un paquete sin abrir`),
+  text: [
+    x(`Tanques la caixa i poses els dibuixos. Al cap d'una estona tens la sensació que alguna cosa et mira des del paquet.`,
+      `Cierras la caja y pones los dibujos. Al cabo de un rato tienes la sensación de que algo te mira desde el paquete.`),
+    x(`Quan t'hi tornes a fixar, el paper s'ha plegat solet, la caixa ha desaparegut i Zum també. Mai no sabràs què hi havia dins.`,
+      `Cuando vuelves a fijarte, el papel se ha plegado solo, la caja ha desaparecido y Zum también. Nunca sabrás qué había dentro.`)
+  ] },
+
+fin_riu: { ending: 'fin_riu', title: x(`El riu s'enduu l'expedició`, `El río se lleva la expedición`),
+  text: [
+    x(`Pises una taula que no tocava. ¡CRAC! Tot cedeix i et trobes dins del riu. L'aigua t'arrossega fins a una platja de sorra, molt lluny del pont. Zum, surant com un suro, grinyola: "Bateria al tres per cent".`,
+      `Pisas una tabla que no tocaba. ¡CRAC! Todo cede y te encuentras dentro del río. El agua te arrastra hasta una playa de arena, muy lejos del puente. Zum, flotando como un corcho, chirría: "Batería al tres por ciento".`),
+    x(`L'expedició s'ha acabat. Els nombres de Calmara continuaran perduts.`,
+      `La expedición ha terminado. Los números de Calmara seguirán perdidos.`)
+  ] },
+
+fin_porta: { ending: 'fin_porta', title: x(`La porta que no s'obri`, `La puerta que no se abre`),
+  text: [
+    x(`El panell fa un "bzzzt" greu i els signes s'apaguen. La porta de la torre queda tancada, i tu fora. Tornes pel riu amb Zum a coll, sense saber quin nombre era el bo.`,
+      `El panel hace un "bzzzt" grave y los signos se apagan. La puerta de la torre queda cerrada, y tú fuera. Vuelves por el río con Zum en brazos, sin saber cuál era el número bueno.`),
+    x(`La torre guardarà el seu secret un segle més.`, `La torre guardará su secreto un siglo más.`)
+  ] },
+
+fin_trampa: { ending: 'fin_trampa', title: x(`El terra que s'enfonsa`, `El suelo que se hunde`),
+  text: [
+    x(`Escrius el nombre que no tocava. El terra s'enfonsa i lliscas per un tobogan de pedra, tan llarg que et marejes, fins a eixir per un forat a l'exterior del laberint.`,
+      `Escribes el número que no tocaba. El suelo se hunde y te deslizas por un tobogán de piedra, tan largo que te mareas, hasta salir por un agujero al exterior del laberinto.`),
+    x(`Darrere teu, la porta es tanca amb un colp sec. El laberint no tornarà a obrir-se. Els nombres de Calmara continuaran perduts.`,
+      `Detrás de ti, la puerta se cierra con un golpe seco. El laberinto no volverá a abrirse. Los números de Calmara seguirán perdidos.`)
+  ] },
+
+fin_fosc: { ending: 'fin_fosc', title: x(`Una foscor massa fosca`, `Una oscuridad demasiado oscura`),
+  text: [
+    x(`Comptes malament i el peu busca un terra que no hi és. Lliscas per una rampa llarga i fosca fins a eixir de colp a l'aire lliure, a l'escala exterior del temple. Darrere teu, el corredor es tanca amb un crit de pedra.`,
+      `Cuentas mal y el pie busca un suelo que no está. Te deslizas por una rampa larga y oscura hasta salir de golpe al aire libre, en la escalera exterior del templo. Detrás de ti, el corredor se cierra con un grito de piedra.`),
+    x(`>—Has perdut el compte, i jo, la paciència —diu Zum, esbufegant. Mai no sabràs què hi havia al fons.`,
+      `>—Has perdido la cuenta, y yo, la paciencia —dice Zum, resoplando. Nunca sabrás qué había al fondo.`)
+  ] },
+
+fin_segell: { ending: 'fin_segell', title: x(`El temple es tanca`, `El templo se cierra`),
+  text: [
+    x(`Els cercles de pedra fan un "crac" i s'aturen. Tot el temple tremola, les finestres es tanquen una a una i una veu diu, baixeta: "Encara no".`,
+      `Los círculos de piedra hacen un "crac" y se paran. Todo el templo tiembla, las ventanas se cierran una a una y una voz dice, bajito: "Todavía no".`),
+    x(`Un passadís ocult t'escup a l'exterior, damunt l'herba. El temple queda segellat, i Calmara dorm un segle més.`,
+      `Un pasillo oculto te escupe al exterior, sobre la hierba. El templo queda sellado, y Calmara duerme un siglo más.`)
+  ] },
+
+fin_or: { ending: 'fin_or', title: x(`Massa or`, `Demasiado oro`),
+  text: [
+    x(`Omples la motxilla fins dalt. Pesa tant que cada pas fa tremolar el temple. Les finestres es tanquen i la ciutat, amb un "plof" silenciós, desapareix.`,
+      `Llenas la mochila hasta arriba. Pesa tanto que cada paso hace temblar el templo. Las ventanas se cierran y la ciudad, con un "plof" silencioso, desaparece.`),
+    x(`Quan ix el sol, ets enmig de la selva amb la motxilla plena de... pedres. L'or era només pintura, i els nombres de Calmara ja no tornaran.`,
+      `Cuando sale el sol, estás en medio de la selva con la mochila llena de... piedras. El oro era solo pintura, y los números de Calmara ya no volverán.`),
+    x(`>—Jo t'ho vaig dir —diu Zum—. Bé, no t'ho vaig dir, però ho vaig pensar molt fort.`,
+      `>—Yo te lo dije —dice Zum—. Bueno, no te lo dije, pero lo pensé muy fuerte.`)
+  ] },
+
+fin_tauleta: { ending: 'fin_tauleta', title: x(`La tauleta calla`, `La tablilla calla`),
+  text: [
+    x(`La tauleta fa un so apagat. Un a un, tots els nombres s'esborren com si els passaren un drap. Les tres línies s'apaguen i la cambra torna a ser fosca i muda.`,
+      `La tablilla hace un sonido apagado. Uno a uno, todos los números se borran como si les pasaran un trapo. Las tres líneas se apagan y la cámara vuelve a ser oscura y muda.`),
+    x(`>—Perdó, em sembla que m'he aspirat el resultat —diu Zum. Calmara continua perduda.`,
+      `>—Perdón, creo que me he aspirado el resultado —dice Zum. Calmara sigue perdida.`)
+  ] },
+
+fi_bo: { ending: 'bo', title: x(`Els nombres han tornat`, `Los números han vuelto`),
+  text: s => {
+    const t = [
+      x(`La veu de Calmara riu com una campana, i el temple es plega com un llibre. ¡PLOF! Tornes a ser al menjador de casa, amb el paquet obert i una fruita de selva damunt de la taula.`,
+        `La voz de Calmara ríe como una campana, y el templo se pliega como un libro. ¡PLOF! Vuelves a estar en el comedor de casa, con el paquete abierto y una fruta de selva encima de la mesa.`),
+      x(`Zum et fa l'ullet amb els dos ulls a la vegada: "Bon treball, {nom}."`, `Zum te guiña el ojo con los dos ojos a la vez: "Buen trabajo, {nom}."`)
+    ];
+    if (s.tamu) t.push(x(`Dins la motxilla trobes una fruita xicoteta que no hi havies posat: Tamu no s'oblida dels amics.`,
+                         `Dentro de la mochila encuentras una fruta pequeña que no habías puesto: Tamu no se olvida de los amigos.`));
+    if (s.braca) t.push(x(`Del paquet cau un fil trenat amb una conxeta xicoteta: Oxo ha volgut agrair-t'ho.`,
+                          `Del paquete cae un hilo trenzado con una conchita: Oxo ha querido agradecértelo.`));
+    t.push(x(`>—Sembla que Calmara encara guarda un secret per a qui ajuda tothom pel camí i no se'n queda res —diu Zum, mentre aspira el mapa—. Només és una idea.`,
+             `>—Parece que Calmara aún guarda un secreto para quien ayuda a todos por el camino y no se queda nada —dice Zum, mientras aspira el mapa—. Solo es una idea.`));
+    t.push(x(`Fi. Però potser hi ha una manera de fer-ho encara millor.`, `Fin. Pero quizá hay una manera de hacerlo todavía mejor.`));
+    return t;
+  } },
+
+fi_heroi: { ending: 'heroi', title: x(`El gran dia de Calmara`, `El gran día de Calmara`),
+  text: [
+    x(`La veu de Calmara riu com una campana i el temple s'obri de dalt a baix. Ixen per les finestres Oxo, amb el braçalet posat i la canoa al cap; Tamu, penjat d'una lliana; el jaguar guardià, que fa com que no vol; i una multitud que feia segles que no eixia a passejar.`,
+      `La voz de Calmara ríe como una campana y el templo se abre de arriba abajo. Salen por las ventanas Oxo, con la pulsera puesta y la canoa en la cabeza; Tamu, colgado de una liana; el jaguar guardián, que hace como que no quiere; y una multitud que hacía siglos que no salía a pasear.`),
+    x(`Tots canten els nombres: u, dos, tres... mil. Una persona gran, amb una corona de fulles, et fa lloc a la primera fila.`,
+      `Todos cantan los números: uno, dos, tres... mil. Una persona mayor, con una corona de hojas, te hace sitio en la primera fila.`),
+    x(`>—Per haver ajudat tothom pel camí i no haver-te emportat res —diu—, Calmara et nomena persona amiga de la ciutat per sempre.`,
+      `>—Por haber ayudado a todos por el camino y no haberte llevado nada —dice—, Calmara te nombra persona amiga de la ciudad para siempre.`),
+    x(`Zum pega un bot tan alt que s'aspira el sostre. Torna a baixar. El sostre torna a pujar.`,
+      `Zum pega un salto tan alto que se aspira el techo. Vuelve a bajar. El techo vuelve a subir.`),
+    x(`¡PLOF! Estàs al menjador de casa, amb el paquet obert i, damunt la taula, un collaret de fusta amb el teu nom tallat: {nom}.`,
+      `¡PLOF! Estás en el comedor de casa, con el paquete abierto y, encima de la mesa, un collar de madera con tu nombre tallado: {nom}.`),
+    x(`Fi... o potser el començament d'una altra expedició.`, `Fin... o quizá el comienzo de otra expedición.`)
+  ] }
+
+};
+
+/* ============ MOTOR ============ */
+function initState() {
+  return { nom: '', obj: null, pagat: null, f1: 0, f2: 0, f3: 0,
+           tamu: 0, braca: 0, ofrena: 0, retornat: 0,
+           via1: '', via2: '' };
+}
+const st = { scene: 'intro', s: initState(), hist: [], found: {}, lang: 'ca', era: 'casa' };
+let locked = false;
+let restartArmed = false;
+let restartTimer = null;
+
+function T(v) { return (v && typeof v === 'object') ? v[st.lang] : v; }
+function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function hn(text) {
+  let t = esc(text);
+  t = t.replace(/\{([^{}|]+)\|([^{}|]+)\}/g, function (m, a, b) { return st.s.gen === 'f' ? b : a; });
+  t = t.replace(/\{nom\}/g, '<b>' + esc(String(st.s.nom || '').toUpperCase()) + '</b>');
+  t = t.replace(/\b(Zum|Tamu|Oxo)\b/g, function (m) { return '<b>' + m.toUpperCase() + '</b>'; });
+  return t;
+}
+
+function foundCount() {
+  let n = 0;
+  ALL_ENDINGS.forEach(function (k) { if (st.found[k]) n++; });
+  if (st.found.bo) n++;
+  if (st.found.heroi) n++;
+  return n;
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ scene: st.scene, s: st.s, hist: st.hist.slice(-40), found: st.found, lang: st.lang, era: st.era }));
+  } catch (e) { /* sense emmagatzematge */ }
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.lang === 'ca' || d.lang === 'es') st.lang = d.lang;
+    if (d.found && typeof d.found === 'object') st.found = d.found;
+    if (d.scene && S[d.scene]) {
+      st.scene = d.scene;
+      st.s = Object.assign(initState(), d.s || {});
+      st.hist = Array.isArray(d.hist) ? d.hist : [];
+      st.era = d.era || (S[d.scene].era || 'casa');
+    }
+  } catch (e) { /* res */ }
+}
+
+function plateSVG(era) {
+  const a = 'currentColor';
+  if (era === 'selva') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><rect x="14" y="26" width="6" height="36" opacity=".6"/><circle cx="17" cy="20" r="14" opacity=".85"/><rect x="52" y="16" width="7" height="46" opacity=".6"/><circle cx="55" cy="14" r="16" opacity=".9"/><rect x="88" y="30" width="6" height="32" opacity=".6"/><circle cx="91" cy="24" r="12" opacity=".8"/></g><path d="M26 56 q14-14 28 0 t28 0" fill="none" stroke="' + a + '" stroke-width="3" stroke-linecap="round"/><rect x="2" y="62" width="106" height="4" fill="' + a + '"/></svg>';
+  }
+  if (era === 'laberint') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="none" stroke="' + a + '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8 H102 V60 H8 Z"/><path d="M8 24 H78 M30 40 H102 M8 52 H60 M60 24 V40 M78 8 V24 M30 40 V52"/></g></svg>';
+  }
+  if (era === 'temple') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><rect x="8" y="54" width="94" height="8"/><rect x="20" y="44" width="70" height="10" opacity=".85"/><rect x="32" y="34" width="46" height="10" opacity=".7"/><rect x="42" y="24" width="26" height="10" opacity=".85"/><rect x="50" y="10" width="10" height="14"/></g></svg>';
+  }
+  return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M10 34 L55 6 L100 34 Z" opacity=".85"/><rect x="20" y="34" width="70" height="28" opacity=".5"/><rect x="48" y="44" width="14" height="18" opacity=".9"/><rect x="26" y="40" width="12" height="12" opacity=".9"/><rect x="72" y="40" width="12" height="12" opacity=".9"/></g></svg>';
+}
+
+function slotSVG(kind, on) {
+  const a = 'currentColor';
+  const fill = on ? a : 'none';
+  const props = 'stroke="' + a + '" stroke-width="3"' + (on ? '' : ' stroke-dasharray="4 3" opacity=".5"');
+  let shape;
+  if (kind === 1) shape = '<circle cx="16" cy="16" r="10" fill="' + fill + '" ' + props + '/>';
+  else if (kind === 2) shape = '<circle cx="16" cy="16" r="10" fill="none" ' + props + '/><circle cx="16" cy="16" r="4" fill="' + fill + '"/>';
+  else shape = '<rect x="12" y="3" width="8" height="26" rx="3" fill="' + fill + '" ' + props + '/>';
+  return '<svg viewBox="0 0 32 32" aria-hidden="true">' + shape + '</svg>';
+}
+
+function hudHTML() {
+  const s = st.s;
+  const chips = [];
+  if (s.obj) chips.push('<span class="chip">' + esc(T(OCHIP[s.obj])) + '</span>');
+  if (s.tamu) chips.push('<span class="chip">' + esc(T(U.buttonChip)) + '</span>');
+  if (!chips.length) chips.push('<span class="chip empty">' + esc(T(U.empty)) + '</span>');
+  return '<div class="hud">' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pieces)) + '</span>' + slotSVG(1, s.f1) + slotSVG(2, s.f2) + slotSVG(3, s.f3) + '</div>' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pack)) + '</span><span class="chips">' + chips.join('') + '</span></div>' +
+    '</div>';
+}
+
+function textHTML(arr) {
+  return arr.map(function (item) {
+    let line = T(item);
+    let cls = '';
+    const c = line.charAt(0);
+    if (c === '>') { cls = 'dlg'; line = line.slice(1); }
+    else if (c === '?') { cls = 'riddle'; line = line.slice(1); }
+    else if (c === '!') { cls = 'hint'; line = line.slice(1); }
+    return '<p' + (cls ? ' class="' + cls + '"' : '') + '>' + hn(line) + '</p>';
+  }).join('');
+}
+
+function renderIntro() {
+  const app = document.getElementById('app');
+  const l = st.lang;
+  const body = {
+    ca: {
+      hola: `Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs. Pel camí hi haurà nombres, signes i uns quants reptes: pensa abans de respondre!`,
+      li: [
+        `<b>Motxilla:</b> només hi cap UN objecte, el que triaràs al principi. Cada objecte serveix en un lloc distint, i pots perdre'l o canviar-lo per una altra cosa.`,
+        `<b>Fragments de la tauleta:</b> n'hi ha tres i cal trobar-los tots. Els veuràs a dalt de cada pantalla.`,
+        `<b>Reptes:</b> hi haurà portes, ponts i panells que demanen pensar amb nombres. Les pistes, escrites en cursiva, t'ajudaran.`,
+        `<b>Finals:</b> hi ha ${TOTAL_FINALS} finals diferents. A veure quants descobreixes!`,
+        `Sempre pots tornar a l'última decisió amb el botó ↶.`
+      ]
+    },
+    es: {
+      hola: `¡Hola! Aquí decides tú qué pasa. Al final de cada escena elegirás qué hacer, y la historia cambiará según lo que elijas. Por el camino habrá números, signos y unos cuantos retos: ¡piensa antes de responder!`,
+      li: [
+        `<b>Mochila:</b> solo cabe UN objeto, el que elegirás al principio. Cada objeto sirve en un lugar distinto, y puedes perderlo o cambiarlo por otra cosa.`,
+        `<b>Fragmentos de la tablilla:</b> hay tres y hay que encontrarlos todos. Los verás arriba en cada pantalla.`,
+        `<b>Retos:</b> habrá puertas, puentes y paneles que piden pensar con números. Las pistas, escritas en cursiva, te ayudarán.`,
+        `<b>Finales:</b> hay ${TOTAL_FINALS} finales distintos. ¡A ver cuántos descubres!`,
+        `Siempre puedes volver a la última decisión con el botón ↶.`
+      ]
+    }
+  }[l];
+  app.innerHTML =
+    '<section class="card intro">' +
+    '<h1>' + esc(T(TITLE)) + '</h1>' +
+    '<p class="sub">' + esc(T(DESC)) + '</p>' +
+    '<p style="font-size:1.15rem">' + body.hola + '</p>' +
+    '<ul>' + body.li.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>' +
+    '<label for="nom">' + esc(T(U.nameQ)) + '</label>' +
+    '<input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="' + esc(T(U.namePh)) + '">' +
+    '<p class="err" id="nom-err" hidden>' + esc(T(U.nameErr)) + '</p>' +
+    '<div class="choices"><button class="btn main" id="go-start" type="button">' + esc(T(U.start)) + '</button></div>' +
+    '<p class="counter">' + esc(T(U.finalsCount(foundCount()))) + '</p>' +
+    '</section>';
+  const input = document.getElementById('nom');
+  const err = document.getElementById('nom-err');
+  function go() {
+    const v = input.value.replace(/[<>&"'`{}|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+    if (!v) { err.hidden = false; input.focus(); return; }
+    st.s = initState();
+    st.s.nom = v;
+    st.hist = [];
+    enter('pro');
+  }
+  document.getElementById('go-start').addEventListener('click', go);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  input.addEventListener('input', function () { err.hidden = true; });
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const sc = S[st.scene];
+  document.body.dataset.era = st.era;
+  document.documentElement.lang = st.lang === 'es' ? 'es' : 'ca';
+  document.title = T(TITLE_FULL);
+  document.getElementById('brand').textContent = T(TITLE);
+  document.getElementById('lang-ca').setAttribute('aria-pressed', String(st.lang === 'ca'));
+  document.getElementById('lang-es').setAttribute('aria-pressed', String(st.lang === 'es'));
+  document.getElementById('restart').setAttribute('aria-label', T(U.restartLbl));
+  if (st.scene === 'intro') { renderIntro(); window.scrollTo(0, 0); return; }
+
+  const tx = typeof sc.text === 'function' ? sc.text(st.s) : sc.text;
+  let html = '<section class="card">';
+  if (ERA[sc.era] && !sc.ending) {
+    html += '<div class="plate">' + plateSVG(sc.era) + '<div class="pn">' + esc(T(ERA[sc.era].n)) + '</div></div>';
+  }
+  if (!sc.ending) html += hudHTML();
+  if (sc.ending) html += '<h2>' + esc(T(sc.title)) + '</h2>';
+  html += '<div class="txt">' + textHTML(tx) + '</div>';
+
+  if (sc.ending) {
+    html += '<p class="endnote">' + esc(T(U.newEnd)) + ' · ' + esc(T(U.finalsCount(foundCount()))) + '</p>';
+    html += '<div class="choices">';
+    if (sc.ending === 'bo' || sc.ending === 'heroi') {
+      html += '<button class="btn main" data-act="again" type="button">' + esc(T(U.playAgain)) + '</button>';
+    } else {
+      html += '<button class="btn main" data-act="undo" type="button">' + esc(T(U.backLast)) + '</button>';
+      html += '<button class="btn ghost" data-act="again" type="button">' + esc(T(U.again)) + '</button>';
+    }
+    html += '</div>';
+  } else {
+    const ch = sc.choices.filter(function (c) { return !c.if || c.if(st.s); });
+    html += '<div class="choices">';
+    ch.forEach(function (c, i) {
+      const label = typeof c.t === 'function' ? c.t(st.s) : c.t;
+      html += '<button class="btn" data-i="' + i + '" type="button">' + hn(T(label)) + '</button>';
+    });
+    html += '</div>';
+    if (st.hist.length) html += '<div class="undo"><button class="btn ghost" data-act="undo" type="button">' + esc(T(U.undo)) + '</button></div>';
+    app.innerHTML = html + '</section>';
+    app.querySelectorAll('button[data-i]').forEach(function (b) {
+      b.addEventListener('click', function () { choose(ch[Number(b.dataset.i)]); });
+    });
+    bindActs(app);
+    window.scrollTo(0, 0);
+    return;
+  }
+  app.innerHTML = html + '</section>';
+  bindActs(app);
+  window.scrollTo(0, 0);
+}
+
+function bindActs(app) {
+  app.querySelectorAll('button[data-act]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.act === 'undo') undo();
+      else resetGame();
+    });
+  });
+}
+
+function choose(c) {
+  if (locked) return;
+  st.hist.push({ scene: st.scene, s: clone(st.s), era: st.era });
+  if (st.hist.length > 80) st.hist.shift();
+  if (c.set) c.set(st.s);
+  const target = typeof c.go === 'function' ? c.go(st.s) : c.go;
+  enter(target);
+}
+
+function enter(id) {
+  const prevEra = st.era;
+  const sc = S[id];
+  st.scene = id;
+  if (sc.onEnter) sc.onEnter(st.s);
+  if (sc.era) st.era = sc.era;
+  if (sc.ending) st.found[sc.ending] = 1;
+  render();
+  save();
+  if (!sc.ending && sc.era && sc.era !== prevEra && ERA[sc.era] && ERA[sc.era].ch) plof(sc.era);
+}
+
+function undo() {
+  if (locked) return;
+  const h = st.hist.pop();
+  if (!h) { resetGame(); return; }
+  st.scene = h.scene;
+  st.s = Object.assign(initState(), h.s);
+  st.era = h.era || (S[h.scene].era || st.era);
+  render();
+  save();
+}
+
+function resetGame() {
+  st.s = initState();
+  st.hist = [];
+  st.scene = 'intro';
+  st.era = 'casa';
+  render();
+  save();
+}
+
+function plof(eraKey) {
+  const el = document.getElementById('plof');
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('plof-dial').textContent = T(ERA[eraKey].n);
+  locked = true;
+  el.hidden = false;
+  setTimeout(function () { el.hidden = true; locked = false; }, reduced ? 500 : 1400);
+}
+
+function setLang(l) {
+  st.lang = l;
+  render();
+  save();
+}
+
+document.getElementById('lang-ca').addEventListener('click', function () { setLang('ca'); });
+document.getElementById('lang-es').addEventListener('click', function () { setLang('es'); });
+document.getElementById('restart').addEventListener('click', function () {
+  const b = document.getElementById('restart');
+  if (!restartArmed) {
+    restartArmed = true;
+    b.textContent = T(U.restartAsk);
+    restartTimer = setTimeout(function () { restartArmed = false; b.textContent = '↻'; }, 2500);
+  } else {
+    clearTimeout(restartTimer);
+    restartArmed = false;
+    b.textContent = '↻';
+    resetGame();
+  }
+});
+
+load();
+render();
+</script>
+</body>
+</html>

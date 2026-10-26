@@ -67,6 +67,12 @@
 - La geometria és `tools/simuladors/src/mapa.geo.js`, generada (no s'edita a mà) per `python3 tools/simuladors/geo/mapa_espanya.py <ne_10m_admin_1_states_provinces.geojson>` a partir de Natural Earth (domini públic). `build.py` l'insereix amb `/*@INC:mapa.geo.js@*/` (qualsevol font pot incloure un fitxer de `src/` així).
 - La targeta i les 2 URLs del sitemap es mantenen a mà (ja hi són).
 
+# Aventures interactives bilingües amb URL pròpia (`numeros-perduts`)
+
+- Font: `tools/aventures/<slug>.src.html` (HTML autònom de l'aventura, amb selector VAL/CAS intern). Les pàgines `<slug>/index.html` i `es/<slug>/index.html` són **generades** amb `python3 tools/aventures/genera.py [slug]` (cal Playwright); no s'editen a mà. El generador afegeix canonical, hreflang ca/es/x-default, og, GoatCounter i la portada de l'aventura com a HTML estàtic; el selector d'idioma navega a l'altra URL i `?lang=es` redirigeix.
+- Una aventura nova: afegir-la al diccionari `AVENTURES` de `genera.py`, targeta a `index.html`, entrada (sense `url`) a `i18n/portada-es.json` + `python3 tools/genera_portada_es.py`, les dues URLs al `sitemap.xml` amb hreflang i `tools/novetats.py`.
+- Les aventures anteriors (`ultima-senyal`, `maquina-temps-*`) segueixen en una sola URL amb `?lang=es`.
+
 # Portada en castellà (`es/index.html`)
 
 - `es/index.html` és generat: **no s'edita a mà**. Es crea amb `python3 tools/genera_portada_es.py` a partir de `index.html` (estructura, filtres i codi) i `i18n/portada-es.json` (matèries `cats`, subtítols `subs` i, per recurs, `t`, `d`, `tag` i `nv`). `--check` només comprova si cal regenerar.

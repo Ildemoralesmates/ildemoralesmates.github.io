@@ -10,15 +10,18 @@ noms fixos de personatges a la regex de hn(): Zum, Tamu, Oxo. Narració i títol
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Els números perduts: Expedició a Calmara</title>
-<meta name="description" content="Aventura interactiva amb reptes de nombres: tria el camí, resol candaus de mates, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. Bilingüe valencià/castellà, 10 finals.">
+<meta name="description" content="Aventura interactiva amb reptes de nombres: tria el camí, resol candaus de mates, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. 10 finals.">
 <link rel="canonical" href="https://ildemoralesmates.github.io/numeros-perduts/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/numeros-perduts/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/numeros-perduts/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/numeros-perduts/">
 <meta name="author" content="Ilde">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ca_ES">
 <meta property="og:site_name" content="Recursos de matemàtiques">
 <meta property="og:title" content="Els números perduts: Expedició a Calmara">
-<meta property="og:description" content="Aventura interactiva amb reptes de nombres: tria el camí, resol candaus de mates, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. Bilingüe valencià/castellà, 10 finals.">
+<meta property="og:description" content="Aventura interactiva amb reptes de nombres: tria el camí, resol candaus de mates, ajuda Tamu i Oxo i recupera els tres fragments de la tauleta amb el robot Zum. 10 finals.">
 <meta property="og:url" content="https://ildemoralesmates.github.io/numeros-perduts/">
 <meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -118,7 +121,7 @@ h2{font-family:var(--font-title);font-weight:800;font-size:1.6rem;line-height:1.
     <button class="pill" id="restart" type="button" aria-label="Començar de nou">↻</button>
   </div>
 </header>
-<main id="app"></main>
+<main id="app"><section class="card intro"><h1>Els números perduts</h1><p class="sub">Expedició a Calmara</p><p style="font-size:1.15rem">Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs. Pel camí hi haurà nombres, signes i uns quants reptes: pensa abans de respondre!</p><ul><li><b>Motxilla:</b> només hi cap UN objecte, el que triaràs al principi. Cada objecte serveix en un lloc distint, i pots perdre'l o canviar-lo per una altra cosa.</li><li><b>Fragments de la tauleta:</b> n'hi ha tres i cal trobar-los tots. Els veuràs a dalt de cada pantalla.</li><li><b>Reptes:</b> hi haurà portes, ponts i panells que demanen pensar amb nombres. Les pistes, escrites en cursiva, t'ajudaran.</li><li><b>Finals:</b> hi ha 10 finals diferents. A veure quants descobreixes!</li><li>Sempre pots tornar a l'última decisió amb el botó ↶.</li></ul><label for="nom">Com et diuen?</label><input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="El teu nom"><p class="err" id="nom-err" hidden="">Escriu el teu nom per a començar.</p><div class="choices"><button class="btn main" id="go-start" type="button">Començar l'aventura</button></div><p class="counter">Finals descoberts: 0 de 10</p></section></main>
 <div id="plof" hidden role="status" aria-live="polite">
   <div class="big">¡PLOF!</div>
   <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="45" cy="45" r="30" fill="none" stroke="#fff" stroke-width="7"/><line x1="67" y1="67" x2="92" y2="92" stroke="#fff" stroke-width="9" stroke-linecap="round"/><circle cx="45" cy="45" r="4" fill="#fff"/></svg>
@@ -754,7 +757,6 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (!raw) return;
     const d = JSON.parse(raw);
-    if (d.lang === 'ca' || d.lang === 'es') st.lang = d.lang;
     if (d.found && typeof d.found === 'object') st.found = d.found;
     if (d.scene && S[d.scene]) {
       st.scene = d.scene;
@@ -979,9 +981,9 @@ function plof(eraKey) {
 }
 
 function setLang(l) {
-  st.lang = l;
-  render();
+  if (l === st.lang) return;
   save();
+  location.href = l === 'es' ? '/es/numeros-perduts/' : '/numeros-perduts/';
 }
 
 document.getElementById('lang-ca').addEventListener('click', function () { setLang('ca'); });
@@ -1000,8 +1002,8 @@ document.getElementById('restart').addEventListener('click', function () {
   }
 });
 
+if (new URLSearchParams(location.search).get('lang') === 'es') location.replace('/es/numeros-perduts/');
 load();
-{ const ql = new URLSearchParams(location.search).get('lang'); if (ql === 'es' || ql === 'ca') st.lang = ql; }
 render();
 </script>
 </body>
