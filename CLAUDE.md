@@ -79,3 +79,8 @@
 - Només hi apareixen els recursos que tenen `es/<recurs>/` o una entrada amb `url` al JSON (pàgines bilingües en una sola URL, com `ultima-senyal` i `maquina-temps-engranatges`: s'enllacen amb `?lang=es`, que fa que s'òbrin en castellà); Cultura i Contes no tenen pestanya fins que hi haja un recurs en castellà. Un recurs castellà nou **sense** entrada al JSON no apareix i l'script ho avisa.
 - Cada vegada que es canvie `index.html` (targetes, filtres, text) o s'afegisca/traduïsca un recurs: actualitzar `i18n/portada-es.json` si cal i executar l'script. També actualitza el sitemap (portada ca + es amb `hreflang`).
 - `nv` és la frase curta del bloc «Últimes pàgines» en castellà; si es canvia la descripció a `novetats.json`, convé revisar-la.
+
+# Jocs d'aula (pestanya `jocs`: `hexaciencia`, `bingo-resultats`)
+
+- Fonts a `tools/jocs/` (`hexaciencia.src.html`, `bingo.src.html`, HTML autònom amb diccionari `I18N` ca/es). Les pàgines `<slug>/index.html` i `es/<slug>/index.html` són **generades** amb `python3 tools/jocs/genera.py [slug]` (cal Playwright); no s'editen a mà. El generador afig canonical, hreflang, og, GoatCounter, enllaç ⌂ a la portada i la pantalla inicial com a HTML estàtic; l'idioma el fixa la URL i el selector VAL/CAS canvia el text sense perdre la partida (i actualitza la URL).
+- Un joc nou: afegir-lo al diccionari `JOCS` de `genera.py` (les fonts noves porten els marcadors `<!--@HOME@-->`, `/*@URL@*/` i `let lang = 'ca';`; la pantalla inicial va dins `<div id="setup" class="overlay">`), targeta a `index.html` (`cat: 'jocs'`), entrada a `i18n/portada-es.json` + `python3 tools/genera_portada_es.py`, les dues URLs al `sitemap.xml` amb hreflang i `tools/novetats.py`.

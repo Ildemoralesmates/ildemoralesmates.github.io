@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bingo de resultats</title>
+<style>
+:root{
+  --bg:#f4f1ea; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+  --accent:#4f46e5; --ok:#16a34a; --ko:#dc2626; --soft:#eef2ff; --hit:#fde68a; --hitink:#78350f;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#14161c; --card:#1d2029; --ink:#e8eaf0; --muted:#9aa1b2; --line:#323746; --accent:#7c7cff; --soft:#262a45; --hit:#6b5410; --hitink:#fff3c4}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:.7em 1.1em;background:var(--accent);color:#fff;font-weight:700;transition:transform .08s,filter .15s}
+button:hover{filter:brightness(1.08)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.5;cursor:default}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);font-weight:600}
+button.small{padding:.4em .75em;font-size:.85rem;border-radius:9px}
+button.ok{background:var(--ok)}
+.hl{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--line);border-radius:9px;padding:.4em .75em;color:inherit;background:transparent;font-size:.85rem;font-weight:600}
+sup{font-size:.6em;line-height:0}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .1em;font-size:.8em}
+.fr i{font-style:normal;border-bottom:.08em solid currentColor;padding:0 .2em}
+.fr b{font-weight:inherit;padding:0 .2em}
+
+/* ---------- pantalla de cant ---------- */
+#app{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(16rem,1fr);gap:16px;height:100vh;padding:16px}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 22px;display:flex;flex-direction:column;gap:14px;min-height:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.2em}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.counter{color:var(--muted);font-weight:700}
+.qbox{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.qexpr{font-size:clamp(2.2rem,7vw,6.5rem);font-weight:800;line-height:1.2;letter-spacing:.01em}
+.qexpr.txt{font-size:clamp(1.6rem,3.8vw,3.2rem);font-weight:700}
+.qsub{font-size:clamp(1rem,2vw,1.6rem);color:var(--muted);font-weight:700}
+.reveal{font-size:clamp(2.6rem,9vw,8rem);font-weight:900;color:var(--ok);line-height:1}
+.reveal small{display:block;font-size:.18em;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:.4em}
+.hide{visibility:hidden}
+.timer{position:relative;height:22px;border-radius:999px;background:var(--line);overflow:hidden}
+#tbar{position:absolute;inset:0 auto 0 0;width:100%;background:var(--ok);transition:width .15s linear,background .3s}
+#tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85em;color:#111}
+.ctl{display:grid;grid-template-columns:1fr;gap:10px}
+.big{font-size:1.35em;padding:.85em 1em;width:100%}
+.side{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:14px;overflow:auto;min-height:0}
+.side h3{margin:0;font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-width:2.6em;text-align:center;padding:.25em .5em;border-radius:9px;background:var(--soft);font-weight:800;font-variant-numeric:tabular-nums}
+.chip.last{background:var(--accent);color:#fff}
+.log{width:100%;border-collapse:collapse;font-size:.92rem}
+.log td{padding:.25em .3em;border-bottom:1px solid var(--line)}
+.log td:last-child{text-align:right;font-weight:800;white-space:nowrap}
+.checkrow{display:flex;gap:8px}
+.checkrow input{flex:1;min-width:0;font:inherit;padding:.45em .7em;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.cardgrid{display:grid;gap:5px}
+.cell{padding:.55em .2em;text-align:center;border-radius:8px;border:1.5px solid var(--line);font-weight:800;font-variant-numeric:tabular-nums}
+.cell.on{background:var(--hit);color:var(--hitink);border-color:var(--hit)}
+.verdict{font-weight:800;border-radius:10px;padding:.45em .7em;background:var(--soft)}
+.verdict.win{background:var(--ok);color:#fff}
+@media (max-width:820px){#app{grid-template-columns:1fr;height:auto;min-height:100vh}.qbox{padding:16px 0}}
+
+/* ---------- configuració ---------- */
+.overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;z-index:10;overflow:auto;padding:16px}
+.overlay.hidden{display:none}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 26px;width:min(720px,100%);display:flex;flex-direction:column;gap:12px}
+.sc h1{margin:0;font-size:1.8rem}
+.sc h3{margin:.6em 0 0;font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.sc p{margin:0;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{background:var(--card);color:var(--ink);border:2px solid var(--line);font-weight:700}
+.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+details{color:var(--muted)}
+details summary{cursor:pointer;font-weight:600}
+details p{margin-top:.5em}
+.warn{color:#b45309;font-weight:700}
+.codebox{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;letter-spacing:.04em;background:var(--soft);border-radius:14px;padding:.4em .6em;text-align:center;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ---------- impressió dels cartons ---------- */
+#print{display:none;position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding:14px}
+#print.show{display:block}
+#print .bar{position:sticky;top:0;z-index:2;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--bg);padding:6px 0 12px}
+#print .bar span{color:var(--muted);font-weight:600}
+#pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:14px}
+.pc{background:#fff;color:#000;border:1.4pt solid #000;border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.pc header{display:flex;justify-content:space-between;font-weight:800;font-size:.85rem}
+.pc header span{font-weight:600}
+.pc table{width:100%;border-collapse:collapse;table-layout:fixed}
+.pc td{border:1px solid #000;text-align:center;height:3.2rem;font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
+.pc footer{font-size:.7rem;color:#333;text-align:right}
+@media print{
+  @page{size:A4;margin:9mm}
+  html,body{background:#fff!important}
+  body>*:not(#print){display:none!important}
+  #print{display:block!important;position:static;padding:0;background:#fff;overflow:visible}
+  #print .bar,#print>p{display:none!important}
+  #pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+  .pc{border:1.4pt solid #000;border-radius:3mm;padding:3mm;break-inside:avoid;display:flex;flex-direction:column;gap:2mm}
+  .pc header{display:flex;justify-content:space-between;font-weight:800;font-size:10pt}
+  .pc header span{font-weight:600}
+  .pc table{width:100%;border-collapse:collapse;table-layout:fixed}
+  .pc footer{font-size:8pt;color:#333;text-align:right}
+  .pc td{border:1pt solid #000;text-align:center;height:14mm;font-size:20pt;font-weight:800;font-variant-numeric:tabular-nums}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="setup" class="overlay"></div>
+<div id="print"></div>
+<script>
+/* ---------- textos ---------- */
+const I18N = {
+ca: {
+  title:'Bingo de resultats', subtitle:'Es canta l\'operació, la classe la resol i marca el resultat al cartó.',
+  course:'Curs', c2:'2n ESO', c4:'4t ESO', cboth:'2n i 4t barrejats',
+  topics:'Temes',
+  tEnt:'Enters amb signe', tMen:'Càlcul mental', tPot:'Potències i arrels', tPerc:'Percentatges',
+  tFrac:'Fraccions d\'un nombre', tEcu:'Equacions', tGeo:'Geometria', tPri:'Prioritat d\'operacions',
+  card:'Nombres per cartó', pool:'Operacions del joc', timer:'Temps per operació', manual:'Manual',
+  ncards:'Cartons a imprimir', start:'Començar a cantar', resume:'Continuar el joc anterior',
+  printCards:'Imprimir cartons', cardsTitle:'Cartons', doPrint:'Imprimir', download:'Descarregar (HTML)', closeCards:'Tancar', cardsTip:'Si el navegador no deixa imprimir des d\'ací, descarrega el fitxer i obri\'l en una pestanya nova.', how:'Com es juga',
+  howText:'Primer es genera el joc: té un codi (p. ex. 4853-2-3F-12-40) que fixa les operacions i els cartons. Imprimeix els cartons i reparteix-los. Tu cantes una operació a la pissarra; cada alumne la fa i, si el resultat és al seu cartó, el marca. Qui completa una fila canta «Línia» i qui completa tot el cartó canta «Bingo». Per a comprovar-ho, escriu el número del cartó. Amb el codi pots recuperar el joc (i les operacions ja cantades) en qualsevol ordinador.',
+  minTopics:'Tria almenys un tema.', few:'Amb estos temes no hi ha prou resultats diferents: el joc té {n} operacions.',
+  tooFew:'Amb estos temes no es pot fer un joc: tria\'n més.',
+  ready:'Preparats?', readyHint:'Prem «Següent» per a cantar la primera operació.',
+  next:'Següent operació', reveal:'Mostrar resultat', result:'Resultat', called:'Resultats cantats', log:'Últimes operacions',
+  progress:'{n} de {m}', end:'S\'han cantat totes les operacions', check:'Revisar cartó', cardNo:'Número de cartó',
+  go:'Comprovar', none:'Encara res', line:'Línia!', bingo:'Bingo!', lines:'{n} fila(es) completa(es)',
+  prepTitle:'Joc preparat', codeLbl:'Codi del joc', codeHint:'Apunta este codi: amb ell pots recuperar el joc i tornar a imprimir els mateixos cartons des de qualsevol ordinador.',
+  copy:'Copiar codi', copied:'Copiat', recover:'Recuperar un joc', recoverHint:'Escriu el codi del joc (p. ex. 4853-2-3F-12-40) i, si cal, quantes operacions ja s\'havien cantat.',
+  recoverGo:'Recuperar', doneN:'Operacions ja cantades', badCode:'El codi no és vàlid. Té este format: 4853-2-3F-12-40.',
+  back:'Canviar la configuració', continueAt:'Continuar a l\'operació {n}', gameFoot:'Joc {c}',
+  newgame:'Nou joc', confirmNew:'Vols començar un joc nou? Es perdran les operacions cantades.',
+  gameId:'Joc {c}', cardTitle:'Cartó {n}', home:'Tornar a la portada', fullscreen:'Pantalla completa',
+  solveX:'Troba x',
+  rectA:'Àrea del rectangle de {a} × {b}', sqP:'Perímetre del quadrat de costat {a}',
+  triA:'Àrea del triangle de base {b} i altura {h}', cubV:'Volum del cub d\'aresta {a}',
+  hyp:'Hipotenusa del triangle de catets {a} i {b}',
+  inc:'Augmenta {n} un {p}%', dec:'Redueix {n} un {p}%'
+},
+es: {
+  title:'Bingo de resultados', subtitle:'Se canta la operación, la clase la resuelve y marca el resultado en el cartón.',
+  course:'Curso', c2:'2.º ESO', c4:'4.º ESO', cboth:'2.º y 4.º mezclados',
+  topics:'Temas',
+  tEnt:'Enteros con signo', tMen:'Cálculo mental', tPot:'Potencias y raíces', tPerc:'Porcentajes',
+  tFrac:'Fracciones de un número', tEcu:'Ecuaciones', tGeo:'Geometría', tPri:'Prioridad de operaciones',
+  card:'Números por cartón', pool:'Operaciones del juego', timer:'Tiempo por operación', manual:'Manual',
+  ncards:'Cartones a imprimir', start:'Empezar a cantar', resume:'Continuar el juego anterior',
+  printCards:'Imprimir cartones', cardsTitle:'Cartones', doPrint:'Imprimir', download:'Descargar (HTML)', closeCards:'Cerrar', cardsTip:'Si el navegador no deja imprimir desde aquí, descarga el archivo y ábrelo en una pestaña nueva.', how:'Cómo se juega',
+  howText:'Primero se genera el juego: tiene un código (p. ej. 4853-2-3F-12-40) que fija las operaciones y los cartones. Imprime los cartones y repártelos. Tú cantas una operación en la pizarra; cada alumno la hace y, si el resultado está en su cartón, lo marca. Quien completa una fila canta «Línea» y quien completa todo el cartón canta «Bingo». Para comprobarlo, escribe el número del cartón. Con el código puedes recuperar el juego (y las operaciones ya cantadas) en cualquier ordenador.',
+  minTopics:'Elige al menos un tema.', few:'Con estos temas no hay suficientes resultados distintos: el juego tiene {n} operaciones.',
+  tooFew:'Con estos temas no se puede hacer un juego: elige más.',
+  ready:'¿Listos?', readyHint:'Pulsa «Siguiente» para cantar la primera operación.',
+  next:'Siguiente operación', reveal:'Mostrar resultado', result:'Resultado', called:'Resultados cantados', log:'Últimas operaciones',
+  progress:'{n} de {m}', end:'Se han cantado todas las operaciones', check:'Revisar cartón', cardNo:'Número de cartón',
+  go:'Comprobar', none:'Todavía nada', line:'¡Línea!', bingo:'¡Bingo!', lines:'{n} fila(s) completa(s)',
+  prepTitle:'Juego preparado', codeLbl:'Código del juego', codeHint:'Apunta este código: con él puedes recuperar el juego y volver a imprimir los mismos cartones desde cualquier ordenador.',
+  copy:'Copiar código', copied:'Copiado', recover:'Recuperar un juego', recoverHint:'Escribe el código del juego (p. ej. 4853-2-3F-12-40) y, si hace falta, cuántas operaciones ya se habían cantado.',
+  recoverGo:'Recuperar', doneN:'Operaciones ya cantadas', badCode:'El código no es válido. Tiene este formato: 4853-2-3F-12-40.',
+  back:'Cambiar la configuración', continueAt:'Continuar en la operación {n}', gameFoot:'Juego {c}',
+  newgame:'Nuevo juego', confirmNew:'¿Quieres empezar un juego nuevo? Se perderán las operaciones cantadas.',
+  gameId:'Juego {c}', cardTitle:'Cartón {n}', home:'Volver a la portada', fullscreen:'Pantalla completa',
+  solveX:'Halla x',
+  rectA:'Área del rectángulo de {a} × {b}', sqP:'Perímetro del cuadrado de lado {a}',
+  triA:'Área del triángulo de base {b} y altura {h}', cubV:'Volumen del cubo de arista {a}',
+  hyp:'Hipotenusa del triángulo de catetos {a} y {b}',
+  inc:'Aumenta {n} un {p}%', dec:'Reduce {n} un {p}%'
+}};
+let lang = 'ca';
+const t = (k, v) => {
+  let s = (I18N[lang] && I18N[lang][k]) || k;
+  if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]);
+  return s;
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
+/* ---------- aleatori amb llavor ---------- */
+function rng(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let x = a; x = Math.imul(x ^ x >>> 15, x | 1); x ^= x + Math.imul(x ^ x >>> 7, x | 61); return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
+const ri = (r, a, b) => a + Math.floor(r() * (b - a + 1));
+const nz = (r, a, b) => { let x; do x = ri(r, a, b); while (!x); return x; };
+const shuffle = (arr, r) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fm = n => n < 0 ? '−' + (-n) : String(n);
+const p = n => n < 0 ? '(−' + (-n) + ')' : String(n);
+const term = n => n < 0 ? '− ' + (-n) : '+ ' + n;
+
+/* ---------- generadors d'operacions: {h|k+a, ans} ---------- */
+const GEN = {
+  ent(r, lv){
+    const m = lv === 4 ? 20 : 12, k = ri(r, 0, 3);
+    if (k === 0) { const a = ri(r, -m, m), b = ri(r, -m, m); return { h: p(a) + ' + ' + p(b), ans: a + b }; }
+    if (k === 1) { const a = ri(r, -m, m), b = ri(r, -m, m); return { h: p(a) + ' − ' + p(b), ans: a - b }; }
+    const mm = lv === 4 ? 12 : 9;
+    if (k === 2) { const a = nz(r, -mm, mm), b = nz(r, -mm, mm); return { h: p(a) + ' · ' + p(b), ans: a * b }; }
+    const b = nz(r, -mm, mm), q = ri(r, -mm, mm); return { h: p(b * q) + ' : ' + p(b), ans: q };
+  },
+  men(r, lv){
+    const k = ri(r, 0, 3);
+    if (k === 0) { const a = lv === 4 ? ri(r, 11, 25) : ri(r, 2, 12), b = lv === 4 ? ri(r, 3, 9) : ri(r, 2, 12); return { h: a + ' · ' + b, ans: a * b }; }
+    if (k === 1) { const b = ri(r, 2, 12), q = ri(r, 2, lv === 4 ? 25 : 12); return { h: (b * q) + ' : ' + b, ans: q }; }
+    if (k === 2) { const a = lv === 4 ? ri(r, 100, 450) : ri(r, 20, 99), b = lv === 4 ? ri(r, 100, 450) : ri(r, 20, 99); return { h: a + ' + ' + b, ans: a + b }; }
+    const a = lv === 4 ? ri(r, 300, 900) : ri(r, 50, 150), b = lv === 4 ? ri(r, 100, 299) : ri(r, 11, 49); return { h: a + ' − ' + b, ans: a - b };
+  },
+  pot(r, lv){
+    const k = ri(r, 0, lv === 4 ? 3 : 2);
+    if (k === 0) { const b = ri(r, 2, 5), e = b === 2 ? ri(r, 2, 7) : b === 3 ? ri(r, 2, 4) : ri(r, 2, 3); return { h: b + '<sup>' + e + '</sup>', ans: Math.pow(b, e) }; }
+    if (k === 1) { const n = ri(r, 2, 14); return { h: '√' + (n * n), ans: n }; }
+    if (k === 2) { const b = -ri(r, 2, 5), e = ri(r, 2, 3); return { h: '(−' + (-b) + ')<sup>' + e + '</sup>', ans: Math.pow(b, e) }; }
+    const n = ri(r, 2, 6), s = r() < 0.5 ? -1 : 1; return { h: '³√' + p(s * n * n * n), ans: s * n };
+  },
+  perc(r, lv){
+    const pc = [5, 10, 20, 25, 30, 40, 50, 60, 75][ri(r, 0, 8)], n = 20 * ri(r, 1, 25);
+    const k = lv === 4 ? ri(r, 0, 2) : 0;
+    if (k === 0) return { h: pc + '% de ' + n, ans: n * pc / 100 };
+    if (k === 1) return { k: 'inc', a: { n, p: pc }, ans: n * (100 + pc) / 100 };
+    return { k: 'dec', a: { n, p: pc }, ans: n * (100 - pc) / 100 };
+  },
+  frac(r){
+    const b = ri(r, 2, 9), a = ri(r, 1, b - 1), k = ri(r, 2, 12);
+    return { h: '<span class="fr"><i>' + a + '</i><b>' + b + '</b></span> de ' + (b * k), ans: a * k };
+  },
+  ecu(r, lv){
+    const k = ri(r, 0, lv === 4 ? 3 : 2);
+    if (k === 0) { const x = ri(r, -10, 20), a = nz(r, -15, 20); return { h: 'x ' + term(a) + ' = ' + fm(x + a), ans: x, sub: 'solveX' }; }
+    if (k === 1) { const a = ri(r, 2, 9), x = nz(r, -9, 12); return { h: a + 'x = ' + fm(a * x), ans: x, sub: 'solveX' }; }
+    if (k === 2) { const a = ri(r, 2, 9), x = nz(r, -9, 12), c = nz(r, -12, 12); return { h: a + 'x ' + term(-c) + ' = ' + fm(a * x - c), ans: x, sub: 'solveX' }; }
+    let a, c, b, d, x;
+    do { a = ri(r, 3, 9); c = ri(r, 1, a - 1); x = nz(r, -8, 12); b = nz(r, -10, 10); d = b + (a - c) * x; } while (!d);
+    return { h: a + 'x ' + term(b) + ' = ' + c + 'x ' + term(d), ans: x, sub: 'solveX' };
+  },
+  geo(r, lv){
+    const k = ri(r, 0, lv === 4 ? 4 : 3);
+    if (k === 0) { const a = ri(r, 2, 15), b = ri(r, 2, 15); return { k: 'rectA', a: { a, b }, ans: a * b }; }
+    if (k === 1) { const a = ri(r, 2, 30); return { k: 'sqP', a: { a }, ans: 4 * a }; }
+    if (k === 2) { let b, h; do { b = ri(r, 2, 20); h = ri(r, 2, 20); } while ((b * h) % 2); return { k: 'triA', a: { b, h }, ans: b * h / 2 }; }
+    if (k === 3) { const a = ri(r, 2, 6); return { k: 'cubV', a: { a }, ans: a * a * a }; }
+    const T = [[3, 4, 5], [5, 12, 13], [6, 8, 10], [8, 15, 17], [7, 24, 25], [9, 12, 15], [20, 21, 29]][ri(r, 0, 6)];
+    return { k: 'hyp', a: { a: T[0], b: T[1] }, ans: T[2] };
+  },
+  pri(r, lv){
+    const a = ri(r, 2, 20), b = ri(r, 2, 9), c = ri(r, 2, 9);
+    if (lv === 2) {
+      const k = ri(r, 0, 2);
+      if (k === 0) return { h: a + ' + ' + b + ' · ' + c, ans: a + b * c };
+      if (k === 1) return { h: '(' + a + ' + ' + b + ') · ' + c, ans: (a + b) * c };
+      return { h: a + ' − ' + b + ' · ' + c, ans: a - b * c };
+    }
+    const k = ri(r, 0, 3), d = ri(r, 2, 9);
+    if (k === 0) return { h: a + ' − ' + b + '<sup>2</sup> · ' + c, ans: a - b * b * c };
+    if (k === 1) { const e = ri(r, 2, 6); return { h: (b * c) + ' : ' + b + ' + ' + d + ' · ' + p(-e), ans: c - d * e }; }
+    if (k === 2) return { h: '(' + a + ' − ' + b + ') · (' + c + ' − ' + d + ')', ans: (a - b) * (c - d) };
+    return { h: p(-a) + ' + ' + b + ' · (−' + c + ')<sup>2</sup>', ans: -a + b * c * c };
+  }
+};
+const TOPICS = ['ent', 'men', 'pot', 'perc', 'frac', 'ecu', 'geo', 'pri'];
+const TKEY = { ent: 'tEnt', men: 'tMen', pot: 'tPot', perc: 'tPerc', frac: 'tFrac', ecu: 'tEcu', geo: 'tGeo', pri: 'tPri' };
+
+function makePool(cfg){
+  const r = rng(cfg.seed), used = new Set(), pool = [];
+  let i = 0, tries = 0;
+  while (pool.length < cfg.size && tries < 6000) {
+    tries++;
+    const top = cfg.topics[i++ % cfg.topics.length];
+    const lv = cfg.course === 'both' ? (r() < 0.5 ? 2 : 4) : +cfg.course;
+    const q = GEN[top](r, lv);
+    if (!Number.isInteger(q.ans) || Math.abs(q.ans) > 250 || used.has(q.ans)) continue;
+    used.add(q.ans); q.top = top; pool.push(q);
+  }
+  return pool;
+}
+function cardNums(G, no){
+  const r = rng(G.seed * 1009 + no * 7919 + 13);
+  return shuffle(G.pool.map(q => q.ans), r).slice(0, G.card);
+}
+const cols = G => G.card / 3;
+
+/* ---------- estat ---------- */
+const KEY = 'bingo_resultats_joc';
+let cfg = { course: '2', topics: ['ent', 'men', 'pot', 'perc', 'ecu', 'pri'], card: 12, size: 40, ncards: 30, timer: 0 };
+let G = null;          // joc en curs: {seed, ..., pool, order, n, rev}
+let warn = '';
+try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.pool && s.order) G = s; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) {} };
+let checked = null, tmr = null, tEnd = 0;
+
+function qHTML(q){
+  if (q.k) return esc(t(q.k, q.a));
+  return q.h;
+}
+const cur = () => (G && G.n > 0) ? G.pool[G.order[G.n - 1]] : null;
+const revealedN = () => G.n - (G.rev || G.n === 0 ? 0 : 1);
+const calledSet = () => new Set(G.order.slice(0, revealedN()).map(i => G.pool[i].ans));
+
+const codeOf = g => g.seed + '-' + (g.course === 'both' ? 'M' : g.course) + '-' + TOPICS.reduce((m, k, i) => m | (g.topics.includes(k) ? 1 << i : 0), 0).toString(16).toUpperCase().padStart(2, '0') + '-' + g.card + '-' + g.size;
+function parseCode(str){
+  const m = String(str).toUpperCase().replace(/[\s_·.–—]+/g, '-').match(/^(\d{4})-([24M])-([0-9A-F]{2})-(9|12|15)-(30|40|60)$/);
+  if (!m) return null;
+  const mask = parseInt(m[3], 16), topics = TOPICS.filter((k, i) => mask & (1 << i));
+  if (!topics.length) return null;
+  return { seed: +m[1], course: m[2] === 'M' ? 'both' : m[2], topics, card: +m[4], size: +m[5] };
+}
+function makeGame(c){
+  const g = { seed: c.seed, course: c.course, topics: TOPICS.filter(k => c.topics.includes(k)), card: c.card, size: c.size, timer: cfg.timer };
+  g.pool = makePool(g);
+  if (g.pool.length < g.card * 2) return null;
+  g.order = shuffle(g.pool.map((_, i) => i), rng(g.seed + 5));
+  g.n = 0; g.rev = false;
+  return g;
+}
+let view = 'setup';
+function newGame(){
+  if (!cfg.topics.length) { warn = t('minTopics'); renderSetup(); return; }
+  const g = makeGame({ seed: 1000 + Math.floor(Math.random() * 9000), course: cfg.course, topics: cfg.topics, card: cfg.card, size: cfg.size });
+  if (!g) { warn = t('tooFew'); renderSetup(); return; }
+  warn = g.pool.length < g.size ? t('few', { n: g.pool.length }) : '';
+  G = g; checked = null; save(); view = 'prep'; renderSetup();
+}
+function recoverGame(){
+  const c = parseCode($('rcode').value), n = Math.max(0, parseInt($('rn').value, 10) || 0);
+  const g = c && makeGame(c);
+  if (!g) { warn = t('badCode'); renderSetup(); return; }
+  g.n = Math.min(n, g.pool.length); g.rev = g.n > 0;
+  warn = ''; G = g; checked = null; save(); view = 'prep'; renderSetup();
+}
+function startPlay(){ view = 'setup'; $('setup').classList.add('hidden'); renderAll(); }
+function backToSetup(){ view = 'setup'; renderSetup(); }
+function copyCode(){
+  try { navigator.clipboard.writeText(codeOf(G)); const b = $('cpy'); if (b) b.textContent = '✓ ' + t('copied'); } catch (e) {}
+}
+function resume(){ view = 'setup'; $('setup').classList.add('hidden'); renderAll(); }
+function openSetup(){ stopTimer(); view = 'setup'; renderSetup(); $('setup').classList.remove('hidden'); }
+
+function next(){
+  if (!G || G.n >= G.pool.length) return;
+  G.n++; G.rev = false; save(); startTimer(); renderAll();
+}
+function reveal(){
+  if (!G || G.n === 0 || G.rev) return;
+  G.rev = true; stopTimer(); save(); renderAll();
+}
+function startTimer(){
+  stopTimer();
+  if (!G.timer) return;
+  tEnd = Date.now() + G.timer * 1000;
+  tmr = setInterval(() => {
+    const left = Math.max(0, tEnd - Date.now()), f = left / (G.timer * 1000);
+    const bar = $('tbar'), num = $('tnum');
+    if (bar) { bar.style.width = (f * 100) + '%'; bar.style.background = f < 0.25 ? 'var(--ko)' : 'var(--ok)'; }
+    if (num) num.textContent = Math.ceil(left / 1000);
+    if (left <= 0) reveal();
+  }, 150);
+}
+function stopTimer(){ if (tmr) { clearInterval(tmr); tmr = null; } }
+
+function checkCard(){
+  const n = parseInt($('cno').value, 10);
+  checked = n > 0 ? n : null;
+  renderAll();
+}
+function cardResult(no){
+  const nums = cardNums(G, no), called = calledSet(), c = cols(G);
+  let rows = 0;
+  for (let i = 0; i < 3; i++) if (nums.slice(i * c, (i + 1) * c).every(x => called.has(x))) rows++;
+  return { nums, called, c, rows, full: nums.every(x => called.has(x)) };
+}
+
+/* ---------- impressió ---------- */
+function cardsHTML(n){
+  let h = '';
+  for (let no = 1; no <= n; no++) {
+    const nums = cardNums(G, no), c = cols(G);
+    let tb = '';
+    for (let i = 0; i < 3; i++) tb += '<tr>' + nums.slice(i * c, (i + 1) * c).map(x => '<td>' + fm(x) + '</td>').join('') + '</tr>';
+    h += '<div class="pc"><header>' + esc(t('title')) + '<span>' + esc(t('cardTitle', { n: no })) + '</span></header><table>' + tb + '</table><footer>' + esc(t('gameFoot', { c: codeOf(G) })) + '</footer></div>';
+  }
+  return h;
+}
+function printCards(){
+  const n = Math.max(1, Math.min(200, cfg.ncards));
+  $('print').innerHTML = '<div class="bar"><button onclick="window.print()">🖨 ' + t('doPrint') + '</button><button class="ghost" onclick="downloadCards()">⬇ ' + t('download') + '</button><button class="ghost" onclick="closeCards()">✕ ' + t('closeCards') + '</button><span>' + esc(t('cardsTitle')) + ' · ' + esc(codeOf(G)) + '</span></div><p style="color:var(--muted);margin:0 0 12px">' + t('cardsTip') + '</p><div id="pgrid">' + cardsHTML(n) + '</div>';
+  $('print').classList.add('show');
+}
+function closeCards(){ $('print').classList.remove('show'); }
+function downloadCards(){
+  const n = Math.max(1, Math.min(200, cfg.ncards));
+  const css = document.querySelector('style').textContent;
+  const html = '<!DOCTYPE html><html lang="' + lang + '"><head><meta charset="utf-8"><title>' + esc(t('title')) + ' ' + esc(codeOf(G)) + '</title><style>' + css + '#print{display:block!important;position:static}#print .bar{display:none}body{background:#fff}</style></head><body><div id="print" class="show"><div id="pgrid">' + cardsHTML(n) + '</div></div></body></html>';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  a.download = 'cartons-' + codeOf(G) + '.html';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ---------- pintat ---------- */
+function seg(opts, val, fn){
+  return '<div class="seg">' + opts.map(o => '<button class="' + (String(o[0]) === String(val) ? 'on' : '') + '" onclick="' + fn + '(\'' + o[0] + '\')">' + esc(o[1]) + '</button>').join('') + '</div>';
+}
+const setCourse = v => { cfg.course = v; renderSetup(); };
+const setCard = v => { cfg.card = +v; renderSetup(); };
+const setSize = v => { cfg.size = +v; renderSetup(); };
+const setTimer = v => { cfg.timer = +v; renderSetup(); };
+const setNcards = v => { cfg.ncards = +v; renderSetup(); };
+function toggleTopic(k){
+  const i = cfg.topics.indexOf(k);
+  if (i >= 0) cfg.topics.splice(i, 1); else cfg.topics.push(k);
+  renderSetup();
+}
+function toolsHTML(){
+  return '<div class="tools"><!--@HOME@--><button class="small ghost" onclick="setLang(\'ca\')" ' + (lang === 'ca' ? 'style="border-color:var(--accent)"' : '') + '>VAL</button><button class="small ghost" onclick="setLang(\'es\')" ' + (lang === 'es' ? 'style="border-color:var(--accent)"' : '') + '>CAS</button></div>';
+}
+function renderSetup(){
+  const el = $('setup');
+  if (view === 'prep' && G) { renderPrep(el); return; }
+  const tp = TOPICS.map(k => '<button class="' + (cfg.topics.includes(k) ? 'on' : '') + '" onclick="toggleTopic(\'' + k + '\')">' + esc(t(TKEY[k])) + '</button>').join('');
+  el.innerHTML = '<div class="sc"><div class="top"><h1>🎯 ' + t('title') + '</h1>' + toolsHTML() + '</div>' +
+    '<p>' + t('subtitle') + '</p>' +
+    '<h3>' + t('course') + '</h3>' + seg([['2', t('c2')], ['4', t('c4')], ['both', t('cboth')]], cfg.course, 'setCourse') +
+    '<h3>' + t('topics') + '</h3><div class="seg">' + tp + '</div>' +
+    '<h3>' + t('card') + '</h3>' + seg([[9, 9], [12, 12], [15, 15]], cfg.card, 'setCard') +
+    '<h3>' + t('pool') + '</h3>' + seg([[30, 30], [40, 40], [60, 60]], cfg.size, 'setSize') +
+    '<h3>' + t('timer') + '</h3>' + seg([[0, t('manual')], [15, '15 s'], [30, '30 s'], [45, '45 s'], [60, '60 s']], cfg.timer, 'setTimer') +
+    (warn ? '<div class="warn">' + esc(warn) + '</div>' : '') +
+    '<div class="row"><button class="big" onclick="newGame()">▶ ' + t('start') + '</button></div>' +
+    '<h3>' + t('recover') + '</h3><p>' + t('recoverHint') + '</p><div class="checkrow"><input id="rcode" placeholder="4853-2-3F-12-40" maxlength="20" style="text-transform:uppercase"><input id="rn" type="number" min="0" placeholder="' + t('doneN') + '" style="max-width:11em"><button class="small" onclick="recoverGame()">' + t('recoverGo') + '</button></div>' +
+    (G ? '<div class="row"><button class="ghost" onclick="resume()">↩ ' + t('resume') + ' (' + codeOf(G) + ')</button></div>' : '') +
+    '<details><summary>' + t('how') + '</summary><p>' + t('howText') + '</p></details></div>';
+}
+function renderPrep(el){
+  el.innerHTML = '<div class="sc"><div class="top"><h1>✅ ' + t('prepTitle') + '</h1>' + toolsHTML() + '</div>' +
+    '<h3>' + t('codeLbl') + '</h3><div class="codebox">' + esc(codeOf(G)) + '</div><p>' + t('codeHint') + '</p>' +
+    '<div class="row"><button class="small ghost" id="cpy" onclick="copyCode()">⧉ ' + t('copy') + '</button></div>' +
+    (warn ? '<div class="warn">' + esc(warn) + '</div>' : '') +
+    '<h3>' + t('printCards') + '</h3><div class="checkrow"><input id="ncards" type="number" min="1" max="200" value="' + cfg.ncards + '" onchange="setNcardsQuiet(this.value)" style="max-width:8em"><span style="align-self:center;color:var(--muted)">' + t('ncards') + '</span></div>' +
+    '<div class="row"><button class="big ghost" onclick="printCards()">🖨 ' + t('printCards') + '</button></div>' +
+    '<div class="row"><button class="big" onclick="startPlay()">▶ ' + (G.n > 0 ? t('continueAt', { n: G.n + 1 }) : t('start')) + '</button></div>' +
+    '<div class="row"><button class="small ghost" onclick="backToSetup()">← ' + t('back') + '</button></div></div>';
+}
+function renderAll(){
+  document.documentElement.lang = lang;
+  document.title = t('title');
+  renderSetup();
+  const A = $('app');
+  if (!G) { A.innerHTML = ''; return; }
+  const q = cur(), end = G.n >= G.pool.length && G.rev;
+  let stage;
+  if (!q) stage = '<div class="qexpr txt">' + t('ready') + '</div><div class="qsub">' + t('readyHint') + '</div>';
+  else {
+    const txt = !!q.k;
+    stage = '<div class="qexpr' + (txt ? ' txt' : '') + '">' + qHTML(q) + '</div>' +
+      (q.sub ? '<div class="qsub">' + t(q.sub) + '</div>' : '') +
+      '<div class="reveal' + (G.rev ? '' : ' hide') + '"><small>' + t('result') + '</small>' + fm(q.ans) + '</div>';
+  }
+  const timer = (G.timer && q && !G.rev) ? '<div class="timer"><div id="tbar"></div><div id="tnum">' + G.timer + '</div></div>' : '';
+  let btn;
+  if (q && !G.rev) btn = '<button class="big ok" onclick="reveal()">👁 ' + t('reveal') + '</button>';
+  else if (G.n >= G.pool.length) btn = '<div class="verdict">' + t('end') + '</div>';
+  else btn = '<button class="big" onclick="next()">▶ ' + t('next') + '</button>';
+  const shown = G.order.slice(0, revealedN()).map(i => G.pool[i]);
+  const chips = shown.map((x, i) => '<span class="chip' + (i === shown.length - 1 && G.rev ? ' last' : '') + '">' + fm(x.ans) + '</span>').join('') || '<span style="color:var(--muted)">—</span>';
+  const logRows = shown.slice(-6).reverse().map(x => '<tr><td>' + qHTML(x) + '</td><td>' + fm(x.ans) + '</td></tr>').join('');
+  let chk = '';
+  if (checked) {
+    const R = cardResult(checked);
+    let cells = '';
+    R.nums.forEach(x => { cells += '<div class="cell' + (R.called.has(x) ? ' on' : '') + '">' + fm(x) + '</div>'; });
+    chk = '<div class="cardgrid" style="grid-template-columns:repeat(' + R.c + ',1fr)">' + cells + '</div>' +
+      '<div class="verdict' + (R.full || R.rows ? ' win' : '') + '">' + (R.full ? t('bingo') : R.rows ? t('line') + ' · ' + t('lines', { n: R.rows }) : t('none')) + '</div>';
+  }
+  A.innerHTML = '<div class="stage"><div class="top"><div class="logo">🎯 ' + t('title') + '</div>' +
+    '<div class="counter">' + t('progress', { n: G.n, m: G.pool.length }) + ' · ' + t('gameId', { c: codeOf(G) }) + '</div>' +
+    '<div class="tools"><!--@HOME@--><button class="small ghost" onclick="setLang(\'ca\')" ' + (lang === 'ca' ? 'style="border-color:var(--accent)"' : '') + '>VAL</button><button class="small ghost" onclick="setLang(\'es\')" ' + (lang === 'es' ? 'style="border-color:var(--accent)"' : '') + '>CAS</button>' +
+    '<button class="small ghost" onclick="toggleFS()" title="' + t('fullscreen') + '">⛶</button>' +
+    '<button class="small ghost" onclick="if(confirm(t(\'confirmNew\')))openSetup()" title="' + t('newgame') + '">↺</button></div></div>' +
+    '<div class="qbox">' + stage + '</div>' + timer + '<div class="ctl">' + btn + '</div></div>' +
+    '<aside class="side"><div><h3>' + t('called') + '</h3><div class="chips">' + chips + '</div></div>' +
+    (logRows ? '<div><h3>' + t('log') + '</h3><table class="log">' + logRows + '</table></div>' : '') +
+    '<div><h3>' + t('check') + '</h3><div class="checkrow"><input id="cno" type="number" min="1" placeholder="' + t('cardNo') + '" value="' + (checked || '') + '" onkeydown="if(event.key===\'Enter\'){event.stopPropagation();checkCard()}"><button class="small" onclick="checkCard()">' + t('go') + '</button></div></div>' + chk +
+    '<div><h3>' + t('printCards') + '</h3><div class="checkrow"><input id="ncards" type="number" min="1" max="200" value="' + cfg.ncards + '" onchange="setNcardsQuiet(this.value)"><button class="small ghost" onclick="printCards()">🖨 ' + t('printCards') + '</button></div></div></aside>';
+}
+function setNcardsQuiet(v){ cfg.ncards = Math.max(1, Math.min(200, +v || 30)); }
+function toggleFS(){ if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+function setLang(l){
+  lang = l;
+  /*@URL@*/
+  document.documentElement.lang = l;
+  renderAll();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeCards();
+  if (!$('setup').classList.contains('hidden') || !G) return;
+  if (e.target && e.target.tagName === 'INPUT') return;
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (G.n === 0 || G.rev) next(); else reveal();
+  }
+});
+renderAll();
+</script>
+</body>
+</html>
