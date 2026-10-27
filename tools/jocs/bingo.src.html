@@ -121,10 +121,10 @@ ca: {
   topics:'Temes',
   tEnt:'Enters amb signe', tMen:'Càlcul mental', tPot:'Potències i arrels', tPerc:'Percentatges',
   tFrac:'Fraccions d\'un nombre', tEcu:'Equacions', tGeo:'Geometria', tPri:'Prioritat d\'operacions',
-  card:'Nombres per cartó', pool:'Operacions del joc', timer:'Temps per operació', manual:'Manual',
+  card:'Nombres per cartó', pool:'Operacions del joc', timer:'Temps per operació', manual:'Manual', showRes:'Resultats a la pissarra', showNo:'Ocults (es veuen en revisar un cartó)', showYes:'Visibles després de cada operació', revealOpt:'Mostrar resultat (opcional)',
   ncards:'Cartons a imprimir', start:'Començar a cantar', resume:'Continuar el joc anterior',
   printCards:'Imprimir cartons', cardsTitle:'Cartons', doPrint:'Imprimir', download:'Descarregar (HTML)', closeCards:'Tancar', cardsTip:'Si el navegador no deixa imprimir des d\'ací, descarrega el fitxer i obri\'l en una pestanya nova.', how:'Com es juga',
-  howText:'Primer es genera el joc: té un codi (p. ex. 4853-2-3F-12-40) que fixa les operacions i els cartons. Imprimeix els cartons i reparteix-los. Tu cantes una operació a la pissarra; cada alumne la fa i, si el resultat és al seu cartó, el marca. Qui completa una fila canta «Línia» i qui completa tot el cartó canta «Bingo». Per a comprovar-ho, escriu el número del cartó. Amb el codi pots recuperar el joc (i les operacions ja cantades) en qualsevol ordinador.',
+  howText:'Primer es genera el joc: té un codi (p. ex. 4853-2-3F-12-40) que fixa les operacions i els cartons. Imprimeix els cartons i reparteix-los. Tu cantes una operació a la pissarra; cada alumne la fa i, si el resultat és al seu cartó, el marca. Qui completa una fila canta «Línia» i qui completa tot el cartó canta «Bingo». Per a comprovar-ho, escriu el número del cartó. Per defecte els resultats no es mostren a la pissarra, perquè ningú copie: només es veuen en revisar un cartó (o amb «Mostrar resultat»). Amb el codi pots recuperar el joc (i les operacions ja cantades) en qualsevol ordinador.',
   minTopics:'Tria almenys un tema.', few:'Amb estos temes no hi ha prou resultats diferents: el joc té {n} operacions.',
   tooFew:'Amb estos temes no es pot fer un joc: tria\'n més.',
   ready:'Preparats?', readyHint:'Prem «Següent» per a cantar la primera operació.',
@@ -149,10 +149,10 @@ es: {
   topics:'Temas',
   tEnt:'Enteros con signo', tMen:'Cálculo mental', tPot:'Potencias y raíces', tPerc:'Porcentajes',
   tFrac:'Fracciones de un número', tEcu:'Ecuaciones', tGeo:'Geometría', tPri:'Prioridad de operaciones',
-  card:'Números por cartón', pool:'Operaciones del juego', timer:'Tiempo por operación', manual:'Manual',
+  card:'Números por cartón', pool:'Operaciones del juego', timer:'Tiempo por operación', manual:'Manual', showRes:'Resultados en la pizarra', showNo:'Ocultos (se ven al revisar un cartón)', showYes:'Visibles tras cada operación', revealOpt:'Mostrar resultado (opcional)',
   ncards:'Cartones a imprimir', start:'Empezar a cantar', resume:'Continuar el juego anterior',
   printCards:'Imprimir cartones', cardsTitle:'Cartones', doPrint:'Imprimir', download:'Descargar (HTML)', closeCards:'Cerrar', cardsTip:'Si el navegador no deja imprimir desde aquí, descarga el archivo y ábrelo en una pestaña nueva.', how:'Cómo se juega',
-  howText:'Primero se genera el juego: tiene un código (p. ej. 4853-2-3F-12-40) que fija las operaciones y los cartones. Imprime los cartones y repártelos. Tú cantas una operación en la pizarra; cada alumno la hace y, si el resultado está en su cartón, lo marca. Quien completa una fila canta «Línea» y quien completa todo el cartón canta «Bingo». Para comprobarlo, escribe el número del cartón. Con el código puedes recuperar el juego (y las operaciones ya cantadas) en cualquier ordenador.',
+  howText:'Primero se genera el juego: tiene un código (p. ej. 4853-2-3F-12-40) que fija las operaciones y los cartones. Imprime los cartones y repártelos. Tú cantas una operación en la pizarra; cada alumno la hace y, si el resultado está en su cartón, lo marca. Quien completa una fila canta «Línea» y quien completa todo el cartón canta «Bingo». Para comprobarlo, escribe el número del cartón. Por defecto los resultados no se muestran en la pizarra, para que nadie copie: solo se ven al revisar un cartón (o con «Mostrar resultado»). Con el código puedes recuperar el juego (y las operaciones ya cantadas) en cualquier ordenador.',
   minTopics:'Elige al menos un tema.', few:'Con estos temas no hay suficientes resultados distintos: el juego tiene {n} operaciones.',
   tooFew:'Con estos temas no se puede hacer un juego: elige más.',
   ready:'¿Listos?', readyHint:'Pulsa «Siguiente» para cantar la primera operación.',
@@ -281,7 +281,7 @@ const cols = G => G.card / 3;
 
 /* ---------- estat ---------- */
 const KEY = 'bingo_resultats_joc';
-let cfg = { course: '2', topics: ['ent', 'men', 'pot', 'perc', 'ecu', 'pri'], card: 12, size: 40, ncards: 30, timer: 0 };
+let cfg = { course: '2', topics: ['ent', 'men', 'pot', 'perc', 'ecu', 'pri'], card: 12, size: 40, ncards: 30, timer: 0, show: false };
 let G = null;          // joc en curs: {seed, ..., pool, order, n, rev}
 let warn = '';
 try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.pool && s.order) G = s; } catch (e) {}
@@ -293,7 +293,7 @@ function qHTML(q){
   return q.h;
 }
 const cur = () => (G && G.n > 0) ? G.pool[G.order[G.n - 1]] : null;
-const revealedN = () => G.n - (G.rev || G.n === 0 ? 0 : 1);
+const revealedN = () => G.show ? G.n - (G.rev || G.n === 0 ? 0 : 1) : G.n;
 const calledSet = () => new Set(G.order.slice(0, revealedN()).map(i => G.pool[i].ans));
 
 const codeOf = g => g.seed + '-' + (g.course === 'both' ? 'M' : g.course) + '-' + TOPICS.reduce((m, k, i) => m | (g.topics.includes(k) ? 1 << i : 0), 0).toString(16).toUpperCase().padStart(2, '0') + '-' + g.card + '-' + g.size;
@@ -305,7 +305,7 @@ function parseCode(str){
   return { seed: +m[1], course: m[2] === 'M' ? 'both' : m[2], topics, card: +m[4], size: +m[5] };
 }
 function makeGame(c){
-  const g = { seed: c.seed, course: c.course, topics: TOPICS.filter(k => c.topics.includes(k)), card: c.card, size: c.size, timer: cfg.timer };
+  const g = { seed: c.seed, course: c.course, topics: TOPICS.filter(k => c.topics.includes(k)), card: c.card, size: c.size, timer: cfg.timer, show: cfg.show };
   g.pool = makePool(g);
   if (g.pool.length < g.card * 2) return null;
   g.order = shuffle(g.pool.map((_, i) => i), rng(g.seed + 5));
@@ -324,7 +324,7 @@ function recoverGame(){
   const c = parseCode($('rcode').value), n = Math.max(0, parseInt($('rn').value, 10) || 0);
   const g = c && makeGame(c);
   if (!g) { warn = t('badCode'); renderSetup(); return; }
-  g.n = Math.min(n, g.pool.length); g.rev = g.n > 0;
+  g.n = Math.min(n, g.pool.length); g.rev = g.show && g.n > 0;
   warn = ''; G = g; checked = null; save(); view = 'prep'; renderSetup();
 }
 function startPlay(){ view = 'setup'; $('setup').classList.add('hidden'); renderAll(); }
@@ -352,7 +352,7 @@ function startTimer(){
     const bar = $('tbar'), num = $('tnum');
     if (bar) { bar.style.width = (f * 100) + '%'; bar.style.background = f < 0.25 ? 'var(--ko)' : 'var(--ok)'; }
     if (num) num.textContent = Math.ceil(left / 1000);
-    if (left <= 0) reveal();
+    if (left <= 0) { if (G.show) reveal(); else stopTimer(); }
   }, 150);
 }
 function stopTimer(){ if (tmr) { clearInterval(tmr); tmr = null; } }
@@ -404,6 +404,7 @@ const setCourse = v => { cfg.course = v; renderSetup(); };
 const setCard = v => { cfg.card = +v; renderSetup(); };
 const setSize = v => { cfg.size = +v; renderSetup(); };
 const setTimer = v => { cfg.timer = +v; renderSetup(); };
+const setShow = v => { cfg.show = v === '1'; renderSetup(); };
 const setNcards = v => { cfg.ncards = +v; renderSetup(); };
 function toggleTopic(k){
   const i = cfg.topics.indexOf(k);
@@ -423,6 +424,7 @@ function renderSetup(){
     '<h3>' + t('topics') + '</h3><div class="seg">' + tp + '</div>' +
     '<h3>' + t('card') + '</h3>' + seg([[9, 9], [12, 12], [15, 15]], cfg.card, 'setCard') +
     '<h3>' + t('pool') + '</h3>' + seg([[30, 30], [40, 40], [60, 60]], cfg.size, 'setSize') +
+    '<h3>' + t('showRes') + '</h3>' + seg([[0, t('showNo')], [1, t('showYes')]], cfg.show ? 1 : 0, 'setShow') +
     '<h3>' + t('timer') + '</h3>' + seg([[0, t('manual')], [15, '15 s'], [30, '30 s'], [45, '45 s'], [60, '60 s']], cfg.timer, 'setTimer') +
     (warn ? '<div class="warn">' + esc(warn) + '</div>' : '') +
     '<div class="row"><button class="big" onclick="newGame()">▶ ' + t('start') + '</button></div>' +
@@ -455,14 +457,19 @@ function renderAll(){
       (q.sub ? '<div class="qsub">' + t(q.sub) + '</div>' : '') +
       '<div class="reveal' + (G.rev ? '' : ' hide') + '"><small>' + t('result') + '</small>' + fm(q.ans) + '</div>';
   }
-  const timer = (G.timer && q && !G.rev) ? '<div class="timer"><div id="tbar"></div><div id="tnum">' + G.timer + '</div></div>' : '';
+  const timer = (G.timer && q && (!G.show || !G.rev)) ? '<div class="timer"><div id="tbar"></div><div id="tnum">' + G.timer + '</div></div>' : '';
   let btn;
-  if (q && !G.rev) btn = '<button class="big ok" onclick="reveal()">👁 ' + t('reveal') + '</button>';
-  else if (G.n >= G.pool.length) btn = '<div class="verdict">' + t('end') + '</div>';
-  else btn = '<button class="big" onclick="next()">▶ ' + t('next') + '</button>';
-  const shown = G.order.slice(0, revealedN()).map(i => G.pool[i]);
+  if (G.show) {
+    if (q && !G.rev) btn = '<button class="big ok" onclick="reveal()">👁 ' + t('reveal') + '</button>';
+    else if (G.n >= G.pool.length) btn = '<div class="verdict">' + t('end') + '</div>';
+    else btn = '<button class="big" onclick="next()">▶ ' + t('next') + '</button>';
+  } else {
+    btn = (G.n >= G.pool.length ? '<div class="verdict">' + t('end') + '</div>' : '<button class="big" onclick="next()">▶ ' + t('next') + '</button>') +
+      (q && !G.rev ? '<button class="small ghost" onclick="reveal()">👁 ' + t('revealOpt') + '</button>' : '');
+  }
+  const shown = G.order.slice(0, G.show ? revealedN() : Math.max(0, G.n - 1)).map(i => G.pool[i]);
   const chips = shown.map((x, i) => '<span class="chip' + (i === shown.length - 1 && G.rev ? ' last' : '') + '">' + fm(x.ans) + '</span>').join('') || '<span style="color:var(--muted)">—</span>';
-  const logRows = shown.slice(-6).reverse().map(x => '<tr><td>' + qHTML(x) + '</td><td>' + fm(x.ans) + '</td></tr>').join('');
+  const logRows = shown.slice(-6).reverse().map(x => '<tr><td>' + qHTML(x) + '</td>' + (G.show ? '<td>' + fm(x.ans) + '</td>' : '') + '</tr>').join('');
   let chk = '';
   if (checked) {
     const R = cardResult(checked);
@@ -477,7 +484,7 @@ function renderAll(){
     '<button class="small ghost" onclick="toggleFS()" title="' + t('fullscreen') + '">⛶</button>' +
     '<button class="small ghost" onclick="if(confirm(t(\'confirmNew\')))openSetup()" title="' + t('newgame') + '">↺</button></div></div>' +
     '<div class="qbox">' + stage + '</div>' + timer + '<div class="ctl">' + btn + '</div></div>' +
-    '<aside class="side"><div><h3>' + t('called') + '</h3><div class="chips">' + chips + '</div></div>' +
+    '<aside class="side">' + (G.show ? '<div><h3>' + t('called') + '</h3><div class="chips">' + chips + '</div></div>' : '') +
     (logRows ? '<div><h3>' + t('log') + '</h3><table class="log">' + logRows + '</table></div>' : '') +
     '<div><h3>' + t('check') + '</h3><div class="checkrow"><input id="cno" type="number" min="1" placeholder="' + t('cardNo') + '" value="' + (checked || '') + '" onkeydown="if(event.key===\'Enter\'){event.stopPropagation();checkCard()}"><button class="small" onclick="checkCard()">' + t('go') + '</button></div></div>' + chk +
     '<div><h3>' + t('printCards') + '</h3><div class="checkrow"><input id="ncards" type="number" min="1" max="200" value="' + cfg.ncards + '" onchange="setNcardsQuiet(this.value)"><button class="small ghost" onclick="printCards()">🖨 ' + t('printCards') + '</button></div></div></aside>';
@@ -496,7 +503,7 @@ document.addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;
   if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
     e.preventDefault();
-    if (G.n === 0 || G.rev) next(); else reveal();
+    if (!G.show || G.n === 0 || G.rev) next(); else reveal();
   }
 });
 renderAll();
