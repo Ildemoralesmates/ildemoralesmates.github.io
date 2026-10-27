@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cifras y letras: juego de clase con equipos y marcador</title>
+<meta name="description" content="Juego de clase «Cifras y letras»: prueba de letras y prueba de cifras con reloj, equipos, marcador y solución paso a paso. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/xifres-i-lletres/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/xifres-i-lletres/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/xifres-i-lletres/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/xifres-i-lletres/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Cifras y letras: juego de clase con equipos y marcador">
+<meta property="og:description" content="Juego de clase «Cifras y letras»: prueba de letras y prueba de cifras con reloj, equipos, marcador y solución paso a paso. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/xifres-i-lletres/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+:root{--tile:#fff4d6;--tile-v:#ffe39a;--tile-ink:#1b2742;--tile-edge:#cdbb8a;--gold:#f0b429;--gold-ink:#3a2a00;--gold-edge:#b98a14;--led:#ff9f1a}
+.bar .pill b{color:var(--ink)}
+.bar .sp{margin-left:auto}
+.tabsx{display:flex;gap:6px}
+.tabsx button{flex:1;font:inherit;font-weight:600;font-size:15px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--chip);color:var(--ink);cursor:pointer}
+.tabsx button[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.stagebox{display:grid;gap:12px;padding:14px;background:var(--stage);border-radius:0 0 10px 10px;min-width:0}
+.hintp{margin:0;font-size:13.5px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
+.tiles.nums{grid-template-columns:repeat(6,minmax(0,1fr))}
+.tile{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;border-radius:9px;font-weight:800;font-size:clamp(1.3rem,4vw,2.9rem);background:var(--tile);color:var(--tile-ink);box-shadow:0 4px 0 var(--tile-edge),0 7px 12px rgba(0,0,0,.25);font-family:var(--f-body)}
+.tile.v{background:var(--tile-v)}
+.tile.empty{background:transparent;box-shadow:none;border:2px dashed var(--line);color:var(--muted);font-weight:400}
+.tile.num{aspect-ratio:1/1;font-size:clamp(1.2rem,3.4vw,2.6rem)}
+.tile.big{background:var(--gold);color:var(--gold-ink);box-shadow:0 4px 0 var(--gold-edge),0 7px 12px rgba(0,0,0,.25)}
+.tile.pop{animation:pop .4s ease-out backwards}
+@keyframes pop{from{transform:rotateX(90deg) scale(.7);opacity:0}to{transform:none;opacity:1}}
+.rowc{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.rowc .lab{font-size:13.5px;color:var(--muted)}
+.target{display:flex;gap:6px;justify-content:center}
+.digit{background:#05080f;color:var(--led);font-family:var(--f-num);font-weight:800;font-size:clamp(2.2rem,6vw,4.2rem);line-height:1.1;padding:.04em .26em;border-radius:9px;border:2px solid #000;min-width:1.1em;text-align:center;text-shadow:0 0 12px rgba(255,159,26,.5)}
+.clockbox{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:center;border-top:1px solid var(--line);padding-top:12px}
+.clk{position:relative;width:104px;height:104px;flex:none}
+.clk svg{width:100%;height:100%;transform:rotate(-90deg)}
+.clk .bgc{fill:none;stroke:var(--line);stroke-width:9}
+.clk .fgc{fill:none;stroke:var(--pa);stroke-width:9;stroke-linecap:round}
+.clk .fgc.warn{stroke:var(--warn)}
+.clk .fgc.late{stroke:var(--pb)}
+.clk .tm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums}
+.clkctl{display:grid;gap:8px;justify-items:start}
+.side .msg{min-height:2.6em;margin:0;font-size:14px;border-left:4px solid var(--pa);background:var(--chip);border-radius:0 8px 8px 0;padding:7px 10px}
+.side .msg.ok{border-color:var(--ok)}
+.side .msg.bad{border-color:var(--warn)}
+.side .msg.warn{border-color:var(--warn)}
+.side h3{margin:2px 0 0;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.teams{display:grid;gap:8px}
+.team{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--panel);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.team .tname{min-width:0;font:inherit;font-weight:600;font-size:14px;padding:4px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink)}
+.team .sc{display:flex;align-items:center;gap:6px}
+.team .score{font-size:1.7rem;font-weight:800;min-width:1.6em;text-align:center;color:var(--pa);font-variant-numeric:tabular-nums;line-height:1}
+.team .adj{padding:2px 8px;font-size:13px}
+.team .ans{display:flex;gap:6px;align-items:center;grid-column:1/-1;flex-wrap:wrap}
+.team .tin{flex:1 1 7rem;min-width:0;font:inherit;font-size:14px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink)}
+.team .sug{grid-column:1/-1;font-size:12.5px;color:var(--muted);min-height:1.3em}
+.team .sug.ok{color:var(--ok)}
+.team .sug.bad{color:var(--warn)}
+.nteams{font-size:13px;color:var(--muted)}
+.nchips{display:flex;flex-wrap:wrap;gap:6px;min-height:2.8rem;align-items:center}
+.nchip{min-width:2.9rem;padding:6px 10px;border-radius:9px;background:var(--tile);color:var(--tile-ink);font:inherit;font-weight:800;font-size:1.15rem;border:3px solid transparent;cursor:pointer;box-shadow:0 2px 0 var(--tile-edge);animation:pop .3s ease-out}
+.nchip.sel{border-color:var(--pa)}
+.nchip.hl{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.45)}
+.nchip.hit{background:var(--ok);color:#fff;box-shadow:none}
+.ops{display:flex;gap:6px}
+.ops button{width:2.8rem;font:inherit;font-size:1.25rem;font-weight:800;padding:3px 0;border-radius:8px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.ops button[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+ol.hist{margin:0;padding-left:1.4em;font-family:var(--f-num);font-size:13.5px;font-variant-numeric:tabular-nums}
+.stat{font-size:13px;color:var(--muted);margin:0}
+.rules ul{margin:6px 0 0;padding-left:1.2em;color:var(--muted);font-size:13.5px}
+details.rules summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:14px}
+@media (prefers-reduced-motion:reduce){.tile.pop,.nchip{animation:none}}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Juego de aula · Operaciones y vocabulario</p>
+      <h1 data-i18n="h1">Cifras y letras</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Dos pruebas con reloj para la pizarra digital: forma una palabra con 9 letras o llega a un objetivo con 6 números.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="stage-card">
+<div class="bar">
+<span class="pill"><span data-i18n="round_lbl">Ronda</span> <b id="roundNum">1</b></span>
+<button class="btn" id="newRound" type="button" data-i18n="new_round">Nueva ronda</button>
+<button class="btn" id="resetGame" type="button" data-i18n="reset_game">Reiniciar la partida</button>
+<button class="btn sp" id="mute" type="button" data-i18n-aria="sound_title" aria-label="Activar o desactivar el sonido" title="">🔊</button>
+</div>
+<div class="stagebox">
+<div class="tabsx" role="group" data-i18n-aria="aria.tabs" aria-label="Prueba">
+<button type="button" id="tabL" aria-pressed="true" data-i18n="tab_l">Letras</button>
+<button type="button" id="tabN" aria-pressed="false" data-i18n="tab_n">Cifras</button>
+</div>
+
+<div id="viewL" class="stagebox" style="padding:0;background:none">
+<p class="hintp" data-i18n="hint_l">Elige 9 letras: vocales y consonantes, mínimo 3 de cada. Cuando estén, arranca el reloj.</p>
+<div class="tiles" id="lTiles"></div>
+<div class="rowc">
+<button class="btn primary" id="addV" type="button" data-i18n="vowel">Vocal</button>
+<button class="btn primary" id="addC" type="button" data-i18n="consonant">Consonante</button>
+<button class="btn" id="fillL" type="button" data-i18n="rand_fill">Completar al azar</button>
+<button class="btn" id="clearL" type="button" data-i18n="clear_l">Borrar</button>
+</div>
+</div>
+
+<div id="viewN" class="stagebox" style="padding:0;background:none" hidden>
+<p class="hintp" data-i18n="hint_n">Elige cuántos números grandes quieres (25, 50, 75, 100); el resto serán pequeños. Después, genera el objetivo.</p>
+<div class="tiles nums" id="nTiles"></div>
+<div class="rowc" id="bigRow"><span class="lab" data-i18n="big_q">Números grandes:</span>
+<button class="btn" type="button" data-k="0">0</button><button class="btn" type="button" data-k="1">1</button><button class="btn" type="button" data-k="2">2</button><button class="btn" type="button" data-k="3">3</button><button class="btn" type="button" data-k="4">4</button>
+</div>
+<div class="target" id="target" role="img" data-i18n-aria="aria.target" aria-label="Objetivo"></div>
+<div class="rowc" style="justify-content:center">
+<button class="btn primary" id="genT" type="button" data-i18n="gen_target">Generar objetivo</button>
+<label class="check"><input type="checkbox" id="onlySol" checked> <span data-i18n="only_solv">Solo objetivos con solución exacta</span></label>
+</div>
+</div>
+
+<div class="clockbox">
+<div class="clk"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bgc" cx="60" cy="60" r="54"/><circle class="fgc" id="clkFg" cx="60" cy="60" r="54"/></svg><div class="tm" id="clkT" aria-live="off">30</div></div>
+<div class="clkctl">
+<div class="rowc">
+<button class="btn primary" id="clkGo" type="button" data-i18n="start">Arrancar</button>
+<button class="btn" id="clkReset" type="button" data-i18n="reset_clock">Reiniciar reloj</button>
+</div>
+<label class="rowc"><span class="lab" data-i18n="dur_lbl">Duración</span> <select id="dur"><option value="30">30 s</option><option value="45">45 s</option><option value="60">60 s</option><option value="90">90 s</option></select></label>
+<span class="note" data-i18n="space_hint">Espacio: arrancar / pausar</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="side">
+<p class="msg" id="msg" role="status" aria-live="polite"></p>
+<h3 data-i18n="teams_h">Equipos y marcador</h3>
+<div class="teams" id="teams"></div>
+<label class="nteams"><span data-i18n="n_teams">Equipos:</span> <select id="nTeams"><option>2</option><option>3</option><option>4</option></select></label>
+<div id="calcBox" hidden>
+<h3 data-i18n="calc_h">Taller de cálculo</h3>
+<p class="note" data-i18n="calc_hint">Comprueba la propuesta de un equipo: pulsa un número, una operación y otro número. O mira la solución paso a paso.</p>
+<div class="nchips" id="chips"></div>
+<div class="ops" id="ops" role="group" data-i18n-aria="aria.ops" aria-label="Operaciones">
+<button type="button" data-op="+" aria-pressed="false">+</button><button type="button" data-op="−" aria-pressed="false">−</button><button type="button" data-op="×" aria-pressed="false">×</button><button type="button" data-op="÷" aria-pressed="false">÷</button>
+</div>
+<ol class="hist" id="hist"></ol>
+<p class="note" id="status"></p>
+<div class="rowc">
+<button class="btn" id="undo" type="button" data-i18n="undo">Deshacer</button>
+<button class="btn" id="resetCalc" type="button" data-i18n="reset_calc">Empezar de nuevo</button>
+<button class="btn primary" id="stepBtn" type="button" data-i18n="step_btn">Solución paso a paso</button>
+<button class="btn" id="allBtn" type="button" data-i18n="all_btn">Toda la solución</button>
+</div>
+<p class="stat" id="stat"></p>
+</div>
+</div>
+</div>
+<p data-i18n-html="story">Para la pizarra digital: el profesor elige las letras o los números, arranca el reloj y cada equipo escribe en su cuadro la palabra o el número conseguido. El marcador sugiere los puntos; en la prueba de cifras, el taller de cálculo comprueba la propuesta de un equipo y muestra la solución más corta paso a paso.</p>
+<details class="rules"><summary data-i18n="rules_h">Reglas y puntuación</summary>
+<ul><li data-i18n="rules_l">Letras: cada palabra válida suma tantos puntos como letras; con las 9 letras, 18 puntos.</li><li data-i18n="rules_n">Cifras: 10 puntos si se llega al objetivo, 7 si se queda a 5 o menos, 5 si se queda a 10 o menos.</li><li data-i18n="rules_ops">Solo operaciones +, −, ×, ÷ con enteros positivos; cada número se puede usar una vez.</li></ul>
+</details>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Xifres i lletres: joc de classe amb equips i marcador",
+"eyebrow":"Joc d'aula · Operacions i vocabulari",
+"h1":"Xifres i lletres",
+"lede":"Dues proves amb rellotge per a la pissarra digital: forma una paraula amb 9 lletres o arriba a un objectiu amb 6 números.",
+"story":"Per a la pissarra digital: el professor tria les lletres o els números, engega el rellotge i cada equip escriu al seu requadre la paraula o el nombre aconseguit. El marcador suggerix els punts; en la prova de xifres, el taller de càlcul comprova la proposta d'un equip i mostra la solució més curta pas a pas.",
+"round_lbl":"Ronda","new_round":"Nova ronda","reset_game":"Reinicia la partida","reset_sure":"Segur? Torna a clicar",
+"sound_title":"Activa o desactiva el so","aria.tabs":"Prova","aria.target":"Objectiu","aria.ops":"Operacions",
+"tab_l":"Lletres","tab_n":"Xifres",
+"hint_l":"Tria 9 lletres: vocals i consonants, mínim 3 de cada. Quan estiguen, engega el rellotge.",
+"vowel":"Vocal","consonant":"Consonant","rand_fill":"Completa a l'atzar","clear_l":"Esborra",
+"hint_n":"Tria quants números grans vols (25, 50, 75, 100); la resta seran xicotets. Després, genera l'objectiu.",
+"big_q":"Números grans:","gen_target":"Genera l'objectiu","only_solv":"Només objectius amb solució exacta",
+"start":"Engega","pause":"Pausa","resume":"Continua","reset_clock":"Reinicia el rellotge","dur_lbl":"Durada","space_hint":"Espai: engegar / pausar",
+"msg_welcome":"Tria una prova: lletres o xifres. Cada equip escriu la seua resposta i el marcador suggerix els punts.",
+"teams_h":"Equips i marcador","n_teams":"Equips:","team_default":"Equip {n}","team_name":"Nom de l'equip",
+"ph_word":"Paraula","ph_num":"Nombre aconseguit",
+"sug_wait_letters":"Falten lletres al tauler.","sug_wait_target":"Falta l'objectiu.",
+"sug_type_word":"Escriviu la paraula.","sug_type_num":"Escriviu el nombre aconseguit.",
+"word_ok":"{n} lletres → {p} punts (la paraula la valida el professor)","word_bad":"Ús de lletres que no hi són: {c}",
+"word_bad_empty":"Cap lletra vàlida.","word_too_long":"{n} lletres: massa llarga (màxim 9).",
+"num_ok":"A {d} de l'objectiu → {p} punts","num_bad":"Escriviu un nombre positiu.",
+"apply":"Suma {p} punts","apply0":"Suma punts","applied":"Punts sumats",
+"calc_h":"Taller de càlcul","calc_hint":"Comprova la proposta d'un equip: clica un nombre, una operació i un altre nombre. O mira la solució pas a pas.",
+"undo":"Desfés","reset_calc":"Torna a començar","step_btn":"Solució pas a pas","step_next":"Pas següent ({k}/{n})","all_btn":"Tota la solució",
+"letters_ready":"Lletres a punt. Engega el rellotge!","letters_progress":"{n}/9 lletres ({v} vocals, {c} consonants).",
+"nums_ready":"Números a punt. Ara genera l'objectiu.","need_numbers":"Primer tria els números.","target_ready":"Objectiu fixat. Engega el rellotge!",
+"need_letters":"Primer cal completar les 9 lletres.","need_target":"Primer cal generar l'objectiu.",
+"solving":"Calculant totes les solucions possibles…","time_up":"S'ha acabat el temps! Escriviu els resultats als requadres dels equips.",
+"new_round_msg":"Ronda nova. Tria una prova.",
+"err_zero":"La resta ha de donar un nombre positiu.","err_div":"La divisió ha de ser exacta (sense decimals).","pick_first":"Primer clica un nombre.",
+"status_best":"El més a prop de l'objectiu està a {d}.","status_hit":"Objectiu aconseguit!",
+"sol_trivial":"L'objectiu ja és un dels números de partida.",
+"sol_exact":"Hi ha solució exacta en {n} operacions (la més curta que troba el programa).",
+"sol_near":"No hi ha solució exacta. El més a prop que es pot arribar és {v}, a {d} de l'objectiu.",
+"sol_done_exact":"Solució completa. Hi ha una altra manera? Intenteu trobar-la.","sol_done_near":"Fi del recorregut: el més a prop és {v}.",
+"stat_none":"","stat_wait":"Calculant…",
+"stat":"Amb estos 6 números es poden aconseguir {n} dels 900 objectius possibles (de 100 a 999).",
+"rules_h":"Regles i puntuació",
+"rules_l":"Lletres: cada paraula vàlida suma tants punts com lletres; amb les 9 lletres, 18 punts.",
+"rules_n":"Xifres: 10 punts si s'arriba a l'objectiu, 7 si s'està a 5 o menys, 5 si s'està a 10 o menys.",
+"rules_ops":"Només operacions +, −, ×, ÷ amb enters positius; cada número es pot usar una vegada.",
+/* Raona-ho */
+"rng":"Escriu nombres enters positius.","m_notin":"Només pots usar els números del conjunt, i cada un una vegada.",
+"f_a":"1r número","f_b":"2n número","f_c":"3r número","f_n":"Operacions","d1.l0":"Objectius","d2.l0":"Diferència",
+"m1.q":"Amb els números 100, 25, 3, 2, 7 i 10, escriu-ne dos la suma dels quals siga 107.",
+"m1_f":"{0} + {1} = {2}, no 107. Comprova-ho amb el taller.","m1_ok":"✔ 100 + 7 = 107. És l'única parella possible.",
+"m1.more":"El 107 és un nombre primer. Raona per què no es pot aconseguir amb el producte de dos números més grans que 1.",
+"m2.q":"Amb els mateixos números, escriu-ne tres (a, b, c) de manera que (a + b) × c = 270.",
+"m2_f":"({0} + {1}) × {2} = {3}, no 270.","m2_ok":"✔ (25 + 2) × 10 = 27 × 10 = 270. És l'única possibilitat (amb a i b intercanviables).",
+"m2.more":"Si escrius 25 + 2 × 10 en una calculadora, què et dona? Per què no és igual que (25 + 2) × 10?",
+"m3.q":"Amb els mateixos números has d'arribar a 977. Escriu el nombre mínim d'operacions que et calen.",
+"m3_poc":"Amb {0} operacions no s'hi arriba: el programa ha provat totes les combinacions.","m3_molt":"Amb {0} operacions sí, però es pot amb menys. Prova-ho al taller.",
+"m3_ok":"✔ Tres: 25 − 2 = 23, 100 × 10 = 1000 i 1000 − 23 = 977.",
+"m3.more":"Per què sovint és bona idea acostar-se primer a un múltiple de 100 o de 1000 i corregir després amb una resta?",
+"s1.q":"La suma de dos números és sempre major que cadascun d'ells.","s1.h":"Sumar un nombre positiu fa créixer el resultat.",
+"s1.e":"a + b > a perquè b > 0. Per això sumar mai no et fa baixar d'un nombre que ja tens.",
+"s2.q":"El producte de dos números és sempre major que cadascun d'ells.","s2.h":"Pensa en un factor molt especial.",
+"s2.e":"Només passa si cap factor és 1: a × 1 = a. Per això multiplicar per 1 no serveix de res en el joc.",
+"s2_nocx":"{0} × {1} = {2}: supera tots dos factors. Busca un cas en què no.","s2_cx":"✔ {0} × {1} = {2}: no és major que {2}. Contraexemple trobat.",
+"s3.q":"Si multipliques un número parell per un d'imparell, el resultat és sempre parell.","s3.h":"Pensa en el factor 2 que té el parell.",
+"s3.e":"Si a = 2k, aleshores a × b = 2(k · b), que és parell sempre.",
+"s4.q":"Si sumes dos números imparells, el resultat és imparell.","s4.h":"Prova 3 + 5.",
+"s4.e":"(2k + 1) + (2m + 1) = 2(k + m + 1): sempre és parell.",
+"s5.q":"Si multipliques dos números més grans que 1, el resultat pot ser un nombre primer.","s5.h":"Un primer només té dos divisors: 1 i ell mateix.",
+"s5.e":"a × b té almenys els divisors 1, a, b i a × b: no és primer mai.",
+"s6.q":"Quan divideixes exactament dos números del conjunt, el quocient és major que 1.","s6.h":"I si els dos números fossen iguals?",
+"s6.e":"Només si el dividend és major que el divisor. Amb dos números iguals, 3 ÷ 3 = 1.",
+"s6_nodiv":"{0} ÷ {1} no és exacta: busca una divisió exacta.","s6_nocx":"{0} ÷ {1} = {2}, que és major que 1. Busca un cas en què no.","s6_cx":"✔ {0} ÷ {1} = 1. Contraexemple trobat.",
+"e1.ctx":"Tenen els números 7 i 5 i volen obtindre un 2 amb una sola operació.","e1.n0":"Anna","e1.n1":"Bernat",
+"e1.s0":"7 − 5 = 2. Al gran li resto el petit.","e1.s1":"5 − 7 = 2. És igual: la diferència no depén de l'ordre.",
+"e1.w0":"5 − 7 dona −2 (negatiu): la resta no és commutativa i el joc només accepta resultats positius.",
+"e1.w1":"Perquè en una resta el signe del resultat sempre és positiu.","e1.w2":"Perquè només es poden restar números imparells.",
+"e1.frame":"Bernat, 5 − 7 no dona 2 perquè…",
+"e1.model":"5 − 7 = −2: en una resta l'ordre importa. La diferència entre 5 i 7 és 2, però l'operació que dona 2 és 7 − 5. El taller ho col·loca bé automàticament perquè només accepta restes positives.",
+"e2.ctx":"Tenen els números 20 i 8 i volen fer una divisió.","e2.n0":"Carles","e2.n1":"Dani",
+"e2.s0":"20 ÷ 8 = 2,5. Ja tinc un resultat.","e2.s1":"20 ÷ 8 no es pot fer en este joc: la divisió ha de ser exacta i 8 no és divisor de 20.",
+"e2.w0":"20 = 2 × 8 + 4: sobra residu, i el joc només admet quocients enters.","e2.w1":"Perquè no es pot dividir un nombre gran per un de més xicotet.","e2.w2":"Perquè només es pot dividir quan els dos números són parells.",
+"e2.frame":"Carles, 20 ÷ 8 no es pot usar perquè…",
+"e2.model":"Una divisió és exacta quan el residu és 0. Ací 20 ÷ 8 dona 2 i sobren 4, així que no és exacta. El joc només accepta quocients enters; amb 20 ÷ 5 = 4 sí que funcionaria.",
+"e3.ctx":"Volen escriure en una sola línia els passos 3 + 4 = 7 i 7 × 5 = 35.","e3.n0":"Pau","e3.n1":"Queralt",
+"e3.s0":"Es pot escriure 3 + 4 × 5 = 35.","e3.s1":"No: 3 + 4 × 5 = 23. Si vols sumar primer, cal escriure (3 + 4) × 5 = 35.",
+"e3.w0":"La multiplicació té prioritat sobre la suma; per a canviar l'ordre calen parèntesis.","e3.w1":"Perquè els parèntesis es posen sempre al final de l'expressió.","e3.w2":"Perquè 3 + 4 × 5 és igual a 7 × 5 en qualsevol cas.",
+"e3.frame":"Pau, 3 + 4 × 5 no és 35 perquè…",
+"e3.model":"3 + 4 × 5 = 3 + 20 = 23, perquè es multiplica abans de sumar. Si volem sumar primer, posem parèntesis: (3 + 4) × 5 = 7 × 5 = 35. Al taller cada pas és una operació diferent i per això no hi ha ambigüitat.",
+"d1.q":"Quatre jocs de sis números. Quin permet aconseguir més objectius entre 100 i 999? Tria'l i escriu quants en dona (±15).","d1.lc":"Joc triat:",
+"d1_f":"Amb {0} s'aconsegueixen {1} objectius. N'hi ha un altre que en dona més.","d1_n":"Quasi. Mira l'estadística del simulador: quants objectius s'aconsegueixen amb este joc?",
+"d1_ok":"✔ Els números xicotets consecutius (4 a 9) donen 895 objectius, més que els 4 grans amb el 3 i el 7 (860).",
+"d1.more":"Per què creus que tindre molts números xicotets de valors diferents dona tantes combinacions? Compara-ho amb 1, 2, 3, 4, 5, 6.",
+"d2.q":"Tens 100, 10, 9, 3, 2 i 1 i l'objectiu és 999. Quina és la millor primera operació? Escriu a quant de 999 queda el seu resultat.","d2.lc":"Primera operació:",
+"d2_f":"{0} = {1}, a {2} de 999. Hi ha una opció que s'hi acosta molt més.","d2_d":"Torna a calcular: quina és la diferència entre el resultat i 999?",
+"d2_ok":"✔ 100 × 10 = 1000, a 1 de 999. Després només cal restar 1: 1000 − 1 = 999.",
+"d2.more":"Busca un altre objectiu que es resolga acostant-se a 1000 i corregint. En quins altres casos t'ajuda este truc?"
+},
+es:{
+"title":"Cifras y letras: juego de clase con equipos y marcador",
+"eyebrow":"Juego de aula · Operaciones y vocabulario",
+"h1":"Cifras y letras",
+"lede":"Dos pruebas con reloj para la pizarra digital: forma una palabra con 9 letras o llega a un objetivo con 6 números.",
+"story":"Para la pizarra digital: el profesor elige las letras o los números, arranca el reloj y cada equipo escribe en su cuadro la palabra o el número conseguido. El marcador sugiere los puntos; en la prueba de cifras, el taller de cálculo comprueba la propuesta de un equipo y muestra la solución más corta paso a paso.",
+"round_lbl":"Ronda","new_round":"Nueva ronda","reset_game":"Reiniciar la partida","reset_sure":"¿Seguro? Pulsa otra vez",
+"sound_title":"Activar o desactivar el sonido","aria.tabs":"Prueba","aria.target":"Objetivo","aria.ops":"Operaciones",
+"tab_l":"Letras","tab_n":"Cifras",
+"hint_l":"Elige 9 letras: vocales y consonantes, mínimo 3 de cada. Cuando estén, arranca el reloj.",
+"vowel":"Vocal","consonant":"Consonante","rand_fill":"Completar al azar","clear_l":"Borrar",
+"hint_n":"Elige cuántos números grandes quieres (25, 50, 75, 100); el resto serán pequeños. Después, genera el objetivo.",
+"big_q":"Números grandes:","gen_target":"Generar objetivo","only_solv":"Solo objetivos con solución exacta",
+"start":"Arrancar","pause":"Pausa","resume":"Continuar","reset_clock":"Reiniciar reloj","dur_lbl":"Duración","space_hint":"Espacio: arrancar / pausar",
+"msg_welcome":"Elige una prueba: letras o cifras. Cada equipo escribe su respuesta y el marcador sugiere los puntos.",
+"teams_h":"Equipos y marcador","n_teams":"Equipos:","team_default":"Equipo {n}","team_name":"Nombre del equipo",
+"ph_word":"Palabra","ph_num":"Número conseguido",
+"sug_wait_letters":"Faltan letras en el tablero.","sug_wait_target":"Falta el objetivo.",
+"sug_type_word":"Escribid la palabra.","sug_type_num":"Escribid el número conseguido.",
+"word_ok":"{n} letras → {p} puntos (la palabra la valida el profesor)","word_bad":"Usa letras que no están: {c}",
+"word_bad_empty":"Ninguna letra válida.","word_too_long":"{n} letras: demasiado larga (máximo 9).",
+"num_ok":"A {d} del objetivo → {p} puntos","num_bad":"Escribid un número positivo.",
+"apply":"Sumar {p} puntos","apply0":"Sumar puntos","applied":"Puntos sumados",
+"calc_h":"Taller de cálculo","calc_hint":"Comprueba la propuesta de un equipo: pulsa un número, una operación y otro número. O mira la solución paso a paso.",
+"undo":"Deshacer","reset_calc":"Empezar de nuevo","step_btn":"Solución paso a paso","step_next":"Siguiente paso ({k}/{n})","all_btn":"Toda la solución",
+"letters_ready":"Letras listas. ¡Arranca el reloj!","letters_progress":"{n}/9 letras ({v} vocales, {c} consonantes).",
+"nums_ready":"Números listos. Ahora genera el objetivo.","need_numbers":"Primero elige los números.","target_ready":"Objetivo fijado. ¡Arranca el reloj!",
+"need_letters":"Primero hay que completar las 9 letras.","need_target":"Primero hay que generar el objetivo.",
+"solving":"Calculando todas las soluciones posibles…","time_up":"¡Se acabó el tiempo! Escribid los resultados en los cuadros de los equipos.",
+"new_round_msg":"Ronda nueva. Elige una prueba.",
+"err_zero":"La resta tiene que dar un número positivo.","err_div":"La división tiene que ser exacta (sin decimales).","pick_first":"Primero pulsa un número.",
+"status_best":"Lo más cerca del objetivo está a {d}.","status_hit":"¡Objetivo conseguido!",
+"sol_trivial":"El objetivo ya es uno de los números de partida.",
+"sol_exact":"Hay solución exacta en {n} operaciones (la más corta que encuentra el programa).",
+"sol_near":"No hay solución exacta. Lo más cerca que se puede llegar es {v}, a {d} del objetivo.",
+"sol_done_exact":"Solución completa. ¿Hay otra forma? Intentad encontrarla.","sol_done_near":"Fin del recorrido: lo más cerca es {v}.",
+"stat_none":"","stat_wait":"Calculando…",
+"stat":"Con estos 6 números se pueden conseguir {n} de los 900 objetivos posibles (de 100 a 999).",
+"rules_h":"Reglas y puntuación",
+"rules_l":"Letras: cada palabra válida suma tantos puntos como letras; con las 9 letras, 18 puntos.",
+"rules_n":"Cifras: 10 puntos si se llega al objetivo, 7 si se queda a 5 o menos, 5 si se queda a 10 o menos.",
+"rules_ops":"Solo operaciones +, −, ×, ÷ con enteros positivos; cada número se puede usar una vez.",
+/* Raona-ho */
+"rng":"Escribe números enteros positivos.","m_notin":"Solo puedes usar los números del conjunto, y cada uno una vez.",
+"f_a":"1.er número","f_b":"2.º número","f_c":"3.er número","f_n":"Operaciones","d1.l0":"Objetivos","d2.l0":"Diferencia",
+"m1.q":"Con los números 100, 25, 3, 2, 7 y 10, escribe dos cuya suma sea 107.",
+"m1_f":"{0} + {1} = {2}, no 107. Compruébalo con el taller.","m1_ok":"✔ 100 + 7 = 107. Es la única pareja posible.",
+"m1.more":"El 107 es un número primo. Razona por qué no se puede conseguir con el producto de dos números mayores que 1.",
+"m2.q":"Con los mismos números, escribe tres (a, b, c) de manera que (a + b) × c = 270.",
+"m2_f":"({0} + {1}) × {2} = {3}, no 270.","m2_ok":"✔ (25 + 2) × 10 = 27 × 10 = 270. Es la única posibilidad (con a y b intercambiables).",
+"m2.more":"Si escribes 25 + 2 × 10 en una calculadora, ¿qué te da? ¿Por qué no es igual que (25 + 2) × 10?",
+"m3.q":"Con los mismos números tienes que llegar a 977. Escribe el número mínimo de operaciones que necesitas.",
+"m3_poc":"Con {0} operaciones no se llega: el programa ha probado todas las combinaciones.","m3_molt":"Con {0} operaciones sí, pero se puede con menos. Pruébalo en el taller.",
+"m3_ok":"✔ Tres: 25 − 2 = 23, 100 × 10 = 1000 y 1000 − 23 = 977.",
+"m3.more":"¿Por qué suele ser buena idea acercarse primero a un múltiplo de 100 o de 1000 y corregir después con una resta?",
+"s1.q":"La suma de dos números es siempre mayor que cada uno de ellos.","s1.h":"Sumar un número positivo hace crecer el resultado.",
+"s1.e":"a + b > a porque b > 0. Por eso sumar nunca te hace bajar de un número que ya tienes.",
+"s2.q":"El producto de dos números es siempre mayor que cada uno de ellos.","s2.h":"Piensa en un factor muy especial.",
+"s2.e":"Solo ocurre si ningún factor es 1: a × 1 = a. Por eso multiplicar por 1 no sirve de nada en el juego.",
+"s2_nocx":"{0} × {1} = {2}: supera a los dos factores. Busca un caso en que no.","s2_cx":"✔ {0} × {1} = {2}: no es mayor que {2}. Contraejemplo encontrado.",
+"s3.q":"Si multiplicas un número par por uno impar, el resultado es siempre par.","s3.h":"Piensa en el factor 2 que tiene el par.",
+"s3.e":"Si a = 2k, entonces a × b = 2(k · b), que siempre es par.",
+"s4.q":"Si sumas dos números impares, el resultado es impar.","s4.h":"Prueba 3 + 5.",
+"s4.e":"(2k + 1) + (2m + 1) = 2(k + m + 1): siempre es par.",
+"s5.q":"Si multiplicas dos números mayores que 1, el resultado puede ser un número primo.","s5.h":"Un primo solo tiene dos divisores: 1 y él mismo.",
+"s5.e":"a × b tiene al menos los divisores 1, a, b y a × b: nunca es primo.",
+"s6.q":"Cuando divides exactamente dos números del conjunto, el cociente es mayor que 1.","s6.h":"¿Y si los dos números fueran iguales?",
+"s6.e":"Solo si el dividendo es mayor que el divisor. Con dos números iguales, 3 ÷ 3 = 1.",
+"s6_nodiv":"{0} ÷ {1} no es exacta: busca una división exacta.","s6_nocx":"{0} ÷ {1} = {2}, que es mayor que 1. Busca un caso en que no.","s6_cx":"✔ {0} ÷ {1} = 1. Contraejemplo encontrado.",
+"e1.ctx":"Tienen los números 7 y 5 y quieren obtener un 2 con una sola operación.","e1.n0":"Ana","e1.n1":"Bernardo",
+"e1.s0":"7 − 5 = 2. Al grande le resto el pequeño.","e1.s1":"5 − 7 = 2. Es igual: la diferencia no depende del orden.",
+"e1.w0":"5 − 7 da −2 (negativo): la resta no es conmutativa y el juego solo acepta resultados positivos.",
+"e1.w1":"Porque en una resta el signo del resultado siempre es positivo.","e1.w2":"Porque solo se pueden restar números impares.",
+"e1.frame":"Bernardo, 5 − 7 no da 2 porque…",
+"e1.model":"5 − 7 = −2: en una resta el orden importa. La diferencia entre 5 y 7 es 2, pero la operación que da 2 es 7 − 5. El taller lo coloca bien automáticamente porque solo acepta restas positivas.",
+"e2.ctx":"Tienen los números 20 y 8 y quieren hacer una división.","e2.n0":"Carlos","e2.n1":"Daniel",
+"e2.s0":"20 ÷ 8 = 2,5. Ya tengo un resultado.","e2.s1":"20 ÷ 8 no se puede hacer en este juego: la división tiene que ser exacta y 8 no es divisor de 20.",
+"e2.w0":"20 = 2 × 8 + 4: sobra resto, y el juego solo admite cocientes enteros.","e2.w1":"Porque no se puede dividir un número grande por otro más pequeño.","e2.w2":"Porque solo se puede dividir cuando los dos números son pares.",
+"e2.frame":"Carlos, 20 ÷ 8 no se puede usar porque…",
+"e2.model":"Una división es exacta cuando el resto es 0. Aquí 20 ÷ 8 da 2 y sobran 4, así que no es exacta. El juego solo acepta cocientes enteros; con 20 ÷ 5 = 4 sí funcionaría.",
+"e3.ctx":"Quieren escribir en una sola línea los pasos 3 + 4 = 7 y 7 × 5 = 35.","e3.n0":"Pablo","e3.n1":"Quiteria",
+"e3.s0":"Se puede escribir 3 + 4 × 5 = 35.","e3.s1":"No: 3 + 4 × 5 = 23. Si quieres sumar primero, hay que escribir (3 + 4) × 5 = 35.",
+"e3.w0":"La multiplicación tiene prioridad sobre la suma; para cambiar el orden hacen falta paréntesis.","e3.w1":"Porque los paréntesis se ponen siempre al final de la expresión.","e3.w2":"Porque 3 + 4 × 5 es igual a 7 × 5 en cualquier caso.",
+"e3.frame":"Pablo, 3 + 4 × 5 no es 35 porque…",
+"e3.model":"3 + 4 × 5 = 3 + 20 = 23, porque se multiplica antes de sumar. Si queremos sumar primero, ponemos paréntesis: (3 + 4) × 5 = 7 × 5 = 35. En el taller cada paso es una operación distinta y por eso no hay ambigüedad.",
+"d1.q":"Cuatro juegos de seis números. ¿Cuál permite conseguir más objetivos entre 100 y 999? Elígelo y escribe cuántos da (±15).","d1.lc":"Juego elegido:",
+"d1_f":"Con {0} se consiguen {1} objetivos. Hay otro que da más.","d1_n":"Casi. Mira la estadística del simulador: ¿cuántos objetivos se consiguen con este juego?",
+"d1_ok":"✔ Los números pequeños consecutivos (4 a 9) dan 895 objetivos, más que los 4 grandes con el 3 y el 7 (860).",
+"d1.more":"¿Por qué crees que tener muchos números pequeños de valores distintos da tantas combinaciones? Compáralo con 1, 2, 3, 4, 5, 6.",
+"d2.q":"Tienes 100, 10, 9, 3, 2 y 1 y el objetivo es 999. ¿Cuál es la mejor primera operación? Escribe a cuánto de 999 queda su resultado.","d2.lc":"Primera operación:",
+"d2_f":"{0} = {1}, a {2} de 999. Hay una opción que se acerca mucho más.","d2_d":"Vuelve a calcular: ¿cuál es la diferencia entre el resultado y 999?",
+"d2_ok":"✔ 100 × 10 = 1000, a 1 de 999. Después solo hay que restar 1: 1000 − 1 = 999.",
+"d2.more":"Busca otro objetivo que se resuelva acercándose a 1000 y corrigiendo. ¿En qué otros casos te ayuda este truco?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../xifres-i-lletres/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+'use strict';
+const G=id=>document.getElementById(id);
+const rnd=n=>Math.floor(Math.random()*n);
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);const x=a[i];a[i]=a[j];a[j]=x}return a}
+
+/* ---------- bosses de lletres (segons l'idioma de la pàgina) ---------- */
+const BAGS={
+  ca:{V:{A:12,E:12,I:6,O:5,U:3},C:{B:2,C:3,'Ç':1,D:3,F:1,G:2,H:1,J:1,L:5,M:3,N:6,P:3,Q:1,R:6,S:8,T:5,V:2,X:1,Z:1}},
+  es:{V:{A:12,E:12,I:6,O:9,U:5},C:{B:2,C:4,D:5,F:1,G:2,H:2,J:1,L:4,M:2,N:5,'Ñ':1,P:2,Q:1,R:5,S:6,T:4,V:1,X:1,Y:1,Z:1}}
+};
+function bagFor(kind){const c=BAGS[LANG][kind],arr=[];for(const k in c)for(let i=0;i<c[k];i++)arr.push(k);return shuffle(arr)}
+
+/* ---------- solucionador (en un Worker) ---------- */
+function solveAll(nums){
+  const best=new Map(),seen=new Set(),sa=[],so=[],sb=[],sr=[];
+  nums.forEach(v=>{if(v<=999&&!best.has(v))best.set(v,[])});
+  function rec(arr,d){
+    const n=arr.length;
+    for(let i=0;i<n;i++){
+      for(let j=i+1;j<n;j++){
+        const x=arr[i],y=arr[j],hi=x>y?x:y,lo=x>y?y:x;
+        const rest=[];
+        for(let k=0;k<n;k++)if(k!==i&&k!==j)rest.push(arr[k]);
+        for(let c=0;c<4;c++){
+          let r,op;
+          if(c===0){op='+';r=hi+lo}
+          else if(c===1){if(lo===1)continue;op='×';r=hi*lo}
+          else if(c===2){if(hi===lo)continue;op='−';r=hi-lo}
+          else{if(lo===1||hi%lo!==0)continue;op='÷';r=hi/lo}
+          sa[d]=hi;so[d]=op;sb[d]=lo;sr[d]=r;
+          if(r<=999){
+            const cur=best.get(r);
+            if(cur===undefined||cur.length>d+1){
+              const p=[];for(let q=0;q<=d;q++)p.push([sa[q],so[q],sb[q],sr[q]]);
+              best.set(r,p);
+            }
+          }
+          if(n>2){
+            const nx=rest.concat([r]).sort((a,b)=>a-b);
+            const key=nx.join(',');
+            if(!seen.has(key)){seen.add(key);rec(nx,d+1)}
+          }
+        }
+      }
+    }
+  }
+  rec(nums.slice().sort((a,b)=>a-b),0);
+  return Array.from(best.entries());
+}
+
+/* ---------- estat ---------- */
+const S={mode:'L',round:1,letters:[],bags:null,nums:[],target:null,solMap:null,solving:false,pendingTarget:false,
+  dur:30,left:30,running:false,end:0,timer:null,lastSec:0,muted:false,rolling:false,msgKey:null,
+  teams:[],pool:[],hist:[],selA:null,selOp:null,sol:null,solStep:0,nextId:1,busy:false,worker:null,token:0};
+const newTeam=()=>({name:'',score:0,vL:'',vN:'',aL:false,aN:false});
+const tname=i=>S.teams[i].name||t('team_default',{n:i+1});
+
+function save(){try{localStorage.setItem('xil1',JSON.stringify({round:S.round,teams:S.teams.map(x=>({name:x.name,score:x.score}))}))}catch(e){}}
+function load0(){
+  try{
+    const d=JSON.parse(localStorage.getItem('xil1')||'null');
+    if(d&&d.teams&&d.teams.length>=2&&d.teams.length<=4){
+      S.round=d.round||1;
+      S.teams=d.teams.map(x=>{const n=newTeam();n.name=String(x.name||'').slice(0,30);n.score=+x.score||0;return n});
+    }
+  }catch(e){}
+  if(!S.teams.length)S.teams=[newTeam(),newTeam()];
+}
+
+/* ---------- missatges ---------- */
+function setMsg(key,kind,p){S.msgKey=[key,p];const m=G('msg');m.textContent=key?t(key,p):'';m.className='msg'+(kind?' '+kind:'')}
+
+/* ---------- so ---------- */
+let ac=null;
+function beep(f,d,type){
+  if(S.muted)return;
+  try{
+    ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type=type||'sine';o.frequency.value=f;g.gain.value=0.12;
+    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d);
+  }catch(e){}
+}
+
+/* ---------- rellotge ---------- */
+const CIRC=2*Math.PI*54;
+function drawClock(){
+  const fg=G('clkFg');
+  fg.style.strokeDasharray=CIRC;
+  fg.style.strokeDashoffset=CIRC*(1-Math.max(0,S.left)/S.dur);
+  fg.setAttribute('class','fgc'+(S.left<=5?' late':S.left<=10?' warn':''));
+  G('clkT').textContent=Math.ceil(Math.max(0,S.left));
+  G('clkGo').textContent=t(S.running?'pause':(S.left<S.dur&&S.left>0?'resume':'start'));
+}
+const boardReady=()=>S.mode==='L'?S.letters.length===9:S.target!==null;
+function clockToggle(){
+  if(S.running){S.left=Math.max(0,(S.end-performance.now())/1000);clearInterval(S.timer);S.running=false;drawClock();return}
+  if(!boardReady()){setMsg(S.mode==='L'?'need_letters':'need_target','warn');return}
+  if(S.left<=0)S.left=S.dur;
+  S.running=true;S.end=performance.now()+S.left*1000;S.lastSec=Math.ceil(S.left);
+  S.timer=setInterval(tick,100);beep(660,.12);drawClock();
+}
+function tick(){
+  const left=(S.end-performance.now())/1000;
+  if(left<=0){clearInterval(S.timer);S.running=false;S.left=0;drawClock();beep(220,.9,'sawtooth');setMsg('time_up','bad');return}
+  S.left=left;
+  const c=Math.ceil(left);
+  if(c!==S.lastSec){S.lastSec=c;if(c<=5)beep(880,.08)}
+  drawClock();
+}
+function clockReset(){clearInterval(S.timer);S.running=false;S.left=S.dur;drawClock()}
+
+/* ---------- LLETRES ---------- */
+function counts(){let v=0,c=0;S.letters.forEach(l=>{if(l.k==='V')v++;else c++});return{v,c}}
+function canAdd(kind){
+  const n=S.letters.length;if(n>=9)return false;
+  const k=counts(),v=k.v+(kind==='V'?1:0),c=k.c+(kind==='C'?1:0);
+  return(9-n-1)>=Math.max(0,3-v)+Math.max(0,3-c);
+}
+function draw1(kind){
+  if(!S.bags)S.bags={V:bagFor('V'),C:bagFor('C')};
+  if(!S.bags[kind].length)S.bags[kind]=bagFor(kind);
+  S.letters.push({ch:S.bags[kind].pop(),k:kind});
+}
+function addLetter(kind){if(!canAdd(kind))return;draw1(kind);renderLetters(S.letters.length-1);afterLetters()}
+function fillLetters(){
+  let guard=0;
+  while(S.letters.length<9&&guard++<20){
+    const okV=canAdd('V'),okC=canAdd('C');
+    if(!okV&&!okC)break;
+    draw1(okV&&okC?(Math.random()<0.42?'V':'C'):(okV?'V':'C'));
+  }
+  renderLetters(-2);afterLetters();
+}
+function clearLetters(){S.letters=[];S.bags=null;S.teams.forEach(x=>{x.vL='';x.aL=false});renderLetters(-1);afterLetters();clockReset()}
+function afterLetters(){
+  if(S.letters.length===9)setMsg('letters_ready','ok');
+  else{const k=counts();setMsg('letters_progress','',{n:S.letters.length,v:k.v,c:k.c})}
+  refreshTeamInputs();
+}
+function renderLetters(pop){
+  let h='';
+  for(let i=0;i<9;i++){
+    const l=S.letters[i];
+    if(l){
+      const p=(pop===i||pop===-2)?' pop':'';
+      const d=pop===-2?' style="animation-delay:'+(i*70)+'ms"':'';
+      h+='<div class="tile'+(l.k==='V'?' v':'')+p+'"'+d+'>'+l.ch+'</div>';
+    }else h+='<div class="tile empty">·</div>';
+  }
+  G('lTiles').innerHTML=h;
+  G('addV').disabled=!canAdd('V');G('addC').disabled=!canAdd('C');G('fillL').disabled=S.letters.length>=9;
+}
+function norm(s){
+  return s.toUpperCase().replace(/Ñ/g,'\u0001').replace(/Ç/g,'\u0002').normalize('NFD')
+    .replace(/[̀-ͯ]/g,'').replace(/[^A-Z\u0001\u0002]/g,'')
+    .replace(/\u0001/g,'Ñ').replace(/\u0002/g,'Ç');
+}
+function checkWord(w){
+  const pool={};S.letters.forEach(l=>{pool[l.ch]=(pool[l.ch]||0)+1});
+  const bad=[];
+  for(const ch of w){if(pool[ch]>0)pool[ch]--;else if(bad.indexOf(ch)<0)bad.push(ch)}
+  return{ok:bad.length===0,bad};
+}
+
+/* ---------- XIFRES ---------- */
+const BIGS=[25,50,75,100];
+function setNums(arr){S.nums=arr.map(v=>({v,big:BIGS.indexOf(v)>=0}))}
+function drawNumbers(k){
+  const bigs=shuffle(BIGS).slice(0,k);
+  const smalls=shuffle([1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10]).slice(0,6-k);
+  setNums(bigs.concat(smalls));
+  S.target=null;S.solMap=null;S.pendingTarget=false;
+  S.teams.forEach(x=>{x.vN='';x.aN=false});
+  renderNums(true);renderTarget(null);resetPool();clockReset();
+  G('stat').textContent=t('stat_wait');
+  setMsg('nums_ready','ok');
+  startSolve();refreshTeamInputs();
+}
+function renderNums(pop){
+  let h='';
+  for(let i=0;i<6;i++){
+    const n=S.nums[i];
+    if(n)h+='<div class="tile num'+(n.big?' big':'')+(pop?' pop':'')+'"'+(pop?' style="animation-delay:'+(i*90)+'ms"':'')+'>'+n.v+'</div>';
+    else h+='<div class="tile num empty">·</div>';
+  }
+  G('nTiles').innerHTML=h;
+}
+function renderTarget(v){
+  const s=v===null?'···':String(v);
+  G('target').innerHTML=s.split('').map(c=>'<div class="digit">'+c+'</div>').join('');
+  G('target').setAttribute('aria-label',t('aria.target')+(v===null?'':': '+v));
+}
+function startSolve(){
+  S.solving=true;const token=++S.token;
+  const nums=S.nums.map(n=>n.v);
+  const done=entries=>{
+    if(token!==S.token)return;
+    S.solMap=new Map(entries);S.solving=false;
+    let reach=0;S.solMap.forEach((st,v)=>{if(v>=100&&v<=999)reach++});
+    G('stat').textContent=t('stat',{n:reach});
+    if(S.pendingTarget){S.pendingTarget=false;genTarget()}
+    if(S.onSolved){const f=S.onSolved;S.onSolved=null;f()}
+  };
+  try{
+    if(S.worker){S.worker.terminate();S.worker=null}
+    const src=solveAll.toString()+';self.onmessage=function(e){self.postMessage(solveAll(e.data))};';
+    const w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+    S.worker=w;
+    w.onmessage=e=>done(e.data);
+    w.onerror=()=>{w.terminate();S.worker=null;setTimeout(()=>done(solveAll(nums)),20)};
+    w.postMessage(nums);
+  }catch(e){setTimeout(()=>done(solveAll(nums)),20)}
+}
+function pickTarget(){
+  if(G('onlySol').checked&&S.solMap){
+    const keys=[];S.solMap.forEach((st,v)=>{if(v>=100&&v<=999)keys.push(v)});
+    if(keys.length)return keys[rnd(keys.length)];
+  }
+  return 100+rnd(900);
+}
+function genTarget(){
+  if(!S.nums.length){setMsg('need_numbers','warn');return}
+  if(S.rolling)return;
+  if(S.solving&&G('onlySol').checked){S.pendingTarget=true;setMsg('solving','warn');return}
+  const fin=pickTarget();S.rolling=true;
+  const t0=performance.now();
+  const iv=setInterval(()=>{
+    if(performance.now()-t0>(REDUCE?0:1500)){
+      clearInterval(iv);S.rolling=false;S.target=fin;renderTarget(fin);beep(784,.15);
+      setMsg('target_ready','ok');S.teams.forEach(x=>{x.aN=false});
+      refreshTeamInputs();renderCalc();
+    }else{renderTarget(100+rnd(900));beep(300+rnd(300),.03)}
+  },70);
+}
+function bestSolution(){
+  const tg=S.target;
+  if(S.solMap.has(tg))return{v:tg,steps:S.solMap.get(tg),exact:true,diff:0};
+  let bv=null,bd=1e9;
+  S.solMap.forEach((st,v)=>{
+    const d=Math.abs(v-tg);
+    if(d<bd||(d===bd&&st.length<S.solMap.get(bv).length)){bd=d;bv=v}
+  });
+  return{v:bv,steps:S.solMap.get(bv),exact:false,diff:bd};
+}
+
+/* ---------- Taller de càlcul ---------- */
+function resetPool(){
+  S.pool=S.nums.map(n=>({id:S.nextId++,v:n.v,used:false}));
+  S.hist=[];S.selA=null;S.selOp=null;S.sol=null;S.solStep=0;S.busy=false;
+  renderCalc();
+}
+const active=()=>S.pool.filter(c=>!c.used);
+function renderCalc(hl){
+  G('calcBox').hidden=S.mode!=='N';
+  G('chips').innerHTML=active().map(c=>'<button type="button" class="nchip'+(S.selA===c.id?' sel':'')+(hl&&hl.indexOf(c.id)>=0?' hl':'')+(S.target!==null&&c.v===S.target?' hit':'')+'" data-id="'+c.id+'">'+c.v+'</button>').join('');
+  Array.prototype.forEach.call(G('ops').children,b=>b.setAttribute('aria-pressed',String(S.selOp===b.dataset.op)));
+  G('hist').innerHTML=S.hist.map(s=>'<li>'+s.a+' '+s.op+' '+s.b+' = <b>'+s.r+'</b></li>').join('');
+  let st='';
+  if(S.target!==null&&S.hist.length){
+    let bd=1e9;active().forEach(c=>{bd=Math.min(bd,Math.abs(c.v-S.target))});
+    st=bd===0?t('status_hit'):t('status_best',{d:bd});
+  }
+  G('status').textContent=st;
+  const total=S.sol?S.sol.steps.length:0;
+  G('stepBtn').textContent=S.sol&&S.solStep<total?t('step_next',{k:S.solStep+1,n:total}):t('step_btn');
+  const fin=!!S.sol&&S.solStep>=total;
+  G('stepBtn').disabled=S.busy||fin;G('allBtn').disabled=S.busy||fin;G('undo').disabled=S.busy||!S.hist.length;
+}
+function doOp(idA,op,idB){
+  const A=S.pool.filter(c=>c.id===idA)[0],B=S.pool.filter(c=>c.id===idB)[0];
+  if(!A||!B||A===B)return false;
+  let a=A.v,b=B.v,ia=idA,ib=idB;
+  if((op==='−'||op==='÷')&&a<b){let x=a;a=b;b=x;x=ia;ia=ib;ib=x}
+  let r;
+  if(op==='+')r=a+b;
+  else if(op==='×')r=a*b;
+  else if(op==='−'){r=a-b;if(r<=0){setMsg('err_zero','bad');return false}}
+  else{if(b===0||a%b!==0){setMsg('err_div','bad');return false}r=a/b}
+  A.used=true;B.used=true;
+  const Cn={id:S.nextId++,v:r,used:false};S.pool.push(Cn);
+  S.hist.push({a,op,b,r,ia,ib,ir:Cn.id});
+  S.selA=null;S.selOp=null;
+  if(S.target!==null&&r===S.target)setMsg('status_hit','ok');
+  return true;
+}
+function undo(){
+  const s=S.hist.pop();if(!s)return;
+  S.pool.forEach(c=>{if(c.id===s.ia||c.id===s.ib)c.used=false});
+  S.pool=S.pool.filter(c=>c.id!==s.ir);
+  S.selA=null;S.selOp=null;
+  if(S.sol&&S.solStep>0)S.solStep--;
+  renderCalc();
+}
+function ensureSolution(){
+  if(S.target===null||!S.solMap){setMsg(S.solving?'solving':'need_target','warn');return false}
+  if(S.sol)return true;
+  resetPool();
+  S.sol=bestSolution();S.solStep=0;
+  if(!S.sol.steps.length)setMsg('sol_trivial','ok');
+  else if(S.sol.exact)setMsg('sol_exact','ok',{n:S.sol.steps.length});
+  else setMsg('sol_near','warn',{v:S.sol.v,d:S.sol.diff});
+  renderCalc();
+  return true;
+}
+function stepOnce(done){
+  const st=S.sol.steps[S.solStep];
+  const A=active().filter(c=>c.v===st[0])[0];
+  const B=active().filter(c=>c.v===st[2]&&c!==A)[0];
+  if(!A||!B){S.busy=false;renderCalc();return}
+  S.busy=true;renderCalc([A.id,B.id]);
+  setTimeout(()=>{
+    doOp(A.id,st[1],B.id);S.solStep++;S.busy=false;renderCalc();beep(520,.08);
+    if(S.solStep>=S.sol.steps.length)S.sol.exact?setMsg('sol_done_exact','ok'):setMsg('sol_done_near','warn',{v:S.sol.v});
+    if(done)done();
+  },REDUCE?0:650);
+}
+function stepBtn(){if(S.busy)return;if(!ensureSolution())return;if(S.solStep<S.sol.steps.length)stepOnce()}
+function allBtn(){
+  if(S.busy)return;if(!ensureSolution())return;
+  const go=()=>{if(S.solStep<S.sol.steps.length)stepOnce(go)};go();
+}
+
+/* ---------- Equips ---------- */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+function renderTeams(){
+  G('teams').innerHTML=S.teams.map((x,i)=>
+    '<div class="team" data-i="'+i+'">'+
+    '<input type="text" class="tname" maxlength="30" value="'+esc(x.name)+'" placeholder="'+esc(t('team_default',{n:i+1}))+'" aria-label="'+esc(t('team_name'))+'">'+
+    '<div class="sc"><button type="button" class="btn adj" data-a="minus" aria-label="−1">−1</button><span class="score">'+x.score+'</span><button type="button" class="btn adj" data-a="plus" aria-label="+1">+1</button></div>'+
+    '<div class="ans"><input type="text" class="tin" autocomplete="off" spellcheck="false"><button type="button" class="btn primary" data-a="apply" disabled></button></div>'+
+    '<div class="sug"></div></div>').join('');
+  G('nTeams').value=String(S.teams.length);
+  refreshTeamInputs();
+}
+function refreshTeamInputs(){
+  document.querySelectorAll('.team').forEach((card,i)=>{
+    const x=S.teams[i],inp=card.querySelector('.tin');
+    inp.placeholder=t(S.mode==='L'?'ph_word':'ph_num');inp.inputMode=S.mode==='L'?'text':'numeric';
+    inp.setAttribute('aria-label',inp.placeholder);
+    if(inp.value!==x['v'+S.mode])inp.value=x['v'+S.mode];
+    updateSug(i);
+  });
+}
+function evalTeam(i){
+  const x=S.teams[i],v=x['v'+S.mode].trim();
+  if(S.mode==='L'){
+    if(S.letters.length<9)return{st:'wait',txt:t('sug_wait_letters')};
+    if(!v)return{st:'empty',txt:t('sug_type_word')};
+    const w=norm(v);
+    if(!w)return{st:'bad',txt:t('word_bad_empty')};
+    if(w.length>9)return{st:'bad',txt:t('word_too_long',{n:w.length})};
+    const r=checkWord(w);
+    if(!r.ok)return{st:'bad',txt:t('word_bad',{c:r.bad.join(' ')})};
+    const p=w.length===9?18:w.length;
+    return{st:'ok',p,txt:t('word_ok',{n:w.length,p})};
+  }
+  if(S.target===null)return{st:'wait',txt:t('sug_wait_target')};
+  if(!v)return{st:'empty',txt:t('sug_type_num')};
+  const n=parseInt(v,10);
+  if(isNaN(n)||n<=0)return{st:'bad',txt:t('num_bad')};
+  const d=Math.abs(n-S.target),p=d===0?10:d<=5?7:d<=10?5:0;
+  return{st:'ok',p,txt:t('num_ok',{d,p})};
+}
+function updateSug(i){
+  const card=document.querySelector('.team[data-i="'+i+'"]');if(!card)return;
+  const ev=evalTeam(i),x=S.teams[i],sug=card.querySelector('.sug'),btn=card.querySelector('[data-a="apply"]');
+  sug.textContent=ev.txt;sug.className='sug'+(ev.st==='ok'?' ok':ev.st==='bad'?' bad':'');
+  if(x['a'+S.mode]){btn.textContent=t('applied');btn.disabled=true}
+  else{btn.textContent=ev.st==='ok'?t('apply',{p:ev.p}):t('apply0');btn.disabled=ev.st!=='ok'}
+}
+function setScore(i,delta){
+  S.teams[i].score+=delta;
+  const el=document.querySelector('.team[data-i="'+i+'"] .score');if(el)el.textContent=S.teams[i].score;
+  save();
+}
+
+/* ---------- Ronda / mode ---------- */
+function setMode(m){
+  if(S.mode===m)return;
+  S.mode=m;
+  G('tabL').setAttribute('aria-pressed',String(m==='L'));G('tabN').setAttribute('aria-pressed',String(m==='N'));
+  G('viewL').hidden=m!=='L';G('viewN').hidden=m!=='N';
+  S.dur=m==='L'?30:45;G('dur').value=String(S.dur);clockReset();
+  setMsg(m==='L'?'hint_l':'hint_n');
+  refreshTeamInputs();renderCalc();
+}
+function newRound(){
+  S.round++;G('roundNum').textContent=S.round;
+  S.letters=[];S.bags=null;S.nums=[];S.target=null;S.solMap=null;S.pendingTarget=false;S.token++;
+  if(S.worker){S.worker.terminate();S.worker=null}
+  S.teams.forEach(x=>{x.vL='';x.vN='';x.aL=false;x.aN=false});
+  renderLetters(-1);renderNums(false);renderTarget(null);resetPool();clockReset();
+  G('stat').textContent='';
+  setMsg('new_round_msg');refreshTeamInputs();save();
+}
+let resetArm=0;
+function resetGame(){
+  const b=G('resetGame');
+  if(!resetArm){resetArm=1;b.textContent=t('reset_sure');setTimeout(()=>{resetArm=0;b.textContent=t('reset_game')},3000);return}
+  resetArm=0;b.textContent=t('reset_game');
+  S.round=0;S.teams.forEach(x=>{x.score=0});
+  renderTeams();newRound();
+}
+
+/* ---------- càrrega d'un cas des de Raona-ho ---------- */
+function load(o){
+  o=o||{};
+  if(S.mode!=='N')setMode('N');
+  clockReset();setMsg('');
+  const nums=(o.nums&&o.nums.length===6)?o.nums:[100,25,3,2,7,10];
+  setNums(nums);S.target=o.target||null;S.solMap=null;S.pendingTarget=false;
+  S.teams.forEach(x=>{x.vN='';x.aN=false});
+  renderNums(false);renderTarget(S.target);resetPool();
+  G('stat').textContent=t('stat_wait');
+  startSolve();refreshTeamInputs();
+  (o.steps||[]).forEach(s=>{
+    const A=active().filter(c=>c.v===s[0])[0];
+    const B=active().filter(c=>c.v===s[2]&&c!==A)[0];
+    if(A&&B)doOp(A.id,s[1],B.id);
+  });
+  renderCalc();
+  RZ.show(G('nTiles'));
+}
+
+/* ---------- Raona-ho ---------- */
+const C1=[100,25,3,2,7,10];
+const SETS=[[25,50,75,100,3,7],[1,2,3,4,5,6],[4,5,6,7,8,9],[50,7,3,2,1,1]];
+const SETC=[860,442,895,770];
+const D2EXP=[[100,'+',10],[100,'×',10],[10,'×',9],[100,'−',10]];
+const usable=(vals,set)=>{const pool=set.slice();for(const v of vals){const k=pool.indexOf(v);if(k<0)return false;pool.splice(k,1)}return true};
+const posInt=v=>v.every(x=>Number.isInteger(x)&&x>0);
+const FA={l:'f_a'},FB={l:'f_b'},FC={l:'f_c'};
+RZ.init({
+ sim:([o])=>load(o),
+ M:[
+  {id:'m1',f:[FA,FB],sim:()=>load({nums:C1,target:107}),
+   chk:([a,b])=>!posInt([a,b])?{k:'rng'}:!usable([a,b],C1)?{k:'m_notin'}:a+b!==107?{k:'m1_f',p:[a,b,a+b]}:null,ok:()=>({k:'m1_ok'})},
+  {id:'m2',f:[FA,FB,FC],sim:()=>load({nums:C1,target:270}),
+   chk:([a,b,c])=>!posInt([a,b,c])?{k:'rng'}:!usable([a,b,c],C1)?{k:'m_notin'}:(a+b)*c!==270?{k:'m2_f',p:[a,b,c,(a+b)*c]}:null,ok:()=>({k:'m2_ok'})},
+  {id:'m3',f:[{l:'f_n'}],sim:()=>load({nums:C1,target:977}),
+   chk:([n])=>!posInt([n])?{k:'rng'}:n<3?{k:'m3_poc',p:[n]}:n>3?{k:'m3_molt',p:[n]}:null,ok:()=>({k:'m3_ok'})}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load({nums:C1})},
+  {id:'s2',ans:'D',f:[FA,FB],sim:()=>load({nums:C1}),
+   cxsim:([a,b])=>load({nums:[a||1,b||7,25,100,3,10],steps:a&&b?[[a,'×',b]]:[]}),
+   cxok:([a,b])=>({k:'s2_cx',p:[a,b,a*b]}),
+   cx:([a,b])=>!posInt([a,b])?{k:'rng'}:a*b>Math.max(a,b)?{k:'s2_nocx',p:[a,b,a*b]}:null},
+  {id:'s3',ans:'S',sim:()=>load({nums:[4,7,3,10,25,2],steps:[[4,'×',7]]})},
+  {id:'s4',ans:'M',sim:()=>load({nums:[3,5,2,10,25,100],steps:[[3,'+',5]]})},
+  {id:'s5',ans:'M',sim:()=>load({nums:C1,steps:[[7,'×',3]]})},
+  {id:'s6',ans:'D',f:[FA,FB],sim:()=>load({nums:[10,5,3,2,7,25],steps:[[10,'÷',5]]}),
+   cxsim:([a,b])=>load({nums:[a||3,b||3,25,100,2,10],steps:a&&b&&a%b===0?[[a,'÷',b]]:[]}),
+   cxok:([a,b])=>({k:'s6_cx',p:[a,b]}),
+   cx:([a,b])=>!posInt([a,b])?{k:'rng'}:a%b!==0?{k:'s6_nodiv',p:[a,b]}:a/b>1?{k:'s6_nocx',p:[a,b,a/b]}:null}
+ ],
+ E:[
+  {id:'e1',who:0,args:[{nums:[7,5,10,25,3,1],steps:[[5,'−',7]]}]},
+  {id:'e2',who:1,args:[{nums:[20,8,10,25,3,1],steps:[[20,'÷',8]]}]},
+  {id:'e3',who:1,args:[{nums:[3,4,5,10,25,2],steps:[[3,'+',4],[7,'×',5]]}]}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[0,1,2,3],fmt:i=>SETS[i].join(' · ')},f:[{l:'d1.l0'}],
+   sim:([p])=>load({nums:SETS[p]||SETS[2]}),ok:()=>({k:'d1_ok'}),
+   chk:([p,n])=>p!==2?{k:'d1_f',p:[SETS[p].join(', '),SETC[p]]}:!Number.isFinite(n)||Math.abs(n-SETC[2])>15?{k:'d1_n'}:null},
+  {id:'d2',chips:{vals:[0,1,2,3],fmt:i=>D2EXP[i].join(' ')},f:[{l:'d2.l0'}],
+   sim:([p])=>load({nums:[100,10,9,3,2,1],target:999,steps:(p===undefined||p===null)?[]:[D2EXP[p]]}),ok:()=>({k:'d2_ok'}),
+   chk:([p,d])=>{
+     const e=D2EXP[p],r=e[1]==='+'?e[0]+e[2]:e[1]==='×'?e[0]*e[2]:e[0]-e[2],dd=Math.abs(r-999);
+     return p!==1?{k:'d2_f',p:[e.join(' '),r,dd]}:d!==1?{k:'d2_d'}:null;}}
+ ]
+});
+
+/* ---------- arrencada ---------- */
+function init(){
+  load0();
+  G('roundNum').textContent=S.round;
+  renderTeams();renderLetters(-1);renderNums(false);renderTarget(null);
+  S.dur=30;S.left=30;
+  G('tabL').onclick=()=>setMode('L');G('tabN').onclick=()=>setMode('N');
+  G('addV').onclick=()=>addLetter('V');G('addC').onclick=()=>addLetter('C');
+  G('fillL').onclick=fillLetters;G('clearL').onclick=clearLetters;
+  G('bigRow').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.k!==undefined)drawNumbers(+b.dataset.k)};
+  G('genT').onclick=genTarget;
+  G('clkGo').onclick=clockToggle;G('clkReset').onclick=clockReset;
+  G('dur').onchange=function(){S.dur=+this.value;clockReset()};
+  G('newRound').onclick=newRound;G('resetGame').onclick=resetGame;
+  G('mute').onclick=function(){S.muted=!S.muted;this.textContent=S.muted?'🔇':'🔊'};
+  G('nTeams').onchange=function(){
+    const n=+this.value;
+    while(S.teams.length<n)S.teams.push(newTeam());
+    S.teams=S.teams.slice(0,n);renderTeams();save();
+  };
+  G('teams').addEventListener('input',e=>{
+    const el=e.target,card=el.closest('.team');if(!card)return;
+    const i=+card.dataset.i;
+    if(el.classList.contains('tname')){S.teams[i].name=el.value;save()}
+    else if(el.classList.contains('tin')){S.teams[i]['v'+S.mode]=el.value;updateSug(i)}
+  });
+  G('teams').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    const card=b.closest('.team'),i=+card.dataset.i,a=b.dataset.a;
+    if(a==='plus')setScore(i,1);
+    else if(a==='minus')setScore(i,-1);
+    else if(a==='apply'){
+      const ev=evalTeam(i);
+      if(ev.st==='ok'&&!S.teams[i]['a'+S.mode]){S.teams[i]['a'+S.mode]=true;setScore(i,ev.p);updateSug(i);beep(700,.1)}
+    }
+  });
+  G('chips').addEventListener('click',e=>{
+    const b=e.target.closest('.nchip');if(!b||S.busy)return;
+    const id=+b.dataset.id;
+    if(S.selA===null||S.selOp===null){S.selA=S.selA===id?null:id;renderCalc();return}
+    if(id===S.selA){S.selA=null;S.selOp=null;renderCalc();return}
+    doOp(S.selA,S.selOp,id);renderCalc();
+  });
+  G('ops').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b||S.busy)return;
+    if(S.selA===null){setMsg('pick_first','warn');return}
+    S.selOp=S.selOp===b.dataset.op?null:b.dataset.op;renderCalc();
+  });
+  G('undo').onclick=undo;G('resetCalc').onclick=()=>resetPool();
+  G('stepBtn').onclick=stepBtn;G('allBtn').onclick=allBtn;
+  document.addEventListener('keydown',e=>{
+    const tg=e.target&&e.target.tagName;
+    if(e.code==='Space'&&tg!=='INPUT'&&tg!=='TEXTAREA'&&tg!=='SELECT'&&tg!=='BUTTON'){e.preventDefault();clockToggle()}
+  });
+  document.addEventListener('langchange',()=>{
+    drawClock();renderTeams();renderTarget(S.target);renderCalc();
+    G('resetGame').textContent=t('reset_game');
+    G('mute').title=t('sound_title');
+    if(S.msgKey&&S.msgKey[0])setMsg(S.msgKey[0],'',S.msgKey[1]);else setMsg('msg_welcome');
+  });
+  setMsg('msg_welcome');
+}
+init();
+initQuiz([]);
+initLang();applyLang();
+})();
+</script>
+</body>
+</html>
