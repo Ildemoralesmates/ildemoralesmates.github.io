@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oliver i Benji × Bola de Drac: El torneig de les set boles</title>
+<meta name="description" content="Aventura interactiva: tria el camí, resol endevinalles, guanya cartes Veloç, Tècnica i Força en duels i troba les tres Boles del Drac amb la pilota parlant Pipo. 9 finals.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/oliver-benji-bola-de-drac/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/oliver-benji-bola-de-drac/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/oliver-benji-bola-de-drac/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/oliver-benji-bola-de-drac/">
+<meta name="author" content="Ilde">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Oliver i Benji × Bola de Drac: El torneig de les set boles">
+<meta property="og:description" content="Aventura interactiva: tria el camí, resol endevinalles, guanya cartes Veloç, Tècnica i Força en duels i troba les tres Boles del Drac amb la pilota parlant Pipo. 9 finals.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/oliver-benji-bola-de-drac/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Courier+Prime:wght@400;700&family=Grandstander:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6ec; --ink:#241a12; --card:#fffdf8; --muted:#6b5a4a; --line:#e5d8c3;
+  --accent:#6b44a8; --on-accent:#ffffff; --danger:#a3361f;
+  --font-title:"Grandstander","Trebuchet MS",system-ui,sans-serif;
+  --font-read:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --font-dial:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16110c; --ink:#f3e9d8; --card:#211a13; --muted:#b8a78f; --line:#3a2e22; --danger:#ff9b85;
+}
+body[data-era="estadi"]{--accent:#1f7a4a}
+body[data-era="illa"]{--accent:#a35a12}
+body[data-era="cel"]{--accent:#2563a8}
+body[data-era="casa"]{--accent:#6b44a8}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-read);line-height:1.55;transition:background .3s}
+.top{max-width:42rem;margin:0 auto;padding:.75rem 1rem;display:flex;gap:.5rem;align-items:center;justify-content:space-between}
+.brand{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.05rem}
+.tools{display:flex;gap:.4rem;align-items:center}
+.pill{font-family:var(--font-title);font-weight:700;font-size:.9rem;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:.35rem .8rem;cursor:pointer;min-height:2.4rem}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pill:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:42rem;margin:0 auto;padding:0 1rem 3rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:1.2rem;padding:1.1rem 1.1rem 1.3rem;box-shadow:0 2px 0 var(--line)}
+.plate{display:flex;gap:.8rem;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:.7rem;margin-bottom:.8rem}
+.plate svg{flex:0 0 auto;width:5.5rem;height:3.4rem;color:var(--accent)}
+.plate .pn{font-family:var(--font-title);font-weight:800;color:var(--accent);font-size:1.1rem;line-height:1.2}
+.hud{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.2rem 0 1rem;font-size:.95rem}
+.hud .grp{display:flex;align-items:center;gap:.4rem}
+.hud .lbl{font-family:var(--font-title);font-weight:700;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.hud svg{width:1.7rem;height:1.7rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{font-size:.9rem;border:2px solid var(--line);border-radius:999px;padding:.1rem .6rem;background:var(--bg)}
+.chip.empty{color:var(--muted);border-style:dashed}
+.txt p{font-size:1.2rem;margin:.7rem 0}
+.txt p.dlg{padding-left:.9rem;border-left:4px solid var(--accent)}
+.txt p.riddle{font-family:var(--font-title);font-weight:700;background:color-mix(in srgb,var(--accent) 14%,var(--card));border-radius:.8rem;padding:.7rem .9rem}
+.txt p.hint{color:var(--muted);font-style:italic;font-size:1.05rem}
+.choices{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+.btn{font-family:var(--font-title);font-weight:700;font-size:1.15rem;line-height:1.3;text-align:left;border:3px solid var(--accent);background:var(--card);color:var(--ink);border-radius:1rem;padding:.8rem 1rem;min-height:3.4rem;cursor:pointer;transition:transform .08s,background .15s}
+.btn:hover{background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.btn:active{transform:scale(.985)}
+.btn.main{background:var(--accent);color:var(--on-accent);text-align:center}
+.btn.main:hover{background:var(--accent);filter:brightness(1.08)}
+.btn.ghost{border-color:var(--line);font-size:1rem;min-height:2.8rem;font-weight:500;text-align:center}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.undo{margin-top:1rem;text-align:center}
+h1{font-family:var(--font-title);font-weight:800;font-size:2rem;line-height:1.1;margin:.2rem 0 .3rem;color:var(--accent)}
+h2{font-family:var(--font-title);font-weight:800;font-size:1.6rem;line-height:1.15;margin:.2rem 0 .6rem;color:var(--accent)}
+.sub{font-family:var(--font-title);font-size:1.2rem;color:var(--muted);margin:.1rem 0 1rem}
+.intro ul{padding-left:1.2rem;font-size:1.1rem}
+.intro li{margin:.4rem 0}
+.intro label{display:block;font-family:var(--font-title);font-weight:700;font-size:1.1rem;margin:1.1rem 0 .4rem}
+.intro input{width:100%;font:inherit;font-size:1.3rem;padding:.7rem .9rem;border:3px solid var(--line);border-radius:.9rem;background:var(--bg);color:var(--ink)}
+.intro input:focus{border-color:var(--accent)}
+.err{color:var(--danger);font-weight:700;margin:.5rem 0 0}
+.counter{margin-top:1rem;text-align:center;color:var(--muted);font-family:var(--font-dial);font-size:.95rem}
+.endnote{font-family:var(--font-dial);color:var(--muted);margin-top:1rem;font-size:.95rem}
+#plof{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;background:color-mix(in srgb,var(--accent) 88%,#000);color:#fff;text-align:center;padding:1rem}
+#plof .big{font-family:var(--font-title);font-weight:800;font-size:3.4rem;animation:pop .5s ease-out both}
+#plof svg{width:6rem;height:6rem;animation:spin 1.4s linear infinite}
+#plof .dial{font-family:var(--font-dial);font-size:1.15rem;border:2px solid #fff;border-radius:.6rem;padding:.4rem .9rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  #plof svg,#plof .big{animation:none}
+  .btn{transition:none}
+}
+@media (max-width:30rem){
+  h1{font-size:1.7rem}
+  .plate svg{width:4.4rem}
+}
+a.pill{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body data-era="casa">
+<header class="top">
+  <div class="brand" id="brand">Oliver i Benji × Bola de Drac</div>
+  <div class="tools">
+    <a class="pill home" href="/" aria-label="Tornar a la portada" title="Tornar a la portada">⌂</a>
+    <button class="pill" id="lang-ca" aria-pressed="true" type="button">VAL</button>
+    <button class="pill" id="lang-es" aria-pressed="false" type="button">CAS</button>
+    <button class="pill" id="restart" type="button" aria-label="Començar de nou">↻</button>
+  </div>
+</header>
+<main id="app"><section class="card intro"><h1>Oliver i Benji × Bola de Drac</h1><p class="sub">El torneig de les set boles</p><p style="font-size:1.15rem">Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs.</p><ul><li><b>Boles del Drac:</b> n'hi ha tres per trobar, una a cada capítol. Les veuràs a dalt de cada pantalla.</li><li><b>Motxilla:</b> ací guardes l'objecte que t'emportes i les cartes que vas guanyant. L'objecte pot obrir camins, però només en pots dur un.</li><li><b>Cartes:</b> n'hi ha de tres tipus: Veloç, Tècnica i Força. En un duel, la Veloç guanya a la Força, la Força guanya a la Tècnica i la Tècnica guanya a la Veloç. Si es juga el mateix tipus, és empat.</li><li><b>Finals:</b> hi ha 9 finals diferents. A veure quants descobreixes!</li><li>Sempre pots tornar a l'última decisió amb el botó ↶.</li></ul><label for="nom">Com et diuen?</label><input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="El teu nom"><p class="err" id="nom-err" hidden="">Escriu el teu nom per a començar.</p><div class="choices"><button class="btn main" id="go-start" type="button">Començar l'aventura</button></div><p class="counter">Finals descoberts: 0 de 9</p></section></main>
+<div id="plof" hidden role="status" aria-live="polite">
+  <div class="big">¡PLOF!</div>
+  <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="36" fill="none" stroke="#fff" stroke-width="7"/><path d="M50 14 L50 30 M50 70 L50 86 M14 50 L30 50 M70 50 L86 50" stroke="#fff" stroke-width="7" stroke-linecap="round"/><circle cx="50" cy="50" r="6" fill="#fff"/></svg>
+  <div class="dial" id="plof-dial"></div>
+</div>
+
+<script>
+/* ============ DADES ============ */
+const KEY = 'oliver-benji-bola-de-drac-v1';
+const x = (ca, es) => ({ ca: ca, es: es });
+
+const TITLE = x(`Oliver i Benji × Bola de Drac`, `Oliver y Benji × Bola de Dragón`);
+const DESC  = x(`El torneig de les set boles`, `El torneo de las siete bolas`);
+const TITLE_FULL = x(`Oliver i Benji × Bola de Drac: El torneig de les set boles`, `Oliver y Benji × Bola de Dragón: El torneo de las siete bolas`);
+
+const ON = {
+  guants: x(`els guants de porter`, `los guantes de portero`),
+  xiulet: x(`el xiulet d'àrbitre`, `el silbato de árbitro`),
+  radar: x(`el radar de Bulma`, `el radar de Bulma`)
+};
+const OCHIP = {
+  guants: x(`Guants de porter`, `Guantes de portero`),
+  xiulet: x(`Xiulet d'àrbitre`, `Silbato de árbitro`),
+  radar: x(`Radar de Bulma`, `Radar de Bulma`)
+};
+const OB = k => ON[k] || x(`l'objecte`, `el objeto`);
+const ERA = {
+  casa:   { ch: false, n: x(`Pròleg · La teua habitació`, `Prólogo · Tu habitación`) },
+  estadi: { ch: true,  n: x(`Capítol 1 · L'estadi de la primera bola`, `Capítulo 1 · El estadio de la primera bola`) },
+  illa:   { ch: true,  n: x(`Capítol 2 · L'illa del volcà`, `Capítulo 2 · La isla del volcán`) },
+  cel:    { ch: true,  n: x(`Capítol 3 · L'estadi del cel`, `Capítulo 3 · El estadio del cielo`) }
+};
+
+const ALL_ENDINGS = ['fin_tele', 'fin_arbitre', 'fin_cranc', 'fin_mans', 'fin_gel', 'fin_propia', 'fin_nuvol'];   // todos los finales salvo 'bo' y 'heroi'
+const TOTAL_FINALS = ALL_ENDINGS.length + 2;
+
+const U = {
+  start: x(`Començar l'aventura`, `Empezar la aventura`),
+  nameQ: x(`Com et diuen?`, `¿Cómo te llamas?`),
+  nameErr: x(`Escriu el teu nom per a començar.`, `Escribe tu nombre para empezar.`),
+  namePh: x(`El teu nom`, `Tu nombre`),
+  pieces: x(`Boles del Drac`, `Bolas del Dragón`),
+  pack: x(`Motxilla`, `Mochila`),
+  empty: x(`buida`, `vacía`),
+  undo: x(`↶ Tornar a la decisió anterior`, `↶ Volver a la decisión anterior`),
+  backLast: x(`Tornar a l'última decisió`, `Volver a la última decisión`),
+  again: x(`Començar de nou`, `Empezar de nuevo`),
+  playAgain: x(`Tornar a jugar`, `Jugar otra vez`),
+  restartAsk: x(`Toca de nou per a reiniciar`, `Toca de nuevo para reiniciar`),
+  restartLbl: x(`Començar de nou`, `Empezar de nuevo`),
+  finalsCount: (n) => x(`Finals descoberts: ${n} de ${TOTAL_FINALS}`, `Finales descubiertos: ${n} de ${TOTAL_FINALS}`),
+  newEnd: x(`Final descobert!`, `¡Final descubierto!`),
+  cV: x(`Carta Veloç`, `Carta Veloz`),
+  cT: x(`Carta Tècnica`, `Carta Técnica`),
+  cF: x(`Carta Força`, `Carta Fuerza`)
+};
+
+const S = {
+
+intro: { era: 'casa', text: [], choices: [] },
+
+/* ---------- PRÒLEG ---------- */
+pro: { era: 'casa',
+  text: [
+    x(`Fa estona que és de nit i la casa està en silenci. De sobte, la pilota nova que has deixat a l'armari bota soleta pel terra. Ploc, ploc, ploc.`,
+      `Hace rato que es de noche y la casa está en silencio. De pronto, el balón nuevo que dejaste en el armario bota solo por el suelo. Ploc, ploc, ploc.`),
+    x(`>—Psst! Em dic Pipo i sí, parle. No, no t'ho has imaginat —diu la pilota—. Necessite ajuda amb un partit. Un partit molt, molt important.`,
+      `>—¡Psst! Me llamo Pipo y sí, hablo. No, no te lo has imaginado —dice el balón—. Necesito ayuda con un partido. Un partido muy, muy importante.`),
+    x(`Dins de l'armari s'obri un cercle de llum que gira com una rentadora. Fa olor de gespa acabada de tallar.`,
+      `Dentro del armario se abre un círculo de luz que gira como una lavadora. Huele a césped recién cortado.`)
+  ],
+  choices: [
+    { t: x(`Preguntar-li de quin partit parla`, `Preguntarle de qué partido habla`), go: 'pro2' },
+    { t: x(`Tapar-te amb la manta i anar a vore la tele`, `Taparte con la manta e ir a ver la tele`), go: 'fin_tele' }
+  ] },
+
+pro2: { era: 'casa',
+  text: [
+    x(`>—Hi ha un torneig que només es juga una vegada cada cent anys: el Torneig de les Set Boles. Qui guanya la final li pot demanar un desig al drac Shenron —explica Pipo.`,
+      `>—Hay un torneo que solo se juega una vez cada cien años: el Torneo de las Siete Bolas. Quien gana la final le puede pedir un deseo al dragón Shenron —explica Pipo.`),
+    x(`>—Però Freezer vol les boles per a ell i juga amb trampes. Oliver i Benji et necessiten, {nom}. (Oliver és el davanter: el que xuta i marca els gols. Benji és el porter: el que els para.)`,
+      `>—Pero Freezer quiere las bolas para él y juega con trampas. Oliver y Benji te necesitan, {nom}. (Oliver es el delantero: el que chuta y marca los goles. Benji es el portero: el que los para.)`),
+    x(`>—I una cosa més: allà els duels es resolen amb cartes. N'hi ha de tres tipus: Veloç, Tècnica i Força. La Veloç guanya a la Força, la Força guanya a la Tècnica i la Tècnica guanya a la Veloç. Si es juga el mateix tipus, és empat.`,
+      `>—Y otra cosa: allí los duelos se resuelven con cartas. Las hay de tres tipos: Veloz, Técnica y Fuerza. La Veloz gana a la Fuerza, la Fuerza gana a la Técnica y la Técnica gana a la Veloz. Si se juega el mismo tipo, es empate.`),
+    x(`Només pots dur UN objecte, perquè la motxilla és xicoteta. Tria bé: no tots serviran en el mateix lloc.`,
+      `Solo puedes llevar UN objeto, porque la mochila es pequeña. Elige bien: no todos servirán en el mismo sitio.`)
+  ],
+  choices: [
+    { t: x(`Els guants de porter (aguanten el que cremi)`, `Los guantes de portero (aguantan lo que queme)`), go: 'c1_arribada', set: s => { s.obj = 'guants'; } },
+    { t: x(`El xiulet d'àrbitre (fa por a qui fa trampes)`, `El silbato de árbitro (asusta a quien hace trampas)`), go: 'c1_arribada', set: s => { s.obj = 'xiulet'; } },
+    { t: x(`El radar de Bulma (xiula quan hi ha una bola prop)`, `El radar de Bulma (pita cuando hay una bola cerca)`), go: 'c1_arribada', set: s => { s.obj = 'radar'; } }
+  ] },
+
+/* ---------- CAPÍTOL 1 · ESTADI ---------- */
+c1_arribada: { era: 'estadi',
+  text: [
+    x(`PLOF! Aterres de peus sobre la gespa d'un estadi enorme. Les graderies estan buides i el sol cau de ple.`,
+      `¡PLOF! Aterrizas de pie sobre el césped de un estadio enorme. Las gradas están vacías y el sol cae de lleno.`),
+    x(`>—Per fi! Ei, {nom}! Jo soc Oliver. Ell és Benji —diu un xic amb una pilota sota el braç—. La primera Bola del Drac s'ha amagat ací mateix, però algú ha posat trampes pel camp.`,
+      `>—¡Por fin! ¡Eh, {nom}! Yo soy Oliver. Él es Benji —dice un chico con un balón bajo el brazo—. La primera Bola del Dragón se ha escondido aquí mismo, pero alguien ha puesto trampas por el campo.`),
+    x(`A uns passos, Krilin intenta recollir un munt de cartes que se li han escampat per terra. Al fons, la graderia està molt fosca.`,
+      `A unos pasos, Krilin intenta recoger un montón de cartas que se le han esparcido por el suelo. Al fondo, la grada está muy oscura.`)
+  ],
+  choices: [
+    { t: x(`Ajudar Krilin a recollir les cartes`, `Ayudar a Krilin a recoger las cartas`), go: 'c1_krilin' },
+    { t: x(`Anar directament a la porteria de Benji`, `Ir directamente a la portería de Benji`), go: 'c1_porteria' },
+    { t: x(`Pujar a la graderia fosca a vore què passa`, `Subir a la grada oscura a ver qué pasa`), go: 'c1_graderia' }
+  ] },
+
+c1_krilin: { era: 'estadi',
+  onEnter: s => { s.krilin = 1; },
+  text: [
+    x(`Entre els dos arreplegueu les cartes una per una, sense deixar-ne cap sota la gespa.`,
+      `Entre los dos recogéis las cartas una a una, sin dejar ninguna bajo el césped.`),
+    x(`>—Gràcies, de veres! Si algun dia necessites ajuda, ací em tens —diu Krilin—. I una pista: la bola s'amaga on acaba tot el que xuta Oliver. Un lloc amb xarxa, però sense peixos.`,
+      `>—¡Gracias, de verdad! Si algún día necesitas ayuda, aquí me tienes —dice Krilin—. Y una pista: la bola se esconde donde acaba todo lo que chuta Oliver. Un sitio con red, pero sin peces.`)
+  ],
+  choices: [
+    { t: x(`Anar a la porteria`, `Ir a la portería`), go: 'c1_porteria' }
+  ] },
+
+c1_graderia: { era: 'estadi',
+  text: [
+    x(`Puges els graons a poc a poc. Tot fa olor de ferro fred. Darrere d'una columna hi ha un àrbitre amb la cara tapada que remena una bola daurada.`,
+      `Subes los escalones poco a poco. Todo huele a hierro frío. Detrás de una columna hay un árbitro con la cara tapada que manosea una bola dorada.`),
+    x(`!Un àrbitre que no vol que el vegen... això no és normal.`,
+      `!Un árbitro que no quiere que lo vean... eso no es normal.`)
+  ],
+  choices: [
+    { t: x(`Tocar el xiulet amb totes les forces`, `Tocar el silbato con todas tus fuerzas`), if: s => s.obj === 'xiulet', go: 'c1_xiulet' },
+    { t: x(`Tornar al camp a poc a poc, sense fer soroll`, `Volver al campo poco a poco, sin hacer ruido`), go: 'c1_porteria' },
+    { t: x(`Cridar-li que t'ensenye la bola`, `Gritarle que te enseñe la bola`), go: 'fin_arbitre' }
+  ] },
+
+c1_xiulet: { era: 'estadi',
+  onEnter: s => { s.cF = 1; },
+  text: [
+    x(`PIIIIIII! El xiulet sona tan fort que l'àrbitre fals bota de l'ensurt i fuig escales avall.`,
+      `¡PIIIIIII! El silbato suena tan fuerte que el árbitro falso salta del susto y huye escaleras abajo.`),
+    x(`Amb les presses, deixa caure una carta daurada. Dins hi ha un puny gegant: és una carta Força.`,
+      `Con las prisas, deja caer una carta dorada. Dentro hay un puño gigante: es una carta Fuerza.`)
+  ],
+  choices: [
+    { t: x(`Baixar corrents a la porteria`, `Bajar corriendo a la portería`), go: 'c1_porteria' }
+  ] },
+
+c1_porteria: { era: 'estadi',
+  text: s => [
+    x(`>—Soc Benji. Les boles s'amaguen allà on un xut acaba en gol —diu el porter, seriós.`,
+      `>—Soy Benji. Las bolas se esconden allí donde un chut acaba en gol —dice el portero, serio.`),
+    x(`?Tinc dos pals i un travesser. Tinc xarxa, però no pesque. Si algú xuta fort, m'ompli de festa. Què soc?`,
+      `?Tengo dos palos y un larguero. Tengo red, pero no pesco. Si alguien chuta fuerte, me lleno de fiesta. ¿Qué soy?`),
+    s.krilin ? x(`!Krilin ja t'ho havia dit: un lloc amb xarxa i sense peixos.`, `!Krilin ya te lo había dicho: un sitio con red y sin peces.`)
+             : x(`!Pensa: què hi ha sempre darrere de Benji?`, `!Piensa: ¿qué hay siempre detrás de Benji?`)
+  ],
+  choices: [
+    { t: x(`La porteria`, `La portería`), go: 'c1_bola', set: s => { s.cT = 1; } },
+    { t: x(`Una xarxa de pesca`, `Una red de pesca`), go: 'c1_error' },
+    { t: x(`Una tenda de campanya`, `Una tienda de campaña`), go: 'c1_error' }
+  ] },
+
+c1_error: { era: 'estadi',
+  text: [
+    x(`>—Mmm, no. Una xarxa de pesca? Ací no hi ha peixos! —riu Benji—. Pensa-ho un altre cop.`,
+      `>—Mmm, no. ¿Una red de pesca? ¡Aquí no hay peces! —se ríe Benji—. Piénsalo otra vez.`)
+  ],
+  choices: [
+    { t: x(`Tornar a pensar-ho`, `Volver a pensarlo`), go: 'c1_porteria' }
+  ] },
+
+c1_bola: { era: 'estadi',
+  onEnter: s => { s.f1 = 1; },
+  text: [
+    x(`Entre la xarxa de la porteria brilla una bola taronja amb una estrella roja: la primera Bola del Drac! Oliver us dóna una palmada a l'esquena a Benji i a tu.`,
+      `Entre la red de la portería brilla una bola naranja con una estrella roja: ¡la primera Bola del Dragón! Oliver os da una palmada en la espalda a Benji y a ti.`),
+    x(`Però quan la tens a les mans, els llums de l'estadi s'apaguen d'un colp.`,
+      `Pero cuando la tienes en las manos, las luces del estadio se apagan de golpe.`),
+    x(`>—Quina llàstima... Jo també la volia —diu una veu gelada.`,
+      `>—Qué lástima... Yo también la quería —dice una voz helada.`)
+  ],
+  choices: [
+    { t: x(`Girar-te cap a la veu`, `Girarte hacia la voz`), go: 'c1_duel' }
+  ] },
+
+c1_duel: { era: 'estadi',
+  text: [
+    x(`Un soldat de Freezer apareix entre les ombres, amb una carta que brilla com una espelma: una carta Veloç.`,
+      `Un soldado de Freezer aparece entre las sombras, con una carta que brilla como una vela: una carta Veloz.`),
+    x(`>—Duel de cartes! Si guanyes, et quedes la bola. Si perds, me l'enduc —diu el soldat.`,
+      `>—¡Duelo de cartas! Si ganas, te quedas la bola. Si pierdes, me la llevo —dice el soldado.`),
+    x(`!Recorda: la Tècnica guanya a la Veloç.`, `!Recuerda: la Técnica gana a la Veloz.`)
+  ],
+  choices: [
+    { t: x(`Jugar la carta Tècnica`, `Jugar la carta Técnica`), if: s => s.cT, go: 'c1_guany' },
+    { t: x(`Jugar la carta Força`, `Jugar la carta Fuerza`), if: s => s.cF, go: 'c1_perd' },
+    { t: x(`Cridar Oliver perquè t'ajude`, `Llamar a Oliver para que te ayude`), go: 'c1_perd' }
+  ] },
+
+c1_guany: { era: 'estadi',
+  text: [
+    x(`Deixes la carta Tècnica sobre la gespa. La Tècnica s'avança a la velocitat, i el soldat es queda de pedra.`,
+      `Dejas la carta Técnica sobre el césped. La Técnica se adelanta a la velocidad, y el soldado se queda de piedra.`),
+    x(`>—Això no val! —bufa el soldat. Se'n va corrents i els llums tornen a encendre's.`,
+      `>—¡Eso no vale! —bufa el soldado. Se va corriendo y las luces vuelven a encenderse.`)
+  ],
+  choices: [
+    { t: x(`Respirar fons i seguir`, `Respirar hondo y seguir`), go: 'c1_cierre' }
+  ] },
+
+c1_perd: { era: 'estadi',
+  onEnter: s => { s.cT = 0; s.cF = 0; },
+  text: [
+    x(`El soldat guanya el duel i s'enduu les teues cartes. Per sort, Oliver llança un xut de pilota que li fa deixar la bola.`,
+      `El soldado gana el duelo y se lleva tus cartas. Por suerte, Oliver lanza un chut de balón que le hace soltar la bola.`),
+    x(`>—Estàs bé? Quasi ens la lleva! —diu Oliver, amb el cor a mil.`,
+      `>—¿Estás bien? ¡Casi nos la quita! —dice Oliver, con el corazón a mil.`)
+  ],
+  choices: [
+    { t: x(`Dir que sí, però amb les cames tremolant`, `Decir que sí, pero con las piernas temblando`), go: 'c1_cierre' }
+  ] },
+
+c1_cierre: { era: 'estadi',
+  text: [
+    x(`La primera Bola del Drac brilla dins de la teua motxilla. Pipo bota tan alt que quasi toca el cel.`,
+      `La primera Bola del Dragón brilla dentro de tu mochila. Pipo bota tan alto que casi toca el cielo.`),
+    x(`>—Només en queden dues, {nom}! El portal gira cap a una illa on fa molta, molta calor.`,
+      `>—¡Solo quedan dos, {nom}! El portal gira hacia una isla donde hace mucho, mucho calor.`)
+  ],
+  choices: [
+    { t: x(`Saltar dins del portal`, `Saltar dentro del portal`), go: 'c2_arribada' }
+  ] },
+
+/* ---------- CAPÍTOL 2 · ILLA ---------- */
+c2_arribada: { era: 'illa',
+  text: [
+    x(`PLOF! Aterres en una platja amb la sorra tan calenta que sembla una paella. Al final, un pont de fusta creua cap a una illa amb un volcà.`,
+      `¡PLOF! Aterrizas en una playa con la arena tan caliente que parece una paella. Al fondo, un puente de madera cruza hacia una isla con un volcán.`),
+    x(`Un home despistat s'ho menja tot amb la mirada: és Goku. Al pont, un cranc gegant amb ulleres de sol vigila el pas.`,
+      `Un hombre despistado se lo come todo con la mirada: es Goku. En el puente, un cangrejo gigante con gafas de sol vigila el paso.`)
+  ],
+  choices: [
+    { t: x(`Parlar amb Goku`, `Hablar con Goku`), go: 'c2_goku' },
+    { t: x(`Parlar amb el cranc del pont`, `Hablar con el cangrejo del puente`), go: 'c2_cranc' }
+  ] },
+
+c2_goku: { era: 'illa',
+  text: [
+    x(`>—Tinc més fam que un ós en abril! He perdut el meu entrepà i no puc jugar el torneig sense menjar —diu Goku, amb la panxa sonant com un tro.`,
+      `>—¡Tengo más hambre que un oso en abril! He perdido mi bocadillo y no puedo jugar el torneo sin comer —dice Goku, con la tripa sonando como un trueno.`),
+    x(`Pipo sospira: —Els saiyajan i la fam... (els saiyajan són la gent de Goku: lluiten molt i mengen encara més).`,
+      `Pipo suspira: —Los saiyajin y el hambre... (los saiyajin son la gente de Goku: luchan mucho y comen todavía más).`)
+  ],
+  choices: [
+    { t: x(`Ajudar-lo a buscar l'entrepà`, `Ayudarle a buscar el bocadillo`), go: 'c2_entrepa' },
+    { t: x(`Deixar-lo amb la seua fam i anar al pont`, `Dejarle con su hambre e ir al puente`), go: 'c2_cranc' }
+  ] },
+
+c2_entrepa: { era: 'illa',
+  onEnter: s => { s.goku = 1; s.cV = 1; },
+  text: [
+    x(`Seguiu un rastre de molles fins a una palmera. L'entrepà és dins del barret d'un cranc que dorm la migdiada. Goku el recupera sense despertar-lo.`,
+      `Seguís un rastro de migas hasta una palmera. El bocadillo está dentro del sombrero de un cangrejo que duerme la siesta. Goku lo recupera sin despertarlo.`),
+    x(`>—Ets el millor! —diu amb la boca plena—. Té, una carta meua. És Veloç: ningú s'escapa de mi ni de la meua velocitat.`,
+      `>—¡Eres lo mejor! —dice con la boca llena—. Toma, una carta mía. Es Veloz: nadie se escapa de mí ni de mi velocidad.`)
+  ],
+  choices: [
+    { t: x(`Anar al pont del cranc`, `Ir al puente del cangrejo`), go: 'c2_cranc' }
+  ] },
+
+c2_cranc: { era: 'illa',
+  text: [
+    x(`>—Peatge, peatge! O pagues, o no passes —diu el cranc, movent les pinces com si fossen tisores.`,
+      `>—¡Peaje, peaje! O pagas, o no pasas —dice el cangrejo, moviendo las pinzas como si fueran tijeras.`),
+    x(`!Només acceptes pagar amb una cosa que dugues a la motxilla. Pensa bé: potser la necessites més endavant.`,
+      `!Solo acepta que pagues con algo que lleves en la mochila. Piénsalo bien: quizá lo necesites más adelante.`)
+  ],
+  choices: [
+    { t: s => { const o = OB(s.obj); return x(`Pagar amb ${o.ca}`, `Pagar con ${o.es}`); }, if: s => s.obj, go: 'c2_pont', set: s => { s.pagat = s.obj; s.obj = null; } },
+    { t: x(`Tornar a la platja i mirar l'illa`, `Volver a la playa y mirar la isla`), go: 'c2_arribada' },
+    { t: x(`Colar-te per un costat del cranc`, `Colarte por un lado del cangrejo`), go: 'fin_cranc' }
+  ] },
+
+c2_pont: { era: 'illa',
+  text: s => [
+    (function () { const o = OB(s.pagat); return x(`El cranc agafa ${o.ca}, el guarda en una bossa i et deixa passar el pont.`, `El cangrejo coge ${o.es}, lo guarda en una bolsa y te deja pasar el puente.`); })(),
+    x(`>—Ara ja no el tindrem quan el necessitem —mormola Pipo.`,
+      `>—Ahora ya no lo tendremos cuando lo necesitemos —murmura Pipo.`),
+    x(`Al final del pont hi ha dos camins: un baixa a una cala amagada i l'altre puja pel volcà.`,
+      `Al final del puente hay dos caminos: uno baja a una cala escondida y el otro sube por el volcán.`)
+  ],
+  choices: [
+    { t: x(`Baixar a la cala amagada`, `Bajar a la cala escondida`), go: 'c2_cala' },
+    { t: x(`Pujar cap al volcà`, `Subir hacia el volcán`), go: 'c2_vegeta' }
+  ] },
+
+c2_cala: { era: 'illa',
+  onEnter: s => { s.perla = 1; },
+  text: [
+    x(`A la cala, entre les roques, alguna cosa llueix dins d'un cargol: una perla rosa, tan gran com una taronja.`,
+      `En la cala, entre las rocas, algo reluce dentro de un caracol: una perla rosa, tan grande como una naranja.`),
+    x(`>—Això ha de ser de qui té tantes pinces com problemes —diu Pipo, mirant cap al pont.`,
+      `>—Esto tiene que ser de quien tiene tantas pinzas como problemas —dice Pipo, mirando hacia el puente.`)
+  ],
+  choices: [
+    { t: x(`Tornar al pont i donar-la al cranc`, `Volver al puente y dársela al cangrejo`), go: 'c2_retorn' },
+    { t: x(`Guardar la perla i pujar al volcà`, `Guardar la perla y subir al volcán`), go: 'c2_vegeta' }
+  ] },
+
+c2_retorn: { era: 'illa',
+  onEnter: s => { if (s.pagat) { s.obj = s.pagat; s.pagat = null; } s.retornat = 1; s.perla = 0; },
+  text: s => [
+    x(`>—La meua perla! La vaig perdre fa un any! —plora de felicitat el cranc, amb les pinces temblant.`,
+      `>—¡Mi perla! ¡La perdí hace un año! —llora de felicidad el cangrejo, con las pinzas temblando.`),
+    (function () { const o = OB(s.obj); return x(`>—Per haver-me-la tornada, agafa el que et vaig prendre: ${o.ca}.`, `>—Por habérmela devuelto, coge lo que te quité: ${o.es}.`); })()
+  ],
+  choices: [
+    { t: x(`Pujar al volcà`, `Subir al volcán`), go: 'c2_vegeta' }
+  ] },
+
+c2_vegeta: { era: 'illa',
+  text: [
+    x(`Al peu del volcà t'espera algú amb els braços creuats i cara de ser molt important: Vegeta.`,
+      `Al pie del volcán te espera alguien con los brazos cruzados y cara de ser muy importante: Vegeta.`),
+    x(`>—Algú de fora vol les boles? Primer, un duel. Jugue Força —diu Vegeta, i sacseja la carta amb dos dits.`,
+      `>—¿Alguien de fuera quiere las bolas? Primero, un duelo. Juego Fuerza —dice Vegeta, y agita la carta con dos dedos.`),
+    x(`!La Veloç guanya a la Força.`, `!La Veloz gana a la Fuerza.`)
+  ],
+  choices: [
+    { t: x(`Jugar la carta Veloç`, `Jugar la carta Veloz`), if: s => s.cV, go: 'c2_vegeta_guany' },
+    { t: x(`Jugar la carta Força`, `Jugar la carta Fuerza`), if: s => s.cF, go: 'c2_vegeta_empat' },
+    { t: x(`Jugar la carta Tècnica`, `Jugar la carta Técnica`), if: s => s.cT, go: 'c2_vegeta_perd' },
+    { t: x(`Proposar-li un partit amistós en lloc d'un duel`, `Proponerle un partido amistoso en lugar de un duelo`), go: 'c2_vegeta_empat' }
+  ] },
+
+c2_vegeta_guany: { era: 'illa',
+  onEnter: s => { s.vegeta = 1; s.cF = 1; },
+  text: [
+    x(`Vegeta mira la teua carta Veloç. Bufa, es mossega la llengua i... somriu un poc.`,
+      `Vegeta mira tu carta Veloz. Bufa, se muerde la lengua y... sonríe un poco.`),
+    x(`>—No està gens malament. Té, quedat-te una de les meues: una carta Força. Ja t'ho has guanyat.`,
+      `>—No está nada mal. Toma, quédate una de las mías: una carta Fuerza. Te la has ganado.`)
+  ],
+  choices: [
+    { t: x(`Entrar a la cova del volcà`, `Entrar en la cueva del volcán`), go: 'c2_bola' }
+  ] },
+
+c2_vegeta_empat: { era: 'illa',
+  text: [
+    x(`Vegeta s'ho pensa. —Ho deixarem així de moment. Però no et confies, perquè la propera vegada guanyaré jo.`,
+      `Vegeta se lo piensa. —Lo dejaremos así de momento. Pero no te confíes, porque la próxima vez ganaré yo.`)
+  ],
+  choices: [
+    { t: x(`Entrar a la cova del volcà`, `Entrar en la cueva del volcán`), go: 'c2_bola' }
+  ] },
+
+c2_vegeta_perd: { era: 'illa',
+  onEnter: s => { s.cT = 0; },
+  text: [
+    x(`La Força de Vegeta aixafa la teua carta Tècnica com si fora de paper. Vegeta se l'endú.`,
+      `La Fuerza de Vegeta aplasta tu carta Técnica como si fuera de papel. Vegeta se la lleva.`),
+    x(`>—Torna quan en sàpigues més —diu, però et deixa passar.`,
+      `>—Vuelve cuando sepas más —dice, pero te deja pasar.`)
+  ],
+  choices: [
+    { t: x(`Entrar a la cova del volcà`, `Entrar en la cueva del volcán`), go: 'c2_bola' }
+  ] },
+
+c2_bola: { era: 'illa',
+  text: [
+    x(`Dins del volcà hi ha una cova amb la segona Bola del Drac sobre una roca roent. Fa tanta calor que la bola fa fum.`,
+      `Dentro del volcán hay una cueva con la segunda Bola del Dragón sobre una roca ardiente. Hace tanto calor que la bola echa humo.`),
+    x(`Del sostre cauen grava i pedres: la cova s'ensorra a poc a poc. No tens molt de temps, {nom}.`,
+      `Del techo caen grava y piedras: la cueva se hunde poco a poco. No tienes mucho tiempo, {nom}.`)
+  ],
+  choices: [
+    { t: x(`Agafar-la amb els guants de porter`, `Cogerla con los guantes de portero`), if: s => s.obj === 'guants', go: 'c2_guants' },
+    { t: x(`Demanar a Pipo que la faça rodar fora`, `Pedirle a Pipo que la haga rodar fuera`), go: 'c2_pipo' },
+    { t: x(`Agafar-la amb les mans nues`, `Cogerla con las manos desnudas`), go: 'fin_mans' }
+  ] },
+
+c2_guants: { era: 'illa',
+  onEnter: s => { s.f2 = 1; },
+  text: [
+    x(`Amb els guants de porter agafes la bola sense cremar-te ni un dit. Correu cap a l'eixida just quan la cova es tanca darrere de vosaltres.`,
+      `Con los guantes de portero coges la bola sin quemarte ni un dedo. Corréis hacia la salida justo cuando la cueva se cierra detrás de vosotros.`)
+  ],
+  choices: [
+    { t: x(`Ensenyar la bola a Pipo`, `Enseñarle la bola a Pipo`), go: 'c2_cierre' }
+  ] },
+
+c2_pipo: { era: 'illa',
+  onEnter: s => { s.f2 = 1; s.pipoEnfadat = 1; },
+  text: [
+    x(`Pipo bota i xuta la bola amb tot el cos fins a l'eixida. S'ha cremat un poquet la costura.`,
+      `Pipo bota y chuta la bola con todo el cuerpo hasta la salida. Se le ha quemado un poquito la costura.`),
+    x(`>—Sóc una pilota, no un carro d'emergències! —es queixa Pipo—. Ara tindré les costures torrades tota la setmana.`,
+      `>—¡Soy un balón, no un coche de emergencias! —se queja Pipo—. Ahora tendré las costuras tostadas toda la semana.`)
+  ],
+  choices: [
+    { t: x(`Demanar-li perdó i eixir de la cova`, `Pedirle perdón y salir de la cueva`), go: 'c2_cierre' }
+  ] },
+
+c2_cierre: { era: 'illa',
+  text: [
+    x(`La segona Bola del Drac brilla al costat de la primera. Només en falta una.`,
+      `La segunda Bola del Dragón brilla junto a la primera. Solo falta una.`),
+    x(`>—L'última està al cel, en l'estadi on es juga la final —diu Pipo—. I Freezer ja ha arribat.`,
+      `>—La última está en el cielo, en el estadio donde se juega la final —dice Pipo—. Y Freezer ya ha llegado.`)
+  ],
+  choices: [
+    { t: x(`Saltar al portal que puja cap al cel`, `Saltar al portal que sube hacia el cielo`), go: 'c3_arribada' }
+  ] },
+
+/* ---------- CAPÍTOL 3 · CEL ---------- */
+c3_arribada: { era: 'cel',
+  text: [
+    x(`PLOF! Aterres sobre un núvol tan tou que rebotes dos cops. Davant teu hi ha un estadi que flota en el cel, amb una porteria feta de llum.`,
+      `¡PLOF! Aterrizas sobre una nube tan blanda que rebotas dos veces. Delante de ti hay un estadio que flota en el cielo, con una portería hecha de luz.`),
+    x(`Freezer és al mig del camp amb el seu equip gelat. Té tres boles idèntiques als peus.`,
+      `Freezer está en medio del campo con su equipo helado. Tiene tres bolas idénticas a sus pies.`),
+    x(`>—Una és la bola de veritat. Les altres dues són de gel. Si triau mal, perdeu el torneig —diu Freezer amb un somriure de nevera.`,
+      `>—Una es la bola de verdad. Las otras dos son de hielo. Si elegís mal, perdéis el torneo —dice Freezer con una sonrisa de nevera.`)
+  ],
+  choices: [
+    { t: x(`Mirar el radar de Bulma`, `Mirar el radar de Bulma`), if: s => s.obj === 'radar', go: 'c3_radar' },
+    { t: x(`Demanar ajuda a Krilin`, `Pedir ayuda a Krilin`), if: s => s.krilin, go: 'c3_krilin' },
+    { t: x(`Reptar el capità de Freezer a un duel de cartes`, `Retar al capitán de Freezer a un duelo de cartas`), go: 'c3_duel' },
+    { t: x(`Agafar la bola que més brilla`, `Coger la bola que más brilla`), go: 'fin_gel' }
+  ] },
+
+c3_radar: { era: 'cel',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`Poses el radar de Bulma davant de les tres boles. Fa bip... bip... bip-bip-bip! L'agulla assenyala la de l'esquerra.`,
+      `Pones el radar de Bulma delante de las tres bolas. ¡Hace bip... bip... bip-bip-bip! La aguja señala la de la izquierda.`),
+    x(`Quan la toques, Freezer fa una ganyota: és la bona!`,
+      `Cuando la tocas, Freezer hace una mueca: ¡es la buena!`)
+  ],
+  choices: [
+    { t: x(`Portar-la al mig del camp`, `Llevarla al medio del campo`), go: 'c3_final' }
+  ] },
+
+c3_krilin: { era: 'cel',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`Krilin apareix volant, amb les mans plenes de cartes. —Les boles de gel suen. La de veritat, no. Mireu quina està seca!`,
+      `Krilin aparece volando, con las manos llenas de cartas. —Las bolas de hielo sudan. La de verdad, no. ¡Mirad cuál está seca!`),
+    x(`Mentre els soldats de Freezer miren cap amunt, tu agafes la bola seca. Era la bona.`,
+      `Mientras los soldados de Freezer miran hacia arriba, tú coges la bola seca. Era la buena.`)
+  ],
+  choices: [
+    { t: x(`Portar-la al mig del camp`, `Llevarla al medio del campo`), go: 'c3_final' }
+  ] },
+
+c3_duel: { era: 'cel',
+  text: [
+    x(`El capità de Freezer treu una carta que treu fum de gel: una carta Tècnica.`,
+      `El capitán de Freezer saca una carta que echa humo de hielo: una carta Técnica.`),
+    x(`>—Si perds, m'emporte les tres boles —diu.`,
+      `>—Si pierdes, me llevo las tres bolas —dice.`),
+    x(`!La Força guanya a la Tècnica.`, `!La Fuerza gana a la Técnica.`)
+  ],
+  choices: [
+    { t: x(`Jugar la carta Força`, `Jugar la carta Fuerza`), if: s => s.cF, go: 'c3_guany' },
+    { t: x(`Jugar la carta Tècnica`, `Jugar la carta Técnica`), if: s => s.cT, go: 'c3_empat' },
+    { t: x(`Jugar la carta Veloç`, `Jugar la carta Veloz`), if: s => s.cV, go: 'c3_perd' },
+    { t: x(`Demanar ajuda a Pipo`, `Pedir ayuda a Pipo`), go: 'c3_pipo' }
+  ] },
+
+c3_guany: { era: 'cel',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`Poses la carta Força i el gel es trenca com un got. El capità retrocedeix amb la boca oberta.`,
+      `Pones la carta Fuerza y el hielo se rompe como un vaso. El capitán retrocede con la boca abierta.`),
+    x(`Entre els trossos de gel hi ha la tercera Bola del Drac, lluent.`,
+      `Entre los trozos de hielo está la tercera Bola del Dragón, reluciente.`)
+  ],
+  choices: [
+    { t: x(`Portar-la al mig del camp`, `Llevarla al medio del campo`), go: 'c3_final' }
+  ] },
+
+c3_empat: { era: 'cel',
+  onEnter: s => { s.f3 = 1; },
+  text: [
+    x(`Tècnica contra Tècnica: empat. Mentre els soldats discuteixen, Pipo bota entre les boles... fins que una el respon amb un bip. És la de veritat!`,
+      `Técnica contra Técnica: empate. Mientras los soldados discuten, Pipo bota entre las bolas... hasta que una le responde con un bip. ¡Es la de verdad!`)
+  ],
+  choices: [
+    { t: x(`Portar-la al mig del camp`, `Llevarla al medio del campo`), go: 'c3_final' }
+  ] },
+
+c3_perd: { era: 'cel',
+  onEnter: s => { s.cV = 0; },
+  text: [
+    x(`La Tècnica del capità s'avança a la teua Veloç. T'agafa la carta, que se'n va volant amb el vent.`,
+      `La Técnica del capitán se adelanta a tu Veloz. Te quita la carta, que se va volando con el viento.`),
+    x(`>—Ho he perdut? —preguntes. Pipo bota a les teues cames: —Encara no. Deixa'm provar una cosa.`,
+      `>—¿Lo he perdido? —preguntas. Pipo bota en tus piernas: —Todavía no. Déjame probar una cosa.`)
+  ],
+  choices: [
+    { t: x(`Deixar que Pipo ho intente`, `Dejar que Pipo lo intente`), go: 'c3_pipo' }
+  ] },
+
+c3_pipo: { era: 'cel',
+  onEnter: s => { s.f3 = 1; },
+  text: s => [
+    s.pipoEnfadat
+      ? x(`>—Encara tinc les costures torrades —rondina Pipo—, però t'ho faré igual. Mira com bote.`, `>—Todavía tengo las costuras tostadas —rezonga Pipo—, pero lo haré igualmente. Mira cómo boto.`)
+      : x(`>—Deixa-ho a mi! —diu Pipo, content—. Mira com bote.`, `>—¡Déjamelo a mí! —dice Pipo, contento—. Mira cómo boto.`),
+    x(`Pipo bota sobre cada bola. Les dues de gel fan ploc-ploc i s'esquerden. La tercera fa un bip dolç: és la bola de veritat, tan semblant a Pipo que tenen el mateix soroll.`,
+      `Pipo bota sobre cada bola. Las dos de hielo hacen ploc-ploc y se agrietan. La tercera hace un bip dulce: es la bola de verdad, tan parecida a Pipo que tienen el mismo ruido.`)
+  ],
+  choices: [
+    { t: x(`Portar-la al mig del camp`, `Llevarla al medio del campo`), go: 'c3_final' }
+  ] },
+
+c3_final: { era: 'cel',
+  text: [
+    x(`Les tres boles floten i giren juntes. De sobte es fa de nit i un drac verd gegant ix de la llum: Shenron.`,
+      `Las tres bolas flotan y giran juntas. De repente se hace de noche y un dragón verde gigante sale de la luz: Shenron.`),
+    x(`>—He esperat cent anys. Digues el teu desig, {nom} —retruny.`,
+      `>—He esperado cien años. Di tu deseo, {nom} —retruena.`),
+    x(`Freezer, Oliver, Benji i Pipo et miren sense respirar.`,
+      `Freezer, Oliver, Benji y Pipo te miran sin respirar.`)
+  ],
+  choices: [
+    { t: x(`Desitjar que tots els partits es juguen sense trampes`, `Desear que todos los partidos se jueguen sin trampas`), go: s => (s.krilin && s.goku && s.vegeta && s.retornat) ? 'fi_heroi' : 'fi_bo' },
+    { t: x(`Desitjar un núvol només per a tu`, `Desear una nube solo para ti`), go: 'fin_nuvol' },
+    { t: x(`Xutar la bola a porteria amb tota la força`, `Chutar la bola a portería con toda la fuerza`), go: 'fin_propia' }
+  ] },
+
+/* ---------- FINALS ---------- */
+fin_tele: { ending: 'fin_tele', title: x(`Tele i manta`, `Tele y manta`),
+  text: [
+    x(`Et tapes amb la manta i poses la tele. Fan un documental sobre cargols: molt interessant, i molt lent.`,
+      `Te tapas con la manta y pones la tele. Echan un documental sobre caracoles: muy interesante, y muy lento.`),
+    x(`El cercle de llum de l'armari es tanca sense soroll. Pipo bota cap a la finestra i se'n va a buscar algú amb menys son.`,
+      `El círculo de luz del armario se cierra sin ruido. Pipo bota hacia la ventana y se va a buscar a alguien con menos sueño.`)
+  ] },
+
+fin_arbitre: { ending: 'fin_arbitre', title: x(`Targeta roja`, `Tarjeta roja`),
+  text: [
+    x(`Li crides que t'ensenye la bola. L'àrbitre no diu res: treu una targeta roja gegant, més gran que tu, i te l'ensenya.`,
+      `Le gritas que te enseñe la bola. El árbitro no dice nada: saca una tarjeta roja gigante, más grande que tú, y te la enseña.`),
+    x(`T'han expulsat del torneig! El portal et torna a la teua habitació amb un ploc. Només podràs mirar els partits per la tele.`,
+      `¡Te han expulsado del torneo! El portal te devuelve a tu habitación con un ploc. Solo podrás ver los partidos por la tele.`)
+  ] },
+
+fin_cranc: { ending: 'fin_cranc', title: x(`Cua de peatge`, `Cola de peaje`),
+  text: [
+    x(`Intentes colar-te per un costat, però el cranc és molt més ràpid que tu. Et subjecta amb les pinces i et deixa a la cua.`,
+      `Intentas colarte por un lado, pero el cangrejo es mucho más rápido que tú. Te sujeta con las pinzas y te deja en la cola.`),
+    x(`>—Número 4.382, esperar —diu. Passes tres dies fent cua amb una bossa de patates, mentre el torneig es juga sense tu.`,
+      `>—Número 4.382, esperar —dice. Pasas tres días haciendo cola con una bolsa de patatas, mientras el torneo se juega sin ti.`)
+  ] },
+
+fin_mans: { ending: 'fin_mans', title: x(`Mans de gel`, `Manos de hielo`),
+  text: [
+    x(`Agafes la bola amb les mans nues. AUUUU! Crema tant que fas un salt de tres metres i la deixes caure.`,
+      `Coges la bola con las manos desnudas. ¡AUUUU! Quema tanto que das un salto de tres metros y la dejas caer.`),
+    x(`Passes la resta del torneig amb les dues mans dins d'un cubell de gel, mirant la final des de la banqueta.`,
+      `Pasas el resto del torneo con las dos manos dentro de un cubo de hielo, mirando la final desde el banquillo.`)
+  ] },
+
+fin_gel: { ending: 'fin_gel', title: x(`Bola de gelat`, `Bola de helado`),
+  text: [
+    x(`Agafes la bola que més brilla. No és una Bola del Drac: és de gel i, a més, de llima.`,
+      `Coges la bola que más brilla. No es una Bola del Dragón: es de hielo y, además, de lima.`),
+    x(`Freezer riu tan fort que et congela una orella. Passes la tarda amb una bola de gelat a la mà i les dues orelles de color verd.`,
+      `Freezer se ríe tan fuerte que te congela una oreja. Pasas la tarde con una bola de helado en la mano y las dos orejas de color verde.`)
+  ] },
+
+fin_propia: { ending: 'fin_propia', title: x(`Gol en pròpia`, `Gol en propia`),
+  text: [
+    x(`Xutes tan fort que la bola creua tot el camp... i entra a la teua pròpia porteria. Gol en pròpia porta!`,
+      `Chutas tan fuerte que la bola cruza todo el campo... y entra en tu propia portería. ¡Gol en propia puerta!`),
+    x(`Freezer guanya la final per un gol d'avantatge. Pipo no et parla fins dijous, i Benji tampoc.`,
+      `Freezer gana la final por un gol de ventaja. Pipo no te habla hasta el jueves, y Benji tampoco.`)
+  ] },
+
+fin_nuvol: { ending: 'fin_nuvol', title: x(`Núvol particular`, `Nube particular`),
+  text: [
+    x(`Shenron arrufa les celles. —Un núvol? Està bé, un núvol només per a tu.`,
+      `Shenron frunce las cejas. —¿Una nube? Está bien, una nube solo para ti.`),
+    x(`El núvol és tou i còmode, però només baixa els dimarts. Fins aleshores, mires el torneig des del cel, amb Pipo bufant d'avorriment.`,
+      `La nube es blanda y cómoda, pero solo baja los martes. Hasta entonces, miras el torneo desde el cielo, con Pipo resoplando de aburrimiento.`)
+  ] },
+
+fi_bo: { ending: 'bo', title: x(`El torneig net`, `El torneo limpio`),
+  text: s => {
+    const t = [
+      x(`Shenron escolta el desig. Una llum daurada travessa el cel i tots els estadis del món es tornen més justos: les trampes desapareixen.`,
+        `Shenron escucha el deseo. Una luz dorada atraviesa el cielo y todos los estadios del mundo se vuelven más justos: las trampas desaparecen.`),
+      x(`Freezer, amb la cara al terra, mormola que això no val. Oliver i Benji et donen una abraçada, i Pipo bota tan alt que fa un forat al núvol.`,
+        `Freezer, con la cara en el suelo, murmura que eso no vale. Oliver y Benji te dan un abrazo, y Pipo bota tan alto que hace un agujero en la nube.`)
+    ];
+    if (s.vegeta) t.push(x(`Vegeta et fa una salutació amb dos dits, sense somriure gaire.`, `Vegeta te hace un saludo con dos dedos, sin sonreír mucho.`));
+    if (s.goku) t.push(x(`Goku tira confeti d'entrepans.`, `Goku lanza confeti de bocadillos.`));
+    t.push(x(`Quan tornes a l'habitació, Pipo et mostra una carta en blanc amb les vores daurades. —Només es pinta si has ajudat tothom qui et vas trobar pel camí —diu—. Potser la pròxima vegada.`,
+             `Cuando vuelves a tu habitación, Pipo te muestra una carta en blanco con los bordes dorados. —Solo se pinta si has ayudado a todos los que te encontraste por el camino —dice—. Quizá la próxima vez.`));
+    return t;
+  } },
+
+fi_heroi: { ending: 'heroi', title: x(`Capitania de les set boles`, `Capitanía de las siete bolas`),
+  text: [
+    x(`Shenron escolta el desig. Una llum daurada travessa el cel i tots els estadis del món es tornen més justos: les trampes desapareixen.`,
+      `Shenron escucha el deseo. Una luz dorada atraviesa el cielo y todos los estadios del mundo se vuelven más justos: las trampas desaparecen.`),
+    x(`Krilin aplaudeix des de la graderia. Goku llança un entrepà per l'aire. El cranc plora d'emoció. I Vegeta, amb els braços creuats, assenteix una sola vegada.`,
+      `Krilin aplaude desde la grada. Goku lanza un bocadillo por el aire. El cangrejo llora de emoción. Y Vegeta, con los brazos cruzados, asiente una sola vez.`),
+    x(`>—{nom}, mira la carta en blanc! —crida Pipo. Ara està pintada d'or: té el teu nom i una pilota al mig. És la Carta Heroi, i només la guanya qui no deixa ningú enrere.`,
+      `>—¡{nom}, mira la carta en blanco! —grita Pipo. Ahora está pintada de oro: tiene tu nombre y un balón en el medio. Es la Carta Héroe, y solo la gana quien no deja a nadie atrás.`),
+    x(`Oliver i Benji et donen el braçalet de capitania del torneig. Freezer es queda calladet tota la vesprada.`,
+      `Oliver y Benji te dan el brazalete de capitanía del torneo. Freezer se queda calladito toda la tarde.`)
+  ] }
+
+};
+
+/* ============ MOTOR ============ */
+function initState() {
+  return { nom: '', obj: null, pagat: null, en: 5, f1: 0, f2: 0, f3: 0,
+           cT: 0, cF: 0, cV: 0, krilin: 0, goku: 0, vegeta: 0, perla: 0, retornat: 0, pipoEnfadat: 0 };
+}
+const st = { scene: 'intro', s: initState(), hist: [], found: {}, lang: 'ca', era: 'casa' };
+let locked = false;
+let restartArmed = false;
+let restartTimer = null;
+
+function T(v) { return (v && typeof v === 'object') ? v[st.lang] : v; }
+function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function hn(text) {
+  let t = esc(text);
+  t = t.replace(/\{([^{}|]+)\|([^{}|]+)\}/g, function (m, a, b) { return st.s.gen === 'f' ? b : a; });
+  t = t.replace(/\{nom\}/g, '<b>' + esc(String(st.s.nom || '').toUpperCase()) + '</b>');
+  t = t.replace(/\b(Pipo|Oliver|Benji|Goku|Vegeta|Krilin|Freezer|Shenron)\b/g, function (m) { return '<b>' + m.toUpperCase() + '</b>'; });
+  return t;
+}
+
+function foundCount() {
+  let n = 0;
+  ALL_ENDINGS.forEach(function (k) { if (st.found[k]) n++; });
+  if (st.found.bo) n++;
+  if (st.found.heroi) n++;
+  return n;
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify({ scene: st.scene, s: st.s, hist: st.hist.slice(-40), found: st.found, lang: st.lang, era: st.era }));
+  } catch (e) { /* sense emmagatzematge */ }
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.found && typeof d.found === 'object') st.found = d.found;
+    if (d.scene && S[d.scene]) {
+      st.scene = d.scene;
+      st.s = Object.assign(initState(), d.s || {});
+      st.hist = Array.isArray(d.hist) ? d.hist : [];
+      st.era = d.era || (S[d.scene].era || 'casa');
+    }
+  } catch (e) { /* res */ }
+}
+
+function plateSVG(era) {
+  const a = 'currentColor';
+  if (era === 'estadi') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><rect x="4" y="54" width="102" height="6" fill="' + a + '" opacity=".5"/><circle cx="84" cy="44" r="8" fill="' + a + '" opacity=".9"/><path d="M12 54 V18 H50 V54" fill="none" stroke="' + a + '" stroke-width="4"/><path d="M21 18 V54 M30 18 V54 M39 18 V54 M12 28 H50 M12 38 H50 M12 48 H50" fill="none" stroke="' + a + '" stroke-width="1.5" opacity=".5"/></svg>';
+  }
+  if (era === 'illa') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><circle cx="90" cy="16" r="9" fill="' + a + '" opacity=".7"/><path d="M18 60 q27-20 54 0 z" fill="' + a + '" opacity=".6"/><rect x="43" y="22" width="4" height="32" fill="' + a + '" opacity=".9"/><path d="M45 24 q-18-10-26 4 q14-6 26-4 M45 24 q18-10 26 4 q-14-6-26-4 M45 24 q-6-16-20-14 q16 0 20 14 M45 24 q6-16 20-14 q-16 0-20 14" fill="' + a + '" opacity=".85"/><path d="M4 64 q8-6 16 0 t16 0 t16 0 t16 0 t16 0 t16 0" fill="none" stroke="' + a + '" stroke-width="3"/></svg>';
+  }
+  if (era === 'cel') {
+    return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><ellipse cx="30" cy="54" rx="24" ry="10" opacity=".5"/><ellipse cx="80" cy="58" rx="26" ry="9" opacity=".5"/><path d="M30 40 h50 l-6 12 h-38 z" opacity=".85"/><rect x="38" y="26" width="34" height="14" rx="3" opacity=".6"/><circle cx="94" cy="14" r="6" opacity=".6"/></g></svg>';
+  }
+  return '<svg viewBox="0 0 110 68" aria-hidden="true"><g fill="' + a + '"><path d="M10 34 L55 6 L100 34 Z" opacity=".85"/><rect x="20" y="34" width="70" height="28" opacity=".5"/><rect x="48" y="44" width="14" height="18" opacity=".9"/><rect x="26" y="40" width="12" height="12" opacity=".9"/><rect x="72" y="40" width="12" height="12" opacity=".9"/></g></svg>';
+}
+
+function slotSVG(kind, on) {
+  const a = 'currentColor';
+  const fill = on ? a : 'none';
+  const props = 'stroke="' + a + '" stroke-width="3"' + (on ? '' : ' stroke-dasharray="4 3" opacity=".5"');
+  let shape;
+  if (kind === 1) shape = '<circle cx="16" cy="16" r="10" fill="' + fill + '" ' + props + '/>';
+  else if (kind === 2) shape = '<circle cx="16" cy="16" r="10" fill="none" ' + props + '/><circle cx="16" cy="16" r="4" fill="' + fill + '"/>';
+  else shape = '<rect x="12" y="3" width="8" height="26" rx="3" fill="' + fill + '" ' + props + '/>';
+  return '<svg viewBox="0 0 32 32" aria-hidden="true">' + shape + '</svg>';
+}
+
+function hudHTML() {
+  const s = st.s;
+  const chips = [];
+  if (s.obj) chips.push('<span class="chip">' + esc(T(OCHIP[s.obj])) + '</span>');
+  if (s.cV) chips.push('<span class="chip">' + esc(T(U.cV)) + '</span>');
+  if (s.cT) chips.push('<span class="chip">' + esc(T(U.cT)) + '</span>');
+  if (s.cF) chips.push('<span class="chip">' + esc(T(U.cF)) + '</span>');
+  if (!chips.length) chips.push('<span class="chip empty">' + esc(T(U.empty)) + '</span>');
+  return '<div class="hud">' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pieces)) + '</span>' + slotSVG(1, s.f1) + slotSVG(2, s.f2) + slotSVG(3, s.f3) + '</div>' +
+    '<div class="grp"><span class="lbl">' + esc(T(U.pack)) + '</span><span class="chips">' + chips.join('') + '</span></div>' +
+    '</div>';
+}
+
+function textHTML(arr) {
+  return arr.map(function (item) {
+    let line = T(item);
+    let cls = '';
+    const c = line.charAt(0);
+    if (c === '>') { cls = 'dlg'; line = line.slice(1); }
+    else if (c === '?') { cls = 'riddle'; line = line.slice(1); }
+    else if (c === '!') { cls = 'hint'; line = line.slice(1); }
+    return '<p' + (cls ? ' class="' + cls + '"' : '') + '>' + hn(line) + '</p>';
+  }).join('');
+}
+
+function renderIntro() {
+  const app = document.getElementById('app');
+  const l = st.lang;
+  const body = {
+    ca: {
+      hola: `Hola! Ací decideixes tu què passa. Al final de cada escena triaràs què fer, i la història canviarà segons el que triïs.`,
+      li: [
+        `<b>Boles del Drac:</b> n'hi ha tres per trobar, una a cada capítol. Les veuràs a dalt de cada pantalla.`,
+        `<b>Motxilla:</b> ací guardes l'objecte que t'emportes i les cartes que vas guanyant. L'objecte pot obrir camins, però només en pots dur un.`,
+        `<b>Cartes:</b> n'hi ha de tres tipus: Veloç, Tècnica i Força. En un duel, la Veloç guanya a la Força, la Força guanya a la Tècnica i la Tècnica guanya a la Veloç. Si es juga el mateix tipus, és empat.`,
+        `<b>Finals:</b> hi ha ${TOTAL_FINALS} finals diferents. A veure quants descobreixes!`,
+        `Sempre pots tornar a l'última decisió amb el botó ↶.`
+      ]
+    },
+    es: {
+      hola: `¡Hola! Aquí decides tú qué pasa. Al final de cada escena elegirás qué hacer, y la historia cambiará según lo que elijas.`,
+      li: [
+        `<b>Bolas del Dragón:</b> hay tres por encontrar, una en cada capítulo. Las verás arriba en cada pantalla.`,
+        `<b>Mochila:</b> aquí guardas el objeto que te llevas y las cartas que vas ganando. El objeto puede abrir caminos, pero solo puedes llevar uno.`,
+        `<b>Cartas:</b> las hay de tres tipos: Veloz, Técnica y Fuerza. En un duelo, la Veloz gana a la Fuerza, la Fuerza gana a la Técnica y la Técnica gana a la Veloz. Si se juega el mismo tipo, es empate.`,
+        `<b>Finales:</b> hay ${TOTAL_FINALS} finales distintos. ¡A ver cuántos descubres!`,
+        `Siempre puedes volver a la última decisión con el botón ↶.`
+      ]
+    }
+  }[l];
+  app.innerHTML =
+    '<section class="card intro">' +
+    '<h1>' + esc(T(TITLE)) + '</h1>' +
+    '<p class="sub">' + esc(T(DESC)) + '</p>' +
+    '<p style="font-size:1.15rem">' + body.hola + '</p>' +
+    '<ul>' + body.li.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>' +
+    '<label for="nom">' + esc(T(U.nameQ)) + '</label>' +
+    '<input id="nom" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="' + esc(T(U.namePh)) + '">' +
+    '<p class="err" id="nom-err" hidden>' + esc(T(U.nameErr)) + '</p>' +
+    '<div class="choices"><button class="btn main" id="go-start" type="button">' + esc(T(U.start)) + '</button></div>' +
+    '<p class="counter">' + esc(T(U.finalsCount(foundCount()))) + '</p>' +
+    '</section>';
+  const input = document.getElementById('nom');
+  const err = document.getElementById('nom-err');
+  function go() {
+    const v = input.value.replace(/[<>&"'`{}|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+    if (!v) { err.hidden = false; input.focus(); return; }
+    st.s = initState();
+    st.s.nom = v;
+    st.hist = [];
+    enter('pro');
+  }
+  document.getElementById('go-start').addEventListener('click', go);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  input.addEventListener('input', function () { err.hidden = true; });
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const sc = S[st.scene];
+  document.body.dataset.era = st.era;
+  document.documentElement.lang = st.lang === 'es' ? 'es' : 'ca';
+  document.title = T(TITLE_FULL);
+  document.getElementById('brand').textContent = T(TITLE);
+  document.getElementById('lang-ca').setAttribute('aria-pressed', String(st.lang === 'ca'));
+  document.getElementById('lang-es').setAttribute('aria-pressed', String(st.lang === 'es'));
+  document.getElementById('restart').setAttribute('aria-label', T(U.restartLbl));
+  if (st.scene === 'intro') { renderIntro(); window.scrollTo(0, 0); return; }
+
+  const tx = typeof sc.text === 'function' ? sc.text(st.s) : sc.text;
+  let html = '<section class="card">';
+  if (ERA[sc.era] && !sc.ending) {
+    html += '<div class="plate">' + plateSVG(sc.era) + '<div class="pn">' + esc(T(ERA[sc.era].n)) + '</div></div>';
+  }
+  if (!sc.ending) html += hudHTML();
+  if (sc.ending) html += '<h2>' + esc(T(sc.title)) + '</h2>';
+  html += '<div class="txt">' + textHTML(tx) + '</div>';
+
+  if (sc.ending) {
+    html += '<p class="endnote">' + esc(T(U.newEnd)) + ' · ' + esc(T(U.finalsCount(foundCount()))) + '</p>';
+    html += '<div class="choices">';
+    if (sc.ending === 'bo' || sc.ending === 'heroi') {
+      html += '<button class="btn main" data-act="again" type="button">' + esc(T(U.playAgain)) + '</button>';
+    } else {
+      html += '<button class="btn main" data-act="undo" type="button">' + esc(T(U.backLast)) + '</button>';
+      html += '<button class="btn ghost" data-act="again" type="button">' + esc(T(U.again)) + '</button>';
+    }
+    html += '</div>';
+  } else {
+    const ch = sc.choices.filter(function (c) { return !c.if || c.if(st.s); });
+    html += '<div class="choices">';
+    ch.forEach(function (c, i) {
+      const label = typeof c.t === 'function' ? c.t(st.s) : c.t;
+      html += '<button class="btn" data-i="' + i + '" type="button">' + hn(T(label)) + '</button>';
+    });
+    html += '</div>';
+    if (st.hist.length) html += '<div class="undo"><button class="btn ghost" data-act="undo" type="button">' + esc(T(U.undo)) + '</button></div>';
+    app.innerHTML = html + '</section>';
+    app.querySelectorAll('button[data-i]').forEach(function (b) {
+      b.addEventListener('click', function () { choose(ch[Number(b.dataset.i)]); });
+    });
+    bindActs(app);
+    window.scrollTo(0, 0);
+    return;
+  }
+  app.innerHTML = html + '</section>';
+  bindActs(app);
+  window.scrollTo(0, 0);
+}
+
+function bindActs(app) {
+  app.querySelectorAll('button[data-act]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.act === 'undo') undo();
+      else resetGame();
+    });
+  });
+}
+
+function choose(c) {
+  if (locked) return;
+  st.hist.push({ scene: st.scene, s: clone(st.s), era: st.era });
+  if (st.hist.length > 80) st.hist.shift();
+  if (c.set) c.set(st.s);
+  const target = typeof c.go === 'function' ? c.go(st.s) : c.go;
+  enter(target);
+}
+
+function enter(id) {
+  const prevEra = st.era;
+  let sc = S[id];
+  st.scene = id;
+  if (sc.onEnter) sc.onEnter(st.s);
+  if (st.s.en <= 0 && !sc.ending && id !== 'intro' && S.sabata) { id = 'sabata'; sc = S[id]; st.scene = id; }
+  if (sc.era) st.era = sc.era;
+  if (sc.ending) st.found[sc.ending] = 1;
+  render();
+  save();
+  if (!sc.ending && sc.era && sc.era !== prevEra && ERA[sc.era] && ERA[sc.era].ch) plof(sc.era);
+}
+
+function undo() {
+  if (locked) return;
+  const h = st.hist.pop();
+  if (!h) { resetGame(); return; }
+  st.scene = h.scene;
+  st.s = Object.assign(initState(), h.s);
+  st.era = h.era || (S[h.scene].era || st.era);
+  render();
+  save();
+}
+
+function resetGame() {
+  st.s = initState();
+  st.hist = [];
+  st.scene = 'intro';
+  st.era = 'casa';
+  render();
+  save();
+}
+
+function plof(eraKey) {
+  const el = document.getElementById('plof');
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('plof-dial').textContent = T(ERA[eraKey].n);
+  locked = true;
+  el.hidden = false;
+  setTimeout(function () { el.hidden = true; locked = false; }, reduced ? 500 : 1400);
+}
+
+function setLang(l) {
+  if (l === st.lang) return;
+  save();
+  location.href = l === 'es' ? '/es/oliver-benji-bola-de-drac/' : '/oliver-benji-bola-de-drac/';
+}
+
+document.getElementById('lang-ca').addEventListener('click', function () { setLang('ca'); });
+document.getElementById('lang-es').addEventListener('click', function () { setLang('es'); });
+document.getElementById('restart').addEventListener('click', function () {
+  const b = document.getElementById('restart');
+  if (!restartArmed) {
+    restartArmed = true;
+    b.textContent = T(U.restartAsk);
+    restartTimer = setTimeout(function () { restartArmed = false; b.textContent = '↻'; }, 2500);
+  } else {
+    clearTimeout(restartTimer);
+    restartArmed = false;
+    b.textContent = '↻';
+    resetGame();
+  }
+});
+
+if (new URLSearchParams(location.search).get('lang') === 'es') location.replace('/es/oliver-benji-bola-de-drac/');
+load();
+render();
+</script>
+</body>
+</html>

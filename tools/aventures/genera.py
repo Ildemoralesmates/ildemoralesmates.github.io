@@ -89,6 +89,24 @@ AVENTURES = {
             "home": "Volver a la portada",
             "homeurl": "/es/",
         },
+    },
+    "oliver-benji-bola-de-drac": {
+        "ca": {
+            "title": "Oliver i Benji × Bola de Drac: El torneig de les set boles",
+            "brand": "Oliver i Benji × Bola de Drac",
+            "desc": "Aventura interactiva: tria el camí, resol endevinalles, guanya cartes Veloç, Tècnica i Força en duels i troba les tres Boles del Drac amb la pilota parlant Pipo. 9 finals.",
+            "restart": "Començar de nou",
+            "home": "Tornar a la portada",
+            "homeurl": "/",
+        },
+        "es": {
+            "title": "Oliver y Benji × Bola de Dragón: El torneo de las siete bolas",
+            "brand": "Oliver y Benji × Bola de Dragón",
+            "desc": "Aventura interactiva: elige el camino, resuelve adivinanzas, gana cartas Veloz, Técnica y Fuerza en duelos y encuentra las tres Bolas del Dragón con el balón parlante Pipo. 9 finales.",
+            "restart": "Empezar de nuevo",
+            "home": "Volver a la portada",
+            "homeurl": "/es/",
+        },
     }
 }
 
