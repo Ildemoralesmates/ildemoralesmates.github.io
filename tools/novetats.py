@@ -38,7 +38,7 @@ def main():
     ap.add_argument('slug', nargs='?', help="carpeta del recurs, p. ex. thales (amb o sense barra final)")
     ap.add_argument('--t', help='títol (només per a un recurs nou)')
     ap.add_argument('--d', help='descripció breu (només per a un recurs nou)')
-    ap.add_argument('--cat', help="id de matèria: mates, fisica, quimica, biologia, geologia, geo, tecno, curio, misc")
+    ap.add_argument('--cat', help="id de matèria: mates, fisica, quimica, biologia, geologia, geo, tecno, jocs, curio, misc")
     ap.add_argument('--check', action='store_true')
     a = ap.parse_args()
 
