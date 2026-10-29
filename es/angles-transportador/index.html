@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ángulos y transportador</title>
+<meta name="description" content="Ángulos y transportador: arrastra la semirrecta, mide el ángulo con el transportador paso a paso, estímalo a ojo y clasifícalo (agudo, recto, obtuso, llano, cóncavo). Con complementarios y suplementarios y actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/angles-transportador/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/angles-transportador/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/angles-transportador/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/angles-transportador/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Ángulos y transportador">
+<meta property="og:description" content="Ángulos y transportador: arrastra la semirrecta, mide el ángulo con el transportador paso a paso, estímalo a ojo y clasifícalo (agudo, recto, obtuso, llano, cóncavo). Con complementarios y suplementarios y actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/angles-transportador/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+/* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
+.sidep{display:grid;gap:8px;align-content:start}
+.stepper{display:flex;gap:5px;flex-wrap:wrap}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer}
+.stepper button.done{background:var(--chip)}
+.stepper button[aria-current=step]{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600}
+.stepper button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stepno{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sidep h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.stext{font-size:14.5px}
+.stext p{margin:.45em 0}
+.sidep .stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.sidep .stat .v{font-size:15px}
+.pred,.think{border:1px solid var(--line);border-left:4px solid var(--pa);border-radius:8px;padding:10px 12px;background:var(--stage)}
+.think{border-left-color:var(--warn)}
+.pred .eb,.think .eb{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--pa);margin-bottom:3px}
+.think .eb{color:var(--warn)}
+.pred .qtext,.think .qtext{margin:0 0 6px!important;font-size:14.5px!important;font-weight:600}
+.pred .fb{padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.think .fb{margin-top:8px;padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.linkb{font:inherit;font-size:13px;color:var(--pa);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+.stepnav{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
+.rowlinks{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.lgd i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.hintline{min-height:1.4em;margin:0;padding:6px 12px 0;font-size:13.5px;font-weight:600;color:var(--warn)}
+.ctrlbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.ctrlbar .ctl{min-width:11rem;flex:1 1 11rem}
+.ctrlbar .btn[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.readout{padding:8px 12px 12px;font-size:13.5px;display:grid;gap:6px}
+.readout .two{display:flex;flex-wrap:wrap;gap:12px 24px}
+.readout .two>div{flex:1 1 13rem}
+.meter{height:7px;background:var(--chip);border:1px solid var(--line);border-radius:4px;margin:3px 0}
+.meter i{display:block;height:100%;background:var(--pb);border-radius:3px}
+
+#svg{display:block;width:100%;height:auto;max-height:min(62vh,520px);margin-inline:auto;background:var(--stage);border-radius:8px;touch-action:none;user-select:none;-webkit-user-select:none}
+#svg.drag{cursor:grab}
+#svg .ray1{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+#svg .ray2{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+#svg .arc{fill:none;stroke-width:3}
+#svg .sec{fill-opacity:.22;stroke:none}
+#svg .rmk{fill:none;stroke-width:2}
+#svg .hd{stroke:var(--panel);stroke-width:3}
+#svg .hdr{fill:none;stroke-width:2;opacity:.45}
+#svg .vx{fill:var(--ink)}
+#svg .refl{stroke:var(--muted);stroke-width:1.4;stroke-dasharray:4 5;opacity:.7}
+#svg .refn{fill:var(--muted);font:600 11px var(--f-num)}
+#svg .tg{stroke:var(--ok);stroke-width:3;stroke-dasharray:7 5;stroke-linecap:round}
+#svg .pbody{fill:var(--panel);fill-opacity:.62;stroke:var(--ink);stroke-width:1.6}
+#svg .pin{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4}
+#svg .pbase{stroke:var(--ink);stroke-width:1.6}
+#svg .pt1{stroke:var(--muted);stroke-width:.7;fill:none}
+#svg .pt5{stroke:var(--ink);stroke-width:1;fill:none}
+#svg .pt10{stroke:var(--ink);stroke-width:1.5;fill:none}
+#svg .pcr{stroke:var(--pb);stroke-width:1.6;fill:none}
+#svg .pn1{fill:var(--ink);font:600 10px var(--f-num)}
+#svg .pn2{fill:var(--muted);font:500 9px var(--f-num)}
+#svg .zr{fill:none;stroke:var(--ok);stroke-width:2.4}
+#svg .rd{fill:var(--pb);stroke:var(--panel);stroke-width:2}
+#svg .val{fill:var(--ink);font:700 17px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:4px;stroke-linejoin:round}
+#svg .valb{fill:var(--pb);font:700 17px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:4px;stroke-linejoin:round}
+.bigq{margin:0;font-family:var(--f-num);font-size:clamp(26px,4vw,40px);font-weight:700;color:var(--ink);line-height:1.1}
+.card p.bigq{color:var(--ink);font-size:clamp(26px,4vw,40px)}
+.side .qtext{margin:0;font-size:14.5px;font-weight:600;color:var(--ink)}
+.side h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.side .copts{display:flex;flex-wrap:wrap;gap:6px}
+.side .copts .opt[aria-pressed=true]{outline:2px solid var(--pa)}
+.side .tl{margin:0;font-size:13.5px;color:var(--muted)}
+.card .sw{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 1.º ESO · Geometría</p>
+      <h1 data-i18n="h1">Ángulos y transportador</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Arrastra la semirrecta: mide el ángulo con el transportador paso a paso, estímalo a ojo y clasifícalo.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Mide, estima y clasifica</h2>
+<div class="sw">
+<div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label="Modo">
+<button type="button" data-mode="M" aria-pressed="true" data-i18n="mode_M">Mide</button>
+<button type="button" data-mode="E" aria-pressed="false" data-i18n="mode_E">Estima</button>
+<button type="button" data-mode="C" aria-pressed="false" data-i18n="mode_C">Clasifica</button>
+</div>
+<p data-i18n-html="story" style="flex:1 1 20rem">Arrastra el extremo de la semirrecta (o usa el control) para cambiar el ángulo. En <b>Mide</b> el transportador se coloca paso a paso; en <b>Estima</b> lo ocultas y dibujas a ojo; en <b>Clasifica</b> decides si es agudo, recto, obtuso, llano o cóncavo.</p>
+</div>
+<div class="simgrid">
+<div class="simcv">
+<svg id="svg" viewBox="0 0 420 340" role="img" data-i18n-aria="aria.svg" aria-label="Ángulo formado por dos lados y un transportador; arrastra el extremo del segundo lado para cambiarlo"></svg>
+<div id="ctl"></div>
+</div>
+<div class="side">
+
+<div id="paneM" class="sidep">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev">← Anterior</button><button type="button" class="btn primary" id="next" data-i18n="st_next">Siguiente →</button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="a0.title">Un ángulo y un transportador</h2>
+<div class="stext" id="stext" data-i18n-html="a0.text"><p>Este es el ángulo que quieres medir. El punto donde se encuentran los dos lados es el <b>vértice</b>. Arrastra el extremo de la semirrecta para cambiarlo. El transportador es una escala semicircular que va de 0° a 180°.</p></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart">Volver al inicio</button><button type="button" class="btn" id="mnew" data-i18n="new_angle">Otro ángulo</button></div>
+</div>
+
+<div id="paneE" class="sidep" hidden>
+<p class="stepno" data-i18n="es_eyebrow">Estima</p>
+<h2 data-i18n="es_title">Dibuja a ojo</h2>
+<p class="qtext" id="etask"></p>
+<p class="bigq" id="etarget" aria-live="polite"></p>
+<label class="check"><input type="checkbox" id="refc"><span data-i18n="es_ref">Mostrar referencias (45°, 90°, 135°)</span></label>
+<div class="row"><button class="btn primary" id="echk" type="button" data-i18n="es_accept">Aceptar</button><button class="btn" id="enew" type="button" data-i18n="new_angle">Otro ángulo</button></div>
+<p class="msg" id="emsg" aria-live="polite"></p>
+<p class="tl" id="escore"></p>
+</div>
+
+<div id="paneC" class="sidep" hidden>
+<p class="stepno" data-i18n="cl_eyebrow">Clasifica</p>
+<h2 data-i18n="cl_title">¿Qué tipo de ángulo es?</h2>
+<div class="seg" id="csub" role="group" data-i18n-aria="aria.csub" aria-label="Tipo de reto">
+<button type="button" data-sub="id" aria-pressed="true" data-i18n="cl_sub_id">Identifica</button>
+<button type="button" data-sub="dr" aria-pressed="false" data-i18n="cl_sub_dr">Dibuja</button>
+</div>
+<p class="qtext" id="cq"></p>
+<div class="copts" id="copts"></div>
+<div class="row"><button class="btn primary" id="cchk" type="button" data-i18n="check" hidden>Comprobar</button><button class="btn" id="cnew" type="button" data-i18n="cl_next">Siguiente ángulo</button></div>
+<p class="msg" id="cmsg" aria-live="polite"></p>
+<p class="tl" id="cscore"></p>
+<div class="idea" data-i18n-html="cl_rules"><b>Agudo:</b> menos de 90° · <b>Recto:</b> exactamente 90° · <b>Obtuso:</b> entre 90° y 180° · <b>Llano:</b> exactamente 180° · <b>Cóncavo:</b> entre 180° y 360°.</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Angles i transportador",
+"eyebrow":"Matemàtiques · 1r ESO · Geometria",
+"h1":"Angles i transportador",
+"lede":"Arrossega la semirecta: mesura l'angle amb el transportador pas a pas, estima'l a ull i classifica'l.",
+"sim_title":"Mesura, estima i classifica",
+"story":"Arrossega l'extrem de la semirecta (o usa el control) per a canviar l'angle. A <b>Mesura</b> el transportador es col·loca pas a pas; a <b>Estima</b> l'amagues i dibuixes a ull; a <b>Classifica</b> decideixes si és agut, recte, obtús, pla o còncau.",
+"aria.mode":"Mode","aria.csub":"Tipus de repte","aria.svg":"Angle format per dos costats i un transportador; arrossega l'extrem del segon costat per a canviar-lo",
+"mode_M":"Mesura","mode_E":"Estima","mode_C":"Classifica",
+"l_ang":"Angle","new_angle":"Un altre angle",
+"k_ang":"Angle","k_tipus":"Tipus","k_comp":"Complementari","k_supl":"Suplementari",
+"c_agut":"agut","c_recte":"recte","c_obtus":"obtús","c_pla":"pla","c_concau":"còncau",
+"cb_agut":"Agut","cb_recte":"Recte","cb_obtus":"Obtús","cb_pla":"Pla","cb_concau":"Còncau",
+"f_a":"angle","f_b":"segon angle","rng":"Escriu un nombre entre 0 i 180.",
+"a0.title":"Un angle i un transportador",
+"a0.text":"<p>Aquest és l'angle que vols mesurar. El punt on es troben els dos costats és el <b>vèrtex</b>. Arrossega l'extrem de la semirecta per a canviar-lo. El transportador és una escala semicircular que va de 0° a 180°.</p>",
+"a1.title":"Centre sobre el vèrtex",
+"a1.text":"<p>La creueta del centre del transportador ha de coincidir <b>exactament</b> amb el vèrtex de l'angle.</p>",
+"a1.tq":"Què passa si el centre queda un poc desplaçat del vèrtex?",
+"a1.th":"La lectura es falseja: els graus es compten des del centre del transportador, i si aquest no és el vèrtex, el costat de l'angle ja no creua l'escala al lloc correcte.",
+"a2.title":"Alinea el 0 amb un costat",
+"a2.text":"<p>Gira el transportador perquè la línia de base quede sobre un dels costats. Aquest costat ha de passar per un <b>0</b> de l'escala. Ací el costat apunta cap a la <b>dreta</b>.</p>",
+"a2.q":"Predix: quina escala hem de llegir, l'exterior o l'interior?",
+"a2.o0":"L'exterior: el seu 0 és a la dreta","a2.o1":"L'interior: el seu 0 és a l'esquerra","a2.o2":"Qualsevol de les dues dona el mateix",
+"a2.why":"Cal llegir l'escala que té el 0 sobre el costat que has alineat. Ací el costat apunta a la dreta: l'escala exterior.",
+"a2f.title":"Alinea el 0 amb un costat",
+"a2f.text":"<p>Gira el transportador perquè la línia de base quede sobre un dels costats. Aquest costat ha de passar per un <b>0</b> de l'escala. Ací el costat apunta cap a l'<b>esquerra</b>.</p>",
+"a2f.q":"Predix: quina escala hem de llegir, l'exterior o l'interior?",
+"a2f.o0":"L'exterior: el seu 0 és a la dreta","a2f.o1":"L'interior: el seu 0 és a l'esquerra","a2f.o2":"Qualsevol de les dues dona el mateix",
+"a2f.why":"Cal llegir l'escala que té el 0 sobre el costat que has alineat. Ací el costat apunta a l'esquerra: l'escala interior.",
+"a3.title":"Llegeix l'angle",
+"a3.text":"<p>L'altre costat travessa l'escala en una marca: aquest és el valor de l'angle. Comprova que té sentit: si l'angle és agut, la mesura ha de ser menor que 90°; si és obtús, major.</p>",
+"a3.tq":"Si llegeixes l'altra escala, quin valor obtens? Com et pots adonar de l'error?",
+"a3.th":"Obtens el suplementari (180° menys l'angle). T'en pots adonar comparant amb el tipus d'angle: un angle que a ull és agut no pot mesurar més de 90°.",
+"es_eyebrow":"Estima","es_title":"Dibuixa a ull",
+"es_task":"Dibuixa un angle d'aquesta mesura, sense transportador:",
+"es_ref":"Mostra referències (45°, 90°, 135°)",
+"es_res":"Has dibuixat {0}° i el demanat era {1}°.","es_over":"T'has passat {0}°.","es_under":"T'has quedat curt {0}°.",
+"es_ex":"Exacte!","es_g":"Quasi perfecte.","es_b":"Molt bé.","es_m":"Bé; es pot afinar més.","es_f":"Compara amb l'angle recte (90°) i amb la meitat (45°) per a situar-te.",
+"es_score":"Encerts: {0} de {1}","es_hold":"Arrossega la semirecta i prem «Accepta». Es dona per bo si t'acostes a ±5°.","es_accept":"Accepta","es_win":"✔ Encertat!","es_lose":"✘ No és això.",
+"cl_eyebrow":"Classifica","cl_title":"Quin tipus d'angle és?",
+"cl_sub_id":"Identifica","cl_sub_dr":"Dibuixa",
+"cl_q_id":"Mira l'angle i tria el seu tipus.",
+"cl_q_dr":"Dibuixa un angle <b>{0}</b>: arrossega la semirecta i prem «Comprova».",
+"cl_next":"Següent angle",
+"cl_ok":"✔ Correcte: {0}° és un angle {1}.","cl_ko":"✘ No: {0}° és un angle {1}.","cl_ko_dr":"✘ Aquest angle ({0}°) és {1}, no {2}.","cl_ok_dr":"✔ Correcte: {0}° és un angle {1}.",
+"cl_score":"Encerts: {0} de {1}",
+"cl_rules":"<b>Agut:</b> menys de 90° · <b>Recte:</b> exactament 90° · <b>Obtús:</b> entre 90° i 180° · <b>Pla:</b> exactament 180° · <b>Còncau:</b> entre 180° i 360°.",
+"m1.q":"Dibuixa un angle <b>obtús</b> que mesure entre <b>120°</b> i <b>130°</b>.",
+"m1_ag":"{0}° no és obtús: un angle obtús mesura més de 90°.","m1_lo":"{0}° és massa tancat: ha de ser almenys 120°.","m1_hi":"{0}° és massa obert: ha de ser com a màxim 130°.",
+"m1_ok":"✔ Missió complida! {0}° és obtús i està entre 120° i 130°.",
+"m1.more":"Quin és el rang d'angles obtusos? Quin seria l'angle obtús més xicotet que pots dibuixar al simulador?",
+"m2.q":"Troba un angle agut el <b>suplementari</b> del qual siga el <b>triple</b> del seu <b>complementari</b>.",
+"m2_c":"Un angle de {0}° no té complementari: cal que siga agut.","m2_f":"Amb {0}°: suplementari {1}°, complementari {2}°. {1} no és el triple de {2}.",
+"m2_ok":"✔ Missió complida! Suplementari 135° = 3 · 45° (el complementari).",
+"m2.more":"Comprova-ho amb equacions: 180 − x = 3 · (90 − x). Què val x? I si fora el doble en comptes del triple?",
+"m3.q":"Troba <b>dos angles complementaris</b> en què un siga el <b>doble</b> de l'altre.",
+"m3_s":"{0}° + {1}° = {2}°, no 90°: no són complementaris.","m3_d":"Sumen 90°, però cap dels dos és el doble de l'altre.",
+"m3_ok":"✔ Missió complida! {0}° + {1}° = 90° i {2}° és el doble de {3}°.",
+"m3.more":"Hi ha una sola parella possible? Com ho pots saber? (Pista: a + 2a = 90.)",
+"m4.q":"Troba un angle que mesure <b>40° menys</b> que el seu suplementari.",
+"m4_f":"El suplementari de {0}° és {1}°, i la diferència és {2}°, no 40°.","m4_ok":"✔ Missió complida! 70° i el seu suplementari 110° es diferencien en 40°.",
+"m4.more":"Planteja-ho: (180 − x) − x = 40. Què val x? I si la diferència fora 0°?",
+"s1.q":"«Un angle agut té sempre un suplementari obtús.»",
+"s1.h":"Prova amb 30°, 60° i 89°. Quant val 180° menys l'angle?",
+"s1.e":"Sempre: si l'angle és menor que 90°, el seu suplementari 180° − x és major que 90°, o siga, obtús.",
+"s2.q":"«Dos angles obtusos poden ser complementaris.»",
+"s2.h":"Cada obtús mesura més de 90°. Quant sumen dos?",
+"s2.e":"Mai: dos angles obtusos sumen més de 180°, i dos angles complementaris només sumen 90°.",
+"s3.q":"«Dos angles aguts són complementaris.»",
+"s3.h":"Prova 30° i 60°; després 30° i 30°.",
+"s3.e":"De vegades: 30° i 60° són complementaris (sumen 90°), però 30° i 30° no.",
+"s3_c":"{0}° + {1}° = 90°: aquests sí que són complementaris. Busca'n uns que no ho siguen.",
+"s4.q":"«Un angle obtús té complementari.»",
+"s4.h":"Un angle obtús mesura més de 90°. Quant hauria de valdre el seu complementari?",
+"s4.e":"Mai: el complementari és 90° menys l'angle, que seria negatiu si l'angle passa de 90°.",
+"s5.q":"«Si un angle és agut, el seu doble també és agut.»",
+"s5.h":"Prova 30° i després 60°.",
+"s5.e":"De vegades: el doble de 30° és 60° (agut), però el doble de 60° és 120° (obtús). Només és cert si l'angle és menor que 45°.",
+"s5_no":"El doble de {0}° és {1}°, que continua sent agut. Busca un agut amb doble no agut.",
+"s6.q":"«Un angle pla mesura el doble que un angle recte.»",
+"s6.h":"Quant mesura cada un?",
+"s6.e":"Sempre: pla = 180° i recte = 90°, i 180° és 2 · 90°. Dos angles rectes junts formen un angle pla.",
+"e1.ctx":"Un angle té un costat sobre el 0 de l'escala <b>interior</b> del transportador. L'altre costat passa pel <b>70</b> de l'escala interior i pel <b>110</b> de l'exterior. Quant mesura l'angle?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Mesura 110°, perquè és el número més gran.","e1.s1":"Mesura 70°, perquè llegeixo l'escala on hi ha el 0.",
+"e1.w0":"L'escala que s'ha de llegir és la que té el 0 sobre un costat de l'angle: ací la interior, que marca 70°. A més, es veu un angle agut, que mesura menys de 90°.",
+"e1.w1":"Perquè sempre cal llegir l'escala exterior.",
+"e1.w2":"Perquè el número més gran és sempre el correcte.",
+"e1.frame":"Marta, l'angle no mesura 110° perquè…",
+"e1.model":"Marta, un transportador té dues escales i cal llegir la que comença en 0 sobre un dels costats de l'angle. Ací és la interior, que dona 70°. 110° és el suplementari (180° − 70°). Per a comprovar-ho, mira si l'angle és agut o obtús: si és agut, la mesura ha de ser menor que 90°.",
+"e2.ctx":"Un angle mesura <b>35°</b>. Quant mesura el seu <b>complementari</b>?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"180° − 35° = 145°.","e2.s1":"90° − 35° = 55°.",
+"e2.w0":"Els angles complementaris sumen 90°, així que 90° − 35° = 55°. El 145° és el suplementari (180° − 35°).",
+"e2.w1":"Perquè els complementaris sumen 180°.","e2.w2":"Perquè el complementari sempre és més gran que 90°.",
+"e2.frame":"Àlex, el complementari no és 145° perquè…",
+"e2.model":"Àlex, complementari i suplementari es confonen amb facilitat: <b>complementaris</b> sumen 90° (formen un angle recte) i <b>suplementaris</b> sumen 180° (formen un angle pla). 180° − 35° = 145° és el suplementari; el complementari és 90° − 35° = 55°.",
+"e3.ctx":"Un angle mesura exactament <b>180°</b>. Què és?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"Un angle pla: els dos costats formen una línia recta.","e3.s1":"No és un angle, és una línia.",
+"e3.w0":"Els dos costats van en sentits oposats i formen una línia recta, però l'obertura entre ells és 180°: és un angle pla, amb mesura pròpia.",
+"e3.w1":"Perquè només hi ha angle si els costats no estan alineats.","e3.w2":"Perquè un angle ha de ser menor que 180°.",
+"e3.frame":"Joan, un angle de 180° sí que és un angle perquè…",
+"e3.model":"Joan, un angle és l'obertura entre dues semirectes amb el mateix origen. Si les semirectes van en sentits oposats, l'obertura és de 180° i s'anomena angle pla. Que els dos costats formen una línia recta no el fa menys angle: és la meitat d'una volta completa.",
+"d1.q":"Una porta s'ha obert <b>40°</b> respecte al marc. Quants graus més ha de girar per a quedar <b>perpendicular</b> al marc (angle de 90°)? I quants fins a quedar oberta del tot contra la paret (180°)?",
+"d1.l0":"Fins a 90°","d1.l1":"Fins a 180°",
+"d1_s":"{0}° és el suplementari (180° − 40°). Per a arribar a 90° cal el complementari: 90° − 40°.","d1_f":"40° + {0}° no fa 90°.",
+"d1_t":"Fins a 180° falta 180° − 40°, no {0}°.",
+"d1_ok":"✔ Ben decidit! 90° − 40° = 50° i 180° − 40° = 140°.",
+"d1.more":"I si la porta ja s'ha obert 70°? Quant li falta per al recte i per a l'angle pla?",
+"d2.q":"Les busques d'un rellotge formen un angle. Quants graus hi ha entre elles a les <b>4:00</b>? I a les <b>4:30</b>? (Entre dues hores consecutives hi ha 30°.)",
+"d2.l0":"A les 4:00","d2.l1":"A les 4:30",
+"d2_a":"Del 12 al 4 hi ha 4 espais de 30°. No val {0}°.","d2_h":"A les 4:30 l'agulla de les hores s'ha mogut: és enmig del 4 i el 5. L'angle ja no és 120°.",
+"d2_b":"A les 4:30 la dels minuts apunta al 6 (180°) i la de les hores és enmig del 4 i el 5 (135°). La diferència no és {0}°.",
+"d2_ok":"✔ Ben decidit! 4 · 30° = 120° a les 4:00, i a les 4:30: 180° − 135° = 45°.",
+"d2.more":"A quina hora, entre les 3:00 i les 4:00, formen les busques exactament un angle recte? (Pista: a les 3:00 ja el formen.)",
+"d3.q":"Una pizza es talla en <b>8</b> trossos iguals des del centre. Quin angle té cada tros? I quin angle formen <b>tres</b> trossos junts?",
+"d3.l0":"Un tros","d3.l1":"Tres trossos",
+"d3_a":"El cercle complet són 360°: cada tros és 360° ÷ 8. No val {0}°.","d3_b":"Tres trossos són 3 · 45°. No val {0}°.",
+"d3_ok":"✔ Ben decidit! 360° ÷ 8 = 45° i 3 · 45° = 135°.",
+"d3.more":"Quants trossos calen perquè junts formen un angle recte? I un angle pla?"
+},
+es:{
+"title":"Ángulos y transportador",
+"eyebrow":"Matemáticas · 1.º ESO · Geometría",
+"h1":"Ángulos y transportador",
+"lede":"Arrastra la semirrecta: mide el ángulo con el transportador paso a paso, estímalo a ojo y clasifícalo.",
+"sim_title":"Mide, estima y clasifica",
+"story":"Arrastra el extremo de la semirrecta (o usa el control) para cambiar el ángulo. En <b>Mide</b> el transportador se coloca paso a paso; en <b>Estima</b> lo ocultas y dibujas a ojo; en <b>Clasifica</b> decides si es agudo, recto, obtuso, llano o cóncavo.",
+"aria.mode":"Modo","aria.csub":"Tipo de reto","aria.svg":"Ángulo formado por dos lados y un transportador; arrastra el extremo del segundo lado para cambiarlo",
+"mode_M":"Mide","mode_E":"Estima","mode_C":"Clasifica",
+"l_ang":"Ángulo","new_angle":"Otro ángulo",
+"k_ang":"Ángulo","k_tipus":"Tipo","k_comp":"Complementario","k_supl":"Suplementario",
+"c_agut":"agudo","c_recte":"recto","c_obtus":"obtuso","c_pla":"llano","c_concau":"cóncavo",
+"cb_agut":"Agudo","cb_recte":"Recto","cb_obtus":"Obtuso","cb_pla":"Llano","cb_concau":"Cóncavo",
+"f_a":"ángulo","f_b":"segundo ángulo","rng":"Escribe un número entre 0 y 180.",
+"a0.title":"Un ángulo y un transportador",
+"a0.text":"<p>Este es el ángulo que quieres medir. El punto donde se encuentran los dos lados es el <b>vértice</b>. Arrastra el extremo de la semirrecta para cambiarlo. El transportador es una escala semicircular que va de 0° a 180°.</p>",
+"a1.title":"Centro sobre el vértice",
+"a1.text":"<p>La crucecita del centro del transportador tiene que coincidir <b>exactamente</b> con el vértice del ángulo.</p>",
+"a1.tq":"¿Qué pasa si el centro queda un poco desplazado del vértice?",
+"a1.th":"La lectura se falsea: los grados se cuentan desde el centro del transportador, y si este no es el vértice, el lado del ángulo ya no cruza la escala en el sitio correcto.",
+"a2.title":"Alinea el 0 con un lado",
+"a2.text":"<p>Gira el transportador para que la línea de base quede sobre uno de los lados. Ese lado tiene que pasar por un <b>0</b> de la escala. Aquí el lado apunta hacia la <b>derecha</b>.</p>",
+"a2.q":"Predice: ¿qué escala hay que leer, la exterior o la interior?",
+"a2.o0":"La exterior: su 0 está a la derecha","a2.o1":"La interior: su 0 está a la izquierda","a2.o2":"Cualquiera de las dos da lo mismo",
+"a2.why":"Hay que leer la escala que tiene el 0 sobre el lado que has alineado. Aquí el lado apunta a la derecha: la escala exterior.",
+"a2f.title":"Alinea el 0 con un lado",
+"a2f.text":"<p>Gira el transportador para que la línea de base quede sobre uno de los lados. Ese lado tiene que pasar por un <b>0</b> de la escala. Aquí el lado apunta hacia la <b>izquierda</b>.</p>",
+"a2f.q":"Predice: ¿qué escala hay que leer, la exterior o la interior?",
+"a2f.o0":"La exterior: su 0 está a la derecha","a2f.o1":"La interior: su 0 está a la izquierda","a2f.o2":"Cualquiera de las dos da lo mismo",
+"a2f.why":"Hay que leer la escala que tiene el 0 sobre el lado que has alineado. Aquí el lado apunta a la izquierda: la escala interior.",
+"a3.title":"Lee el ángulo",
+"a3.text":"<p>El otro lado atraviesa la escala en una marca: ese es el valor del ángulo. Comprueba que tiene sentido: si el ángulo es agudo, la medida tiene que ser menor que 90°; si es obtuso, mayor.</p>",
+"a3.tq":"Si lees la otra escala, ¿qué valor obtienes? ¿Cómo puedes darte cuenta del error?",
+"a3.th":"Obtienes el suplementario (180° menos el ángulo). Puedes darte cuenta comparando con el tipo de ángulo: un ángulo que a ojo es agudo no puede medir más de 90°.",
+"es_eyebrow":"Estima","es_title":"Dibuja a ojo",
+"es_task":"Dibuja un ángulo de esta medida, sin transportador:",
+"es_ref":"Mostrar referencias (45°, 90°, 135°)",
+"es_res":"Has dibujado {0}° y lo pedido era {1}°.","es_over":"Te has pasado {0}°.","es_under":"Te has quedado corto {0}°.",
+"es_ex":"¡Exacto!","es_g":"Casi perfecto.","es_b":"Muy bien.","es_m":"Bien; se puede afinar más.","es_f":"Compara con el ángulo recto (90°) y con la mitad (45°) para situarte.",
+"es_score":"Aciertos: {0} de {1}","es_hold":"Arrastra la semirrecta y pulsa «Aceptar». Se da por bueno si te acercas a ±5°.","es_accept":"Aceptar","es_win":"✔ ¡Acertado!","es_lose":"✘ No es eso.",
+"cl_eyebrow":"Clasifica","cl_title":"¿Qué tipo de ángulo es?",
+"cl_sub_id":"Identifica","cl_sub_dr":"Dibuja",
+"cl_q_id":"Mira el ángulo y elige su tipo.",
+"cl_q_dr":"Dibuja un ángulo <b>{0}</b>: arrastra la semirrecta y pulsa «Comprobar».",
+"cl_next":"Siguiente ángulo",
+"cl_ok":"✔ Correcto: {0}° es un ángulo {1}.","cl_ko":"✘ No: {0}° es un ángulo {1}.","cl_ko_dr":"✘ Ese ángulo ({0}°) es {1}, no {2}.","cl_ok_dr":"✔ Correcto: {0}° es un ángulo {1}.",
+"cl_score":"Aciertos: {0} de {1}",
+"cl_rules":"<b>Agudo:</b> menos de 90° · <b>Recto:</b> exactamente 90° · <b>Obtuso:</b> entre 90° y 180° · <b>Llano:</b> exactamente 180° · <b>Cóncavo:</b> entre 180° y 360°.",
+"m1.q":"Dibuja un ángulo <b>obtuso</b> que mida entre <b>120°</b> y <b>130°</b>.",
+"m1_ag":"{0}° no es obtuso: un ángulo obtuso mide más de 90°.","m1_lo":"{0}° es demasiado cerrado. Tiene que ser al menos 120°.","m1_hi":"{0}° es demasiado abierto: tiene que ser como máximo 130°.",
+"m1_ok":"✔ ¡Misión cumplida! {0}° es obtuso y está entre 120° y 130°.",
+"m1.more":"¿Cuál es el rango de los ángulos obtusos? ¿Cuál sería el ángulo obtuso más pequeño que puedes dibujar en el simulador?",
+"m2.q":"Encuentra un ángulo agudo cuyo <b>suplementario</b> sea el <b>triple</b> de su <b>complementario</b>.",
+"m2_c":"Un ángulo de {0}° no tiene complementario: tiene que ser agudo.","m2_f":"Con {0}°: suplementario {1}°, complementario {2}°. {1} no es el triple de {2}.",
+"m2_ok":"✔ ¡Misión cumplida! Suplementario 135° = 3 · 45° (el complementario).",
+"m2.more":"Compruébalo con ecuaciones: 180 − x = 3 · (90 − x). ¿Cuánto vale x? ¿Y si fuera el doble en vez del triple?",
+"m3.q":"Encuentra <b>dos ángulos complementarios</b> en los que uno sea el <b>doble</b> del otro.",
+"m3_s":"{0}° + {1}° = {2}°, no 90°: no son complementarios.","m3_d":"Suman 90°, pero ninguno de los dos es el doble del otro.",
+"m3_ok":"✔ ¡Misión cumplida! {0}° + {1}° = 90° y {2}° es el doble de {3}°.",
+"m3.more":"¿Hay una sola pareja posible? ¿Cómo puedes saberlo? (Pista: a + 2a = 90.)",
+"m4.q":"Encuentra un ángulo que mida <b>40° menos</b> que su suplementario.",
+"m4_f":"El suplementario de {0}° es {1}°, y la diferencia es {2}°, no 40°.","m4_ok":"✔ ¡Misión cumplida! 70° y su suplementario 110° se diferencian en 40°.",
+"m4.more":"Plantéalo: (180 − x) − x = 40. ¿Cuánto vale x? ¿Y si la diferencia fuera 0°?",
+"s1.q":"«Un ángulo agudo tiene siempre un suplementario obtuso.»",
+"s1.h":"Prueba con 30°, 60° y 89°. ¿Cuánto vale 180° menos el ángulo?",
+"s1.e":"Siempre: si el ángulo es menor que 90°, su suplementario 180° − x es mayor que 90°, o sea, obtuso.",
+"s2.q":"«Dos ángulos obtusos pueden ser complementarios.»",
+"s2.h":"Cada obtuso mide más de 90°. ¿Cuánto suman dos?",
+"s2.e":"Nunca: dos ángulos obtusos suman más de 180°, y dos ángulos complementarios solo suman 90°.",
+"s3.q":"«Dos ángulos agudos son complementarios.»",
+"s3.h":"Prueba 30° y 60°; después 30° y 30°.",
+"s3.e":"A veces: 30° y 60° son complementarios (suman 90°), pero 30° y 30° no.",
+"s3_c":"{0}° + {1}° = 90°: estos sí son complementarios. Busca unos que no lo sean.",
+"s4.q":"«Un ángulo obtuso tiene complementario.»",
+"s4.h":"Un ángulo obtuso mide más de 90°. ¿Cuánto tendría que valer su complementario?",
+"s4.e":"Nunca: el complementario es 90° menos el ángulo, que sería negativo si el ángulo pasa de 90°.",
+"s5.q":"«Si un ángulo es agudo, su doble también es agudo.»",
+"s5.h":"Prueba 30° y después 60°.",
+"s5.e":"A veces: el doble de 30° es 60° (agudo), pero el doble de 60° es 120° (obtuso). Solo es cierto si el ángulo es menor que 45°.",
+"s5_no":"El doble de {0}° es {1}°, que sigue siendo agudo. Busca un agudo con doble no agudo.",
+"s6.q":"«Un ángulo llano mide el doble que un ángulo recto.»",
+"s6.h":"¿Cuánto mide cada uno?",
+"s6.e":"Siempre: llano = 180° y recto = 90°, y 180° es 2 · 90°. Dos ángulos rectos juntos forman un ángulo llano.",
+"e1.ctx":"Un ángulo tiene un lado sobre el 0 de la escala <b>interior</b> del transportador. El otro lado pasa por el <b>70</b> de la escala interior y por el <b>110</b> de la exterior. ¿Cuánto mide el ángulo?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Mide 110°, porque es el número más grande.","e1.s1":"Mide 70°, porque leo la escala donde está el 0.",
+"e1.w0":"La escala que hay que leer es la que tiene el 0 sobre un lado del ángulo: aquí la interior, que marca 70°. Además, se ve un ángulo agudo, que mide menos de 90°.",
+"e1.w1":"Porque siempre hay que leer la escala exterior.",
+"e1.w2":"Porque el número más grande es siempre el correcto.",
+"e1.frame":"Marta, el ángulo no mide 110° porque…",
+"e1.model":"Marta, un transportador tiene dos escalas y hay que leer la que empieza en 0 sobre uno de los lados del ángulo. Aquí es la interior, que da 70°. 110° es el suplementario (180° − 70°). Para comprobarlo, mira si el ángulo es agudo u obtuso: si es agudo, la medida tiene que ser menor que 90°.",
+"e2.ctx":"Un ángulo mide <b>35°</b>. ¿Cuánto mide su <b>complementario</b>?",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"180° − 35° = 145°.","e2.s1":"90° − 35° = 55°.",
+"e2.w0":"Los ángulos complementarios suman 90°, así que 90° − 35° = 55°. El 145° es el suplementario (180° − 35°).",
+"e2.w1":"Porque los complementarios suman 180°.","e2.w2":"Porque el complementario siempre es mayor que 90°.",
+"e2.frame":"Álex, el complementario no es 145° porque…",
+"e2.model":"Álex, complementario y suplementario se confunden con facilidad: los <b>complementarios</b> suman 90° (forman un ángulo recto) y los <b>suplementarios</b> suman 180° (forman un ángulo llano). 180° − 35° = 145° es el suplementario; el complementario es 90° − 35° = 55°.",
+"e3.ctx":"Un ángulo mide exactamente <b>180°</b>. ¿Qué es?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"Un ángulo llano: los dos lados forman una línea recta.","e3.s1":"No es un ángulo, es una línea.",
+"e3.w0":"Los dos lados van en sentidos opuestos y forman una línea recta, pero la abertura entre ellos es 180°: es un ángulo llano, con medida propia.",
+"e3.w1":"Porque solo hay ángulo si los lados no están alineados.","e3.w2":"Porque un ángulo tiene que ser menor que 180°.",
+"e3.frame":"Joan, un ángulo de 180° sí es un ángulo porque…",
+"e3.model":"Joan, un ángulo es la abertura entre dos semirrectas con el mismo origen. Si las semirrectas van en sentidos opuestos, la abertura es de 180° y se llama ángulo llano. Que los dos lados formen una línea recta no lo hace menos ángulo: es la mitad de una vuelta completa.",
+"d1.q":"Una puerta se ha abierto <b>40°</b> respecto al marco. ¿Cuántos grados más tiene que girar para quedar <b>perpendicular</b> al marco (ángulo de 90°)? ¿Y cuántos hasta quedar abierta del todo contra la pared (180°)?",
+"d1.l0":"Hasta 90°","d1.l1":"Hasta 180°",
+"d1_s":"{0}° es el suplementario (180° − 40°). Para llegar a 90° hace falta el complementario: 90° − 40°.","d1_f":"40° + {0}° no hace 90°.",
+"d1_t":"Hasta 180° faltan 180° − 40°, no {0}°.",
+"d1_ok":"✔ ¡Bien decidido! 90° − 40° = 50° y 180° − 40° = 140°.",
+"d1.more":"¿Y si la puerta ya se ha abierto 70°? ¿Cuánto le falta para el recto y para el ángulo llano?",
+"d2.q":"Las agujas de un reloj forman un ángulo. ¿Cuántos grados hay entre ellas a las <b>4:00</b>? ¿Y a las <b>4:30</b>? (Entre dos horas consecutivas hay 30°.)",
+"d2.l0":"A las 4:00","d2.l1":"A las 4:30",
+"d2_a":"Del 12 al 4 hay 4 espacios de 30°. No vale {0}°.","d2_h":"A las 4:30 la aguja de las horas se ha movido: está entre el 4 y el 5. El ángulo ya no es 120°.",
+"d2_b":"A las 4:30 la de los minutos apunta al 6 (180°) y la de las horas está entre el 4 y el 5 (135°). La diferencia no es {0}°.",
+"d2_ok":"✔ ¡Bien decidido! 4 · 30° = 120° a las 4:00, y a las 4:30: 180° − 135° = 45°.",
+"d2.more":"¿A qué hora, entre las 3:00 y las 4:00, forman las agujas exactamente un ángulo recto? (Pista: a las 3:00 ya lo forman.)",
+"d3.q":"Una pizza se corta en <b>8</b> trozos iguales desde el centro. ¿Qué ángulo tiene cada trozo? ¿Y qué ángulo forman <b>tres</b> trozos juntos?",
+"d3.l0":"Un trozo","d3.l1":"Tres trozos",
+"d3_a":"El círculo completo son 360°: cada trozo es 360° ÷ 8. No vale {0}°.","d3_b":"Tres trozos son 3 · 45°. No vale {0}°.",
+"d3_ok":"✔ ¡Bien decidido! 360° ÷ 8 = 45° y 3 · 45° = 135°.",
+"d3.more":"¿Cuántos trozos hacen falta para que juntos formen un ángulo recto? ¿Y un ángulo llano?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../angles-transportador/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
+const SI18N={
+ca:{st_prev:"← Anterior",st_next:"Següent →",st_restart:"Torna a l'inici",st_step:"Pas {a} de {b}",st_predict:"Predix abans de veure",st_think:"Pensa-hi",
+st_hint:"Mostra una pista",st_hide:"Amaga la pista",st_ok:"Correcte!",st_ko:"No exactament.","aria.steps":"Passos de l'animació","aria.stage":"Dibuix de l'animació",
+sl_cells:"Cèl·lules",sl_chrom:"Cromosomes per cèl·lula",sl_chromat:"Cromàtides per cromosoma",sl_dna:"ADN per cèl·lula",sl_chrompol:"Cromosomes per pol",sl_dnatot:"ADN total"},
+es:{st_prev:"← Anterior",st_next:"Siguiente →",st_restart:"Volver al inicio",st_step:"Paso {a} de {b}",st_predict:"Predice antes de ver",st_think:"Piénsalo",
+st_hint:"Ver una pista",st_hide:"Ocultar la pista",st_ok:"¡Correcto!",st_ko:"No exactamente.","aria.steps":"Pasos de la animación","aria.stage":"Dibujo de la animación",
+sl_cells:"Células",sl_chrom:"Cromosomas por célula",sl_chromat:"Cromátidas por cromosoma",sl_dna:"ADN por célula",sl_chrompol:"Cromosomas por polo",sl_dnatot:"ADN total"}};
+Object.assign(I18N.ca,SI18N.ca);Object.assign(I18N.es,SI18N.es);
+const SE={i:0,steps:[],ans:{},hint:{},cb:null};
+function stepsInit(steps,cb){
+  SE.steps=steps;SE.cb=cb;
+  const sp=$('#stepper');
+  steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+  $('#prev').onclick=()=>stepGo(SE.i-1);
+  $('#next').onclick=()=>stepGo(SE.i+1);
+  $('#restart').onclick=()=>{SE.ans={};SE.hint={};stepGo(0);};
+  document.addEventListener('langchange',stepRender);
+  stepGo(0);
+}
+function stepGo(i){
+  i=Math.max(0,Math.min(SE.steps.length-1,i));
+  const prev=SE.i;SE.i=i;stepRender();
+  if(SE.cb)SE.cb(i,prev);
+}
+function stepRender(){
+  const s=SE.steps[SE.i],id=s.id;
+  $$('#stepper button').forEach((b,k)=>{
+    if(k===SE.i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+    b.className=(SE.ans[SE.steps[k].id]!==undefined&&k!==SE.i)?'done':'';
+  });
+  $('#stepno').textContent=t('st_step',{a:SE.i+1,b:SE.steps.length});
+  const T=$('#stitle');T.dataset.i18n=id+'.title';T.textContent=t(id+'.title');
+  const X=$('#stext');X.dataset.i18nHtml=id+'.text';X.innerHTML=t(id+'.text');
+  const st=$('#sstats');st.innerHTML='';
+  (s.stats||[]).forEach((p,j)=>{
+    const d=document.createElement('div');d.className='stat';
+    d.innerHTML='<span class="k">'+t(p[0])+'</span><span class="v">'+(I18N.ca[id+'.sv'+j]!==undefined?t(id+'.sv'+j):p[1])+'</span>';
+    st.appendChild(d);
+  });
+  st.hidden=!(s.stats&&s.stats.length);
+  const ask=$('#sask');ask.innerHTML='';ask.hidden=!s.ask;
+  if(s.ask){
+    const a=SE.ans[id],c=document.createElement('div');c.className='pred';
+    c.innerHTML='<span class="eb">'+t('st_predict')+'</span><p class="qtext">'+t(id+'.q')+'</p>';
+    const o=document.createElement('div');o.className='opts';
+    for(let j=0;j<s.ask.n;j++){
+      const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(id+'.o'+j);
+      if(a!==undefined){b.disabled=true;if(j===s.ask.ok)b.classList.add('right');else if(j===a)b.classList.add('wrong');}
+      b.onclick=()=>{SE.ans[id]=j;stepRender();};
+      o.appendChild(b);
+    }
+    c.appendChild(o);
+    if(a!==undefined){const f=document.createElement('p');f.className='fb';f.innerHTML='<b>'+(a===s.ask.ok?t('st_ok'):t('st_ko'))+'</b> '+t(id+'.why');c.appendChild(f);}
+    ask.appendChild(c);
+  }
+  const th=$('#sthink');th.innerHTML='';th.hidden=!s.think;
+  if(s.think){
+    const c=document.createElement('div');c.className='think';
+    c.innerHTML='<span class="eb">'+t('st_think')+'</span><p class="qtext">'+t(id+'.tq')+'</p>';
+    const open=!!SE.hint[id];
+    const b=document.createElement('button');b.type='button';b.className='linkb';b.textContent=open?t('st_hide'):t('st_hint');
+    b.onclick=()=>{SE.hint[id]=!SE.hint[id];stepRender();};
+    c.appendChild(b);
+    if(open){const f=document.createElement('p');f.className='fb';f.innerHTML=t(id+'.th');c.appendChild(f);}
+    th.appendChild(c);
+  }
+  $('#prev').disabled=(SE.i===0);$('#next').disabled=(SE.i===SE.steps.length-1);
+}
+
+/* ===== Angles i transportador ===== */
+const svg=$('#svg');
+const OX=210,OY=215,VW=420,R=165,LR=185,LRC=110;
+const vhOf=()=>MODE==='C'?340:262;
+const ease=x=>x*x*(3-2*x);
+const COL={agut:'var(--pa)',recte:'var(--ok)',obtus:'var(--pb)',pla:'var(--muted)',concau:'var(--warn)'};
+const CLS=['agut','recte','obtus','pla','concau'];
+const clsOf=a=>a<90?'agut':a===90?'recte':a<180?'obtus':a===180?'pla':'concau';
+const rnd=(a,b,step=1)=>a+step*Math.floor(Math.random()*((b-a)/step+1));
+let MODE='M',ang=70,flip=false,Q=0,raf=0,dragging=false;
+const E={target:60,done:false,n:0,ok:0,sum:0,ref:false};
+const Cc={sub:'id',ang:120,asked:'agut',answered:null,ok:0,n:0};
+const STEPS_M=[{id:'a0'},{id:'a1',think:true},{id:'a2',ask:{n:3,ok:0}},{id:'a3',think:true}];
+const sl=slider($('#ctl'),{id:'sa',key:'l_ang',min:0,max:180,step:1,val:70,fmtv:v=>(MODE==='E'&&!E.done)?'?':v+'°',on:v=>setAng(v)});
+/* transportador (coordenades centrades al vèrtex) */
+const PROT=(()=>{
+  let s='<path class="pbody" d="M'+(-R)+',0 A'+R+','+R+' 0 0 1 '+R+',0 Z"/>';
+  s+='<path class="pin" d="M'+(-R*0.46)+',0 A'+(R*0.46)+','+(R*0.46)+' 0 0 1 '+(R*0.46)+',0"/>';
+  const T={1:'',5:'',10:''};
+  for(let d=0;d<=180;d++){
+    const k=d%10===0?10:d%5===0?5:1,len=k===10?14:k===5?9:5,a=d*Math.PI/180,c=Math.cos(a),n=Math.sin(a);
+    T[k]+='M'+(R*c).toFixed(1)+','+(-R*n).toFixed(1)+' L'+((R-len)*c).toFixed(1)+','+(-(R-len)*n).toFixed(1)+' ';
+  }
+  s+='<path class="pt1" d="'+T[1]+'"/><path class="pt5" d="'+T[5]+'"/><path class="pt10" d="'+T[10]+'"/>';
+  s+='<line class="pbase" x1="'+(-R-6)+'" y1="0" x2="'+(R+6)+'" y2="0"/>';
+  for(let d=0;d<=180;d+=10){
+    const a=d*Math.PI/180,c=Math.cos(a),n=Math.sin(a),dy=(d===0||d===180)?-10:0;
+    s+='<text class="pn1" text-anchor="middle" dominant-baseline="central" x="'+((R-28)*c).toFixed(1)+'" y="'+(-(R-28)*n+dy).toFixed(1)+'">'+d+'</text>';
+    s+='<text class="pn2" text-anchor="middle" dominant-baseline="central" x="'+((R-46)*c).toFixed(1)+'" y="'+(-(R-46)*n+dy).toFixed(1)+'">'+(180-d)+'</text>';
+  }
+  s+='<path class="pcr" d="M-9,0 L9,0 M0,-9 L0,9"/>';
+  return s;
+})();
+function pt(a,len){const f=(flip?180-a:a)*Math.PI/180;return [OX+len*Math.cos(f),OY-len*Math.sin(f)];}
+const f1=p=>p[0].toFixed(1)+','+p[1].toFixed(1);
+function showProt(){return MODE==='M'||(MODE==='E'&&E.done);}
+function readVal(){return (MODE==='M'&&Q>=2.95)||(MODE==='E'&&E.done)||(MODE==='C'&&Cc.answered!==null);}
+function draggable(){return (MODE==='M')||(MODE==='E'&&!E.done)||(MODE==='C'&&Cc.sub==='dr'&&Cc.answered===null);}
+function maxAng(){return MODE==='C'?360:180;}
+function draw(){
+  const L=MODE==='C'?LRC:LR,cl=clsOf(ang),col=COL[cl];
+  let s='';
+  if(MODE==='E'&&E.ref){[45,90,135].forEach(a=>{const p=pt(a,LR),q=pt(a,LR+14);s+='<line class="refl" x1="'+OX+'" y1="'+OY+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'"/><text class="refn" text-anchor="middle" dominant-baseline="central" x="'+q[0].toFixed(1)+'" y="'+q[1].toFixed(1)+'">'+a+'°</text>';});}
+  if(showProt()){
+    const q=MODE==='M'?Q:3,e1=ease(clamp(q,0,1)),e2=ease(clamp(q-1,0,1));
+    const tx=OX+(1-e1)*150,ty=OY+(1-e1)*95,rot=(1-e2)*25,sc=0.62+0.38*e1;
+    s+='<g transform="translate('+tx.toFixed(1)+','+ty.toFixed(1)+') rotate('+(-rot).toFixed(2)+') scale('+sc.toFixed(3)+')">'+PROT+'</g>';
+    if(q>=1.7){
+      const zo=clamp((q-1.7)/0.3,0,1),zx=flip?OX-(R-46):OX+(R-28);
+      s+='<circle class="zr" cx="'+zx.toFixed(1)+'" cy="'+(OY-10)+'" r="11" style="opacity:'+zo.toFixed(2)+'"/>';
+    }
+  }
+  if(MODE==='E'&&E.done){
+    const p=pt(E.target,L);
+    s+='<line class="tg" x1="'+OX+'" y1="'+OY+'" x2="'+f1(p).split(',')[0]+'" y2="'+f1(p).split(',')[1]+'"/>';
+  }
+  if(ang>0&&ang<360){
+    const ra=MODE==='C'?44:58,p1=pt(0,ra),p2=pt(ang,ra);
+    if(ang===90){
+      const a1=pt(0,22),a2=pt(90,22),c=[a1[0]+a2[0]-OX,a1[1]+a2[1]-OY];
+      s+='<path class="sec" style="fill:'+col+'" d="M'+OX+','+OY+' L'+f1(a1)+' L'+f1(c)+' L'+f1(a2)+' Z"/>';
+      s+='<path class="rmk" style="stroke:'+col+'" d="M'+f1(a1)+' L'+f1(c)+' L'+f1(a2)+'"/>';
+    }else{
+      const large=ang>180?1:0,sw=flip?1:0;
+      s+='<path class="sec" style="fill:'+col+'" d="M'+OX+','+OY+' L'+f1(p1)+' A'+ra+','+ra+' 0 '+large+','+sw+' '+f1(p2)+' Z"/>';
+      s+='<path class="arc" style="stroke:'+col+'" d="M'+f1(p1)+' A'+ra+','+ra+' 0 '+large+','+sw+' '+f1(p2)+'"/>';
+    }
+  }
+  const p1=pt(0,L),p2=pt(ang,L);
+  s+='<line class="ray1" x1="'+OX+'" y1="'+OY+'" x2="'+p1[0].toFixed(1)+'" y2="'+p1[1].toFixed(1)+'"/>';
+  s+='<line class="ray2" x1="'+OX+'" y1="'+OY+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'"/>';
+  s+='<circle class="vx" cx="'+OX+'" cy="'+OY+'" r="4.5"/>';
+  if(draggable())s+='<circle class="hdr" cx="'+p2[0].toFixed(1)+'" cy="'+p2[1].toFixed(1)+'" r="17" style="stroke:'+col+'"/><circle class="hd" cx="'+p2[0].toFixed(1)+'" cy="'+p2[1].toFixed(1)+'" r="9" style="fill:'+col+'"/>';
+  if(readVal()&&ang>0&&ang<360){
+    const lp=pt(ang/2,(MODE==='C'?44:58)+24);
+    s+='<text class="val" text-anchor="middle" dominant-baseline="central" x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'">'+ang+'°</text>';
+  }
+  if((MODE==='M'&&Q>=2.95)||(MODE==='E'&&E.done)){
+    const cp=pt(ang,R),bp=pt(ang,R+17);
+    s+='<circle class="rd" cx="'+cp[0].toFixed(1)+'" cy="'+cp[1].toFixed(1)+'" r="6"/>';
+  }
+  svg.setAttribute('viewBox','0 0 '+VW+' '+vhOf());
+  svg.innerHTML=s;
+  svg.classList.toggle('drag',draggable());
+}
+/* arrossegar */
+function evAng(e){
+  const r=svg.getBoundingClientRect(),x=(e.clientX-r.left)*VW/r.width,y=(e.clientY-r.top)*vhOf()/r.height;
+  let a=Math.atan2(OY-y,x-OX)*180/Math.PI;
+  if(maxAng()===180){const f=a>=0?a:(a<-90?180:0);return Math.round(flip?180-f:f);}
+  let v=Math.round(flip?180-a:a);v=((v%360)+360)%360;return v;
+}
+function snap(v){if(MODE==='C'){if(Math.abs(v-90)<=2)return 90;if(Math.abs(v-180)<=2)return 180;}return v;}
+svg.addEventListener('pointerdown',e=>{if(!draggable())return;dragging=true;try{svg.setPointerCapture(e.pointerId);}catch(x){}setAng(evAng(e));e.preventDefault();});
+svg.addEventListener('pointermove',e=>{if(dragging)setAng(evAng(e));});
+const endDrag=()=>{dragging=false;};
+svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);
+function setSlider(){
+  sl.inp.max=maxAng();sl.inp.min=MODE==='C'?1:0;sl.set(ang);
+  sl.disable(!draggable());
+  sl.el.hidden=(MODE==='C'&&Cc.sub==='id');
+}
+function setAng(v){
+  if(!draggable())return;
+  v=snap(clamp(Math.round(v),MODE==='C'?1:0,maxAng()));
+  ang=v;sl.set(v);
+  if(MODE==='M')refreshM();
+  draw();
+}
+/* ===== mode Mesura (passos) ===== */
+function refreshM(){
+  const cl=clsOf(ang);
+  SE.steps[3].stats=[['k_ang',ang+'°'],['k_tipus',t('c_'+cl)],['k_comp',ang<90?(90-ang)+'°':'—'],['k_supl',ang<180?(180-ang)+'°':'—']];
+  if(SE.i===3)stepRender();
+}
+function setFlipSteps(){
+  SE.steps[2]=flip?{id:'a2f',ask:{n:3,ok:1}}:{id:'a2',ask:{n:3,ok:0}};
+}
+function newM(random){
+  if(random){ang=[25,35,40,50,55,65,70,110,120,130,145,155][rnd(0,11)];flip=Math.random()<0.5;}
+  cancelAnimationFrame(raf);
+  setFlipSteps();SE.ans={};SE.hint={};SE.i=0;Q=0;
+  setSlider();refreshM();stepRender();draw();
+}
+function animQ(i){
+  cancelAnimationFrame(raf);
+  const from=Q,to=i;
+  if(REDUCE||Math.abs(to-from)<1e-6){Q=to;draw();return;}
+  const dur=1000*Math.max(0.5,Math.abs(to-from)),t0=performance.now();
+  function step(now){const p=Math.min(1,(now-t0)/dur);Q=from+(to-from)*ease(p);draw();if(p<1)raf=requestAnimationFrame(step);}
+  raf=requestAnimationFrame(step);
+}
+$('#mnew').onclick=()=>{newM(true);stepGo(0);};
+/* ===== mode Estima ===== */
+function newE(){
+  flip=Math.random()<0.5;E.target=rnd(10,170,5);E.done=false;ang=5;
+  setSlider();sl.refresh();paintE();draw();
+}
+function paintE(){
+  $('#etask').textContent=t('es_task');
+  $('#etarget').textContent=E.target+'°';
+  $('#echk').disabled=E.done;
+  $('#emsg').className='msg';
+  if(!E.done){$('#emsg').textContent=t('es_hold');$('#emsg').className='msg';}
+  else{
+    const err=ang-E.target,ab=Math.abs(err),win=ab<=5;
+    $('#emsg').className='msg '+(win?'good':'bad');
+    $('#emsg').textContent=t(win?'es_win':'es_lose')+' '+tt('es_res',ang,E.target)+' '+(err>0?tt('es_over',ab):err<0?tt('es_under',ab):'');
+  }
+  $('#escore').textContent=E.n?tt('es_score',E.ok,E.n):'';
+}
+$('#echk').onclick=()=>{if(E.done)return;E.done=true;E.n++;E.sum+=Math.abs(ang-E.target);if(Math.abs(ang-E.target)<=5)E.ok++;sl.refresh();setSlider();paintE();draw();};
+$('#enew').onclick=newE;
+$('#refc').addEventListener('change',e=>{E.ref=e.target.checked;draw();});
+/* ===== mode Classifica ===== */
+function newC(){
+  Cc.answered=null;flip=Math.random()<0.5;
+  if(Cc.sub==='id'){
+    const c=CLS[rnd(0,4)];
+    ang=c==='agut'?rnd(10,85,5):c==='recte'?90:c==='obtus'?rnd(95,175,5):c==='pla'?180:rnd(185,355,5);
+  }else{
+    Cc.asked=CLS[rnd(0,4)];ang=rnd(20,70,5);
+  }
+  setSlider();paintC();draw();
+}
+function paintC(){
+  const id=Cc.sub==='id';
+  $$('#csub button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sub===Cc.sub)));
+  $('#cq').innerHTML=id?t('cl_q_id'):tt('cl_q_dr',t('c_'+Cc.asked));
+  const o=$('#copts');o.innerHTML='';o.hidden=!id;
+  if(id)CLS.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=t('cb_'+c);b.disabled=Cc.answered!==null;
+    if(Cc.answered!==null){if(c===clsOf(ang))b.classList.add('right');else if(c===Cc.answered)b.classList.add('wrong');}
+    b.onclick=()=>{Cc.answered=c;Cc.n++;if(c===clsOf(ang))Cc.ok++;paintC();draw();};o.appendChild(b);});
+  $('#cchk').hidden=id;$('#cchk').disabled=Cc.answered!==null;
+  const m=$('#cmsg');
+  if(Cc.answered===null){m.textContent='';m.className='msg';}
+  else{
+    const real=clsOf(ang),ok=id?Cc.answered===real:real===Cc.asked;
+    m.className='msg '+(ok?'good':'bad');
+    m.textContent=id?tt(ok?'cl_ok':'cl_ko',ang,t('c_'+real)):(ok?tt('cl_ok_dr',ang,t('c_'+real)):tt('cl_ko_dr',ang,t('c_'+real),t('c_'+Cc.asked)));
+  }
+  $('#cscore').textContent=Cc.n?tt('cl_score',Cc.ok,Cc.n):'';
+}
+$('#cchk').onclick=()=>{if(Cc.answered!==null)return;Cc.answered=Cc.asked;Cc.n++;if(clsOf(ang)===Cc.asked)Cc.ok++;setSlider();paintC();draw();};
+$('#cnew').onclick=newC;
+$$('#csub button').forEach(b=>b.addEventListener('click',()=>{if(Cc.sub!==b.dataset.sub){Cc.sub=b.dataset.sub;newC();}}));
+/* canvi de mode */
+function setMode(m){
+  cancelAnimationFrame(raf);MODE=m;
+  $$('#modesw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
+  $('#paneM').hidden=m!=='M';$('#paneE').hidden=m!=='E';$('#paneC').hidden=m!=='C';
+  if(m==='M'){ang=Math.min(ang,180);newM(true);stepGo(0);}else if(m==='E')newE();else newC();
+}
+$$('#modesw button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.mode!==MODE)setMode(b.dataset.mode);}));
+/* càrrega d'un cas des de les activitats: es veu l'angle mesurat */
+function ldA(a,fl){
+  a=clamp(Math.round(a),0,180);
+  if(MODE!=='M'){MODE='M';$$('#modesw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode==='M')));$('#paneM').hidden=false;$('#paneE').hidden=true;$('#paneC').hidden=true;}
+  cancelAnimationFrame(raf);
+  ang=a;flip=!!fl;setFlipSteps();SE.ans={};SE.hint={};SE.i=3;Q=3;
+  setSlider();refreshM();stepRender();draw();
+  RZ.show($('#svg'));
+}
+function repaint(){
+  if(!SE.steps.length)return;
+  if(MODE==='M')refreshM();else if(MODE==='E')paintE();else paintC();
+  draw();
+}
+App.hooks.push(repaint);
+/* ===== Raona-ho ===== */
+const inA=x=>x>=0&&x<=180;
+const sup=a=>180-a,comp=a=>90-a;
+RZ.init({
+ F:{a:{l:'f_a',u:'°'},b:{l:'f_b',u:'°'}},
+ sim:([a])=>ldA(a),
+ M:[
+  {id:'m1',f:['a'],ok:([a])=>({k:'m1_ok',p:[a]}),
+   chk:([a])=>!inA(a)?{k:'rng'}:a<=90?{k:'m1_ag',p:[a]}:a<120?{k:'m1_lo',p:[a]}:a>130?{k:'m1_hi',p:[a]}:null},
+  {id:'m2',f:['a'],ok:()=>({k:'m2_ok'}),
+   chk:([a])=>!inA(a)?{k:'rng'}:a>=90?{k:'m2_c',p:[a]}:sup(a)!==3*comp(a)?{k:'m2_f',p:[a,sup(a),comp(a)]}:null},
+  {id:'m3',f:['a','b'],sim:([a,b])=>ldA(a),ok:([a,b])=>({k:'m3_ok',p:[a,b,Math.max(a,b),Math.min(a,b)]}),
+   chk:([a,b])=>(!inA(a)||!inA(b))?{k:'rng'}:a+b!==90?{k:'m3_s',p:[a,b,a+b]}:(a!==2*b&&b!==2*a)?{k:'m3_d'}:null},
+  {id:'m4',f:['a'],ok:()=>({k:'m4_ok'}),
+   chk:([a])=>!inA(a)?{k:'rng'}:sup(a)-a!==40?{k:'m4_f',p:[a,sup(a),sup(a)-a]}:null}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>ldA(60)},
+  {id:'s2',ans:'M',sim:()=>ldA(120)},
+  {id:'s3',ans:'D',f:['a','b'],cxsim:([a,b])=>ldA(a),
+   cx:([a,b])=>(!(a>0&&a<90)||!(b>0&&b<90))?{k:'rng'}:a+b===90?{k:'s3_c',p:[a,b]}:null},
+  {id:'s4',ans:'M',sim:()=>ldA(120)},
+  {id:'s5',ans:'D',f:['a'],cxsim:([a])=>ldA(a),
+   cx:([a])=>!(a>0&&a<90)?{k:'rng'}:2*a>=90?null:{k:'s5_no',p:[a,2*a]}},
+  {id:'s6',ans:'S',sim:()=>ldA(180)}
+ ],
+ E:[
+  {id:'e1',who:1,args:[],sim:()=>ldA(70,true)},
+  {id:'e2',who:1,args:[],sim:()=>ldA(35)},
+  {id:'e3',who:0,args:[],sim:()=>ldA(180)}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'°'},{l:'d1.l1',u:'°'}],sim:()=>ldA(40),ok:()=>({k:'d1_ok'}),
+   chk:([a,b])=>a!==50?(a===140?{k:'d1_s',p:[a]}:{k:'d1_f',p:[a]}):b!==140?{k:'d1_t',p:[b]}:null},
+  {id:'d2',f:[{l:'d2.l0',u:'°'},{l:'d2.l1',u:'°'}],sim:()=>ldA(120),ok:()=>({k:'d2_ok'}),
+   chk:([a,b])=>a!==120?{k:'d2_a',p:[a]}:b===120?{k:'d2_h'}:b!==45?{k:'d2_b',p:[b]}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'°'},{l:'d3.l1',u:'°'}],sim:()=>ldA(45),ok:()=>({k:'d3_ok'}),
+   chk:([a,b])=>a!==45?{k:'d3_a',p:[a]}:b!==135?{k:'d3_b',p:[b]}:null}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+stepsInit(STEPS_M.map(x=>Object.assign({},x)),i=>animQ(i));
+newM(false);
+</script>
+</body>
+</html>

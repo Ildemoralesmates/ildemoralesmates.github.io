@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Àrea per descomposició</title>
+<meta name="description" content="Talla i mou peces: un paral·lelogram es converteix en un rectangle, i dos triangles o dos trapezis iguals formen un paral·lelogram. Així surten les fórmules de l'àrea, pas a pas. Amb activitats per a raonar.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/area-descomposicio/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/area-descomposicio/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/area-descomposicio/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/area-descomposicio/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Àrea per descomposició">
+<meta property="og:description" content="Talla i mou peces: un paral·lelogram es converteix en un rectangle, i dos triangles o dos trapezis iguals formen un paral·lelogram. Així surten les fórmules de l'àrea, pas a pas. Amb activitats per a raonar.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/area-descomposicio/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+/* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
+.sidep{display:grid;gap:8px;align-content:start}
+.stepper{display:flex;gap:5px;flex-wrap:wrap}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer}
+.stepper button.done{background:var(--chip)}
+.stepper button[aria-current=step]{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600}
+.stepper button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stepno{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sidep h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.stext{font-size:14.5px}
+.stext p{margin:.45em 0}
+.sidep .stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.sidep .stat .v{font-size:15px}
+.pred,.think{border:1px solid var(--line);border-left:4px solid var(--pa);border-radius:8px;padding:10px 12px;background:var(--stage)}
+.think{border-left-color:var(--warn)}
+.pred .eb,.think .eb{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--pa);margin-bottom:3px}
+.think .eb{color:var(--warn)}
+.pred .qtext,.think .qtext{margin:0 0 6px!important;font-size:14.5px!important;font-weight:600}
+.pred .fb{padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.think .fb{margin-top:8px;padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.linkb{font:inherit;font-size:13px;color:var(--pa);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+.stepnav{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
+.rowlinks{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.lgd i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.hintline{min-height:1.4em;margin:0;padding:6px 12px 0;font-size:13.5px;font-weight:600;color:var(--warn)}
+.ctrlbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.ctrlbar .ctl{min-width:11rem;flex:1 1 11rem}
+.ctrlbar .btn[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.readout{padding:8px 12px 12px;font-size:13.5px;display:grid;gap:6px}
+.readout .two{display:flex;flex-wrap:wrap;gap:12px 24px}
+.readout .two>div{flex:1 1 13rem}
+.meter{height:7px;background:var(--chip);border:1px solid var(--line);border-radius:4px;margin:3px 0}
+.meter i{display:block;height:100%;background:var(--pb);border-radius:3px}
+
+#svg{display:block;width:100%;height:auto;max-height:min(60vh,500px);margin-inline:auto}
+#svg .gr{stroke:var(--line);stroke-width:1;opacity:.85}
+#svg .f1{fill:var(--pa);fill-opacity:.32}
+#svg .f2{fill:var(--pb);fill-opacity:.42}
+#svg .ol{fill:none;stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+#svg .ol2{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+#svg .ol2d{fill:none;stroke:var(--pb);stroke-width:2;stroke-dasharray:5 3;stroke-linejoin:round}
+#svg .ol3{fill:none;stroke:var(--ok);stroke-width:3.2;stroke-linejoin:round}
+#svg .hl{stroke:var(--ok);stroke-width:2;stroke-dasharray:6 4}
+#svg .br{stroke:var(--muted);stroke-width:1.6;fill:none}
+#svg .rm{fill:none;stroke:var(--ok);stroke-width:1.6}
+#svg .piv{fill:var(--pb);stroke:var(--panel);stroke-width:1.5}
+#svg .edge{fill:var(--muted);font:700 14px var(--f-num)}
+#svg .lab{fill:var(--ink);font:600 12.5px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:3px;stroke-linejoin:round}
+#svg .big{fill:var(--ink);font:700 14px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:3px;stroke-linejoin:round}
+.stage-card .idea{margin:10px 12px 12px}
+.sidep .stats{grid-template-columns:1fr 1fr}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemàtiques · 1r i 2n ESO · Geometria</p>
+      <h1 data-i18n="h1">Àrea per descomposició</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Talla, mou i gira peces: un paral·lelogram es converteix en un rectangle, i dos triangles o dos trapezis iguals formen un paral·lelogram. D'ací surten les fórmules.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="bar">
+<div class="seg" id="shapesw" role="group" data-i18n-aria="aria.shape" aria-label="Figura">
+<button type="button" data-shape="par" aria-pressed="true" data-i18n="shape_par">Paral·lelogram</button>
+<button type="button" data-shape="tri" aria-pressed="false" data-i18n="shape_tri">Triangle</button>
+<button type="button" data-shape="tra" aria-pressed="false" data-i18n="shape_tra">Trapezi</button>
+</div>
+<label class="check sp"><input type="checkbox" id="gridc" checked><span data-i18n="grid">Quadrícula</span></label>
+</div>
+<div class="stage"><svg id="svg" viewBox="0 0 360 292" role="img" data-i18n-aria="aria.svg" aria-label="Figura que es talla i es reordena per a calcular-ne l&#x27;àrea"></svg></div>
+<div class="ctrlbar" id="ctrl"></div>
+<div class="idea" data-i18n-html="idea"><b>Per a la classe:</b> abans de pulsar «Següent», pensa què passarà amb l'àrea quan es moga una peça. Activa la quadrícula i compta quadradets abans i després.</div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="Passos de l&#x27;animació">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev">← Anterior</button><button type="button" class="btn primary" id="next" data-i18n="st_next">Següent →</button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="p0.title">Un paral·lelogram</h2>
+<div class="stext" id="stext" data-i18n-html="p0.text"><p>Un paral·lelogram té els costats oposats paral·lels, però no té angles rectes. Per això no podem multiplicar «llarg per ample» sense més. Ara bé, <b>podem transformar-lo</b> en una figura que ja sabem mesurar.</p></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart">Torna a l'inici</button></div>
+</aside>
+</div>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Àrea per descomposició",
+"eyebrow":"Matemàtiques · 1r i 2n ESO · Geometria",
+"h1":"Àrea per descomposició",
+"lede":"Talla, mou i gira peces: un paral·lelogram es converteix en un rectangle, i dos triangles o dos trapezis iguals formen un paral·lelogram. D'ací surten les fórmules.",
+"aria.shape":"Figura","aria.svg":"Figura que es talla i es reordena per a calcular-ne l'àrea",
+"shape_par":"Paral·lelogram","shape_tri":"Triangle","shape_tra":"Trapezi","grid":"Quadrícula",
+"idea":"<b>Per a la classe:</b> abans de pulsar «Següent», pensa què passarà amb l'àrea quan es moga una peça. Activa la quadrícula i compta quadradets abans i després.",
+"l_b":"Base b","l_h":"Altura h","l_s":"Desplaçament s","l_B":"Base major B","l_bm":"Base menor b",
+"f_b":"base b","f_h":"altura h","f_s":"s","f_B":"base major B","f_bm":"base menor b",
+"k_b":"Base b","k_h":"Altura h","k_B":"Base major B","k_bm":"Base menor b","k_A":"Àrea","k_Ap":"Àrea del paral·lelogram",
+"rng":"Escriu valors dins dels límits del simulador (b de 2 a 12, h de 2 a 10, B de 3 a 12 i la base menor de 1 fins a B).",
+"p0.title":"Un paral·lelogram",
+"p0.text":"<p>Un paral·lelogram té els costats oposats paral·lels, però no té angles rectes. Per això no podem multiplicar «llarg per ample» sense més. Ara bé, <b>podem transformar-lo</b> en una figura que ja sabem mesurar.</p>",
+"p0.q":"Predix abans de veure: amb quina figura simple té la mateixa àrea?",
+"p0.o0":"Un rectangle amb la mateixa base i la mateixa altura","p0.o1":"Un quadrat que té per costat el costat inclinat","p0.o2":"Un triangle amb la mateixa base",
+"p0.why":"Si canviem de lloc un tros de la figura, la forma canvia però l'àrea no: ens quedarà un rectangle. Ho comprovem als passos següents.",
+"p1.title":"Baixa l'altura i talla",
+"p1.text":"<p>Des d'un vèrtex de dalt baixem una línia <b>perpendicular a la base</b>: és l'<b>altura h</b>. Aquesta línia talla un <b>triangle rectangle</b> a l'esquerra (en color).</p>",
+"p1.tq":"Per què cal mesurar l'altura perpendicular a la base i no pel costat inclinat?",
+"p1.th":"El costat inclinat és més llarg que l'altura (és la hipotenusa del triangle que acabem de tallar). L'altura és la distància real entre les dues bases paral·leles, i és la que diu quantes files de quadradets hi caben.",
+"p2.title":"Mou el triangle",
+"p2.text":"<p>Traslladem el triangle fins a l'altre costat, sense girar-lo ni deformar-lo. Els dos costats inclinats coincideixen perfectament.</p>",
+"p2.q":"Quan movem el triangle, canvia l'àrea de la figura?",
+"p2.o0":"Sí, augmenta","p2.o1":"Sí, disminueix","p2.o2":"No, continua sent la mateixa",
+"p2.why":"No hem afegit ni llevat res: només hem canviat de lloc una peça. L'àrea es conserva.",
+"p3.title":"Ja és un rectangle",
+"p3.text":"<p>Ara tenim un rectangle de base <b>b</b> i altura <b>h</b>. Compta els quadradets: <b>b · h</b>. Per tant, l'àrea d'un paral·lelogram és <b>A = b · h</b>.</p>",
+"p3.tq":"Canvia s sense tocar b ni h, és a dir, inclina el paral·lelogram. Què passa amb l'àrea?",
+"p3.th":"Es queda igual: tots els paral·lelograms amb la mateixa base i la mateixa altura tenen la mateixa àrea, per molt inclinats que estiguen.",
+"t0.title":"Un triangle",
+"t0.text":"<p>Un triangle té base <b>b</b> i altura <b>h</b>. Per a trobar-ne l'àrea el convertirem en una figura que ja sabem mesurar.</p>",
+"t0.q":"Predix: si posem al costat un triangle igual, girat, quina figura formaran junts?",
+"t0.o0":"Un paral·lelogram","t0.o1":"Un quadrat","t0.o2":"Un triangle més gran",
+"t0.why":"Girar la còpia 180° fa que els costats iguals coincidisquen i els dos triangles formen un paral·lelogram. Ho veuràs ara.",
+"t1.title":"Fes-ne una còpia",
+"t1.text":"<p>Fem una <b>còpia exacta</b> del triangle (en color). Ara hi ha dos triangles iguals, un damunt de l'altre.</p>",
+"t1.tq":"Per què la còpia girada encaixarà sense deixar cap forat?",
+"t1.th":"Gira mig voltant al voltant del punt mitjà d'un costat: aquest costat queda al seu lloc, i els altres dos costats de la còpia, que són iguals als de l'original, passen a ser els oposats i paral·lels.",
+"t2.title":"Gira la còpia 180°",
+"t2.text":"<p>La còpia gira mig voltant al voltant del <b>punt mitjà</b> d'un costat. Els dos triangles encaixen i formen un <b>paral·lelogram</b>.</p>",
+"t3.title":"Un paral·lelogram: el doble",
+"t3.text":"<p>El paral·lelogram té base <b>b</b> i altura <b>h</b>: la seua àrea és <b>b · h</b>. El triangle n'és <b>la meitat</b>: <b>A = b · h ÷ 2</b>.</p>",
+"t3.q":"Un triangle té base 10 i altura 4. Quina és la seua àrea?",
+"t3.o0":"40","t3.o1":"20","t3.o2":"14",
+"t3.why":"El paral·lelogram de base 10 i altura 4 té àrea 40, i el triangle n'és la meitat: 20.",
+"t3.tq":"Mou el vèrtex de dalt (canvia s). Per què l'àrea del triangle no canvia?",
+"t3.th":"Perquè no han canviat ni la base ni l'altura: tots els triangles amb la mateixa base i la mateixa altura tenen la mateixa àrea.",
+"z0.title":"Un trapezi",
+"z0.text":"<p>Un trapezi té <b>dos costats paral·lels</b>: la base major <b>B</b> i la base menor <b>b</b>. L'altura <b>h</b> és la distància entre elles.</p>",
+"z1.title":"Fes-ne una còpia",
+"z1.text":"<p>Fem una còpia exacta del trapezi (en color). Ara hi ha dos trapezis iguals, un damunt de l'altre.</p>",
+"z1.tq":"On cal posar la còpia perquè els dos trapezis formen una figura sense forats?",
+"z1.th":"Girada mig voltant al voltant del punt mitjà d'un dels costats inclinats: així el costat inclinat de la còpia encaixa justament amb el de l'original.",
+"z2.title":"Gira la còpia 180°",
+"z2.text":"<p>La còpia gira mig voltant al voltant del <b>punt mitjà</b> del costat inclinat i encaixa amb l'original: s'ha format un <b>paral·lelogram</b>.</p>",
+"z2.q":"Quant mesura la base del paral·lelogram?",
+"z2.o0":"B + b","z2.o1":"B − b","z2.o2":"B · b",
+"z2.why":"A la base major B li afegim la base menor b de la còpia: la base total és B + b.",
+"z3.title":"Un paral·lelogram: el doble",
+"z3.text":"<p>El paral·lelogram té base <b>B + b</b> i altura <b>h</b>: la seua àrea és <b>(B + b) · h</b>. El trapezi n'és la meitat: <b>A = (B + b) · h ÷ 2</b>.</p>",
+"z3.tq":"Imagina que la base menor b es fa cada vegada més xicoteta, fins a valdre 0. Quina figura queda i què passa amb la fórmula?",
+"z3.th":"Queda un triangle, i la fórmula es converteix en (B + 0) · h ÷ 2 = B · h ÷ 2, la del triangle. Un triangle és un trapezi amb una base de longitud 0.",
+"m1.q":"Troba una <b>base</b> i una <b>altura</b> d'un <b>paral·lelogram</b> d'àrea exactament <b>24</b> en què la base siga <b>més gran</b> que l'altura.",
+"m1_f":"{0} · {1} = {2}, no 24.","m1_o":"Amb base {0} i altura {1}, la base no és més gran que l'altura.",
+"m1_ok":"✔ Missió complida! {0} · {1} = {2} i la base és més gran que l'altura.",
+"m1.more":"Hi ha tres solucions. Quines són? Quin dels tres paral·lelograms és el més allargat?",
+"m2.q":"Troba la base i l'altura d'un <b>triangle</b> d'àrea exactament <b>15</b>, amb la base <b>major que 3</b>.",
+"m2_f":"{0} · {1} ÷ 2 = {2}, no 15.","m2_b":"Amb base {0} no val: la base ha de ser major que 3.",
+"m2_ok":"✔ Missió complida! {0} · {1} ÷ 2 = 15.",
+"m2.more":"Si dobles l'altura, què has de fer amb la base per a mantindre l'àrea en 15?",
+"m3.q":"Un <b>trapezi</b> té altura <b>4</b> i àrea <b>28</b>. Troba la base major B i la base menor b (amb B &gt; b).",
+"m3_f":"({0} + {1}) · 4 ÷ 2 = {2}, no 28.","m3_o":"B ha de ser més gran que b.",
+"m3_ok":"✔ Missió complida! ({0} + {1}) · 4 ÷ 2 = 28.",
+"m3.more":"Fixa't que només importa la suma B + b. Quantes parelles diferents (B, b) funcionen?",
+"m4.q":"Un trapezi té B = 10 i b = 6. Quina <b>altura h</b> necessita perquè l'àrea siga exactament <b>64</b>?",
+"m4_f":"(10 + 6) · {0} ÷ 2 = {1}, no 64.","m4_ok":"✔ Missió complida! 16 · 8 ÷ 2 = 64.",
+"m4.more":"I si l'àrea haguera de ser 36? Quina altura donaria? Pots posar-la al simulador?",
+"s1.q":"«L'àrea d'un paral·lelogram és el producte de la base pel costat inclinat.»",
+"s1.h":"Prova amb s = 0 i després amb s = 4. Compara base · costat inclinat amb l'àrea real.",
+"s1.e":"De vegades: només és cert si és un rectangle (s = 0), perquè llavors el costat inclinat coincideix amb l'altura. Si el paral·lelogram està inclinat, el costat és més llarg que l'altura i l'àrea real (b · h) és menor que base · costat.",
+"s1_rect":"Amb s = 0 el paral·lelogram és un rectangle i aquí sí que es compleix. Busca'n un d'inclinat.",
+"s2.q":"«Dos triangles amb la mateixa base i la mateixa altura tenen la mateixa àrea, encara que tinguen formes diferents.»",
+"s2.h":"Mou el vèrtex de dalt (s) i mira què passa amb l'àrea.",
+"s2.e":"Sempre: l'àrea només depén de la base i de l'altura (A = b · h ÷ 2). Moure el vèrtex en horitzontal canvia la forma però no l'altura.",
+"s3.q":"«Un triangle i un paral·lelogram amb la mateixa base i la mateixa altura tenen la mateixa àrea.»",
+"s3.h":"Mira el pas del triangle: quantes còpies calen per a omplir el paral·lelogram?",
+"s3.e":"Mai: el paral·lelogram té el doble d'àrea. Dos triangles iguals formen un paral·lelogram, així que el triangle és la meitat.",
+"s4.q":"«Dos triangles amb la mateixa àrea tenen la mateixa base.»",
+"s4.h":"Un triangle de base 6 i altura 4 té àrea 12. N'hi ha un altre amb la mateixa àrea i una altra base?",
+"s4.e":"De vegades: com que A = b · h ÷ 2, un triangle de base 6 i altura 4 té la mateixa àrea (12) que un de base 4 i altura 6, amb una base diferent. Si l'altura canvia, la base pot canviar sense que canvie l'àrea.",
+"s4.l0":"base 1","s4.l1":"altura 1","s4.l2":"base 2","s4.l3":"altura 2",
+"s4_a":"Les àrees són {0} i {1}: no són iguals.","s4_b":"Les dues bases són iguals ({0}). Busca un cas amb bases diferents.",
+"s5.q":"«L'àrea d'un trapezi és sempre més gran que la d'un triangle amb la mateixa base major B i la mateixa altura.»",
+"s5.h":"Compara (B + b) · h ÷ 2 amb B · h ÷ 2: quina té un sumand més?",
+"s5.e":"Sempre: el trapezi té àrea (B + b) · h ÷ 2 i el triangle B · h ÷ 2. La diferència és b · h ÷ 2, que és positiva mentre b &gt; 0.",
+"s6.q":"«L'àrea d'un trapezi pot ser més gran que la d'un rectangle de base B i la mateixa altura.»",
+"s6.h":"Compara (B + b) · h ÷ 2 amb B · h. Com són b i B?",
+"s6.e":"Mai: (B + b) ÷ 2 és la mitjana de les dues bases i, com que b ≤ B, aquesta mitjana no supera B. Si b = B el trapezi és un rectangle i l'àrea és igual, no major.",
+"e1.ctx":"Un paral·lelogram té una <b>base de 10 cm</b>, una <b>altura de 4 cm</b>, i el costat inclinat mesura <b>5 cm</b>. Quina és la seua àrea?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"10 · 5 = 50 cm².","e1.s1":"10 · 4 = 40 cm².",
+"e1.w0":"Marta ha usat el costat inclinat, però l'àrea es calcula amb l'<b>altura</b>, que és perpendicular a la base: 10 · 4 = 40 cm².",
+"e1.w1":"Perquè sempre cal multiplicar la base pel costat més llarg.",
+"e1.w2":"Perquè el costat inclinat sempre mesura el mateix que l'altura.",
+"e1.frame":"Marta, l'àrea no és 50 perquè…",
+"e1.model":"Marta, per a l'àrea no val el costat inclinat sinó l'altura, la distància perpendicular entre les dues bases. Si talles el triangle de l'extrem i el mous, queda un rectangle de 10 per 4: 40 cm². El costat inclinat (5) és la hipotenusa d'aquest triangle, per això és més llarg que l'altura.",
+"e2.ctx":"Un triangle té <b>base 8 m</b> i <b>altura 5 m</b>. Quina és la seua àrea?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"8 · 5 ÷ 2 = 20 m².","e2.s1":"8 · 5 = 40 m².",
+"e2.w0":"Dos triangles iguals formen un paral·lelogram de 8 · 5 = 40 m². Cada triangle n'és la meitat: 20 m².",
+"e2.w1":"Perquè l'àrea d'un triangle sempre és igual a la del rectangle de la mateixa base i altura.",
+"e2.w2":"Perquè cal sumar la base i l'altura.",
+"e2.frame":"Laia, l'àrea no és 40 perquè…",
+"e2.model":"Laia, 8 · 5 = 40 és l'àrea del paral·lelogram (o del rectangle) amb la mateixa base i altura. Però el triangle n'és només la meitat: dos triangles iguals omplen aquest paral·lelogram. Per tant, A = 8 · 5 ÷ 2 = 20 m².",
+"e3.ctx":"Un trapezi té bases de <b>9 cm</b> i <b>5 cm</b> i una <b>altura de 4 cm</b>. Quina és la seua àrea?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"(9 + 5) ÷ 2 = 7 cm².","e3.s1":"(9 + 5) · 4 = 56 cm².",
+"e3.w0":"La fórmula és (9 + 5) · 4 ÷ 2 = 28 cm². Rita s'ha oblidat de multiplicar per l'altura i Joan s'ha oblidat de dividir entre 2.",
+"e3.w1":"Perquè l'àrea d'un trapezi és la mitjana de les bases.",
+"e3.w2":"Perquè l'àrea d'un trapezi és la suma de les bases per l'altura.",
+"e3.frame":"Rita i Joan, l'àrea no és 7 ni 56 perquè…",
+"e3.model":"Rita i Joan, dos trapezis iguals formen un paral·lelogram de base 9 + 5 = 14 i altura 4, amb àrea 14 · 4 = 56; el trapezi n'és la meitat: 28 cm². Rita només ha calculat la mitjana de les bases (7), que cal multiplicar per l'altura (7 · 4 = 28), i Joan ha donat l'àrea del paral·lelogram sense dividir entre 2.",
+"d1.q":"Una paret de golfa té forma de trapezi: la base de baix mesura <b>6 m</b>, la de dalt <b>2 m</b> i l'altura és de <b>3 m</b>. Un pot de pintura cobreix <b>4 m²</b>. Quina és l'àrea de la paret i quants pots necessites?",
+"d1.l0":"Àrea","d1.l1":"Pots",
+"d1_a24":"24 m² és l'àrea del paral·lelogram doble. El trapezi n'és la meitat: (6 + 2) · 3 ÷ 2.","d1_a":"(6 + 2) · 3 ÷ 2 no val {0}. Torna-ho a calcular.",
+"d1_p":"L'àrea és 12 m² i cada pot en cobreix 4 m²: quants pots calen?",
+"d1_ok":"✔ Ben decidit! (6 + 2) · 3 ÷ 2 = 12 m² i 12 ÷ 4 = 3 pots.",
+"d1.more":"I si la paret fora un rectangle de 6 m per 3 m? Quants pots més necessitaries?",
+"d2.q":"Un camp té forma de paral·lelogram: la base mesura <b>12 m</b>, l'altura <b>8 m</b> i el costat inclinat <b>10 m</b>. Quants m² de gespa necessita? I quants metres de tanca calen per a envoltar-lo?",
+"d2.l0":"Àrea","d2.l1":"Tanca",
+"d2_a10":"Has multiplicat 12 · 10, el costat inclinat. L'àrea es calcula amb l'altura.","d2_a":"L'àrea és base per altura: 12 · 8. No val {0}.",
+"d2_p8":"12 + 8 + 12 + 8 usa l'altura, però l'altura no és un costat del camp. La tanca va pel costat inclinat.","d2_p":"La tanca és el perímetre: la suma dels quatre costats, 12 + 10 + 12 + 10. No val {0}.",
+"d2_ok":"✔ Ben decidit! Àrea 12 · 8 = 96 m² i perímetre 2 · (12 + 10) = 44 m.",
+"d2.more":"Si inclines més el paral·lelogram mantenint la base i l'altura, canvia l'àrea? I el perímetre?",
+"d3.q":"Un triangle té <b>base 8 cm</b> i <b>àrea 20 cm²</b>. Quina és la seua altura?",
+"d3.l0":"Altura",
+"d3_half":"2,5 seria si l'àrea fora b · h = 20. Però l'àrea del triangle és b · h ÷ 2, així que b · h = 40.","d3_f":"8 · {0} ÷ 2 = {1}, no 20.",
+"d3_ok":"✔ Ben decidit! 8 · 5 ÷ 2 = 20.",
+"d3.more":"I si la base fora 5 cm i l'àrea 20 cm²? Quina altura necessitaries?"
+},
+es:{
+"title":"Área por descomposición",
+"eyebrow":"Matemáticas · 1.º y 2.º ESO · Geometría",
+"h1":"Área por descomposición",
+"lede":"Corta, mueve y gira piezas: un paralelogramo se convierte en un rectángulo, y dos triángulos o dos trapecios iguales forman un paralelogramo. De ahí salen las fórmulas.",
+"aria.shape":"Figura","aria.svg":"Figura que se corta y se reordena para calcular su área",
+"shape_par":"Paralelogramo","shape_tri":"Triángulo","shape_tra":"Trapecio","grid":"Cuadrícula",
+"idea":"<b>Para la clase:</b> antes de pulsar «Siguiente», piensa qué pasará con el área cuando se mueva una pieza. Activa la cuadrícula y cuenta cuadraditos antes y después.",
+"l_b":"Base b","l_h":"Altura h","l_s":"Desplazamiento s","l_B":"Base mayor B","l_bm":"Base menor b",
+"f_b":"base b","f_h":"altura h","f_s":"s","f_B":"base mayor B","f_bm":"base menor b",
+"k_b":"Base b","k_h":"Altura h","k_B":"Base mayor B","k_bm":"Base menor b","k_A":"Área","k_Ap":"Área del paralelogramo",
+"rng":"Escribe valores dentro de los límites del simulador (b de 2 a 12, h de 2 a 10, B de 3 a 12 y la base menor de 1 hasta B).",
+"p0.title":"Un paralelogramo",
+"p0.text":"<p>Un paralelogramo tiene los lados opuestos paralelos, pero no tiene ángulos rectos. Por eso no podemos multiplicar «largo por ancho» sin más. Ahora bien, <b>podemos transformarlo</b> en una figura que ya sabemos medir.</p>",
+"p0.q":"Predice antes de ver: ¿con qué figura simple tiene la misma área?",
+"p0.o0":"Un rectángulo con la misma base y la misma altura","p0.o1":"Un cuadrado que tiene por lado el lado inclinado","p0.o2":"Un triángulo con la misma base",
+"p0.why":"Si cambiamos de sitio un trozo de la figura, la forma cambia pero el área no: nos quedará un rectángulo. Lo comprobamos en los pasos siguientes.",
+"p1.title":"Baja la altura y corta",
+"p1.text":"<p>Desde un vértice de arriba bajamos una línea <b>perpendicular a la base</b>: es la <b>altura h</b>. Esa línea corta un <b>triángulo rectángulo</b> a la izquierda (en color).</p>",
+"p1.tq":"¿Por qué hay que medir la altura perpendicular a la base y no por el lado inclinado?",
+"p1.th":"El lado inclinado es más largo que la altura (es la hipotenusa del triángulo que acabamos de cortar). La altura es la distancia real entre las dos bases paralelas, y es la que dice cuántas filas de cuadraditos caben.",
+"p2.title":"Mueve el triángulo",
+"p2.text":"<p>Trasladamos el triángulo hasta el otro lado, sin girarlo ni deformarlo. Los dos lados inclinados coinciden perfectamente.</p>",
+"p2.q":"Cuando movemos el triángulo, ¿cambia el área de la figura?",
+"p2.o0":"Sí, aumenta","p2.o1":"Sí, disminuye","p2.o2":"No, sigue siendo la misma",
+"p2.why":"No hemos añadido ni quitado nada: solo hemos cambiado de sitio una pieza. El área se conserva.",
+"p3.title":"Ya es un rectángulo",
+"p3.text":"<p>Ahora tenemos un rectángulo de base <b>b</b> y altura <b>h</b>. Cuenta los cuadraditos: <b>b · h</b>. Por tanto, el área de un paralelogramo es <b>A = b · h</b>.</p>",
+"p3.tq":"Cambia s sin tocar b ni h, es decir, inclina el paralelogramo. ¿Qué pasa con el área?",
+"p3.th":"Se queda igual: todos los paralelogramos con la misma base y la misma altura tienen la misma área, por muy inclinados que estén.",
+"t0.title":"Un triángulo",
+"t0.text":"<p>Un triángulo tiene base <b>b</b> y altura <b>h</b>. Para hallar su área lo convertiremos en una figura que ya sabemos medir.</p>",
+"t0.q":"Predice: si ponemos al lado un triángulo igual, girado, ¿qué figura formarán juntos?",
+"t0.o0":"Un paralelogramo","t0.o1":"Un cuadrado","t0.o2":"Un triángulo más grande",
+"t0.why":"Girar la copia 180° hace que los lados iguales coincidan y los dos triángulos formen un paralelogramo. Lo verás ahora.",
+"t1.title":"Haz una copia",
+"t1.text":"<p>Hacemos una <b>copia exacta</b> del triángulo (en color). Ahora hay dos triángulos iguales, uno encima del otro.</p>",
+"t1.tq":"¿Por qué la copia girada encajará sin dejar ningún hueco?",
+"t1.th":"Gira media vuelta alrededor del punto medio de un lado: ese lado queda en su sitio, y los otros dos lados de la copia, que son iguales a los del original, pasan a ser los opuestos y paralelos.",
+"t2.title":"Gira la copia 180°",
+"t2.text":"<p>La copia gira media vuelta alrededor del <b>punto medio</b> de un lado. Los dos triángulos encajan y forman un <b>paralelogramo</b>.</p>",
+"t3.title":"Un paralelogramo: el doble",
+"t3.text":"<p>El paralelogramo tiene base <b>b</b> y altura <b>h</b>: su área es <b>b · h</b>. El triángulo es <b>la mitad</b>: <b>A = b · h ÷ 2</b>.</p>",
+"t3.q":"Un triángulo tiene base 10 y altura 4. ¿Cuál es su área?",
+"t3.o0":"40","t3.o1":"20","t3.o2":"14",
+"t3.why":"El paralelogramo de base 10 y altura 4 tiene área 40, y el triángulo es la mitad: 20.",
+"t3.tq":"Mueve el vértice de arriba (cambia s). ¿Por qué el área del triángulo no cambia?",
+"t3.th":"Porque no han cambiado ni la base ni la altura: todos los triángulos con la misma base y la misma altura tienen la misma área.",
+"z0.title":"Un trapecio",
+"z0.text":"<p>Un trapecio tiene <b>dos lados paralelos</b>: la base mayor <b>B</b> y la base menor <b>b</b>. La altura <b>h</b> es la distancia entre ellas.</p>",
+"z1.title":"Haz una copia",
+"z1.text":"<p>Hacemos una copia exacta del trapecio (en color). Ahora hay dos trapecios iguales, uno encima del otro.</p>",
+"z1.tq":"¿Dónde hay que poner la copia para que los dos trapecios formen una figura sin huecos?",
+"z1.th":"Girada media vuelta alrededor del punto medio de uno de los lados inclinados: así el lado inclinado de la copia encaja justo con el del original.",
+"z2.title":"Gira la copia 180°",
+"z2.text":"<p>La copia gira media vuelta alrededor del <b>punto medio</b> del lado inclinado y encaja con el original: se ha formado un <b>paralelogramo</b>.</p>",
+"z2.q":"¿Cuánto mide la base del paralelogramo?",
+"z2.o0":"B + b","z2.o1":"B − b","z2.o2":"B · b",
+"z2.why":"A la base mayor B le añadimos la base menor b de la copia: la base total es B + b.",
+"z3.title":"Un paralelogramo: el doble",
+"z3.text":"<p>El paralelogramo tiene base <b>B + b</b> y altura <b>h</b>: su área es <b>(B + b) · h</b>. El trapecio es la mitad: <b>A = (B + b) · h ÷ 2</b>.</p>",
+"z3.tq":"Imagina que la base menor b se hace cada vez más pequeña, hasta valer 0. ¿Qué figura queda y qué pasa con la fórmula?",
+"z3.th":"Queda un triángulo, y la fórmula se convierte en (B + 0) · h ÷ 2 = B · h ÷ 2, la del triángulo. Un triángulo es un trapecio con una base de longitud 0.",
+"m1.q":"Encuentra una <b>base</b> y una <b>altura</b> de un <b>paralelogramo</b> de área exactamente <b>24</b> en el que la base sea <b>mayor</b> que la altura.",
+"m1_f":"{0} · {1} = {2}, no 24.","m1_o":"Con base {0} y altura {1}, la base no es mayor que la altura.",
+"m1_ok":"✔ ¡Misión cumplida! {0} · {1} = {2} y la base es mayor que la altura.",
+"m1.more":"Hay tres soluciones. ¿Cuáles son? ¿Cuál de los tres paralelogramos es el más alargado?",
+"m2.q":"Encuentra la base y la altura de un <b>triángulo</b> de área exactamente <b>15</b>, con la base <b>mayor que 3</b>.",
+"m2_f":"{0} · {1} ÷ 2 = {2}, no 15.","m2_b":"Con base {0} no vale: la base tiene que ser mayor que 3.",
+"m2_ok":"✔ ¡Misión cumplida! {0} · {1} ÷ 2 = 15.",
+"m2.more":"Si duplicas la altura, ¿qué tienes que hacer con la base para mantener el área en 15?",
+"m3.q":"Un <b>trapecio</b> tiene altura <b>4</b> y área <b>28</b>. Encuentra la base mayor B y la base menor b (con B &gt; b).",
+"m3_f":"({0} + {1}) · 4 ÷ 2 = {2}, no 28.","m3_o":"B tiene que ser mayor que b.",
+"m3_ok":"✔ ¡Misión cumplida! ({0} + {1}) · 4 ÷ 2 = 28.",
+"m3.more":"Fíjate en que solo importa la suma B + b. ¿Cuántas parejas distintas (B, b) funcionan?",
+"m4.q":"Un trapecio tiene B = 10 y b = 6. ¿Qué <b>altura h</b> necesita para que el área sea exactamente <b>64</b>?",
+"m4_f":"(10 + 6) · {0} ÷ 2 = {1}, no 64.","m4_ok":"✔ ¡Misión cumplida! 16 · 8 ÷ 2 = 64.",
+"m4.more":"¿Y si el área tuviera que ser 36? ¿Qué altura saldría? ¿Puedes ponerla en el simulador?",
+"s1.q":"«El área de un paralelogramo es el producto de la base por el lado inclinado.»",
+"s1.h":"Prueba con s = 0 y después con s = 4. Compara base · lado inclinado con el área real.",
+"s1.e":"A veces: solo es cierto si es un rectángulo (s = 0), porque entonces el lado inclinado coincide con la altura. Si el paralelogramo está inclinado, el lado es más largo que la altura y el área real (b · h) es menor que base · lado.",
+"s1_rect":"Con s = 0 el paralelogramo es un rectángulo y aquí sí se cumple. Busca uno inclinado.",
+"s2.q":"«Dos triángulos con la misma base y la misma altura tienen la misma área, aunque tengan formas distintas.»",
+"s2.h":"Mueve el vértice de arriba (s) y mira qué pasa con el área.",
+"s2.e":"Siempre: el área solo depende de la base y de la altura (A = b · h ÷ 2). Mover el vértice en horizontal cambia la forma pero no la altura.",
+"s3.q":"«Un triángulo y un paralelogramo con la misma base y la misma altura tienen la misma área.»",
+"s3.h":"Mira el paso del triángulo: ¿cuántas copias hacen falta para llenar el paralelogramo?",
+"s3.e":"Nunca: el paralelogramo tiene el doble de área. Dos triángulos iguales forman un paralelogramo, así que el triángulo es la mitad.",
+"s4.q":"«Dos triángulos con la misma área tienen la misma base.»",
+"s4.h":"Un triángulo de base 6 y altura 4 tiene área 12. ¿Hay otro con la misma área y otra base?",
+"s4.e":"A veces: como A = b · h ÷ 2, un triángulo de base 6 y altura 4 tiene la misma área (12) que uno de base 4 y altura 6, con una base distinta. Si la altura cambia, la base puede cambiar sin que cambie el área.",
+"s4.l0":"base 1","s4.l1":"altura 1","s4.l2":"base 2","s4.l3":"altura 2",
+"s4_a":"Las áreas son {0} y {1}: no son iguales.","s4_b":"Las dos bases son iguales ({0}). Busca un caso con bases distintas.",
+"s5.q":"«El área de un trapecio es siempre mayor que la de un triángulo con la misma base mayor B y la misma altura.»",
+"s5.h":"Compara (B + b) · h ÷ 2 con B · h ÷ 2: ¿cuál tiene un sumando más?",
+"s5.e":"Siempre: el trapecio tiene área (B + b) · h ÷ 2 y el triángulo B · h ÷ 2. La diferencia es b · h ÷ 2, que es positiva mientras b &gt; 0.",
+"s6.q":"«El área de un trapecio puede ser mayor que la de un rectángulo de base B y la misma altura.»",
+"s6.h":"Compara (B + b) · h ÷ 2 con B · h. ¿Cómo son b y B?",
+"s6.e":"Nunca: (B + b) ÷ 2 es la media de las dos bases y, como b ≤ B, esa media no supera B. Si b = B el trapecio es un rectángulo y el área es igual, no mayor.",
+"e1.ctx":"Un paralelogramo tiene una <b>base de 10 cm</b>, una <b>altura de 4 cm</b>, y el lado inclinado mide <b>5 cm</b>. ¿Cuál es su área?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"10 · 5 = 50 cm².","e1.s1":"10 · 4 = 40 cm².",
+"e1.w0":"Marta ha usado el lado inclinado, pero el área se calcula con la <b>altura</b>, que es perpendicular a la base: 10 · 4 = 40 cm².",
+"e1.w1":"Porque siempre hay que multiplicar la base por el lado más largo.",
+"e1.w2":"Porque el lado inclinado siempre mide lo mismo que la altura.",
+"e1.frame":"Marta, el área no es 50 porque…",
+"e1.model":"Marta, para el área no vale el lado inclinado sino la altura, la distancia perpendicular entre las dos bases. Si cortas el triángulo del extremo y lo mueves, queda un rectángulo de 10 por 4: 40 cm². El lado inclinado (5) es la hipotenusa de ese triángulo, por eso es más largo que la altura.",
+"e2.ctx":"Un triángulo tiene <b>base 8 m</b> y <b>altura 5 m</b>. ¿Cuál es su área?",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"8 · 5 ÷ 2 = 20 m².","e2.s1":"8 · 5 = 40 m².",
+"e2.w0":"Dos triángulos iguales forman un paralelogramo de 8 · 5 = 40 m². Cada triángulo es la mitad: 20 m².",
+"e2.w1":"Porque el área de un triángulo siempre es igual a la del rectángulo de la misma base y altura.",
+"e2.w2":"Porque hay que sumar la base y la altura.",
+"e2.frame":"Laia, el área no es 40 porque…",
+"e2.model":"Laia, 8 · 5 = 40 es el área del paralelogramo (o del rectángulo) con la misma base y altura. Pero el triángulo es solo la mitad: dos triángulos iguales llenan ese paralelogramo. Por tanto, A = 8 · 5 ÷ 2 = 20 m².",
+"e3.ctx":"Un trapecio tiene bases de <b>9 cm</b> y <b>5 cm</b> y una <b>altura de 4 cm</b>. ¿Cuál es su área?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"(9 + 5) ÷ 2 = 7 cm².","e3.s1":"(9 + 5) · 4 = 56 cm².",
+"e3.w0":"La fórmula es (9 + 5) · 4 ÷ 2 = 28 cm². Rita se ha olvidado de multiplicar por la altura y Joan se ha olvidado de dividir entre 2.",
+"e3.w1":"Porque el área de un trapecio es la media de las bases.",
+"e3.w2":"Porque el área de un trapecio es la suma de las bases por la altura.",
+"e3.frame":"Rita y Joan, el área no es 7 ni 56 porque…",
+"e3.model":"Rita y Joan, dos trapecios iguales forman un paralelogramo de base 9 + 5 = 14 y altura 4, con área 14 · 4 = 56; el trapecio es la mitad: 28 cm². Rita solo ha calculado la media de las bases (7), que hay que multiplicar por la altura (7 · 4 = 28), y Joan ha dado el área del paralelogramo sin dividir entre 2.",
+"d1.q":"Una pared de buhardilla tiene forma de trapecio: la base de abajo mide <b>6 m</b>, la de arriba <b>2 m</b> y la altura es de <b>3 m</b>. Un bote de pintura cubre <b>4 m²</b>. ¿Cuál es el área de la pared y cuántos botes necesitas?",
+"d1.l0":"Área","d1.l1":"Botes",
+"d1_a24":"24 m² es el área del paralelogramo doble. El trapecio es la mitad: (6 + 2) · 3 ÷ 2.","d1_a":"(6 + 2) · 3 ÷ 2 no vale {0}. Vuelve a calcularlo.",
+"d1_p":"El área es 12 m² y cada bote cubre 4 m²: ¿cuántos botes hacen falta?",
+"d1_ok":"✔ ¡Bien decidido! (6 + 2) · 3 ÷ 2 = 12 m² y 12 ÷ 4 = 3 botes.",
+"d1.more":"¿Y si la pared fuera un rectángulo de 6 m por 3 m? ¿Cuántos botes más necesitarías?",
+"d2.q":"Un campo tiene forma de paralelogramo: la base mide <b>12 m</b>, la altura <b>8 m</b> y el lado inclinado <b>10 m</b>. ¿Cuántos m² de césped necesita? ¿Y cuántos metros de valla hacen falta para rodearlo?",
+"d2.l0":"Área","d2.l1":"Valla",
+"d2_a10":"Has multiplicado 12 · 10, el lado inclinado. El área se calcula con la altura.","d2_a":"El área es base por altura: 12 · 8. No vale {0}.",
+"d2_p8":"12 + 8 + 12 + 8 usa la altura, pero la altura no es un lado del campo. La valla va por el lado inclinado.","d2_p":"La valla es el perímetro: la suma de los cuatro lados, 12 + 10 + 12 + 10. No vale {0}.",
+"d2_ok":"✔ ¡Bien decidido! Área 12 · 8 = 96 m² y perímetro 2 · (12 + 10) = 44 m.",
+"d2.more":"Si inclinas más el paralelogramo manteniendo la base y la altura, ¿cambia el área? ¿Y el perímetro?",
+"d3.q":"Un triángulo tiene <b>base 8 cm</b> y <b>área 20 cm²</b>. ¿Cuál es su altura?",
+"d3.l0":"Altura",
+"d3_half":"2,5 sería si el área fuera b · h = 20. Pero el área del triángulo es b · h ÷ 2, así que b · h = 40.","d3_f":"8 · {0} ÷ 2 = {1}, no 20.",
+"d3_ok":"✔ ¡Bien decidido! 8 · 5 ÷ 2 = 20.",
+"d3.more":"¿Y si la base fuera 5 cm y el área 20 cm²? ¿Qué altura necesitarías?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/area-descomposicio/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
+const SI18N={
+ca:{st_prev:"← Anterior",st_next:"Següent →",st_restart:"Torna a l'inici",st_step:"Pas {a} de {b}",st_predict:"Predix abans de veure",st_think:"Pensa-hi",
+st_hint:"Mostra una pista",st_hide:"Amaga la pista",st_ok:"Correcte!",st_ko:"No exactament.","aria.steps":"Passos de l'animació","aria.stage":"Dibuix de l'animació",
+sl_cells:"Cèl·lules",sl_chrom:"Cromosomes per cèl·lula",sl_chromat:"Cromàtides per cromosoma",sl_dna:"ADN per cèl·lula",sl_chrompol:"Cromosomes per pol",sl_dnatot:"ADN total"},
+es:{st_prev:"← Anterior",st_next:"Siguiente →",st_restart:"Volver al inicio",st_step:"Paso {a} de {b}",st_predict:"Predice antes de ver",st_think:"Piénsalo",
+st_hint:"Ver una pista",st_hide:"Ocultar la pista",st_ok:"¡Correcto!",st_ko:"No exactamente.","aria.steps":"Pasos de la animación","aria.stage":"Dibujo de la animación",
+sl_cells:"Células",sl_chrom:"Cromosomas por célula",sl_chromat:"Cromátidas por cromosoma",sl_dna:"ADN por célula",sl_chrompol:"Cromosomas por polo",sl_dnatot:"ADN total"}};
+Object.assign(I18N.ca,SI18N.ca);Object.assign(I18N.es,SI18N.es);
+const SE={i:0,steps:[],ans:{},hint:{},cb:null};
+function stepsInit(steps,cb){
+  SE.steps=steps;SE.cb=cb;
+  const sp=$('#stepper');
+  steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+  $('#prev').onclick=()=>stepGo(SE.i-1);
+  $('#next').onclick=()=>stepGo(SE.i+1);
+  $('#restart').onclick=()=>{SE.ans={};SE.hint={};stepGo(0);};
+  document.addEventListener('langchange',stepRender);
+  stepGo(0);
+}
+function stepGo(i){
+  i=Math.max(0,Math.min(SE.steps.length-1,i));
+  const prev=SE.i;SE.i=i;stepRender();
+  if(SE.cb)SE.cb(i,prev);
+}
+function stepRender(){
+  const s=SE.steps[SE.i],id=s.id;
+  $$('#stepper button').forEach((b,k)=>{
+    if(k===SE.i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+    b.className=(SE.ans[SE.steps[k].id]!==undefined&&k!==SE.i)?'done':'';
+  });
+  $('#stepno').textContent=t('st_step',{a:SE.i+1,b:SE.steps.length});
+  const T=$('#stitle');T.dataset.i18n=id+'.title';T.textContent=t(id+'.title');
+  const X=$('#stext');X.dataset.i18nHtml=id+'.text';X.innerHTML=t(id+'.text');
+  const st=$('#sstats');st.innerHTML='';
+  (s.stats||[]).forEach((p,j)=>{
+    const d=document.createElement('div');d.className='stat';
+    d.innerHTML='<span class="k">'+t(p[0])+'</span><span class="v">'+(I18N.ca[id+'.sv'+j]!==undefined?t(id+'.sv'+j):p[1])+'</span>';
+    st.appendChild(d);
+  });
+  st.hidden=!(s.stats&&s.stats.length);
+  const ask=$('#sask');ask.innerHTML='';ask.hidden=!s.ask;
+  if(s.ask){
+    const a=SE.ans[id],c=document.createElement('div');c.className='pred';
+    c.innerHTML='<span class="eb">'+t('st_predict')+'</span><p class="qtext">'+t(id+'.q')+'</p>';
+    const o=document.createElement('div');o.className='opts';
+    for(let j=0;j<s.ask.n;j++){
+      const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(id+'.o'+j);
+      if(a!==undefined){b.disabled=true;if(j===s.ask.ok)b.classList.add('right');else if(j===a)b.classList.add('wrong');}
+      b.onclick=()=>{SE.ans[id]=j;stepRender();};
+      o.appendChild(b);
+    }
+    c.appendChild(o);
+    if(a!==undefined){const f=document.createElement('p');f.className='fb';f.innerHTML='<b>'+(a===s.ask.ok?t('st_ok'):t('st_ko'))+'</b> '+t(id+'.why');c.appendChild(f);}
+    ask.appendChild(c);
+  }
+  const th=$('#sthink');th.innerHTML='';th.hidden=!s.think;
+  if(s.think){
+    const c=document.createElement('div');c.className='think';
+    c.innerHTML='<span class="eb">'+t('st_think')+'</span><p class="qtext">'+t(id+'.tq')+'</p>';
+    const open=!!SE.hint[id];
+    const b=document.createElement('button');b.type='button';b.className='linkb';b.textContent=open?t('st_hide'):t('st_hint');
+    b.onclick=()=>{SE.hint[id]=!SE.hint[id];stepRender();};
+    c.appendChild(b);
+    if(open){const f=document.createElement('p');f.className='fb';f.innerHTML=t(id+'.th');c.appendChild(f);}
+    th.appendChild(c);
+  }
+  $('#prev').disabled=(SE.i===0);$('#next').disabled=(SE.i===SE.steps.length-1);
+}
+
+/* ===== Àrea per descomposició ===== */
+const svg=$('#svg');
+const STEPDEF={
+ par:[{id:'p0',ask:{n:3,ok:0}},{id:'p1',think:true},{id:'p2',ask:{n:3,ok:2}},{id:'p3',think:true}],
+ tri:[{id:'t0',ask:{n:3,ok:0}},{id:'t1',think:true},{id:'t2'},{id:'t3',ask:{n:3,ok:1},think:true}],
+ tra:[{id:'z0'},{id:'z1',think:true},{id:'z2',ask:{n:3,ok:0}},{id:'z3',think:true}]
+};
+const ST={shape:'par',b:6,h:4,s:2,B:8,bt:4,grid:true};
+let P=0,raf=0;
+const ease=x=>x*x*(3-2*x);
+const VW=360,VH=292,ML=24,MT=26,MB=50;
+const fx=x=>nf(x,2);
+/* sliders (compartits entre figures) */
+const ctrl=$('#ctrl');
+const sB_=slider(ctrl,{id:'sb',key:'l_b',min:2,max:12,step:1,val:6,on:v=>{ST.b=v;if(ST.s>v){ST.s=v;sS_.set(v);}sS_.inp.max=v;refresh();}});
+const sBB=slider(ctrl,{id:'sBB',key:'l_B',min:3,max:12,step:1,val:8,on:v=>{ST.B=v;if(ST.bt>v){ST.bt=v;sBM.set(v);}sBM.inp.max=v;refresh();}});
+const sBM=slider(ctrl,{id:'sbm',key:'l_bm',min:1,max:8,step:1,val:4,on:v=>{ST.bt=v;refresh();}});
+const sH_=slider(ctrl,{id:'sh',key:'l_h',min:2,max:10,step:1,val:4,on:v=>{ST.h=v;refresh();}});
+const sS_=slider(ctrl,{id:'ss',key:'l_s',min:0,max:6,step:1,val:2,on:v=>{ST.s=v;refresh();}});
+sBM.inp.max=ST.B;sS_.inp.max=ST.b;
+function showCtl(){
+  const par=ST.shape!=='tra';
+  sB_.el.hidden=!par;sS_.el.hidden=!par;sBB.el.hidden=par;sBM.el.hidden=par;
+}
+/* geometria */
+function bbox(){
+  const {shape,b,h,s,B,bt}=ST;
+  if(shape==='tra')return {x1:(3*B+bt)/2,h};
+  return {x1:b+s,h};
+}
+function map(bb){
+  const w=bb.x1,k=Math.min((VW-2*ML)/w,(VH-MT-MB)/bb.h),ox=ML+((VW-2*ML)-w*k)/2;
+  return {k,X:x=>ox+x*k,Y:y=>VH-MB-y*k};
+}
+function draw(){
+  const bb=bbox(),{k,X,Y}=map(bb);
+  const op=o=>o!==undefined?' style="opacity:'+Math.max(0,Math.min(1,o)).toFixed(3)+'"':'';
+  const pl=(pts,cls,o)=>'<polygon points="'+pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')+'" class="'+cls+'"'+op(o)+'/>';
+  const ln=(x1,y1,x2,y2,cls,o)=>'<line x1="'+X(x1).toFixed(1)+'" y1="'+Y(y1).toFixed(1)+'" x2="'+X(x2).toFixed(1)+'" y2="'+Y(y2).toFixed(1)+'" class="'+cls+'"'+op(o)+'/>';
+  const lp=(x1,y1,x2,y2,cls,o)=>'<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" class="'+cls+'"'+op(o)+'/>';
+  const tx=(px,py,str,cls,o,anchor)=>'<text x="'+px.toFixed(1)+'" y="'+py.toFixed(1)+'" class="'+(cls||'lab')+'" text-anchor="'+(anchor||'middle')+'" dominant-baseline="central"'+op(o)+'>'+str+'</text>';
+  const ra=(x,o)=>{const px=X(x),py=Y(0);return '<path class="rm" d="M'+(px+8).toFixed(1)+','+py.toFixed(1)+' L'+(px+8).toFixed(1)+','+(py-8).toFixed(1)+' L'+px.toFixed(1)+','+(py-8).toFixed(1)+'"'+op(o)+'/>';};
+  let s='';
+  if(ST.grid){
+    for(let x=0;x<=bb.x1+1e-9;x++)s+=ln(x,0,x,bb.h,'gr');
+    for(let y=0;y<=bb.h;y++)s+=ln(0,y,bb.x1,y,'gr');
+  }
+  const ca=clamp(P,0,1),e=ease(clamp(P-1,0,1)),fa=clamp(P-2,0,1);
+  const h=ST.h;
+  if(ST.shape==='par'){
+    const b=ST.b,sv=ST.s,dx=b*e;
+    const rest=[[sv,0],[b,0],[b+sv,h],[sv,h]],T=[[dx,0],[sv+dx,0],[sv+dx,h]];
+    s+=pl(rest,'f1');
+    if(sv>0)s+=pl(T,'f1')+pl(T,'f2',ca);
+    s+=pl([[0,0],[b,0],[b+sv,h],[sv,h]],'ol',1-ca);
+    s+=pl(rest,'ol2',ca);
+    if(sv>0)s+=pl(T,'ol2',ca);
+    s+=pl([[sv,0],[b+sv,0],[b+sv,h],[sv,h]],'ol3',fa);
+    s+=ln(sv,0,sv,h,'hl',ca);
+    if(sv>0)s+=ra(sv,ca);
+    s+=tx(X(b/2+sv*e),Y(0)+17,'b','edge');
+    s+=tx(X(sv)-9,Y(h/2),'h','edge',ca,'end');
+    s+=tx(X(sv+b/2),Y(h/2)-9,'A = b · h','big',fa);
+    s+=tx(X(sv+b/2),Y(h/2)+9,b+' · '+h+' = '+(b*h),'big',fa);
+  }else{
+    const isT=ST.shape==='tri';
+    const b=isT?ST.b:ST.B,sv=ST.s,o=(ST.B-ST.bt)/2,bt=ST.bt;
+    const Q=isT?[[0,0],[b,0],[sv,h]]:[[0,0],[ST.B,0],[o+bt,h],[o,h]];
+    const M=isT?[(b+sv)/2,h/2]:[(ST.B+o+bt)/2,h/2],phi=Math.PI*e,cs=Math.cos(phi),sn=Math.sin(phi);
+    const rot=p=>{const dx=p[0]-M[0],dy=p[1]-M[1];return [M[0]+cs*dx-sn*dy,M[1]+sn*dx+cs*dy];};
+    const Qc=Q.map(rot);
+    s+=pl(Q,'f1')+pl(Qc,'f2',ca)+pl(Q,'ol2');
+    s+=pl(Qc,e>=0.999?'ol2':'ol2d',ca);
+    const par=isT?[[0,0],[b,0],[b+sv,h],[sv,h]]:[[0,0],[ST.B+bt,0],[ST.B+o+bt,h],[o,h]];
+    s+=pl(par,'ol3',fa);
+    const xh=isT?sv:o;
+    s+=ln(xh,0,xh,h,'hl');
+    s+=ra(xh);
+    const piv=ca*(1-fa);
+    s+='<circle class="piv" cx="'+X(M[0]).toFixed(1)+'" cy="'+Y(M[1]).toFixed(1)+'" r="4.5"'+op(piv)+'/>';
+    s+=tx(X(xh)-9,Y(h/2),'h','edge',1,'end');
+    if(isT){
+      s+=tx(X(b/2),Y(0)+17,'b','edge');
+      s+=tx(X(M[0]),Y(M[1])-9,b+' · '+h+' = '+(b*h),'big',fa);
+      s+=tx(X(M[0]),Y(M[1])+9,'A = '+(b*h)+' ÷ 2 = '+fx(b*h/2),'big',fa);
+    }else{
+      const B=ST.B;
+      s+=tx(X(B/2),Y(0)+17,'B','edge');
+      s+=tx(X(o+bt/2),Y(h)-11,'b','edge');
+      s+=tx(X(B+bt/2),Y(0)+17,'b','edge',fa);
+      const yb=Y(0)+29;
+      s+=lp(X(0),yb,X(B+bt),yb,'br',fa)+lp(X(0),yb-4,X(0),yb+4,'br',fa)+lp(X(B+bt),yb-4,X(B+bt),yb+4,'br',fa);
+      s+=tx(X((B+bt)/2),yb+13,'B + b','edge',fa);
+      s+=tx(X(M[0]),Y(M[1])-9,'('+B+' + '+bt+') · '+h+' = '+((B+bt)*h),'big',fa);
+      s+=tx(X(M[0]),Y(M[1])+9,'A = '+((B+bt)*h)+' ÷ 2 = '+fx((B+bt)*h/2),'big',fa);
+    }
+  }
+  svg.innerHTML=s;
+}
+/* dades que es mostren al panell (segons la figura i el pas) */
+function statsFor(i){
+  const {shape,b,h,B,bt}=ST;
+  if(shape==='par')return i<3?[['k_b',b],['k_h',h]]:[['k_b',b],['k_h',h],['k_A','b · h = '+(b*h)]];
+  if(shape==='tri')return i<3?[['k_b',b],['k_h',h]]:[['k_b',b],['k_h',h],['k_Ap','b · h = '+(b*h)],['k_A',(b*h)+' ÷ 2 = '+fx(b*h/2)]];
+  return i<3?[['k_B',B],['k_bm',bt],['k_h',h]]:[['k_B',B],['k_bm',bt],['k_h',h],['k_Ap','(B + b) · h = '+((B+bt)*h)],['k_A',((B+bt)*h)+' ÷ 2 = '+fx((B+bt)*h/2)]];
+}
+function refresh(){
+  SE.steps.forEach((s,i)=>{s.stats=statsFor(i).map(p=>[p[0],String(p[1]).replace('.',',')]);});
+  stepRender();draw();
+}
+/* animació entre passos */
+function animateTo(i){
+  cancelAnimationFrame(raf);
+  const from=P,to=i;
+  if(REDUCE||Math.abs(to-from)<1e-6){P=to;draw();return;}
+  const dur=1000*Math.max(0.5,Math.abs(to-from)),t0=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-t0)/dur);
+    P=from+(to-from)*(p*p*(3-2*p));draw();
+    if(p<1)raf=requestAnimationFrame(step);
+  }
+  raf=requestAnimationFrame(step);
+}
+function rebuildStepper(){
+  const sp=$('#stepper');sp.innerHTML='';
+  SE.steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+}
+function setShape(sh,keepStep){
+  cancelAnimationFrame(raf);
+  ST.shape=sh;
+  SE.steps=STEPDEF[sh].map(x=>Object.assign({},x));SE.ans={};SE.hint={};SE.i=0;P=0;
+  rebuildStepper();showCtl();
+  $$('#shapesw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.shape===sh)));
+  refresh();
+}
+$$('#shapesw button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.shape!==ST.shape)setShape(b.dataset.shape);}));
+$('#gridc').addEventListener('change',e=>{ST.grid=e.target.checked;draw();});
+/* càrrega d'un cas des de les activitats: es mostra la figura ja transformada */
+function ld(shape,v){
+  const c=(x,a,z)=>clamp(Math.round(x),a,z);
+  if(v.b!==undefined){ST.b=c(v.b,2,12);sB_.set(ST.b);}
+  if(v.h!==undefined){ST.h=c(v.h,2,10);sH_.set(ST.h);}
+  if(v.B!==undefined){ST.B=c(v.B,3,12);sBB.set(ST.B);}
+  sBM.inp.max=ST.B;
+  if(v.bt!==undefined){ST.bt=c(v.bt,1,ST.B);sBM.set(ST.bt);}
+  if(ST.bt>ST.B){ST.bt=ST.B;sBM.set(ST.bt);}
+  sS_.inp.max=ST.b;
+  if(v.s!==undefined){ST.s=c(v.s,0,ST.b);sS_.set(ST.s);}
+  if(ST.s>ST.b){ST.s=ST.b;sS_.set(ST.s);}
+  setShape(shape);
+  P=3;SE.i=3;refresh();
+  RZ.show($('#svg'));
+}
+App.hooks.push(()=>{if(!SE.steps.length)return;showCtl();refresh();});
+/* ===== Raona-ho ===== */
+const inB=x=>Number.isInteger(x)&&x>=2&&x<=12, inH=x=>Number.isInteger(x)&&x>=2&&x<=10;
+const inBB=x=>Number.isInteger(x)&&x>=3&&x<=12, inBM=(x,B)=>Number.isInteger(x)&&x>=1&&x<=B;
+RZ.init({
+ F:{b:{l:'f_b'},h:{l:'f_h'},s:{l:'f_s'},B:{l:'f_B'},bm:{l:'f_bm'},
+    b1:{l:'s4.l0'},h1:{l:'s4.l1'},b2:{l:'s4.l2'},h2:{l:'s4.l3'}},
+ sim:()=>{},
+ M:[
+  {id:'m1',f:['b','h'],sim:([b,h])=>ld('par',{b,h,s:2}),ok:([b,h])=>({k:'m1_ok',p:[b,h,b*h]}),
+   chk:([b,h])=>(!inB(b)||!inH(h))?{k:'rng'}:b*h!==24?{k:'m1_f',p:[b,h,b*h]}:b<=h?{k:'m1_o',p:[b,h]}:null},
+  {id:'m2',f:['b','h'],sim:([b,h])=>ld('tri',{b,h,s:2}),ok:([b,h])=>({k:'m2_ok',p:[b,h]}),
+   chk:([b,h])=>(!inB(b)||!inH(h))?{k:'rng'}:b*h/2!==15?{k:'m2_f',p:[b,h,fx(b*h/2)]}:b<=3?{k:'m2_b',p:[b]}:null},
+  {id:'m3',f:['B','bm'],sim:([B,bt])=>ld('tra',{B,bt,h:4}),ok:([B,bt])=>({k:'m3_ok',p:[B,bt]}),
+   chk:([B,bt])=>(!inBB(B)||!inBM(bt,B))?{k:'rng'}:(B+bt)*4/2!==28?{k:'m3_f',p:[B,bt,(B+bt)*2]}:B<=bt?{k:'m3_o'}:null},
+  {id:'m4',f:['h'],sim:([h])=>ld('tra',{B:10,bt:6,h}),ok:()=>({k:'m4_ok'}),
+   chk:([h])=>!inH(h)?{k:'rng'}:16*h/2!==64?{k:'m4_f',p:[h,16*h/2]}:null}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:['b','h','s'],sim:()=>ld('par',{b:6,h:4,s:3}),cxsim:([b,h,s])=>ld('par',{b,h,s}),
+   cx:([b,h,s])=>(!inB(b)||!inH(h)||!Number.isInteger(s)||s<0||s>b)?{k:'rng'}:s===0?{k:'s1_rect'}:null},
+  {id:'s2',ans:'S',sim:()=>ld('tri',{b:6,h:4,s:1})},
+  {id:'s3',ans:'M',sim:()=>ld('tri',{b:6,h:4,s:2})},
+  {id:'s4',ans:'D',f:['b1','h1','b2','h2'],sim:()=>ld('tri',{b:6,h:4,s:2}),cxsim:([b1,h1,b2,h2])=>ld('tri',{b:b2,h:h2,s:0}),
+   cx:([b1,h1,b2,h2])=>(!inB(b1)||!inH(h1)||!inB(b2)||!inH(h2))?{k:'rng'}:b1*h1!==b2*h2?{k:'s4_a',p:[fx(b1*h1/2),fx(b2*h2/2)]}:b1===b2?{k:'s4_b',p:[b1]}:null},
+  {id:'s5',ans:'S',sim:()=>ld('tra',{B:8,bt:4,h:4})},
+  {id:'s6',ans:'M',sim:()=>ld('tra',{B:8,bt:4,h:4})}
+ ],
+ E:[
+  {id:'e1',who:1,args:[],sim:()=>ld('par',{b:10,h:4,s:3})},
+  {id:'e2',who:0,args:[],sim:()=>ld('tri',{b:8,h:5,s:3})},
+  {id:'e3',who:3,args:[],sim:()=>ld('tra',{B:9,bt:5,h:4})}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'m²'},{l:'d1.l1'}],sim:()=>ld('tra',{B:6,bt:2,h:3}),ok:()=>({k:'d1_ok'}),
+   chk:([a,p])=>a!==12?(a===24?{k:'d1_a24'}:{k:'d1_a',p:[nf(a,2)]}):p!==3?{k:'d1_p'}:null},
+  {id:'d2',f:[{l:'d2.l0',u:'m²'},{l:'d2.l1',u:'m'}],sim:()=>ld('par',{b:12,h:8,s:6}),ok:()=>({k:'d2_ok'}),
+   chk:([a,p])=>a!==96?(a===120?{k:'d2_a10'}:{k:'d2_a',p:[nf(a,2)]}):p!==44?(p===40?{k:'d2_p8'}:{k:'d2_p',p:[nf(p,2)]}):null},
+  {id:'d3',f:[{l:'d3.l0',u:'cm'}],sim:()=>ld('tri',{b:8,h:4,s:3}),ok:()=>({k:'d3_ok'}),
+   chk:([h])=>h===5?null:h===2.5?{k:'d3_half'}:{k:'d3_f',p:[nf(h,2),nf(8*h/2,2)]}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+showCtl();
+stepsInit(STEPDEF.par.map(x=>Object.assign({},x)),i=>animateTo(i));
+refresh();
+</script>
+</body>
+</html>
