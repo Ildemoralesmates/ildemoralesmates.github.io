@@ -29,7 +29,7 @@ avisos = []
 NIV = {"Primària": "Primaria", "1r ESO": "1.º ESO", "2n ESO": "2.º ESO", "3r ESO": "3.º ESO",
        "4t ESO": "4.º ESO", "Batxillerat": "Bachillerato"}
 BLOC = {"Numèric": "Numérico", "Algebraic": "Algebraico", "Funcions": "Funciones",
-        "Espacial i geometria": "Espacial y geometría"}
+        "Espacial i geometria": "Espacial y geometría", "Incertesa i probabilitat": "Incertidumbre y probabilidad"}
 TIPUS = {"Simulador": "Simulador", "Full de treball": "Hoja de trabajo", "Línia del temps": "Línea del tiempo",
          "Joc": "Juego", "Aventura": "Aventura"}
 MESOS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"]
@@ -182,7 +182,7 @@ out = re.sub(
 # --- script ---
 un("const NIVELLS = ['Primària', '1r ESO', '2n ESO', '3r ESO', '4t ESO', 'Batxillerat'];",
    "const NIVELLS = " + json.dumps(list(NIV.values()), ensure_ascii=False).replace('"', "'") + ";")
-un("const BLOCS = ['Numèric', 'Algebraic', 'Funcions', 'Espacial i geometria'];",
+un("const BLOCS = ['Numèric', 'Algebraic', 'Funcions', 'Espacial i geometria', 'Incertesa i probabilitat'];",
    "const BLOCS = " + json.dumps(list(BLOC.values()), ensure_ascii=False).replace('"', "'") + ";")
 un("const TIPUS = ['Simulador', 'Full de treball', 'Línia del temps', 'Joc', 'Aventura'];",
    "const TIPUS = " + json.dumps(list(TIPUS.values()), ensure_ascii=False).replace('"', "'") + ";")
