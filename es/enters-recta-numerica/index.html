@@ -1,0 +1,1522 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enteros en la recta numérica</title>
+<meta name="description" content="Enteros en la recta numérica: suma, resta y multiplica enteros paso a paso con dos modelos (sumar el opuesto y el muñeco que se gira y camina). Para 1.º de ESO, con predicción, práctica en la recta, actividades para razonar y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/enters-recta-numerica/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/enters-recta-numerica/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/enters-recta-numerica/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/enters-recta-numerica/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Enteros en la recta numérica">
+<meta property="og:description" content="Enteros en la recta numérica: suma, resta y multiplica enteros paso a paso con dos modelos (sumar el opuesto y el muñeco que se gira y camina). Para 1.º de ESO, con predicción, práctica en la recta, actividades para razonar y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/enters-recta-numerica/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.numin,.predict{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.numin input,.predict input{font:inherit;font-size:16px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+#inp{width:min(100%,17em);font-size:18px}
+#guess{width:6em}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.chips{align-items:center}
+.pnl{display:grid;gap:2px}
+.pnl+.pnl{border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.pnl h3,.mx h3{margin:0;font-size:14px;color:var(--pa)}
+.pnl svg,#pSvg{width:100%;height:auto;display:block;background:var(--stage);border-radius:8px}
+.pnl svg text,#pSvg text{font-family:inherit}
+#pSvg{cursor:pointer;touch-action:manipulation}
+.stepbar{justify-content:center;margin-top:2px}
+.cnt{color:var(--muted);min-width:7em;text-align:center;font-size:13.5px}
+.expr{font-size:clamp(20px,2.4vw,28px);font-weight:600;text-align:center;line-height:1.5}
+.expr .l2{color:var(--muted)}
+.expr .tm{padding:0 4px;border-radius:6px;transition:background .25s}
+.expr .tm.cur{background:var(--chip);box-shadow:0 0 0 2px var(--pa)}
+.expr .tm.chg{color:var(--pa)}
+.expr .res{color:var(--ok);font-size:1.15em}
+.mx{display:grid;gap:3px}
+.mx+.mx{border-top:1px solid var(--line);padding-top:8px;margin-top:6px}
+.card .mx .rule{font-size:12.5px;color:var(--muted);margin:0}
+.card .mx .exp{font-size:15px;line-height:1.4;margin:0;min-height:2.8em;color:var(--ink)}
+.pexpr{font-size:clamp(26px,3vw,36px)!important;font-weight:700;text-align:center;color:var(--ink)!important}
+.phint{text-align:center}
+#pAns{font-size:18px;min-width:8em;text-align:center;color:var(--ink)}
+.psel{display:inline-flex;gap:6px;align-items:center;font-size:14px}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 1.º ESO · Números enteros</p>
+      <h1 data-i18n="h1">Enteros en la recta: sumar, restar y multiplicar</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Mira cada operación como un recorrido sobre la recta numérica y comprueba por qué restar un negativo hace subir.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card" id="simcard">
+<h2 data-i18n="sim_title">La recta de los enteros</h2>
+<p data-i18n-html="story">Escribe una operación con números enteros y mírala sobre la recta, <b>paso a paso</b>. Puedes verla de dos maneras: <b>sumando el opuesto</b> (restar es sumar el opuesto) o con <b>el muñeco</b> que se gira y camina. Antes de empezar, piensa cuánto dará.</p>
+<div class="row"><span class="mut" data-i18n="presets">Ejemplos:</span><div class="chips" id="presets"></div></div>
+<div class="numin">
+<label for="inp" data-i18n="expr_l">Operación</label><input type="text" id="inp" value="−2 + 5 − (−3)" autocomplete="off" spellcheck="false">
+<button class="btn primary" id="go" type="button" data-i18n="apply">Representa</button>
+<button class="btn" id="back" type="button" data-i18n="p_back" hidden>↩ Volver al ejercicio</button>
+</div>
+<p class="note" data-i18n="hint">Puedes escribir - o −, y * o · para el producto. Si un negativo va detrás de un signo, entre paréntesis: 5 − (−3), 2·(−4), −(−6).</p>
+<p class="msg bad" id="err" role="alert"></p>
+<div class="predict">
+<label for="guess" data-i18n="guess_q">Tu predicción: ¿cuánto vale?</label><input type="text" inputmode="text" id="guess" autocomplete="off" spellcheck="false">
+<button class="btn primary" id="gcheck" type="button" data-i18n="check_guess">Comprobar</button>
+</div>
+<div class="row">
+<div class="seg" id="seg" role="group" data-i18n-aria="aria.model" aria-label="Modelo"><button type="button" data-m="m1" aria-pressed="true" data-i18n="mo_m1">Sumar el opuesto</button><button type="button" data-m="m2" aria-pressed="false" data-i18n="mo_m2">El muñeco</button><button type="button" data-m="cmp" aria-pressed="false" data-i18n="mo_cmp">Compararlos</button></div>
+</div>
+<div class="simgrid">
+<div class="simcv">
+<div id="panels"></div>
+<div class="row stepbar">
+<button class="btn" id="bFirst" type="button" data-i18n-aria="aria.first" aria-label="Volver al inicio">⏮</button>
+<button class="btn" id="bPrev" type="button" data-i18n="b_prev">◀ Anterior</button>
+<span class="cnt" id="cnt" aria-live="polite"></span>
+<button class="btn primary" id="bNext" type="button" data-i18n="b_next">Siguiente ▶</button>
+<button class="btn" id="bPlay" type="button" data-i18n="b_play">▶▶ Todo seguido</button>
+</div>
+</div>
+<div class="side">
+<div class="expr" id="expr" aria-live="polite"></div>
+<p class="msg" id="msg" aria-live="polite"></p>
+<div id="exps"></div>
+</div>
+</div>
+<div class="idea" data-lvl="basic" data-i18n-html="idea_basic"><b>La idea:</b> sumar un número es moverse hacia la derecha si es positivo y hacia la izquierda si es negativo. Restar es sumar el opuesto: por eso <b>4 − (−3) = 4 + 3</b>. Ningún «truco» de signos: solo direcciones.</div>
+<div class="idea" data-lvl="adv" data-i18n-html="idea_adv"><b>¿Por qué «menos por menos, más»?</b> Multiplicar por −1 es darse media vuelta. En el muñeco, cada signo − es un giro, y un número negativo te hace caminar de espaldas. Si te giras <i>y</i> vas de espaldas, acabas avanzando: −(−3) = +3. Los giros se compensan de dos en dos.</div>
+</section>
+
+<section class="card" id="prac">
+<h2><small data-i18n="p_eyebrow">Práctica</small><span data-i18n="p_title">Marca el resultado en la recta</span></h2>
+<p data-i18n="p_intro">Genera ejercicios y toca la recta donde creas que está el resultado. Si te atascas, míralo paso a paso.</p>
+<div class="row">
+<label class="psel"><span data-i18n="p_type">Tipo</span> <select id="pType"><option value="mix" data-i18n="p_t_mix">Mezcla</option><option value="dos" data-i18n="p_t_dos">Sumas y restas de dos</option><option value="div" data-i18n="p_t_div">Varios términos</option><option value="opo" data-i18n="p_t_opo">Opuestos y paréntesis</option><option value="mul" data-i18n="p_t_mul">Multiplicación</option></select></label>
+<label class="psel"><span data-i18n="p_lvl">Nivel</span> <select id="pLvl"><option value="10" data-i18n="p_l10">Hasta 10</option><option value="20" data-i18n="p_l20">Hasta 20</option></select></label>
+<button class="btn primary" id="pNew" type="button" data-i18n="p_new">Ejercicio nuevo</button>
+<span class="score" id="pScore"></span>
+</div>
+<div class="simgrid">
+<div class="simcv"><svg id="pSvg" role="img" data-i18n-aria="p_aria" aria-label="Recta numérica para responder"></svg></div>
+<div class="side">
+<p class="pexpr" id="pExpr"></p>
+<p class="phint" data-i18n="p_hint">Toca la recta donde creas que está el resultado.</p>
+<div class="row" style="justify-content:center">
+<button class="btn" id="pMinus" type="button">−1</button>
+<span id="pAns"></span>
+<button class="btn" id="pPlus" type="button">+1</button>
+</div>
+<div class="row" style="justify-content:center">
+<button class="btn primary" id="pCheck" type="button" data-i18n="check">Comprobar</button>
+<button class="btn" id="pSol" type="button" data-i18n="p_sol">Verlo paso a paso</button>
+</div>
+<p class="msg" id="pFb" aria-live="polite"></p>
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Enters en la recta numèrica",
+"eyebrow":"Matemàtiques · 1r ESO · Nombres enters",
+"h1":"Enters en la recta: sumar, restar i multiplicar",
+"lede":"Mira cada operació com un recorregut sobre la recta numèrica i comprova per què restar un negatiu fa pujar.",
+"sim_title":"La recta dels enters",
+"story":"Escriu una operació amb nombres enters i mira-la sobre la recta, <b>pas a pas</b>. Pots veure-la de dues maneres: <b>sumant l'oposat</b> (restar és sumar l'oposat) o amb <b>el ninot</b> que es gira i camina. Abans de començar, pensa quant donarà.",
+"presets":"Exemples:",
+"expr_l":"Operació",
+"apply":"Representa",
+"hint":"Pots escriure - o −, i * o · per al producte. Si un negatiu va darrere d'un signe, entre parèntesis: 5 − (−3), 2·(−4), −(−6).",
+"guess_q":"La teua predicció: quant val?",
+"check_guess":"Comprova",
+"aria.model":"Model",
+"mo_m1":"Sumar l'oposat","mo_m2":"El ninot","mo_cmp":"Comparar-los",
+"aria.first":"Torna a l'inici",
+"b_prev":"◀ Anterior","b_next":"Següent ▶","b_play":"▶▶ Tot seguit","b_pause":"⏸ Pausa",
+"step_of":"Pas {0} de {1}",
+"svg_aria":"Recta numèrica amb l'operació {0}",
+"T_m1":"Model 1 · Restar és sumar l'oposat",
+"T_m2":"Model 2 · El ninot que mira i camina",
+"R_m1":"Restar és sumar l'oposat · sumar un positiu → cap a la dreta · sumar un negatiu → cap a l'esquerra · a·b → |a| salts de b (de −b si a és negatiu)",
+"R_m2":"Signe de l'operació: + mira a la dreta, − es gira · nombre positiu: camina avant; negatiu: camina arrere · a·b: ho fa |a| vegades i, si a és negatiu, es torna a girar",
+"idea_basic":"<b>La idea:</b> sumar un nombre és moure's cap a la dreta si és positiu i cap a l'esquerra si és negatiu. Restar és sumar l'oposat: per això <b>4 − (−3) = 4 + 3</b>. Cap «truc» de signes: només direccions.",
+"idea_adv":"<b>Per què «menys per menys, més»?</b> Multiplicar per −1 és girar-se mitja volta. En el ninot, cada signe − és un gir, i un nombre negatiu et fa caminar de reculons. Si et gires <i>i</i> vas de reculons, acabes avançant: −(−3) = +3. Els girs es compensen de dos en dos.",
+"err_empty":"Escriu una operació.",
+"err_char":"Caràcter no vàlid: «{0}»",
+"err_final":"Falta un nombre al final.",
+"err_par_in":"Dins d'un parèntesi ha d'anar un nombre amb el seu signe: (−3), (+5)…",
+"err_par_close":"Falta tancar un parèntesi.",
+"err_par_extra":"Sobra un parèntesi.",
+"err_mul_first":"Falta un nombre abans del signe de multiplicar.",
+"err_dos":"Hi ha dos signes seguits: posa el nombre entre parèntesis, per exemple 5 − (−3).",
+"err_after":"Després del signe ha d'anar un nombre.",
+"err_mul2":"Per ara, només productes de dos factors.",
+"err_sign_miss":"Falta un signe + o − entre dos nombres.",
+"err_par_sign":"Falta un signe abans del parèntesi.",
+"err_mul_pos":"El signe de multiplicar ha d'anar entre dos nombres.",
+"err_max8":"Massa termes: posa'n com a molt 8.",
+"err_digits":"Fem servir nombres de com a molt dues xifres.",
+"err_jumps":"Massa salts: el primer factor ha de ser com a molt 12 (en valor absolut).",
+"err_long":"El recorregut és massa llarg per a veure'l bé en la recta. Prova amb nombres més xicotets.",
+"w_unit1":"unitat","w_unitn":"unitats","w_salt1":"salt","w_saltn":"salts","w_pas1":"pas","w_pasn":"passos","w_vez1":"vegada","w_vezn":"vegades",
+"dir_r":"la dreta","dir_l":"l'esquerra","mv_fwd":"avant","mv_back":"arrere",
+"e1_start_rw":"Partim del 0. Primer convertim les restes en sumes.",
+"e1_start":"Partim del 0 i anem sumant terme a terme.",
+"e1_rw":"Restar és sumar l'oposat: {0}.",
+"e_res":"Resultat: {0} = {1}",
+"e1_m_n0":"{0}: 0 salts: no ens movem.",
+"e1_m_b0":"{0}: salts de 0: no ens movem.",
+"e1_m_inv":"{0}: {1} {2} en sentit contrari al de {3}, és a dir, salts de {4}. De {5} a {6}.",
+"e1_m_dir":"{0}: {1} {2} de {3}. De {4} a {5}.",
+"e1_t_zero":"Sumem 0: no ens movem.",
+"e1_t_first":"Primer terme, {0}: {1} {2} cap a {3}. De {4} a {5}.",
+"e1_t_add":"Sumem {0}: {1} {2} cap a {3}. De {4} a {5}.",
+"e2_start":"El ninot comença en el 0 mirant cap a la dreta (el sentit positiu).",
+"e2_rw":"El ninot no necessita reescriure res: llig els signes tal com estan.",
+"e2_look0":"Mira a la dreta",
+"e2_lookp":"Signe +: mira a la dreta",
+"e2_lookm":"Signe −: es gira i mira a l'esquerra",
+"e2_turn":"el factor {0} és negatiu: es torna a girar, ara mira a {1}",
+"e2_still":"{0}: no camina",
+"e2_walk":"{0}: camina {1} {2} cap {3}",
+"e2_times":", {0} {1}",
+"e2_nomove":"No es mou.",
+"e2_move":"⇒ es desplaça cap a {0}: de {1} a {2}.",
+"lk_look":"mira {0}","lk_quiet":"quiet","lk_fwd":"avant","lk_back":"arrere",
+"g_ok":"✔ Encertat! {0} = {1}. Mira-ho pas a pas per a veure per què.",
+"g_ko":"✘ No és {0}. Mira-ho pas a pas i torna-ho a provar.",
+"g_sign":"✘ El valor absolut ({0}) està bé, però revisa el signe.",
+"g_bad":"Escriu un nombre enter (per exemple −3 o 5).",
+"p_eyebrow":"Pràctica",
+"p_title":"Marca el resultat en la recta",
+"p_intro":"Genera exercicis i toca la recta on creus que està el resultat. Si t'encalles, mira-ho pas a pas.",
+"p_type":"Tipus","p_t_mix":"Barreja","p_t_dos":"Sumes i restes de dos","p_t_div":"Diversos termes","p_t_opo":"Oposats i parèntesis","p_t_mul":"Multiplicació",
+"p_lvl":"Nivell","p_l10":"Fins a 10","p_l20":"Fins a 20",
+"p_new":"Exercici nou",
+"p_score":"Encerts a la primera: {0} / {1} · Ratxa: {2}",
+"p_hint":"Toca la recta on creus que està el resultat.",
+"p_ans":"Resposta: {0}",
+"p_sol":"Veure-ho pas a pas",
+"p_back":"↩ Torna a l'exercici",
+"p_mark":"Marca primer un punt en la recta.",
+"p_ok":"Correcte! {0} = {1}",
+"p_ko":"No: has marcat {0}. Torna-ho a provar o mira-ho pas a pas.",
+"p_aria":"Recta numèrica per a respondre",
+"rz_int":"Escriu nombres enters (amb el signe − si cal) de com a molt dues xifres.",
+"lbl_a":"a =","lbl_b":"b =",
+"cx_no":"Amb a = {0} i b = {1} sí que es compleix l'afirmació. Busca'n un on no.",
+"m1.q":"Escriu dos enters <b>a</b> i <b>b</b>, amb <b>a positiu</b>, tals que <b>a + b = −4</b>.",
+"m1_a":"a ha de ser positiu, i {0} no ho és.",
+"m_sum":"Amb a = {0} i b = {1}, la suma és {2}, no −4.",
+"m1_ok":"✔ {0} + {1} = {2}.",
+"m1.more":"Hi ha moltes solucions. Compara |a| i |b|: quin és més gran i quant? Per què?",
+"m2.q":"Escriu dos enters <b>negatius</b> a i b tals que <b>a − b = 5</b>.",
+"m2_neg":"Els dos han de ser negatius, i {0} no ho és.",
+"m_dif":"Amb a = {0} i b = {1}, a − b = {2}, no 5.",
+"m2_ok":"✔ {0} − {1} = {2}.",
+"m2.more":"Quan restes un negatiu, el resultat puja o baixa respecte del punt de partida? Com ho veus en la recta?",
+"m3.q":"Escriu dos enters a i b tals que <b>a − b siga major que a</b>.",
+"m3_f":"Amb a = {0} i b = {1}, a − b = {2}: no és major que {0}.",
+"m3_ok":"✔ {0} − {1} = {2}, que és major que {0}.",
+"m3.more":"Quin signe ha de tindre b perquè restar faça pujar el resultat? Per què?",
+"m4.q":"Escriu dos enters a i b, tots dos amb <b>valor absolut major que 1</b>, tals que <b>a·b = −12</b>.",
+"m4_abs":"Cap dels dos pot ser 0, 1 ni −1.",
+"m_prod":"Amb a = {0} i b = {1}, a·b = {2}, no −12.",
+"m4_ok":"✔ {0}·{1} = {2}.",
+"m4.more":"Quins signes poden tindre a i b? Se'n podria aconseguir amb dos negatius? Per què?",
+"s1.q":"«Si sumes un enter negatiu a un nombre, el resultat és menor que el de partida.»",
+"s1.h":"Prova 5 + (−3) i 0 + (−4): cap a on et mous?",
+"s1.e":"Sumar un negatiu és avançar cap a l'esquerra, així que acabes sempre més a l'esquerra (més baix) que d'on partíeu.",
+"s2.q":"«Restar un enter fa que el resultat siga sempre menor.»",
+"s2.h":"Prova 5 − 3 i després 5 − (−3). Passa el mateix?",
+"s2.e":"Restar un positiu fa baixar, però restar un negatiu (o 0) no: 5 − (−3) = 8, que és major que 5.",
+"s2.cx":"✔ {0} − {1} = {2}: no és menor que {0}.",
+"s3.q":"«La suma de dos enters negatius és un enter positiu.»",
+"s3.h":"Prova −3 + (−4): cap a on et mous des del −3?",
+"s3.e":"Des d'un nombre negatiu, sumar-ne un altre de negatiu et porta encara més cap a l'esquerra: la suma de dos negatius sempre és negativa.",
+"s4.q":"«El producte de dos enters és sempre major que cadascun dels factors.»",
+"s4.h":"Prova 3·4, però també (−3)·4 i 1·5.",
+"s4.e":"Amb dos positius majors que 1 sí (3·4 = 12), però amb un factor negatiu el producte baixa ((−3)·4 = −12) i amb l'1 no canvia (1·5 = 5).",
+"s4.cx":"✔ {0}·{1} = {2}: no és major que tots dos factors.",
+"s5.q":"«Les restes a − b i b − a donen enters oposats.»",
+"s5.h":"Prova 7 − 3 i 3 − 7.",
+"s5.e":"a − b = −(b − a): si canvies l'ordre, el resultat canvia de signe però no de valor (7 − 3 = 4 i 3 − 7 = −4).",
+"s6.q":"«|a + b| és igual a |a| + |b|.»",
+"s6.h":"Prova 3 + 4 i després 3 + (−4).",
+"s6.e":"Només passa quan a i b tenen el mateix signe (o un d'ells és 0). Si els signes són diferents, una part es compensa: |3 + (−4)| = 1, però |3| + |−4| = 7.",
+"s6.cx":"✔ |{0} + {1}| = {2}, però |{0}| + |{4}| = {3}.",
+"e1.ctx":"Cal calcular <b>−3 − 5</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"−3 − 5 = 2, perquè menys per menys fa més.",
+"e1.s1":"−3 − 5 = −8.",
+"e1.w0":"Aquí no hi ha dos signes seguits: partim de −3 i restem 5, així que anem 5 unitats cap a l'esquerra. «Menys per menys» és una regla de multiplicar, no de restar un positiu.",
+"e1.w1":"Marta té raó perquè dos signes menys sempre fan un més.",
+"e1.w2":"Pau té raó perquè el resultat sempre porta el signe del primer nombre.",
+"e1.frame":"Marta, t'has equivocat perquè…",
+"e1.model":"Marta, en −3 − 5 el 5 és positiu i el signe − és el de restar: partim de −3 i retrocedim 5 passos, fins al −8. La regla «menys per menys» només s'usa quan hi ha un negatiu darrere del signe de restar, com en 4 − (−5).",
+"e2.ctx":"Cal calcular <b>4 − (−6)</b>.",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"4 − (−6) = −2: resto 6 i baixe fins al −2.",
+"e2.s1":"4 − (−6) = 10.",
+"e2.w0":"Restar un negatiu és sumar-ne l'oposat: 4 − (−6) = 4 + 6 = 10. Àlex ha restat 6 en compte de restar −6.",
+"e2.w1":"Àlex té raó perquè restar sempre fa el resultat més xicotet.",
+"e2.w2":"Laia té raó perquè 6 és major que 4.",
+"e2.frame":"Àlex, t'has equivocat perquè…",
+"e2.model":"Àlex, el que restem és −6, no 6. Restar l'oposat d'un nombre és sumar-lo: 4 − (−6) = 4 + 6 = 10. En la recta, en compte de retrocedir 6, avancem 6 cap a la dreta.",
+"e3.ctx":"Cal calcular <b>−5 + 8</b>.",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"−5 + 8 = −13.",
+"e3.s1":"−5 + 8 = 13.",
+"e3.w0":"El resultat és 3: partim de −5 i avancem 8 cap a la dreta; en 5 passos arribem al 0 i encara en queden 3.",
+"e3.w1":"Cap té raó perquè −5 + 8 no es pot calcular amb nombres de signes diferents.",
+"e3.w2":"Cap té raó perquè el resultat és −3.",
+"e3.frame":"Rita i Joan, el resultat és 3 perquè…",
+"e3.model":"Rita i Joan, partim de −5 i avancem 8: 5 passos ens porten al 0 i en queden 3, així que −5 + 8 = 3. Rita ha sumat els valors absoluts i ha posat el signe del primer; Joan els ha sumat sense mirar els signes. Si els signes són diferents, els valors es compensen: es resta.",
+"d1.q":"A les 6 del matí fa <b>−4 °C</b>. A migdia ha pujat 9 graus i a la vesprada ha baixat 11 graus. Quina temperatura fa a la vesprada?",
+"d1.l0":"Temperatura",
+"d1_2":"Això seria si haguérem partit de 0: has oblidat els −4 °C del matí.",
+"d1_f":"No quadra. Parteix de −4, puja 9 (a quin nombre arribes?) i després baixa 11.",
+"d1.more":"Escriu l'operació sencera amb signes. Quantes maneres hi ha d'escriure «ha baixat 11 graus»?",
+"d2.q":"El saldo del teu compte és de <b>−15 €</b>. Hi ingresses 40 € i et passen un rebut de 28 €. Quin saldo tens ara?",
+"d2.l0":"Saldo",
+"d2_pos":"El saldo no és positiu: amb l'ingrés no n'hi ha prou per a pagar el rebut. Torna-ho a mirar en la recta.",
+"d2_all":"L'ingrés suma i el rebut resta: cap dels dos s'ha de tractar com a deute inicial.",
+"d2_f":"No quadra. Parteix de −15, suma l'ingrés (40) i resta el rebut (28).",
+"d2.more":"Si l'ingrés haguera sigut de 50 €, quin saldo tindries? Com canvia el recorregut en la recta?",
+"d3.q":"La temperatura baixa <b>3 graus cada hora</b> durant 5 hores. Quina variació de temperatura hi ha en total?",
+"d3.l0":"Variació",
+"d3_pos":"Ha baixat, així que la variació ha de ser negativa.",
+"d3_sum":"Has sumat en compte de repetir: són 5 salts de −3.",
+"d3_f":"No quadra. Són 5 salts, cadascun de −3.",
+"d3.more":"Escriu-ho com a multiplicació de dos enters. Quin signe té el resultat quan un factor és negatiu i l'altre positiu?",
+"r1.q":"Quant val −4 + 7?",
+"r1.o0":"3","r1.o1":"−3","r1.o2":"11","r1.o3":"−11",
+"r1.e":"Partim de −4 i avancem 7 cap a la dreta: 4 passos fins al 0 i en queden 3, per tant val 3.",
+"r2.q":"Quant val 5 − (−3)?",
+"r2.e":"Restar −3 és sumar-ne l'oposat, 3: 5 + 3 = 8.",
+"r3.q":"Quina d'aquestes operacions <b>no</b> dona −2?",
+"r3.o0":"−5 + 3","r3.o1":"1 − 3","r3.o2":"−6 − (−4)","r3.o3":"−2 − (−4)",
+"r3.e":"−2 − (−4) = −2 + 4 = 2. Les altres tres donen −2.",
+"r4.q":"Restar −6 equival a…",
+"r4.o0":"sumar 6","r4.o1":"restar 6","r4.o2":"sumar −6","r4.o3":"multiplicar per −6",
+"r4.e":"Restar un nombre és sumar-ne l'oposat, i l'oposat de −6 és 6.",
+"r5.q":"Quant val (−3)·(−4)?",
+"r5.o0":"12","r5.o1":"−12","r5.o2":"7","r5.o3":"−7",
+"r5.e":"Dos factors negatius donen un producte positiu: 3·4 = 12.",
+"r6.q":"Quant val −3 + 8 − 10 − (−2) − (−9)?",
+"r6.e":"−3 + 8 = 5; 5 − 10 = −5; −5 − (−2) = −3; −3 − (−9) = 6.",
+"r7.q":"Un submarí és a −45 m. Puja 18 m i després baixa 30 m. A quina cota queda?",
+"r7.o0":"−57 m","r7.o1":"−27 m","r7.o2":"−93 m","r7.o3":"3 m",
+"r7.e":"−45 + 18 = −27 i després −27 − 30 = −57 m."
+},
+es:{
+"title":"Enteros en la recta numérica",
+"eyebrow":"Matemáticas · 1.º ESO · Números enteros",
+"h1":"Enteros en la recta: sumar, restar y multiplicar",
+"lede":"Mira cada operación como un recorrido sobre la recta numérica y comprueba por qué restar un negativo hace subir.",
+"sim_title":"La recta de los enteros",
+"story":"Escribe una operación con números enteros y mírala sobre la recta, <b>paso a paso</b>. Puedes verla de dos maneras: <b>sumando el opuesto</b> (restar es sumar el opuesto) o con <b>el muñeco</b> que se gira y camina. Antes de empezar, piensa cuánto dará.",
+"presets":"Ejemplos:",
+"expr_l":"Operación",
+"apply":"Representa",
+"hint":"Puedes escribir - o −, y * o · para el producto. Si un negativo va detrás de un signo, entre paréntesis: 5 − (−3), 2·(−4), −(−6).",
+"guess_q":"Tu predicción: ¿cuánto vale?",
+"check_guess":"Comprobar",
+"aria.model":"Modelo",
+"mo_m1":"Sumar el opuesto","mo_m2":"El muñeco","mo_cmp":"Compararlos",
+"aria.first":"Volver al inicio",
+"b_prev":"◀ Anterior","b_next":"Siguiente ▶","b_play":"▶▶ Todo seguido","b_pause":"⏸ Pausa",
+"step_of":"Paso {0} de {1}",
+"svg_aria":"Recta numérica con la operación {0}",
+"T_m1":"Modelo 1 · Restar es sumar el opuesto",
+"T_m2":"Modelo 2 · El muñeco que mira y camina",
+"R_m1":"Restar es sumar el opuesto · sumar un positivo → hacia la derecha · sumar un negativo → hacia la izquierda · a·b → |a| saltos de b (de −b si a es negativo)",
+"R_m2":"Signo de la operación: + mira a la derecha, − se gira · número positivo: camina hacia delante; negativo: hacia atrás · a·b: lo hace |a| veces y, si a es negativo, se vuelve a girar",
+"idea_basic":"<b>La idea:</b> sumar un número es moverse hacia la derecha si es positivo y hacia la izquierda si es negativo. Restar es sumar el opuesto: por eso <b>4 − (−3) = 4 + 3</b>. Ningún «truco» de signos: solo direcciones.",
+"idea_adv":"<b>¿Por qué «menos por menos, más»?</b> Multiplicar por −1 es darse media vuelta. En el muñeco, cada signo − es un giro, y un número negativo te hace caminar de espaldas. Si te giras <i>y</i> vas de espaldas, acabas avanzando: −(−3) = +3. Los giros se compensan de dos en dos.",
+"err_empty":"Escribe una operación.",
+"err_char":"Carácter no válido: «{0}»",
+"err_final":"Falta un número al final.",
+"err_par_in":"Dentro de un paréntesis tiene que ir un número con su signo: (−3), (+5)…",
+"err_par_close":"Falta cerrar un paréntesis.",
+"err_par_extra":"Sobra un paréntesis.",
+"err_mul_first":"Falta un número antes del signo de multiplicar.",
+"err_dos":"Hay dos signos seguidos: pon el número entre paréntesis, por ejemplo 5 − (−3).",
+"err_after":"Después del signo tiene que ir un número.",
+"err_mul2":"Por ahora, solo productos de dos factores.",
+"err_sign_miss":"Falta un signo + o − entre dos números.",
+"err_par_sign":"Falta un signo antes del paréntesis.",
+"err_mul_pos":"El signo de multiplicar tiene que ir entre dos números.",
+"err_max8":"Demasiados términos: pon como mucho 8.",
+"err_digits":"Usamos números de como mucho dos cifras.",
+"err_jumps":"Demasiados saltos: el primer factor tiene que ser como mucho 12 (en valor absoluto).",
+"err_long":"El recorrido es demasiado largo para verlo bien en la recta. Prueba con números más pequeños.",
+"w_unit1":"unidad","w_unitn":"unidades","w_salt1":"salto","w_saltn":"saltos","w_pas1":"paso","w_pasn":"pasos","w_vez1":"vez","w_vezn":"veces",
+"dir_r":"la derecha","dir_l":"la izquierda","mv_fwd":"adelante","mv_back":"atrás",
+"e1_start_rw":"Partimos del 0. Primero convertimos las restas en sumas.",
+"e1_start":"Partimos del 0 y vamos sumando término a término.",
+"e1_rw":"Restar es sumar el opuesto: {0}.",
+"e_res":"Resultado: {0} = {1}",
+"e1_m_n0":"{0}: 0 saltos: no nos movemos.",
+"e1_m_b0":"{0}: saltos de 0: no nos movemos.",
+"e1_m_inv":"{0}: {1} {2} en sentido contrario al de {3}, es decir, saltos de {4}. De {5} a {6}.",
+"e1_m_dir":"{0}: {1} {2} de {3}. De {4} a {5}.",
+"e1_t_zero":"Sumamos 0: no nos movemos.",
+"e1_t_first":"Primer término, {0}: {1} {2} hacia {3}. De {4} a {5}.",
+"e1_t_add":"Sumamos {0}: {1} {2} hacia {3}. De {4} a {5}.",
+"e2_start":"El muñeco empieza en el 0 mirando hacia la derecha (el sentido positivo).",
+"e2_rw":"El muñeco no necesita reescribir nada: lee los signos tal como están.",
+"e2_look0":"Mira a la derecha",
+"e2_lookp":"Signo +: mira a la derecha",
+"e2_lookm":"Signo −: se gira y mira a la izquierda",
+"e2_turn":"el factor {0} es negativo: se vuelve a girar, ahora mira a {1}",
+"e2_still":"{0}: no camina",
+"e2_walk":"{0}: camina {1} {2} hacia {3}",
+"e2_times":", {0} {1}",
+"e2_nomove":"No se mueve.",
+"e2_move":"⇒ se desplaza hacia {0}: de {1} a {2}.",
+"lk_look":"mira {0}","lk_quiet":"quieto","lk_fwd":"adelante","lk_back":"atrás",
+"g_ok":"✔ ¡Acertaste! {0} = {1}. Míralo paso a paso para ver por qué.",
+"g_ko":"✘ No es {0}. Míralo paso a paso y vuelve a probar.",
+"g_sign":"✘ El valor absoluto ({0}) está bien, pero revisa el signo.",
+"g_bad":"Escribe un número entero (por ejemplo −3 o 5).",
+"p_eyebrow":"Práctica",
+"p_title":"Marca el resultado en la recta",
+"p_intro":"Genera ejercicios y toca la recta donde creas que está el resultado. Si te atascas, míralo paso a paso.",
+"p_type":"Tipo","p_t_mix":"Mezcla","p_t_dos":"Sumas y restas de dos","p_t_div":"Varios términos","p_t_opo":"Opuestos y paréntesis","p_t_mul":"Multiplicación",
+"p_lvl":"Nivel","p_l10":"Hasta 10","p_l20":"Hasta 20",
+"p_new":"Ejercicio nuevo",
+"p_score":"Aciertos a la primera: {0} / {1} · Racha: {2}",
+"p_hint":"Toca la recta donde creas que está el resultado.",
+"p_ans":"Respuesta: {0}",
+"p_sol":"Verlo paso a paso",
+"p_back":"↩ Volver al ejercicio",
+"p_mark":"Marca primero un punto en la recta.",
+"p_ok":"¡Correcto! {0} = {1}",
+"p_ko":"No: has marcado {0}. Vuelve a probar o míralo paso a paso.",
+"p_aria":"Recta numérica para responder",
+"rz_int":"Escribe números enteros (con el signo − si hace falta) de como mucho dos cifras.",
+"lbl_a":"a =","lbl_b":"b =",
+"cx_no":"Con a = {0} y b = {1} sí que se cumple la afirmación. Busca uno en el que no.",
+"m1.q":"Escribe dos enteros <b>a</b> y <b>b</b>, con <b>a positivo</b>, tales que <b>a + b = −4</b>.",
+"m1_a":"a tiene que ser positivo, y {0} no lo es.",
+"m_sum":"Con a = {0} y b = {1}, la suma es {2}, no −4.",
+"m1_ok":"✔ {0} + {1} = {2}.",
+"m1.more":"Hay muchas soluciones. Compara |a| y |b|: ¿cuál es mayor y cuánto? ¿Por qué?",
+"m2.q":"Escribe dos enteros <b>negativos</b> a y b tales que <b>a − b = 5</b>.",
+"m2_neg":"Los dos tienen que ser negativos, y {0} no lo es.",
+"m_dif":"Con a = {0} y b = {1}, a − b = {2}, no 5.",
+"m2_ok":"✔ {0} − {1} = {2}.",
+"m2.more":"Cuando restas un negativo, ¿el resultado sube o baja respecto del punto de partida? ¿Cómo lo ves en la recta?",
+"m3.q":"Escribe dos enteros a y b tales que <b>a − b sea mayor que a</b>.",
+"m3_f":"Con a = {0} y b = {1}, a − b = {2}: no es mayor que {0}.",
+"m3_ok":"✔ {0} − {1} = {2}, que es mayor que {0}.",
+"m3.more":"¿Qué signo tiene que tener b para que restar haga subir el resultado? ¿Por qué?",
+"m4.q":"Escribe dos enteros a y b, los dos con <b>valor absoluto mayor que 1</b>, tales que <b>a·b = −12</b>.",
+"m4_abs":"Ninguno de los dos puede ser 0, 1 ni −1.",
+"m_prod":"Con a = {0} y b = {1}, a·b = {2}, no −12.",
+"m4_ok":"✔ {0}·{1} = {2}.",
+"m4.more":"¿Qué signos pueden tener a y b? ¿Se podría conseguir con dos negativos? ¿Por qué?",
+"s1.q":"«Si sumas un entero negativo a un número, el resultado es menor que el de partida.»",
+"s1.h":"Prueba 5 + (−3) y 0 + (−4): ¿hacia dónde te mueves?",
+"s1.e":"Sumar un negativo es avanzar hacia la izquierda, así que acabas siempre más a la izquierda (más abajo) que de donde partías.",
+"s2.q":"«Restar un entero hace que el resultado sea siempre menor.»",
+"s2.h":"Prueba 5 − 3 y después 5 − (−3). ¿Pasa lo mismo?",
+"s2.e":"Restar un positivo hace bajar, pero restar un negativo (o 0) no: 5 − (−3) = 8, que es mayor que 5.",
+"s2.cx":"✔ {0} − {1} = {2}: no es menor que {0}.",
+"s3.q":"«La suma de dos enteros negativos es un entero positivo.»",
+"s3.h":"Prueba −3 + (−4): ¿hacia dónde te mueves desde el −3?",
+"s3.e":"Desde un número negativo, sumar otro negativo te lleva todavía más a la izquierda: la suma de dos negativos siempre es negativa.",
+"s4.q":"«El producto de dos enteros es siempre mayor que cada uno de los factores.»",
+"s4.h":"Prueba 3·4, pero también (−3)·4 y 1·5.",
+"s4.e":"Con dos positivos mayores que 1 sí (3·4 = 12), pero con un factor negativo el producto baja ((−3)·4 = −12) y con el 1 no cambia (1·5 = 5).",
+"s4.cx":"✔ {0}·{1} = {2}: no es mayor que los dos factores.",
+"s5.q":"«Las restas a − b y b − a dan enteros opuestos.»",
+"s5.h":"Prueba 7 − 3 y 3 − 7.",
+"s5.e":"a − b = −(b − a): si cambias el orden, el resultado cambia de signo pero no de valor (7 − 3 = 4 y 3 − 7 = −4).",
+"s6.q":"«|a + b| es igual a |a| + |b|.»",
+"s6.h":"Prueba 3 + 4 y después 3 + (−4).",
+"s6.e":"Solo pasa cuando a y b tienen el mismo signo (o uno de ellos es 0). Si los signos son distintos, una parte se compensa: |3 + (−4)| = 1, pero |3| + |−4| = 7.",
+"s6.cx":"✔ |{0} + {1}| = {2}, pero |{0}| + |{4}| = {3}.",
+"e1.ctx":"Hay que calcular <b>−3 − 5</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"−3 − 5 = 2, porque menos por menos es más.",
+"e1.s1":"−3 − 5 = −8.",
+"e1.w0":"Aquí no hay dos signos seguidos: partimos de −3 y restamos 5, así que vamos 5 unidades hacia la izquierda. «Menos por menos» es una regla de multiplicar, no de restar un positivo.",
+"e1.w1":"Marta tiene razón porque dos signos menos siempre hacen un más.",
+"e1.w2":"Pau tiene razón porque el resultado siempre lleva el signo del primer número.",
+"e1.frame":"Marta, te has equivocado porque…",
+"e1.model":"Marta, en −3 − 5 el 5 es positivo y el signo − es el de restar: partimos de −3 y retrocedemos 5 pasos, hasta el −8. La regla «menos por menos» solo se usa cuando hay un negativo detrás del signo de restar, como en 4 − (−5).",
+"e2.ctx":"Hay que calcular <b>4 − (−6)</b>.",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"4 − (−6) = −2: resto 6 y bajo hasta el −2.",
+"e2.s1":"4 − (−6) = 10.",
+"e2.w0":"Restar un negativo es sumar su opuesto: 4 − (−6) = 4 + 6 = 10. Álex ha restado 6 en lugar de restar −6.",
+"e2.w1":"Álex tiene razón porque restar siempre hace el resultado más pequeño.",
+"e2.w2":"Laia tiene razón porque 6 es mayor que 4.",
+"e2.frame":"Álex, te has equivocado porque…",
+"e2.model":"Álex, lo que restamos es −6, no 6. Restar el opuesto de un número es sumarlo: 4 − (−6) = 4 + 6 = 10. En la recta, en lugar de retroceder 6, avanzamos 6 hacia la derecha.",
+"e3.ctx":"Hay que calcular <b>−5 + 8</b>.",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"−5 + 8 = −13.",
+"e3.s1":"−5 + 8 = 13.",
+"e3.w0":"El resultado es 3: partimos de −5 y avanzamos 8 hacia la derecha; en 5 pasos llegamos al 0 y todavía quedan 3.",
+"e3.w1":"Ninguno tiene razón porque −5 + 8 no se puede calcular con números de signos distintos.",
+"e3.w2":"Ninguno tiene razón porque el resultado es −3.",
+"e3.frame":"Rita y Joan, el resultado es 3 porque…",
+"e3.model":"Rita y Joan, partimos de −5 y avanzamos 8: 5 pasos nos llevan al 0 y quedan 3, así que −5 + 8 = 3. Rita ha sumado los valores absolutos y ha puesto el signo del primero; Joan los ha sumado sin mirar los signos. Si los signos son distintos, los valores se compensan: se resta.",
+"d1.q":"A las 6 de la mañana hay <b>−4 °C</b>. Al mediodía ha subido 9 grados y por la tarde ha bajado 11 grados. ¿Qué temperatura hay por la tarde?",
+"d1.l0":"Temperatura",
+"d1_2":"Eso sería si hubiéramos partido de 0: has olvidado los −4 °C de la mañana.",
+"d1_f":"No cuadra. Parte de −4, sube 9 (¿a qué número llegas?) y después baja 11.",
+"d1.more":"Escribe la operación entera con signos. ¿Cuántas maneras hay de escribir «ha bajado 11 grados»?",
+"d2.q":"El saldo de tu cuenta es de <b>−15 €</b>. Ingresas 40 € y te pasan un recibo de 28 €. ¿Qué saldo tienes ahora?",
+"d2.l0":"Saldo",
+"d2_pos":"El saldo no es positivo: con el ingreso no basta para pagar el recibo. Vuelve a mirarlo en la recta.",
+"d2_all":"El ingreso suma y el recibo resta: ninguno de los dos se tiene que tratar como deuda inicial.",
+"d2_f":"No cuadra. Parte de −15, suma el ingreso (40) y resta el recibo (28).",
+"d2.more":"Si el ingreso hubiera sido de 50 €, ¿qué saldo tendrías? ¿Cómo cambia el recorrido en la recta?",
+"d3.q":"La temperatura baja <b>3 grados cada hora</b> durante 5 horas. ¿Qué variación de temperatura hay en total?",
+"d3.l0":"Variación",
+"d3_pos":"Ha bajado, así que la variación tiene que ser negativa.",
+"d3_sum":"Has sumado en lugar de repetir: son 5 saltos de −3.",
+"d3_f":"No cuadra. Son 5 saltos, cada uno de −3.",
+"d3.more":"Escríbelo como multiplicación de dos enteros. ¿Qué signo tiene el resultado cuando un factor es negativo y el otro positivo?",
+"r1.q":"¿Cuánto vale −4 + 7?",
+"r1.o0":"3","r1.o1":"−3","r1.o2":"11","r1.o3":"−11",
+"r1.e":"Partimos de −4 y avanzamos 7 hacia la derecha: 4 pasos hasta el 0 y quedan 3, por tanto vale 3.",
+"r2.q":"¿Cuánto vale 5 − (−3)?",
+"r2.e":"Restar −3 es sumar su opuesto, 3: 5 + 3 = 8.",
+"r3.q":"¿Cuál de estas operaciones <b>no</b> da −2?",
+"r3.o0":"−5 + 3","r3.o1":"1 − 3","r3.o2":"−6 − (−4)","r3.o3":"−2 − (−4)",
+"r3.e":"−2 − (−4) = −2 + 4 = 2. Las otras tres dan −2.",
+"r4.q":"Restar −6 equivale a…",
+"r4.o0":"sumar 6","r4.o1":"restar 6","r4.o2":"sumar −6","r4.o3":"multiplicar por −6",
+"r4.e":"Restar un número es sumar su opuesto, y el opuesto de −6 es 6.",
+"r5.q":"¿Cuánto vale (−3)·(−4)?",
+"r5.o0":"12","r5.o1":"−12","r5.o2":"7","r5.o3":"−7",
+"r5.e":"Dos factores negativos dan un producto positivo: 3·4 = 12.",
+"r6.q":"¿Cuánto vale −3 + 8 − 10 − (−2) − (−9)?",
+"r6.e":"−3 + 8 = 5; 5 − 10 = −5; −5 − (−2) = −3; −3 − (−9) = 6.",
+"r7.q":"Un submarino está a −45 m. Sube 18 m y después baja 30 m. ¿A qué cota queda?",
+"r7.o0":"−57 m","r7.o1":"−27 m","r7.o2":"−93 m","r7.o3":"3 m",
+"r7.e":"−45 + 18 = −27 y después −27 − 30 = −57 m."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../enters-recta-numerica/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* ===== Enters en la recta numèrica ===== */
+const MN='−';
+const num=v=>v<0?MN+Math.abs(v):String(v);
+const sgn=v=>v>0?1:v<0?-1:0;
+const fS=v=>v>0?'+'+v:v<0?MN+(-v):'0';
+const sp=v=>'('+fS(v)+')';
+const r1=v=>Math.round(v*10)/10;
+const pl=(n,k)=>t(k+(n===1?'1':'n'));
+let _P=null;
+const P=()=>_P||(_P={pos:css('--pa'),neg:css('--pb'),ok:css('--ok'),ink:css('--ink'),mut:css('--muted'),stage:css('--stage'),warn:css('--warn')});
+const PE=(k,...p)=>{const e=new Error(k);e.k=k;e.p=p;return e;};
+const errText=e=>tt(e.k,...(e.p||[]));
+
+/* ----- analitzador ----- */
+function tokenize(s){
+  const tk=[];let i=0;
+  while(i<s.length){
+    const c=s[i];
+    if(/\d/.test(c)){let j=i;while(j<s.length&&/\d/.test(s[j]))j++;tk.push({k:'n',v:parseInt(s.slice(i,j),10)});i=j;}
+    else if('+-*()'.includes(c)){tk.push({k:c});i++;}
+    else throw PE('err_char',c);
+  }
+  return tk;
+}
+function fmtF(f){
+  if(f.paren) return '('+(f.v<0?MN:(f.shown?'+':''))+Math.abs(f.v)+')';
+  return (f.shown&&f.v>0?'+':'')+num(f.v);
+}
+function parse(str){
+  const s=String(str).replace(/[−–—]/g,'-').replace(/[·×⋅*xX]/g,'*').replace(/\s+/g,'');
+  if(!s) throw PE('err_empty');
+  const tk=tokenize(s);let p=0;
+  const peek=(k=0)=>tk[p+k], next=()=>tk[p++];
+  const isS=x=>x&&(x.k==='+'||x.k==='-');
+  function factor(){
+    const a=peek();
+    if(!a) throw PE('err_final');
+    if(a.k==='n'){next();return {v:a.v,paren:false,shown:false};}
+    if(a.k==='('){
+      next();let sg=1,shown=false;
+      if(isS(peek())){shown=true;sg=next().k==='-'?-1:1;}
+      const n=next();
+      if(!n||n.k!=='n') throw PE('err_par_in');
+      const c=next();
+      if(!c||c.k!==')') throw PE('err_par_close');
+      return {v:sg*n.v,paren:true,shown};
+    }
+    if(isS(a)) throw PE('err_dos');
+    if(a.k===')') throw PE('err_par_extra');
+    throw PE('err_mul_first');
+  }
+  function rest(tm){
+    if(peek()&&peek().k==='*'){
+      next();tm.f2=factor();
+      if(peek()&&peek().k==='*') throw PE('err_mul2');
+    }
+    return tm;
+  }
+  const terms=[];const a=peek();
+  if(isS(a)){
+    const b=peek(1);
+    if(b&&b.k==='n'){next();next();terms.push(rest({op:1,opShown:false,f1:{v:(a.k==='-'?-1:1)*b.v,paren:false,shown:true},f2:null}));}
+    else if(b&&b.k==='('){next();terms.push(rest({op:a.k==='-'?-1:1,opShown:true,f1:factor(),f2:null}));}
+    else if(isS(b)) throw PE('err_dos');
+    else throw PE('err_after');
+  } else terms.push(rest({op:1,opShown:false,f1:factor(),f2:null}));
+  while(p<tk.length){
+    const o=next();
+    if(!isS(o)) throw PE(o.k===')'?'err_par_extra':o.k==='('?'err_par_sign':o.k==='*'?'err_mul_pos':'err_sign_miss');
+    if(isS(peek())) throw PE('err_dos');
+    terms.push(rest({op:o.k==='-'?-1:1,opShown:true,f1:factor(),f2:null}));
+  }
+  if(terms.length>8) throw PE('err_max8');
+  return terms;
+}
+function body(tm){return tm.f2?fmtF(tm.f1)+'·'+fmtF(tm.f2):fmtF(tm.f1);}
+function tText(tm,i){
+  if(i===0) return (tm.opShown?(tm.op<0?MN:'+'):'')+body(tm);
+  return (tm.op<0?MN:'+')+' '+body(tm);
+}
+function rwBody(tm){const a=tm.op*tm.f1.v;return tm.f2?sp(a)+'·'+fmtF(tm.f2):sp(a);}
+function rwText(tm,i){if(!tm.changed) return tText(tm,i);return (i===0?'':'+ ')+rwBody(tm);}
+
+function build(str,md){
+  const terms=parse(str);
+  let pos=0;const Pt=[0];
+  terms.forEach((tm,i)=>{
+    if(Math.abs(tm.f1.v)>99||(tm.f2&&Math.abs(tm.f2.v)>99)) throw PE('err_digits');
+    if(tm.f2){
+      if(Math.abs(tm.f1.v)>12) throw PE('err_jumps');
+      tm.n=Math.abs(tm.f1.v);tm.s=tm.op*sgn(tm.f1.v)*tm.f2.v;tm.w=sgn(tm.f2.v);tm.dist=Math.abs(tm.f2.v);
+      tm.flips=(tm.op<0?1:0)+(tm.f1.v<0?1:0);
+    } else {
+      tm.n=1;tm.s=tm.op*tm.f1.v;tm.w=sgn(tm.f1.v);tm.dist=Math.abs(tm.f1.v);tm.flips=tm.op<0?1:0;
+    }
+    tm.f=tm.flips%2?-1:1;tm.prevF=i?terms[i-1].f:1;tm.changed=tm.op<0;
+    tm.text=tText(tm,i);tm.rw=rwText(tm,i);
+    tm.start=pos;for(let k=0;k<tm.n;k++){pos+=tm.s;Pt.push(pos);}tm.end=pos;
+    tm.tr=tm.prevF<0?300:0;tm.tf=420*tm.flips;
+    const u=tm.n*tm.dist;tm.tw=u===0?300:Math.min(3600,Math.max(600,u*170));tm.d2=tm.tr+tm.tf+tm.tw+60;
+    tm.d1=(tm.n===0||tm.s===0)?300:Math.min(3600,tm.n*(340+Math.abs(tm.s)*45));
+  });
+  let lo=Math.min(...Pt)-2,hi=Math.max(...Pt)+2;
+  if(hi-lo<14){const e=14-(hi-lo);lo-=Math.floor(e/2);hi+=Math.ceil(e/2);}
+  if(hi-lo>124) throw PE('err_long');
+  const needRw=md!=='m2'&&terms.some(tm=>tm.changed);
+  const steps=[{k:'start'}];let rwIdx=-1;
+  if(needRw){rwIdx=steps.length;steps.push({k:'rw'});}
+  const termStep=[];
+  terms.forEach((tm,i)=>{termStep.push(steps.length);steps.push({k:'term',i});});
+  steps.push({k:'res'});
+  return {str,terms,P:Pt,lo,hi,result:pos,needRw,rwIdx,steps,termStep,text:terms.map((tm,i)=>tText(tm,i)).join(' ')};
+}
+
+/* ----- generador d'exercicis ----- */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const nz=m=>{let v=0;while(v===0)v=rnd(-m,m);return v;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function gen(type,lv){
+  for(let tries=0;tries<400;tries++){
+    const Tp=type==='mix'?pick(['dos','div','opo','mul']):type;let e;
+    if(Tp==='dos'){
+      const a=nz(lv),b=rnd(1,lv);
+      e=pick([`${num(a)} + ${b}`,`${num(a)} ${MN} ${b}`,`${num(a)} + ${sp(-b)}`,`${num(a)} ${MN} ${sp(-b)}`,`${num(a)} ${MN} ${sp(b)}`]);
+    } else if(Tp==='div'){
+      const k=rnd(3,4);e=num(nz(lv));
+      for(let j=1;j<k;j++){const v=nz(Math.ceil(lv*0.7));e+=` ${pick(['+',MN])} `+(v>0&&Math.random()<0.45?String(v):sp(v));}
+    } else if(Tp==='opo'){
+      const a=nz(lv),v=nz(lv),w=nz(lv);
+      e=pick([`${MN}${sp(v)}`,`${MN}${sp(v)} + ${sp(w)}`,`${MN}${sp(v)} ${MN} ${sp(w)}`,`${num(a)} ${MN} ${sp(v)}`,`${num(a)} + ${sp(v)} ${MN} ${sp(w)}`,`+${sp(v)} ${MN} ${sp(w)}`]);
+    } else {
+      const a=(Math.random()<.5?-1:1)*rnd(2,lv<=10?3:5),b=nz(lv<=10?4:6),c=nz(lv);const fa=a<0?sp(a):String(a);
+      e=pick([`${fa}·${sp(b)}`,`${num(c)} + ${fa}·${sp(b)}`,`${num(c)} ${MN} ${fa}·${sp(b)}`]);
+    }
+    try{const d=build(e,'m1');if(d.P.every(v=>Math.abs(v)<=lv)) return e;}catch(err){if(!err.k)throw err;}
+  }
+  return `${MN}3 + 5`;
+}
+
+/* ----- dibuix (SVG) ----- */
+const clampW=w=>Math.max(380,Math.min(1000,Math.round(w||900)));
+function geo(o,w){
+  const R={lo:o.lo,hi:o.hi,W:clampW(w),m:46};
+  const ppu=(R.W-2*R.m)/(R.hi-R.lo);R.ppu=ppu;
+  R.lab=[1,2,5,10].find(s=>ppu*s>=26)||10;
+  R.fs=(ppu*R.lab>=30&&R.W>=520)?17:14;return R;
+}
+const xOf=(R,v)=>R.m+(v-R.lo)*(R.W-2*R.m)/(R.hi-R.lo);
+function T(x,y,s,o){o=o||{};
+  return `<text x="${r1(x)}" y="${r1(y)}" text-anchor="${o.a||'middle'}" font-size="${o.fs||15}" font-weight="${o.w||400}" fill="${o.c||P().ink}" stroke="${P().stage}" stroke-width="${o.halo==null?4:o.halo}" paint-order="stroke" stroke-linejoin="round">${s}</text>`;}
+function head(x,y,dx,dy,col,sz,op){
+  const Ln=Math.hypot(dx,dy);if(Ln<0.01) return '';
+  const ux=dx/Ln,uy=dy/Ln,px=-uy,py=ux,bx=x-ux*sz,by=y-uy*sz,k=sz*0.55;
+  return `<path d="M${r1(x)} ${r1(y)} L${r1(bx+px*k)} ${r1(by+py*k)} L${r1(bx-px*k)} ${r1(by-py*k)}Z" fill="${col}" opacity="${op}"/>`;
+}
+function axis(R,y){
+  const {W,m}=R,ink=P().ink;
+  let s=`<line x1="${m-24}" y1="${y}" x2="${W-m+24}" y2="${y}" stroke="${ink}" stroke-width="2.5"/>`;
+  s+=`<path d="M${W-m+34} ${y} l-13 -7 v14z" fill="${ink}"/><path d="M${m-34} ${y} l13 -7 v14z" fill="${ink}"/>`;
+  for(let v=R.lo;v<=R.hi;v++){const x=r1(xOf(R,v)),big=v%5===0;
+    s+=`<line x1="${x}" y1="${y-(big?9:6)}" x2="${x}" y2="${y+(big?9:6)}" stroke="${ink}" stroke-width="${v===0?3:1.6}"/>`;}
+  return s;
+}
+function tickLabels(R,y,hl){
+  let s='';
+  for(let v=R.lo;v<=R.hi;v++){
+    if(v%R.lab!==0&&v!==0&&v!==hl) continue;
+    s+=T(xOf(R,v),y+30,num(v),{fs:R.fs,w:(v===0||v===hl)?700:400,c:v===hl?P().ok:P().ink});
+  }
+  return s;
+}
+
+/* Model 1: salts (sumar l'oposat) */
+function renderM1(svg,Dd,s,pg,w){
+  const R=geo(Dd,w),X=v=>xOf(R,v),Co=P();
+  const hh=tm=>Math.max(16,Math.min(105,Math.abs(tm.s)*R.ppu*0.42));
+  let up=24,dn=24;
+  Dd.terms.forEach(tm=>{if(tm.n&&tm.s){if(tm.s>0)up=Math.max(up,hh(tm));else dn=Math.max(dn,hh(tm));}});
+  const y=Math.round(up+44),H=Math.round(y+Math.max(56,dn+36));
+  const st=Dd.steps[s];
+  let arcs='',labs='',pos=0,ball=null;
+  Dd.terms.forEach((tm,i)=>{
+    const ts=Dd.termStep[i];if(ts>s) return;
+    const cur=ts===s,pr=cur?pg:1;
+    if(tm.n===0||tm.s===0){pos=tm.end;return;}
+    const h=hh(tm),dir=tm.s>0?-1:1,col=tm.s>0?Co.pos:Co.neg,tot=pr*tm.n;
+    for(let k=0;k<tm.n;k++){
+      const q=Math.max(0,Math.min(1,tot-k));if(q<=0) break;
+      const a=tm.start+k*tm.s,b=a+tm.s,x0=X(a),x2=X(b),x1=(x0+x2)/2,y1=y+dir*2*h;
+      const qx=(1-q)*x0+q*x1,qy=(1-q)*y+q*y1;
+      const ex=(1-q)*(1-q)*x0+2*(1-q)*q*x1+q*q*x2,ey=(1-q)*(1-q)*y+2*(1-q)*q*y1+q*q*y;
+      const op=cur?1:.55;
+      arcs+=`<path d="M${r1(x0)} ${y} Q${r1(qx)} ${r1(qy)} ${r1(ex)} ${r1(ey)}" fill="none" stroke="${col}" stroke-width="${cur?4:3}" opacity="${op}" stroke-linecap="round"/>`;
+      arcs+=head(ex,ey,ex-qx,ey-qy,col,cur?13:10,op);
+      if(q>=1&&(k===0||Math.abs(tm.s)*R.ppu>=36))
+        labs+=T(x1,dir<0?y-h-10:y+h+22,fS(tm.s),{fs:Math.abs(tm.s)*R.ppu<36?14:18,w:700,c:col});
+      if(q>=1) pos=b; else if(cur) ball=[ex,ey];
+    }
+    if(pr>=1) pos=tm.end;
+  });
+  const res=st.k==='res';
+  let mk='';
+  if(res) mk+=`<circle cx="${r1(X(Dd.result))}" cy="${y}" r="16" fill="none" stroke="${Co.ok}" stroke-width="3.5"/>`;
+  mk+=ball?`<circle cx="${r1(ball[0])}" cy="${r1(ball[1])}" r="7" fill="${Co.ink}" stroke="${Co.stage}" stroke-width="2.5"/>`
+          :`<circle cx="${r1(X(pos))}" cy="${y}" r="8" fill="${res?Co.ok:Co.ink}" stroke="${Co.stage}" stroke-width="2.5"/>`;
+  svg.setAttribute('viewBox',`0 0 ${R.W} ${H}`);
+  svg.innerHTML=axis(R,y)+arcs+tickLabels(R,y,res?Dd.result:null)+labs+mk;
+}
+
+/* Model 2: el ninot */
+function charSVG(x,y,sx,sw){
+  const lg=P().ink,body=P().pos;
+  return `<g transform="translate(${r1(x)} ${y})"><g transform="scale(${sx.toFixed(3)} 1)">
+<path d="M-14 -102 H9" stroke="${body}" stroke-width="3.5" stroke-linecap="round"/><path d="M17 -102 l-10 -6.5 v13z" fill="${body}"/>
+<line x1="-4" y1="-30" x2="${r1(-4+sw)}" y2="-3" stroke="${lg}" stroke-width="5" stroke-linecap="round"/>
+<line x1="4" y1="-30" x2="${r1(4-sw)}" y2="-3" stroke="${lg}" stroke-width="5" stroke-linecap="round"/>
+<ellipse cx="${r1(-1+sw)}" cy="-2" rx="6" ry="3" fill="${lg}"/><ellipse cx="${r1(7-sw)}" cy="-2" rx="6" ry="3" fill="${lg}"/>
+<rect x="-12" y="-63" width="24" height="36" rx="10" fill="${body}"/>
+<line x1="0" y1="-55" x2="${r1(7-sw*0.7)}" y2="-37" stroke="${body}" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<circle cx="0" cy="-78" r="14" fill="#f6d2ad" stroke="${lg}" stroke-width="2"/>
+<circle cx="6" cy="-80" r="2.6" fill="#2f3a52"/><path d="M13 -78 l6 3 l-6 2z" fill="#d9946a"/>
+<path d="M3 -71 q4 3 8 0" stroke="#2f3a52" stroke-width="1.8" fill="none"/>
+</g></g>`;
+}
+function renderM2(svg,Dd,s,pg,w){
+  const R=geo(Dd,w),X=v=>xOf(R,v),Co=P();
+  const y=122,rowH=36,H=y+60+Dd.terms.length*rowH,fsr=R.W<520?13:15;
+  let rows='',pos=0,sx=1,swing=0;
+  Dd.terms.forEach((tm,i)=>{
+    const ts=Dd.termStep[i];if(ts>s) return;
+    const cur=ts===s,ms=(cur?pg:1)*tm.d2,walkStart=tm.tr+tm.tf;
+    if(cur){
+      if(ms<tm.tr){sx=-Math.cos(Math.PI*ms/tm.tr);}
+      else if(ms-tm.tr<tm.tf){const tt2=ms-tm.tr,k=Math.floor(tt2/420),u=(tt2-k*420)/420;sx=(k%2?-1:1)*Math.cos(Math.PI*u);}
+      else sx=tm.f;
+    } else sx=tm.f;
+    const wq=cur?Math.max(0,Math.min(1,(ms-walkStart)/tm.tw)):1;
+    const p=tm.start+wq*tm.n*tm.s;pos=p;
+    if(cur&&wq>0&&wq<1) swing=9*Math.sin(wq*tm.n*tm.dist*Math.PI*2);
+    const yr=y+60+i*rowH,xs=X(tm.start),xe=X(p),xEnd=X(tm.end);
+    const md=sgn(tm.s),col=md>0?Co.pos:md<0?Co.neg:Co.mut;
+    let lab=tm.text;
+    if(!cur||ms>=walkStart){
+      const how=(tm.dist===0||tm.n===0)?t('lk_quiet'):tm.w>0?t('lk_fwd'):t('lk_back');
+      lab+='   '+tt('lk_look',tm.f>0?'→':'←')+' · '+how+(tm.f2?' · ×'+tm.n:'');
+    }
+    const lx=Math.max(R.m-30,Math.min(R.W-(R.W<520?230:300),Math.min(xs,xEnd)));
+    rows+=T(lx,yr,lab,{a:'start',fs:fsr,w:600,c:cur?Co.ink:Co.mut});
+    rows+=`<circle cx="${r1(xs)}" cy="${yr+12}" r="4" fill="${col}"/>`;
+    if(Math.abs(xe-xs)>1){
+      rows+=`<line x1="${r1(xs)}" y1="${yr+12}" x2="${r1(xe)}" y2="${yr+12}" stroke="${col}" stroke-width="${cur?4.5:3.5}" stroke-linecap="round" opacity="${cur?1:.65}"/>`;
+      rows+=head(xe+md*4,yr+12,md,0,col,12,cur?1:.65);
+      for(let k=1;k<tm.n;k++){const v=tm.start+k*tm.s;if((v-p)*md<=0){const xv=r1(X(v));rows+=`<line x1="${xv}" y1="${yr+4}" x2="${xv}" y2="${yr+20}" stroke="${col}" stroke-width="2.5"/>`;}}
+    }
+  });
+  const res=Dd.steps[s].k==='res';
+  const mk=res?`<circle cx="${r1(X(Dd.result))}" cy="${y}" r="16" fill="none" stroke="${Co.ok}" stroke-width="3.5"/>`:'';
+  svg.setAttribute('viewBox',`0 0 ${R.W} ${H}`);
+  svg.innerHTML=axis(R,y)+tickLabels(R,y,res?Dd.result:null)+rows+mk+charSVG(X(pos),y-4,sx,swing);
+}
+
+/* ----- explicacions ----- */
+const dirW=v=>t(v>0?'dir_r':'dir_l');
+function exp1(Dd,s){
+  const st=Dd.steps[s];
+  if(st.k==='start') return t(Dd.needRw?'e1_start_rw':'e1_start');
+  if(st.k==='rw') return tt('e1_rw',Dd.terms.filter(tm=>tm.changed).map(tm=>`${tm.text} → ${tm.rw}`).join(';   '));
+  if(st.k==='res') return tt('e_res',Dd.text,num(Dd.result));
+  const tm=Dd.terms[st.i],i=st.i;
+  if(tm.f2){
+    const a=tm.op*tm.f1.v,b=tm.f2.v,pre=tm.changed?rwBody(tm):body(tm);
+    if(tm.n===0) return tt('e1_m_n0',pre);
+    if(b===0) return tt('e1_m_b0',pre);
+    if(a<0) return tt('e1_m_inv',pre,tm.n,pl(tm.n,'w_salt'),sp(b),fS(tm.s),num(tm.start),num(tm.end));
+    return tt('e1_m_dir',pre,tm.n,pl(tm.n,'w_salt'),fS(tm.s),num(tm.start),num(tm.end));
+  }
+  if(tm.s===0) return t('e1_t_zero');
+  const u=Math.abs(tm.s);
+  return tt(i===0?'e1_t_first':'e1_t_add',i===0?fS(tm.s):sp(tm.s),u,pl(u,'w_unit'),dirW(tm.s),num(tm.start),num(tm.end));
+}
+function exp2(Dd,s){
+  const st=Dd.steps[s];
+  if(st.k==='start') return t('e2_start');
+  if(st.k==='rw') return t('e2_rw');
+  if(st.k==='res') return tt('e_res',Dd.text,num(Dd.result));
+  const tm=Dd.terms[st.i],i=st.i,parts=[];
+  if(i===0&&!tm.opShown) parts.push(t('e2_look0'));
+  else parts.push(t(tm.op>0?'e2_lookp':'e2_lookm'));
+  if(tm.f2&&tm.f1.v<0) parts.push(tt('e2_turn',fmtF(tm.f1),dirW(tm.f)));
+  const nb=tm.f2?tm.f2:tm.f1;
+  let wk=tm.dist===0?tt('e2_still',fmtF(nb)):tt('e2_walk',fmtF(nb),tm.dist,pl(tm.dist,'w_pas'),t(tm.w>0?'mv_fwd':'mv_back'));
+  if(tm.f2) wk+=tt('e2_times',tm.n,pl(tm.n,'w_vez'));
+  parts.push(wk);
+  const mv=tm.end===tm.start?t('e2_nomove'):tt('e2_move',dirW(tm.end-tm.start),num(tm.start),num(tm.end));
+  return parts.join('. ')+'. '+mv;
+}
+
+/* ----- controlador de la demostració ----- */
+const TITLES={m1:'T_m1',m2:'T_m2'},RULES={m1:'R_m1',m2:'R_m2'};
+let D=null,si=0,raf=0,playing=false,playTimer=0,mode='m1',msgFn=null;
+function setMsg(cls,html){const m=$('#msg');m.className='msg'+(cls?' '+cls:'');m.textContent=html;}
+function panelW(){return $('#panels').clientWidth||600;}
+function setPanels(){
+  const ps=$('#panels'),ex=$('#exps');ps.innerHTML='';ex.innerHTML='';
+  const ks=mode==='cmp'?['m1','m2']:[mode];
+  ks.forEach(k=>{
+    const sec=document.createElement('section');sec.className='pnl';sec.dataset.k=k;
+    sec.innerHTML=(ks.length>1?'<h3>'+t(TITLES[k])+'</h3>':'')+'<svg xmlns="http://www.w3.org/2000/svg" role="img"></svg>';
+    ps.appendChild(sec);
+    const mx=document.createElement('div');mx.className='mx';mx.dataset.k=k;
+    mx.innerHTML='<h3>'+t(TITLES[k])+'</h3><p class="rule">'+t(RULES[k])+'</p><p class="exp"></p>';
+    ex.appendChild(mx);
+  });
+}
+function stepDur(){
+  const st=D.steps[si];if(st.k!=='term') return 0;const tm=D.terms[st.i];
+  return mode==='m1'?tm.d1:mode==='m2'?tm.d2:Math.max(tm.d1,tm.d2);
+}
+function draw(pg){
+  const st=D.steps[si],tm=st.k==='term'?D.terms[st.i]:null,dur=stepDur(),w=panelW();
+  $$('#panels .pnl').forEach(p=>{
+    const k=p.dataset.k,svg=p.querySelector('svg');
+    const pm=tm?Math.min(1,pg*dur/(k==='m1'?tm.d1:tm.d2)):1;
+    svg.setAttribute('aria-label',tt('svg_aria',D.text));
+    if(k==='m1') renderM1(svg,D,si,pm,w); else renderM2(svg,D,si,pm,w);
+  });
+}
+function exprHTML(){
+  const st=D.steps[si],cur=st.k==='term'?st.i:-1;
+  let h='<div>'+D.terms.map((tm,i)=>`<span class="tm${i===cur?' cur':''}">${tm.text}</span>`).join(' ')+'</div>';
+  if(D.needRw&&si>=D.rwIdx) h+='<div class="l2">= '+D.terms.map((tm,i)=>`<span class="tm${tm.changed?' chg':''}${i===cur?' cur':''}">${tm.rw}</span>`).join(' ')+'</div>';
+  if(st.k==='res') h+=`<div class="res">= ${num(D.result)}</div>`;
+  return h;
+}
+function texts(){
+  $('#expr').innerHTML=exprHTML();
+  $$('#exps .mx').forEach(p=>{p.querySelector('.exp').textContent=p.dataset.k==='m1'?exp1(D,si):exp2(D,si);});
+  $('#cnt').textContent=tt('step_of',si+1,D.steps.length);
+  $('#bPrev').disabled=si===0;$('#bFirst').disabled=si===0;$('#bNext').disabled=si===D.steps.length-1;
+}
+function go(n,anim,done){
+  cancelAnimationFrame(raf);
+  si=Math.max(0,Math.min(D.steps.length-1,n));texts();
+  const dur=stepDur();
+  if(anim&&dur>0&&!REDUCE){
+    const t0=performance.now();
+    const tick=now=>{const p=Math.min(1,(now-t0)/dur);draw(p);if(p<1) raf=requestAnimationFrame(tick);else if(done) done();};
+    raf=requestAnimationFrame(tick);
+  } else {draw(1);if(done) done();}
+}
+function stopPlay(){playing=false;clearTimeout(playTimer);$('#bPlay').textContent=t('b_play');}
+function playStep(){
+  if(!playing) return;
+  if(si>=D.steps.length-1){stopPlay();return;}
+  go(si+1,true,()=>{playTimer=setTimeout(playStep,D.steps[si].k==='rw'?1800:800);});
+}
+function load(str){
+  stopPlay();
+  let nd;
+  try{nd=build(str,mode);}
+  catch(e){if(!e.k) throw e;$('#err').textContent=errText(e);return false;}
+  $('#err').textContent='';D=nd;msgFn=null;setMsg('','');$('#guess').value='';
+  setPanels();go(0,false);return true;
+}
+function loadExpr(str){
+  $('#back').hidden=true;$('#inp').value=str;
+  RZ.show(load(str)?$('#panels'):$('#err'));
+}
+
+const EXAMPLES=['−3 + 5','4 − 7','−2 − 6','5 − (−3)','−4 + (−3)','−(−4)','−(+6) + 2','5 − 3 + (−8) + 2','3·(−2)','(−2)·(+3)','(−2)·(−3)','6 − 2·(−3)'];
+EXAMPLES.forEach(e=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=e;
+  b.onclick=()=>{$('#back').hidden=true;$('#inp').value=e;load(e);};$('#presets').appendChild(b);});
+$('#go').onclick=()=>{$('#back').hidden=true;load($('#inp').value);};
+$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter'){$('#back').hidden=true;load($('#inp').value);}});
+$$('#seg button').forEach(b=>b.onclick=()=>{
+  mode=b.dataset.m;$$('#seg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  load(D?D.str:$('#inp').value);
+});
+$('#bFirst').onclick=()=>{stopPlay();go(0,false);};
+$('#bPrev').onclick=()=>{stopPlay();go(si-1,false);};
+$('#bNext').onclick=()=>{stopPlay();go(si+1,true);};
+$('#bPlay').onclick=()=>{
+  if(playing){stopPlay();return;}
+  playing=true;$('#bPlay').textContent=t('b_pause');
+  if(si>=D.steps.length-1) go(0,false);
+  playTimer=setTimeout(playStep,300);
+};
+$('#simcard').addEventListener('keydown',e=>{
+  if(!D) return;
+  const tg=e.target.tagName;if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA') return;
+  if(e.key==='ArrowRight'){e.preventDefault();$('#bNext').click();}
+  else if(e.key==='ArrowLeft'){e.preventDefault();$('#bPrev').click();}
+  else if(e.key===' '&&tg!=='BUTTON'){e.preventDefault();$('#bPlay').click();}
+});
+/* predicció */
+function checkGuess(){
+  if(!D) return;
+  const raw=$('#guess').value.replace(/−/g,'-').replace(/\s/g,'');
+  if(!/^[+-]?\d+$/.test(raw)){msgFn=()=>setMsg('bad',tt('g_bad'));msgFn();return;}
+  const v=parseInt(raw,10);
+  if(v===D.result){stopPlay();msgFn=()=>setMsg('good',tt('g_ok',D.text,num(D.result)));go(D.steps.length-1,true);}
+  else if(v!==0&&v===-D.result) msgFn=()=>setMsg('bad',tt('g_sign',Math.abs(v)));
+  else msgFn=()=>setMsg('bad',tt('g_ko',num(v)));
+  msgFn();
+}
+$('#gcheck').onclick=checkGuess;
+$('#guess').addEventListener('keydown',e=>{if(e.key==='Enter')checkGuess();});
+
+/* ----- pràctica ----- */
+const PR={lv:10,D:null,ans:null,solved:false,first:true,counted:false,hits:0,tot:0,streak:0,fb:null};
+function pGeo(){return geo({lo:-PR.lv-2,hi:PR.lv+2},$('#pSvg').clientWidth||$('#prac').clientWidth);}
+function pDraw(){
+  if(!PR.D) return;
+  const R=pGeo(),Co=P(),y=78,H=128,svg=$('#pSvg');
+  let s=axis(R,y)+tickLabels(R,y,PR.solved?PR.D.result:null);
+  if(PR.ans!==null){
+    const x=xOf(R,PR.ans),col=PR.solved?Co.ok:Co.pos;
+    s+=`<path d="M${r1(x)} ${y-10} l-11 -19 h22z" fill="${col}"/><circle cx="${r1(x)}" cy="${y}" r="8" fill="${col}" stroke="${Co.stage}" stroke-width="2.5"/>`;
+    s+=T(x,y-36,num(PR.ans),{fs:20,w:700,c:col});
+  }
+  svg.setAttribute('viewBox',`0 0 ${R.W} ${H}`);svg.innerHTML=s;
+}
+function pTexts(){
+  $('#pAns').textContent=tt('p_ans',PR.ans===null?'—':num(PR.ans));
+  $('#pScore').textContent=tt('p_score',PR.hits,PR.tot,PR.streak);
+  const f=$('#pFb');
+  if(PR.fb){const r=PR.fb();f.className='msg '+r[0];f.textContent=r[1];}else{f.className='msg';f.textContent='';}
+}
+function pNew(){
+  PR.lv=+$('#pLvl').value;
+  PR.D=build(gen($('#pType').value,PR.lv),'m1');PR.ans=null;PR.solved=false;PR.first=true;PR.counted=false;PR.fb=null;
+  $('#pExpr').textContent=PR.D.text+' = ?';pTexts();pDraw();
+}
+function pSet(v){
+  if(PR.solved) return;const R=pGeo();
+  PR.ans=Math.max(R.lo,Math.min(R.hi,v));PR.fb=null;pTexts();pDraw();
+}
+$('#pSvg').addEventListener('click',e=>{
+  const R=pGeo(),r=e.currentTarget.getBoundingClientRect();
+  const xv=(e.clientX-r.left)/r.width*R.W;
+  pSet(Math.round(R.lo+(xv-R.m)/(R.W-2*R.m)*(R.hi-R.lo)));
+});
+$('#pMinus').onclick=()=>pSet((PR.ans===null?0:PR.ans)-1);
+$('#pPlus').onclick=()=>pSet((PR.ans===null?0:PR.ans)+1);
+$('#pNew').onclick=pNew;$('#pType').onchange=pNew;$('#pLvl').onchange=pNew;
+$('#pCheck').onclick=()=>{
+  if(PR.solved) return;
+  if(PR.ans===null){PR.fb=()=>['bad',t('p_mark')];pTexts();return;}
+  if(!PR.counted){PR.counted=true;PR.tot++;}
+  const mine=PR.ans;
+  if(mine===PR.D.result){
+    PR.solved=true;if(PR.first){PR.hits++;PR.streak++;}
+    PR.fb=()=>['good',tt('p_ok',PR.D.text,num(PR.D.result))];
+  } else {
+    PR.first=false;PR.streak=0;
+    PR.fb=()=>['bad',tt('p_ko',num(mine))];
+  }
+  pTexts();pDraw();
+};
+$('#pSol').onclick=()=>{
+  if(!PR.solved){if(!PR.counted){PR.counted=true;PR.tot++;}PR.first=false;PR.streak=0;pTexts();}
+  $('#inp').value=PR.D.text;
+  if(load(PR.D.text)){$('#back').hidden=false;RZ.show($('#simcard'));}
+};
+$('#back').onclick=()=>{$('#back').hidden=true;RZ.show($('#prac'));};
+
+/* ----- refresc general (idioma, nivell, tema, mida) ----- */
+function refreshAll(){
+  if(!D) load($('#inp').value); else {setPanels();go(si,false);if(msgFn) msgFn();}
+  if(!PR.D) pNew(); else {pTexts();pDraw();}
+}
+App.hooks.push(refreshAll);
+document.addEventListener('themechange',()=>{_P=null;if(D) go(si,false);pDraw();});
+let rzt=0;
+window.addEventListener('resize',()=>{clearTimeout(rzt);rzt=setTimeout(()=>{if(D&&!playing) go(si,false);pDraw();},150);});
+
+/* ===== Raona-ho ===== */
+const isInt=v=>Number.isInteger(v)&&Math.abs(v)<=99;
+const ints=f=>(v,r)=>v.every(isInt)?f(v,r):{k:'rz_int'};
+const pb=b=>b<0?sp(b):String(b);
+const exSum=(a,b)=>`${num(a)} + ${pb(b)}`;
+const exDif=(a,b)=>`${num(a)} ${MN} ${pb(b)}`;
+const exPro=(a,b)=>`${num(a)}·${pb(b)}`;
+/* els camps accepten el signe − (U+2212) i, en tauletes, teclat de text (el decimal no té el signe) */
+(()=>{
+  const box=$('#reason');
+  box.addEventListener('input',e=>{const i=e.target;if(i.matches&&i.matches('input[data-i]')&&i.value.indexOf(MN)>=0) i.value=i.value.replace(/−/g,'-');},true);
+  new MutationObserver(()=>{$$('input[data-i]',box).forEach(i=>{if(i.getAttribute('inputmode')!=='text') i.setAttribute('inputmode','text');});}).observe(box,{childList:true,subtree:true});
+})();
+RZ.init({
+ F:{a:{l:'lbl_a'},b:{l:'lbl_b'}},
+ M:[
+  {id:'m1',f:['a','b'],sim:([a,b])=>loadExpr(exSum(a,b)),
+   chk:ints(([a,b])=>a<=0?{k:'m1_a',p:[num(a)]}:a+b!==-4?{k:'m_sum',p:[num(a),num(b),num(a+b)]}:null),
+   ok:([a,b])=>({k:'m1_ok',p:[num(a),pb(b),num(a+b)]})},
+  {id:'m2',f:['a','b'],sim:([a,b])=>loadExpr(exDif(a,b)),
+   chk:ints(([a,b])=>a>=0?{k:'m2_neg',p:[num(a)]}:b>=0?{k:'m2_neg',p:[num(b)]}:a-b!==5?{k:'m_dif',p:[num(a),num(b),num(a-b)]}:null),
+   ok:([a,b])=>({k:'m2_ok',p:[num(a),pb(b),num(a-b)]})},
+  {id:'m3',f:['a','b'],sim:([a,b])=>loadExpr(exDif(a,b)),
+   chk:ints(([a,b])=>a-b>a?null:{k:'m3_f',p:[num(a),num(b),num(a-b)]}),
+   ok:([a,b])=>({k:'m3_ok',p:[num(a),pb(b),num(a-b)]})},
+  {id:'m4',f:['a','b'],sim:([a,b])=>loadExpr(exPro(a,b)),
+   chk:ints(([a,b])=>(Math.abs(a)<2||Math.abs(b)<2)?{k:'m4_abs'}:a*b!==-12?{k:'m_prod',p:[num(a),num(b),num(a*b)]}:null),
+   ok:([a,b])=>({k:'m4_ok',p:[num(a),pb(b),num(a*b)]})}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>loadExpr('5 + (−3)')},
+  {id:'s2',ans:'D',f:['a','b'],sim:()=>loadExpr('5 − (−3)'),cxsim:([a,b])=>loadExpr(exDif(a,b)),
+   cx:ints(([a,b])=>b<=0?null:{k:'cx_no',p:[num(a),num(b)]}),cxok:([a,b])=>({k:'s2.cx',p:[num(a),pb(b),num(a-b)]})},
+  {id:'s3',ans:'M',sim:()=>loadExpr('−3 + (−4)')},
+  {id:'s4',ans:'D',f:['a','b'],sim:()=>loadExpr('(−3)·4'),cxsim:([a,b])=>loadExpr(exPro(a,b)),
+   cx:ints(([a,b])=>(a*b>a&&a*b>b)?{k:'cx_no',p:[num(a),num(b)]}:null),cxok:([a,b])=>({k:'s4.cx',p:[num(a),pb(b),num(a*b)]})},
+  {id:'s5',ans:'S',sim:()=>loadExpr('7 − 3')},
+  {id:'s6',ans:'D',f:['a','b'],sim:()=>loadExpr('3 + (−4)'),cxsim:([a,b])=>loadExpr(exSum(a,b)),
+   cx:ints(([a,b])=>Math.abs(a+b)!==Math.abs(a)+Math.abs(b)?null:{k:'cx_no',p:[num(a),num(b)]}),cxok:([a,b])=>({k:'s6.cx',p:[num(a),pb(b),Math.abs(a+b),Math.abs(a)+Math.abs(b),Math.abs(b)]})}
+ ],
+ E:[
+  {id:'e1',who:1,args:['−3 − 5'],sim:v=>loadExpr(v[0])},
+  {id:'e2',who:1,args:['4 − (−6)'],sim:v=>loadExpr(v[0])},
+  {id:'e3',who:3,args:['−5 + 8'],sim:v=>loadExpr(v[0])}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'°C'}],sim:()=>loadExpr('−4 + 9 − 11'),
+   chk:ints(([x])=>x===-6?null:x===2?{k:'d1_2'}:{k:'d1_f'})},
+  {id:'d2',f:[{l:'d2.l0',u:'€'}],sim:()=>loadExpr('−15 + 40 − 28'),
+   chk:ints(([x])=>x===-3?null:x===3?{k:'d2_pos'}:x===-83?{k:'d2_all'}:{k:'d2_f'})},
+  {id:'d3',f:[{l:'d3.l0',u:'°C'}],sim:()=>loadExpr('5·(−3)'),
+   chk:ints(([x])=>x===-15?null:x===15?{k:'d3_pos'}:x===-8?{k:'d3_sum'}:{k:'d3_f'})}
+ ]
+});
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":8,"tol":0},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":3},{"id":"r4","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"basic","type":"mc","n":4,"ans":0},{"id":"r6","lvl":"adv","type":"num","num":6,"tol":0},{"id":"r7","lvl":"adv","type":"mc","n":4,"ans":0}];
+initQuiz(QDATA);
+initLang();applyLang();
+</script>
+</body>
+</html>

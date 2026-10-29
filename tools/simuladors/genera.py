@@ -4,7 +4,7 @@
 
 Les pàgines duen el text en tots dos idiomes dins d'un diccionari I18N (valencià i castellà) i
 el text de cada idioma s'escriu també en l'HTML estàtic perquè Google el indexe.
-Cal Playwright (per a llegir el diccionari). Ús:  python3 tools/simuladors/genera.py
+Cal Playwright (per a llegir el diccionari). Ús:  python3 tools/simuladors/genera.py [clau ...]   (sense arguments, tots; amb claus del MAP, només eixos)
 NO s'edita mai <slug>/index.html ni es/<slug>/index.html a mà: es canvia src/ i es torna a executar.
 Després cal mantindre sitemap.xml (ja té les 8 URLs) i, si cal, la targeta d'index.html.
 """
@@ -14,10 +14,13 @@ from playwright.sync_api import sync_playwright
 R=Path(__file__).resolve().parent
 OUT=R/'.build'; REPO=R.parent.parent
 BASE='https://ildemoralesmates.github.io'
-subprocess.run([sys.executable,str(R/'build.py')],check=True,cwd=R,stdout=subprocess.DEVNULL)
-MAP={'punnett':'genetica-punnett','atoms':'models-atomics','gasos':'lleis-gasos','seleccio':'seleccio-natural','richter':'escala-richter','ones':'ones-sismiques','decay':'desintegracio-radioactiva','isostasia':'isostasia','meiosi':'meiosi','osmosi':'osmosi-difusio','fotosintesi':'fotosintesi-respiracio','engranatges':'engranatges-mcm','rectangles':'mcd-rectangles','zoom':'zoom-recta-decimals','potencies':'potencies-escacs-paper','arrel':'arrel-quadrada-area','rebaixes':'rebaixes-encadenades','mistos':'patrons-mistos','meandres':'meandres','estratigrafia':'estratigrafia','temps-geologic':'temps-geologic-un-any','inclinat':'pla-inclinat','tir':'tir-parabolic','kepler':'lleis-kepler','muntanya':'muntanya-russa','mru':'mru-mrua','lorentz':'particula-camp-magnetic','acel':'acceleracio-tangencial-normal','lissajous':'figures-lissajous','fraccions':'fraccions-suma-resta','pitagores':'pitagores','thales':'thales','barres':'fraccions-barres','balanca':'equacions-balanca','erato':'eratostenes','trig':'trigonometria','segongrau':'equacions-segon-grau','rectes':'rectes-tarifes','tec-engr':'engranatges-politges','tec-mec':'mecanismes-moviment','tec-pal':'palanques','tec-circ':'circuit-serie-paral-lel','tec-sim':'simulador-circuits','tec-res':'codi-colors-resistencies','tec-rob':'robot-laberint','tec-vist':'vistes-diedriques','mapa':'puzle-mapa-espanya','xifres':'xifres-i-lletres'}
+ONLY=set(sys.argv[1:])  # opcional: només aquestes fonts (p. ex. genera.py enters)
+subprocess.run([sys.executable,str(R/'build.py')]+sorted(ONLY),check=True,cwd=R,stdout=subprocess.DEVNULL)
+MAP={'punnett':'genetica-punnett','atoms':'models-atomics','gasos':'lleis-gasos','seleccio':'seleccio-natural','richter':'escala-richter','ones':'ones-sismiques','decay':'desintegracio-radioactiva','isostasia':'isostasia','meiosi':'meiosi','osmosi':'osmosi-difusio','fotosintesi':'fotosintesi-respiracio','engranatges':'engranatges-mcm','rectangles':'mcd-rectangles','zoom':'zoom-recta-decimals','potencies':'potencies-escacs-paper','arrel':'arrel-quadrada-area','rebaixes':'rebaixes-encadenades','mistos':'patrons-mistos','meandres':'meandres','estratigrafia':'estratigrafia','temps-geologic':'temps-geologic-un-any','inclinat':'pla-inclinat','tir':'tir-parabolic','kepler':'lleis-kepler','muntanya':'muntanya-russa','mru':'mru-mrua','lorentz':'particula-camp-magnetic','acel':'acceleracio-tangencial-normal','lissajous':'figures-lissajous','fraccions':'fraccions-suma-resta','pitagores':'pitagores','thales':'thales','barres':'fraccions-barres','balanca':'equacions-balanca','erato':'eratostenes','trig':'trigonometria','segongrau':'equacions-segon-grau','rectes':'rectes-tarifes','tec-engr':'engranatges-politges','tec-mec':'mecanismes-moviment','tec-pal':'palanques','tec-circ':'circuit-serie-paral-lel','tec-sim':'simulador-circuits','tec-res':'codi-colors-resistencies','tec-rob':'robot-laberint','tec-vist':'vistes-diedriques','mapa':'puzle-mapa-espanya','xifres':'xifres-i-lletres','enters':'enters-recta-numerica'}
 DESC={'ca':{'gasos':"Simulador cinètic de gas ideal: lleis de Boyle–Mariotte, Charles i Gay-Lussac amb pressió mesurada a partir dels xocs, gràfiques i taula de mesures."},
- 'es':{ 'xifres':"Juego de clase «Cifras y letras»: prueba de letras y prueba de cifras con reloj, equipos, marcador y solución paso a paso. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.",
+ 'es':{
+ 'enters':"Enteros en la recta numérica: suma, resta y multiplica enteros paso a paso con dos modelos (sumar el opuesto y el muñeco que se gira y camina). Para 1.º de ESO, con predicción, práctica en la recta, actividades para razonar y test autocorregido.",
+ 'xifres':"Juego de clase «Cifras y letras»: prueba de letras y prueba de cifras con reloj, equipos, marcador y solución paso a paso. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.",
  'mapa':"Puzle interactivo del mapa de España: arrastra las comunidades autónomas o las 50 provincias (más Ceuta y Melilla) hasta su sitio, con piezas o con nombres, pistas y cronómetro. Con actividades para razonar: misiones, afirmaciones para desmontar y errores ajenos.",
  'tec-engr':'Engranajes, trenes compuestos, poleas con correa y los cambios de marcha de una bicicleta (subida, llano y bajada): cambia los dientes o los diámetros y mira cómo cambian la relación de transmisión, las rpm, el par y el sentido de giro. Para Tecnología de 2.º y 3.º de ESO, con predicción y test autocorregido.',
  'tec-mec':'Biela-manivela, leva y seguidor, piñón-cremallera y tornillo sin fin en movimiento: cambia las medidas y la velocidad y mira la gráfica del movimiento que se obtiene. Para Tecnología de 2.º y 3.º de ESO, con test autocorregido.',
@@ -84,6 +87,7 @@ def prerender(s,I,l):
 with sync_playwright() as p:
     b=p.chromium.launch(); pg=b.new_page()
     for key,slug in MAP.items():
+        if ONLY and key not in ONLY: continue
         f=OUT/f'{key}.html'; s0=f.read_text(encoding='utf-8')
         pg.goto('file://'+str(f)); I=pg.evaluate('I18N')
         for l in ('ca','es'):
