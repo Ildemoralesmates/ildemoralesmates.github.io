@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laplace y ley de los grandes números</title>
+<meta name="description" content="Laboratorio de Laplace y ley de los grandes números para 3.º de ESO: dado, moneda, dos dados y urna con bolas. Compara la frecuencia relativa con la probabilidad teórica. Con actividades para razonar y test autocorregido.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/laplace-grans-nombres/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/laplace-grans-nombres/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/laplace-grans-nombres/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/laplace-grans-nombres/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Laplace y ley de los grandes números">
+<meta property="og:description" content="Laboratorio de Laplace y ley de los grandes números para 3.º de ESO: dado, moneda, dos dados y urna con bolas. Compara la frecuencia relativa con la probabilidad teórica. Con actividades para razonar y test autocorregido.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/laplace-grans-nombres/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.ctrls{display:grid;gap:10px}
+.crow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.crow .ctl{min-width:11rem;flex:1 1 11rem;max-width:16rem}
+.crow label.lbl{font-size:13.5px;color:var(--muted)}
+.crow input[type=number]{font:inherit;font-size:14px;width:4.6em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.crow select{max-width:100%}
+.side dl{font-size:13.5px}
+.side .tw{max-height:9.5rem;overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:0 6px}
+.side .tbl{font-size:12.5px}
+.side .tbl tr.sel td{font-weight:700;color:var(--pa)}
+.side .note{line-height:1.4}
+.side .eq{font-family:var(--f-num);font-size:13px;word-break:break-word}
+.simcv canvas{cursor:pointer;border-radius:8px;border:1px solid var(--line)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 3.º ESO · Incertidumbre y probabilidad</p>
+      <h1 data-i18n="h1">Laplace y los grandes números: el azar a la larga</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <div class="seg" id="lvlsw" role="group" data-i18n-aria="aria.lvl" aria-label="Nivel de la página"><button type="button" data-level="basic" data-i18n="lvl_basic">Básico</button><button type="button" data-level="adv" data-i18n="lvl_adv">Avanzado</button></div>
+      <p class="lede" data-i18n="lede">Dado, moneda y urna para entender la regla de Laplace y ver cómo la frecuencia relativa se acerca a la probabilidad cuando repetimos muchas veces.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Tira, cuenta y compara</h2>
+<p data-i18n-html="story">Aquí el azar se puede tocar: <b>tira, extrae y cuenta</b>. Elige un experimento, cambia los parámetros y compara la frecuencia con lo que predice Laplace.</p>
+<div class="ctrls" data-mod="lln">
+<div class="chips" id="exl" role="group" data-i18n-aria="aria.ex" aria-label="Experimento">
+<button class="chip" type="button" data-ex="dau" aria-pressed="true" data-i18n="ex_dau">Dado</button>
+<button class="chip" type="button" data-ex="mon" aria-pressed="false" data-i18n="ex_mon">Moneda</button>
+<button class="chip" type="button" data-ex="sum" aria-pressed="false" data-i18n="ex_sum">Dos dados (suma)</button>
+<button class="chip" type="button" data-ex="urn" aria-pressed="false" data-i18n="ex_urn">Urna de bolas</button>
+</div>
+<div class="crow">
+<div class="ctl" id="c1n"><label for="s1n" data-i18n="l_n">Caras del dado</label><output id="s1n-o"></output><input type="range" id="s1n" min="2" max="20" step="1" value="6"></div>
+<div class="ctl" id="c1p"><label for="s1p" data-i18n="l_pc">Probabilidad de cara</label><output id="s1p-o"></output><input type="range" id="s1p" min="5" max="95" step="5" value="50"></div>
+<div class="ctl" id="c1r"><label for="s1r" data-i18n="l_r">Bolas rojas</label><output id="s1r-o"></output><input type="range" id="s1r" min="0" max="10" step="1" value="3"></div>
+<div class="ctl" id="c1b"><label for="s1b" data-i18n="l_b">Bolas azules</label><output id="s1b-o"></output><input type="range" id="s1b" min="0" max="10" step="1" value="2"></div>
+<div class="ctl" id="c1g"><label for="s1g" data-i18n="l_g">Bolas verdes</label><output id="s1g-o"></output><input type="range" id="s1g" min="0" max="10" step="1" value="1"></div>
+<span id="c1e"><label class="lbl" for="evsel" data-i18n="l_ev">Suceso a seguir</label> <select id="evsel"></select></span>
+</div>
+<div class="crow">
+<button class="btn primary" type="button" id="b1" data-i18n="b_1">1 tirada</button>
+<button class="btn" type="button" id="b10" data-i18n="b_10">×10</button>
+<button class="btn" type="button" id="b100" data-i18n="b_100">×100</button>
+<button class="btn" type="button" id="b1000" data-i18n="b_1000">×1000</button>
+<button class="btn" type="button" id="bauto" data-i18n="b_auto">▶ Automático</button>
+<div class="ctl" id="c1v"><label for="s1v" data-i18n="l_speed">Velocidad</label><output id="s1v-o"></output><input type="range" id="s1v" min="0" max="5" step="1" value="3"></div>
+<button class="btn" type="button" id="b1r" data-i18n="b_reset">Reinicia</button>
+</div>
+</div>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label="Dibujo del experimento"></canvas></div>
+<div class="side" id="side" aria-live="polite"></div>
+</div>
+<div class="idea" data-mod="lln" data-i18n-html="idea_lln"><b>La idea:</b> si todos los resultados son igual de probables, la regla de Laplace dice <b>P = casos favorables / casos posibles</b>. La ley de los grandes números añade que, repitiendo muchas veces, la <b>frecuencia relativa</b> se acerca a esa probabilidad. Con la moneda trucada no vale Laplace, pero la frecuencia también se estabiliza.</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+<section class="card quizc" data-i18n-aria="aria.quiz" aria-label="Test de autoevaluación"><h2><small data-i18n="quiz_eyebrow">Autoevaluación</small><span data-i18n="quiz_title">Ponte a prueba</span></h2><p class="score" id="score"></p><div id="quiz"></div><div><button class="btn" id="resetQuiz" type="button" data-i18n="reset_quiz">Reiniciar el test</button></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Laplace i llei dels grans nombres",
+"eyebrow":"Matemàtiques · 3r ESO · Incertesa i probabilitat",
+"h1":"Laplace i els grans nombres: l'atzar a la llarga",
+"lede":"Dau, moneda i urna per a entendre la regla de Laplace i veure com la freqüència relativa s'acosta a la probabilitat quan repetim moltes vegades.",
+"sim_title":"Tira, compta i compara",
+"story":"Ací l'atzar es pot tocar: <b>tira, extrau i compta</b>. Tria un experiment, canvia els paràmetres i compara la freqüència amb el que prediu Laplace.",
+"aria.ex":"Experiment",
+"aria.cv":"Dibuix de l'experiment",
+"ex_dau":"Dau",
+"ex_mon":"Moneda",
+"ex_sum":"Dos daus (suma)",
+"ex_urn":"Urna de boles",
+"l_n":"Cares del dau",
+"l_nd":"Cares de cada dau",
+"l_pc":"Probabilitat de cara",
+"l_r":"Boles roges",
+"l_b":"Boles blaves",
+"l_g":"Boles verdes",
+"l_ev":"Succés a seguir",
+"l_speed":"Velocitat",
+"b_1":"1 tirada",
+"b_10":"×10",
+"b_100":"×100",
+"b_1000":"×1000",
+"b_auto":"▶ Automàtic",
+"b_pause":"⏸ Pausa",
+"b_reset":"Reinicia",
+"hc0":"cara",
+"hc1":"creu",
+"hk0":"C",
+"hk1":"X",
+"c0":"roja",
+"c1":"blava",
+"c2":"verda",
+"ck0":"R",
+"ck1":"B",
+"ck2":"V",
+"m1_0":"Encara no has tirat. Prova «1 tirada» o «×100».",
+"m1_l":"Última tirada: {0}",
+"dt_n":"Repeticions",
+"dt_ev":"Succés seguit",
+"dt_p":"Probabilitat teòrica",
+"dt_fa":"Freqüència absoluta",
+"dt_fr":"Freqüència relativa",
+"dt_diff":"Diferència",
+"lap":"Laplace: casos favorables / casos possibles = {0} / {1} = {2}.",
+"lap_sum":"Els casos possibles són les {0} parelles de daus.",
+"lap_urn":"Cada bola és un cas.",
+"lap_no":"Ací els dos resultats no són igual de probables: no es pot aplicar Laplace. La probabilitat de cara és {0} %.",
+"th_r":"Resultat",
+"th_f":"f",
+"th_fr":"fr",
+"th_p":"p",
+"cv_bars":"Freqüència relativa (barres) i probabilitat teòrica (ratlla)",
+"cv_leg":"Clica una barra per a triar el succés",
+"cv_conv":"Freqüència relativa de «{0}» segons les repeticions",
+"cv_x":"repeticions (escala logarítmica)",
+"idea_lln":"<b>La idea:</b> si tots els resultats són igual de probables, la regla de Laplace diu <b>P = casos favorables / casos possibles</b>. La llei dels grans nombres afegeix que, repetint moltes vegades, la <b>freqüència relativa</b> s'acosta a eixa probabilitat. Amb la moneda trucada no val Laplace, però la freqüència també s'estabilitza.",
+"f_r":"Boles roges",
+"f_b":"Boles blaves",
+"f_nn":"Tirades",
+"f_kk":"Cares",
+"f_pct":"Probabilitat",
+"m_rng":"Escriu nombres enters dins dels límits del simulador.",
+"m1.q":"Posa boles roges i blaves (cap de verda), menys de 20 en total, perquè la probabilitat de traure roja siga <b>2/5</b>.",
+"m1_f":"Amb això P(roja) = {0}. Busca una proporció de 2 roges per cada 5 boles.",
+"m1_ok":"✔ {0} roges i {1} blaves: P(roja) = {0}/{2}, equivalent a 2/5.",
+"m1.more":"Hi ha més d'una solució. Què tenen en comú? Escriu una regla que relacione les roges amb les blaves.",
+"s1.q":"Una moneda ha eixit cara 10 vegades seguides. A la tirada següent és més probable que isca creu.",
+"s1.h":"La moneda no té memòria: cada tirada és independent.",
+"s1.e":"Mai. Encara que 10 cares seguides siguen rares, la tirada següent torna a tindre 1/2. Pensar que «ja toca creu» és l'error del jugador.",
+"s2.q":"Si tirem una moneda n vegades, la freqüència relativa de cares és exactament 1/2.",
+"s2.h":"Pensa què passa amb 3 tirades, o amb 10 si n'eixen 7 de cara.",
+"s2.e":"De vegades. Pot valdre 1/2, però en general no. La llei dels grans nombres diu que s'hi acosta, no que hi arribe.",
+"s2_no":"Aquest cas sí que dona 1/2. Busca'n un on no.",
+"s2_cx":"✔ {0} cares en {1} tirades: {2} ≠ 0,5.",
+"e1.ctx":"Una moneda ha eixit cara 5 vegades seguides. Quina probabilitat té de ser creu a la sisena tirada?",
+"e1.n0":"Laia",
+"e1.n1":"Pau",
+"e1.s0":"«Ja en toca! Ara és més probable que isca creu.»",
+"e1.s1":"«Segueix sent 1/2: la moneda no recorda què ha eixit abans.»",
+"e1.w0":"Les tirades són independents: la moneda no té memòria.",
+"e1.w1":"Perquè les monedes alternen cara i creu.",
+"e1.w2":"Perquè cinc cares seguides són impossibles.",
+"e1.frame":"Laia, la moneda no recorda perquè…",
+"e1.model":"Cada tirada és independent: el que ha eixit abans no canvia les probabilitats de la següent. A la llarga hi haurà creus, però això és la llei dels grans nombres, no un «compte pendent» de la moneda.",
+"d1.q":"Vols traure una bola roja. L'urna A té 3 roges i 7 blaves; la B, 5 roges i 12 blaves. Quina tries i quina probabilitat (en %, arrodonida a l'enter) té de sortir roja?",
+"d1.lc":"Urna:",
+"d1.c1":"Urna A",
+"d1.c2":"Urna B",
+"d1_f":"Compara 3/10 amb 5/17 (passa-ho a decimals).",
+"d1_v":"Revisa el càlcul: casos favorables entre casos possibles.",
+"d1_ok":"✔ L'urna A: 3/10 = 30 %, mentre que la B té 5/17 ≈ 29,4 %. Una diferència xicoteta!",
+"d1.more":"Si la B tinguera 6 roges i 12 blaves, canviaria la decisió? Comprova-ho.",
+"q1.q":"Tirem un dau de 6 cares. Quina és la probabilitat que isca un múltiple de 3?",
+"q1.o0":"1/3",
+"q1.o1":"1/6",
+"q1.o2":"1/2",
+"q1.o3":"2/3",
+"q1.e":"Els múltiples de 3 són el 3 i el 6: 2 casos favorables de 6, és a dir, 2/6 = 1/3.",
+"q2.q":"Una urna té 4 boles roges, 6 de blaves i 2 de verdes. Quina és la probabilitat (en %) de traure una bola blava?",
+"q2.u":"%",
+"q2.e":"6 blaves de 12 boles: 6/12 = 0,5 = 50 %.",
+"q3.q":"Què diu la llei dels grans nombres?",
+"q3.o0":"Que els resultats alternen per a compensar-se",
+"q3.o1":"Que la freqüència relativa s'acosta a la probabilitat quan repetim moltes vegades",
+"q3.o2":"Que cal repetir exactament 1000 vegades",
+"q3.e":"Amb moltes repeticions, la freqüència relativa s'estabilitza prop de la probabilitat teòrica. No hi ha cap «compensació» a curt termini.",
+"q4.q":"Tirem dos daus de 6 cares. Quina és la probabilitat que la suma siga 5?",
+"q4.o0":"1/12",
+"q4.o1":"5/36",
+"q4.o2":"1/9",
+"q4.o3":"1/6",
+"q4.e":"Les parelles amb suma 5 són (1,4), (2,3), (3,2) i (4,1): 4 de 36, és a dir, 4/36 = 1/9.",
+"q9.q":"Una moneda ha eixit cara 5 vegades seguides. Quina és la probabilitat que a la sisena isca cara?",
+"q9.o0":"1/2",
+"q9.o1":"Menys d'1/2",
+"q9.o2":"Més d'1/2",
+"q9.e":"Les tirades són independents: la moneda no recorda. Sempre és 1/2.",
+"f_g":"Boles verdes",
+"m5.q":"Una urna té exactament 12 boles, entre roges, blaves i verdes. Perquè P(roja) = 1/2 i P(verda) = 1/4, quantes boles poses de cada color?",
+"m5_sum":"Això fa {0} boles, no 12.",
+"m5_r":"Amb eixes roges, P(roja) = {0}, no 1/2.",
+"m5_g":"Amb eixes verdes, P(verda) = {0}, no 1/4.",
+"m5_ok":"✔ {0} roges, {1} blaves i {2} verdes: 6/12 = 1/2 i 3/12 = 1/4.",
+"m5.more":"Si en lloc de 12 foren 20 boles amb les mateixes probabilitats, quantes n'hi hauria de cada color? Escriu la regla.",
+"s7.q":"Si en 6 tirades d'un dau no ha eixit cap 6, a la tirada següent és segur que isca 6.",
+"s7.h":"El dau no porta compte de les tirades anteriors. I «segur» és molt fort.",
+"s7.e":"Mai. La probabilitat del 6 continua sent 1/6 en cada tirada, passe el que passe abans. Pot tardar molt a eixir.",
+"s8.q":"Amb dos daus, la probabilitat que la suma siga 7 és 1/11, perquè hi ha 11 sumes possibles (del 2 al 12).",
+"s8.h":"Laplace només val si els resultats són igual de probables. Són igual de probables les 11 sumes?",
+"s8.e":"Mai. Les sumes no són igual de probables: la suma 7 s'obté amb 6 de les 36 parelles igual de probables, així que P = 6/36 = 1/6.",
+"e5.ctx":"Tirem un dau equilibrat 60 vegades i el 6 ha eixit 15 vegades. Quina és la probabilitat de traure un 6 amb eixe dau?",
+"e5.n0":"Marc",
+"e5.n1":"Irene",
+"e5.s0":"«15/60 = 1/4: eixa és la probabilitat del 6.»",
+"e5.s1":"«La probabilitat és 1/6; 15/60 només és la freqüència d'aquestes 60 tirades.»",
+"e5.w0":"En un dau equilibrat la probabilitat teòrica és 1/6; la freqüència observada s'hi acosta amb moltes tirades, però no té per què coincidir.",
+"e5.w1":"Perquè 60 tirades són massa poques per a calcular res.",
+"e5.w2":"Perquè el dau està trucat.",
+"e5.frame":"Irene, 15/60 no és la probabilitat perquè…",
+"e5.model":"La freqüència relativa diu què ha passat en un experiment concret; la probabilitat és el valor teòric (1/6) al qual la freqüència s'acosta quan repetim moltes vegades. Aquí 15/60 = 0,25 i 1/6 ≈ 0,167: no tenen per què coincidir.",
+"q10.q":"Una urna té 5 boles roges, 3 de blaves i 2 de verdes. Quina és la probabilitat de NO traure una bola blava? (en forma decimal)",
+"q10.e":"Hi ha 10 boles i 7 no són blaves: 7/10 = 0,7. També: 1 − 3/10 = 0,7."
+},
+es:{
+"title":"Laplace y ley de los grandes números",
+"eyebrow":"Matemáticas · 3.º ESO · Incertidumbre y probabilidad",
+"h1":"Laplace y los grandes números: el azar a la larga",
+"lede":"Dado, moneda y urna para entender la regla de Laplace y ver cómo la frecuencia relativa se acerca a la probabilidad cuando repetimos muchas veces.",
+"sim_title":"Tira, cuenta y compara",
+"story":"Aquí el azar se puede tocar: <b>tira, extrae y cuenta</b>. Elige un experimento, cambia los parámetros y compara la frecuencia con lo que predice Laplace.",
+"aria.ex":"Experimento",
+"aria.cv":"Dibujo del experimento",
+"ex_dau":"Dado",
+"ex_mon":"Moneda",
+"ex_sum":"Dos dados (suma)",
+"ex_urn":"Urna de bolas",
+"l_n":"Caras del dado",
+"l_nd":"Caras de cada dado",
+"l_pc":"Probabilidad de cara",
+"l_r":"Bolas rojas",
+"l_b":"Bolas azules",
+"l_g":"Bolas verdes",
+"l_ev":"Suceso a seguir",
+"l_speed":"Velocidad",
+"b_1":"1 tirada",
+"b_10":"×10",
+"b_100":"×100",
+"b_1000":"×1000",
+"b_auto":"▶ Automático",
+"b_pause":"⏸ Pausa",
+"b_reset":"Reinicia",
+"hc0":"cara",
+"hc1":"cruz",
+"hk0":"C",
+"hk1":"X",
+"c0":"roja",
+"c1":"azul",
+"c2":"verde",
+"ck0":"R",
+"ck1":"A",
+"ck2":"V",
+"m1_0":"Todavía no has tirado. Prueba «1 tirada» o «×100».",
+"m1_l":"Última tirada: {0}",
+"dt_n":"Repeticiones",
+"dt_ev":"Suceso seguido",
+"dt_p":"Probabilidad teórica",
+"dt_fa":"Frecuencia absoluta",
+"dt_fr":"Frecuencia relativa",
+"dt_diff":"Diferencia",
+"lap":"Laplace: casos favorables / casos posibles = {0} / {1} = {2}.",
+"lap_sum":"Los casos posibles son las {0} parejas de dados.",
+"lap_urn":"Cada bola es un caso.",
+"lap_no":"Aquí los dos resultados no son igual de probables: no se puede aplicar Laplace. La probabilidad de cara es {0} %.",
+"th_r":"Resultado",
+"th_f":"f",
+"th_fr":"fr",
+"th_p":"p",
+"cv_bars":"Frecuencia relativa (barras) y probabilidad teórica (raya)",
+"cv_leg":"Clica una barra para elegir el suceso",
+"cv_conv":"Frecuencia relativa de «{0}» según las repeticiones",
+"cv_x":"repeticiones (escala logarítmica)",
+"idea_lln":"<b>La idea:</b> si todos los resultados son igual de probables, la regla de Laplace dice <b>P = casos favorables / casos posibles</b>. La ley de los grandes números añade que, repitiendo muchas veces, la <b>frecuencia relativa</b> se acerca a esa probabilidad. Con la moneda trucada no vale Laplace, pero la frecuencia también se estabiliza.",
+"f_r":"Bolas rojas",
+"f_b":"Bolas azules",
+"f_nn":"Tiradas",
+"f_kk":"Caras",
+"f_pct":"Probabilidad",
+"m_rng":"Escribe números enteros dentro de los límites del simulador.",
+"m1.q":"Pon bolas rojas y azules (ninguna verde), menos de 20 en total, para que la probabilidad de sacar roja sea <b>2/5</b>.",
+"m1_f":"Con esto P(roja) = {0}. Busca una proporción de 2 rojas por cada 5 bolas.",
+"m1_ok":"✔ {0} rojas y {1} azules: P(roja) = {0}/{2}, equivalente a 2/5.",
+"m1.more":"Hay más de una solución. ¿Qué tienen en común? Escribe una regla que relacione las rojas con las azules.",
+"s1.q":"Una moneda ha salido cara 10 veces seguidas. En la tirada siguiente es más probable que salga cruz.",
+"s1.h":"La moneda no tiene memoria: cada tirada es independiente.",
+"s1.e":"Nunca. Aunque 10 caras seguidas sean raras, la tirada siguiente vuelve a tener 1/2. Pensar que «ya toca cruz» es el error del jugador.",
+"s2.q":"Si tiramos una moneda n veces, la frecuencia relativa de caras es exactamente 1/2.",
+"s2.h":"Piensa qué pasa con 3 tiradas, o con 10 si salen 7 caras.",
+"s2.e":"A veces. Puede valer 1/2, pero en general no. La ley de los grandes números dice que se acerca, no que llegue.",
+"s2_no":"Este caso sí da 1/2. Busca uno en el que no.",
+"s2_cx":"✔ {0} caras en {1} tiradas: {2} ≠ 0,5.",
+"e1.ctx":"Una moneda ha salido cara 5 veces seguidas. ¿Qué probabilidad tiene de ser cruz en la sexta tirada?",
+"e1.n0":"Laia",
+"e1.n1":"Pau",
+"e1.s0":"«¡Ya toca! Ahora es más probable que salga cruz.»",
+"e1.s1":"«Sigue siendo 1/2: la moneda no recuerda lo que salió antes.»",
+"e1.w0":"Las tiradas son independientes: la moneda no tiene memoria.",
+"e1.w1":"Porque las monedas alternan cara y cruz.",
+"e1.w2":"Porque cinco caras seguidas son imposibles.",
+"e1.frame":"Laia, la moneda no recuerda porque…",
+"e1.model":"Cada tirada es independiente: lo que salió antes no cambia las probabilidades de la siguiente. A la larga habrá cruces, pero eso es la ley de los grandes números, no una «cuenta pendiente» de la moneda.",
+"d1.q":"Quieres sacar una bola roja. La urna A tiene 3 rojas y 7 azules; la B, 5 rojas y 12 azules. ¿Cuál eliges y qué probabilidad (en %, redondeada al entero) tiene de salir roja?",
+"d1.lc":"Urna:",
+"d1.c1":"Urna A",
+"d1.c2":"Urna B",
+"d1_f":"Compara 3/10 con 5/17 (pásalo a decimales).",
+"d1_v":"Revisa el cálculo: casos favorables entre casos posibles.",
+"d1_ok":"✔ La urna A: 3/10 = 30 %, mientras que la B tiene 5/17 ≈ 29,4 %. ¡Una diferencia pequeña!",
+"d1.more":"Si la B tuviera 6 rojas y 12 azules, ¿cambiaría la decisión? Compruébalo.",
+"q1.q":"Tiramos un dado de 6 caras. ¿Cuál es la probabilidad de que salga un múltiplo de 3?",
+"q1.o0":"1/3",
+"q1.o1":"1/6",
+"q1.o2":"1/2",
+"q1.o3":"2/3",
+"q1.e":"Los múltiplos de 3 son el 3 y el 6: 2 casos favorables de 6, es decir, 2/6 = 1/3.",
+"q2.q":"Una urna tiene 4 bolas rojas, 6 azules y 2 verdes. ¿Cuál es la probabilidad (en %) de sacar una bola azul?",
+"q2.u":"%",
+"q2.e":"6 azules de 12 bolas: 6/12 = 0,5 = 50 %.",
+"q3.q":"¿Qué dice la ley de los grandes números?",
+"q3.o0":"Que los resultados alternan para compensarse",
+"q3.o1":"Que la frecuencia relativa se acerca a la probabilidad cuando repetimos muchas veces",
+"q3.o2":"Que hay que repetir exactamente 1000 veces",
+"q3.e":"Con muchas repeticiones, la frecuencia relativa se estabiliza cerca de la probabilidad teórica. No hay ninguna «compensación» a corto plazo.",
+"q4.q":"Tiramos dos dados de 6 caras. ¿Cuál es la probabilidad de que la suma sea 5?",
+"q4.o0":"1/12",
+"q4.o1":"5/36",
+"q4.o2":"1/9",
+"q4.o3":"1/6",
+"q4.e":"Las parejas con suma 5 son (1,4), (2,3), (3,2) y (4,1): 4 de 36, es decir, 4/36 = 1/9.",
+"q9.q":"Una moneda ha salido cara 5 veces seguidas. ¿Cuál es la probabilidad de que en la sexta salga cara?",
+"q9.o0":"1/2",
+"q9.o1":"Menos de 1/2",
+"q9.o2":"Más de 1/2",
+"q9.e":"Las tiradas son independientes: la moneda no recuerda. Siempre es 1/2.",
+"f_g":"Bolas verdes",
+"m5.q":"Una urna tiene exactamente 12 bolas, entre rojas, azules y verdes. Para que P(roja) = 1/2 y P(verde) = 1/4, ¿cuántas bolas pones de cada color?",
+"m5_sum":"Eso hace {0} bolas, no 12.",
+"m5_r":"Con esas rojas, P(roja) = {0}, no 1/2.",
+"m5_g":"Con esas verdes, P(verde) = {0}, no 1/4.",
+"m5_ok":"✔ {0} rojas, {1} azules y {2} verdes: 6/12 = 1/2 y 3/12 = 1/4.",
+"m5.more":"Si en lugar de 12 fueran 20 bolas con las mismas probabilidades, ¿cuántas habría de cada color? Escribe la regla.",
+"s7.q":"Si en 6 tiradas de un dado no ha salido ningún 6, en la tirada siguiente es seguro que salga 6.",
+"s7.h":"El dado no lleva la cuenta de las tiradas anteriores. Y «seguro» es muy fuerte.",
+"s7.e":"Nunca. La probabilidad del 6 sigue siendo 1/6 en cada tirada, pase lo que pase antes. Puede tardar mucho en salir.",
+"s8.q":"Con dos dados, la probabilidad de que la suma sea 7 es 1/11, porque hay 11 sumas posibles (de la 2 a la 12).",
+"s8.h":"Laplace solo vale si los resultados son equiprobables. ¿Son igual de probables las 11 sumas?",
+"s8.e":"Nunca. Las sumas no son igual de probables: la suma 7 se obtiene con 6 de las 36 parejas equiprobables, así que P = 6/36 = 1/6.",
+"e5.ctx":"Tiramos un dado equilibrado 60 veces y el 6 ha salido 15 veces. ¿Cuál es la probabilidad de sacar un 6 con ese dado?",
+"e5.n0":"Marc",
+"e5.n1":"Irene",
+"e5.s0":"«15/60 = 1/4: esa es la probabilidad del 6.»",
+"e5.s1":"«La probabilidad es 1/6; 15/60 solo es la frecuencia de estas 60 tiradas.»",
+"e5.w0":"En un dado equilibrado la probabilidad teórica es 1/6; la frecuencia observada se acerca a ella con muchas tiradas, pero no tiene por qué coincidir.",
+"e5.w1":"Porque 60 tiradas son demasiado pocas para calcular nada.",
+"e5.w2":"Porque el dado está trucado.",
+"e5.frame":"Irene, 15/60 no es la probabilidad porque…",
+"e5.model":"La frecuencia relativa dice qué ha pasado en un experimento concreto; la probabilidad es el valor teórico (1/6) al que se acerca la frecuencia cuando repetimos muchas veces. Aquí 15/60 = 0,25 y 1/6 ≈ 0,167: no tienen por qué coincidir.",
+"q10.q":"Una urna tiene 5 bolas rojas, 3 azules y 2 verdes. ¿Cuál es la probabilidad de NO sacar una bola azul? (en forma decimal)",
+"q10.e":"Hay 10 bolas y 7 no son azules: 7/10 = 0,7. También: 1 − 3/10 = 0,7."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../laplace-grans-nombres/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== Probabilitat 3r ESO: laboratori de l'atzar ===== */
+let dirty=true,mod='lln';
+const cv=makeCanvas($('#cv'),640,480,()=>{dirty=true;});
+const FONT='system-ui,-apple-system,"Segoe UI",sans-serif';
+const BALL=['#d64545','#2f6fe0','#2e9e5b'];
+const INK='#1a2236';
+function tx(c,s,x,y,sz,col,al,wt){c.font=(wt||400)+' '+sz+'px '+FONT;c.fillStyle=col;c.textAlign=al||'left';c.textBaseline='middle';c.fillText(s,x,y);}
+const gcdf=(a,b)=>b?gcdf(b,a%b):Math.abs(a);
+const fr=(n,d)=>{const g=gcdf(n,d)||1;return [n/g,d/g];};
+const fmul=(a,b)=>fr(a[0]*b[0],a[1]*b[1]);
+const fadd=(a,b)=>fr(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const fstr=p=>p[1]===1?String(p[0]):p[0]+'/'+p[1];
+const fval=p=>p[0]/p[1];
+const pc=x=>nf(100*x,1)+' %';
+const fp=p=>fstr(p)+' ('+pc(fval(p))+')';
+const nice=v=>[.05,.1,.2,.25,.3,.4,.5,.6,.8,1].find(x=>x>=v)||1;
+const isPrime=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;};
+function bindR(id,fn){const i=$('#'+id),o=$('#'+id+'-o');const u=()=>{o.textContent=i.value+((id==='s1p'||id==='s2p')?' %':'');};
+  i.addEventListener('input',()=>{u();fn(+i.value);});u();return {i,u,set(v){i.value=v;u();}};}
+function die(c,x,y,s,v,n,col){
+  c.fillStyle='#fff';rrect(c,x-s/2,y-s/2,s,s,s*.16);c.fill();c.strokeStyle=col.muted;c.lineWidth=1.5;c.stroke();
+  const P={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  if(v>=1&&v<=6&&n<=6){c.fillStyle=INK;P[v].forEach(i=>{c.beginPath();c.arc(x+(i%3-1)*s*.26,y+(Math.floor(i/3)-1)*s*.26,s*.075,0,TAU);c.fill();});}
+  else tx(c,v==null?'?':String(v),x,y,s*.46,INK,'center',700);
+}
+
+/* ======================= MÒDUL 1: Laplace i grans nombres ======================= */
+const S1={exp:'dau',n:6,pc:50,r:3,b:2,g:1,sel:0,cnt:[],tot:0,hist:[],last:null,anim:null,auto:false,acc:0,sp:3};
+const SPD=[2,6,25,100,500,3000];
+function o1(){
+  const e=S1.exp,n=S1.n;
+  if(e==='dau'){const L=[],W=[];for(let i=1;i<=n;i++){L.push(String(i));W.push(1);}return{L,W,T:n,lap:true};}
+  if(e==='mon')return{L:[t('hc0'),t('hc1')],W:[S1.pc,100-S1.pc],T:100,lap:S1.pc===50};
+  if(e==='sum'){const L=[],W=[];for(let s=2;s<=2*n;s++){L.push(String(s));W.push(s<=n+1?s-1:2*n+1-s);}return{L,W,T:n*n,lap:true};}
+  const L=[],W=[],K=[];[S1.r,S1.b,S1.g].forEach((w,i)=>{if(w>0){L.push(t('c'+i));W.push(w);K.push(i);}});
+  return{L,W,T:W.reduce((a,b)=>a+b,0),lap:true,K};
+}
+function buildEv(){const o=o1(),s=$('#evsel');s.innerHTML=o.L.map((l,i)=>'<option value="'+i+'">'+l+'</option>').join('');s.value=String(S1.sel);}
+function reset1(){const o=o1();S1.cnt=o.W.map(()=>0);S1.tot=0;S1.hist=[];S1.last=null;S1.anim=null;S1.sel=clamp(S1.sel,0,o.W.length-1);buildEv();dirty=true;panel1();}
+function samp1(o){
+  if(S1.exp==='sum'){const a=1+Math.floor(Math.random()*S1.n),b=1+Math.floor(Math.random()*S1.n);return{i:a+b-2,d:[a,b]};}
+  let x=Math.random()*o.T,i=0;for(;i<o.W.length-1;i++){x-=o.W[i];if(x<0)break;}return{i};
+}
+function apply1(r){S1.cnt[r.i]++;S1.tot++;S1.last=r;const n=S1.tot;
+  if(n<=120||n%Math.ceil(n/120)===0)S1.hist.push({n,c:S1.cnt.slice()});
+  if(S1.hist.length>1600)S1.hist=S1.hist.filter((h,i)=>i%2===0||i===S1.hist.length-1);}
+function run1(k){const o=o1();for(let j=0;j<k;j++)apply1(samp1(o));dirty=true;panel1();}
+function step1(){if(S1.anim)return;const r=samp1(o1());if(REDUCE){apply1(r);dirty=true;panel1();return;}S1.anim={r,t0:performance.now()};dirty=true;}
+function setAuto(v){S1.auto=v;$('#bauto').textContent=t(v?'b_pause':'b_auto');}
+
+const B={x0:58,x1:614,y0:140,y1:316}, V={x0:58,x1:614,y0:376,y1:462};
+function drawVis(c,col,o){
+  let r=S1.last;
+  if(S1.anim){const i=Math.floor(Math.random()*o.L.length);r={i,d:S1.exp==='sum'?[1+Math.floor(Math.random()*S1.n),1+Math.floor(Math.random()*S1.n)]:null};}
+  const cy=60;
+  if(S1.exp==='dau')die(c,320,cy,70,r?r.i+1:null,S1.n,col);
+  else if(S1.exp==='sum'){die(c,285,cy,64,r?r.d[0]:null,S1.n,col);die(c,355,cy,64,r?r.d[1]:null,S1.n,col);}
+  else if(S1.exp==='mon'){c.beginPath();c.arc(320,cy,34,0,TAU);c.fillStyle=r?(r.i===0?'#e0b341':'#b9bfcc'):'#cdd2de';c.fill();c.strokeStyle=col.muted;c.lineWidth=2;c.stroke();tx(c,r?t('hk'+r.i):'?',320,cy,28,INK,'center',700);}
+  else{
+    const cols=[];[S1.r,S1.b,S1.g].forEach((w,i)=>{for(let j=0;j<w;j++)cols.push(i);});
+    const jx=170,jy=16,jw=130,jh=88;c.strokeStyle=col.muted;c.lineWidth=2.5;c.beginPath();c.moveTo(jx,jy);c.lineTo(jx,jy+jh);c.lineTo(jx+jw,jy+jh);c.lineTo(jx+jw,jy);c.stroke();
+    cols.forEach((k,j)=>{c.beginPath();c.arc(jx+15+(j%7)*17,jy+jh-12-Math.floor(j/7)*17,8,0,TAU);c.fillStyle=BALL[k];c.fill();});
+    c.beginPath();c.arc(440,cy,26,0,TAU);c.fillStyle=r?BALL[o.K[r.i]]:'#cdd2de';c.fill();c.strokeStyle=col.muted;c.lineWidth=2;c.stroke();
+    if(!r)tx(c,'?',440,cy,24,INK,'center',700);
+  }
+}
+function drawBars(c,col,o){
+  const m=o.L.length,tot=S1.tot,p=o.W.map(w=>w/o.T),f=S1.cnt.map(k=>tot?k/tot:0);
+  const ymax=nice(Math.max(...p,...f)*1.12),H=B.y1-B.y0,yy=v=>B.y1-v/ymax*H;
+  c.lineWidth=1;c.strokeStyle=col.line;
+  [0,.5,1].forEach(q=>{const y=yy(q*ymax);c.beginPath();c.moveTo(B.x0,y);c.lineTo(B.x1,y);c.stroke();tx(c,nf(q*ymax*100,1)+' %',B.x0-6,y,11,col.muted,'right');});
+  tx(c,t('cv_bars'),B.x0,B.y0-20,12,col.muted,'left',600);
+  tx(c,t('cv_leg'),B.x1,B.y0-20,11,col.muted,'right');
+  const bw=(B.x1-B.x0)/m,w=Math.min(38,bw*.72);
+  for(let i=0;i<m;i++){
+    const x=B.x0+(i+.5)*bw,h=f[i]/ymax*H;
+    c.globalAlpha=i===S1.sel?1:.55;c.fillStyle=S1.exp==='urn'?BALL[o.K[i]]:col.pa;c.fillRect(x-w/2,B.y1-h,w,h);c.globalAlpha=1;
+    c.strokeStyle=col.ink;c.lineWidth=2.4;c.beginPath();c.moveTo(x-w/2-4,yy(p[i]));c.lineTo(x+w/2+4,yy(p[i]));c.stroke();
+    if(m<=8&&tot)tx(c,nf(f[i]*100,1)+'%',x,Math.min(B.y1-h,yy(p[i]))-10,11,col.ink,'center');
+    tx(c,o.L[i],x,B.y1+11,clamp(bw*.55,9,14),i===S1.sel?col.ink:col.muted,'center',i===S1.sel?700:400);
+    if(i===S1.sel){c.strokeStyle=col.ink;c.lineWidth=1.2;c.setLineDash([3,3]);c.strokeRect(x-bw/2+1,B.y0-6,bw-2,B.y1-B.y0+26);c.setLineDash([]);}
+  }
+}
+function drawConv(c,col,o){
+  const i=S1.sel,p=o.W[i]/o.T;
+  tx(c,tt('cv_conv',o.L[i]),V.x0,V.y0-18,12,col.muted,'left',600);
+  const xm=Math.max(10,S1.tot),lx=n=>V.x0+Math.log10(Math.max(1,n))/Math.log10(xm)*(V.x1-V.x0);
+  const ym=Math.min(1,p*2.2+.05),yv=v=>V.y1-clamp(v/ym,0,1)*(V.y1-V.y0);
+  c.strokeStyle=col.line;c.lineWidth=1;c.strokeRect(V.x0,V.y0,V.x1-V.x0,V.y1-V.y0);
+  for(let k=1;k<=xm;k*=10){const x=lx(k);c.beginPath();c.moveTo(x,V.y0);c.lineTo(x,V.y1);c.stroke();tx(c,String(k),x,V.y1+10,10,col.muted,'center');}
+  tx(c,'0 %',V.x0-6,V.y1,11,col.muted,'right');tx(c,nf(ym*100,0)+' %',V.x0-6,V.y0,11,col.muted,'right');
+  c.strokeStyle=col.ink;c.lineWidth=1.8;c.setLineDash([6,4]);c.beginPath();c.moveTo(V.x0,yv(p));c.lineTo(V.x1,yv(p));c.stroke();c.setLineDash([]);
+  tx(c,'p = '+nf(p,3),V.x1-4,yv(p)-9,11,col.ink,'right',600);
+  c.strokeStyle=col.pa;c.lineWidth=2;c.beginPath();
+  S1.hist.forEach((h,k)=>{const x=lx(h.n),y=yv(h.c[i]/h.n);if(k)c.lineTo(x,y);else c.moveTo(x,y);});c.stroke();
+  tx(c,t('cv_x'),V.x1,V.y1+24,10,col.muted,'right');
+}
+function draw1(c,col){const o=o1();drawVis(c,col,o);drawBars(c,col,o);drawConv(c,col,o);}
+function panel1(){
+  if(mod!=='lln')return;
+  const o=o1(),i=S1.sel,P=fr(o.W[i],o.T),k=S1.cnt[i],tot=S1.tot;
+  const lastTxt=!S1.last?t('m1_0'):tt('m1_l',S1.exp==='sum'?S1.last.d[0]+' + '+S1.last.d[1]+' = '+o.L[S1.last.i]:o.L[S1.last.i]);
+  let lap;
+  if(o.lap){const fv=S1.exp==='mon'?1:o.W[i],ps=S1.exp==='mon'?2:o.T;
+    lap=tt('lap',fv,ps,fp(P))+(S1.exp==='sum'?' '+tt('lap_sum',S1.n*S1.n):S1.exp==='urn'?' '+t('lap_urn'):'');}
+  else lap=tt('lap_no',S1.pc);
+  let rows='';o.L.forEach((l,j)=>{const f=tot?S1.cnt[j]/tot:0;rows+='<tr'+(j===i?' class="sel"':'')+'><td>'+l+'</td><td>'+S1.cnt[j]+'</td><td>'+(tot?nf(f,3):'—')+'</td><td>'+nf(o.W[j]/o.T,3)+'</td></tr>';});
+  $('#side').innerHTML='<p class="msg">'+lastTxt+'</p><dl><dt>'+t('dt_n')+'</dt><dd>'+tot+'</dd><dt>'+t('dt_ev')+'</dt><dd>'+o.L[i]+'</dd><dt>'+t('dt_p')+'</dt><dd class="hl">'+fp(P)+'</dd><dt>'+t('dt_fa')+'</dt><dd>'+k+'</dd><dt>'+t('dt_fr')+'</dt><dd class="hl">'+(tot?k+'/'+tot+' = '+nf(k/tot,3):'—')+'</dd><dt>'+t('dt_diff')+'</dt><dd>'+(tot?nf(Math.abs(k/tot-o.W[i]/o.T),3):'—')+'</dd></dl>'
+   +'<p class="note">'+lap+'</p><div class="tw"><table class="tbl"><tr><th>'+t('th_r')+'</th><th>'+t('th_f')+'</th><th>'+t('th_fr')+'</th><th>'+t('th_p')+'</th></tr>'+rows+'</table></div>';
+}
+function ch1(){if(S1.r+S1.b+S1.g<1){S1.r=1;sl.r.set(1);}reset1();syncC1();}
+function syncC1(){
+  $('#c1n').hidden=!(S1.exp==='dau'||S1.exp==='sum');$('#c1p').hidden=S1.exp!=='mon';
+  ['r','b','g'].forEach(k=>$('#c1'+k).hidden=S1.exp!=='urn');
+  $('label[for=s1n]').textContent=t(S1.exp==='sum'?'l_nd':'l_n');
+}
+const sl={n:bindR('s1n',v=>{S1.n=v;reset1();}),p:bindR('s1p',v=>{S1.pc=v;reset1();}),
+  r:bindR('s1r',v=>{S1.r=v;ch1();}),b:bindR('s1b',v=>{S1.b=v;ch1();}),g:bindR('s1g',v=>{S1.g=v;ch1();}),
+  v:bindR('s1v',v=>{S1.sp=v;$('#s1v-o').textContent=SPD[v]+'/s';})};
+$('#s1v-o').textContent=SPD[S1.sp]+'/s';
+$$('#exl .chip').forEach(b=>b.onclick=()=>{S1.exp=b.dataset.ex;S1.sel=0;$$('#exl .chip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));setAuto(false);syncC1();reset1();});
+$('#evsel').onchange=e=>{S1.sel=+e.target.value;dirty=true;panel1();};
+$('#b1').onclick=step1;$('#b10').onclick=()=>run1(10);$('#b100').onclick=()=>run1(100);$('#b1000').onclick=()=>run1(1000);
+$('#bauto').onclick=()=>setAuto(!S1.auto);$('#b1r').onclick=()=>{setAuto(false);reset1();};
+
+/* ======================= comuns: clics i bucle ======================= */
+function panelAll(){panel1();}
+cv.cv.addEventListener('click',e=>{
+  const p=cv.pt(e);
+  const o=o1(),bw=(B.x1-B.x0)/o.L.length;if(p.y>B.y0-10&&p.y<B.y1+26&&p.x>=B.x0&&p.x<B.x1){S1.sel=Math.floor((p.x-B.x0)/bw);$('#evsel').value=String(S1.sel);dirty=true;panel1();}
+});
+document.addEventListener('themechange',()=>{dirty=true;});
+document.addEventListener('langchange',()=>{buildEv();syncC1();$('#bauto').textContent=t(S1.auto?'b_pause':'b_auto');panelAll();dirty=true;});
+let prev=performance.now();
+function frame(now){
+  const dt=Math.min(.1,(now-prev)/1000);prev=now;
+  if(S1.anim&&now-S1.anim.t0>=400){const r=S1.anim.r;S1.anim=null;apply1(r);panel1();dirty=true;}
+  if(S1.anim)dirty=true;
+  if(S1.auto){S1.acc+=SPD[S1.sp]*dt;const k=Math.floor(S1.acc);if(k>0){S1.acc-=k;run1(Math.min(k,4000));}}
+  if(dirty){dirty=false;const c=cv.ctx,col=C();c.clearRect(0,0,640,480);c.fillStyle=col.stage;c.fillRect(0,0,640,480);draw1(c,col);}
+  requestAnimationFrame(frame);
+}
+
+/* ======================= Raona-ho ======================= */
+const goCv=()=>$('#cv').scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});
+function ldLln(exp,o){setAuto(false);S1.exp=exp;S1.sel=0;Object.assign(S1,o||{});
+  sl.n.set(S1.n);sl.p.set(S1.pc);sl.r.set(S1.r);sl.b.set(S1.b);sl.g.set(S1.g);
+  $$('#exl .chip').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.ex===exp)));syncC1();reset1();goCv();}
+const isI=(...a)=>a.every(Number.isInteger);
+const F={fr:{l:'f_r'},fb:{l:'f_b'},fg:{l:'f_g'},fnn:{l:'f_nn'},fk:{l:'f_kk'},fpct:{l:'f_pct',u:'%'}};
+RZ.init({F,
+ sim:()=>{},
+ M:[
+  {id:'m1',f:['fr','fb'],sim:([r,b])=>ldLln('urn',{r:clamp(r||2,0,10),b:clamp(b||3,0,10),g:0}),
+   chk:([r,b])=>!(isI(r,b)&&r>=0&&b>=0&&r<=10&&b<=10&&r+b>=1)?{k:'m_rng'}:(r+b>=20)?{k:'m_rng'}:r*5!==2*(r+b)?{k:'m1_f',p:[fstr(fr(r,r+b))]}:null,
+   ok:([r,b])=>({k:'m1_ok',p:[r,b,r+b]})},
+  {id:'m5',f:['fr','fb','fg'],sim:([r,b,g])=>ldLln('urn',{r:clamp(r||0,0,10),b:clamp(b||0,0,10),g:clamp(g||0,0,10)+((r||0)+(b||0)+(g||0)<1?1:0)}),
+   chk:([r,b,g])=>!(isI(r,b,g)&&r>=0&&b>=0&&g>=0&&r<=12&&b<=12&&g<=12)?{k:'m_rng'}:r+b+g!==12?{k:'m5_sum',p:[r+b+g]}:r*2!==12?{k:'m5_r',p:[fstr(fr(r,12))]}:g*4!==12?{k:'m5_g',p:[fstr(fr(g,12))]}:null,
+   ok:([r,b,g])=>({k:'m5_ok',p:[r,b,g]})}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>ldLln('mon',{pc:50})},
+  {id:'s7',ans:'M',sim:()=>ldLln('dau',{n:6})},
+  {id:'s2',ans:'D',f:['fnn','fk'],sim:()=>ldLln('mon',{pc:50}),
+   cx:([n,k])=>!(isI(n,k)&&n>=1&&n<=1000&&k>=0&&k<=n)?{k:'m_rng'}:2*k===n?{k:'s2_no'}:null,
+   cxok:([n,k])=>({k:'s2_cx',p:[k,n,nf(k/n,2)]}),cxsim:()=>ldLln('mon',{pc:50})},
+  {id:'s8',ans:'M',sim:()=>ldLln('sum',{n:6})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>ldLln('mon',{pc:50})},
+  {id:'e5',who:1,sim:()=>ldLln('dau',{n:6})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[1,2],fmt:x=>t('d1.c'+x)},f:['fpct'],sim:([p])=>ldLln('urn',p===2?{r:5,b:12,g:0}:{r:3,b:7,g:0}),
+   chk:([p,v])=>p!==1?{k:'d1_f'}:Math.abs(v-30)>1?{k:'d1_v'}:null,ok:()=>({k:'d1_ok'})}
+ ]
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q2","lvl":"all","type":"num","num":50,"tol":0,"u":1},{"id":"q3","lvl":"all","type":"mc","n":3,"ans":1},{"id":"q4","lvl":"all","type":"mc","n":4,"ans":2},{"id":"q9","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"q10","lvl":"adv","type":"num","num":0.7,"tol":0}];
+buildEv();syncC1();reset1();
+initQuiz(QDATA);
+initLang();applyLang();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

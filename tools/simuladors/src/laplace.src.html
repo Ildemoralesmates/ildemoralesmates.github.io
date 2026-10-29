@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laplace i llei dels grans nombres</title>
+<meta name="description" content="Laboratori de Laplace i llei dels grans nombres per a 3r d'ESO: dau, moneda, dos daus i urna amb boles. Compara la freqüència relativa amb la probabilitat teòrica. Amb activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}
+.msg.bad{color:var(--warn);font-weight:600}
+.ctrls{display:grid;gap:10px}
+.crow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.crow .ctl{min-width:11rem;flex:1 1 11rem;max-width:16rem}
+.crow label.lbl{font-size:13.5px;color:var(--muted)}
+.crow input[type=number]{font:inherit;font-size:14px;width:4.6em;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.crow select{max-width:100%}
+.side dl{font-size:13.5px}
+.side .tw{max-height:9.5rem;overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:0 6px}
+.side .tbl{font-size:12.5px}
+.side .tbl tr.sel td{font-weight:700;color:var(--pa)}
+.side .note{line-height:1.4}
+.side .eq{font-family:var(--f-num);font-size:13px;word-break:break-word}
+.simcv canvas{cursor:pointer;border-radius:8px;border:1px solid var(--line)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <!--@LVLSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="ctrls" data-mod="lln">
+<div class="chips" id="exl" role="group" data-i18n-aria="aria.ex" aria-label="">
+<button class="chip" type="button" data-ex="dau" aria-pressed="true" data-i18n="ex_dau"></button>
+<button class="chip" type="button" data-ex="mon" aria-pressed="false" data-i18n="ex_mon"></button>
+<button class="chip" type="button" data-ex="sum" aria-pressed="false" data-i18n="ex_sum"></button>
+<button class="chip" type="button" data-ex="urn" aria-pressed="false" data-i18n="ex_urn"></button>
+</div>
+<div class="crow">
+<div class="ctl" id="c1n"><label for="s1n" data-i18n="l_n"></label><output id="s1n-o"></output><input type="range" id="s1n" min="2" max="20" step="1" value="6"></div>
+<div class="ctl" id="c1p"><label for="s1p" data-i18n="l_pc"></label><output id="s1p-o"></output><input type="range" id="s1p" min="5" max="95" step="5" value="50"></div>
+<div class="ctl" id="c1r"><label for="s1r" data-i18n="l_r"></label><output id="s1r-o"></output><input type="range" id="s1r" min="0" max="10" step="1" value="3"></div>
+<div class="ctl" id="c1b"><label for="s1b" data-i18n="l_b"></label><output id="s1b-o"></output><input type="range" id="s1b" min="0" max="10" step="1" value="2"></div>
+<div class="ctl" id="c1g"><label for="s1g" data-i18n="l_g"></label><output id="s1g-o"></output><input type="range" id="s1g" min="0" max="10" step="1" value="1"></div>
+<span id="c1e"><label class="lbl" for="evsel" data-i18n="l_ev"></label> <select id="evsel"></select></span>
+</div>
+<div class="crow">
+<button class="btn primary" type="button" id="b1" data-i18n="b_1"></button>
+<button class="btn" type="button" id="b10" data-i18n="b_10"></button>
+<button class="btn" type="button" id="b100" data-i18n="b_100"></button>
+<button class="btn" type="button" id="b1000" data-i18n="b_1000"></button>
+<button class="btn" type="button" id="bauto" data-i18n="b_auto"></button>
+<div class="ctl" id="c1v"><label for="s1v" data-i18n="l_speed"></label><output id="s1v-o"></output><input type="range" id="s1v" min="0" max="5" step="1" value="3"></div>
+<button class="btn" type="button" id="b1r" data-i18n="b_reset"></button>
+</div>
+</div>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="side" id="side" aria-live="polite"></div>
+</div>
+<div class="idea" data-mod="lln" data-i18n-html="idea_lln"></div>
+</section>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Laplace i llei dels grans nombres",
+"eyebrow":"Matemàtiques · 3r ESO · Incertesa i probabilitat",
+"h1":"Laplace i els grans nombres: l'atzar a la llarga",
+"lede":"Dau, moneda i urna per a entendre la regla de Laplace i veure com la freqüència relativa s'acosta a la probabilitat quan repetim moltes vegades.",
+"sim_title":"Tira, compta i compara",
+"story":"Ací l'atzar es pot tocar: <b>tira, extrau i compta</b>. Tria un experiment, canvia els paràmetres i compara la freqüència amb el que prediu Laplace.",
+"aria.ex":"Experiment",
+"aria.cv":"Dibuix de l'experiment",
+"ex_dau":"Dau",
+"ex_mon":"Moneda",
+"ex_sum":"Dos daus (suma)",
+"ex_urn":"Urna de boles",
+"l_n":"Cares del dau",
+"l_nd":"Cares de cada dau",
+"l_pc":"Probabilitat de cara",
+"l_r":"Boles roges",
+"l_b":"Boles blaves",
+"l_g":"Boles verdes",
+"l_ev":"Succés a seguir",
+"l_speed":"Velocitat",
+"b_1":"1 tirada",
+"b_10":"×10",
+"b_100":"×100",
+"b_1000":"×1000",
+"b_auto":"▶ Automàtic",
+"b_pause":"⏸ Pausa",
+"b_reset":"Reinicia",
+"hc0":"cara",
+"hc1":"creu",
+"hk0":"C",
+"hk1":"X",
+"c0":"roja",
+"c1":"blava",
+"c2":"verda",
+"ck0":"R",
+"ck1":"B",
+"ck2":"V",
+"m1_0":"Encara no has tirat. Prova «1 tirada» o «×100».",
+"m1_l":"Última tirada: {0}",
+"dt_n":"Repeticions",
+"dt_ev":"Succés seguit",
+"dt_p":"Probabilitat teòrica",
+"dt_fa":"Freqüència absoluta",
+"dt_fr":"Freqüència relativa",
+"dt_diff":"Diferència",
+"lap":"Laplace: casos favorables / casos possibles = {0} / {1} = {2}.",
+"lap_sum":"Els casos possibles són les {0} parelles de daus.",
+"lap_urn":"Cada bola és un cas.",
+"lap_no":"Ací els dos resultats no són igual de probables: no es pot aplicar Laplace. La probabilitat de cara és {0} %.",
+"th_r":"Resultat",
+"th_f":"f",
+"th_fr":"fr",
+"th_p":"p",
+"cv_bars":"Freqüència relativa (barres) i probabilitat teòrica (ratlla)",
+"cv_leg":"Clica una barra per a triar el succés",
+"cv_conv":"Freqüència relativa de «{0}» segons les repeticions",
+"cv_x":"repeticions (escala logarítmica)",
+"idea_lln":"<b>La idea:</b> si tots els resultats són igual de probables, la regla de Laplace diu <b>P = casos favorables / casos possibles</b>. La llei dels grans nombres afegeix que, repetint moltes vegades, la <b>freqüència relativa</b> s'acosta a eixa probabilitat. Amb la moneda trucada no val Laplace, però la freqüència també s'estabilitza.",
+"f_r":"Boles roges",
+"f_b":"Boles blaves",
+"f_nn":"Tirades",
+"f_kk":"Cares",
+"f_pct":"Probabilitat",
+"m_rng":"Escriu nombres enters dins dels límits del simulador.",
+"m1.q":"Posa boles roges i blaves (cap de verda), menys de 20 en total, perquè la probabilitat de traure roja siga <b>2/5</b>.",
+"m1_f":"Amb això P(roja) = {0}. Busca una proporció de 2 roges per cada 5 boles.",
+"m1_ok":"✔ {0} roges i {1} blaves: P(roja) = {0}/{2}, equivalent a 2/5.",
+"m1.more":"Hi ha més d'una solució. Què tenen en comú? Escriu una regla que relacione les roges amb les blaves.",
+"s1.q":"Una moneda ha eixit cara 10 vegades seguides. A la tirada següent és més probable que isca creu.",
+"s1.h":"La moneda no té memòria: cada tirada és independent.",
+"s1.e":"Mai. Encara que 10 cares seguides siguen rares, la tirada següent torna a tindre 1/2. Pensar que «ja toca creu» és l'error del jugador.",
+"s2.q":"Si tirem una moneda n vegades, la freqüència relativa de cares és exactament 1/2.",
+"s2.h":"Pensa què passa amb 3 tirades, o amb 10 si n'eixen 7 de cara.",
+"s2.e":"De vegades. Pot valdre 1/2, però en general no. La llei dels grans nombres diu que s'hi acosta, no que hi arribe.",
+"s2_no":"Aquest cas sí que dona 1/2. Busca'n un on no.",
+"s2_cx":"✔ {0} cares en {1} tirades: {2} ≠ 0,5.",
+"e1.ctx":"Una moneda ha eixit cara 5 vegades seguides. Quina probabilitat té de ser creu a la sisena tirada?",
+"e1.n0":"Laia",
+"e1.n1":"Pau",
+"e1.s0":"«Ja en toca! Ara és més probable que isca creu.»",
+"e1.s1":"«Segueix sent 1/2: la moneda no recorda què ha eixit abans.»",
+"e1.w0":"Les tirades són independents: la moneda no té memòria.",
+"e1.w1":"Perquè les monedes alternen cara i creu.",
+"e1.w2":"Perquè cinc cares seguides són impossibles.",
+"e1.frame":"Laia, la moneda no recorda perquè…",
+"e1.model":"Cada tirada és independent: el que ha eixit abans no canvia les probabilitats de la següent. A la llarga hi haurà creus, però això és la llei dels grans nombres, no un «compte pendent» de la moneda.",
+"d1.q":"Vols traure una bola roja. L'urna A té 3 roges i 7 blaves; la B, 5 roges i 12 blaves. Quina tries i quina probabilitat (en %, arrodonida a l'enter) té de sortir roja?",
+"d1.lc":"Urna:",
+"d1.c1":"Urna A",
+"d1.c2":"Urna B",
+"d1_f":"Compara 3/10 amb 5/17 (passa-ho a decimals).",
+"d1_v":"Revisa el càlcul: casos favorables entre casos possibles.",
+"d1_ok":"✔ L'urna A: 3/10 = 30 %, mentre que la B té 5/17 ≈ 29,4 %. Una diferència xicoteta!",
+"d1.more":"Si la B tinguera 6 roges i 12 blaves, canviaria la decisió? Comprova-ho.",
+"q1.q":"Tirem un dau de 6 cares. Quina és la probabilitat que isca un múltiple de 3?",
+"q1.o0":"1/3",
+"q1.o1":"1/6",
+"q1.o2":"1/2",
+"q1.o3":"2/3",
+"q1.e":"Els múltiples de 3 són el 3 i el 6: 2 casos favorables de 6, és a dir, 2/6 = 1/3.",
+"q2.q":"Una urna té 4 boles roges, 6 de blaves i 2 de verdes. Quina és la probabilitat (en %) de traure una bola blava?",
+"q2.u":"%",
+"q2.e":"6 blaves de 12 boles: 6/12 = 0,5 = 50 %.",
+"q3.q":"Què diu la llei dels grans nombres?",
+"q3.o0":"Que els resultats alternen per a compensar-se",
+"q3.o1":"Que la freqüència relativa s'acosta a la probabilitat quan repetim moltes vegades",
+"q3.o2":"Que cal repetir exactament 1000 vegades",
+"q3.e":"Amb moltes repeticions, la freqüència relativa s'estabilitza prop de la probabilitat teòrica. No hi ha cap «compensació» a curt termini.",
+"q4.q":"Tirem dos daus de 6 cares. Quina és la probabilitat que la suma siga 5?",
+"q4.o0":"1/12",
+"q4.o1":"5/36",
+"q4.o2":"1/9",
+"q4.o3":"1/6",
+"q4.e":"Les parelles amb suma 5 són (1,4), (2,3), (3,2) i (4,1): 4 de 36, és a dir, 4/36 = 1/9.",
+"q9.q":"Una moneda ha eixit cara 5 vegades seguides. Quina és la probabilitat que a la sisena isca cara?",
+"q9.o0":"1/2",
+"q9.o1":"Menys d'1/2",
+"q9.o2":"Més d'1/2",
+"q9.e":"Les tirades són independents: la moneda no recorda. Sempre és 1/2.",
+"f_g":"Boles verdes",
+"m5.q":"Una urna té exactament 12 boles, entre roges, blaves i verdes. Perquè P(roja) = 1/2 i P(verda) = 1/4, quantes boles poses de cada color?",
+"m5_sum":"Això fa {0} boles, no 12.",
+"m5_r":"Amb eixes roges, P(roja) = {0}, no 1/2.",
+"m5_g":"Amb eixes verdes, P(verda) = {0}, no 1/4.",
+"m5_ok":"✔ {0} roges, {1} blaves i {2} verdes: 6/12 = 1/2 i 3/12 = 1/4.",
+"m5.more":"Si en lloc de 12 foren 20 boles amb les mateixes probabilitats, quantes n'hi hauria de cada color? Escriu la regla.",
+"s7.q":"Si en 6 tirades d'un dau no ha eixit cap 6, a la tirada següent és segur que isca 6.",
+"s7.h":"El dau no porta compte de les tirades anteriors. I «segur» és molt fort.",
+"s7.e":"Mai. La probabilitat del 6 continua sent 1/6 en cada tirada, passe el que passe abans. Pot tardar molt a eixir.",
+"s8.q":"Amb dos daus, la probabilitat que la suma siga 7 és 1/11, perquè hi ha 11 sumes possibles (del 2 al 12).",
+"s8.h":"Laplace només val si els resultats són igual de probables. Són igual de probables les 11 sumes?",
+"s8.e":"Mai. Les sumes no són igual de probables: la suma 7 s'obté amb 6 de les 36 parelles igual de probables, així que P = 6/36 = 1/6.",
+"e5.ctx":"Tirem un dau equilibrat 60 vegades i el 6 ha eixit 15 vegades. Quina és la probabilitat de traure un 6 amb eixe dau?",
+"e5.n0":"Marc",
+"e5.n1":"Irene",
+"e5.s0":"«15/60 = 1/4: eixa és la probabilitat del 6.»",
+"e5.s1":"«La probabilitat és 1/6; 15/60 només és la freqüència d'aquestes 60 tirades.»",
+"e5.w0":"En un dau equilibrat la probabilitat teòrica és 1/6; la freqüència observada s'hi acosta amb moltes tirades, però no té per què coincidir.",
+"e5.w1":"Perquè 60 tirades són massa poques per a calcular res.",
+"e5.w2":"Perquè el dau està trucat.",
+"e5.frame":"Irene, 15/60 no és la probabilitat perquè…",
+"e5.model":"La freqüència relativa diu què ha passat en un experiment concret; la probabilitat és el valor teòric (1/6) al qual la freqüència s'acosta quan repetim moltes vegades. Aquí 15/60 = 0,25 i 1/6 ≈ 0,167: no tenen per què coincidir.",
+"q10.q":"Una urna té 5 boles roges, 3 de blaves i 2 de verdes. Quina és la probabilitat de NO traure una bola blava? (en forma decimal)",
+"q10.e":"Hi ha 10 boles i 7 no són blaves: 7/10 = 0,7. També: 1 − 3/10 = 0,7."
+},
+es:{
+"title":"Laplace y ley de los grandes números",
+"eyebrow":"Matemáticas · 3.º ESO · Incertidumbre y probabilidad",
+"h1":"Laplace y los grandes números: el azar a la larga",
+"lede":"Dado, moneda y urna para entender la regla de Laplace y ver cómo la frecuencia relativa se acerca a la probabilidad cuando repetimos muchas veces.",
+"sim_title":"Tira, cuenta y compara",
+"story":"Aquí el azar se puede tocar: <b>tira, extrae y cuenta</b>. Elige un experimento, cambia los parámetros y compara la frecuencia con lo que predice Laplace.",
+"aria.ex":"Experimento",
+"aria.cv":"Dibujo del experimento",
+"ex_dau":"Dado",
+"ex_mon":"Moneda",
+"ex_sum":"Dos dados (suma)",
+"ex_urn":"Urna de bolas",
+"l_n":"Caras del dado",
+"l_nd":"Caras de cada dado",
+"l_pc":"Probabilidad de cara",
+"l_r":"Bolas rojas",
+"l_b":"Bolas azules",
+"l_g":"Bolas verdes",
+"l_ev":"Suceso a seguir",
+"l_speed":"Velocidad",
+"b_1":"1 tirada",
+"b_10":"×10",
+"b_100":"×100",
+"b_1000":"×1000",
+"b_auto":"▶ Automático",
+"b_pause":"⏸ Pausa",
+"b_reset":"Reinicia",
+"hc0":"cara",
+"hc1":"cruz",
+"hk0":"C",
+"hk1":"X",
+"c0":"roja",
+"c1":"azul",
+"c2":"verde",
+"ck0":"R",
+"ck1":"A",
+"ck2":"V",
+"m1_0":"Todavía no has tirado. Prueba «1 tirada» o «×100».",
+"m1_l":"Última tirada: {0}",
+"dt_n":"Repeticiones",
+"dt_ev":"Suceso seguido",
+"dt_p":"Probabilidad teórica",
+"dt_fa":"Frecuencia absoluta",
+"dt_fr":"Frecuencia relativa",
+"dt_diff":"Diferencia",
+"lap":"Laplace: casos favorables / casos posibles = {0} / {1} = {2}.",
+"lap_sum":"Los casos posibles son las {0} parejas de dados.",
+"lap_urn":"Cada bola es un caso.",
+"lap_no":"Aquí los dos resultados no son igual de probables: no se puede aplicar Laplace. La probabilidad de cara es {0} %.",
+"th_r":"Resultado",
+"th_f":"f",
+"th_fr":"fr",
+"th_p":"p",
+"cv_bars":"Frecuencia relativa (barras) y probabilidad teórica (raya)",
+"cv_leg":"Clica una barra para elegir el suceso",
+"cv_conv":"Frecuencia relativa de «{0}» según las repeticiones",
+"cv_x":"repeticiones (escala logarítmica)",
+"idea_lln":"<b>La idea:</b> si todos los resultados son igual de probables, la regla de Laplace dice <b>P = casos favorables / casos posibles</b>. La ley de los grandes números añade que, repitiendo muchas veces, la <b>frecuencia relativa</b> se acerca a esa probabilidad. Con la moneda trucada no vale Laplace, pero la frecuencia también se estabiliza.",
+"f_r":"Bolas rojas",
+"f_b":"Bolas azules",
+"f_nn":"Tiradas",
+"f_kk":"Caras",
+"f_pct":"Probabilidad",
+"m_rng":"Escribe números enteros dentro de los límites del simulador.",
+"m1.q":"Pon bolas rojas y azules (ninguna verde), menos de 20 en total, para que la probabilidad de sacar roja sea <b>2/5</b>.",
+"m1_f":"Con esto P(roja) = {0}. Busca una proporción de 2 rojas por cada 5 bolas.",
+"m1_ok":"✔ {0} rojas y {1} azules: P(roja) = {0}/{2}, equivalente a 2/5.",
+"m1.more":"Hay más de una solución. ¿Qué tienen en común? Escribe una regla que relacione las rojas con las azules.",
+"s1.q":"Una moneda ha salido cara 10 veces seguidas. En la tirada siguiente es más probable que salga cruz.",
+"s1.h":"La moneda no tiene memoria: cada tirada es independiente.",
+"s1.e":"Nunca. Aunque 10 caras seguidas sean raras, la tirada siguiente vuelve a tener 1/2. Pensar que «ya toca cruz» es el error del jugador.",
+"s2.q":"Si tiramos una moneda n veces, la frecuencia relativa de caras es exactamente 1/2.",
+"s2.h":"Piensa qué pasa con 3 tiradas, o con 10 si salen 7 caras.",
+"s2.e":"A veces. Puede valer 1/2, pero en general no. La ley de los grandes números dice que se acerca, no que llegue.",
+"s2_no":"Este caso sí da 1/2. Busca uno en el que no.",
+"s2_cx":"✔ {0} caras en {1} tiradas: {2} ≠ 0,5.",
+"e1.ctx":"Una moneda ha salido cara 5 veces seguidas. ¿Qué probabilidad tiene de ser cruz en la sexta tirada?",
+"e1.n0":"Laia",
+"e1.n1":"Pau",
+"e1.s0":"«¡Ya toca! Ahora es más probable que salga cruz.»",
+"e1.s1":"«Sigue siendo 1/2: la moneda no recuerda lo que salió antes.»",
+"e1.w0":"Las tiradas son independientes: la moneda no tiene memoria.",
+"e1.w1":"Porque las monedas alternan cara y cruz.",
+"e1.w2":"Porque cinco caras seguidas son imposibles.",
+"e1.frame":"Laia, la moneda no recuerda porque…",
+"e1.model":"Cada tirada es independiente: lo que salió antes no cambia las probabilidades de la siguiente. A la larga habrá cruces, pero eso es la ley de los grandes números, no una «cuenta pendiente» de la moneda.",
+"d1.q":"Quieres sacar una bola roja. La urna A tiene 3 rojas y 7 azules; la B, 5 rojas y 12 azules. ¿Cuál eliges y qué probabilidad (en %, redondeada al entero) tiene de salir roja?",
+"d1.lc":"Urna:",
+"d1.c1":"Urna A",
+"d1.c2":"Urna B",
+"d1_f":"Compara 3/10 con 5/17 (pásalo a decimales).",
+"d1_v":"Revisa el cálculo: casos favorables entre casos posibles.",
+"d1_ok":"✔ La urna A: 3/10 = 30 %, mientras que la B tiene 5/17 ≈ 29,4 %. ¡Una diferencia pequeña!",
+"d1.more":"Si la B tuviera 6 rojas y 12 azules, ¿cambiaría la decisión? Compruébalo.",
+"q1.q":"Tiramos un dado de 6 caras. ¿Cuál es la probabilidad de que salga un múltiplo de 3?",
+"q1.o0":"1/3",
+"q1.o1":"1/6",
+"q1.o2":"1/2",
+"q1.o3":"2/3",
+"q1.e":"Los múltiplos de 3 son el 3 y el 6: 2 casos favorables de 6, es decir, 2/6 = 1/3.",
+"q2.q":"Una urna tiene 4 bolas rojas, 6 azules y 2 verdes. ¿Cuál es la probabilidad (en %) de sacar una bola azul?",
+"q2.u":"%",
+"q2.e":"6 azules de 12 bolas: 6/12 = 0,5 = 50 %.",
+"q3.q":"¿Qué dice la ley de los grandes números?",
+"q3.o0":"Que los resultados alternan para compensarse",
+"q3.o1":"Que la frecuencia relativa se acerca a la probabilidad cuando repetimos muchas veces",
+"q3.o2":"Que hay que repetir exactamente 1000 veces",
+"q3.e":"Con muchas repeticiones, la frecuencia relativa se estabiliza cerca de la probabilidad teórica. No hay ninguna «compensación» a corto plazo.",
+"q4.q":"Tiramos dos dados de 6 caras. ¿Cuál es la probabilidad de que la suma sea 5?",
+"q4.o0":"1/12",
+"q4.o1":"5/36",
+"q4.o2":"1/9",
+"q4.o3":"1/6",
+"q4.e":"Las parejas con suma 5 son (1,4), (2,3), (3,2) y (4,1): 4 de 36, es decir, 4/36 = 1/9.",
+"q9.q":"Una moneda ha salido cara 5 veces seguidas. ¿Cuál es la probabilidad de que en la sexta salga cara?",
+"q9.o0":"1/2",
+"q9.o1":"Menos de 1/2",
+"q9.o2":"Más de 1/2",
+"q9.e":"Las tiradas son independientes: la moneda no recuerda. Siempre es 1/2.",
+"f_g":"Bolas verdes",
+"m5.q":"Una urna tiene exactamente 12 bolas, entre rojas, azules y verdes. Para que P(roja) = 1/2 y P(verde) = 1/4, ¿cuántas bolas pones de cada color?",
+"m5_sum":"Eso hace {0} bolas, no 12.",
+"m5_r":"Con esas rojas, P(roja) = {0}, no 1/2.",
+"m5_g":"Con esas verdes, P(verde) = {0}, no 1/4.",
+"m5_ok":"✔ {0} rojas, {1} azules y {2} verdes: 6/12 = 1/2 y 3/12 = 1/4.",
+"m5.more":"Si en lugar de 12 fueran 20 bolas con las mismas probabilidades, ¿cuántas habría de cada color? Escribe la regla.",
+"s7.q":"Si en 6 tiradas de un dado no ha salido ningún 6, en la tirada siguiente es seguro que salga 6.",
+"s7.h":"El dado no lleva la cuenta de las tiradas anteriores. Y «seguro» es muy fuerte.",
+"s7.e":"Nunca. La probabilidad del 6 sigue siendo 1/6 en cada tirada, pase lo que pase antes. Puede tardar mucho en salir.",
+"s8.q":"Con dos dados, la probabilidad de que la suma sea 7 es 1/11, porque hay 11 sumas posibles (de la 2 a la 12).",
+"s8.h":"Laplace solo vale si los resultados son equiprobables. ¿Son igual de probables las 11 sumas?",
+"s8.e":"Nunca. Las sumas no son igual de probables: la suma 7 se obtiene con 6 de las 36 parejas equiprobables, así que P = 6/36 = 1/6.",
+"e5.ctx":"Tiramos un dado equilibrado 60 veces y el 6 ha salido 15 veces. ¿Cuál es la probabilidad de sacar un 6 con ese dado?",
+"e5.n0":"Marc",
+"e5.n1":"Irene",
+"e5.s0":"«15/60 = 1/4: esa es la probabilidad del 6.»",
+"e5.s1":"«La probabilidad es 1/6; 15/60 solo es la frecuencia de estas 60 tiradas.»",
+"e5.w0":"En un dado equilibrado la probabilidad teórica es 1/6; la frecuencia observada se acerca a ella con muchas tiradas, pero no tiene por qué coincidir.",
+"e5.w1":"Porque 60 tiradas son demasiado pocas para calcular nada.",
+"e5.w2":"Porque el dado está trucado.",
+"e5.frame":"Irene, 15/60 no es la probabilidad porque…",
+"e5.model":"La frecuencia relativa dice qué ha pasado en un experimento concreto; la probabilidad es el valor teórico (1/6) al que se acerca la frecuencia cuando repetimos muchas veces. Aquí 15/60 = 0,25 y 1/6 ≈ 0,167: no tienen por qué coincidir.",
+"q10.q":"Una urna tiene 5 bolas rojas, 3 azules y 2 verdes. ¿Cuál es la probabilidad de NO sacar una bola azul? (en forma decimal)",
+"q10.e":"Hay 10 bolas y 7 no son azules: 7/10 = 0,7. También: 1 − 3/10 = 0,7."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+(function(){
+/* ===== Probabilitat 3r ESO: laboratori de l'atzar ===== */
+let dirty=true,mod='lln';
+const cv=makeCanvas($('#cv'),640,480,()=>{dirty=true;});
+const FONT='system-ui,-apple-system,"Segoe UI",sans-serif';
+const BALL=['#d64545','#2f6fe0','#2e9e5b'];
+const INK='#1a2236';
+function tx(c,s,x,y,sz,col,al,wt){c.font=(wt||400)+' '+sz+'px '+FONT;c.fillStyle=col;c.textAlign=al||'left';c.textBaseline='middle';c.fillText(s,x,y);}
+const gcdf=(a,b)=>b?gcdf(b,a%b):Math.abs(a);
+const fr=(n,d)=>{const g=gcdf(n,d)||1;return [n/g,d/g];};
+const fmul=(a,b)=>fr(a[0]*b[0],a[1]*b[1]);
+const fadd=(a,b)=>fr(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const fstr=p=>p[1]===1?String(p[0]):p[0]+'/'+p[1];
+const fval=p=>p[0]/p[1];
+const pc=x=>nf(100*x,1)+' %';
+const fp=p=>fstr(p)+' ('+pc(fval(p))+')';
+const nice=v=>[.05,.1,.2,.25,.3,.4,.5,.6,.8,1].find(x=>x>=v)||1;
+const isPrime=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;};
+function bindR(id,fn){const i=$('#'+id),o=$('#'+id+'-o');const u=()=>{o.textContent=i.value+((id==='s1p'||id==='s2p')?' %':'');};
+  i.addEventListener('input',()=>{u();fn(+i.value);});u();return {i,u,set(v){i.value=v;u();}};}
+function die(c,x,y,s,v,n,col){
+  c.fillStyle='#fff';rrect(c,x-s/2,y-s/2,s,s,s*.16);c.fill();c.strokeStyle=col.muted;c.lineWidth=1.5;c.stroke();
+  const P={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  if(v>=1&&v<=6&&n<=6){c.fillStyle=INK;P[v].forEach(i=>{c.beginPath();c.arc(x+(i%3-1)*s*.26,y+(Math.floor(i/3)-1)*s*.26,s*.075,0,TAU);c.fill();});}
+  else tx(c,v==null?'?':String(v),x,y,s*.46,INK,'center',700);
+}
+
+/* ======================= MÒDUL 1: Laplace i grans nombres ======================= */
+const S1={exp:'dau',n:6,pc:50,r:3,b:2,g:1,sel:0,cnt:[],tot:0,hist:[],last:null,anim:null,auto:false,acc:0,sp:3};
+const SPD=[2,6,25,100,500,3000];
+function o1(){
+  const e=S1.exp,n=S1.n;
+  if(e==='dau'){const L=[],W=[];for(let i=1;i<=n;i++){L.push(String(i));W.push(1);}return{L,W,T:n,lap:true};}
+  if(e==='mon')return{L:[t('hc0'),t('hc1')],W:[S1.pc,100-S1.pc],T:100,lap:S1.pc===50};
+  if(e==='sum'){const L=[],W=[];for(let s=2;s<=2*n;s++){L.push(String(s));W.push(s<=n+1?s-1:2*n+1-s);}return{L,W,T:n*n,lap:true};}
+  const L=[],W=[],K=[];[S1.r,S1.b,S1.g].forEach((w,i)=>{if(w>0){L.push(t('c'+i));W.push(w);K.push(i);}});
+  return{L,W,T:W.reduce((a,b)=>a+b,0),lap:true,K};
+}
+function buildEv(){const o=o1(),s=$('#evsel');s.innerHTML=o.L.map((l,i)=>'<option value="'+i+'">'+l+'</option>').join('');s.value=String(S1.sel);}
+function reset1(){const o=o1();S1.cnt=o.W.map(()=>0);S1.tot=0;S1.hist=[];S1.last=null;S1.anim=null;S1.sel=clamp(S1.sel,0,o.W.length-1);buildEv();dirty=true;panel1();}
+function samp1(o){
+  if(S1.exp==='sum'){const a=1+Math.floor(Math.random()*S1.n),b=1+Math.floor(Math.random()*S1.n);return{i:a+b-2,d:[a,b]};}
+  let x=Math.random()*o.T,i=0;for(;i<o.W.length-1;i++){x-=o.W[i];if(x<0)break;}return{i};
+}
+function apply1(r){S1.cnt[r.i]++;S1.tot++;S1.last=r;const n=S1.tot;
+  if(n<=120||n%Math.ceil(n/120)===0)S1.hist.push({n,c:S1.cnt.slice()});
+  if(S1.hist.length>1600)S1.hist=S1.hist.filter((h,i)=>i%2===0||i===S1.hist.length-1);}
+function run1(k){const o=o1();for(let j=0;j<k;j++)apply1(samp1(o));dirty=true;panel1();}
+function step1(){if(S1.anim)return;const r=samp1(o1());if(REDUCE){apply1(r);dirty=true;panel1();return;}S1.anim={r,t0:performance.now()};dirty=true;}
+function setAuto(v){S1.auto=v;$('#bauto').textContent=t(v?'b_pause':'b_auto');}
+
+const B={x0:58,x1:614,y0:140,y1:316}, V={x0:58,x1:614,y0:376,y1:462};
+function drawVis(c,col,o){
+  let r=S1.last;
+  if(S1.anim){const i=Math.floor(Math.random()*o.L.length);r={i,d:S1.exp==='sum'?[1+Math.floor(Math.random()*S1.n),1+Math.floor(Math.random()*S1.n)]:null};}
+  const cy=60;
+  if(S1.exp==='dau')die(c,320,cy,70,r?r.i+1:null,S1.n,col);
+  else if(S1.exp==='sum'){die(c,285,cy,64,r?r.d[0]:null,S1.n,col);die(c,355,cy,64,r?r.d[1]:null,S1.n,col);}
+  else if(S1.exp==='mon'){c.beginPath();c.arc(320,cy,34,0,TAU);c.fillStyle=r?(r.i===0?'#e0b341':'#b9bfcc'):'#cdd2de';c.fill();c.strokeStyle=col.muted;c.lineWidth=2;c.stroke();tx(c,r?t('hk'+r.i):'?',320,cy,28,INK,'center',700);}
+  else{
+    const cols=[];[S1.r,S1.b,S1.g].forEach((w,i)=>{for(let j=0;j<w;j++)cols.push(i);});
+    const jx=170,jy=16,jw=130,jh=88;c.strokeStyle=col.muted;c.lineWidth=2.5;c.beginPath();c.moveTo(jx,jy);c.lineTo(jx,jy+jh);c.lineTo(jx+jw,jy+jh);c.lineTo(jx+jw,jy);c.stroke();
+    cols.forEach((k,j)=>{c.beginPath();c.arc(jx+15+(j%7)*17,jy+jh-12-Math.floor(j/7)*17,8,0,TAU);c.fillStyle=BALL[k];c.fill();});
+    c.beginPath();c.arc(440,cy,26,0,TAU);c.fillStyle=r?BALL[o.K[r.i]]:'#cdd2de';c.fill();c.strokeStyle=col.muted;c.lineWidth=2;c.stroke();
+    if(!r)tx(c,'?',440,cy,24,INK,'center',700);
+  }
+}
+function drawBars(c,col,o){
+  const m=o.L.length,tot=S1.tot,p=o.W.map(w=>w/o.T),f=S1.cnt.map(k=>tot?k/tot:0);
+  const ymax=nice(Math.max(...p,...f)*1.12),H=B.y1-B.y0,yy=v=>B.y1-v/ymax*H;
+  c.lineWidth=1;c.strokeStyle=col.line;
+  [0,.5,1].forEach(q=>{const y=yy(q*ymax);c.beginPath();c.moveTo(B.x0,y);c.lineTo(B.x1,y);c.stroke();tx(c,nf(q*ymax*100,1)+' %',B.x0-6,y,11,col.muted,'right');});
+  tx(c,t('cv_bars'),B.x0,B.y0-20,12,col.muted,'left',600);
+  tx(c,t('cv_leg'),B.x1,B.y0-20,11,col.muted,'right');
+  const bw=(B.x1-B.x0)/m,w=Math.min(38,bw*.72);
+  for(let i=0;i<m;i++){
+    const x=B.x0+(i+.5)*bw,h=f[i]/ymax*H;
+    c.globalAlpha=i===S1.sel?1:.55;c.fillStyle=S1.exp==='urn'?BALL[o.K[i]]:col.pa;c.fillRect(x-w/2,B.y1-h,w,h);c.globalAlpha=1;
+    c.strokeStyle=col.ink;c.lineWidth=2.4;c.beginPath();c.moveTo(x-w/2-4,yy(p[i]));c.lineTo(x+w/2+4,yy(p[i]));c.stroke();
+    if(m<=8&&tot)tx(c,nf(f[i]*100,1)+'%',x,Math.min(B.y1-h,yy(p[i]))-10,11,col.ink,'center');
+    tx(c,o.L[i],x,B.y1+11,clamp(bw*.55,9,14),i===S1.sel?col.ink:col.muted,'center',i===S1.sel?700:400);
+    if(i===S1.sel){c.strokeStyle=col.ink;c.lineWidth=1.2;c.setLineDash([3,3]);c.strokeRect(x-bw/2+1,B.y0-6,bw-2,B.y1-B.y0+26);c.setLineDash([]);}
+  }
+}
+function drawConv(c,col,o){
+  const i=S1.sel,p=o.W[i]/o.T;
+  tx(c,tt('cv_conv',o.L[i]),V.x0,V.y0-18,12,col.muted,'left',600);
+  const xm=Math.max(10,S1.tot),lx=n=>V.x0+Math.log10(Math.max(1,n))/Math.log10(xm)*(V.x1-V.x0);
+  const ym=Math.min(1,p*2.2+.05),yv=v=>V.y1-clamp(v/ym,0,1)*(V.y1-V.y0);
+  c.strokeStyle=col.line;c.lineWidth=1;c.strokeRect(V.x0,V.y0,V.x1-V.x0,V.y1-V.y0);
+  for(let k=1;k<=xm;k*=10){const x=lx(k);c.beginPath();c.moveTo(x,V.y0);c.lineTo(x,V.y1);c.stroke();tx(c,String(k),x,V.y1+10,10,col.muted,'center');}
+  tx(c,'0 %',V.x0-6,V.y1,11,col.muted,'right');tx(c,nf(ym*100,0)+' %',V.x0-6,V.y0,11,col.muted,'right');
+  c.strokeStyle=col.ink;c.lineWidth=1.8;c.setLineDash([6,4]);c.beginPath();c.moveTo(V.x0,yv(p));c.lineTo(V.x1,yv(p));c.stroke();c.setLineDash([]);
+  tx(c,'p = '+nf(p,3),V.x1-4,yv(p)-9,11,col.ink,'right',600);
+  c.strokeStyle=col.pa;c.lineWidth=2;c.beginPath();
+  S1.hist.forEach((h,k)=>{const x=lx(h.n),y=yv(h.c[i]/h.n);if(k)c.lineTo(x,y);else c.moveTo(x,y);});c.stroke();
+  tx(c,t('cv_x'),V.x1,V.y1+24,10,col.muted,'right');
+}
+function draw1(c,col){const o=o1();drawVis(c,col,o);drawBars(c,col,o);drawConv(c,col,o);}
+function panel1(){
+  if(mod!=='lln')return;
+  const o=o1(),i=S1.sel,P=fr(o.W[i],o.T),k=S1.cnt[i],tot=S1.tot;
+  const lastTxt=!S1.last?t('m1_0'):tt('m1_l',S1.exp==='sum'?S1.last.d[0]+' + '+S1.last.d[1]+' = '+o.L[S1.last.i]:o.L[S1.last.i]);
+  let lap;
+  if(o.lap){const fv=S1.exp==='mon'?1:o.W[i],ps=S1.exp==='mon'?2:o.T;
+    lap=tt('lap',fv,ps,fp(P))+(S1.exp==='sum'?' '+tt('lap_sum',S1.n*S1.n):S1.exp==='urn'?' '+t('lap_urn'):'');}
+  else lap=tt('lap_no',S1.pc);
+  let rows='';o.L.forEach((l,j)=>{const f=tot?S1.cnt[j]/tot:0;rows+='<tr'+(j===i?' class="sel"':'')+'><td>'+l+'</td><td>'+S1.cnt[j]+'</td><td>'+(tot?nf(f,3):'—')+'</td><td>'+nf(o.W[j]/o.T,3)+'</td></tr>';});
+  $('#side').innerHTML='<p class="msg">'+lastTxt+'</p><dl><dt>'+t('dt_n')+'</dt><dd>'+tot+'</dd><dt>'+t('dt_ev')+'</dt><dd>'+o.L[i]+'</dd><dt>'+t('dt_p')+'</dt><dd class="hl">'+fp(P)+'</dd><dt>'+t('dt_fa')+'</dt><dd>'+k+'</dd><dt>'+t('dt_fr')+'</dt><dd class="hl">'+(tot?k+'/'+tot+' = '+nf(k/tot,3):'—')+'</dd><dt>'+t('dt_diff')+'</dt><dd>'+(tot?nf(Math.abs(k/tot-o.W[i]/o.T),3):'—')+'</dd></dl>'
+   +'<p class="note">'+lap+'</p><div class="tw"><table class="tbl"><tr><th>'+t('th_r')+'</th><th>'+t('th_f')+'</th><th>'+t('th_fr')+'</th><th>'+t('th_p')+'</th></tr>'+rows+'</table></div>';
+}
+function ch1(){if(S1.r+S1.b+S1.g<1){S1.r=1;sl.r.set(1);}reset1();syncC1();}
+function syncC1(){
+  $('#c1n').hidden=!(S1.exp==='dau'||S1.exp==='sum');$('#c1p').hidden=S1.exp!=='mon';
+  ['r','b','g'].forEach(k=>$('#c1'+k).hidden=S1.exp!=='urn');
+  $('label[for=s1n]').textContent=t(S1.exp==='sum'?'l_nd':'l_n');
+}
+const sl={n:bindR('s1n',v=>{S1.n=v;reset1();}),p:bindR('s1p',v=>{S1.pc=v;reset1();}),
+  r:bindR('s1r',v=>{S1.r=v;ch1();}),b:bindR('s1b',v=>{S1.b=v;ch1();}),g:bindR('s1g',v=>{S1.g=v;ch1();}),
+  v:bindR('s1v',v=>{S1.sp=v;$('#s1v-o').textContent=SPD[v]+'/s';})};
+$('#s1v-o').textContent=SPD[S1.sp]+'/s';
+$$('#exl .chip').forEach(b=>b.onclick=()=>{S1.exp=b.dataset.ex;S1.sel=0;$$('#exl .chip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));setAuto(false);syncC1();reset1();});
+$('#evsel').onchange=e=>{S1.sel=+e.target.value;dirty=true;panel1();};
+$('#b1').onclick=step1;$('#b10').onclick=()=>run1(10);$('#b100').onclick=()=>run1(100);$('#b1000').onclick=()=>run1(1000);
+$('#bauto').onclick=()=>setAuto(!S1.auto);$('#b1r').onclick=()=>{setAuto(false);reset1();};
+
+/* ======================= comuns: clics i bucle ======================= */
+function panelAll(){panel1();}
+cv.cv.addEventListener('click',e=>{
+  const p=cv.pt(e);
+  const o=o1(),bw=(B.x1-B.x0)/o.L.length;if(p.y>B.y0-10&&p.y<B.y1+26&&p.x>=B.x0&&p.x<B.x1){S1.sel=Math.floor((p.x-B.x0)/bw);$('#evsel').value=String(S1.sel);dirty=true;panel1();}
+});
+document.addEventListener('themechange',()=>{dirty=true;});
+document.addEventListener('langchange',()=>{buildEv();syncC1();$('#bauto').textContent=t(S1.auto?'b_pause':'b_auto');panelAll();dirty=true;});
+let prev=performance.now();
+function frame(now){
+  const dt=Math.min(.1,(now-prev)/1000);prev=now;
+  if(S1.anim&&now-S1.anim.t0>=400){const r=S1.anim.r;S1.anim=null;apply1(r);panel1();dirty=true;}
+  if(S1.anim)dirty=true;
+  if(S1.auto){S1.acc+=SPD[S1.sp]*dt;const k=Math.floor(S1.acc);if(k>0){S1.acc-=k;run1(Math.min(k,4000));}}
+  if(dirty){dirty=false;const c=cv.ctx,col=C();c.clearRect(0,0,640,480);c.fillStyle=col.stage;c.fillRect(0,0,640,480);draw1(c,col);}
+  requestAnimationFrame(frame);
+}
+
+/* ======================= Raona-ho ======================= */
+const goCv=()=>$('#cv').scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});
+function ldLln(exp,o){setAuto(false);S1.exp=exp;S1.sel=0;Object.assign(S1,o||{});
+  sl.n.set(S1.n);sl.p.set(S1.pc);sl.r.set(S1.r);sl.b.set(S1.b);sl.g.set(S1.g);
+  $$('#exl .chip').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.ex===exp)));syncC1();reset1();goCv();}
+const isI=(...a)=>a.every(Number.isInteger);
+const F={fr:{l:'f_r'},fb:{l:'f_b'},fg:{l:'f_g'},fnn:{l:'f_nn'},fk:{l:'f_kk'},fpct:{l:'f_pct',u:'%'}};
+RZ.init({F,
+ sim:()=>{},
+ M:[
+  {id:'m1',f:['fr','fb'],sim:([r,b])=>ldLln('urn',{r:clamp(r||2,0,10),b:clamp(b||3,0,10),g:0}),
+   chk:([r,b])=>!(isI(r,b)&&r>=0&&b>=0&&r<=10&&b<=10&&r+b>=1)?{k:'m_rng'}:(r+b>=20)?{k:'m_rng'}:r*5!==2*(r+b)?{k:'m1_f',p:[fstr(fr(r,r+b))]}:null,
+   ok:([r,b])=>({k:'m1_ok',p:[r,b,r+b]})},
+  {id:'m5',f:['fr','fb','fg'],sim:([r,b,g])=>ldLln('urn',{r:clamp(r||0,0,10),b:clamp(b||0,0,10),g:clamp(g||0,0,10)+((r||0)+(b||0)+(g||0)<1?1:0)}),
+   chk:([r,b,g])=>!(isI(r,b,g)&&r>=0&&b>=0&&g>=0&&r<=12&&b<=12&&g<=12)?{k:'m_rng'}:r+b+g!==12?{k:'m5_sum',p:[r+b+g]}:r*2!==12?{k:'m5_r',p:[fstr(fr(r,12))]}:g*4!==12?{k:'m5_g',p:[fstr(fr(g,12))]}:null,
+   ok:([r,b,g])=>({k:'m5_ok',p:[r,b,g]})}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>ldLln('mon',{pc:50})},
+  {id:'s7',ans:'M',sim:()=>ldLln('dau',{n:6})},
+  {id:'s2',ans:'D',f:['fnn','fk'],sim:()=>ldLln('mon',{pc:50}),
+   cx:([n,k])=>!(isI(n,k)&&n>=1&&n<=1000&&k>=0&&k<=n)?{k:'m_rng'}:2*k===n?{k:'s2_no'}:null,
+   cxok:([n,k])=>({k:'s2_cx',p:[k,n,nf(k/n,2)]}),cxsim:()=>ldLln('mon',{pc:50})},
+  {id:'s8',ans:'M',sim:()=>ldLln('sum',{n:6})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>ldLln('mon',{pc:50})},
+  {id:'e5',who:1,sim:()=>ldLln('dau',{n:6})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[1,2],fmt:x=>t('d1.c'+x)},f:['fpct'],sim:([p])=>ldLln('urn',p===2?{r:5,b:12,g:0}:{r:3,b:7,g:0}),
+   chk:([p,v])=>p!==1?{k:'d1_f'}:Math.abs(v-30)>1?{k:'d1_v'}:null,ok:()=>({k:'d1_ok'})}
+ ]
+});
+const QDATA=[{"id":"q1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"q2","lvl":"all","type":"num","num":50,"tol":0,"u":1},{"id":"q3","lvl":"all","type":"mc","n":3,"ans":1},{"id":"q4","lvl":"all","type":"mc","n":4,"ans":2},{"id":"q9","lvl":"basic","type":"mc","n":3,"ans":0},{"id":"q10","lvl":"adv","type":"num","num":0.7,"tol":0}];
+buildEv();syncC1();reset1();
+initQuiz(QDATA);
+initLang();applyLang();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
