@@ -1,0 +1,1456 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Famílies de funcions — animació interactiva</title>
+<meta name="description" content="Funció afí, quadràtica, proporcionalitat inversa, exponencial, logarítmica, radical, sinus i funcions a trossos: mou els paràmetres, construeix la taula punt a punt, mira exemples reals i identifica la funció amagada. Per a 4t ESO, amb activitats per a raonar.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/families-funcions/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/families-funcions/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/families-funcions/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/families-funcions/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Famílies de funcions — animació interactiva">
+<meta property="og:description" content="Funció afí, quadràtica, proporcionalitat inversa, exponencial, logarítmica, radical, sinus i funcions a trossos: mou els paràmetres, construeix la taula punt a punt, mira exemples reals i identifica la funció amagada. Per a 4t ESO, amb activitats per a raonar.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/families-funcions/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+:root{--cv:#2457c2;--cv2:#cf5d17;--pt:#1d8a4e;--grid:#e1e6f0;--grid-major:#b7c2da;--asy:#8a3bb4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--cv:#7aa7ff;--cv2:#ff9a56;--pt:#4cd08a;--grid:#18213a;--grid-major:#2c3a5c;--asy:#c78bf3}}
+.rtabs{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin:0 0 14px;overflow-x:auto}
+.rtabs button{font:600 14.5px var(--f-body);padding:9px 12px;border:0;background:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1.5px;cursor:pointer;white-space:nowrap}
+.rtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--cv)}
+.rtabs button:focus-visible{outline:2px solid var(--pa);outline-offset:-2px}
+.rgraph{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 8px 6px}
+.rgraph svg{display:block;width:100%;height:auto;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.readout{font:13px var(--f-num);color:var(--muted);min-height:1.5em;margin:6px 4px 0;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink)}
+.gl{stroke:var(--grid);stroke-width:1}
+.glM{stroke:var(--grid-major);stroke-width:1}
+.axl{stroke:var(--muted);stroke-width:1.4}
+.tk{fill:var(--muted);font:11px var(--f-num)}
+.axt{fill:var(--ink);font:italic 600 12.5px var(--f-body)}
+.curve{fill:none;stroke:var(--cv);stroke-width:2.8;stroke-linejoin:round;stroke-linecap:round}
+.curve.c2{stroke:var(--cv2);stroke-dasharray:7 5;stroke-width:2.4}
+.asy{stroke:var(--asy);stroke-width:1.5;stroke-dasharray:6 5;fill:none}
+.sp{fill:var(--panel);stroke:var(--pt);stroke-width:2.4}
+.sp.fill{fill:var(--pt)}
+.dotp{fill:var(--cv2);stroke:var(--panel);stroke-width:1.5}
+.dotp.last{r:7}
+.guide{stroke:var(--cv2);stroke-width:1.2;stroke-dasharray:4 4;opacity:.8}
+.hover{fill:var(--cv);stroke:var(--panel);stroke-width:2}
+.ctls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;padding:2px 4px}
+@media (max-width:620px){.ctls{grid-template-columns:1fr}}
+.ctls .ctl output{color:var(--cv);font-weight:700}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 18px;margin:2px 4px 0;font-size:13.5px}
+.toggles label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.formula{font-family:var(--f-display);font-size:1.7rem;line-height:1.2;margin:0;overflow-x:auto;white-space:nowrap}
+.formula small{font:600 .8rem var(--f-body);color:var(--muted);display:block;margin-top:2px}
+.statement{background:var(--chip);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.5;color:var(--ink)}
+.statement:empty{display:none}
+.statement p{margin:0 0 6px;color:var(--ink)}
+.sh{margin:0 0 4px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.props{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13.5px}
+.props dt{color:var(--muted)}
+.props dd{margin:0;text-align:left;font-family:var(--f-body);font-variant-numeric:tabular-nums;color:var(--ink);overflow-wrap:anywhere}
+.props dd b{color:var(--cv)}
+.rtbl{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.tbl-wrap{overflow-x:auto;max-height:19rem;overflow-y:auto}
+table.rt{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+table.rt th{font:700 11.5px var(--f-body);text-transform:none;color:var(--muted);text-align:right;padding:4px 6px;border-bottom:1.5px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--panel)}
+table.rt td{padding:3px 6px;text-align:right;font-family:var(--f-num);font-size:12.5px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.rt th:first-child,table.rt td:first-child{text-align:left}
+table.rt td.calc{color:var(--muted);font-size:12px}
+table.rt tr.cur td{background:color-mix(in srgb,var(--cv2) 15%,transparent);font-weight:700}
+table.rt td.no{color:var(--warn);font-family:var(--f-body);font-size:12px}
+.tbl-note{color:var(--muted);font-size:12.5px;margin:6px 0 0}
+.rrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:8px}
+.rfb{margin:8px 0 0;font-size:14px;color:var(--ink)}
+.rfb:empty{display:none}
+.rfb.ok{color:var(--ok);font-weight:600}
+.rfb.bad{color:var(--warn)}
+.chal-par{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--muted);font-weight:600}
+.fld i{font-family:var(--f-display);font-size:1.05rem;color:var(--ink)}
+input.rn{font:600 15px var(--f-num);width:6rem;padding:6px 8px;border:1.5px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+input.rn.ok{border-color:var(--ok)}
+input.rn.bad{border-color:var(--warn)}
+.chips .chip.fam{font-size:13px;padding:4px 11px}
+.simcv{min-width:0}
+@media (min-width:821px){#sim .simcv{position:sticky;top:8px}}
+.msgs{font-size:13px;color:var(--muted)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Funcions · 4t ESO</p>
+      <h1 data-i18n="h1">📈 Famílies de funcions</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Afí, quadràtica, inversa, exponencial, logarítmica, radical, sinus i a trossos: mou els paràmetres, calcula la taula punt a punt i descobreix què té de propi cada família.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card" id="sim">
+<h2 data-i18n="sim_title">Tria una família i juga amb els paràmetres</h2>
+<p data-i18n-html="story">Cada família té la seua <b>forma</b>, el seu <b>domini</b> i el seu <b>recorregut</b>. Mou els lliscadors i mira com canvien la gràfica, la fórmula i les propietats; calcula la taula de valors <b>un punt cada vegada</b> per a descobrir el patró de la família; i prova les situacions reals.</p>
+<nav class="rtabs" id="famtabs" role="tablist" data-i18n-aria="aria.fam" aria-label="Família de funcions">
+  <button type="button" role="tab" data-fam="afi" aria-selected="true" data-i18n="fam_afi">Afí (recta)</button>
+  <button type="button" role="tab" data-fam="cua" aria-selected="false" data-i18n="fam_cua">Quadràtica</button>
+  <button type="button" role="tab" data-fam="inv" aria-selected="false" data-i18n="fam_inv">Proporcionalitat inversa</button>
+  <button type="button" role="tab" data-fam="exp" aria-selected="false" data-i18n="fam_exp">Exponencial</button>
+  <button type="button" role="tab" data-fam="log" aria-selected="false" data-i18n="fam_log">Logarítmica</button>
+  <button type="button" role="tab" data-fam="rad" aria-selected="false" data-i18n="fam_rad">Radical</button>
+  <button type="button" role="tab" data-fam="sin" aria-selected="false" data-i18n="fam_sin">Sinus (periòdica)</button>
+  <button type="button" role="tab" data-fam="tro" aria-selected="false" data-i18n="fam_tro">A trossos</button>
+</nav>
+<div class="simgrid">
+  <div class="simcv">
+    <div class="rgraph">
+      <svg id="gsvg" viewBox="0 0 640 360" role="img" data-i18n-aria="aria.svg" aria-label="Gràfica de la funció triada amb els seus punts notables i els punts de la taula"></svg>
+      <div class="readout" id="read" aria-live="off"></div>
+    </div>
+    <div class="ctls" id="ctls"></div>
+    <div class="toggles">
+      <label><input type="checkbox" id="showPts" checked><span data-i18n="c_pts">Mostra els punts notables</span></label>
+      <label><input type="checkbox" id="showAsy" checked><span data-i18n="c_asy">Mostra les asímptotes</span></label>
+    </div>
+  </div>
+  <div class="side">
+    <div>
+      <p class="sh" data-i18n="s_formula">Fórmula</p>
+      <div class="formula" id="formula"></div>
+    </div>
+    <div>
+      <p class="sh" data-i18n="s_ex">Situacions reals</p>
+      <div class="chips" id="exchips"></div>
+      <div class="statement" id="extext"></div>
+    </div>
+    <div>
+      <p class="sh" data-i18n="s_props">Propietats</p>
+      <dl class="props" id="props"></dl>
+    </div>
+    <div class="rtbl">
+      <p class="sh" data-i18n="s_tbl">Taula de valors, punt a punt</p>
+      <div class="tbl-wrap" id="tbl"></div>
+      <div class="rrow">
+        <button class="btn primary" id="tNext" type="button" data-i18n="t_next">Següent punt →</button>
+        <button class="btn" id="tPlay" type="button" data-i18n="t_play">▶ Anima</button>
+        <button class="btn" id="tAll" type="button" data-i18n="t_all">Mostra-ho tot</button>
+        <button class="btn" id="tReset" type="button" data-i18n="t_reset">↺ Reinicia</button>
+      </div>
+      <p class="tbl-note" id="tnote"></p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="card" id="chal">
+<h2><small data-i18n="ch_eyebrow">Repte</small><span data-i18n="ch_title">Quina funció és?</span></h2>
+<p data-i18n="ch_intro">Hi ha una funció amagada. Primer descobreix a quina família pertany (mira el domini, les asímptotes i la forma). Després escriu-ne els paràmetres: pots passar el cursor per la gràfica per a llegir punts, demanar una pista o superposar la teua proposta.</p>
+<div class="simgrid">
+  <div class="simcv">
+    <div class="rgraph"><svg id="csvg" viewBox="0 0 640 360" role="img" data-i18n-aria="aria.csvg" aria-label="Gràfica de la funció amagada"></svg></div>
+  </div>
+  <div class="side">
+    <div>
+      <p class="sh" data-i18n="ch_s1">1. Tria la família</p>
+      <div class="chips" id="chfam"></div>
+    </div>
+    <div id="chstep2" hidden>
+      <p class="sh" data-i18n="ch_s2">2. Escriu els paràmetres</p>
+      <div class="chal-par" id="chpar"></div>
+      <label class="toggles"><span style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="chover" checked><span data-i18n="ch_over">Superposa la meua (taronja)</span></span></label>
+    </div>
+    <div class="rrow">
+      <button class="btn primary" id="chCheck" type="button" data-i18n="check">Comprova</button>
+      <button class="btn" id="chHint" type="button" data-i18n="ch_hint">Pista</button>
+      <button class="btn" id="chNew" type="button" data-i18n="ch_new">Nou repte</button>
+    </div>
+    <p class="rfb" id="chfb" aria-live="polite"></p>
+    <p class="msgs" id="chscore"></p>
+  </div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Famílies de funcions — animació interactiva",
+"eyebrow":"Funcions · 4t ESO",
+"h1":"📈 Famílies de funcions",
+"lede":"Afí, quadràtica, inversa, exponencial, logarítmica, radical, sinus i a trossos: mou els paràmetres, calcula la taula punt a punt i descobreix què té de propi cada família.",
+"sim_title":"Tria una família i juga amb els paràmetres",
+"story":"Cada família té la seua <b>forma</b>, el seu <b>domini</b> i el seu <b>recorregut</b>. Mou els lliscadors i mira com canvien la gràfica, la fórmula i les propietats; calcula la taula de valors <b>un punt cada vegada</b> per a descobrir el patró de la família; i prova les situacions reals.",
+"aria.fam":"Família de funcions","aria.svg":"Gràfica de la funció triada amb els seus punts notables i els punts de la taula","aria.csvg":"Gràfica de la funció amagada",
+"fam_afi":"Afí (recta)","fam_cua":"Quadràtica","fam_inv":"Proporcionalitat inversa","fam_exp":"Exponencial","fam_log":"Logarítmica","fam_rad":"Radical","fam_sin":"Sinus (periòdica)","fam_tro":"A trossos",
+"c_pts":"Mostra els punts notables","c_asy":"Mostra les asímptotes",
+"s_formula":"Fórmula","s_ex":"Situacions reals","s_props":"Propietats","s_tbl":"Taula de valors, punt a punt",
+"t_next":"Següent punt →","t_play":"▶ Anima","t_pause":"⏸ Pausa","t_all":"Mostra-ho tot","t_reset":"↺ Reinicia",
+"ex_free":"Lliure",
+"pl_afi_m":"m · pendent","pl_afi_n":"n · ordenada a l'origen",
+"pl_cua_a":"a · obertura","pl_cua_b":"b","pl_cua_c":"c · ordenada a l'origen",
+"pl_inv_k":"k · constant",
+"pl_exp_a":"a · valor inicial","pl_exp_b":"b · factor de creixement",
+"pl_log_a":"a · escala vertical","pl_log_b":"b · base",
+"pl_rad_a":"a · estirament","pl_rad_h":"h · desplaçament en x","pl_rad_k":"k · desplaçament en y",
+"pl_sin_a":"a · amplitud","pl_sin_b":"b · freqüència","pl_sin_c":"c · línia mitjana",
+"pl_tro_m1":"m₁ · preu per unitat (1r tram)","pl_tro_c":"c · on canvia de tram","pl_tro_m2":"m₂ · preu per unitat (2n tram)","pl_tro_s":"s · suplement fix en c",
+"rd_hint":"Passa el ratolí o el dit per damunt de la gràfica per a llegir punts.",
+"rd_val":"x = <b>{0}</b> → f(x) = <b>{1}</b>","rd_nodef":"x = <b>{0}</b>: la funció no hi està definida",
+"tb_calc":"càlcul","tb_no":"no existeix","t_note0":"Prem «Següent punt →» per a calcular f(x) pas a pas.",
+"pt_afi":"Δy/Δx","pt_cua":"Δ²y","pt_inv":"x·y","pt_exp":"y / y ant.","pt_log":"b^(y/a)","pt_rad":"((y−k)/a)²","pt_sin":"x / T","pt_tro":"Δy/Δx",
+"pn_afi":"Δy/Δx és sempre el mateix: és el pendent m. Pujar 1 en x sempre suma el mateix a y.",
+"pn_cua":"Δ²y (la «diferència de les diferències») és constant i val 2a: això caracteritza la paràbola.",
+"pn_inv":"x·y és sempre el mateix: la constant k. Si x es duplica, y es redueix a la meitat.",
+"pn_exp":"El quocient y / y anterior és constant i val b: l'exponencial multiplica, no suma.",
+"pn_log":"b elevat a y/a torna a donar x: el logaritme «desfà» l'exponencial.",
+"pn_rad":"((y−k)/a)² dóna x − h: elevar al quadrat desfà l'arrel.",
+"pn_sin":"x/T és la fracció del període recorregut: cada T la funció torna a començar.",
+"pn_tro":"Δy/Δx canvia en x = c: allí canvia de pendent (de m₁ a m₂).",
+"p_dom":"Domini","p_rng":"Recorregut","p_cy":"Talla l'eix Y","p_cx":"Talla l'eix X","p_mono":"Creixement","p_ext":"Extrems","p_cont":"Continuïtat","p_asy":"Asímptotes","p_vtx":"Vèrtex","p_axis":"Eix de simetria","p_per":"Període","p_amp":"Amplitud","p_mid":"Línia mitjana","p_fac":"Factor","p_start":"Punt d'inici","p_pcs":"Trams","p_sym":"Simetria","p_slope":"Pendent","p_delta":"Discriminant","p_prod":"Constant","p_inv":"Inversa de","p_note":"Nota",
+"v_none":"cap punt","v_allx":"tot l'eix (és la recta y = 0)","v_inc":"creixent","v_dec":"decreixent","v_const":"constant","v_noext":"no en té","v_cont":"contínua","v_cont_dom":"contínua en tot el domini",
+"v_two":"dos punts: {0} i {1}","v_one":"un punt (tangent): {0}","v_dec_in":"decreixent en {0}","v_inc_in":"creixent en {0}","v_min":"mínim absolut en {0}","v_max":"màxim absolut en {0}",
+"v_up":"creix","v_dn":"decreix","exp_fac":"×{0} per cada +1 en x ({2} un {1} % per unitat)",
+"inv_dec":"decreixent en cada branca (x &lt; 0 i x &gt; 0) per separat","inv_inc":"creixent en cada branca (x &lt; 0 i x &gt; 0) per separat",
+"inv_cont":"discontínua en x = 0 (no és del domini)","inv_sym":"imparella: simètrica respecte de l'origen",
+"log_inv":"y = {0}ˣ","log_inv_a":"cas general: x = b^(y/a)",
+"sin_tan":"infinits punts (la gràfica és tangent a l'eix)","sin_inf":"infinits punts (dos per període)","sin_ext":"màxim {0} i mínim {1}, repetits cada període","sin_mono":"alterna creixent i decreixent cada mig període",
+"tro_pcs":"{0}·x fins a x = {1}; després, pendent {2}","tro_wk":"creixent (no estrictament si algun pendent és 0)",
+"tro_c_ok":"contínua (els trams s'enganxen en x = {0})","tro_c_ko":"discontínua en x = {0}: salt de {1}",
+"deg_cua":"a = 0: ja no és una paràbola, és una recta (família afí).","deg_inv":"k = 0: f(x) = 0 per a x ≠ 0 (ja no és una hipèrbola).",
+"deg_a0":"a = 0: la funció és constant i la família «desapareix». Torna a moure a.","deg_exp":"b = 1: 1ˣ = 1, la funció és constant.",
+"afi1.n":"Taxi","afi1.d":"El taxi cobra una <b>baixada de bandera</b> (n, en €) i un preu per quilòmetre (m, en €/km). El preu del viatge és <b>P = m·x + n</b>. Qui és el pendent? I l'ordenada a l'origen?","afi1.x":"distància x (km)","afi1.y":"preu (€)",
+"afi2.n":"Dipòsit que es buida","afi2.d":"Un dipòsit conté <b>n</b> litres i es buida a ritme constant: el <b>pendent és negatiu</b>. Quants litres queden després de x minuts? Quan es buida del tot?","afi2.x":"temps x (min)","afi2.y":"aigua (L)",
+"cua1.n":"Salt d'una pilota","cua1.d":"Una pilota llançada cap amunt té alçada <b>h = a·t² + b·t + c</b>, amb a negatiu (la gravetat «tira cap avall»). El vèrtex és el moment d'alçada màxima.","cua1.x":"temps t (s)","cua1.y":"alçada (m)",
+"cua2.n":"Benefici d'una empresa","cua2.d":"El benefici <b>B</b> (milers d'€) segons les unitats venudes <b>x</b> (milers) puja i després baixa. El vèrtex dóna el benefici màxim; les arrels, el punt d'equilibri.","cua2.x":"unitats x (milers)","cua2.y":"benefici (milers €)",
+"inv1.n":"Viatge","inv1.d":"Fer un trajecte de <b>k</b> km a velocitat <b>x</b> (km/h) dura <b>t = k/x</b> hores: més velocitat, menys temps. El producte x·t sempre és k.","inv1.x":"velocitat x (km/h)","inv1.y":"temps (h)",
+"inv2.n":"Repartir un premi","inv2.d":"Es reparteix un premi de <b>k</b> € entre <b>x</b> persones: cadascuna rep <b>k/x</b>. Si es dobla el nombre de persones, cadascuna rep la meitat.","inv2.x":"persones x","inv2.y":"€ per persona",
+"exp1.n":"Bacteris","exp1.d":"Un cultiu comença amb <b>a</b> bacteris i es multiplica per <b>b</b> cada hora: <b>N = a·bᵗ</b>. Cada hora s'aplica el mateix factor, no el mateix sumand.","exp1.x":"temps t (h)","exp1.y":"bacteris",
+"exp2.n":"Cotxe que perd valor","exp2.d":"Un cotxe val <b>a</b> € i cada any es multiplica per <b>b</b> &lt; 1 el seu valor. Un factor de 0,85 vol dir perdre un 15 % anual.","exp2.x":"anys t","exp2.y":"valor (€)",
+"log1.n":"Doblar un capital","log1.d":"Amb un interès compost de factor <b>b</b> cada any, els anys que calen perquè el capital es multiplique per <b>x</b> són <b>t = log<sub>b</sub>(x)</b>.","log1.x":"capital final / inicial","log1.y":"anys",
+"log2.n":"Bits","log2.d":"Quants <b>bits</b> calen per a distingir <b>x</b> opcions? Uns <b>log₂(x)</b> (arrodonit cap amunt). Cada bit més, el doble d'opcions.","log2.x":"opcions x","log2.y":"bits",
+"rad1.n":"Horitzó","rad1.d":"Des d'una altura x (m), l'horitzó és a uns <b>3,57·√x</b> km. Per a veure el doble de lluny, no cal pujar el doble: cal pujar quatre vegades més.","rad1.x":"altura x (m)","rad1.y":"distància (km)",
+"rad2.n":"Pèndol","rad2.d":"El període d'un pèndol de longitud <b>x</b> (m) és <b>T ≈ 2,01·√x</b> s. Quatre vegades més llarg → el doble de període.","rad2.x":"longitud x (m)","rad2.y":"període (s)",
+"sin1.n":"Marea","sin1.d":"L'alçada de l'aigua en un port oscil·la entre un mínim i un màxim amb un període d'unes 12,5 h: <b>h = a·sin(b·t) + c</b>. c és el nivell mitjà i a l'amplitud.","sin1.x":"temps t (h)","sin1.y":"alçada (m)",
+"sin2.n":"Noria","sin2.d":"Una cabina d'una noria puja i baixa periòdicament: l'amplitud és el radi, la línia mitjana l'altura de l'eix i el període, el temps d'una volta.","sin2.x":"temps t (s)","sin2.y":"alçada (m)",
+"tro1.n":"Lloguer de bicis","tro1.d":"Les primeres hores costen <b>m₁</b> €/h; a partir de <b>c</b> hores, <b>m₂</b> €/h. El preu <b>no fa cap salt</b>, però la recta canvia de pendent.","tro1.x":"temps x (h)","tro1.y":"preu (€)",
+"tro2.n":"Missatgeria","tro2.d":"Fins a <b>c</b> kg es cobra <b>m₁</b> €/kg; a partir d'ací, <b>m₂</b> €/kg <b>més un suplement fix s</b> per paquet gran: la gràfica fa un <b>salt</b> en x = c.","tro2.x":"pes x (kg)","tro2.y":"preu (€)",
+"ch_eyebrow":"Repte","ch_title":"Quina funció és?",
+"ch_intro":"Hi ha una funció amagada. Primer descobreix a quina família pertany (mira el domini, les asímptotes i la forma). Després escriu-ne els paràmetres: pots passar el cursor per la gràfica per a llegir punts, demanar una pista o superposar la teua proposta.",
+"ch_s1":"1. Tria la família","ch_s2":"2. Escriu els paràmetres","ch_over":"Superposa la meua (taronja)","ch_hint":"Pista","ch_new":"Nou repte",
+"ch_fam_ok":"✔ Sí, és de la família <b>{0}</b>. Ara troba els paràmetres.","ch_fam_bad":"✘ No és de la família <i>{0}</i>. Fixa't en el domini, les asímptotes i la forma.",
+"ch_ok":"✔ Correcte! La funció era <b>{0}</b>","ch_par_bad":"Encara no: revisa {0}. Compara la teua corba (taronja) amb la gràfica.",
+"ch_score":"Reptes resolts: {0}","ch_hint_pre":"Pista:",
+"rng":"Escriu valors dins dels rangs del simulador (p. ex. |m| ≤ 5, |n| ≤ 8, |a| ≤ 3).",
+"f_m":"m","f_n":"n","f_a":"a","f_b":"b","f_c":"c","f_k":"k","f_h":"h","f_m1":"m₁","f_m2":"m₂","f_s":"s",
+"m1.q":"Una recta passa pels punts <b>(0, 3)</b> i <b>(2, 7)</b>. Escriu el pendent <i>m</i> i l'ordenada a l'origen <i>n</i> de f(x) = m·x + n.",
+"m1_f":"Amb eixos valors la recta passa per (0, {0}) i per (2, {1}). Necessites (0, 3) i (2, 7): calcula el pendent com a Δy/Δx.",
+"m1_ok":"✔ Missió complida! m = (7 − 3)/(2 − 0) = 2 i n = f(0) = 3.",
+"m1.more":"Fes-ho ara per a la recta que passa per (1, 4) i (3, 0): escriu-ne la fórmula i comprova-la al simulador. Què passa amb el signe del pendent?",
+"m2.q":"Una paràbola talla l'eix X en <b>x = 1</b> i en <b>x = 5</b>, i talla l'eix Y en <b>(0, 5)</b>. Troba a, b i c de f(x) = ax² + bx + c.",
+"m2_f":"Amb eixos valors: f(0) = {0}, f(1) = {1} i f(5) = {2}. Necessites f(0) = 5, f(1) = 0 i f(5) = 0.",
+"m2_ok":"✔ Missió complida! f(x) = (x − 1)(x − 5) = x² − 6x + 5.",
+"m2.more":"Sense dibuixar-la: quin és el vèrtex? (Pista: l'eix de simetria és a mig camí de les dues arrels.) Comprova-ho al simulador.",
+"m3.q":"La hipèrbola f(x) = k/x passa pel punt <b>(4, 6)</b>. Troba la constant <i>k</i> i calcula <b>f(8)</b>.","m3.l1":"f(8)",
+"m3_k":"Amb k = {0}, la hipèrbola passa per (4, {1}), no per (4, 6). Recorda que x·y = k.",
+"m3_y":"k és correcta. Ara calcula f(8) = k/8.",
+"m3_ok":"✔ Missió complida! k = 4·6 = 24 i f(8) = 24/8 = 3.",
+"m3.more":"Si doblem x, què li passa a y? Explica-ho amb la idea que x·y és constant.",
+"m4.q":"Un cultiu té <b>200</b> bacteris i es <b>duplica cada hora</b>. Escriu a i b de N(t) = a·bᵗ i calcula quants bacteris hi haurà a les <b>5 hores</b>.","m4.l2":"N(5)",
+"m4_a":"Pensa què val a: és el valor quan t = 0, és a dir, els bacteris que hi ha al principi.",
+"m4_b":"Amb b = {0} no es duplica cada hora. Si es duplica, cada hora es multiplica per…?",
+"m4_n":"Calcula N(5) = 200·b⁵ amb cura (mira la taula de valors del simulador).",
+"m4_ok":"✔ Missió complida! N(t) = 200·2ᵗ i N(5) = 200·32 = 6400.",
+"m4.more":"I si, en compte de duplicar-se, el cultiu augmentara un 50 % cada hora? Quin seria b? Quants bacteris hi hauria a les 3 hores?",
+"m5.q":"Troba a, b i c de f(x) = a·sin(b·x) + c perquè tinga <b>màxim 5</b>, <b>mínim −1</b>, <b>període 4π</b> i comence <b>pujant</b> des de la línia mitjana en x = 0.",
+"m5_b":"El període és 2π/b. Amb eixos valors el període és {0}; necessites 4π ≈ 12,57.",
+"m5_r":"Amb eixos valors el màxim és {0} i el mínim {1}. Necessites 5 i −1: la línia mitjana és la mitjana dels dos i l'amplitud, la semidiferència.",
+"m5_neg":"Té el mateix màxim, mínim i període, però comença <b>baixant</b>. Quin signe ha de tindre a?",
+"m5_ok":"✔ Missió complida! Amplitud (5 − (−1))/2 = 3, línia mitjana (5 + (−1))/2 = 2 i b = 2π/4π = 0,5.",
+"m5.more":"Si volguérem el mateix màxim i mínim però un període de π, quin seria b? I si la gràfica comença en un màxim, quina funció usaries, sin o cos?",
+"m6.q":"La funció f(x) = √(x − h) + k comença en el punt <b>(3, −2)</b>. Escriu h i k, i troba en quin valor de x talla l'eix X.","m6.l2":"x (tall amb l'eix X)",
+"m6_s":"Amb h = {0} i k = {1}, la gràfica comença en ({0}, {1}). Necessites començar en (3, −2): h desplaça en horitzontal i k en vertical.",
+"m6_x":"Resol √(x − 3) − 2 = 0: primer aïlla l'arrel i després eleva al quadrat.",
+"m6_ok":"✔ Missió complida! √(x − 3) = 2 ⇒ x − 3 = 4 ⇒ x = 7.",
+"m6.more":"Comprova que x = 7 és solució (substitueix-la). Per què, en elevar al quadrat una equació amb arrels, convé comprovar sempre les solucions?",
+"m7.q":"Una tarifa de taxi cobra <b>2 €/km</b> fins als 4 km i <b>1 €/km</b> a partir d'ací (la gràfica no fa cap salt). Quant costa un viatge de <b>10 km</b>? I fins a quin recorregut arribes amb <b>10 €</b>?","m7.l0":"Preu de 10 km","m7.l1":"km amb 10 €",
+"m7_p":"{0} € no és correcte: els primers 4 km valen 4·2 = 8 €, i els 6 km restants, a 1 €/km.",
+"m7_x":"Amb {0} km el preu és {1} €. Recorda que 8 € ja s'han gastat en els primers 4 km.",
+"m7_ok":"✔ Missió complida! 10 km: 8 + 6 = 14 €. Amb 10 €: 8 + (x − 4) = 10 ⇒ x = 6 km.",
+"m7.more":"Escriu la funció a trossos que dóna el preu P(x) per a qualsevol recorregut x. On és el «canvi de tram» en la gràfica?",
+"s1.q":"Una funció afí f(x) = m·x + n talla sempre l'eix X en algun punt.",
+"s1.h":"Què passa si m = 0? Pensa en la recta y = 3.",
+"s1.e":"De vegades. Si m ≠ 0, talla l'eix X en x = −n/m. Però si m = 0 i n ≠ 0 és una recta horitzontal que mai no el talla.",
+"s1_cx_m":"Amb m ≠ 0 la recta sempre talla l'eix X. Prova amb un pendent especial.",
+"s1_cx_n":"Amb m = 0 i n = 0 la recta és l'eix X mateix. Prova amb n ≠ 0.",
+"s1_cx":"✔ Una recta horitzontal a una altura diferent de 0 mai no talla l'eix X.",
+"s2.q":"El domini de qualsevol funció quadràtica f(x) = ax² + bx + c (amb a ≠ 0) és tot ℝ.",
+"s2.h":"Hi ha algun valor de x per al qual no es puga calcular ax² + bx + c?",
+"s2.e":"Sempre. Només cal multiplicar, sumar i elevar al quadrat: es pot fer amb qualsevol x. El recorregut, en canvi, depén del vèrtex.",
+"s3.q":"Una paràbola talla sempre l'eix X en dos punts.",
+"s3.h":"Pensa en y = x² i en y = x² + 1: tallen l'eix X en dos punts?",
+"s3.e":"De vegades. Depén del discriminant Δ = b² − 4ac: Δ > 0 dos punts, Δ = 0 un punt (tangent) i Δ < 0 cap.",
+"s3_a0":"Amb a = 0 no és una paràbola. Tria a ≠ 0.",
+"s3_pos":"Amb eixos valors Δ = {0} > 0: sí que talla en dos punts. Busca'n uns amb Δ ≤ 0.",
+"s3_cx":"✔ Amb eixos valors Δ = {0} ≤ 0: la paràbola no talla l'eix X en dos punts.",
+"s4.q":"La gràfica de f(x) = a·bˣ (amb a > 0, b > 0 i b ≠ 1) talla alguna vegada l'eix X.",
+"s4.h":"Una potència de base positiva pot valdre 0 o ser negativa?",
+"s4.e":"Mai. bˣ és sempre positiu i a també ho és, així que f(x) > 0 per a tot x. La gràfica s'acosta a l'eix X (asímptota y = 0) però no el toca.",
+"s5.q":"La gràfica de y = k/x (amb k ≠ 0) talla algun dels dos eixos.",
+"s5.h":"Per a tallar l'eix Y caldria x = 0; per a tallar l'eix X caldria k/x = 0.",
+"s5.e":"Mai. x = 0 no és del domini (no es pot dividir entre 0) i k/x només és 0 si k = 0. Els dos eixos són asímptotes.",
+"s6.q":"Si a > 0 i b > 1, la funció f(x) = a·bˣ és sempre creixent.",
+"s6.h":"Prova diferents valors de a i b > 1 i mira si la gràfica baixa alguna vegada.",
+"s6.e":"Sempre. Si b > 1, bˣ creix amb x i a > 0 només l'estira. (Si 0 < b < 1 seria decreixent: decaïment exponencial.)",
+"s7.q":"Una funció a trossos és sempre discontínua.",
+"s7.h":"Una tarifa que canvia de preu per unitat però sense suplement, fa algun «salt»?",
+"s7.e":"De vegades. És contínua si els trams s'enganxen (sense salt), com una tarifa sense suplement; és discontínua si hi ha salt.",
+"s7_s":"Amb s ≠ 0 hi ha un salt: és discontínua. Busca s = 0.",
+"s7_same":"Amb m₁ = m₂ i s = 0 és una sola recta, no una funció a trossos de debò. Tria pendents diferents.",
+"s7_cx":"✔ Amb s = 0 els trams s'enganxen en x = c: és contínua, tot i que fa un angle (canvi de pendent).",
+"e1.ctx":"Es demana el pendent de la funció f(x) = 3 − 2x.","e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"«m = 3, perquè és el primer nombre que apareix.»","e1.s1":"«m = −2, perquè és el que multiplica x.»",
+"e1.w0":"El pendent és el coeficient de x, amb el seu signe: m = −2. El 3 és l'ordenada a l'origen (el punt (0, 3)).",
+"e1.w1":"El primer nombre de l'expressió sempre és el pendent.","e1.w2":"Un pendent no pot ser negatiu: seria una recta que baixa.",
+"e1.frame":"El pendent és… i el 3 és…",
+"e1.model":"Per a passar f(x) = 3 − 2x a la forma m·x + n, l'escrivim f(x) = −2x + 3. Així es veu que m = −2 (cada vegada que x puja 1, y baixa 2) i n = 3 (talla l'eix Y en (0, 3)). L'ordre en què s'escriuen els termes no canvia qui és cadascú.",
+"e2.ctx":"Sobre la funció y = 6/x:","e2.n0":"Marta","e2.n1":"Pau",
+"e2.s0":"«És decreixent en tot el seu domini: quan x creix, y decreix.»","e2.s1":"«No és decreixent en tot el domini: f(−1) = −6 i f(1) = 6, i en passar de −1 a 1 la y puja.»",
+"e2.w0":"En passar de x = −1 a x = 1 la y puja de −6 a 6: només és decreixent en cada branca per separat (x < 0 i x > 0), perquè x = 0 queda fora del domini.",
+"e2.w1":"No es pot comparar f(−1) amb f(1) perquè x = 0 no existeix, així que no importa.","e2.w2":"Les hipèrboles són sempre creixents.",
+"e2.frame":"És decreixent en cada branca, però…",
+"e2.model":"«Decreixent» vol dir que per a qualsevol x₁ < x₂ del conjunt, f(x₁) > f(x₂). Això es compleix dins de (−∞, 0) i dins de (0, ∞), però no en tot el domini: x₁ = −1 < x₂ = 1 i, tanmateix, f(−1) = −6 < f(1) = 6. Per això es diu «decreixent en cada branca».",
+"e3.ctx":"Sobre f(x) = 2ˣ quan x és molt negatiu (−10, −20, −100…):","e3.n0":"Clara","e3.n1":"Dani",
+"e3.s0":"«La gràfica baixa per davall de l'eix X, perquè 2ˣ és cada vegada més xicotet.»","e3.s1":"«No: s'acosta a 0, però sempre és positiu: 2⁻¹⁰ = 1/1024 > 0.»",
+"e3.w0":"Una potència de base positiva és sempre positiva: 2ˣ > 0 per a tot x. La gràfica s'acosta a l'eix X (asímptota y = 0) però no el travessa.",
+"e3.w1":"Les exponencials només són positives quan x és positiu.","e3.w2":"Cada vegada és més xicotet, així que arribarà a 0 i després a valors negatius.",
+"e3.frame":"2ˣ és sempre…, per tant…",
+"e3.model":"2ˣ sempre és positiu: 2⁻¹ = 1/2, 2⁻² = 1/4, 2⁻¹⁰ = 1/1024… cada vegada més prop de 0, però mai 0 ni menys. Per això l'eix X és una asímptota horitzontal i el recorregut és (0, ∞).",
+"e4.ctx":"Sobre f(x) = −x² + 4:","e4.n0":"Eva","e4.n1":"Marc",
+"e4.s0":"«El vèrtex (0, 4) és un mínim, perquè el vèrtex sempre és un mínim.»","e4.s1":"«El vèrtex (0, 4) és un màxim, perquè a = −1 és negatiu i les branques van cap avall.»",
+"e4.w0":"El signe de a ho decideix: si a < 0 les branques baixen i el vèrtex és el punt més alt (màxim). Només si a > 0 és un mínim.",
+"e4.w1":"Els vèrtexs són màxims quan estan damunt de l'eix X.","e4.w2":"El vèrtex és màxim o mínim segons si b és positiu o negatiu.",
+"e4.frame":"Com que a és…, la paràbola…",
+"e4.model":"Mirem a: com a = −1 < 0, la paràbola té forma de cim (∩) i el vèrtex (0, 4) és el seu punt més alt: màxim absolut. Si fóra x² + 4 (a = 1 > 0), el mateix vèrtex seria un mínim.",
+"e5.ctx":"Sobre f(x) = sin(2x): quin és el seu període?","e5.n0":"Sara","e5.n1":"Hugo",
+"e5.s0":"«El període és 2π/b = 2π/2 = π.»","e5.s1":"«El període és π: a la gràfica, la mateixa forma es repeteix cada π unitats.»",
+"e5.w0":"Tots dos arriben al mateix resultat per camins diferents: la fórmula T = 2π/b i l'observació de la gràfica donen T = π.",
+"e5.w1":"Només Sara té raó: la fórmula és l'única manera fiable.","e5.w2":"Només Hugo té raó: la fórmula no serveix si b ≠ 1.",
+"e5.frame":"Tots dos tenen raó perquè…",
+"e5.model":"Els dos tenen raó. Amb la fórmula, T = 2π/b = 2π/2 = π; i a la gràfica es veu que, després de π, la corba torna a començar igual. Que coincidisquen és una bona manera de comprovar un resultat: calcular i mirar.",
+"e6.ctx":"On és la coordenada x del vèrtex de f(x) = ax² + bx + c? Exemple: f(x) = x² − 4x + 3, amb vèrtex en (2, −1).","e6.n0":"Lia","e6.n1":"Pol",
+"e6.s0":"«x_v = b/(2a) = −4/2 = −2.»","e6.s1":"«x_v = −b/a = 4.»",
+"e6.w0":"La fórmula correcta és x_v = −b/(2a) = 4/2 = 2: Lia es deixa el signe menys i Pol es deixa el 2 del denominador.",
+"e6.w1":"Un dels dos té raó, però no l'altre.","e6.w2":"El vèrtex no té fórmula: cal provar valors fins a trobar-lo.",
+"e6.frame":"La fórmula és… i cadascú s'ha deixat…",
+"e6.model":"x_v = −b/(2a). Amb a = 1 i b = −4: x_v = 4/2 = 2, i f(2) = 4 − 8 + 3 = −1 → vèrtex (2, −1). Lia perd el signe (b/(2a) = −2) i Pol perd el 2 (−b/a = 4). Comprova-ho al simulador: el vèrtex és (2, −1).",
+"d1.q":"Un cotxe de <b>20 000 €</b> perd cada any un <b>15 %</b> del seu valor. Tria el tipus de funció que ho modelitza i calcula el valor després de <b>2 anys</b>.",
+"d1.lc":"Tipus de funció:","d1.l0":"Valor als 2 anys",
+"d1_fam":"Una funció {0} no encaixa: ací el valor es multiplica pel mateix factor cada any (no es resta la mateixa quantitat).",
+"d1_v":"Cada any el valor es multiplica per 0,85 (perds un 15 %). Després d'un any són {0} €; fes-ho una vegada més.",
+"d1_ok":"✔ Ben decidit! Exponencial: V(t) = 20 000·0,85ᵗ i V(2) = 14 450 €.",
+"d1.more":"Quant ha perdut de valor en total? Per què no és un 30 % (2 anys · 15 %)?",
+"d2.q":"El benefici d'una empresa és <b>B(x) = −2x² + 16x − 24</b> (en milers d'€, amb x en milers d'unitats). Troba quantes unitats cal vendre perquè el benefici siga <b>màxim</b> i quin és eixe benefici màxim.",
+"d2.l0":"x (milers)","d2.l1":"B màxim (milers €)",
+"d2_x":"Amb x = {0} el benefici és {1}, però no és el màxim. El màxim és al vèrtex: x = −b/(2a).",
+"d2_b":"x és correcta; ara calcula B(x) en eixe punt.",
+"d2_ok":"✔ Ben decidit! x = −16/(2·(−2)) = 4 i B(4) = −32 + 64 − 24 = 8 milers d'€.",
+"d2.more":"Per a quins valors de x l'empresa té pèrdues? (Pista: les arrels de B.) Comprova-ho en la gràfica.",
+"d3.q":"Aparcament <b>A</b>: 1,5 €/h sempre. Aparcament <b>B</b>: 1 €/h les 2 primeres hores i 2 €/h a partir de la tercera. Si hi has d'estar <b>3 hores</b>, quin és més barat? Després, troba amb quantes hores costen igual i quant valen.",
+"d3.lc":"Per a 3 h és més barat:","d3.l0":"Hores en què costen igual","d3.l1":"Preu en eixe punt",
+"d3_p":"Per a 3 h: A = {0} € i B = {1} €. Compara.",
+"d3_h":"Amb {0} h: A = {1} € i B = {2} €. Han de ser iguals.",
+"d3_c":"Les hores són correctes; calcula ara quant valen en eixe punt.",
+"d3_ok":"✔ Ben decidit! B és més barat per a 3 h (4 € contra 4,5 €); a les 4 h costen igual (6 €) i després B és més car.",
+"d3.more":"Escriu la funció de B com a funció a trossos i dibuixa A i B en els mateixos eixos. On es tallen?"
+},
+es:{
+"title":"Familias de funciones — animación interactiva",
+"eyebrow":"Funciones · 4.º ESO",
+"h1":"📈 Familias de funciones",
+"lede":"Afín, cuadrática, inversa, exponencial, logarítmica, radical, seno y a trozos: mueve los parámetros, calcula la tabla punto a punto y descubre qué tiene de propio cada familia.",
+"sim_title":"Elige una familia y juega con los parámetros",
+"story":"Cada familia tiene su <b>forma</b>, su <b>dominio</b> y su <b>recorrido</b>. Mueve los deslizadores y mira cómo cambian la gráfica, la fórmula y las propiedades; calcula la tabla de valores <b>un punto cada vez</b> para descubrir el patrón de la familia; y prueba las situaciones reales.",
+"aria.fam":"Familia de funciones","aria.svg":"Gráfica de la función elegida con sus puntos notables y los puntos de la tabla","aria.csvg":"Gráfica de la función oculta",
+"fam_afi":"Afín (recta)","fam_cua":"Cuadrática","fam_inv":"Proporcionalidad inversa","fam_exp":"Exponencial","fam_log":"Logarítmica","fam_rad":"Radical","fam_sin":"Seno (periódica)","fam_tro":"A trozos",
+"c_pts":"Muestra los puntos notables","c_asy":"Muestra las asíntotas",
+"s_formula":"Fórmula","s_ex":"Situaciones reales","s_props":"Propiedades","s_tbl":"Tabla de valores, punto a punto",
+"t_next":"Siguiente punto →","t_play":"▶ Anima","t_pause":"⏸ Pausa","t_all":"Muéstralo todo","t_reset":"↺ Reinicia",
+"ex_free":"Libre",
+"pl_afi_m":"m · pendiente","pl_afi_n":"n · ordenada en el origen",
+"pl_cua_a":"a · apertura","pl_cua_b":"b","pl_cua_c":"c · ordenada en el origen",
+"pl_inv_k":"k · constante",
+"pl_exp_a":"a · valor inicial","pl_exp_b":"b · factor de crecimiento",
+"pl_log_a":"a · escala vertical","pl_log_b":"b · base",
+"pl_rad_a":"a · estiramiento","pl_rad_h":"h · desplazamiento en x","pl_rad_k":"k · desplazamiento en y",
+"pl_sin_a":"a · amplitud","pl_sin_b":"b · frecuencia","pl_sin_c":"c · línea media",
+"pl_tro_m1":"m₁ · precio por unidad (1.er tramo)","pl_tro_c":"c · donde cambia de tramo","pl_tro_m2":"m₂ · precio por unidad (2.º tramo)","pl_tro_s":"s · suplemento fijo en c",
+"rd_hint":"Pasa el ratón o el dedo por encima de la gráfica para leer puntos.",
+"rd_val":"x = <b>{0}</b> → f(x) = <b>{1}</b>","rd_nodef":"x = <b>{0}</b>: la función no está definida ahí",
+"tb_calc":"cálculo","tb_no":"no existe","t_note0":"Pulsa «Siguiente punto →» para calcular f(x) paso a paso.",
+"pt_afi":"Δy/Δx","pt_cua":"Δ²y","pt_inv":"x·y","pt_exp":"y / y ant.","pt_log":"b^(y/a)","pt_rad":"((y−k)/a)²","pt_sin":"x / T","pt_tro":"Δy/Δx",
+"pn_afi":"Δy/Δx es siempre el mismo: es la pendiente m. Subir 1 en x siempre suma lo mismo a y.",
+"pn_cua":"Δ²y (la «diferencia de las diferencias») es constante y vale 2a: eso caracteriza la parábola.",
+"pn_inv":"x·y es siempre el mismo: la constante k. Si x se duplica, y se reduce a la mitad.",
+"pn_exp":"El cociente y / y anterior es constante y vale b: la exponencial multiplica, no suma.",
+"pn_log":"b elevado a y/a vuelve a dar x: el logaritmo «deshace» la exponencial.",
+"pn_rad":"((y−k)/a)² da x − h: elevar al cuadrado deshace la raíz.",
+"pn_sin":"x/T es la fracción del período recorrido: cada T la función vuelve a empezar.",
+"pn_tro":"Δy/Δx cambia en x = c: ahí cambia de pendiente (de m₁ a m₂).",
+"p_dom":"Dominio","p_rng":"Recorrido","p_cy":"Corta el eje Y","p_cx":"Corta el eje X","p_mono":"Crecimiento","p_ext":"Extremos","p_cont":"Continuidad","p_asy":"Asíntotas","p_vtx":"Vértice","p_axis":"Eje de simetría","p_per":"Período","p_amp":"Amplitud","p_mid":"Línea media","p_fac":"Factor","p_start":"Punto de inicio","p_pcs":"Tramos","p_sym":"Simetría","p_slope":"Pendiente","p_delta":"Discriminante","p_prod":"Constante","p_inv":"Inversa de","p_note":"Nota",
+"v_none":"ningún punto","v_allx":"todo el eje (es la recta y = 0)","v_inc":"creciente","v_dec":"decreciente","v_const":"constante","v_noext":"no tiene","v_cont":"continua","v_cont_dom":"continua en todo el dominio",
+"v_two":"dos puntos: {0} y {1}","v_one":"un punto (tangente): {0}","v_dec_in":"decreciente en {0}","v_inc_in":"creciente en {0}","v_min":"mínimo absoluto en {0}","v_max":"máximo absoluto en {0}",
+"v_up":"crece","v_dn":"decrece","exp_fac":"×{0} por cada +1 en x ({2} un {1} % por unidad)",
+"inv_dec":"decreciente en cada rama (x &lt; 0 y x &gt; 0) por separado","inv_inc":"creciente en cada rama (x &lt; 0 y x &gt; 0) por separado",
+"inv_cont":"discontinua en x = 0 (no está en el dominio)","inv_sym":"impar: simétrica respecto del origen",
+"log_inv":"y = {0}ˣ","log_inv_a":"caso general: x = b^(y/a)",
+"sin_tan":"infinitos puntos (la gráfica es tangente al eje)","sin_inf":"infinitos puntos (dos por período)","sin_ext":"máximo {0} y mínimo {1}, repetidos cada período","sin_mono":"alterna creciente y decreciente cada medio período",
+"tro_pcs":"{0}·x hasta x = {1}; después, pendiente {2}","tro_wk":"creciente (no estrictamente si alguna pendiente es 0)",
+"tro_c_ok":"continua (los tramos se pegan en x = {0})","tro_c_ko":"discontinua en x = {0}: salto de {1}",
+"deg_cua":"a = 0: ya no es una parábola, es una recta (familia afín).","deg_inv":"k = 0: f(x) = 0 para x ≠ 0 (ya no es una hipérbola).",
+"deg_a0":"a = 0: la función es constante y la familia «desaparece». Vuelve a mover a.","deg_exp":"b = 1: 1ˣ = 1, la función es constante.",
+"afi1.n":"Taxi","afi1.d":"El taxi cobra una <b>bajada de bandera</b> (n, en €) y un precio por kilómetro (m, en €/km). El precio del viaje es <b>P = m·x + n</b>. ¿Quién es la pendiente? ¿Y la ordenada en el origen?","afi1.x":"distancia x (km)","afi1.y":"precio (€)",
+"afi2.n":"Depósito que se vacía","afi2.d":"Un depósito contiene <b>n</b> litros y se vacía a ritmo constante: la <b>pendiente es negativa</b>. ¿Cuántos litros quedan tras x minutos? ¿Cuándo se vacía del todo?","afi2.x":"tiempo x (min)","afi2.y":"agua (L)",
+"cua1.n":"Salto de una pelota","cua1.d":"Una pelota lanzada hacia arriba tiene altura <b>h = a·t² + b·t + c</b>, con a negativo (la gravedad «tira hacia abajo»). El vértice es el momento de altura máxima.","cua1.x":"tiempo t (s)","cua1.y":"altura (m)",
+"cua2.n":"Beneficio de una empresa","cua2.d":"El beneficio <b>B</b> (miles de €) según las unidades vendidas <b>x</b> (miles) sube y luego baja. El vértice da el beneficio máximo; las raíces, el punto de equilibrio.","cua2.x":"unidades x (miles)","cua2.y":"beneficio (miles €)",
+"inv1.n":"Viaje","inv1.d":"Hacer un trayecto de <b>k</b> km a velocidad <b>x</b> (km/h) dura <b>t = k/x</b> horas: más velocidad, menos tiempo. El producto x·t siempre es k.","inv1.x":"velocidad x (km/h)","inv1.y":"tiempo (h)",
+"inv2.n":"Repartir un premio","inv2.d":"Se reparte un premio de <b>k</b> € entre <b>x</b> personas: cada una recibe <b>k/x</b>. Si se duplica el número de personas, cada una recibe la mitad.","inv2.x":"personas x","inv2.y":"€ por persona",
+"exp1.n":"Bacterias","exp1.d":"Un cultivo empieza con <b>a</b> bacterias y se multiplica por <b>b</b> cada hora: <b>N = a·bᵗ</b>. Cada hora se aplica el mismo factor, no el mismo sumando.","exp1.x":"tiempo t (h)","exp1.y":"bacterias",
+"exp2.n":"Coche que pierde valor","exp2.d":"Un coche vale <b>a</b> € y cada año su valor se multiplica por <b>b</b> &lt; 1. Un factor de 0,85 significa perder un 15 % anual.","exp2.x":"años t","exp2.y":"valor (€)",
+"log1.n":"Duplicar un capital","log1.d":"Con un interés compuesto de factor <b>b</b> cada año, los años necesarios para que el capital se multiplique por <b>x</b> son <b>t = log<sub>b</sub>(x)</b>.","log1.x":"capital final / inicial","log1.y":"años",
+"log2.n":"Bits","log2.d":"¿Cuántos <b>bits</b> hacen falta para distinguir <b>x</b> opciones? Unos <b>log₂(x)</b> (redondeado hacia arriba). Cada bit más, el doble de opciones.","log2.x":"opciones x","log2.y":"bits",
+"rad1.n":"Horizonte","rad1.d":"Desde una altura x (m), el horizonte está a unos <b>3,57·√x</b> km. Para ver el doble de lejos no hace falta subir el doble: hay que subir cuatro veces más.","rad1.x":"altura x (m)","rad1.y":"distancia (km)",
+"rad2.n":"Péndulo","rad2.d":"El período de un péndulo de longitud <b>x</b> (m) es <b>T ≈ 2,01·√x</b> s. Cuatro veces más largo → el doble de período.","rad2.x":"longitud x (m)","rad2.y":"período (s)",
+"sin1.n":"Marea","sin1.d":"La altura del agua en un puerto oscila entre un mínimo y un máximo con un período de unas 12,5 h: <b>h = a·sin(b·t) + c</b>. c es el nivel medio y a la amplitud.","sin1.x":"tiempo t (h)","sin1.y":"altura (m)",
+"sin2.n":"Noria","sin2.d":"Una cabina de una noria sube y baja periódicamente: la amplitud es el radio, la línea media la altura del eje y el período, el tiempo de una vuelta.","sin2.x":"tiempo t (s)","sin2.y":"altura (m)",
+"tro1.n":"Alquiler de bicis","tro1.d":"Las primeras horas cuestan <b>m₁</b> €/h; a partir de <b>c</b> horas, <b>m₂</b> €/h. El precio <b>no da ningún salto</b>, pero la recta cambia de pendiente.","tro1.x":"tiempo x (h)","tro1.y":"precio (€)",
+"tro2.n":"Mensajería","tro2.d":"Hasta <b>c</b> kg se cobra <b>m₁</b> €/kg; a partir de ahí, <b>m₂</b> €/kg <b>más un suplemento fijo s</b> por paquete grande: la gráfica da un <b>salto</b> en x = c.","tro2.x":"peso x (kg)","tro2.y":"precio (€)",
+"ch_eyebrow":"Reto","ch_title":"¿Qué función es?",
+"ch_intro":"Hay una función oculta. Primero descubre a qué familia pertenece (mira el dominio, las asíntotas y la forma). Después escribe sus parámetros: puedes pasar el cursor por la gráfica para leer puntos, pedir una pista o superponer tu propuesta.",
+"ch_s1":"1. Elige la familia","ch_s2":"2. Escribe los parámetros","ch_over":"Superpón la mía (naranja)","ch_hint":"Pista","ch_new":"Nuevo reto",
+"ch_fam_ok":"✔ Sí, es de la familia <b>{0}</b>. Ahora encuentra los parámetros.","ch_fam_bad":"✘ No es de la familia <i>{0}</i>. Fíjate en el dominio, las asíntotas y la forma.",
+"ch_ok":"✔ ¡Correcto! La función era <b>{0}</b>","ch_par_bad":"Todavía no: revisa {0}. Compara tu curva (naranja) con la gráfica.",
+"ch_score":"Retos resueltos: {0}","ch_hint_pre":"Pista:",
+"rng":"Escribe valores dentro de los rangos del simulador (p. ej. |m| ≤ 5, |n| ≤ 8, |a| ≤ 3).",
+"f_m":"m","f_n":"n","f_a":"a","f_b":"b","f_c":"c","f_k":"k","f_h":"h","f_m1":"m₁","f_m2":"m₂","f_s":"s",
+"m1.q":"Una recta pasa por los puntos <b>(0, 3)</b> y <b>(2, 7)</b>. Escribe la pendiente <i>m</i> y la ordenada en el origen <i>n</i> de f(x) = m·x + n.",
+"m1_f":"Con esos valores la recta pasa por (0, {0}) y por (2, {1}). Necesitas (0, 3) y (2, 7): calcula la pendiente como Δy/Δx.",
+"m1_ok":"✔ ¡Misión cumplida! m = (7 − 3)/(2 − 0) = 2 y n = f(0) = 3.",
+"m1.more":"Hazlo ahora para la recta que pasa por (1, 4) y (3, 0): escribe su fórmula y compruébala en el simulador. ¿Qué pasa con el signo de la pendiente?",
+"m2.q":"Una parábola corta el eje X en <b>x = 1</b> y en <b>x = 5</b>, y corta el eje Y en <b>(0, 5)</b>. Encuentra a, b y c de f(x) = ax² + bx + c.",
+"m2_f":"Con esos valores: f(0) = {0}, f(1) = {1} y f(5) = {2}. Necesitas f(0) = 5, f(1) = 0 y f(5) = 0.",
+"m2_ok":"✔ ¡Misión cumplida! f(x) = (x − 1)(x − 5) = x² − 6x + 5.",
+"m2.more":"Sin dibujarla: ¿cuál es el vértice? (Pista: el eje de simetría está a medio camino de las dos raíces.) Compruébalo en el simulador.",
+"m3.q":"La hipérbola f(x) = k/x pasa por el punto <b>(4, 6)</b>. Encuentra la constante <i>k</i> y calcula <b>f(8)</b>.","m3.l1":"f(8)",
+"m3_k":"Con k = {0}, la hipérbola pasa por (4, {1}), no por (4, 6). Recuerda que x·y = k.",
+"m3_y":"k es correcta. Ahora calcula f(8) = k/8.",
+"m3_ok":"✔ ¡Misión cumplida! k = 4·6 = 24 y f(8) = 24/8 = 3.",
+"m3.more":"Si duplicamos x, ¿qué le pasa a y? Explícalo con la idea de que x·y es constante.",
+"m4.q":"Un cultivo tiene <b>200</b> bacterias y se <b>duplica cada hora</b>. Escribe a y b de N(t) = a·bᵗ y calcula cuántas bacterias habrá a las <b>5 horas</b>.","m4.l2":"N(5)",
+"m4_a":"Piensa cuánto vale a: es el valor cuando t = 0, es decir, las bacterias que hay al principio.",
+"m4_b":"Con b = {0} no se duplica cada hora. Si se duplica, cada hora se multiplica por…?",
+"m4_n":"Calcula N(5) = 200·b⁵ con cuidado (mira la tabla de valores del simulador).",
+"m4_ok":"✔ ¡Misión cumplida! N(t) = 200·2ᵗ y N(5) = 200·32 = 6400.",
+"m4.more":"¿Y si, en vez de duplicarse, el cultivo aumentara un 50 % cada hora? ¿Cuánto sería b? ¿Cuántas bacterias habría a las 3 horas?",
+"m5.q":"Encuentra a, b y c de f(x) = a·sin(b·x) + c para que tenga <b>máximo 5</b>, <b>mínimo −1</b>, <b>período 4π</b> y empiece <b>subiendo</b> desde la línea media en x = 0.",
+"m5_b":"El período es 2π/b. Con esos valores el período es {0}; necesitas 4π ≈ 12,57.",
+"m5_r":"Con esos valores el máximo es {0} y el mínimo {1}. Necesitas 5 y −1: la línea media es la media de los dos y la amplitud, la semidiferencia.",
+"m5_neg":"Tiene el mismo máximo, mínimo y período, pero empieza <b>bajando</b>. ¿Qué signo debe tener a?",
+"m5_ok":"✔ ¡Misión cumplida! Amplitud (5 − (−1))/2 = 3, línea media (5 + (−1))/2 = 2 y b = 2π/4π = 0,5.",
+"m5.more":"Si quisiéramos el mismo máximo y mínimo pero un período de π, ¿cuánto sería b? Y si la gráfica empieza en un máximo, ¿qué función usarías, sin o cos?",
+"m6.q":"La función f(x) = √(x − h) + k empieza en el punto <b>(3, −2)</b>. Escribe h y k, y encuentra en qué valor de x corta el eje X.","m6.l2":"x (corte con el eje X)",
+"m6_s":"Con h = {0} y k = {1}, la gráfica empieza en ({0}, {1}). Necesitas empezar en (3, −2): h desplaza en horizontal y k en vertical.",
+"m6_x":"Resuelve √(x − 3) − 2 = 0: primero aísla la raíz y luego eleva al cuadrado.",
+"m6_ok":"✔ ¡Misión cumplida! √(x − 3) = 2 ⇒ x − 3 = 4 ⇒ x = 7.",
+"m6.more":"Comprueba que x = 7 es solución (sustitúyela). ¿Por qué, al elevar al cuadrado una ecuación con raíces, conviene comprobar siempre las soluciones?",
+"m7.q":"Una tarifa de taxi cobra <b>2 €/km</b> hasta los 4 km y <b>1 €/km</b> a partir de ahí (la gráfica no da ningún salto). ¿Cuánto cuesta un viaje de <b>10 km</b>? ¿Y hasta qué recorrido llegas con <b>10 €</b>?","m7.l0":"Precio de 10 km","m7.l1":"km con 10 €",
+"m7_p":"{0} € no es correcto: los primeros 4 km valen 4·2 = 8 €, y los 6 km restantes, a 1 €/km.",
+"m7_x":"Con {0} km el precio es {1} €. Recuerda que 8 € ya se han gastado en los primeros 4 km.",
+"m7_ok":"✔ ¡Misión cumplida! 10 km: 8 + 6 = 14 €. Con 10 €: 8 + (x − 4) = 10 ⇒ x = 6 km.",
+"m7.more":"Escribe la función a trozos que da el precio P(x) para cualquier recorrido x. ¿Dónde está el «cambio de tramo» en la gráfica?",
+"s1.q":"Una función afín f(x) = m·x + n corta siempre el eje X en algún punto.",
+"s1.h":"¿Qué pasa si m = 0? Piensa en la recta y = 3.",
+"s1.e":"A veces. Si m ≠ 0, corta el eje X en x = −n/m. Pero si m = 0 y n ≠ 0 es una recta horizontal que nunca lo corta.",
+"s1_cx_m":"Con m ≠ 0 la recta siempre corta el eje X. Prueba con una pendiente especial.",
+"s1_cx_n":"Con m = 0 y n = 0 la recta es el propio eje X. Prueba con n ≠ 0.",
+"s1_cx":"✔ Una recta horizontal a una altura distinta de 0 nunca corta el eje X.",
+"s2.q":"El dominio de cualquier función cuadrática f(x) = ax² + bx + c (con a ≠ 0) es todo ℝ.",
+"s2.h":"¿Hay algún valor de x para el que no se pueda calcular ax² + bx + c?",
+"s2.e":"Siempre. Solo hay que multiplicar, sumar y elevar al cuadrado: se puede hacer con cualquier x. El recorrido, en cambio, depende del vértice.",
+"s3.q":"Una parábola corta siempre el eje X en dos puntos.",
+"s3.h":"Piensa en y = x² y en y = x² + 1: ¿cortan el eje X en dos puntos?",
+"s3.e":"A veces. Depende del discriminante Δ = b² − 4ac: Δ > 0 dos puntos, Δ = 0 un punto (tangente) y Δ < 0 ninguno.",
+"s3_a0":"Con a = 0 no es una parábola. Elige a ≠ 0.",
+"s3_pos":"Con esos valores Δ = {0} > 0: sí corta en dos puntos. Busca unos con Δ ≤ 0.",
+"s3_cx":"✔ Con esos valores Δ = {0} ≤ 0: la parábola no corta el eje X en dos puntos.",
+"s4.q":"La gráfica de f(x) = a·bˣ (con a > 0, b > 0 y b ≠ 1) corta alguna vez el eje X.",
+"s4.h":"¿Una potencia de base positiva puede valer 0 o ser negativa?",
+"s4.e":"Nunca. bˣ siempre es positivo y a también, así que f(x) > 0 para todo x. La gráfica se acerca al eje X (asíntota y = 0) pero no lo toca.",
+"s5.q":"La gráfica de y = k/x (con k ≠ 0) corta alguno de los dos ejes.",
+"s5.h":"Para cortar el eje Y haría falta x = 0; para cortar el eje X haría falta k/x = 0.",
+"s5.e":"Nunca. x = 0 no es del dominio (no se puede dividir entre 0) y k/x solo es 0 si k = 0. Los dos ejes son asíntotas.",
+"s6.q":"Si a > 0 y b > 1, la función f(x) = a·bˣ es siempre creciente.",
+"s6.h":"Prueba distintos valores de a y b > 1 y mira si la gráfica baja alguna vez.",
+"s6.e":"Siempre. Si b > 1, bˣ crece con x y a > 0 solo la estira. (Si 0 < b < 1 sería decreciente: decaimiento exponencial.)",
+"s7.q":"Una función a trozos es siempre discontinua.",
+"s7.h":"Una tarifa que cambia de precio por unidad pero sin suplemento, ¿da algún «salto»?",
+"s7.e":"A veces. Es continua si los tramos se pegan (sin salto), como una tarifa sin suplemento; es discontinua si hay salto.",
+"s7_s":"Con s ≠ 0 hay un salto: es discontinua. Busca s = 0.",
+"s7_same":"Con m₁ = m₂ y s = 0 es una sola recta, no una función a trozos de verdad. Elige pendientes distintas.",
+"s7_cx":"✔ Con s = 0 los tramos se pegan en x = c: es continua, aunque hace un ángulo (cambio de pendiente).",
+"e1.ctx":"Se pide la pendiente de la función f(x) = 3 − 2x.","e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"«m = 3, porque es el primer número que aparece.»","e1.s1":"«m = −2, porque es el que multiplica a x.»",
+"e1.w0":"La pendiente es el coeficiente de x, con su signo: m = −2. El 3 es la ordenada en el origen (el punto (0, 3)).",
+"e1.w1":"El primer número de la expresión siempre es la pendiente.","e1.w2":"Una pendiente no puede ser negativa: sería una recta que baja.",
+"e1.frame":"La pendiente es… y el 3 es…",
+"e1.model":"Para pasar f(x) = 3 − 2x a la forma m·x + n, la escribimos f(x) = −2x + 3. Así se ve que m = −2 (cada vez que x sube 1, y baja 2) y n = 3 (corta el eje Y en (0, 3)). El orden en que se escriben los términos no cambia quién es cada uno.",
+"e2.ctx":"Sobre la función y = 6/x:","e2.n0":"Marta","e2.n1":"Pau",
+"e2.s0":"«Es decreciente en todo su dominio: cuando x crece, y decrece.»","e2.s1":"«No es decreciente en todo el dominio: f(−1) = −6 y f(1) = 6, y al pasar de −1 a 1 la y sube.»",
+"e2.w0":"Al pasar de x = −1 a x = 1 la y sube de −6 a 6: solo es decreciente en cada rama por separado (x < 0 y x > 0), porque x = 0 queda fuera del dominio.",
+"e2.w1":"No se puede comparar f(−1) con f(1) porque x = 0 no existe, así que no importa.","e2.w2":"Las hipérbolas son siempre crecientes.",
+"e2.frame":"Es decreciente en cada rama, pero…",
+"e2.model":"«Decreciente» significa que para cualquier x₁ < x₂ del conjunto, f(x₁) > f(x₂). Eso se cumple dentro de (−∞, 0) y dentro de (0, ∞), pero no en todo el dominio: x₁ = −1 < x₂ = 1 y, sin embargo, f(−1) = −6 < f(1) = 6. Por eso se dice «decreciente en cada rama».",
+"e3.ctx":"Sobre f(x) = 2ˣ cuando x es muy negativo (−10, −20, −100…):","e3.n0":"Clara","e3.n1":"Dani",
+"e3.s0":"«La gráfica baja por debajo del eje X, porque 2ˣ es cada vez más pequeño.»","e3.s1":"«No: se acerca a 0, pero siempre es positivo: 2⁻¹⁰ = 1/1024 > 0.»",
+"e3.w0":"Una potencia de base positiva es siempre positiva: 2ˣ > 0 para todo x. La gráfica se acerca al eje X (asíntota y = 0) pero no lo atraviesa.",
+"e3.w1":"Las exponenciales solo son positivas cuando x es positivo.","e3.w2":"Cada vez es más pequeño, así que llegará a 0 y después a valores negativos.",
+"e3.frame":"2ˣ es siempre…, por tanto…",
+"e3.model":"2ˣ siempre es positivo: 2⁻¹ = 1/2, 2⁻² = 1/4, 2⁻¹⁰ = 1/1024… cada vez más cerca de 0, pero nunca 0 ni menos. Por eso el eje X es una asíntota horizontal y el recorrido es (0, ∞).",
+"e4.ctx":"Sobre f(x) = −x² + 4:","e4.n0":"Eva","e4.n1":"Marc",
+"e4.s0":"«El vértice (0, 4) es un mínimo, porque el vértice siempre es un mínimo.»","e4.s1":"«El vértice (0, 4) es un máximo, porque a = −1 es negativo y las ramas van hacia abajo.»",
+"e4.w0":"El signo de a lo decide: si a < 0 las ramas bajan y el vértice es el punto más alto (máximo). Solo si a > 0 es un mínimo.",
+"e4.w1":"Los vértices son máximos cuando están encima del eje X.","e4.w2":"El vértice es máximo o mínimo según si b es positivo o negativo.",
+"e4.frame":"Como a es…, la parábola…",
+"e4.model":"Miramos a: como a = −1 < 0, la parábola tiene forma de cima (∩) y el vértice (0, 4) es su punto más alto: máximo absoluto. Si fuera x² + 4 (a = 1 > 0), el mismo vértice sería un mínimo.",
+"e5.ctx":"Sobre f(x) = sin(2x): ¿cuál es su período?","e5.n0":"Sara","e5.n1":"Hugo",
+"e5.s0":"«El período es 2π/b = 2π/2 = π.»","e5.s1":"«El período es π: en la gráfica, la misma forma se repite cada π unidades.»",
+"e5.w0":"Los dos llegan al mismo resultado por caminos distintos: la fórmula T = 2π/b y la observación de la gráfica dan T = π.",
+"e5.w1":"Solo Sara tiene razón: la fórmula es la única manera fiable.","e5.w2":"Solo Hugo tiene razón: la fórmula no sirve si b ≠ 1.",
+"e5.frame":"Los dos tienen razón porque…",
+"e5.model":"Los dos tienen razón. Con la fórmula, T = 2π/b = 2π/2 = π; y en la gráfica se ve que, después de π, la curva vuelve a empezar igual. Que coincidan es una buena manera de comprobar un resultado: calcular y mirar.",
+"e6.ctx":"¿Dónde está la coordenada x del vértice de f(x) = ax² + bx + c? Ejemplo: f(x) = x² − 4x + 3, con vértice en (2, −1).","e6.n0":"Lía","e6.n1":"Pol",
+"e6.s0":"«x_v = b/(2a) = −4/2 = −2.»","e6.s1":"«x_v = −b/a = 4.»",
+"e6.w0":"La fórmula correcta es x_v = −b/(2a) = 4/2 = 2: Lía se deja el signo menos y Pol se deja el 2 del denominador.",
+"e6.w1":"Uno de los dos tiene razón, pero no el otro.","e6.w2":"El vértice no tiene fórmula: hay que probar valores hasta encontrarlo.",
+"e6.frame":"La fórmula es… y cada uno se ha dejado…",
+"e6.model":"x_v = −b/(2a). Con a = 1 y b = −4: x_v = 4/2 = 2, y f(2) = 4 − 8 + 3 = −1 → vértice (2, −1). Lía pierde el signo (b/(2a) = −2) y Pol pierde el 2 (−b/a = 4). Compruébalo en el simulador: el vértice es (2, −1).",
+"d1.q":"Un coche de <b>20 000 €</b> pierde cada año un <b>15 %</b> de su valor. Elige el tipo de función que lo modeliza y calcula el valor después de <b>2 años</b>.",
+"d1.lc":"Tipo de función:","d1.l0":"Valor a los 2 años",
+"d1_fam":"Una función {0} no encaja: aquí el valor se multiplica por el mismo factor cada año (no se resta la misma cantidad).",
+"d1_v":"Cada año el valor se multiplica por 0,85 (pierdes un 15 %). Después de un año son {0} €; hazlo una vez más.",
+"d1_ok":"✔ ¡Bien decidido! Exponencial: V(t) = 20 000·0,85ᵗ y V(2) = 14 450 €.",
+"d1.more":"¿Cuánto ha perdido de valor en total? ¿Por qué no es un 30 % (2 años · 15 %)?",
+"d2.q":"El beneficio de una empresa es <b>B(x) = −2x² + 16x − 24</b> (en miles de €, con x en miles de unidades). Encuentra cuántas unidades hay que vender para que el beneficio sea <b>máximo</b> y cuál es ese beneficio máximo.",
+"d2.l0":"x (miles)","d2.l1":"B máximo (miles €)",
+"d2_x":"Con x = {0} el beneficio es {1}, pero no es el máximo. El máximo está en el vértice: x = −b/(2a).",
+"d2_b":"x es correcta; ahora calcula B(x) en ese punto.",
+"d2_ok":"✔ ¡Bien decidido! x = −16/(2·(−2)) = 4 y B(4) = −32 + 64 − 24 = 8 miles de €.",
+"d2.more":"¿Para qué valores de x la empresa tiene pérdidas? (Pista: las raíces de B.) Compruébalo en la gráfica.",
+"d3.q":"Aparcamiento <b>A</b>: 1,5 €/h siempre. Aparcamiento <b>B</b>: 1 €/h las 2 primeras horas y 2 €/h a partir de la tercera. Si tienes que estar <b>3 horas</b>, ¿cuál es más barato? Después, encuentra con cuántas horas cuestan igual y cuánto valen.",
+"d3.lc":"Para 3 h es más barato:","d3.l0":"Horas en que cuestan igual","d3.l1":"Precio en ese punto",
+"d3_p":"Para 3 h: A = {0} € y B = {1} €. Compara.",
+"d3_h":"Con {0} h: A = {1} € y B = {2} €. Tienen que ser iguales.",
+"d3_c":"Las horas son correctas; calcula ahora cuánto valen en ese punto.",
+"d3_ok":"✔ ¡Bien decidido! B es más barato para 3 h (4 € frente a 4,5 €); a las 4 h cuestan igual (6 €) y después B es más caro.",
+"d3.more":"Escribe la función de B como función a trozos y dibuja A y B en los mismos ejes. ¿Dónde se cortan?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/families-funcions/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== Famílies de funcions ===== */
+const NS='http://www.w3.org/2000/svg',INF=Infinity;
+const sv=(tag,at,par)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e;};
+const N=(x,d=2)=>{if(!Number.isFinite(x))return '—';let r=Math.round(x*Math.pow(10,d))/Math.pow(10,d);if(r===0)r=0;
+  return r.toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d,useGrouping:Math.abs(r)>=10000}).replace('-','−');};
+const par=x=>x<0?'('+N(x)+')':N(x);
+const sgn=c=>(c<0?' − ':' + ')+N(Math.abs(c));
+function poly(terms){let out='';terms.forEach(([c,v])=>{if(!c)return;const a=Math.abs(c),body=(v&&a===1)?v:N(a)+v;out+=(out?(c<0?' − ':' + '):(c<0?'−':''))+body;});return out||'0';}
+const iv=(a,b,ca,cb)=>(a===-INF?'(':(ca?'[':'('))+(a===-INF?'−∞':N(a))+', '+(b===INF?'∞':N(b))+(b===INF?')':(cb?']':')'));
+const pt2=(x,y)=>'('+N(x)+', '+N(y)+')';
+const FAMS=['afi','cua','inv','exp','log','rad','sin','tro'];
+const SYM={m1:'m₁',m2:'m₂'};const sym=k=>SYM[k]||k;
+const nice=(r,tg=8)=>{const q=r/tg,m=Math.pow(10,Math.floor(Math.log10(q))),n=q/m;return (n<1.5?1:n<3.5?2:n<7.5?5:10)*m;};
+const sp=(k,min,max,step,def)=>({k,min,max,step,def});
+const T2=2*Math.PI;
+
+/* ---------- definició de cada família ---------- */
+const FAM={
+afi:{P:[sp('m',-5,5,.1,2),sp('n',-8,8,.1,1)],view:[-6,6,-8,8],
+ f:(x,p)=>p.m*x+p.n,
+ formula:p=>'f(x) = '+poly([[p.m,'x'],[p.n,'']]),
+ calc:(x,p)=>N(p.m)+'·'+par(x)+(p.n?sgn(p.n):''),
+ xs:()=>[-3,-2,-1,0,1,2,3],
+ segs:(p,v)=>[[v[0],v[1]]],
+ pts:p=>[{x:0,y:p.n,k:'cy'}].concat(p.m?[{x:-p.n/p.m,y:0,k:'cx'}]:[]),
+ asy:()=>[],
+ deg:p=>null,
+ props:p=>[['p_dom','ℝ'],['p_rng',p.m?'ℝ':'{'+N(p.n)+'}'],['p_cy',pt2(0,p.n)],
+  ['p_cx',p.m?pt2(-p.n/p.m,0):(p.n===0?t('v_allx'):t('v_none'))],
+  ['p_slope','x + 1 ⇒ y '+(p.m<0?'−':'+')+' '+N(Math.abs(p.m))],
+  ['p_mono',p.m>0?t('v_inc'):p.m<0?t('v_dec'):t('v_const')],['p_ext',t('v_noext')],['p_cont',t('v_cont')]],
+ pat:(R,i)=>i>0&&R[i].ok&&R[i-1].ok?N((R[i].y-R[i-1].y)/(R[i].x-R[i-1].x)):'—'},
+cua:{P:[sp('a',-3,3,.5,1),sp('b',-8,8,1,-2),sp('c',-8,8,1,-3)],view:[-6,6,-8,8],
+ f:(x,p)=>p.a*x*x+p.b*x+p.c,
+ formula:p=>'f(x) = '+poly([[p.a,'x²'],[p.b,'x'],[p.c,'']]),
+ calc:(x,p)=>N(p.a)+'·'+par(x)+'²'+(p.b?sgn(p.b)+'·'+par(x):'')+(p.c?sgn(p.c):''),
+ xs:()=>[-3,-2,-1,0,1,2,3],
+ segs:(p,v)=>[[v[0],v[1]]],
+ pts:p=>{const o=[{x:0,y:p.c,k:'cy'}];if(p.a){const xv=-p.b/(2*p.a),D=p.b*p.b-4*p.a*p.c;o.push({x:xv,y:p.a*xv*xv+p.b*xv+p.c,k:'vtx'});
+   if(D>=0){const r=Math.sqrt(D);[(-p.b-r)/(2*p.a),(-p.b+r)/(2*p.a)].forEach((x,i,a)=>{if(i===0||D>0)o.push({x,y:0,k:'cx'});});}}return o;},
+ asy:()=>[],
+ deg:p=>p.a===0?'deg_cua':null,
+ props:p=>{const xv=-p.b/(2*p.a),yv=p.a*xv*xv+p.b*xv+p.c,D=p.b*p.b-4*p.a*p.c,r=Math.sqrt(Math.max(D,0));
+  const x1=(-p.b-r)/(2*p.a),x2=(-p.b+r)/(2*p.a);
+  return [['p_vtx',pt2(xv,yv)],['p_axis','x = '+N(xv)],['p_dom','ℝ'],['p_rng',p.a>0?iv(yv,INF,true):iv(-INF,yv,false,true)],
+  ['p_cy',pt2(0,p.c)],['p_delta','b² − 4ac = '+N(D)],
+  ['p_cx',D>0?tt('v_two',pt2(Math.min(x1,x2),0),pt2(Math.max(x1,x2),0)):D===0?tt('v_one',pt2(xv,0)):t('v_none')],
+  ['p_mono',p.a>0?tt('v_dec_in',iv(-INF,xv,false,true))+' · '+tt('v_inc_in',iv(xv,INF,true)):tt('v_inc_in',iv(-INF,xv,false,true))+' · '+tt('v_dec_in',iv(xv,INF,true))],
+  ['p_ext',tt(p.a>0?'v_min':'v_max',pt2(xv,yv))],['p_cont',t('v_cont')]];},
+ pat:(R,i)=>{if(i<2||!R[i].ok||!R[i-1].ok||!R[i-2].ok)return '—';const h1=R[i].x-R[i-1].x,h2=R[i-1].x-R[i-2].x;return Math.abs(h1-h2)<1e-9?N(R[i].y-2*R[i-1].y+R[i-2].y):'—';}},
+inv:{P:[sp('k',-10,10,.5,4)],view:[-8,8,-8,8],
+ f:(x,p)=>x===0?NaN:p.k/x,
+ formula:p=>'f(x) = '+N(p.k)+' / x',
+ calc:(x,p)=>N(p.k)+' : '+par(x),
+ xs:()=>[-4,-2,-1,0,1,2,4],
+ segs:(p,v)=>[[v[0],-1e-3,'e'],[1e-3,v[1],'s']],
+ pts:()=>[],
+ asy:()=>[{v:0},{h:0}],
+ deg:p=>p.k===0?'deg_inv':null,
+ props:p=>[['p_dom','ℝ ∖ {0}'],['p_rng','ℝ ∖ {0}'],['p_cy',t('v_none')],['p_cx',t('v_none')],['p_asy','x = 0 · y = 0'],
+  ['p_prod','x·y = '+N(p.k)],['p_mono',t(p.k>0?'inv_dec':'inv_inc')],['p_ext',t('v_noext')],['p_cont',t('inv_cont')],['p_sym',t('inv_sym')]],
+ pat:(R,i)=>R[i].ok?N(R[i].x*R[i].y):'—'},
+exp:{P:[sp('a',-4,4,.5,1),sp('b',.2,4,.1,2)],view:[-4,4,-4,16],
+ f:(x,p)=>p.a*Math.pow(p.b,x),
+ formula:p=>'f(x) = '+(p.a===1?'':p.a===-1?'−':N(p.a)+'·')+N(p.b)+'<sup>x</sup>',
+ calc:(x,p)=>N(p.a)+'·'+N(p.b)+'<sup>'+N(x)+'</sup>',
+ xs:()=>[-2,-1,0,1,2,3,4],
+ segs:(p,v)=>[[v[0],v[1]]],
+ pts:p=>[{x:0,y:p.a,k:'cy'}],
+ asy:()=>[{h:0}],
+ deg:p=>p.a===0?'deg_a0':Math.abs(p.b-1)<1e-9?'deg_exp':null,
+ props:p=>[['p_dom','ℝ'],['p_rng',p.a>0?'(0, ∞)':'(−∞, 0)'],['p_cy',pt2(0,p.a)],['p_cx',t('v_none')],['p_asy','y = 0'],
+  ['p_fac',tt('exp_fac',N(p.b),N(Math.abs(p.b-1)*100,1),t(p.b>1?'v_up':'v_dn'))],
+  ['p_mono',((p.a>0)===(p.b>1))?t('v_inc'):t('v_dec')],['p_ext',t('v_noext')],['p_cont',t('v_cont')]],
+ pat:(R,i)=>i>0&&R[i].ok&&R[i-1].ok&&R[i-1].y!==0?N(R[i].y/R[i-1].y):'—'},
+log:{P:[sp('a',-3,3,.5,1),sp('b',1.5,10,.5,2)],view:[-1,17,-5,5],
+ f:(x,p)=>x>0?p.a*Math.log(x)/Math.log(p.b):NaN,
+ formula:p=>'f(x) = '+(p.a===1?'':p.a===-1?'−':N(p.a)+'·')+'log<sub>'+N(p.b)+'</sub>(x)',
+ calc:(x,p)=>N(p.a)+'·log<sub>'+N(p.b)+'</sub>('+N(x)+')',
+ xs:()=>[0,.25,.5,1,2,4,8,16],
+ segs:(p,v)=>[[Math.max(v[0],1e-4),v[1],'s']],
+ pts:p=>[{x:1,y:0,k:'cx'}],
+ asy:()=>[{v:0}],
+ deg:p=>p.a===0?'deg_a0':null,
+ props:p=>[['p_dom','(0, ∞)'],['p_rng','ℝ'],['p_cy',t('v_none')],['p_cx',pt2(1,0)],['p_asy','x = 0'],
+  ['p_inv',p.a===1?tt('log_inv',N(p.b)):t('log_inv_a')],['p_mono',p.a>0?t('v_inc'):t('v_dec')],['p_ext',t('v_noext')],['p_cont',t('v_cont')]],
+ pat:(R,i,p)=>R[i].ok&&p.a?N(Math.pow(p.b,R[i].y/p.a)):'—'},
+rad:{P:[sp('a',-3,3,.5,1),sp('h',-6,6,1,0),sp('k',-6,6,1,0)],view:[-6,10,-6,6],
+ f:(x,p)=>x>=p.h?p.a*Math.sqrt(x-p.h)+p.k:NaN,
+ formula:p=>'f(x) = '+(p.a===1?'':p.a===-1?'−':N(p.a)+'·')+'√('+(p.h===0?'x':'x'+(p.h<0?' + '+N(-p.h):' − '+N(p.h)))+')'+(p.k?sgn(p.k):''),
+ calc:(x,p)=>N(p.a)+'·√('+N(x)+(p.h<0?' + '+N(-p.h):p.h>0?' − '+N(p.h):'')+')'+(p.k?sgn(p.k):''),
+ xs:p=>[-1,0,1,2,4,9,16].map(d=>p.h+d),
+ segs:(p,v)=>[[Math.max(v[0],p.h),v[1],'s']],
+ pts:p=>{const o=[{x:p.h,y:p.k,k:'vtx'}];if(p.a){if(p.h<=0)o.push({x:0,y:p.a*Math.sqrt(-p.h)+p.k,k:'cy'});const q=-p.k/p.a;if(q>0)o.push({x:p.h+q*q,y:0,k:'cx'});}return o;},
+ asy:()=>[],
+ deg:p=>p.a===0?'deg_a0':null,
+ props:p=>{const q=-p.k/p.a;return [['p_dom',iv(p.h,INF,true)],['p_rng',p.a>0?iv(p.k,INF,true):iv(-INF,p.k,false,true)],['p_start',pt2(p.h,p.k)],
+  ['p_cy',p.h<=0?pt2(0,p.a*Math.sqrt(-p.h)+p.k):t('v_none')],
+  ['p_cx',q>0?pt2(p.h+q*q,0):q===0?pt2(p.h,0):t('v_none')],
+  ['p_mono',p.a>0?t('v_inc'):t('v_dec')],['p_ext',tt(p.a>0?'v_min':'v_max',pt2(p.h,p.k))],['p_cont',t('v_cont_dom')]];},
+ pat:(R,i,p)=>R[i].ok&&p.a?N(Math.pow((R[i].y-p.k)/p.a,2)):'—'},
+sin:{P:[sp('a',-4,4,.5,2),sp('b',.5,4,.5,1),sp('c',-4,4,.5,0)],view:[-7,7,-6,6],
+ f:(x,p)=>p.a*Math.sin(p.b*x)+p.c,
+ formula:p=>'f(x) = '+(p.a===1?'':p.a===-1?'−':N(p.a)+'·')+'sin('+(p.b===1?'x':N(p.b)+'·x')+')'+(p.c?sgn(p.c):''),
+ calc:(x,p)=>N(p.a)+'·sin('+N(p.b)+'·'+par(x)+')'+(p.c?sgn(p.c):''),
+ xs:p=>{const T=T2/p.b;return [0,1,2,3,4,5,6,7,8].map(j=>j*T/8);},
+ segs:(p,v)=>[[v[0],v[1]]],
+ pts:p=>{const T=T2/p.b;return [{x:0,y:p.c,k:'cy'},{x:T/4,y:p.c+p.a,k:'vtx'},{x:3*T/4,y:p.c-p.a,k:'vtx'}];},
+ asy:()=>[],
+ deg:p=>p.a===0?'deg_a0':null,
+ props:p=>{const T=T2/p.b,A=Math.abs(p.a);return [['p_dom','ℝ'],['p_rng',iv(p.c-A,p.c+A,true,true)],['p_per',N(T,3)+'  (= 2π/b)'],['p_amp',N(A)],['p_mid','y = '+N(p.c)],
+  ['p_cy',pt2(0,p.c)],['p_cx',A<Math.abs(p.c)?t('v_none'):A===Math.abs(p.c)?t('sin_tan'):t('sin_inf')],
+  ['p_ext',tt('sin_ext',N(p.c+A),N(p.c-A))],['p_mono',t('sin_mono')],['p_cont',t('v_cont')]];},
+ pat:(R,i,p)=>R[i].ok?N(R[i].x*p.b/T2,3):'—'},
+tro:{P:[sp('m1',0,5,.5,2),sp('c',1,8,.5,4),sp('m2',0,5,.5,1),sp('s',0,6,.5,0)],view:[-1,12,-2,24],
+ f:(x,p)=>x<0?NaN:x<=p.c?p.m1*x:p.m1*p.c+p.s+p.m2*(x-p.c),
+ formula:p=>{const f1=N(p.m1)+'·x',f2=N(p.m1*p.c+p.s-p.m2*p.c)+(p.m2?sgn(p.m2)+'·x':'');
+   return 'f(x) = '+f1+'  <small>0 ≤ x ≤ '+N(p.c)+'</small><br>f(x) = '+(p.m1*p.c+p.s-p.m2*p.c===0?(p.m2?N(p.m2)+'·x':'0'):(p.m2?N(p.m2)+'·x'+sgn(p.m1*p.c+p.s-p.m2*p.c):N(p.m1*p.c+p.s)))+'  <small>x &gt; '+N(p.c)+'</small>';},
+ calc:(x,p)=>x<=p.c?N(p.m1)+'·'+N(x):N(p.m1)+'·'+N(p.c)+(p.s?' + '+N(p.s):'')+' + '+N(p.m2)+'·'+N(x-p.c),
+ xs:()=>[0,1,2,3,4,5,6,8,10],
+ segs:(p,v)=>[[Math.max(0,v[0]),Math.min(p.c,v[1])],[p.c+1e-9,v[1]]],
+ pts:p=>{const o=[{x:p.c,y:p.m1*p.c,k:'cx2'}];if(p.s>0)o.push({x:p.c,y:p.m1*p.c+p.s,k:'open'});o.push({x:0,y:0,k:'cy'});return o;},
+ asy:()=>[],
+ deg:p=>null,
+ props:p=>{const y1=p.m1*p.c,y2=y1+p.s;return [['p_dom','[0, ∞)'],
+  ['p_rng',p.m2>0?'[0, ∞)':(p.s>0?'[0, '+N(y1)+'] ∪ {'+N(y2)+'}':'[0, '+N(y2)+']')],
+  ['p_cy',pt2(0,0)],['p_cx',p.m1>0?pt2(0,0):'[0, '+N(p.c)+'] × {0}'],
+  ['p_pcs',tt('tro_pcs',N(p.m1),N(p.c),N(p.m2))],
+  ['p_mono',(p.m1===0&&p.m2===0&&p.s===0)?t('v_const'):(p.m1>0&&p.m2>0)?t('v_inc'):t('tro_wk')],
+  ['p_cont',p.s===0?tt('tro_c_ok',N(p.c)):tt('tro_c_ko',N(p.c),N(p.s))],['p_ext',t('v_noext')]];},
+ pat:(R,i)=>i>0&&R[i].ok&&R[i-1].ok?N((R[i].y-R[i-1].y)/(R[i].x-R[i-1].x)):'—'}
+};
+
+/* ---------- exemples reals (rng: paràmetres que es poden moure [min,max,pas]) ---------- */
+const EX={
+afi:[{id:'afi1',p:{m:1.2,n:2.5},view:[-.5,10.5,-1,16],xs:[0,1,2,3,4,5,6,8,10],rng:{m:[0,3,.1],n:[0,6,.1]}},
+     {id:'afi2',p:{m:-5,n:60},view:[-1,14,-5,70],xs:[0,2,4,6,8,10,12],rng:{m:[-10,0,.5],n:[20,100,1]}}],
+cua:[{id:'cua1',p:{a:-5,b:10,c:1},view:[-.2,3.2,-2,8],xs:[0,.5,1,1.5,2,2.5,3],rng:{a:[-10,-1,.5],b:[0,20,.5],c:[0,5,.5]}},
+     {id:'cua2',p:{a:-2,b:16,c:-24},view:[-.5,8.5,-12,12],xs:[0,1,2,3,4,5,6,7,8],rng:{a:[-4,-1,.5],b:[0,24,1],c:[-40,0,1]}}],
+inv:[{id:'inv1',p:{k:240},view:[-5,125,-1,13],xs:[10,20,30,40,60,80,120],rng:{k:[60,480,10]}},
+     {id:'inv2',p:{k:600},view:[-1,31,-10,165],xs:[2,3,4,5,6,8,10,12],rng:{k:[100,1000,50]}}],
+exp:[{id:'exp1',p:{a:100,b:2},view:[-.3,6.3,-300,6800],xs:[0,1,2,3,4,5,6],rng:{a:[10,500,10],b:[1.1,3,.1]}},
+     {id:'exp2',p:{a:20000,b:.85},view:[-.5,10.5,-1000,22500],xs:[0,1,2,3,4,5,6,7,8],rng:{a:[5000,30000,500],b:[.5,1.2,.01]}}],
+log:[{id:'log1',p:{a:1,b:1.05},view:[-.2,4.2,-2,31],xs:[1,1.5,2,2.5,3,3.5,4],rng:{a:[.5,2,.5],b:[1.01,1.2,.01]}},
+     {id:'log2',p:{a:1,b:2},view:[-3,67,-1,7.5],xs:[1,2,4,8,16,32,64],rng:{b:[2,10,1]}}],
+rad:[{id:'rad1',p:{a:3.57,h:0,k:0},view:[-4,104,-3,40],xs:[0,4,9,16,25,49,100],rng:{a:[1,6,.01]}},
+     {id:'rad2',p:{a:2.01,h:0,k:0},view:[-.3,4.3,-.4,5.2],xs:[0,.25,.5,1,1.5,2,3,4],rng:{a:[1,3,.01]}}],
+sin:[{id:'sin1',p:{a:2,b:.5,c:3},view:[-1,26,-.5,6.5],rng:{a:[.5,3,.5],b:[.25,1,.05],c:[2,5,.5]}},
+     {id:'sin2',p:{a:10,b:.2,c:11},view:[-3,72,-1,23],rng:{a:[4,10,1],b:[.1,.5,.05],c:[10,12,1]}}],
+tro:[{id:'tro1',p:{m1:3,c:2,m2:2,s:0},view:[-.4,8.4,-1,21],xs:[0,1,2,3,4,5,6,8],rng:{m1:[0,5,.5],c:[1,6,1],m2:[0,5,.5]}},
+     {id:'tro2',p:{m1:1,c:5,m2:1.5,s:2},view:[-.5,10.5,-1,19],xs:[0,1,2,3,4,5,6,8,10],rng:{m1:[0,3,.5],c:[2,8,1],m2:[0,3,.5],s:[0,5,.5]}}]
+};
+
+/* ---------- estat ---------- */
+const S={fam:'afi',exo:null,p:{},view:FAM.afi.view,nrow:0,hov:null,play:null};
+const svg=$('#gsvg');
+function specs(){const F=FAM[S.fam];if(!S.exo||!S.exo.rng)return F.P;
+  return F.P.filter(q=>S.exo.rng[q.k]).map(q=>{const r=S.exo.rng[q.k];return sp(q.k,r[0],r[1],r[2],S.p[q.k]);});}
+function stopPlay(){if(S.play){clearInterval(S.play);S.play=null;}$('#tPlay').textContent=t('t_play');}
+function choose(fam,exId,vals,all){
+  stopPlay();
+  S.fam=fam;const F=FAM[fam];
+  S.exo=exId?EX[fam].find(e=>e.id===exId):null;
+  S.p={};F.P.forEach(q=>S.p[q.k]=q.def);
+  if(S.exo)Object.assign(S.p,S.exo.p);
+  S.view=(S.exo&&S.exo.view)||F.view;
+  if(vals){specs().forEach(q=>{if(vals[q.k]!==undefined)S.p[q.k]=clamp(vals[q.k],q.min,q.max);});
+    Object.keys(vals).forEach(k=>{if(!specs().some(q=>q.k===k)&&vals[k]!==undefined&&!S.exo)S.p[k]=vals[k];});}
+  S.nrow=all?rows().length:0;
+  $$('#famtabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.fam===fam)));
+  buildEx();buildCtls();render();
+}
+function buildEx(){
+  const box=$('#exchips');box.textContent='';
+  const mk=(id,label)=>{const b=document.createElement('button');b.type='button';b.className='chip fam';b.textContent=label;
+    b.setAttribute('aria-pressed',String((S.exo?S.exo.id:null)===id));b.onclick=()=>choose(S.fam,id);box.appendChild(b);};
+  mk(null,t('ex_free'));EX[S.fam].forEach(e=>mk(e.id,t(e.id+'.n')));
+  const d=$('#extext');d.innerHTML=S.exo?'<p>'+t(S.exo.id+'.d')+'</p>':'';
+}
+function buildCtls(){
+  const box=$('#ctls');box.textContent='';
+  specs().forEach(q=>{
+    const d=document.createElement('div');d.className='ctl';const id='p_'+q.k;
+    d.innerHTML='<label for="'+id+'">'+t('pl_'+S.fam+'_'+q.k)+'</label><output id="'+id+'o"></output><input type="range" id="'+id+'" min="'+q.min+'" max="'+q.max+'" step="'+q.step+'" value="'+S.p[q.k]+'">';
+    const inp=$('input',d),out=$('output',d);
+    const upd=()=>{out.textContent=N(+inp.value,2);};
+    inp.addEventListener('input',()=>{S.p[q.k]=+inp.value;upd();render();});
+    upd();box.appendChild(d);
+  });
+}
+function rows(){
+  const F=FAM[S.fam],xs=(S.exo&&S.exo.xs)||F.xs(S.p);
+  return xs.map(x=>{const y=F.f(x,S.p);return {x,y,ok:Number.isFinite(y)};});
+}
+
+/* ---------- dibuix de la gràfica ---------- */
+function curvePaths(fam,p,view){
+  const F=FAM[fam],out=[];
+  F.segs(p,view).forEach(([a,b,mode])=>{
+    if(!(b>a))return;const n=520;let cur=[];
+    for(let i=0;i<=n;i++){let u=i/n;if(mode==='s')u=u*u;else if(mode==='e')u=1-(1-u)*(1-u);
+      const x=a+(b-a)*u,y=F.f(x,p);
+      if(!Number.isFinite(y)){if(cur.length>1)out.push(cur);cur=[];continue;}cur.push([x,y]);}
+    if(cur.length>1)out.push(cur);
+  });
+  return out;
+}
+const W=640,H=360,ML=50,MR=14,MT=14,MB=34;
+function plot(el,c){
+  const [x0,x1,y0,y1]=c.view;
+  const X=x=>ML+(x-x0)/(x1-x0)*(W-ML-MR),Y=y=>H-MB-(y-y0)/(y1-y0)*(H-MT-MB);
+  el.textContent='';
+  const defs=sv('defs',{},el),cp=sv('clipPath',{id:el.id+'cp'},defs);sv('rect',{x:ML,y:MT,width:W-ML-MR,height:H-MT-MB},cp);
+  const gx=nice(x1-x0),gy=nice(y1-y0);
+  const g=sv('g',{},el);
+  for(let k=Math.ceil(x0/gx-1e-9);k*gx<=x1+1e-9;k++){const v=k*gx,px=X(v);sv('line',{x1:px,x2:px,y1:MT,y2:H-MB,class:'gl'},g);
+    const tx=sv('text',{x:px,y:H-MB+15,'text-anchor':'middle',class:'tk'},g);tx.textContent=N(v,4);}
+  for(let k=Math.ceil(y0/gy-1e-9);k*gy<=y1+1e-9;k++){const v=k*gy,py=Y(v);sv('line',{x1:ML,x2:W-MR,y1:py,y2:py,class:'gl'},g);
+    const tx=sv('text',{x:ML-6,y:py+4,'text-anchor':'end',class:'tk'},g);tx.textContent=N(v,4);}
+  if(y0<0&&y1>0)sv('line',{x1:ML,x2:W-MR,y1:Y(0),y2:Y(0),class:'axl'},g);
+  if(x0<0&&x1>0)sv('line',{x1:X(0),x2:X(0),y1:MT,y2:H-MB,class:'axl'},g);
+  sv('rect',{x:ML,y:MT,width:W-ML-MR,height:H-MT-MB,fill:'none',stroke:'var(--line)'},g);
+  const xt=sv('text',{x:W-MR,y:H-4,'text-anchor':'end',class:'axt'},g);xt.textContent=c.xl||'x';
+  const yt=sv('text',{x:ML+6,y:MT+13,class:'axt'},g);yt.textContent=c.yl||'f(x)';
+  const cl={'clip-path':'url(#'+el.id+'cp)'};
+  const body=sv('g',cl,el);
+  if(c.asy)c.curves.forEach(cv=>FAM[cv.fam].asy(cv.p).forEach(a=>{
+    if(a.h!==undefined)sv('line',{x1:ML,x2:W-MR,y1:Y(a.h),y2:Y(a.h),class:'asy'},body);
+    if(a.v!==undefined)sv('line',{x1:X(a.v),x2:X(a.v),y1:MT,y2:H-MB,class:'asy'},body);}));
+  c.curves.forEach(cv=>{
+    curvePaths(cv.fam,cv.p,c.view).forEach(pp=>{
+      const d=pp.map((q,i)=>(i?'L':'M')+X(q[0]).toFixed(1)+' '+clamp(Y(q[1]),-4000,4000).toFixed(1)).join('');
+      sv('path',{d,class:'curve'+(cv.cls?' '+cv.cls:'')},body);});});
+  if(c.pts&&c.curves[0]){const cv=c.curves[0];FAM[cv.fam].pts(cv.p).forEach(q=>{
+    if(!Number.isFinite(q.x)||!Number.isFinite(q.y)||q.x<x0||q.x>x1||q.y<y0||q.y>y1)return;
+    const e=sv('circle',{cx:X(q.x),cy:Y(q.y),r:5.5,class:'sp'+(q.k==='open'?' open':'')},body);
+    if(q.k==='cx2')e.setAttribute('class','sp fill');
+    sv('title',{},e).textContent=pt2(q.x,q.y);});}
+  (c.dots||[]).filter(q=>q.x>=x0&&q.x<=x1&&q.y>=y0&&q.y<=y1).forEach((q,i,a)=>{const last=i===a.length-1;
+    if(last){sv('line',{x1:X(q.x),x2:X(q.x),y1:Y(q.y),y2:Y(0>y0&&0<y1?0:y0),class:'guide'},body);sv('line',{x1:X(q.x),x2:X(0>x0&&0<x1?0:x0),y1:Y(q.y),y2:Y(q.y),class:'guide'},body);}
+    const e=sv('circle',{cx:X(q.x),cy:Y(q.y),r:last?6.5:4.5,class:'dotp'},body);sv('title',{},e).textContent=pt2(q.x,q.y);});
+  if(c.hov){sv('circle',{cx:X(c.hov.x),cy:Y(c.hov.y),r:5,class:'hover'},body);}
+  return {X,Y,x0,x1,y0,y1};
+}
+function dataX(ev,m){const r=svg.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*W;return m.x0+(px-ML)/(W-ML-MR)*(m.x1-m.x0);}
+
+/* ---------- render ---------- */
+let M=null;
+function drawMain(){
+  const R=rows(),n=Math.min(S.nrow,R.length),dg=FAM[S.fam].deg(S.p),ex=S.exo;
+  M=plot(svg,{view:S.view,curves:[{fam:S.fam,p:S.p}],pts:$('#showPts').checked&&!dg,asy:$('#showAsy').checked&&!dg,
+    dots:R.slice(0,n).filter(r=>r.ok),xl:ex?t(ex.id+'.x'):'x',yl:ex?t(ex.id+'.y'):'f(x)',hov:S.hov});
+}
+function render(){
+  const F=FAM[S.fam],R=rows(),n=Math.min(S.nrow,R.length),dg=F.deg(S.p);
+  drawMain();
+  $('#formula').innerHTML=F.formula(S.p);
+  const pr=dg?[['p_note',t(dg)]]:F.props(S.p);
+  $('#props').innerHTML=pr.map(r=>'<dt>'+t(r[0])+'</dt><dd>'+r[1]+'</dd>').join('');
+  renderTable(R,n);
+  if(!S.hov)$('#read').innerHTML=t('rd_hint');
+}
+function renderTable(R,n){
+  const F=FAM[S.fam];
+  let h='<table class="rt"><thead><tr><th>x</th><th>'+t('tb_calc')+'</th><th>f(x)</th><th>'+t('pt_'+S.fam)+'</th></tr></thead><tbody>';
+  for(let i=0;i<n;i++){const r=R[i];
+    if(!r.ok){h+='<tr'+(i===n-1?' class="cur"':'')+'><td>'+N(r.x)+'</td><td class="no" colspan="3">'+t('tb_no')+'</td></tr>';continue;}
+    h+='<tr'+(i===n-1?' class="cur"':'')+'><td>'+N(r.x)+'</td><td class="calc">'+F.calc(r.x,S.p)+'</td><td>'+N(r.y)+'</td><td>'+F.pat(R,i,S.p)+'</td></tr>';}
+  h+='</tbody></table>';
+  $('#tbl').innerHTML=n?h:'';
+  $('#tnote').textContent=n===0?t('t_note0'):(n>=3?t('pn_'+S.fam):'');
+  $('#tNext').disabled=n>=R.length;$('#tAll').disabled=n>=R.length;$('#tPlay').disabled=n>=R.length&&!S.play;
+  const tb=$('#tbl');tb.scrollTop=tb.scrollHeight;
+}
+$('#tNext').onclick=()=>{stopPlay();S.nrow=Math.min(S.nrow+1,rows().length);render();};
+$('#tAll').onclick=()=>{stopPlay();S.nrow=rows().length;render();};
+$('#tReset').onclick=()=>{stopPlay();S.nrow=0;render();};
+$('#tPlay').onclick=()=>{
+  if(S.play){stopPlay();render();return;}
+  if(S.nrow>=rows().length)S.nrow=0;
+  $('#tPlay').textContent=t('t_pause');
+  S.play=setInterval(()=>{if(S.nrow>=rows().length){stopPlay();render();return;}S.nrow++;render();},REDUCE?900:650);
+  S.nrow=Math.max(S.nrow,0);render();
+};
+$('#showPts').addEventListener('change',render);$('#showAsy').addEventListener('change',render);
+$$('#famtabs button').forEach(b=>b.onclick=()=>choose(b.dataset.fam));
+svg.addEventListener('pointermove',ev=>{
+  if(!M)return;const x=dataX(ev,M);if(x<M.x0||x>M.x1)return;const y=FAM[S.fam].f(x,S.p);
+  if(Number.isFinite(y)){S.hov={x,y};$('#read').innerHTML=tt('rd_val',N(x),N(y));}else{S.hov=null;$('#read').innerHTML=tt('rd_nodef',N(x));}
+  drawMain();});
+svg.addEventListener('pointerleave',()=>{S.hov=null;$('#read').innerHTML=t('rd_hint');drawMain();});
+
+/* ---------- repte: identifica la funció ---------- */
+const csvg=$('#csvg');
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const GEN={
+ afi:()=>({p:{m:rnd([-3,-2,-1,-.5,.5,1,2,3]),n:rnd([-4,-3,-2,-1,0,1,2,3,4])},view:[-6,6,-8,8]}),
+ cua:()=>{for(;;){const a=rnd([-2,-1,1,2]),xv=rnd([-2,-1,0,1,2]),yv=rnd([-4,-2,0,2,4]),b=-2*a*xv,c=a*xv*xv+yv;if(Math.abs(b)<=8&&Math.abs(c)<=8)return {p:{a,b,c},view:[-6,6,-8,8]};}},
+ inv:()=>({p:{k:rnd([-6,-4,-3,-2,2,3,4,6])},view:[-8,8,-8,8]}),
+ exp:()=>({p:{a:rnd([1,2,3]),b:rnd([2,3,.5])},view:[-4,4,-2,12]}),
+ log:()=>({p:{a:rnd([1,2,-1]),b:rnd([2,3,4])},view:[-1,13,-5,5]}),
+ rad:()=>({p:{a:rnd([1,2,-1]),h:rnd([-3,-2,-1,0,1,2,3]),k:rnd([-3,-2,-1,0,1,2,3])},view:[-6,10,-6,6]}),
+ sin:()=>({p:{a:rnd([1,2,3]),b:rnd([.5,1,2]),c:rnd([-2,-1,0,1,2])},view:[-7,7,-6,6]}),
+ tro:()=>({p:{m1:rnd([1,2,3]),c:rnd([2,3,4]),m2:rnd([0,.5,1,3]),s:rnd([0,0,2])},view:[-1,10,-2,20]})
+};
+const HX={afi:[0,1,2],cua:[0,1,2],inv:[1,2,4],exp:[0,1,2],log:[1,2,4],rad:[-2,0,2,4,6],sin:[0,1,2,3],tro:[0,2,4,6,8]};
+const CH={fam:null,p:null,view:null,pick:null,famOk:false,solved:false,hints:0,tries:0,won:0,last:null};
+function chNew(){
+  let f;do{f=rnd(FAMS);}while(f===CH.last);CH.last=f;
+  const g=GEN[f]();CH.fam=f;CH.p=g.p;CH.view=g.view;CH.pick=null;CH.famOk=false;CH.solved=false;CH.hints=0;
+  $('#chfb').textContent='';$('#chfb').className='rfb';chBuild();chDraw();
+}
+function chBuild(){
+  const fb=$('#chfam');fb.textContent='';
+  FAMS.forEach(f=>{const b=document.createElement('button');b.type='button';b.className='chip fam';b.textContent=t('fam_'+f);
+    b.setAttribute('aria-pressed',String(CH.pick===f));b.disabled=CH.famOk;
+    b.onclick=()=>{CH.pick=f;CH.tries++;
+      if(f===CH.fam){CH.famOk=true;setFb(tt('ch_fam_ok',t('fam_'+f)),'ok');}
+      else setFb(tt('ch_fam_bad',t('fam_'+f)),'bad');
+      chBuild();chDraw();};
+    fb.appendChild(b);});
+  $('#chstep2').hidden=!CH.famOk;
+  const pb=$('#chpar');
+  const key=CH.fam+JSON.stringify(CH.p);
+  if(pb.dataset.key!==key){
+    pb.dataset.key=key;pb.textContent='';
+    FAM[CH.fam].P.forEach(q=>{const l=document.createElement('label');l.className='fld';
+      l.innerHTML='<span><i>'+sym(q.k)+'</i></span><input class="rn" data-k="'+q.k+'" inputmode="decimal" autocomplete="off" spellcheck="false">';
+      pb.appendChild(l);$('input',l).oninput=chDraw;$('input',l).onkeydown=e=>{if(e.key==='Enter')chCheck();};});}
+  $('#chCheck').disabled=!CH.famOk||CH.solved;$('#chHint').disabled=CH.solved;
+  $('#chscore').textContent=tt('ch_score',CH.won);
+}
+function setFb(msg,cls){const e=$('#chfb');e.innerHTML=msg;e.className='rfb '+(cls||'');}
+function chVals(){const o={};let ok=true;$$('#chpar input').forEach(i=>{const v=parseNum(i.value);if(i.value.trim()===''||!Number.isFinite(v))ok=false;o[i.dataset.k]=v;});return ok?o:null;}
+function chDraw(){
+  const curves=[{fam:CH.fam,p:CH.p}];
+  if(CH.famOk&&$('#chover').checked){const v=chVals();if(v)curves.push({fam:CH.fam,p:v,cls:'c2'});}
+  plot(csvg,{view:CH.view,curves:CH.solved?curves.slice(0,1):curves,pts:false,asy:CH.solved,xl:'x',yl:'f(x)'});
+}
+function chCheck(){
+  if(!CH.famOk||CH.solved)return;
+  const v=chVals();if(!v){setFb(t('rz_bad'),'bad');return;}
+  const bad=Object.keys(CH.p).filter(k=>Math.abs(v[k]-CH.p[k])>.02);
+  CH.tries++;
+  if(!bad.length){CH.solved=true;CH.won++;
+    setFb(tt('ch_ok',FAM[CH.fam].formula(CH.p)),'ok');chBuild();chDraw();}
+  else setFb(tt('ch_par_bad',bad.map(sym).join(', ')),'bad');
+}
+$('#chCheck').onclick=chCheck;
+$('#chNew').onclick=chNew;
+$('#chover').addEventListener('change',chDraw);
+$('#chHint').onclick=()=>{
+  const F=FAM[CH.fam];CH.hints++;
+  const xs=HX[CH.fam].slice(0,Math.min(HX[CH.fam].length,CH.hints+2));
+  const txt=xs.map(x=>{const y=F.f(x,CH.p);return 'f('+N(x)+') = '+(Number.isFinite(y)?N(y):t('tb_no'));}).join(' · ');
+  setFb(t('ch_hint_pre')+' '+txt,'');
+};
+
+/* ---------- Raona-ho ---------- */
+function load(o){
+  o=o||{};
+  choose(o.fam||'afi',o.ex||null,o.p||null,o.all!==false);
+  RZ.show($('#gsvg'));
+}
+const f=(fam,p,x)=>FAM[fam].f(x,p);
+const near=(a,b,e)=>Math.abs(a-b)<=(e||1e-6);
+RZ.init({
+ sim:()=>load({fam:'afi'}),
+ M:[
+  {id:'m1',f:[{l:'f_m',u:''},{l:'f_n',u:''}],sim:([m,n])=>load({fam:'afi',p:{m,n}}),ok:()=>({k:'m1_ok'}),
+   chk:([m,n])=>near(m,2)&&near(n,3)?null:{k:'m1_f',p:[N(n),N(2*m+n)]}},
+  {id:'m2',f:[{l:'f_a',u:''},{l:'f_b',u:''},{l:'f_c',u:''}],sim:([a,b,c])=>load({fam:'cua',p:{a,b,c}}),ok:()=>({k:'m2_ok'}),
+   chk:([a,b,c])=>(near(a,1)&&near(b,-6)&&near(c,5))?null:{k:'m2_f',p:[N(c),N(a+b+c),N(25*a+5*b+c)]}},
+  {id:'m3',f:[{l:'f_k',u:''},{l:'m3.l1',u:''}],sim:([k])=>load({fam:'inv',p:{k}}),ok:()=>({k:'m3_ok'}),
+   chk:([k,y])=>!near(k,24)?{k:'m3_k',p:[N(k),N(k/4)]}:near(y,3)?null:{k:'m3_y'}},
+  {id:'m4',f:[{l:'f_a',u:''},{l:'f_b',u:''},{l:'m4.l2',u:''}],sim:([a,b])=>load({fam:'exp',p:{a,b}}),ok:()=>({k:'m4_ok'}),
+   chk:([a,b,n])=>!near(a,200)?{k:'m4_a'}:!near(b,2)?{k:'m4_b',p:[N(b)]}:near(n,6400)?null:{k:'m4_n',p:[N(200*Math.pow(2,5))]}},
+  {id:'m5',f:[{l:'f_a',u:''},{l:'f_b',u:''},{l:'f_c',u:''}],sim:([a,b,c])=>load({fam:'sin',p:{a,b,c}}),ok:()=>({k:'m5_ok'}),
+   chk:([a,b,c])=>{const A=Math.abs(a);
+     if(!near(b,.5))return {k:'m5_b',p:[N(T2/b,2)]};
+     if(!near(c+A,5)||!near(c-A,-1))return {k:'m5_r',p:[N(c+A),N(c-A)]};
+     return near(a,3)?null:{k:'m5_neg'};}},
+  {id:'m6',f:[{l:'f_h',u:''},{l:'f_k',u:''},{l:'m6.l2',u:''}],sim:([h,k])=>load({fam:'rad',p:{a:1,h,k}}),ok:()=>({k:'m6_ok'}),
+   chk:([h,k,x])=>!near(h,3)||!near(k,-2)?{k:'m6_s',p:[N(h),N(k)]}:near(x,7)?null:{k:'m6_x',p:[N(3+Math.pow(2,2))]}},
+  {id:'m7',f:[{l:'m7.l0',u:'€'},{l:'m7.l1',u:'km'}],sim:()=>load({fam:'tro',p:{m1:2,c:4,m2:1,s:0}}),ok:()=>({k:'m7_ok'}),
+   chk:([p10,x10])=>!near(p10,14)?{k:'m7_p',p:[N(p10)]}:near(x10,6)?null:{k:'m7_x',p:[N(x10),N(x10<=4?2*x10:8+(x10-4))]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[{l:'f_m',u:''},{l:'f_n',u:''}],sim:()=>load({fam:'afi'}),cxsim:([m,n])=>load({fam:'afi',p:{m,n}}),
+   cxok:()=>({k:'s1_cx'}),cx:([m,n])=>Math.abs(m)>5||Math.abs(n)>8?{k:'rng'}:(m!==0?{k:'s1_cx_m'}:n===0?{k:'s1_cx_n'}:null)},
+  {id:'s2',ans:'S',sim:()=>load({fam:'cua'})},
+  {id:'s3',ans:'D',f:[{l:'f_a',u:''},{l:'f_b',u:''},{l:'f_c',u:''}],sim:()=>load({fam:'cua'}),cxsim:([a,b,c])=>load({fam:'cua',p:{a,b,c}}),
+   cxok:([a,b,c])=>({k:'s3_cx',p:[N(b*b-4*a*c)]}),
+   cx:([a,b,c])=>Math.abs(a)>3||Math.abs(b)>8||Math.abs(c)>8?{k:'rng'}:a===0?{k:'s3_a0'}:b*b-4*a*c>0?{k:'s3_pos',p:[N(b*b-4*a*c)]}:null},
+  {id:'s4',ans:'M',sim:()=>load({fam:'exp'})},
+  {id:'s5',ans:'M',sim:()=>load({fam:'inv'})},
+  {id:'s6',ans:'S',sim:()=>load({fam:'exp',p:{a:1,b:2}})},
+  {id:'s7',ans:'D',f:[{l:'f_m1',u:''},{l:'f_c',u:''},{l:'f_m2',u:''},{l:'f_s',u:''}],sim:()=>load({fam:'tro'}),cxsim:([m1,c,m2,s])=>load({fam:'tro',p:{m1,c,m2,s}}),
+   cxok:()=>({k:'s7_cx'}),
+   cx:([m1,c,m2,s])=>m1<0||m1>5||m2<0||m2>5||c<1||c>8||s<0||s>6?{k:'rng'}:s!==0?{k:'s7_s'}:m1===m2?{k:'s7_same'}:null}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({fam:'afi',p:{m:-2,n:3}})},
+  {id:'e2',who:1,sim:()=>load({fam:'inv',p:{k:6}})},
+  {id:'e3',who:1,sim:()=>load({fam:'exp',p:{a:1,b:2}})},
+  {id:'e4',who:1,sim:()=>load({fam:'cua',p:{a:-1,b:0,c:4}})},
+  {id:'e5',who:2,sim:()=>load({fam:'sin',p:{a:1,b:2,c:0}})},
+  {id:'e6',who:3,sim:()=>load({fam:'cua',p:{a:1,b:-4,c:3}})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[0,1,2,3,4,5,6,7],fmt:x=>t('fam_'+FAMS[x])},f:[{l:'d1.l0',u:'€'}],sim:()=>load({fam:'exp',ex:'exp2',p:{a:20000,b:.85}}),ok:()=>({k:'d1_ok'}),
+   chk:([p,v])=>p!==3?{k:'d1_fam',p:[t('fam_'+FAMS[p])]}:near(v,14450,1)?null:{k:'d1_v',p:[N(20000*.85)]}},
+  {id:'d2',f:[{l:'d2.l0',u:''},{l:'d2.l1',u:''}],sim:()=>load({fam:'cua',ex:'cua2'}),ok:()=>({k:'d2_ok'}),
+   chk:([x,b])=>!near(x,4,.01)?{k:'d2_x',p:[N(x),N(-2*x*x+16*x-24)]}:near(b,8,.01)?null:{k:'d2_b'}},
+  {id:'d3',chips:{vals:[0,1],fmt:x=>'AB'[x]},f:[{l:'d3.l0',u:'h'},{l:'d3.l1',u:'€'}],sim:()=>load({fam:'tro',ex:'tro1',p:{m1:1,c:2,m2:2,s:0}}),ok:()=>({k:'d3_ok'}),
+   chk:([p,h,c])=>p!==1?{k:'d3_p',p:[N(1.5*3),N(2+2*(3-2))]}:!near(h,4,.01)?{k:'d3_h',p:[N(h),N(1.5*h),N(h<=2?h:2+2*(h-2))]}:near(c,6,.01)?null:{k:'d3_c'}}
+ ]
+});
+initQuiz([]);
+
+/* ---------- arrencada ---------- */
+document.addEventListener('langchange',()=>{stopPlay();buildEx();buildCtls();render();if(CH.fam){chBuild();chDraw();}});
+initLang();applyLang();
+choose('afi');
+chNew();
+})();
+</script>
+</body>
+</html>
