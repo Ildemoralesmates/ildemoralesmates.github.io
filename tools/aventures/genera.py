@@ -90,6 +90,24 @@ AVENTURES = {
             "homeurl": "/es/",
         },
     },
+    "somni-blaugrana": {
+        "ca": {
+            "title": "El somni blaugrana: Aventura de futbol al Ciutat de València",
+            "brand": "El somni blaugrana",
+            "desc": "Aventura interactiva de futbol: tria el camí, resol reptes de multiplicar i dividir, guanya les tres franges de la samarreta amb el baló Cuiro i juga el partit final amb marcador i rellotge. 9 finals.",
+            "restart": "Començar de nou",
+            "home": "Tornar a la portada",
+            "homeurl": "/",
+        },
+        "es": {
+            "title": "El sueño blaugrana: Aventura de fútbol en el Ciutat de València",
+            "brand": "El sueño blaugrana",
+            "desc": "Aventura interactiva de fútbol: elige el camino, resuelve retos de multiplicar y dividir, gana las tres franjas de la camiseta con el balón Cuiro y juega el partido final con marcador y reloj. 9 finales.",
+            "restart": "Empezar de nuevo",
+            "home": "Volver a la portada",
+            "homeurl": "/es/",
+        },
+    },
     "oliver-benji-bola-de-drac": {
         "ca": {
             "title": "Oliver i Benji × Bola de Drac: El torneig de les set boles",
