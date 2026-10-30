@@ -176,6 +176,7 @@ out = re.sub(
     '<footer>\n'
     '    <p>Material propio de © Ilde Morales, publicado con licencia <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">Creative Commons BY-NC-SA 4.0</a>: puedes usarlo y adaptarlo citando la autoría, sin uso comercial y compartiéndolo con la misma licencia. Las imágenes y materiales de terceros conservan su propia licencia.</p>\n'
     '    <p>Hay más recursos, algunos solo en valenciano, en la <a href="/" hreflang="ca" lang="ca-valencia">versión en valenciano</a>.</p>\n'
+    '    <p>Si has detectado algún problema o quieres hacer una sugerencia, <a href="https://forms.gle/awo1Lah8aBx5Q6XH6" target="_blank" rel="noopener">cuéntamelo aquí</a>.</p>\n'
     '  </footer>',
     out, count=1, flags=re.S)
 
