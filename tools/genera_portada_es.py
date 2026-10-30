@@ -161,8 +161,8 @@ un('<meta property="og:site_name" content="Aprendre jugant">', '<meta property="
 un("deed.ca", "deed.es") if out.count("deed.ca") == 1 else tot("deed.ca", "deed.es", out.count("deed.ca"))
 
 # --- cos ---
-un('<nav class="langnav" aria-label="Idioma"><a href="es/" hreflang="es" lang="es">Castellano</a></nav>',
-   '<nav class="langnav" aria-label="Idioma"><a href="/" hreflang="ca" lang="ca-valencia">Valencià</a></nav>')
+un('<nav class="langnav" aria-label="Idioma i contacte"><a href="https://forms.gle/awo1Lah8aBx5Q6XH6" target="_blank" rel="noopener">Avisos i suggeriments</a><a href="es/" hreflang="es" lang="es">Castellano</a></nav>',
+   '<nav class="langnav" aria-label="Idioma y contacto"><a href="https://forms.gle/awo1Lah8aBx5Q6XH6" target="_blank" rel="noopener">Avisos y sugerencias</a><a href="/" hreflang="ca" lang="ca-valencia">Valencià</a></nav>')
 un("Ilde Morales · Mates, ciències i cultura", "Ilde Morales · Matemáticas, ciencias y cultura")
 un("<h1>Aprendre <em>jugant</em></h1>", "<h1>Aprender <em>jugando</em></h1>")
 un("Activitats interactives per a l'alumnat. Tria una matèria o entra directament en un recurs: cada pàgina funciona sola, al mòbil i a l'ordinador.",
