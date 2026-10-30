@@ -80,7 +80,9 @@
 - Cada vegada que es canvie `index.html` (targetes, filtres, text) o s'afegisca/traduïsca un recurs: actualitzar `i18n/portada-es.json` si cal i executar l'script. També actualitza el sitemap (portada ca + es amb `hreflang`).
 - `nv` és la frase curta del bloc «Últimes pàgines» en castellà; si es canvia la descripció a `novetats.json`, convé revisar-la.
 
-# Jocs d'aula (pestanya `jocs`: `hexaciencia`, `bingo-resultats`)
+# Jocs d'aula (pestanya `jocs`: `hexaciencia`, `bingo-resultats` i els jocs arcade de monomis)
 
 - Fonts a `tools/jocs/` (`hexaciencia.src.html`, `bingo.src.html`, HTML autònom amb diccionari `I18N` ca/es). Les pàgines `<slug>/index.html` i `es/<slug>/index.html` són **generades** amb `python3 tools/jocs/genera.py [slug]` (cal Playwright); no s'editen a mà. El generador afig canonical, hreflang, og, GoatCounter, enllaç ⌂ a la portada i la pantalla inicial com a HTML estàtic; l'idioma el fixa la URL i el selector VAL/CAS canvia el text sense perdre la partida (i actualitza la URL).
 - Un joc nou: afegir-lo al diccionari `JOCS` de `genera.py` (les fonts noves porten els marcadors `<!--@HOME@-->`, `/*@URL@*/` i `let lang = 'ca';`; la pantalla inicial va dins `<div id="setup" class="overlay">`), targeta a `index.html` (`cat: 'jocs'`), entrada a `i18n/portada-es.json` + `python3 tools/genera_portada_es.py`, les dues URLs al `sitemap.xml` amb hreflang i `tools/novetats.py`.
+
+- **Jocs arcade de monomis** (`monomis-en-orbita`, `monomis-a-la-fuga`, `fabrica-de-monomis`, `monosalt`, `defensa-monomial`): fonts `tools/jocs/<slug>.src.html` (HTML autònom, canvas, diccionari `TX` amb `es` i `ca`) i entrada amb `"arcade": True` a `JOCS` de `genera.py`. Marcadors: `let lang = 'ca';`, `/*@URL@*/` dins `setLang(l)`, `/*@TITLES@*/null` (títol de pestanya en els dos idiomes), `<!--@HOME@-->` (⌂ a la barra `#tb`) i la pantalla inicial `#ovStart .panel`, que el generador torna a escriure com a HTML estàtic. El rànquing local usa la clau `jocs_<slug>_hs` (una per joc); el nom del jugador i el so es comparteixen entre jocs. Es prova amb Playwright (ca i es, teclat i mòbil de 390 px, sense errors de JS).
