@@ -53,6 +53,18 @@ JOCS = {
          "desc": "Tria la torre el monomi de la qual divideix exactament l'enemic, o la que du el factor que falta al producte: les operacions de monomis al revés, amb pistes d'error. Bilingüe VAL/CAS."},
   "es": {"title": "Defensa monomial: Juego de torres con divisores y factores",
          "desc": "Elige la torre cuyo monomio divide exactamente al enemigo, o la que lleva el factor que falta en el producto: las operaciones de monomios al revés, con pistas de error. Bilingüe VAL/CAS."}},
+ "tetris-de-sumes": {
+  "src": "tetris-de-sumes.src.html", "h1": "<title>tetris-de-sumes</title>", "arcade": True,
+  "ca": {"title": "Tetris de sumes: Sumes de dues xifres acabades en 5 i 0",
+         "desc": "Tetris en què, en completar una línia, cal resoldre una suma de dos nombres de dues xifres acabats en 0 o 5 per netejar-la. Amb pistes, nivells, teclat i tàctil. Bilingüe VAL/CAS."},
+  "es": {"title": "Tetris de sumas: Sumas de dos cifras acabadas en 5 y 0",
+         "desc": "Tetris en el que, al completar una línea, hay que resolver una suma de dos números de dos cifras acabados en 0 o 5 para limpiarla. Con pistas, niveles, teclado y táctil. Bilingüe VAL/CAS."}},
+ "defensa-de-sumes": {
+  "src": "defensa-de-sumes.src.html", "h1": "<title>defensa-de-sumes</title>", "arcade": True,
+  "ca": {"title": "Defensa de sumes: Torres amb sumes de dues xifres acabades en 5 i 0",
+         "desc": "Defensa de torres: només la torre amb el resultat exacte de la suma del monstre el destrueix. Sumes de dos nombres de dues xifres acabats en 0 o 5, amb pistes. Bilingüe VAL/CAS."},
+  "es": {"title": "Defensa de sumas: Torres con sumas de dos cifras acabadas en 5 y 0",
+         "desc": "Defensa de torres: solo la torre con el resultado exacto de la suma del monstruo lo destruye. Sumas de dos números de dos cifras acabados en 0 o 5, con pistas. Bilingüe VAL/CAS."}},
 }
 LOC = {"ca": {"home": "Tornar a la portada", "homeurl": "/", "locale": "ca_ES", "site": "Recursos de matemàtiques"},
        "es": {"home": "Volver a la portada", "homeurl": "/es/", "locale": "es_ES", "site": "Recursos de matemáticas"}}

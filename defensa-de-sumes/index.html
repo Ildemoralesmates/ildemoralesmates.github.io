@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0c24">
+<title>Defensa de sumes: Torres amb sumes de dues xifres acabades en 5 i 0</title>
+<style>
+:root{--cy:#35e6ff;--mg:#ff3fd0;--yl:#ffd84a;--gn:#4dff9a;--rd:#ff4d6a;--bg:#0a0c24}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:#fff;touch-action:none;-webkit-user-select:none;user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.ov{position:fixed;inset:0;display:none;background:rgba(6,8,30,.82);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);overflow:auto;padding:14px;touch-action:pan-y;z-index:20}
+.ov.on{display:flex}
+.panel{margin:auto;width:100%;max-width:720px;text-align:center;padding:10px}
+h1{margin:0 0 4px;font-size:clamp(30px,7vw,54px);letter-spacing:2px;line-height:1.05;text-transform:uppercase;background:linear-gradient(90deg,var(--cy),var(--mg),var(--yl));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(53,230,255,.45))}
+h2{margin:0 0 8px;font-size:clamp(26px,6vw,44px);letter-spacing:2px;color:var(--yl);text-shadow:0 0 18px rgba(255,216,74,.5)}
+.sub{margin:0 0 14px;color:#b9c3ff;font-size:clamp(14px,3.6vw,18px)}
+.how{margin:0 auto 14px;max-width:560px;font-size:clamp(12px,3.2vw,15px);color:#cfd6ff;line-height:1.5;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 14px}
+.how b{color:var(--cy)}
+.lbl{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8d99e6;margin:10px 0 6px}
+input.nm{font:inherit;font-size:18px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px 12px;width:min(300px,90%);text-align:center;outline:none;-webkit-user-select:text;user-select:text}
+input.nm:focus{border-color:var(--cy);box-shadow:0 0 12px rgba(53,230,255,.4)}
+.btn{font:inherit;font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:clamp(16px,4.4vw,22px);color:#0a0c24;background:linear-gradient(90deg,var(--cy),var(--gn));border:0;border-radius:14px;padding:14px 34px;margin:10px 6px 4px;cursor:pointer;box-shadow:0 0 22px rgba(53,230,255,.55),0 6px 0 rgba(0,0,0,.35);transition:transform .1s,box-shadow .1s;animation:pulse 1.6s ease-in-out infinite}
+.btn:active{transform:translateY(4px);box-shadow:0 0 18px rgba(53,230,255,.5),0 2px 0 rgba(0,0,0,.35)}
+.btn.alt{background:rgba(255,255,255,.1);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.3);font-size:clamp(13px,3.6vw,16px);padding:11px 22px;animation:none}
+@keyframes pulse{50%{transform:scale(1.04)}}
+table{margin:6px auto 0;border-collapse:collapse;width:min(460px,100%);font-size:clamp(12px,3.3vw,15px)}
+td,th{padding:5px 8px;text-align:left}
+th{color:#8d99e6;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.18)}
+td.r,th.r{text-align:right}
+tr.me td{color:var(--yl);font-weight:800;background:rgba(255,216,74,.1)}
+.big{font-size:clamp(46px,14vw,92px);font-weight:900;color:#fff;text-shadow:0 0 24px rgba(53,230,255,.7);line-height:1}
+.rec{color:var(--gn);font-weight:800;letter-spacing:2px;animation:pulse 1s infinite;margin:4px 0}
+.tb{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));display:flex;gap:8px;z-index:30}
+.tb button{font:inherit;font-size:18px;width:42px;height:42px;border-radius:12px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);cursor:pointer;padding:0}
+.tb button.lg{width:auto;padding:0 12px;font-size:13px;font-weight:800;letter-spacing:1px}
+/* pista */
+#hint{position:fixed;display:none;z-index:9;text-align:left;font-size:clamp(13px,3.6vw,16px);line-height:1.5;color:#e4e9ff;background:rgba(14,16,50,.95);border:1px solid rgba(255,216,74,.6);border-radius:14px;padding:8px 12px;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none}
+#hint.on{display:block;animation:pop .2s ease-out}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+#hint b{color:#4dff9a;font-size:1.15em}
+#hint .hh{color:#ffd84a;font-weight:800;letter-spacing:1px;text-transform:uppercase;font-size:.8em;display:block;margin-bottom:2px}
+.tb a.hl{display:flex;align-items:center;justify-content:center;font:inherit;font-size:18px;width:42px;height:42px;border-radius:12px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);text-decoration:none}
+.tb button.lg.on{border-color:var(--cy);box-shadow:0 0 12px rgba(255,255,255,.25);background:rgba(255,255,255,.22)}
+.tb.inplay .nl{display:none}
+</style>
+<meta name="description" content="Defensa de torres: només la torre amb el resultat exacte de la suma del monstre el destrueix. Sumes de dos nombres de dues xifres acabats en 0 o 5, amb pistes. Bilingüe VAL/CAS.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/defensa-de-sumes/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/defensa-de-sumes/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/defensa-de-sumes/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/defensa-de-sumes/">
+<meta name="author" content="Ilde Morales">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Defensa de sumes: Torres amb sumes de dues xifres acabades en 5 i 0">
+<meta property="og:description" content="Defensa de torres: només la torre amb el resultat exacte de la suma del monstre el destrueix. Sumes de dos nombres de dues xifres acabats en 0 o 5, amb pistes. Bilingüe VAL/CAS.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/defensa-de-sumes/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="tb" id="tb">
+  <a class="hl nl" href="/" title="Tornar a la portada" aria-label="Tornar a la portada">⌂</a><button id="bLangCa" class="lg nl" tabindex="-1" aria-label="Valencià">VAL</button><button id="bLangEs" class="lg nl" tabindex="-1" aria-label="Castellano">CAS</button>
+  <button id="bMute" tabindex="-1" aria-label="Sonido">🔊</button>
+  <button id="bPause" tabindex="-1" aria-label="Pausa" style="display:none">⏸</button>
+</div>
+
+<div id="hint" aria-live="polite"></div>
+
+<div class="ov on" id="ovStart"><div class="panel">
+  <h1 data-t="title">Defensa de sumes</h1>
+  <p class="sub" data-t="tag">Dispara la torre el número de la qual és el resultat de la suma</p>
+  <div class="how" id="how">Els monstres porten una suma escrita i s’acosten al castell. <b>Només la torre que té el resultat exacte</b> els destrueix; si t’equivoques, la torre s’encalla un moment i et donem una <b>pista</b>.<br><b>Teclat:</b> <b>1 · 2 · 3 · 4</b> (o A · S · D · F) disparen cada torre<br><b>Tàctil:</b> toca la torre<br><b>P</b> / <b>Esc</b> pausa · <b>M</b> so<br>Cada monstre que arriba al castell et lleva un cor.</div>
+  <div class="lbl" data-t="pname">Nom de jugador</div>
+  <input class="nm" id="nameIn" maxlength="22" autocomplete="off" autocapitalize="words" spellcheck="false" data-ph="other" placeholder="Escriu el teu nom">
+  <div><button class="btn" id="bPlay" data-t="play">Jugar!</button></div>
+  <div class="lbl" data-t="best">Millors jugadors</div>
+  <table id="hsStart"><tbody><tr><td style="text-align:center;color:#8d99e6">Encara no hi ha rècords. Sigues el primer!</td></tr></tbody></table>
+</div></div>
+
+<div class="ov" id="ovPause"><div class="panel">
+  <h2 data-t="paused">PAUSA</h2>
+  <div><button class="btn" id="bResume" data-t="resume"></button></div>
+  <div><button class="btn alt" id="bRestart1" data-t="restart"></button><button class="btn alt" id="bMenu1" data-t="menu"></button></div>
+</div></div>
+
+<div class="ov" id="ovOver"><div class="panel">
+  <h2 data-t="over"></h2>
+  <div class="sub" id="overWho"></div>
+  <div class="big" id="overScore">0</div>
+  <div class="rec" id="overRec" style="display:none"></div>
+  <table id="hsOver"></table>
+  <div><button class="btn" id="bAgain" data-t="again"></button></div>
+  <div><button class="btn alt" id="bMenu2" data-t="menu"></button></div>
+</div></div>
+
+<script>
+(()=>{
+'use strict';
+/* ================= textos ================= */
+const TX={
+es:{title:'Defensa de sumas',tag:'Dispara la torre cuyo número es el resultado de la suma',
+ how:'Los monstruos traen una suma escrita y se acercan al castillo. <b>Solo la torre que tiene el resultado exacto</b> los destruye; si te equivocas, la torre se atasca un momento y te damos una <b>pista</b>.<br><b>Teclado:</b> <b>1 · 2 · 3 · 4</b> (o A · S · D · F) disparan cada torre<br><b>Táctil:</b> toca la torre<br><b>P</b> / <b>Esc</b> pausa · <b>M</b> sonido<br>Cada monstruo que llega al castillo te quita un corazón.',
+ pname:'Nombre de jugador',other:'Escribe tu nombre',guest:'Invitado',play:'¡Jugar!',best:'Mejores jugadores',player:'Jugador',
+ paused:'Pausa',resume:'Continuar',restart:'Reiniciar',menu:'Menú',over:'El castillo ha caído',again:'Jugar otra vez',
+ newrec:'¡Nuevo récord!',score:'PUNTOS',level:'NIVEL',combo:'COMBO',pts:'Puntos',lv:'Nivel',
+ lvl:['Decenas redondas','Con un 5','5 más 5','Pasando de 100','Maestro de las sumas'],
+ hint:'Pista',solution:'Solución',lvUp:'¡Nivel ',heartUp:'¡Un corazón más!',jam:'¡Atascada!',leak:'¡Se ha colado!',
+ good:['¡Bien!','¡Crack!','¡Directo!','¡Limpio!','¡Eso es!'],late:'¡Bien, con ayuda!',
+ sumsOf:' monstruos',whoIs:'Jugador: ',empty:'Aún no hay récords. ¡Sé el primero!',
+ hintFn:(a,b)=>{const ta=Math.floor(a/10),tb=Math.floor(b/10),ua=a%10,ub=b%10;return 'Primero las decenas: '+ta+' + '+tb+' = '+(ta+tb)+' → <b>'+(ta+tb)*10+'</b><br>Luego las unidades: '+ua+' + '+ub+' = <b>'+(ua+ub)+'</b>'},
+ solFn:(a,b)=>{const T=(Math.floor(a/10)+Math.floor(b/10))*10,U=a%10+b%10;return T+' + '+U+' = <b>'+(a+b)+'</b>'}},
+ca:{title:'Defensa de sumes',tag:'Dispara la torre el número de la qual és el resultat de la suma',
+ how:'Els monstres porten una suma escrita i s’acosten al castell. <b>Només la torre que té el resultat exacte</b> els destrueix; si t’equivoques, la torre s’encalla un moment i et donem una <b>pista</b>.<br><b>Teclat:</b> <b>1 · 2 · 3 · 4</b> (o A · S · D · F) disparen cada torre<br><b>Tàctil:</b> toca la torre<br><b>P</b> / <b>Esc</b> pausa · <b>M</b> so<br>Cada monstre que arriba al castell et lleva un cor.',
+ pname:'Nom de jugador',other:'Escriu el teu nom',guest:'Convidat',play:'Jugar!',best:'Millors jugadors',player:'Jugador',
+ paused:'Pausa',resume:'Continuar',restart:'Reiniciar',menu:'Menú',over:'El castell ha caigut',again:'Jugar una altra vegada',
+ newrec:'Nou rècord!',score:'PUNTS',level:'NIVELL',combo:'COMBO',pts:'Punts',lv:'Nivell',
+ lvl:['Desenes rodones','Amb un 5','5 més 5','Passant de 100','Mestre de les sumes'],
+ hint:'Pista',solution:'Solució',lvUp:'Nivell ',heartUp:'Un cor més!',jam:'Encallada!',leak:'S’ha colat!',
+ good:['Bé!','Crack!','Directe!','Net!','Això és!'],late:'Bé, amb ajuda!',
+ sumsOf:' monstres',whoIs:'Jugador: ',empty:'Encara no hi ha rècords. Sigues el primer!',
+ hintFn:(a,b)=>{const ta=Math.floor(a/10),tb=Math.floor(b/10),ua=a%10,ub=b%10;return 'Primer les desenes: '+ta+' + '+tb+' = '+(ta+tb)+' → <b>'+(ta+tb)*10+'</b><br>Després les unitats: '+ua+' + '+ub+' = <b>'+(ua+ub)+'</b>'},
+ solFn:(a,b)=>{const T=(Math.floor(a/10)+Math.floor(b/10))*10,U=a%10+b%10;return T+' + '+U+' = <b>'+(a+b)+'</b>'}}
+};
+let lang = 'ca';
+const PAGE_TITLES = {"ca": "Defensa de sumes: Torres amb sumes de dues xifres acabades en 5 i 0", "es": "Defensa de sumas: Torres con sumas de dos cifras acabadas en 5 y 0"};
+const t=k=>TX[lang][k];
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+/* ================= sumas ================= */
+function genSum(lv,prev){
+  let a,b,r,tries=0;
+  do{
+    let ua,ub;
+    if(lv<=1){ua=0;ub=0}
+    else if(lv===2){[ua,ub]=Math.random()<.5?[5,0]:[0,5]}
+    else if(lv===3){ua=5;ub=5}
+    else{[ua,ub]=[[0,0],[5,0],[0,5],[5,5]][ri(0,3)]}
+    a=ri(1,9)*10+ua;b=ri(1,9)*10+ub;r=a+b;
+    if(lv<=3&&r>100)continue;
+    if(lv===4&&r<=100)continue;
+    if(prev&&prev.a===a&&prev.b===b)continue;
+    break;
+  }while(++tries<200);
+  if(tries>=200||lv<=3&&r>100){a=lv===3?45:30;b=lv===3?35:40;r=a+b}
+  if(lv>=2&&Math.random()<.5){const s=a;a=b;b=s}
+  const ta=Math.floor(a/10),tb=Math.floor(b/10),ua2=a%10,ub2=b%10;
+  const tensOnly=(ta+tb)*10;
+  const cand=[r+10,r-10,r+5,r-5];
+  if(ua2+ub2===10)cand.push((ta+tb)*100+10);
+  if(r-100>0)cand.push(r-100);
+  const set=[r];
+  if(tensOnly!==r&&tensOnly>0)set.push(tensOnly);
+  while(set.length<3){
+    const v=cand[ri(0,cand.length-1)];
+    if(v>0&&!set.includes(v))set.push(v);
+    else if(cand.length<3||Math.random()<.1)cand.push(r+ri(1,4)*10*(Math.random()<.5?1:-1));
+  }
+  const opts=set.slice(0,3).sort((x,y)=>x-y);
+  return{a,b,r,opts};
+}
+
+/* ================= audio ================= */
+let AC=null,muted=store.get('mono_muted',false);
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d,type,v,f2,delay){
+  const a=ac();if(!a||muted)return;const t0=a.currentTime+(delay||0);
+  const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';
+  o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);
+  g.gain.setValueAtTime(v||.1,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+  o.connect(g);g.connect(a.destination);o.start(t0);o.stop(t0+d+.03);
+}
+const sfx={
+  move(){tone(300,.04,'square',.025)},
+  rot(){tone(480,.06,'square',.04,620)},
+  lock(){tone(140,.09,'triangle',.12,90)},
+  drop(){tone(220,.12,'sawtooth',.06,70)},
+  line(){[523,784].forEach((f,i)=>tone(f,.14,'triangle',.1,f*1.02,i*.08))},
+  hit(s){const f=440*Math.pow(1.0595,Math.min(s,10)*2);tone(f,.18,'triangle',.14,f*2);tone(f*1.5,.3,'sine',.08,f*3,.05)},
+  clear(){[523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',.1,f*1.01,i*.06))},
+  wrong(){tone(170,.32,'sawtooth',.11,60)},
+  level(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.2,'triangle',.11,f*1.01,i*.09))},
+  life(){[660,880].forEach((f,i)=>tone(f,.16,'sine',.1,f,i*.08))},
+  over(){[392,330,262,196].forEach((f,i)=>tone(f,.3,'sawtooth',.09,f*.9,i*.16))}
+};
+
+sfx.shoot=()=>tone(900,.12,'square',.05,260);
+sfx.miss=()=>tone(110,.45,'sawtooth',.14,35);
+
+/* ================= estado ================= */
+const cv=$('#c'),ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,HUDH=62,er=26,towerH=110,towerTop=0,wallY=0,tw=120;
+let state='start',stateT=0,player='',overLock=0,last=performance.now(),time=0;
+let enemies=[],towers=[],proj=[],parts=[],floaters=[],target=null,lastQ=null;
+let score=0,hearts=5,streak=0,clean=0,kills=0,level=1,spawnT=0,shakeT=0,hintT=0,lastHint=null;
+const mult=()=>Math.min(5,1+Math.floor(streak/3));
+const lvName=()=>t('lvl')[Math.min(level-1,4)];
+const tx=i=>W*(i+.5)/4;
+const HUES=[155,200,280,330,35];
+
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  er=Math.max(18,Math.min(34,Math.min(W*.06,H*.055)));
+  towerH=Math.max(84,Math.min(150,H*.2));towerTop=H-towerH-6;wallY=towerTop-16;
+  tw=Math.min(W/4-10,150);
+  const hw=Math.min(W-16,460),hl=$('#hint');hl.style.width=hw+'px';hl.style.left=Math.round((W-hw)/2)+'px';hl.style.top=(HUDH+6)+'px';
+}
+addEventListener('resize',resize);
+
+/* ================= enemigos y torres ================= */
+function bw(){const fs=Math.max(15,er*.72);return fs*4.6+18}
+function spawnEnemy(){
+  const q=genSum(level,lastQ);lastQ=q;
+  const m=bw()/2+6;
+  enemies.push({x:m+Math.random()*(W-2*m),y:HUDH+er*2.6,a:q.a,b:q.b,r:q.r,wrongs:0,dying:false,ph:Math.random()*6,hue:HUES[ri(0,HUES.length-1)]});
+  if(!target)retarget();
+}
+function retarget(){
+  hideHint();
+  let f=null;for(const e of enemies)if(!e.dying&&(!f||e.y>f.y))f=e;
+  target=f;
+  for(const T of towers){T.jam=0;T.glow=false}
+  if(!f)return;
+  const r=f.r,ta=Math.floor(f.a/10),tb=Math.floor(f.b/10);
+  const tensOnly=(ta+tb)*10;
+  const pool=[];
+  if(tensOnly!==r&&tensOnly>0&&Math.random()<.85)pool.push(tensOnly);
+  if((f.a%10)+(f.b%10)===10)pool.push((ta+tb)*100+10);
+  const more=[r+10,r-10,r+5,r-5,r+20,r-20,r-100,r+15,r-15].filter(v=>v>0&&v!==r&&!pool.includes(v));
+  for(let i=more.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[more[i],more[j]]=[more[j],more[i]]}
+  const dist=pool.concat(more.filter(v=>!pool.includes(v))).slice(0,3);
+  const nums=dist.concat([r]);
+  for(let i=nums.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[nums[i],nums[j]]=[nums[j],nums[i]]}
+  towers.forEach((T,i)=>{T.n=nums[i];T.flip=.35});
+}
+function newTowers(){towers=[0,1,2,3].map(()=>({n:0,jam:0,cd:0,recoil:0,flip:0,glow:false}))}
+
+/* ================= pistas ================= */
+const hintEl=$('#hint');
+function hideHint(){hintEl.classList.remove('on');hintT=0;lastHint=null}
+function showHint(e,full){
+  lastHint={e,full};
+  hintEl.innerHTML='<span class="hh">'+(full?t('solution'):t('hint'))+' · '+e.a+' + '+e.b+'</span>'+t('hintFn')(e.a,e.b)+(full?'<br>'+t('solFn')(e.a,e.b):'');
+  hintEl.classList.add('on');hintT=9;
+}
+
+/* ================= disparo ================= */
+function fire(i){
+  if(state!=='play'||!target||target.dying)return;
+  const T=towers[i];if(!T||T.jam>0||T.cd>0)return;
+  const ok=T.n===target.r;
+  T.cd=.3;T.recoil=.18;
+  if(ok)target.dying=true;
+  proj.push({i,e:target,t:0,ok,x0:tx(i),y0:towerTop-6});
+  sfx.shoot();
+}
+function burst(x,y,hue,n,sp){for(let k=0;k<n;k++){const a=Math.random()*6.283,v=(.3+Math.random())*sp;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-sp*.3,t:0,life:.5+Math.random()*.4,hue,s:2+Math.random()*3})}}
+function pop(s,col,x,y){floaters.push({s,col,x,y,t:0})}
+function resolve(p){
+  const e=p.e;
+  if(!enemies.includes(e))return;
+  if(p.ok){
+    enemies.splice(enemies.indexOf(e),1);
+    burst(e.x,e.y,e.hue,26,260);
+    const first=e.wrongs===0;
+    let pts;
+    if(first){pts=100*mult();streak++;clean++;sfx.hit(streak);
+      if(clean%6===0&&hearts<5){hearts++;sfx.life();pop(t('heartUp'),'#ff7aa8',W/2,H*.4)}
+      const g=t('good');pop(g[ri(0,g.length-1)],'#ffd84a',e.x,e.y-er*2)}
+    else{pts=e.wrongs===1?50:25;sfx.hit(0);pop(t('late'),'#35e6ff',e.x,e.y-er*2)}
+    score+=pts;pop('+'+pts+(first&&mult()>1?' ×'+mult():''),'#4dff9a',e.x,e.y);
+    kills++;
+    const nl=1+Math.floor(kills/4);
+    if(nl>level){level=nl;sfx.level();pop(t('lvUp')+level+'! '+lvName(),'#ffd84a',W/2,H*.3)}
+    retarget();
+  }else{
+    const T=towers[p.i];T.jam=1.4;streak=0;e.wrongs++;sfx.wrong();
+    burst(e.x,e.y,0,10,120);pop('✗','#ff4d6a',e.x,e.y-er*3.2);
+    pop(t('jam'),'#ff4d6a',tx(p.i),towerTop-20);
+    if(e.wrongs===1)showHint(e,false);
+    else{showHint(e,true);towers.forEach(X=>{X.glow=(X.n===e.r)})}
+  }
+}
+function leak(e){
+  enemies.splice(enemies.indexOf(e),1);
+  hearts--;streak=0;shakeT=.35;sfx.miss();
+  pop('♥ −1','#ff4d6a',e.x,wallY-er);pop(t('leak'),'#ff4d6a',W/2,H*.4);
+  retarget();
+  if(hearts<=0)gameOver();
+}
+
+/* ================= clasificación ================= */
+const HSK='jocs_defensa-de-sumes_hs';
+function loadHS(){return store.get(HSK,[])}
+function renderHS(el,hl){
+  const hs=loadHS();
+  if(!hs.length){el.innerHTML='<tr><td style="text-align:center;color:#8d99e6">'+t('empty')+'</td></tr>';return}
+  let h='<tr><th>#</th><th>'+t('player')+'</th><th class="r">'+t('pts')+'</th><th class="r">'+t('lv')+'</th></tr>';
+  hs.slice(0,8).forEach((e,i)=>{h+='<tr'+(e.id===hl?' class="me"':'')+'><td>'+(i+1)+'</td><td>'+esc(e.n)+'</td><td class="r">'+e.s+'</td><td class="r">'+e.l+'</td></tr>'});
+  el.innerHTML=h;
+}
+
+/* ================= pantallas ================= */
+const ovS=$('#ovStart'),ovP=$('#ovPause'),ovO=$('#ovOver'),bPause=$('#bPause');
+function show(s){
+  state=s;stateT=0;
+  $('#tb').classList.toggle('inplay',s==='play');
+  ovS.classList.toggle('on',s==='start');ovP.classList.toggle('on',s==='pause');ovO.classList.toggle('on',s==='over');
+  bPause.style.display=(s==='play'||s==='pause')?'':'none';
+  if(s!=='play'&&s!=='pause')hideHint();
+  if(s==='start')renderHS($('#hsStart'));
+}
+function resetGame(){
+  enemies=[];proj=[];parts=[];floaters=[];target=null;lastQ=null;
+  score=0;hearts=5;streak=0;clean=0;kills=0;level=1;spawnT=.5;shakeT=0;
+  newTowers();hideHint();
+}
+function startGame(){
+  ac();
+  const typed=$('#nameIn').value.trim();
+  player=typed||t('guest');store.set('mono_name',typed);
+  resetGame();show('play');last=performance.now();
+}
+function gameOver(){
+  if(state==='over')return;
+  sfx.over();
+  const hs=loadHS();let id=null,rec=false;
+  if(score>0){
+    id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    rec=hs.length===0||score>hs[0].s;
+    hs.push({id,n:player,s:score,l:level});hs.sort((a,b)=>b.s-a.s);store.set(HSK,hs.slice(0,10));
+  }
+  $('#overWho').textContent=t('whoIs')+player+' · '+kills+t('sumsOf');
+  $('#overScore').textContent=score;
+  const r=$('#overRec');r.style.display=rec?'':'none';r.textContent=t('newrec');
+  renderHS($('#hsOver'),id);
+  show('over');overLock=.7;
+}
+function togglePause(){
+  if(state==='play')show('pause');
+  else if(state==='pause'){show('play');last=performance.now()}
+}
+$('#nameIn').value=store.get('mono_name','');
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t)});
+  document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=t(e.dataset.ph)});
+  $('#how').innerHTML=t('how');
+  $('#bLangCa').classList.toggle('on',lang==='ca');$('#bLangEs').classList.toggle('on',lang==='es');
+  if(PAGE_TITLES)document.title=PAGE_TITLES[lang];
+  if(state==='start')renderHS($('#hsStart'));
+  if(lastHint&&enemies.includes(lastHint.e))showHint(lastHint.e,lastHint.full);
+}
+function setLang(l){lang=l;try { history.replaceState(null, '', l === 'es' ? '/es/defensa-de-sumes/' : '/defensa-de-sumes/' + location.search); } catch(e) {}applyLang()}
+$('#bLangCa').onclick=e=>{setLang('ca');e.currentTarget.blur()};
+$('#bLangEs').onclick=e=>{setLang('es');e.currentTarget.blur()};
+function setMute(m){muted=m;store.set('mono_muted',m);$('#bMute').textContent=m?'🔇':'🔊'}
+$('#bMute').onclick=e=>{setMute(!muted);e.currentTarget.blur()};
+$('#bPause').onclick=e=>{togglePause();e.currentTarget.blur()};
+$('#bPlay').onclick=startGame;
+$('#bResume').onclick=togglePause;
+$('#bRestart1').onclick=startGame;
+$('#bMenu1').onclick=()=>show('start');
+$('#bAgain').onclick=startGame;
+$('#bMenu2').onclick=()=>show('start');
+
+/* ================= entrada ================= */
+addEventListener('keydown',e=>{
+  const k=e.key,inInput=e.target&&e.target.tagName==='INPUT';
+  if(k==='m'||k==='M'){if(!inInput){setMute(!muted);return}}
+  if(state==='start'){if(k==='Enter'||(k===' '&&!inInput)){e.preventDefault();startGame()}return}
+  if(state==='play'){
+    if(k==='p'||k==='P'||k==='Escape'){togglePause();return}
+    const i='1234'.indexOf(k);const j='asdfASDF'.indexOf(k);
+    if(i>=0)fire(i);else if(j>=0)fire(j%4);
+    return;
+  }
+  if(state==='pause'){
+    if(k==='p'||k==='P'||k==='Escape'||k==='Enter'||k===' '){e.preventDefault();togglePause()}
+    else if(k==='r'||k==='R')startGame();
+    return;
+  }
+  if(state==='over'){
+    if(overLock>0)return;
+    if(k==='Enter'||k===' '||k==='r'||k==='R'){e.preventDefault();startGame()}
+  }
+});
+cv.addEventListener('pointerdown',e=>{
+  if(state!=='play')return;
+  e.preventDefault();ac();
+  if(e.clientY<wallY-er)return;
+  fire(Math.max(0,Math.min(3,Math.floor(e.clientX/(W/4)))));
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')togglePause()});
+addEventListener('blur',()=>{if(state==='play')togglePause()});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* ================= bucle ================= */
+function update(dt){
+  time+=dt;
+  if(shakeT>0)shakeT-=dt;
+  if(hintT>0){hintT-=dt;if(hintT<=0&&!(target&&target.wrongs>=2))hintEl.classList.remove('on')}
+  for(const T of towers){if(T.jam>0)T.jam-=dt;if(T.cd>0)T.cd-=dt;if(T.recoil>0)T.recoil-=dt;if(T.flip>0)T.flip-=dt}
+  const v=H*Math.min(.075,.034+.0035*(level-1));
+  for(const e of enemies.slice()){
+    e.ph+=dt*6;
+    if(e.dying)continue;
+    e.y+=v*dt;
+    if(e.y>=wallY-er*.4){leak(e);if(state!=='play')return}
+  }
+  spawnT-=dt;
+  if(spawnT<=0){
+    const free=!enemies.some(e=>e.y<HUDH+er*5.5);
+    if(enemies.length<6&&free){spawnEnemy();spawnT=Math.max(3.2,7.5-.5*(level-1))}else spawnT=.3;
+  }
+  for(const p of proj.slice()){
+    p.t+=dt;
+    if(p.t>=.26){proj.splice(proj.indexOf(p),1);resolve(p);if(state!=='play')return}
+  }
+  for(const q of parts){q.t+=dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=420*dt}
+  parts=parts.filter(q=>q.t<q.life);
+  for(const f of floaters)f.t+=dt;
+  floaters=floaters.filter(f=>f.t<1.4);
+}
+
+/* ================= dibujo ================= */
+function txt(s,x,y,size,col,al,wt){ctx.font=(wt||800)+' '+size+'px "Trebuchet MS","Segoe UI",system-ui,sans-serif';ctx.fillStyle=col;ctx.textAlign=al||'left';ctx.textBaseline='middle';ctx.fillText(s,x,y)}
+function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h)}
+function drawEnemy(e){
+  const wob=Math.sin(e.ph)*er*.06,x=e.x,y=e.y+wob;
+  const dy=e.dying?Math.max(0,1-0):0;
+  ctx.save();
+  // sombra
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(x,y+er*1.05,er*.9,er*.25,0,0,6.283);ctx.fill();
+  // pies
+  ctx.fillStyle='hsl('+e.hue+',55%,34%)';
+  const fo=Math.sin(e.ph)*er*.18;
+  ctx.beginPath();ctx.ellipse(x-er*.45,y+er*.95+fo*.3,er*.3,er*.2,0,0,6.283);ctx.ellipse(x+er*.45,y+er*.95-fo*.3,er*.3,er*.2,0,0,6.283);ctx.fill();
+  // cuerpo
+  const g=ctx.createRadialGradient(x-er*.3,y-er*.4,er*.1,x,y,er*1.1);
+  g.addColorStop(0,'hsl('+e.hue+',85%,68%)');g.addColorStop(1,'hsl('+e.hue+',70%,40%)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,er,0,6.283);ctx.fill();
+  // cuernos
+  ctx.fillStyle='hsl('+e.hue+',40%,85%)';
+  ctx.beginPath();ctx.moveTo(x-er*.7,y-er*.55);ctx.lineTo(x-er*.5,y-er*1.15);ctx.lineTo(x-er*.25,y-er*.8);ctx.fill();
+  ctx.beginPath();ctx.moveTo(x+er*.7,y-er*.55);ctx.lineTo(x+er*.5,y-er*1.15);ctx.lineTo(x+er*.25,y-er*.8);ctx.fill();
+  // ojos
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x-er*.34,y-er*.1,er*.25,0,6.283);ctx.arc(x+er*.34,y-er*.1,er*.25,0,6.283);ctx.fill();
+  ctx.fillStyle='#14163a';ctx.beginPath();ctx.arc(x-er*.3,y-er*.04,er*.12,0,6.283);ctx.arc(x+er*.3,y-er*.04,er*.12,0,6.283);ctx.fill();
+  // boca
+  ctx.strokeStyle='#14163a';ctx.lineWidth=Math.max(2,er*.08);ctx.beginPath();ctx.arc(x,y+er*.38,er*.3,.15*Math.PI,.85*Math.PI);ctx.stroke();
+  ctx.restore();
+  // cartel con la suma
+  const fs=Math.max(15,er*.72),s=e.a+' + '+e.b;
+  ctx.font='900 '+fs+'px "Trebuchet MS","Segoe UI",system-ui,sans-serif';
+  const w=ctx.measureText(s).width+18,h=fs*1.45,by=y-er*1.15-h;
+  ctx.fillStyle='rgba(0,0,0,.28)';rr(x-w/2+2,by+3,w,h,8);ctx.fill();
+  ctx.fillStyle=(e===target&&!e.dying)?'#fff7c2':'#fff';rr(x-w/2,by,w,h,8);ctx.fill();
+  ctx.strokeStyle=(e===target)?'#ffd84a':'rgba(10,12,36,.5)';ctx.lineWidth=(e===target)?3:2;ctx.stroke();
+  txt(s,x,by+h/2+1,fs,'#14163a','center',900);
+  // diana en el objetivo
+  if(e===target&&!e.dying){
+    const k=1+Math.sin(time*6)*.06,R=er*1.55*k;
+    ctx.strokeStyle='rgba(255,216,74,.9)';ctx.lineWidth=2.5;ctx.setLineDash([6,5]);ctx.beginPath();ctx.arc(x,y,R,time,time+6.283);ctx.stroke();ctx.setLineDash([]);
+  }
+}
+function drawTower(i){
+  const T=towers[i],cx=tx(i),top=towerTop,hh=towerH,w=tw,jam=T.jam>0;
+  const rec=T.recoil>0?T.recoil*10:0;
+  const sh=jam?Math.sin(time*50)*2.5:0;
+  ctx.save();ctx.translate(sh,rec);
+  if(T.glow){ctx.shadowColor='#ffd84a';ctx.shadowBlur=26}
+  const g=ctx.createLinearGradient(0,top,0,top+hh);
+  g.addColorStop(0,jam?'#6b6f85':'#5b6bc4');g.addColorStop(1,jam?'#3f4256':'#2b3584');
+  ctx.fillStyle=g;rr(cx-w/2,top+hh*.14,w,hh*.86+8,10);ctx.fill();
+  ctx.shadowBlur=0;
+  // almenas
+  ctx.fillStyle=jam?'#7a7f99':'#7384e0';
+  const m=w/5;
+  for(let k=0;k<3;k++){rr(cx-w/2+k*(w-m)/2,top,m,hh*.2,3);ctx.fill()}
+  // placa con el número
+  const ph=hh*.5,py=top+hh*.3;
+  ctx.fillStyle=jam?'#c9ccd8':(T.glow?'#fff2a8':'#fff');rr(cx-w*.42,py,w*.84,ph,10);ctx.fill();
+  ctx.strokeStyle=T.glow?'#ffd84a':'rgba(10,12,36,.55)';ctx.lineWidth=T.glow?4:2;ctx.stroke();
+  const flip=T.flip>0?Math.abs(Math.cos(T.flip/.35*Math.PI/2)):1;
+  ctx.save();ctx.translate(cx,py+ph/2+1);ctx.scale(1,Math.max(.1,flip));
+  txt(String(T.n),0,0,Math.min(w*.36,ph*.78),jam?'#6b6f85':'#14163a','center',900);
+  ctx.restore();
+  if(jam)txt('✗',cx+w*.34,py+ph*.2,Math.max(16,w*.16),'#ff4d6a','center',900);
+  // tecla
+  txt(String(i+1),cx,top+hh-hh*.1,Math.max(12,Math.min(18,w*.12)),'rgba(255,255,255,.8)','center',900);
+  // cañón
+  ctx.fillStyle=jam?'#555':'#ffd84a';ctx.beginPath();ctx.arc(cx,top-4,Math.max(5,w*.05),0,6.283);ctx.fill();
+  ctx.restore();
+}
+function heartsRow(x,y,size){
+  const gap=size*1.15;
+  for(let i=0;i<5;i++)txt('♥',x+gap*i+gap/2,y,size,i<hearts?'#ff4d6a':'rgba(255,255,255,.18)','center',900);
+  return gap*5;
+}
+function draw(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0a0c24');g.addColorStop(.7,'#241560');g.addColorStop(1,'#16314a');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const sh=shakeT>0?(Math.random()-.5)*8*Math.min(1,shakeT*3):0;
+  ctx.save();ctx.translate(sh,sh*.5);
+  // suelo y muralla
+  ctx.fillStyle='rgba(30,70,70,.55)';ctx.fillRect(0,wallY+10,W,H-wallY);
+  ctx.strokeStyle='rgba(255,77,106,.55)';ctx.lineWidth=3;ctx.setLineDash([14,10]);ctx.beginPath();ctx.moveTo(0,wallY);ctx.lineTo(W,wallY);ctx.stroke();ctx.setLineDash([]);
+  const list=enemies.slice().sort((a,b)=>a.y-b.y);
+  for(const e of list)drawEnemy(e);
+  for(let i=0;i<4;i++)drawTower(i);
+  // proyectiles
+  for(const p of proj){
+    const k=p.t/.26,x=p.x0+(p.e.x-p.x0)*k,y=p.y0+(p.e.y-p.y0)*k;
+    const col=p.ok?'#ffd84a':'#9aa3d9';
+    ctx.shadowColor=col;ctx.shadowBlur=16;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,Math.max(6,er*.3),0,6.283);ctx.fill();ctx.shadowBlur=0;
+    ctx.globalAlpha=.4;ctx.beginPath();ctx.arc(p.x0+(x-p.x0)*.7,p.y0+(y-p.y0)*.7,Math.max(4,er*.22),0,6.283);ctx.fill();ctx.globalAlpha=1;
+  }
+  for(const q of parts){ctx.globalAlpha=Math.max(0,1-q.t/q.life);ctx.fillStyle=q.hue?'hsl('+q.hue+',90%,65%)':'#9aa3d9';ctx.fillRect(q.x,q.y,q.s,q.s);ctx.globalAlpha=1}
+  ctx.restore();
+  // HUD
+  txt(String(score),12,24,26,'#fff','left',900);
+  ctx.font='900 26px "Trebuchet MS",sans-serif';const sw=ctx.measureText(String(score)).width;
+  if(mult()>1)txt(t('combo')+' ×'+mult(),12+sw+12,26,13,'#4dff9a','left');
+  const hw=heartsRow(12,48,18);
+  txt(t('level')+' '+level,12+hw+10,49,12,'#ffd84a','left');
+  for(const f of floaters){
+    const k=f.t/1.4,a=k<.1?k/.1:1-Math.max(0,(k-.5)/.5);
+    ctx.globalAlpha=Math.max(0,a);
+    txt(f.s,Math.max(60,Math.min(W-60,f.x)),f.y-f.t*40,Math.round(Math.max(18,er*.85)),f.col,'center',900);
+    ctx.globalAlpha=1;
+  }
+}
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  stateT+=dt;if(overLock>0)overLock-=dt;
+  if(state==='play')update(dt);
+  draw();
+  requestAnimationFrame(frame);
+}
+
+/* ================= arranque ================= */
+newTowers();resize();
+setMute(muted);
+applyLang();renderHS($('#hsStart'));
+requestAnimationFrame(frame);
+
+/* gancho de pruebas */
+window.__g={
+  get st(){return{state,score,level,hearts,streak,kills,towers:towers.map(T=>({n:T.n,jam:T.jam>0,glow:T.glow})),target:target&&{a:target.a,b:target.b,r:target.r,w:target.wrongs,y:target.y},n:enemies.length}},
+  get enemies(){return enemies},get wallY(){return wallY},
+  fire,genSum,spawnEnemy,set(o){if('hearts'in o)hearts=o.hearts;if('kills'in o){kills=o.kills;level=1+Math.floor(kills/4)}},
+  noSpawn(){spawnT=1e9}};
+})();
+</script>
+</body>
+</html>
