@@ -62,7 +62,7 @@ JOCS = {
  "defensa-de-sumes": {
   "src": "defensa-de-sumes.src.html", "h1": "<title>defensa-de-sumes</title>", "arcade": True,
   "ca": {"title": "Defensa de sumes: Torres amb sumes de dues xifres acabades en 5 i 0",
-         "desc": "Defensa de torres amb dos escenaris (pirates o botiga de llaminadures): només la torre amb el resultat exacte de la suma destrueix l'enemic. Sumes de dues xifres acabades en 0 o 5, amb pistes. Bilingüe VAL/CAS."},
+         "desc": "Defensa de torres amb dos escenaris (pirates o tenda de caramels): només la torre amb el resultat exacte de la suma destrueix l'enemic. Sumes de dues xifres acabades en 0 o 5, amb pistes. Bilingüe VAL/CAS."},
   "es": {"title": "Defensa de sumas: Torres con sumas de dos cifras acabadas en 5 y 0",
          "desc": "Defensa de torres con dos escenarios (piratas o tienda de golosinas): solo la torre con el resultado exacto de la suma destruye al enemigo. Sumas de dos cifras acabadas en 0 o 5, con pistas. Bilingüe VAL/CAS."}},
 }
