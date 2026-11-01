@@ -65,6 +65,18 @@ JOCS = {
          "desc": "Defensa de torres amb dos escenaris (pirates o tenda de caramels): només la torre amb el resultat exacte de la suma destrueix l'enemic. Sumes de dues xifres acabades en 0 o 5, amb pistes. Bilingüe VAL/CAS."},
   "es": {"title": "Defensa de sumas: Torres con sumas de dos cifras acabadas en 5 y 0",
          "desc": "Defensa de torres con dos escenarios (piratas o tienda de golosinas): solo la torre con el resultado exacto de la suma destruye al enemigo. Sumas de dos cifras acabadas en 0 o 5, con pistas. Bilingüe VAL/CAS."}},
+ "triples-de-sumes": {
+  "src": "triples-de-sumes.src.html", "h1": "<title>triples-de-sumes</title>", "arcade": True,
+  "ca": {"title": "Triples de sumes: Bàsquet amb sumes de dues xifres acabades en 5 i 0",
+         "desc": "Bàsquet de sumes: tria la pilota amb el resultat correcte i anota el triple. Rellotge de tir, pistes si falles i mode «en flames». Sumes de dues xifres acabades en 0 o 5. Bilingüe VAL/CAS."},
+  "es": {"title": "Triples de sumas: Baloncesto con sumas de dos cifras acabadas en 5 y 0",
+         "desc": "Baloncesto de sumas: elige el balón con el resultado correcto y anota el triple. Reloj de tiro, pistas si fallas y modo «en llamas». Sumas de dos cifras acabadas en 0 o 5. Bilingüe VAL/CAS."}},
+ "triples-de-restes": {
+  "src": "triples-de-restes.src.html", "h1": "<title>triples-de-restes</title>", "arcade": True,
+  "ca": {"title": "Triples de restes: Bàsquet amb restes de dues xifres acabades en 5 i 0",
+         "desc": "Bàsquet de restes: tria la pilota amb el resultat correcte i anota el triple. Rellotge de tir, pistes si falles i mode «en flames». Restes de dues xifres acabades en 0 o 5. Bilingüe VAL/CAS."},
+  "es": {"title": "Triples de restas: Baloncesto con restas de dos cifras acabadas en 5 y 0",
+         "desc": "Baloncesto de restas: elige el balón con el resultado correcto y anota el triple. Reloj de tiro, pistas si fallas y modo «en llamas». Restas de dos cifras acabadas en 0 o 5. Bilingüe VAL/CAS."}},
 }
 LOC = {"ca": {"home": "Tornar a la portada", "homeurl": "/", "locale": "ca_ES", "site": "Recursos de matemàtiques"},
        "es": {"home": "Volver a la portada", "homeurl": "/es/", "locale": "es_ES", "site": "Recursos de matemáticas"}}

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0c24">
+<title>Triples de restas: Baloncesto con restas de dos cifras acabadas en 5 y 0</title>
+<style>
+:root{--cy:#35e6ff;--mg:#ff3fd0;--yl:#ffd84a;--gn:#4dff9a;--rd:#ff4d6a;--bg:#0a0c24}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:#fff;touch-action:none;-webkit-user-select:none;user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.ov{position:fixed;inset:0;display:none;background:rgba(6,8,30,.82);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);overflow:auto;padding:14px;touch-action:pan-y;z-index:20}
+.ov.on{display:flex}
+.panel{margin:auto;width:100%;max-width:720px;text-align:center;padding:10px}
+h1{margin:0 0 4px;font-size:clamp(30px,7vw,54px);letter-spacing:2px;line-height:1.05;text-transform:uppercase;background:linear-gradient(90deg,var(--cy),var(--mg),var(--yl));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(53,230,255,.45))}
+h2{margin:0 0 8px;font-size:clamp(26px,6vw,44px);letter-spacing:2px;color:var(--yl);text-shadow:0 0 18px rgba(255,216,74,.5)}
+.sub{margin:0 0 14px;color:#b9c3ff;font-size:clamp(14px,3.6vw,18px)}
+.how{margin:0 auto 14px;max-width:560px;font-size:clamp(12px,3.2vw,15px);color:#cfd6ff;line-height:1.5;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 14px}
+.how b{color:var(--cy)}
+.lbl{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8d99e6;margin:10px 0 6px}
+input.nm{font:inherit;font-size:18px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px 12px;width:min(300px,90%);text-align:center;outline:none;-webkit-user-select:text;user-select:text}
+input.nm:focus{border-color:var(--cy);box-shadow:0 0 12px rgba(53,230,255,.4)}
+.btn{font:inherit;font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:clamp(16px,4.4vw,22px);color:#0a0c24;background:linear-gradient(90deg,var(--cy),var(--gn));border:0;border-radius:14px;padding:14px 34px;margin:10px 6px 4px;cursor:pointer;box-shadow:0 0 22px rgba(53,230,255,.55),0 6px 0 rgba(0,0,0,.35);transition:transform .1s,box-shadow .1s;animation:pulse 1.6s ease-in-out infinite}
+.btn:active{transform:translateY(4px);box-shadow:0 0 18px rgba(53,230,255,.5),0 2px 0 rgba(0,0,0,.35)}
+.btn.alt{background:rgba(255,255,255,.1);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.3);font-size:clamp(13px,3.6vw,16px);padding:11px 22px;animation:none}
+@keyframes pulse{50%{transform:scale(1.04)}}
+table{margin:6px auto 0;border-collapse:collapse;width:min(460px,100%);font-size:clamp(12px,3.3vw,15px)}
+td,th{padding:5px 8px;text-align:left}
+th{color:#8d99e6;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.18)}
+td.r,th.r{text-align:right}
+tr.me td{color:var(--yl);font-weight:800;background:rgba(255,216,74,.1)}
+.big{font-size:clamp(46px,14vw,92px);font-weight:900;color:#fff;text-shadow:0 0 24px rgba(53,230,255,.7);line-height:1}
+.rec{color:var(--gn);font-weight:800;letter-spacing:2px;animation:pulse 1s infinite;margin:4px 0}
+.tb{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));display:flex;gap:8px;z-index:30}
+.tb button{font:inherit;font-size:18px;width:42px;height:42px;border-radius:12px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);cursor:pointer;padding:0}
+.tb button.lg{width:auto;padding:0 12px;font-size:13px;font-weight:800;letter-spacing:1px}
+/* pista */
+#hint{position:fixed;display:none;z-index:9;text-align:left;font-size:clamp(13px,3.6vw,16px);line-height:1.5;color:#e4e9ff;background:rgba(14,16,50,.95);border:1px solid rgba(255,216,74,.6);border-radius:14px;padding:8px 12px;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none}
+#hint.on{display:block;animation:pop .2s ease-out}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+#hint b{color:#4dff9a;font-size:1.15em}
+#hint .hh{color:#ffd84a;font-weight:800;letter-spacing:1px;text-transform:uppercase;font-size:.8em;display:block;margin-bottom:2px}
+.tb a.hl{display:flex;align-items:center;justify-content:center;font:inherit;font-size:18px;width:42px;height:42px;border-radius:12px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);text-decoration:none}
+.tb button.lg.on{border-color:var(--cy);box-shadow:0 0 12px rgba(255,255,255,.25);background:rgba(255,255,255,.22)}
+.tb.inplay .nl{display:none}
+</style>
+<meta name="description" content="Baloncesto de restas: elige el balón con el resultado correcto y anota el triple. Reloj de tiro, pistas si fallas y modo «en llamas». Restas de dos cifras acabadas en 0 o 5. Bilingüe VAL/CAS.">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/triples-de-restes/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/triples-de-restes/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/triples-de-restes/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/triples-de-restes/">
+<meta name="author" content="Ilde Morales">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Triples de restas: Baloncesto con restas de dos cifras acabadas en 5 y 0">
+<meta property="og:description" content="Baloncesto de restas: elige el balón con el resultado correcto y anota el triple. Reloj de tiro, pistas si fallas y modo «en llamas». Restas de dos cifras acabadas en 0 o 5. Bilingüe VAL/CAS.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/triples-de-restes/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="tb" id="tb">
+  <a class="hl nl" href="/es/" title="Volver a la portada" aria-label="Volver a la portada">⌂</a><button id="bLangCa" class="lg nl" tabindex="-1" aria-label="Valencià">VAL</button><button id="bLangEs" class="lg nl" tabindex="-1" aria-label="Castellano">CAS</button>
+  <button id="bMute" tabindex="-1" aria-label="Sonido">🔊</button>
+  <button id="bPause" tabindex="-1" aria-label="Pausa" style="display:none">⏸</button>
+</div>
+
+<div id="hint" aria-live="polite"></div>
+
+<div class="ov on" id="ovStart"><div class="panel">
+  <h1 data-t="title">Triples de restas</h1>
+  <p class="sub" data-t="tag">Elige el balón con el resultado y anota el triple</p>
+  <div class="how" id="how">Cada resta vale un <b>triple</b>. Elige el balón que lleva el resultado correcto antes de que se acabe el reloj de tiro.<br><b>Teclado:</b> <b>1 · 2 · 3</b> (o A · S · D)<br><b>Táctil:</b> toca el balón<br><b>P</b> / <b>Esc</b> pausa · <b>M</b> sonido<br>Si fallas, el balón rebota en el aro y te damos una <b>pista</b>. Con <b>3 aciertos seguidos</b> te pones <b>¡en llamas!</b> y los puntos se doblan.</div>
+  <div class="lbl" data-t="pname">Nombre de jugador</div>
+  <input class="nm" id="nameIn" maxlength="22" autocomplete="off" autocapitalize="words" spellcheck="false" data-ph="other" placeholder="Escribe tu nombre">
+  <div><button class="btn" id="bPlay" data-t="play">¡Jugar!</button></div>
+  <div class="lbl" data-t="best">Mejores jugadores</div>
+  <table id="hsStart"><tbody><tr><td style="text-align:center;color:#8d99e6">Aún no hay récords. ¡Sé el primero!</td></tr></tbody></table>
+</div></div>
+
+<div class="ov" id="ovPause"><div class="panel">
+  <h2 data-t="paused">PAUSA</h2>
+  <div><button class="btn" id="bResume" data-t="resume"></button></div>
+  <div><button class="btn alt" id="bRestart1" data-t="restart"></button><button class="btn alt" id="bMenu1" data-t="menu"></button></div>
+</div></div>
+
+<div class="ov" id="ovOver"><div class="panel">
+  <h2 data-t="over"></h2>
+  <div class="sub" id="overWho"></div>
+  <div class="big" id="overScore">0</div>
+  <div class="rec" id="overRec" style="display:none"></div>
+  <table id="hsOver"></table>
+  <div><button class="btn" id="bAgain" data-t="again"></button></div>
+  <div><button class="btn alt" id="bMenu2" data-t="menu"></button></div>
+</div></div>
+
+<script>
+(()=>{
+'use strict';
+/* ================= textos ================= */
+const TX={
+es:{title:'Triples de restas',tag:'Elige el balón con el resultado y anota el triple',
+ how:'Cada resta vale un <b>triple</b>. Elige el balón que lleva el resultado correcto antes de que se acabe el reloj de tiro.<br><b>Teclado:</b> <b>1 · 2 · 3</b> (o A · S · D)<br><b>Táctil:</b> toca el balón<br><b>P</b> / <b>Esc</b> pausa · <b>M</b> sonido<br>Si fallas, el balón rebota en el aro y te damos una <b>pista</b>. Con <b>3 aciertos seguidos</b> te pones <b>¡en llamas!</b> y los puntos se doblan.',
+ pname:'Nombre de jugador',other:'Escribe tu nombre',guest:'Invitado',play:'¡Jugar!',best:'Mejores jugadores',player:'Jugador',
+ paused:'Pausa',resume:'Continuar',restart:'Reiniciar',menu:'Menú',over:'Fin del partido',again:'Jugar otra vez',
+ newrec:'¡Nuevo récord!',score:'PUNTOS',level:'NIVEL',pts:'Puntos',lv:'Nivel',
+ lvl:['Decenas redondas','Con un 5','5 menos 5','Quitando un 5','Maestro de las restas'],
+ hint:'Pista',solution:'Solución',lvUp:'¡Nivel ',heartUp:'¡Un corazón más!',time:'¡Tiempo!',onfire:'¡En llamas!',fireOff:'Se apagó…',
+ good:['¡Triple!','¡Pura red!','¡Canasta!','¡Limpio!','¡Eso es!'],late:'¡Entra con ayuda!',
+ sumsOf:' canastas',whoIs:'Jugador: ',empty:'Aún no hay récords. ¡Sé el primero!',
+ hintFn:(a,b)=>{const ta=Math.floor(a/10),tb=Math.floor(b/10),ua=a%10,ub=b%10;if(ua>=ub)return 'Primero las decenas: '+ta+' − '+tb+' = '+(ta-tb)+' → <b>'+(ta-tb)*10+'</b><br>Luego las unidades: '+ua+' − '+ub+' = <b>'+(ua-ub)+'</b>';const x=a-tb*10;return 'Primero quita las decenas: '+a+' − '+tb*10+' = <b>'+x+'</b><br>Luego quita las unidades: '+x+' − '+ub+' = ?'},
+ solFn:(a,b)=>{const ta=Math.floor(a/10),tb=Math.floor(b/10),ua=a%10,ub=b%10;if(ua>=ub)return (ta-tb)*10+' + '+(ua-ub)+' = <b>'+(a-b)+'</b>';const x=a-tb*10;return x+' − '+ub+' = <b>'+(a-b)+'</b>'}},
+ca:{title:'Triples de restes',tag:'Tria la pilota amb el resultat i anota el triple',
+ how:'Cada resta val un <b>triple</b>. Tria la pilota que du el resultat correcte abans que s’acabe el rellotge de tir.<br><b>Teclat:</b> <b>1 · 2 · 3</b> (o A · S · D)<br><b>Tàctil:</b> toca la pilota<br><b>P</b> / <b>Esc</b> pausa · <b>M</b> so<br>Si falles, la pilota rebota a l’anella i et donem una <b>pista</b>. Amb <b>3 encerts seguits</b> te poses <b>en flames!</b> i els punts es dobleguen.',
+ pname:'Nom de jugador',other:'Escriu el teu nom',guest:'Convidat',play:'Jugar!',best:'Millors jugadors',player:'Jugador',
+ paused:'Pausa',resume:'Continuar',restart:'Reiniciar',menu:'Menú',over:'Fi del partit',again:'Jugar una altra vegada',
+ newrec:'Nou rècord!',score:'PUNTS',level:'NIVELL',pts:'Punts',lv:'Nivell',
+ lvl:['Desenes rodones','Amb un 5','5 menys 5','Llevant un 5','Mestre de les restes'],
+ hint:'Pista',solution:'Solució',lvUp:'Nivell ',heartUp:'Un cor més!',time:'Temps!',onfire:'En flames!',fireOff:'S’ha apagat…',
+ good:['Triple!','Pura xarxa!','Cistella!','Net!','Això és!'],late:'Entra amb ajuda!',
+ sumsOf:' cistelles',whoIs:'Jugador: ',empty:'Encara no hi ha rècords. Sigues el primer!',
+ hintFn:(a,b)=>{const ta=Math.floor(a/10),tb=Math.floor(b/10),ua=a%10,ub=b%10;if(ua>=ub)return 'Primer les desenes: '+ta+' − '+tb+' = '+(ta-tb)+' → <b>'+(ta-tb)*10+'</b><br>Després les unitats: '+ua+' − '+ub+' = <b>'+(ua-ub)+'</b>';const x=a-tb*10;return 'Primer lleva les desenes: '+a+' − '+tb*10+' = <b>'+x+'</b><br>Després lleva les unitats: '+x+' − '+ub+' = ?'},
+ solFn:(a,b)=>{const ta=Math.floor(a/10),tb=Math.floor(b/10),ua=a%10,ub=b%10;if(ua>=ub)return (ta-tb)*10+' + '+(ua-ub)+' = <b>'+(a-b)+'</b>';const x=a-tb*10;return x+' − '+ub+' = <b>'+(a-b)+'</b>'}}
+};
+let lang = 'es';
+const PAGE_TITLES = {"ca": "Triples de restes: Bàsquet amb restes de dues xifres acabades en 5 i 0", "es": "Triples de restas: Baloncesto con restas de dos cifras acabadas en 5 y 0"};
+const t=k=>TX[lang][k];
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+/* ================= sumas ================= */
+function genSum(lv,prev){
+  let a,b,r,tries=0,ok=false;
+  do{
+    let ua,ub;
+    if(lv<=1){ua=0;ub=0}
+    else if(lv===2){ua=5;ub=0}
+    else if(lv===3){ua=5;ub=5}
+    else if(lv===4){ua=0;ub=5}
+    else{[ua,ub]=[[0,0],[5,0],[5,5],[0,5]][ri(0,3)]}
+    a=ri(2,9)*10+ua;b=ri(1,9)*10+ub;r=a-b;
+    if(r<5)continue;
+    if(prev&&prev.a===a&&prev.b===b)continue;
+    ok=true;break;
+  }while(++tries<200);
+  if(!ok){a=lv<=1||lv===4?80:85;b=lv===4?35:lv===3?35:30;r=a-b}
+  const ta=Math.floor(a/10),tb=Math.floor(b/10),ua2=a%10,ub2=b%10;
+  const pref=[];
+  if(ua2<ub2)pref.push((ta-tb)*10+(ub2-ua2));   // resta la unidad pequeña a la grande
+  else if(ua2>ub2)pref.push((ta-tb)*10);          // se olvida de las unidades
+  const cand=[r+10,r-10,r+5,r-5,a+b];
+  const set=[r];
+  for(const v of pref)if(v>0&&!set.includes(v))set.push(v);
+  let guard=0;
+  while(set.length<3&&guard++<60){
+    const v=cand[ri(0,cand.length-1)];
+    if(v>0&&v<=199&&!set.includes(v))set.push(v);
+  }
+  while(set.length<3)set.push(r+10*(set.length+1));
+  const opts=set.slice(0,3).sort((x,y)=>x-y);
+  return{a,b,r,opts};
+}
+
+/* ================= audio ================= */
+let AC=null,muted=store.get('mono_muted',false);
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d,type,v,f2,delay){
+  const a=ac();if(!a||muted)return;const t0=a.currentTime+(delay||0);
+  const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';
+  o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);
+  g.gain.setValueAtTime(v||.1,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+  o.connect(g);g.connect(a.destination);o.start(t0);o.stop(t0+d+.03);
+}
+const sfx={
+  move(){tone(300,.04,'square',.025)},
+  rot(){tone(480,.06,'square',.04,620)},
+  lock(){tone(140,.09,'triangle',.12,90)},
+  drop(){tone(220,.12,'sawtooth',.06,70)},
+  line(){[523,784].forEach((f,i)=>tone(f,.14,'triangle',.1,f*1.02,i*.08))},
+  hit(s){const f=440*Math.pow(1.0595,Math.min(s,10)*2);tone(f,.18,'triangle',.14,f*2);tone(f*1.5,.3,'sine',.08,f*3,.05)},
+  clear(){[523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',.1,f*1.01,i*.06))},
+  wrong(){tone(170,.32,'sawtooth',.11,60)},
+  level(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.2,'triangle',.11,f*1.01,i*.09))},
+  life(){[660,880].forEach((f,i)=>tone(f,.16,'sine',.1,f,i*.08))},
+  over(){[392,330,262,196].forEach((f,i)=>tone(f,.3,'sawtooth',.09,f*.9,i*.16))}
+};
+
+sfx.shoot=()=>{tone(300,.25,'sine',.07,700)};
+sfx.swish=()=>{tone(1200,.28,'triangle',.09,500);tone(700,.4,'sine',.06,1400,.05);[784,988,1175].forEach((f,i)=>tone(f,.14,'triangle',.07,f*1.01,.1+i*.06))};
+sfx.rim=()=>{tone(420,.22,'triangle',.16,300);tone(840,.12,'square',.05,600)};
+sfx.tick=()=>tone(900,.05,'square',.04);
+sfx.fire=()=>{[392,523,659,784,1047].forEach((f,i)=>tone(f,.12,'sawtooth',.06,f*1.02,i*.05))};
+
+/* ================= estado ================= */
+const cv=$('#c'),ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,HUDH=62;
+let sbX=0,sbY=0,sbW=0,sbH=0,bbW=0,bbH=0,bbTop=0,hx=0,rimY=0,rimRx=0,rimRy=0,netH=0,R=40,sp=120,ballY=0,floorY=0,sideHint=false;
+let state='start',stateT=0,player='',overLock=0,last=performance.now(),time=0;
+let score=0,hearts=5,streak=0,clean=0,done=0,made=0,level=1,fire=false,lastQ=null,q=null,wrongs=0,phase='ask';
+let clock=15,clockMax=15,revT=0,shot=null,rimShake=0,netShake=0,shakeT=0,tickS=99;
+let balls=[],floaters=[],parts=[],lastHint=null;
+const mult=()=>fire?2:1;
+const lvName=()=>t('lvl')[Math.min(level-1,4)];
+const bx=i=>W/2+(i-1)*sp;
+const hintEl=$('#hint');
+
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  R=Math.max(26,Math.min(56,Math.min(W/8,H*.095)));
+  sp=Math.min(W/3,R*4.4);
+  ballY=H-R*1.5-8;floorY=ballY-R*1.45;
+  sbW=Math.min(W-24,460);sbH=Math.max(70,Math.min(104,H*.15));sbX=(W-sbW)/2;sbY=HUDH+2;
+  bbW=Math.max(110,Math.min(230,Math.min(W*.42,(floorY-sbY-sbH)*.62)));
+  bbH=bbW*.68;bbTop=sbY+sbH+10;hx=W/2;rimRx=bbW*.2;rimRy=rimRx*.28;rimY=bbTop+bbH*.82;netH=bbW*.34;
+  sideHint=W>=700&&W>H*1.2;
+  let hw,hl,ht;
+  if(sideHint){hw=Math.min(340,(W-bbW)/2-30);hl=16;ht=sbY+sbH+20}
+  else{hw=Math.min(W-16,460);hl=(W-hw)/2;ht=rimY+netH+14}
+  hintEl.style.width=hw+'px';hintEl.style.left=hl+'px';hintEl.style.top=ht+'px';
+}
+addEventListener('resize',resize);
+
+/* ================= preguntas ================= */
+function showHint(full){
+  lastHint=full;
+  hintEl.innerHTML='<span class="hh">'+(full?t('solution'):t('hint'))+' · '+q.a+' − '+q.b+'</span>'+t('hintFn')(q.a,q.b)+(full?'<br>'+t('solFn')(q.a,q.b):'');
+  hintEl.classList.add('on');
+}
+function hideHint(){hintEl.classList.remove('on');lastHint=null}
+function newQ(){
+  q=genSum(level,lastQ);lastQ=q;wrongs=0;phase='ask';
+  clockMax=Math.max(7,16-1.2*(level-1));clock=clockMax;tickS=99;
+  balls=q.opts.map(n=>({n,dis:false,flip:.35,glow:false,hid:false}));
+  hideHint();
+}
+function bump(){
+  done++;
+  const nl=1+Math.floor(done/4);
+  if(nl>level){level=nl;sfx.level();pop(t('lvUp')+level+'! '+lvName(),'#ffd84a',W/2,H*.5)}
+}
+function pop(s,col,x,y){floaters.push({s,col,x,y,t:0})}
+function burst(x,y,n,sp0){for(let k=0;k<n;k++){const a=Math.random()*6.283,v=(.3+Math.random())*sp0;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-sp0*.4,t:0,life:.6+Math.random()*.5,hue:ri(0,360),s:3+Math.random()*3})}}
+
+function answer(i){
+  if(state!=='play'||phase!=='ask')return;
+  const b=balls[i];if(!b||b.dis)return;
+  const ok=b.n===q.r,dir=Math.random()<.5?-1:1;
+  b.hid=true;
+  shot={i,ok,t:0,x0:bx(i),y0:ballY,tx:ok?hx:hx+dir*rimRx*1.02,ty:ok?rimY:rimY-rimRy*.3,dir,ph:0,u:0,rot:0};
+  phase='shot';sfx.shoot();
+}
+function finishShot(){
+  const s=shot,i=s.i;shot=null;
+  if(s.ok){
+    let pts;
+    if(wrongs===0){
+      pts=3*mult();streak++;clean++;
+      if(clean%6===0&&hearts<5){hearts++;sfx.life();pop(t('heartUp'),'#ff7aa8',W/2,H*.45)}
+      const was=fire;fire=streak>=3;
+      if(fire&&!was){sfx.fire();pop('🔥 '+t('onfire'),'#ffb347',W/2,sbY+sbH+bbH*.5)}
+    }else{pts=2;streak=0;fire=false}
+    score+=pts;made++;
+    const g=t('good');pop('+'+pts+'  '+g[ri(0,g.length-1)],'#4dff9a',hx,rimY-bbH*.5);
+    bump();newQ();
+  }else{
+    balls[i].dis=true;balls[i].hid=false;wrongs++;
+    if(fire)pop(t('fireOff'),'#9aa3d9',hx,rimY+netH+30);
+    streak=0;fire=false;
+    if(wrongs===1){showHint(false);phase='ask'}
+    else{hearts--;sfx.wrong();reveal()}
+  }
+}
+function reveal(){
+  balls.forEach(b=>{b.hid=false;if(b.n===q.r){b.glow=true;b.dis=false}else b.dis=true});
+  showHint(true);phase='reveal';revT=3;
+}
+function timeout(){
+  hearts--;streak=0;fire=false;sfx.wrong();shakeT=.3;
+  pop(t('time'),'#ff4d6a',W/2,sbY+sbH+bbH*.5);
+  reveal();
+}
+
+/* ================= clasificación ================= */
+const HSK='jocs_triples-de-restes_hs';
+function loadHS(){return store.get(HSK,[])}
+function renderHS(el,hl){
+  const hs=loadHS();
+  if(!hs.length){el.innerHTML='<tr><td style="text-align:center;color:#8d99e6">'+t('empty')+'</td></tr>';return}
+  let h='<tr><th>#</th><th>'+t('player')+'</th><th class="r">'+t('pts')+'</th><th class="r">'+t('lv')+'</th></tr>';
+  hs.slice(0,8).forEach((e,i)=>{h+='<tr'+(e.id===hl?' class="me"':'')+'><td>'+(i+1)+'</td><td>'+esc(e.n)+'</td><td class="r">'+e.s+'</td><td class="r">'+e.l+'</td></tr>'});
+  el.innerHTML=h;
+}
+
+/* ================= pantallas ================= */
+const ovS=$('#ovStart'),ovP=$('#ovPause'),ovO=$('#ovOver'),bPause=$('#bPause');
+function show(s){
+  state=s;stateT=0;
+  $('#tb').classList.toggle('inplay',s==='play');
+  ovS.classList.toggle('on',s==='start');ovP.classList.toggle('on',s==='pause');ovO.classList.toggle('on',s==='over');
+  bPause.style.display=(s==='play'||s==='pause')?'':'none';
+  if(s!=='play'&&s!=='pause')hideHint();
+  if(s==='start')renderHS($('#hsStart'));
+}
+function resetGame(){
+  score=0;hearts=5;streak=0;clean=0;done=0;made=0;level=1;fire=false;lastQ=null;shot=null;
+  floaters=[];parts=[];rimShake=netShake=shakeT=0;newQ();
+}
+function startGame(){
+  ac();
+  const typed=$('#nameIn').value.trim();
+  player=typed||t('guest');store.set('mono_name',typed);
+  resetGame();show('play');last=performance.now();
+}
+function gameOver(){
+  if(state==='over')return;
+  sfx.over();
+  const hs=loadHS();let id=null,rec=false;
+  if(score>0){
+    id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    rec=hs.length===0||score>hs[0].s;
+    hs.push({id,n:player,s:score,l:level});hs.sort((a,b)=>b.s-a.s);store.set(HSK,hs.slice(0,10));
+  }
+  $('#overWho').textContent=t('whoIs')+player+' · '+made+t('sumsOf');
+  $('#overScore').textContent=score;
+  const r=$('#overRec');r.style.display=rec?'':'none';r.textContent=t('newrec');
+  renderHS($('#hsOver'),id);
+  show('over');overLock=.7;
+}
+function togglePause(){
+  if(state==='play')show('pause');
+  else if(state==='pause'){show('play');last=performance.now()}
+}
+$('#nameIn').value=store.get('mono_name','');
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t)});
+  document.querySelectorAll('[data-ph]').forEach(e=>{e.placeholder=t(e.dataset.ph)});
+  $('#how').innerHTML=t('how');
+  $('#bLangCa').classList.toggle('on',lang==='ca');$('#bLangEs').classList.toggle('on',lang==='es');
+  if(PAGE_TITLES)document.title=PAGE_TITLES[lang];
+  if(state==='start')renderHS($('#hsStart'));
+  if(lastHint!==null&&q)showHint(lastHint);
+}
+function setLang(l){lang=l;try { history.replaceState(null, '', l === 'es' ? '/es/triples-de-restes/' : '/triples-de-restes/' + location.search); } catch(e) {}applyLang()}
+$('#bLangCa').onclick=e=>{setLang('ca');e.currentTarget.blur()};
+$('#bLangEs').onclick=e=>{setLang('es');e.currentTarget.blur()};
+function setMute(m){muted=m;store.set('mono_muted',m);$('#bMute').textContent=m?'🔇':'🔊'}
+$('#bMute').onclick=e=>{setMute(!muted);e.currentTarget.blur()};
+$('#bPause').onclick=e=>{togglePause();e.currentTarget.blur()};
+$('#bPlay').onclick=startGame;
+$('#bResume').onclick=togglePause;
+$('#bRestart1').onclick=startGame;
+$('#bMenu1').onclick=()=>show('start');
+$('#bAgain').onclick=startGame;
+$('#bMenu2').onclick=()=>show('start');
+
+/* ================= entrada ================= */
+addEventListener('keydown',e=>{
+  const k=e.key,inInput=e.target&&e.target.tagName==='INPUT';
+  if(k==='m'||k==='M'){if(!inInput){setMute(!muted);return}}
+  if(state==='start'){if(k==='Enter'||(k===' '&&!inInput)){e.preventDefault();startGame()}return}
+  if(state==='play'){
+    if(k==='p'||k==='P'||k==='Escape'){togglePause();return}
+    const i='123'.indexOf(k),j='asdASD'.indexOf(k);
+    if(i>=0)answer(i);else if(j>=0)answer(j%3);
+    return;
+  }
+  if(state==='pause'){
+    if(k==='p'||k==='P'||k==='Escape'||k==='Enter'||k===' '){e.preventDefault();togglePause()}
+    else if(k==='r'||k==='R')startGame();
+    return;
+  }
+  if(state==='over'){
+    if(overLock>0)return;
+    if(k==='Enter'||k===' '||k==='r'||k==='R'){e.preventDefault();startGame()}
+  }
+});
+cv.addEventListener('pointerdown',e=>{
+  if(state!=='play')return;
+  e.preventDefault();ac();
+  if(e.clientY<ballY-R*1.9)return;
+  let best=-1,bd=1e9;
+  for(let i=0;i<3;i++){const d=Math.abs(e.clientX-bx(i));if(d<bd){bd=d;best=i}}
+  if(bd<sp*.62)answer(best);
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')togglePause()});
+addEventListener('blur',()=>{if(state==='play')togglePause()});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* ================= bucle ================= */
+const T_FLIGHT=.7;
+function update(dt){
+  time+=dt;
+  if(shakeT>0)shakeT-=dt;if(rimShake>0)rimShake-=dt;if(netShake>0)netShake-=dt;
+  for(const b of balls)if(b.flip>0)b.flip-=dt;
+  if(phase==='ask'){
+    clock-=dt;
+    const sec=Math.ceil(clock);
+    if(clock<3.05&&sec<tickS&&sec>0){tickS=sec;sfx.tick()}
+    if(clock<=0)timeout();
+  }else if(phase==='shot'&&shot){
+    shot.t+=dt;shot.rot+=dt*9;
+    if(shot.ph===0&&shot.t>=T_FLIGHT){
+      shot.ph=1;shot.u=0;
+      if(shot.ok){netShake=.7;sfx.swish();burst(hx,rimY+netH*.5,fire||streak>=2?30:18,260)}
+      else{rimShake=.55;sfx.rim();shakeT=.18}
+    }
+    if(shot.ph===1){shot.u+=dt;if(shot.u>=.65)finishShot()}
+  }else if(phase==='reveal'){
+    revT-=dt;
+    if(revT<=0){
+      if(hearts<=0){gameOver();return}
+      bump();streak=0;newQ();
+    }
+  }
+  for(const p of parts){p.t+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=520*dt}
+  parts=parts.filter(p=>p.t<p.life);
+  for(const f of floaters)f.t+=dt;
+  floaters=floaters.filter(f=>f.t<1.6);
+}
+
+/* ================= dibujo ================= */
+function txt(s,x,y,size,col,al,wt){ctx.font=(wt||800)+' '+size+'px "Trebuchet MS","Segoe UI",system-ui,sans-serif';ctx.fillStyle=col;ctx.textAlign=al||'left';ctx.textBaseline='middle';ctx.fillText(s,x,y)}
+function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h)}
+function drawBall(x,y,r,rot,label,st){
+  ctx.save();ctx.translate(x,y);
+  const dis=st&&st.dis,glow=st&&st.glow;
+  if(glow){ctx.shadowColor='#ffd84a';ctx.shadowBlur=32}
+  const g=ctx.createRadialGradient(-r*.3,-r*.3,r*.1,0,0,r*1.05);
+  if(dis){g.addColorStop(0,'#b9bccb');g.addColorStop(1,'#6b6f85')}else{g.addColorStop(0,'#ffb35c');g.addColorStop(1,'#d2581a')}
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,6.283);ctx.fill();ctx.shadowBlur=0;
+  ctx.save();ctx.beginPath();ctx.arc(0,0,r,0,6.283);ctx.clip();ctx.rotate(rot||0);
+  ctx.strokeStyle=dis?'rgba(30,32,50,.6)':'rgba(70,24,6,.8)';ctx.lineWidth=Math.max(2,r*.07);
+  ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);ctx.stroke();
+  ctx.beginPath();ctx.arc(-r*1.25,0,r*.95,-.9,.9);ctx.stroke();
+  ctx.beginPath();ctx.arc(r*1.25,0,r*.95,Math.PI-.9,Math.PI+.9);ctx.stroke();
+  ctx.restore();
+  ctx.strokeStyle=dis?'rgba(30,32,50,.7)':'rgba(70,24,6,.9)';ctx.lineWidth=Math.max(2,r*.06);ctx.beginPath();ctx.arc(0,0,r,0,6.283);ctx.stroke();
+  if(label!=null){
+    const fs=r*(String(label).length>2?.56:.68),pw=r*1.46,ph=r*.86;
+    const fl=st&&st.flip>0?Math.max(.1,Math.abs(Math.cos(st.flip/.35*Math.PI/2))):1;
+    ctx.save();ctx.scale(1,fl);
+    ctx.fillStyle=dis?'#d5d7e2':'#fff';rr(-pw/2,-ph/2,pw,ph,ph*.4);ctx.fill();
+    ctx.strokeStyle='rgba(10,12,36,.55)';ctx.lineWidth=2;ctx.stroke();
+    txt(String(label),0,1,fs,dis?'#6b6f85':'#14163a','center',900);
+    ctx.restore();
+    if(dis)txt('✗',r*.66,-r*.62,r*.5,'#ff4d6a','center',900);
+  }
+  ctx.restore();
+}
+function flames(x,y,r){
+  for(let k=0;k<7;k++){
+    const a=-Math.PI/2+(k-3)*.42,ph=time*9+k*1.7,len=r*(.55+.25*Math.sin(ph));
+    const bx0=x+Math.cos(a)*r*.85,by0=y+Math.sin(a)*r*.85;
+    const g=ctx.createLinearGradient(bx0,by0,bx0+Math.cos(a)*len,by0+Math.sin(a)*len);
+    g.addColorStop(0,'rgba(255,200,60,.95)');g.addColorStop(1,'rgba(255,60,20,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(bx0+Math.cos(a+1.57)*r*.2,by0+Math.sin(a+1.57)*r*.2);
+    ctx.lineTo(bx0+Math.cos(a)*len,by0+Math.sin(a)*len);ctx.lineTo(bx0+Math.cos(a-1.57)*r*.2,by0+Math.sin(a-1.57)*r*.2);ctx.closePath();ctx.fill();
+  }
+}
+function drawBg(){
+  const g=ctx.createLinearGradient(0,0,0,floorY);g.addColorStop(0,'#0b1233');g.addColorStop(1,'#243a86');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  // gradas
+  ctx.fillStyle='rgba(255,255,255,.05)';
+  for(let k=0;k<4;k++){const y=HUDH+sbH+20+k*38;if(y>floorY-30)break;for(let x=(k%2)*17;x<W;x+=34){ctx.beginPath();ctx.arc(x,y,7,0,6.283);ctx.fill()}}
+  // suelo de parquet
+  const fg=ctx.createLinearGradient(0,floorY,0,H);fg.addColorStop(0,'#d99a55');fg.addColorStop(1,'#a86a2e');
+  ctx.fillStyle=fg;ctx.fillRect(0,floorY,W,H-floorY);
+  ctx.strokeStyle='rgba(80,40,10,.35)';ctx.lineWidth=2;ctx.beginPath();
+  for(let x=-(H-floorY);x<W+(H-floorY);x+=46){ctx.moveTo(x+(H-floorY)*.5,floorY);ctx.lineTo(x,H)}ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,floorY);ctx.lineTo(W,floorY);ctx.stroke();
+  ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(W/2,floorY+(H-floorY)*.95,Math.min(W*.45,sp*1.9),(H-floorY)*.8,0,Math.PI,0);ctx.stroke();
+}
+function drawHoop(drawBallInside){
+  const sx=rimShake>0?Math.sin(time*60)*3*Math.min(1,rimShake*2):0,sy=rimShake>0?Math.cos(time*50)*2.5*Math.min(1,rimShake*2):0;
+  // soporte y tablero
+  ctx.fillStyle='#555a78';ctx.fillRect(hx-4,sbY+sbH-4,8,bbTop-(sbY+sbH)+8);
+  ctx.fillStyle='rgba(255,255,255,.92)';rr(hx-bbW/2,bbTop,bbW,bbH,10);ctx.fill();
+  ctx.strokeStyle='#c8cde6';ctx.lineWidth=4;ctx.stroke();
+  ctx.strokeStyle='#e0423a';ctx.lineWidth=Math.max(3,bbW*.025);ctx.strokeRect(hx-bbW*.2,bbTop+bbH*.36,bbW*.4,bbH*.4);
+  ctx.save();ctx.translate(sx,sy);
+  // aro (parte trasera)
+  ctx.strokeStyle='#ff6a1a';ctx.lineWidth=Math.max(4,bbW*.035);
+  ctx.beginPath();ctx.ellipse(hx,rimY,rimRx,rimRy,0,Math.PI,Math.PI*2);ctx.stroke();
+  if(drawBallInside)drawBallInside();
+  // red
+  const sw=netShake>0?Math.sin(time*40)*bbW*.04*Math.min(1,netShake*2):0;
+  ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=2;
+  const nb=rimRx*.62,N=7;
+  ctx.beginPath();
+  for(let k=0;k<=N;k++){const f=k/N-.5;ctx.moveTo(hx+f*2*rimRx,rimY);ctx.lineTo(hx+f*2*nb+sw,rimY+netH)}
+  for(let r=1;r<=3;r++){const yy=rimY+netH*r/3.4,w=rimRx+(nb-rimRx)*(r/3.4);const o=r%2?sw*.6:sw*.8;
+    for(let k=0;k<N;k++){const f1=(k/N-.5)*2*w,f2=((k+1)/N-.5)*2*w;ctx.moveTo(hx+f1+o,yy+(k%2?3:-3));ctx.lineTo(hx+f2+o,yy+(k%2?-3:3))}}
+  ctx.stroke();
+  // aro (parte delantera)
+  ctx.strokeStyle='#ff6a1a';ctx.lineWidth=Math.max(4,bbW*.035);
+  ctx.beginPath();ctx.ellipse(hx,rimY,rimRx,rimRy,0,0,Math.PI);ctx.stroke();
+  ctx.restore();
+}
+function shotPos(){
+  const s=shot;
+  if(s.ph===0){
+    const k=Math.min(1,s.t/T_FLIGHT),apex=Math.max(120,(s.y0-s.ty)*.4);
+    return{x:s.x0+(s.tx-s.x0)*k,y:s.y0+(s.ty-s.y0)*k-4*apex*k*(1-k),sc:1-.42*k,inNet:false};
+  }
+  const u=s.u;
+  if(s.ok){
+    const d=Math.min(1,u/.3);
+    return{x:s.tx,y:s.ty+netH*.9*d+(u>.3?900*(u-.3)*(u-.3):0),sc:.58,inNet:u<.42};
+  }
+  return{x:s.tx+s.dir*230*u,y:s.ty-260*u+720*u*u,sc:.58+.2*u,inNet:false};
+}
+function draw(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  drawBg();
+  const sh=shakeT>0?(Math.random()-.5)*7*Math.min(1,shakeT*4):0;
+  ctx.save();ctx.translate(sh,sh*.5);
+  // marcador
+  const fireOn=fire;
+  ctx.fillStyle='rgba(6,8,30,.88)';rr(sbX,sbY,sbW,sbH,14);ctx.fill();
+  ctx.strokeStyle=fireOn?'#ff9a3d':'#ffd84a';ctx.lineWidth=fireOn?4:3;if(fireOn){ctx.shadowColor='#ff7a1a';ctx.shadowBlur=18}ctx.stroke();ctx.shadowBlur=0;
+  if(q&&state!=='start'){
+    txt(q.a+' − '+q.b+' = ?',sbX+sbW/2,sbY+sbH*.42,Math.min(sbH*.5,sbW/8.5),'#fff','center',900);
+    const bw=sbW-28,bh=8,by=sbY+sbH-17,k=Math.max(0,Math.min(1,clock/clockMax));
+    ctx.fillStyle='rgba(255,255,255,.14)';rr(sbX+14,by,bw,bh,4);ctx.fill();
+    ctx.fillStyle=k>.5?'#4dff9a':k>.25?'#ffd84a':'#ff4d6a';rr(sbX+14,by,Math.max(2,bw*k),bh,4);ctx.fill();
+    if(fireOn)txt('🔥 ×2',sbX+sbW-12,sbY+16,Math.max(13,sbH*.2),'#ffb347','right',900);
+  }
+  // canasta
+  const sp0=shot?shotPos():null;
+  drawHoop(sp0&&sp0.inNet?()=>drawBall(sp0.x,sp0.y,R*sp0.sc,shot.rot,null,null):null);
+  // balones en el suelo
+  for(let i=0;i<3;i++){
+    const b=balls[i];if(!b||b.hid||state==='start')continue;
+    const bob=(phase==='ask'&&!b.dis)?Math.sin(time*3+i)*3:0;
+    if(fire&&phase==='ask'&&!b.dis)flames(bx(i),ballY+bob,R);
+    drawBall(bx(i),ballY+bob,R,0,b.n,b);
+    txt(String(i+1),bx(i),ballY+R+14,Math.max(12,R*.3),'rgba(255,255,255,.9)','center',900);
+  }
+  // balón en vuelo
+  if(sp0&&!sp0.inNet){
+    if(fire||streak>=2)flames(sp0.x,sp0.y,R*sp0.sc);
+    drawBall(sp0.x,sp0.y,R*sp0.sc,shot.rot,null,null);
+  }
+  for(const p of parts){ctx.globalAlpha=Math.max(0,1-p.t/p.life);ctx.fillStyle='hsl('+p.hue+',90%,62%)';ctx.fillRect(p.x,p.y,p.s,p.s);ctx.globalAlpha=1}
+  ctx.restore();
+  // HUD
+  txt(String(score),12,24,26,'#fff','left',900);
+  const gap=18*1.15;
+  for(let i=0;i<5;i++)txt('♥',12+gap*i+gap/2,48,18,i<hearts?'#ff4d6a':'rgba(255,255,255,.18)','center',900);
+  txt(t('level')+' '+level,12+gap*5+10,49,12,'#ffd84a','left');
+  for(const f of floaters){
+    const k=f.t/1.6,a=k<.1?k/.1:1-Math.max(0,(k-.5)/.5);
+    ctx.globalAlpha=Math.max(0,a);
+    txt(f.s,Math.max(90,Math.min(W-90,f.x)),f.y-f.t*38,Math.round(Math.max(20,R*.62)),f.col,'center',900);
+    ctx.globalAlpha=1;
+  }
+}
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  stateT+=dt;if(overLock>0)overLock-=dt;
+  if(state==='play')update(dt);
+  draw();
+  requestAnimationFrame(frame);
+}
+
+/* ================= arranque ================= */
+resize();
+setMute(muted);
+applyLang();renderHS($('#hsStart'));
+requestAnimationFrame(frame);
+
+/* gancho de pruebas */
+window.__g={
+  get st(){return{state,score,level,hearts,streak,fire,made,done,wrongs,phase,clock:Math.round(clock*10)/10,q,balls:balls.map(b=>({n:b.n,dis:b.dis,glow:b.glow}))}},
+  answer,genSum,set(o){if('hearts'in o)hearts=o.hearts;if('done'in o){done=o.done;level=1+Math.floor(done/4)}if('streak'in o){streak=o.streak;fire=streak>=3}if('clock'in o)clock=o.clock}};
+})();
+</script>
+</body>
+</html>
