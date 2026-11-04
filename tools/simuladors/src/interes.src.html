@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Interés simple i compost</title>
+<meta name="description" content="Interés simple i compost per a 4t d'ESO: carrera any a any, l'interés compost descompost en capes (l'interés de l'interés) i la freqüència de capitalització (TIN, TAE i el nombre e). Amb activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+:root{--l3:#8a3bb4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--l3:#c78bf3}}
+.numin{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.numin input[type=text]{font:inherit;font-size:15px;width:6.5em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.ctls{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:8px 18px}
+.msg{min-height:1.5em;font-size:14.5px;margin:0}
+.msg.good{color:var(--ok);font-weight:600}.msg.bad{color:var(--warn);font-weight:600}
+.ticket{font-family:var(--f-num);font-size:14px;line-height:1.7;background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:10px 12px;color:var(--ink)}
+.ticket .a{color:var(--pa);font-weight:700}.ticket .b{color:var(--pb);font-weight:700}.ticket .c{color:var(--l3);font-weight:700}.ticket .g{color:var(--ok);font-weight:700}.ticket .w{color:var(--warn);font-weight:700}
+.side .tbl td,.side .tbl th{font-size:13px}
+.dot{display:inline-block;width:.8em;height:.8em;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.big{font-family:var(--f-num);font-size:15px;color:var(--ink);margin:0}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="row">
+  <div class="seg" id="modesw" role="group" data-i18n-aria="aria.mode" aria-label=""><button type="button" data-m="race" aria-pressed="true" data-i18n="mode_race"></button><button type="button" data-m="freq" aria-pressed="false" data-i18n="mode_freq"></button></div>
+  <span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div>
+</div>
+<div class="ctls" id="ctls"></div>
+<div class="numin" id="raceRow">
+  <label class="check"><input type="checkbox" id="layers" checked><span data-i18n="layers"></span></label>
+  <label for="guess" data-i18n="guess"></label><input type="text" inputmode="decimal" id="guess" autocomplete="off"><span>€</span>
+</div>
+<div class="row"><button class="btn primary" id="go" type="button"></button><button class="btn" id="fast" type="button"></button><button class="btn" id="again" type="button" data-i18n="again"></button></div>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv"></canvas></div>
+<div class="side">
+<p class="msg" id="msg" aria-live="polite"></p>
+<div id="panel"></div>
+</div>
+</div>
+<div class="idea" id="ideaR" data-i18n-html="idea_race"></div>
+<div class="idea" id="ideaF" data-i18n-html="idea_freq" hidden></div>
+</section>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Interés simple i compost",
+"eyebrow":"Matemàtiques · 4t ESO · Matemàtica financera",
+"h1":"Interés simple i compost: la bola de neu",
+"lede":"Amb interés simple, els diners creixen en línia recta. Amb interés compost, els interessos també generen interessos… i la diferència acaba sent enorme.",
+"sim_title":"El compte d'estalvis",
+"story":"<b>Interés simple:</b> cada any es cobra el mateix interés, calculat sempre sobre el capital inicial: C = C<sub>0</sub> · (1 + r · t). <b>Interés compost:</b> l'interés de cada any s'afig al capital i, l'any següent, també genera interés: C = C<sub>0</sub> · (1 + r)<sup>t</sup>. Al mode <b>Capitalització</b> veuràs què passa si els interessos s'afigen cada mes, cada dia… o a cada instant.",
+"aria.mode":"Mode","mode_race":"📈 Simple contra compost","mode_freq":"⏱ Capitalització",
+"presets":"Casos:",
+"c0":"Capital inicial (€)","rate":"Tipus d'interés anual","years":"Anys","tin":"TIN (tipus nominal anual)",
+"layers":"Desglossa el compost en capes",
+"guess":"La teua predicció: capital final amb interés compost?",
+"go_year":"▶ Passa un any","go_freq":"▶ Capitalitza més sovint","go_done":"✔ Fet",
+"fast_year":"⏭ Fins a l'any {0}","fast_freq":"⏭ Fins a la contínua","again":"Torna a començar",
+"bad_in":"Escriu un capital inicial positiu.",
+"lg_cap":"Capital inicial","lg_l1":"Interés del capital","lg_l2":"Interés de l'interés","lg_l3":"Interés de l'interés de l'interés (i més)","lg_int":"Interessos",
+"lb_s":"S","lb_c":"C","lb_simple":"Simple","lb_comp":"Compost","lb_year":"any","lb_double":"2 · C₀",
+"p_year":"Any <b>{0}</b>",
+"p_simple":"Simple: C₀ · (1 + {0} · {1}) = <span class=\"a\">{2}</span>",
+"p_comp":"Compost: C₀ · {0}<sup>{1}</sup> = <span class=\"b\">{2}</span>",
+"p_diff":"Diferència: <span class=\"w\">{0}</span>",
+"p_layers":"Capes del compost:",
+"p_l0":"Capital: {0}","p_l1":"Interés del capital: {0}","p_l2":"Interés de l'interés: {0}","p_l3":"3r ordre i més: {0}",
+"p_share":"Un <b>{0} %</b> dels interessos compostos són «interés d'interessos».",
+"p_inc":"Interessos d'aquest any: simple <span class=\"a\">{0}</span>, compost <span class=\"b\">{1}</span>",
+"p_dbl":"El compost duplica el capital l'any <b>{0}</b>; el simple, l'any <b>{1}</b>.",
+"p_dbl_s":"El simple no el duplica en aquests anys.","p_dblc":"El compost duplica el capital l'any <b>{0}</b>.",
+"g_ok":"✔ Encertat! Amb interés compost hi ha {0}.",
+"g_simple":"✘ Havies dit {0}: és el resultat amb interés <b>simple</b>. Amb el compost hi ha {1}.",
+"g_ko":"✘ Havies dit {0}. Amb interés compost hi ha {1}.",
+"f_n1":"anual","f_n2":"semestral","f_n4":"trimestral","f_n12":"mensual","f_n52":"setmanal","f_n365":"diària","f_ninf":"contínua",
+"f_head_n":"Capitalització","f_head_i":"Interés per període","f_head_c":"Capital en 1 any","f_head_tae":"TAE",
+"f_now":"Capitalització <b>{0}</b>: {1} vegades a l'any, un {2} % cada vegada.",
+"f_now_inf":"Capitalització <b>contínua</b>: a cada instant. C = C₀ · e<sup>r</sup> = {0}.",
+"f_formula":"C = C₀ · (1 + r/n)<sup>n</sup> = {0} · {1}<sup>{2}</sup>",
+"f_lim":"Per molt sovint que capitalitzes, el capital no supera C₀ · e<sup>r</sup> = <span class=\"g\">{0}</span> (TAE màxima: {1} %).",
+"f_e":"Amb un TIN del 100 %, el capital es multiplica com a màxim per e ≈ 2,71828: el nombre e naix ací (Jakob Bernoulli, 1683).",
+"pr_r1":"1000 € al 5 %, 15 anys","pr_r2":"1000 € al 10 %, 10 anys","pr_r3":"Una vida: 100 € al 7 %, 40 anys","pr_r4":"2 % durant 10 anys",
+"pr_f1":"TIN 6 %","pr_f2":"TIN 12 %","pr_f3":"TIN 100 % (Bernoulli)",
+"idea_race":"<b>La idea:</b> l'interés simple creix de manera <b>lineal</b> (cada any suma el mateix) i el compost, de manera <b>exponencial</b> (cada any <b>multiplica</b> per 1 + r: és l'índex de variació anual). Les capes són els termes del binomi: (1 + r)<sup>t</sup> = 1 + t·r + C(t,2)·r² + …; el primer terme és el capital, el segon és exactament l'interés simple i la resta són «interessos d'interessos», que al principi són xicotets però acaben manant.",
+"idea_freq":"<b>La idea:</b> el TIN és el tipus «de cartell»; si es capitalitza n vegades a l'any, cada vegada s'aplica r/n. La <b>TAE</b> (taxa anual equivalent) és el que creix de veritat en un any: TAE = (1 + r/n)<sup>n</sup> − 1. Com més sovint, més TAE… però amb fre: el límit és e<sup>r</sup> − 1.",
+"l_years":"Anys","l_rate":"Tipus","l_tae":"TAE","l_t":"Temps","l_c":"Capital",
+"m1.q":"Al <b>5 % compost</b>, quin és el <b>primer any</b> en què un capital ja s'ha duplicat?",
+"m1_f":"A l'any {0} el capital s'ha multiplicat per {1}.",
+"m1_ok":"✔ Missió complida! 1,05¹⁴ ≈ 1,98 i 1,05¹⁵ ≈ 2,08: l'any 15.",
+"m1.more":"Regla del 72: 72 : 5 ≈ 14,4 anys. Prova-la amb altres tipus. Per què funciona? (Pista: ln 2 ≈ 0,69.)",
+"m2.q":"Quin és el <b>tipus enter més xicotet</b> (en %) que duplica un capital en <b>10 anys</b> amb interés <b>compost</b>?",
+"m2_f":"Al {0} % compost, en 10 anys el capital es multiplica per {1}.",
+"m2_ok":"✔ Missió complida! 1,07¹⁰ ≈ 1,97 (no arriba) i 1,08¹⁰ ≈ 2,16.",
+"m2.more":"I amb interés simple, quin tipus necessites per a duplicar-lo en 10 anys? Per què el compost en necessita menys?",
+"m3.q":"Quin <b>tipus</b> (en %) duplica un capital en <b>10 anys</b> amb interés <b>simple</b>?",
+"m3_f":"Al {0} % simple, en 10 anys el capital es multiplica per {1}.",
+"m3_ok":"✔ Missió complida! 1 + 0,10 · 10 = 2.",
+"m3.more":"Amb interés simple, en quants anys es triplica al mateix tipus? I amb el compost?",
+"m4.q":"Amb un <b>TIN del 12 %</b> i capitalització <b>mensual</b>, quina és la <b>TAE</b>? (amb dues decimals)",
+"m4_f":"Revisa-ho: (1 + 0,12/12)¹² − 1. Una TAE del {0} % no hi correspon.",
+"m4_ok":"✔ Missió complida! 1,01¹² ≈ 1,1268: TAE del 12,68 %.",
+"m4.more":"I amb capitalització diària? La TAE pot passar del 12,75 %? Mira el límit e<sup>0,12</sup> − 1.",
+"s1.q":"«Amb el mateix capital, tipus i temps, l'interés compost sempre dona més que el simple.»",
+"s1.h":"I si deixes els diners un any just? I mig any?",
+"s1.e":"Per a t &gt; 1 any guanya el compost; per a t = 1 empaten i per a t &lt; 1, (1 + r)<sup>t</sup> &lt; 1 + r·t: guanya el simple. Per això en terminis curts s'usa l'interés simple.",
+"s1.cx":"✔ Contraexemple trobat: amb t = {0} anys, el compost no dona més que el simple.",
+"s1_no":"Amb t = {0} anys el compost sí que dona més. Prova un temps més curt.",
+"s2.q":"«Amb interés simple, els interessos de cada any són iguals.»",
+"s2.h":"Mira «Interessos d'aquest any» al panell.",
+"s2.e":"Sempre es calculen sobre el capital inicial: C₀ · r cada any. Per això la gràfica és una recta.",
+"s3.q":"«Amb interés compost, els interessos de cada any són iguals.»",
+"s3.h":"Mira «Interessos d'aquest any» en diversos anys.",
+"s3.e":"Cada any es calculen sobre un capital més gran: creixen en progressió geomètrica (C₀ · r · (1 + r)<sup>t − 1</sup>).",
+"s4.q":"«Si capitalitzes cada vegada més sovint (amb el mateix TIN), el capital pot créixer tant com vulgues.»",
+"s4.h":"Al mode Capitalització, compara la diària amb la contínua.",
+"s4.e":"La TAE creix, però s'acosta a e<sup>r</sup> − 1 sense superar-la: amb un TIN del 100 %, com a màxim e − 1 ≈ 171,8 %.",
+"s5.q":"«La TAE és més gran o igual que el TIN.»",
+"s5.h":"Compara la TAE de la capitalització anual amb la de la mensual.",
+"s5.e":"Amb capitalització anual són iguals; amb més d'una capitalització a l'any, la TAE és més gran, perquè dins de l'any ja hi ha interés de l'interés.",
+"e1.ctx":"Es deixen <b>1000 €</b> al <b>4 % compost</b> durant <b>3 anys</b>. Quins interessos s'han guanyat?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"120 €: 3 anys · 40 €.",
+"e1.s1":"124,86 €: 1000 · 1,04³ − 1000.",
+"e1.w0":"Cada any l'interés es calcula sobre el capital acumulat, que ja inclou els interessos anteriors: el segon any és el 4 % de 1040 €, no de 1000 €.",
+"e1.w1":"Perquè amb interés compost mai no es pot multiplicar l'interés pels anys.",
+"e1.w2":"Perquè el 4 % de 1000 no són 40 €.",
+"e1.frame":"Marta, els interessos no són 120 € perquè…",
+"e1.model":"Marta, 3 · 40 seria interés simple. Amb el compost, el primer any guanyes 40 €, però el segon el 4 % es calcula sobre 1040 € (41,60 €) i el tercer sobre 1081,60 € (43,26 €). En total, 1000 · 1,04³ − 1000 ≈ 124,86 €.",
+"e2.ctx":"Un banc ofereix un <b>TIN del 6 %</b> amb capitalització <b>mensual</b>. Quina és la TAE?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"El 6 %: el TIN i la TAE són el mateix.",
+"e2.s1":"Un 6,17 %.",
+"e2.w0":"Cada mes s'aplica el 0,5 % sobre un capital que ja inclou els interessos dels mesos anteriors: (1 + 0,06/12)¹² − 1 ≈ 6,17 %.",
+"e2.w1":"Perquè la TAE sempre és el doble del TIN.",
+"e2.w2":"Perquè el 6 % dividit entre 12 no és 0,5 %.",
+"e2.frame":"Joan, la TAE no és el 6 % perquè…",
+"e2.model":"Joan, el TIN és el tipus de cartell, però cada mes s'aplica un 0,5 % sobre el capital que ja ha crescut els mesos anteriors. En un any, el capital es multiplica per 1,005¹² ≈ 1,0617: la TAE és del 6,17 %.",
+"e3.ctx":"Un capital a <b>interés compost</b> passa de <b>1000 €</b> a <b>1210 €</b> en <b>2 anys</b>. Quin és el tipus d'interés?",
+"e3.n0":"Àlex","e3.n1":"Laia",
+"e3.s0":"El 10,5 %: 210 € en 2 anys són 105 € l'any.",
+"e3.s1":"El 10 %: 1,1² = 1,21.",
+"e3.w0":"Amb interés compost el segon any l'interés es calcula sobre 1100 €, no sobre 1000 €: el tipus que compleix (1 + r)² = 1,21 és r = 0,10.",
+"e3.w1":"Perquè els interessos mai no es poden dividir entre els anys.",
+"e3.w2":"Perquè 210 : 2 no és 105.",
+"e3.frame":"Àlex, el tipus no és el 10,5 % perquè…",
+"e3.model":"Àlex, repartir 210 € a parts iguals entre els 2 anys només valdria amb interés simple. Amb el compost, l'any 1 dona 100 € i l'any 2, 110 € (el 10 % de 1100). Cal resoldre (1 + r)² = 1,21, és a dir, 1 + r = √1,21 = 1,1.",
+"d1.q":"Tens <b>5000 €</b> per a <b>10 anys</b>. <b>Banc A:</b> 5 % d'interés simple. <b>Banc B:</b> 4,5 % d'interés compost. Quin et dona més i quants euros de diferència?",
+"d1.lc":"Més diners:","d1.l0":"Diferència (€)",
+"d1_pick":"Calcula els dos: A = 5000 · (1 + 0,05 · 10) i B = 5000 · 1,045¹⁰.",
+"d1_diff":"Bona tria. Ara resta els dos capitals finals.",
+"d1.more":"I en 5 anys? Quin banc guanya? Busca l'any en què B passa per davant.",
+"d2.q":"<b>Oferta A:</b> TIN del 5 % amb capitalització anual. <b>Oferta B:</b> TIN del 4,9 % amb capitalització mensual. Quina té més TAE?",
+"d2.lc":"Més TAE:",
+"d2_no":"No. A té una TAE del 5 %; calcula la de B: (1 + 0,049/12)¹² − 1.",
+"d2_ok":"✔ Ben decidit! B: (1 + 0,049/12)¹² − 1 ≈ 5,01 %, una mica més que el 5 % de A. Per això cal comparar TAE, no TIN.",
+"d2.more":"Quin TIN amb capitalització mensual donaria exactament una TAE del 5 %?",
+"d3.q":"Vols tindre <b>10 000 €</b> d'ací a <b>5 anys</b> en un compte al <b>4 % compost</b>. Quant has d'ingressar hui?",
+"d3.l0":"Ingrés hui (€)",
+"d3_no":"Si ingresses {0}, d'ací a 5 anys tindràs {1}. És el problema al revés: divideix entre 1,04⁵.",
+"d3_ok":"✔ Ben decidit! 10 000 : 1,04⁵ ≈ 8219,27 €.",
+"d3.more":"Quant hauries d'ingressar si el tipus fóra del 2 %? Per què, com més tipus, menys has d'ingressar?",
+"r1.q":"Amb interés simple, 2000 € al 3 % durant 4 anys generen uns interessos de…",
+"r1.o0":"240 €","r1.o1":"251,02 €","r1.o2":"2240 €","r1.o3":"60 €",
+"r1.e":"2000 · 0,03 · 4 = 240 €.",
+"r2.q":"1000 € al 10 % compost durant 2 anys. Quin és el capital final?",
+"r2.u":"€","r2.e":"1000 · 1,1² = 1210 €.",
+"r3.q":"En la fórmula C = C₀ · (1 + r)<sup>t</sup>, el factor 1 + r és…",
+"r3.o0":"l'índex de variació anual","r3.o1":"l'interés total","r3.o2":"el tipus d'interés","r3.o3":"el temps",
+"r3.e":"Cada any el capital es multiplica per 1 + r: és una pujada del r % repetida t vegades.",
+"r4.q":"Amb interés simple, el capital creix de manera…",
+"r4.o0":"lineal","r4.o1":"exponencial","r4.o2":"quadràtica","r4.o3":"constant",
+"r4.e":"C = C₀ + C₀·r·t: suma el mateix cada any, és una funció afí del temps.",
+"r5.q":"TIN del 12 % amb capitalització trimestral. Quina és la TAE (en %)?",
+"r5.u":"%","r5.e":"(1 + 0,12/4)⁴ − 1 = 1,03⁴ − 1 ≈ 0,1255: un 12,55 %.",
+"r6.q":"Amb un TIN del 100 % capitalitzat de manera contínua, en un any el capital es multiplica per…",
+"r6.o0":"2","r6.o1":"e ≈ 2,718","r6.o2":"infinit","r6.o3":"1,5",
+"r6.e":"(1 + 1/n)<sup>n</sup> → e quan n creix sense límit."
+},
+es:{
+"title":"Interés simple y compuesto",
+"eyebrow":"Matemáticas · 4.º ESO · Matemática financiera",
+"h1":"Interés simple y compuesto: la bola de nieve",
+"lede":"Con interés simple, el dinero crece en línea recta. Con interés compuesto, los intereses también generan intereses… y la diferencia acaba siendo enorme.",
+"sim_title":"La cuenta de ahorros",
+"story":"<b>Interés simple:</b> cada año se cobra el mismo interés, calculado siempre sobre el capital inicial: C = C<sub>0</sub> · (1 + r · t). <b>Interés compuesto:</b> el interés de cada año se suma al capital y, el año siguiente, también genera interés: C = C<sub>0</sub> · (1 + r)<sup>t</sup>. En el modo <b>Capitalización</b> verás qué pasa si los intereses se suman cada mes, cada día… o en cada instante.",
+"aria.mode":"Modo","mode_race":"📈 Simple contra compuesto","mode_freq":"⏱ Capitalización",
+"presets":"Casos:",
+"c0":"Capital inicial (€)","rate":"Tipo de interés anual","years":"Años","tin":"TIN (tipo nominal anual)",
+"layers":"Desglosa el compuesto en capas",
+"guess":"Tu predicción: ¿capital final con interés compuesto?",
+"go_year":"▶ Pasa un año","go_freq":"▶ Capitaliza más a menudo","go_done":"✔ Hecho",
+"fast_year":"⏭ Hasta el año {0}","fast_freq":"⏭ Hasta la continua","again":"Volver a empezar",
+"bad_in":"Escribe un capital inicial positivo.",
+"lg_cap":"Capital inicial","lg_l1":"Interés del capital","lg_l2":"Interés del interés","lg_l3":"Interés del interés del interés (y más)","lg_int":"Intereses",
+"lb_s":"S","lb_c":"C","lb_simple":"Simple","lb_comp":"Compuesto","lb_year":"año","lb_double":"2 · C₀",
+"p_year":"Año <b>{0}</b>",
+"p_simple":"Simple: C₀ · (1 + {0} · {1}) = <span class=\"a\">{2}</span>",
+"p_comp":"Compuesto: C₀ · {0}<sup>{1}</sup> = <span class=\"b\">{2}</span>",
+"p_diff":"Diferencia: <span class=\"w\">{0}</span>",
+"p_layers":"Capas del compuesto:",
+"p_l0":"Capital: {0}","p_l1":"Interés del capital: {0}","p_l2":"Interés del interés: {0}","p_l3":"3.er orden y más: {0}",
+"p_share":"Un <b>{0} %</b> de los intereses compuestos son «interés de intereses».",
+"p_inc":"Intereses de este año: simple <span class=\"a\">{0}</span>, compuesto <span class=\"b\">{1}</span>",
+"p_dbl":"El compuesto duplica el capital el año <b>{0}</b>; el simple, el año <b>{1}</b>.",
+"p_dbl_s":"El simple no lo duplica en estos años.","p_dblc":"El compuesto duplica el capital el año <b>{0}</b>.",
+"g_ok":"✔ ¡Acertaste! Con interés compuesto hay {0}.",
+"g_simple":"✘ Habías dicho {0}: es el resultado con interés <b>simple</b>. Con el compuesto hay {1}.",
+"g_ko":"✘ Habías dicho {0}. Con interés compuesto hay {1}.",
+"f_n1":"anual","f_n2":"semestral","f_n4":"trimestral","f_n12":"mensual","f_n52":"semanal","f_n365":"diaria","f_ninf":"continua",
+"f_head_n":"Capitalización","f_head_i":"Interés por periodo","f_head_c":"Capital en 1 año","f_head_tae":"TAE",
+"f_now":"Capitalización <b>{0}</b>: {1} veces al año, un {2} % cada vez.",
+"f_now_inf":"Capitalización <b>continua</b>: en cada instante. C = C₀ · e<sup>r</sup> = {0}.",
+"f_formula":"C = C₀ · (1 + r/n)<sup>n</sup> = {0} · {1}<sup>{2}</sup>",
+"f_lim":"Por muy a menudo que capitalices, el capital no supera C₀ · e<sup>r</sup> = <span class=\"g\">{0}</span> (TAE máxima: {1} %).",
+"f_e":"Con un TIN del 100 %, el capital se multiplica como máximo por e ≈ 2,71828: el número e nace aquí (Jakob Bernoulli, 1683).",
+"pr_r1":"1000 € al 5 %, 15 años","pr_r2":"1000 € al 10 %, 10 años","pr_r3":"Una vida: 100 € al 7 %, 40 años","pr_r4":"2 % durante 10 años",
+"pr_f1":"TIN 6 %","pr_f2":"TIN 12 %","pr_f3":"TIN 100 % (Bernoulli)",
+"idea_race":"<b>La idea:</b> el interés simple crece de forma <b>lineal</b> (cada año suma lo mismo) y el compuesto, de forma <b>exponencial</b> (cada año <b>multiplica</b> por 1 + r: es el índice de variación anual). Las capas son los términos del binomio: (1 + r)<sup>t</sup> = 1 + t·r + C(t,2)·r² + …; el primer término es el capital, el segundo es exactamente el interés simple y el resto son «intereses de intereses», que al principio son pequeños pero acaban mandando.",
+"idea_freq":"<b>La idea:</b> el TIN es el tipo «de cartel»; si se capitaliza n veces al año, cada vez se aplica r/n. La <b>TAE</b> (tasa anual equivalente) es lo que crece de verdad en un año: TAE = (1 + r/n)<sup>n</sup> − 1. Cuanto más a menudo, más TAE… pero con freno: el límite es e<sup>r</sup> − 1.",
+"l_years":"Años","l_rate":"Tipo","l_tae":"TAE","l_t":"Tiempo","l_c":"Capital",
+"m1.q":"Al <b>5 % compuesto</b>, ¿cuál es el <b>primer año</b> en que un capital ya se ha duplicado?",
+"m1_f":"En el año {0} el capital se ha multiplicado por {1}.",
+"m1_ok":"✔ ¡Misión cumplida! 1,05¹⁴ ≈ 1,98 y 1,05¹⁵ ≈ 2,08: el año 15.",
+"m1.more":"Regla del 72: 72 : 5 ≈ 14,4 años. Pruébala con otros tipos. ¿Por qué funciona? (Pista: ln 2 ≈ 0,69.)",
+"m2.q":"¿Cuál es el <b>tipo entero más pequeño</b> (en %) que duplica un capital en <b>10 años</b> con interés <b>compuesto</b>?",
+"m2_f":"Al {0} % compuesto, en 10 años el capital se multiplica por {1}.",
+"m2_ok":"✔ ¡Misión cumplida! 1,07¹⁰ ≈ 1,97 (no llega) y 1,08¹⁰ ≈ 2,16.",
+"m2.more":"¿Y con interés simple, qué tipo necesitas para duplicarlo en 10 años? ¿Por qué el compuesto necesita menos?",
+"m3.q":"¿Qué <b>tipo</b> (en %) duplica un capital en <b>10 años</b> con interés <b>simple</b>?",
+"m3_f":"Al {0} % simple, en 10 años el capital se multiplica por {1}.",
+"m3_ok":"✔ ¡Misión cumplida! 1 + 0,10 · 10 = 2.",
+"m3.more":"Con interés simple, ¿en cuántos años se triplica al mismo tipo? ¿Y con el compuesto?",
+"m4.q":"Con un <b>TIN del 12 %</b> y capitalización <b>mensual</b>, ¿cuál es la <b>TAE</b>? (con dos decimales)",
+"m4_f":"Revísalo: (1 + 0,12/12)¹² − 1. Una TAE del {0} % no le corresponde.",
+"m4_ok":"✔ ¡Misión cumplida! 1,01¹² ≈ 1,1268: TAE del 12,68 %.",
+"m4.more":"¿Y con capitalización diaria? ¿Puede la TAE pasar del 12,75 %? Mira el límite e<sup>0,12</sup> − 1.",
+"s1.q":"«Con el mismo capital, tipo y tiempo, el interés compuesto siempre da más que el simple.»",
+"s1.h":"¿Y si dejas el dinero un año justo? ¿Y medio año?",
+"s1.e":"Para t &gt; 1 año gana el compuesto; para t = 1 empatan y para t &lt; 1, (1 + r)<sup>t</sup> &lt; 1 + r·t: gana el simple. Por eso en plazos cortos se usa el interés simple.",
+"s1.cx":"✔ Contraejemplo encontrado: con t = {0} años, el compuesto no da más que el simple.",
+"s1_no":"Con t = {0} años el compuesto sí da más. Prueba un tiempo más corto.",
+"s2.q":"«Con interés simple, los intereses de cada año son iguales.»",
+"s2.h":"Mira «Intereses de este año» en el panel.",
+"s2.e":"Siempre se calculan sobre el capital inicial: C₀ · r cada año. Por eso la gráfica es una recta.",
+"s3.q":"«Con interés compuesto, los intereses de cada año son iguales.»",
+"s3.h":"Mira «Intereses de este año» en varios años.",
+"s3.e":"Cada año se calculan sobre un capital mayor: crecen en progresión geométrica (C₀ · r · (1 + r)<sup>t − 1</sup>).",
+"s4.q":"«Si capitalizas cada vez más a menudo (con el mismo TIN), el capital puede crecer tanto como quieras.»",
+"s4.h":"En el modo Capitalización, compara la diaria con la continua.",
+"s4.e":"La TAE crece, pero se acerca a e<sup>r</sup> − 1 sin superarla: con un TIN del 100 %, como máximo e − 1 ≈ 171,8 %.",
+"s5.q":"«La TAE es mayor o igual que el TIN.»",
+"s5.h":"Compara la TAE de la capitalización anual con la de la mensual.",
+"s5.e":"Con capitalización anual son iguales; con más de una capitalización al año, la TAE es mayor, porque dentro del año ya hay interés del interés.",
+"e1.ctx":"Se dejan <b>1000 €</b> al <b>4 % compuesto</b> durante <b>3 años</b>. ¿Qué intereses se han ganado?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"120 €: 3 años · 40 €.",
+"e1.s1":"124,86 €: 1000 · 1,04³ − 1000.",
+"e1.w0":"Cada año el interés se calcula sobre el capital acumulado, que ya incluye los intereses anteriores: el segundo año es el 4 % de 1040 €, no de 1000 €.",
+"e1.w1":"Porque con interés compuesto nunca se puede multiplicar el interés por los años.",
+"e1.w2":"Porque el 4 % de 1000 no son 40 €.",
+"e1.frame":"Marta, los intereses no son 120 € porque…",
+"e1.model":"Marta, 3 · 40 sería interés simple. Con el compuesto, el primer año ganas 40 €, pero el segundo el 4 % se calcula sobre 1040 € (41,60 €) y el tercero sobre 1081,60 € (43,26 €). En total, 1000 · 1,04³ − 1000 ≈ 124,86 €.",
+"e2.ctx":"Un banco ofrece un <b>TIN del 6 %</b> con capitalización <b>mensual</b>. ¿Cuál es la TAE?",
+"e2.n0":"Joan","e2.n1":"Rita",
+"e2.s0":"El 6 %: el TIN y la TAE son lo mismo.",
+"e2.s1":"Un 6,17 %.",
+"e2.w0":"Cada mes se aplica el 0,5 % sobre un capital que ya incluye los intereses de los meses anteriores: (1 + 0,06/12)¹² − 1 ≈ 6,17 %.",
+"e2.w1":"Porque la TAE siempre es el doble del TIN.",
+"e2.w2":"Porque el 6 % dividido entre 12 no es 0,5 %.",
+"e2.frame":"Joan, la TAE no es el 6 % porque…",
+"e2.model":"Joan, el TIN es el tipo de cartel, pero cada mes se aplica un 0,5 % sobre el capital que ya ha crecido los meses anteriores. En un año, el capital se multiplica por 1,005¹² ≈ 1,0617: la TAE es del 6,17 %.",
+"e3.ctx":"Un capital a <b>interés compuesto</b> pasa de <b>1000 €</b> a <b>1210 €</b> en <b>2 años</b>. ¿Cuál es el tipo de interés?",
+"e3.n0":"Álex","e3.n1":"Laia",
+"e3.s0":"El 10,5 %: 210 € en 2 años son 105 € al año.",
+"e3.s1":"El 10 %: 1,1² = 1,21.",
+"e3.w0":"Con interés compuesto el segundo año el interés se calcula sobre 1100 €, no sobre 1000 €: el tipo que cumple (1 + r)² = 1,21 es r = 0,10.",
+"e3.w1":"Porque los intereses nunca se pueden dividir entre los años.",
+"e3.w2":"Porque 210 : 2 no es 105.",
+"e3.frame":"Álex, el tipo no es el 10,5 % porque…",
+"e3.model":"Álex, repartir 210 € a partes iguales entre los 2 años solo valdría con interés simple. Con el compuesto, el año 1 da 100 € y el año 2, 110 € (el 10 % de 1100). Hay que resolver (1 + r)² = 1,21, es decir, 1 + r = √1,21 = 1,1.",
+"d1.q":"Tienes <b>5000 €</b> para <b>10 años</b>. <b>Banco A:</b> 5 % de interés simple. <b>Banco B:</b> 4,5 % de interés compuesto. ¿Cuál te da más y cuántos euros de diferencia?",
+"d1.lc":"Más dinero:","d1.l0":"Diferencia (€)",
+"d1_pick":"Calcula los dos: A = 5000 · (1 + 0,05 · 10) y B = 5000 · 1,045¹⁰.",
+"d1_diff":"Buena elección. Ahora resta los dos capitales finales.",
+"d1.more":"¿Y en 5 años? ¿Qué banco gana? Busca el año en que B pasa por delante.",
+"d2.q":"<b>Oferta A:</b> TIN del 5 % con capitalización anual. <b>Oferta B:</b> TIN del 4,9 % con capitalización mensual. ¿Cuál tiene más TAE?",
+"d2.lc":"Más TAE:",
+"d2_no":"No. A tiene una TAE del 5 %; calcula la de B: (1 + 0,049/12)¹² − 1.",
+"d2_ok":"✔ ¡Bien decidido! B: (1 + 0,049/12)¹² − 1 ≈ 5,01 %, algo más que el 5 % de A. Por eso hay que comparar TAE, no TIN.",
+"d2.more":"¿Qué TIN con capitalización mensual daría exactamente una TAE del 5 %?",
+"d3.q":"Quieres tener <b>10 000 €</b> dentro de <b>5 años</b> en una cuenta al <b>4 % compuesto</b>. ¿Cuánto tienes que ingresar hoy?",
+"d3.l0":"Ingreso hoy (€)",
+"d3_no":"Si ingresas {0}, dentro de 5 años tendrás {1}. Es el problema al revés: divide entre 1,04⁵.",
+"d3_ok":"✔ ¡Bien decidido! 10 000 : 1,04⁵ ≈ 8219,27 €.",
+"d3.more":"¿Cuánto tendrías que ingresar si el tipo fuera del 2 %? ¿Por qué, cuanto más tipo, menos tienes que ingresar?",
+"r1.q":"Con interés simple, 2000 € al 3 % durante 4 años generan unos intereses de…",
+"r1.o0":"240 €","r1.o1":"251,02 €","r1.o2":"2240 €","r1.o3":"60 €",
+"r1.e":"2000 · 0,03 · 4 = 240 €.",
+"r2.q":"1000 € al 10 % compuesto durante 2 años. ¿Cuál es el capital final?",
+"r2.u":"€","r2.e":"1000 · 1,1² = 1210 €.",
+"r3.q":"En la fórmula C = C₀ · (1 + r)<sup>t</sup>, el factor 1 + r es…",
+"r3.o0":"el índice de variación anual","r3.o1":"el interés total","r3.o2":"el tipo de interés","r3.o3":"el tiempo",
+"r3.e":"Cada año el capital se multiplica por 1 + r: es una subida del r % repetida t veces.",
+"r4.q":"Con interés simple, el capital crece de forma…",
+"r4.o0":"lineal","r4.o1":"exponencial","r4.o2":"cuadrática","r4.o3":"constante",
+"r4.e":"C = C₀ + C₀·r·t: suma lo mismo cada año, es una función afín del tiempo.",
+"r5.q":"TIN del 12 % con capitalización trimestral. ¿Cuál es la TAE (en %)?",
+"r5.u":"%","r5.e":"(1 + 0,12/4)⁴ − 1 = 1,03⁴ − 1 ≈ 0,1255: un 12,55 %.",
+"r6.q":"Con un TIN del 100 % capitalizado de forma continua, en un año el capital se multiplica por…",
+"r6.o0":"2","r6.o1":"e ≈ 2,718","r6.o2":"infinito","r6.o3":"1,5",
+"r6.e":"(1 + 1/n)<sup>n</sup> → e cuando n crece sin límite."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Interés simple i compost ===== */
+const W=900,H=470,cx=fitCanvas($('#cv'),W,H);
+const NS=[1,2,4,12,52,365,Infinity];
+const PRE={race:[['pr_r1',1000,5,15],['pr_r2',1000,10,10],['pr_r3',100,7,40],['pr_r4',1000,2,10]],
+ freq:[['pr_f1',1000,6],['pr_f2',1000,12],['pr_f3',1000,100]]};
+let mode='race',C0=1000,R=10,T=10,TIN=12,phase=0,target=0,guess=null,msgFn=null,valid=true;
+const fx=(v,d)=>v.toFixed(d).replace('.',',');
+const eur=v=>{const r=Math.round(v*100)/100;let [a,b]=Math.abs(r).toFixed(2).split('.');if(a.length>4)a=a.replace(/\B(?=(\d{3})+(?!\d))/g,'.');return (r<0?'−':'')+a+(b==='00'?'':','+b)+' €';};
+const pct=(v,d=2)=>{const m=Math.pow(10,d),r=Math.round(v*m)/m;let o=(Object.is(r,-0)?0:r).toFixed(d);if(d>0)o=o.replace(/\.?0+$/,'');return o.replace('.',',');};
+const fI=x=>{let s=x.toFixed(4).replace(/0+$/,'');if(!s.split('.')[1]||s.split('.')[1].length<2)s=x.toFixed(2);return s.replace('.',',');};
+const sup=n=>String(n);
+const simpleV=t=>C0*(1+R/100*t), compV=t=>C0*Math.pow(1+R/100,t);
+function binom(t,k){let b=1;for(let i=1;i<=k;i++)b=b*(t-k+i)/i;return b;}
+function layers(t){const r=R/100,l0=C0,l1=C0*r*t,l2=t>=2?C0*binom(t,2)*r*r:0,tot=compV(t);return [l0,l1,l2,Math.max(0,tot-l0-l1-l2)];}
+const fV=k=>{const n=NS[k];return n===Infinity?C0*Math.exp(TIN/100):C0*Math.pow(1+TIN/100/n,n);};
+/* ---- controls ---- */
+let sC,sR,sT,sTIN;
+function buildCtls(){const box=$('#ctls');box.innerHTML='';
+  const d=document.createElement('div');d.className='ctl';d.innerHTML='<label for="c0" data-i18n="c0">'+t('c0')+'</label><span></span><input type="text" inputmode="decimal" id="c0" autocomplete="off" style="grid-column:1/-1;font:inherit;font-size:15px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)">';
+  box.appendChild(d);$('#c0').value=String(C0).replace('.',',');
+  $('#c0').oninput=()=>{const v=parseNum($('#c0').value);C0=Number.isFinite(v)?v:NaN;reset();};
+  if(mode==='race'){
+    sR=slider(box,{id:'sr',key:'rate',min:0.5,max:20,step:0.5,val:R,fmtv:v=>pct(v,1)+' %',on:v=>{R=v;reset();}});
+    sT=slider(box,{id:'st',key:'years',min:1,max:40,step:1,val:T,fmtv:v=>String(v),on:v=>{T=v;reset();}});
+  }else sTIN=slider(box,{id:'stin',key:'tin',min:1,max:100,step:1,val:TIN,fmtv:v=>v+' %',on:v=>{TIN=v;reset();}});
+  $$('#ctls [data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));}
+function buildPresets(){const box=$('#presets');box.innerHTML='';
+  PRE[mode].forEach(p=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t(p[0]);
+    const on=mode==='race'?(p[1]===C0&&p[2]===R&&p[3]===T):(p[1]===C0&&p[2]===TIN);
+    b.setAttribute('aria-pressed',String(on));b.onclick=()=>{if(mode==='race')setRace(p[1],p[2],p[3]);else setFreq(p[1],p[2]);};box.appendChild(b);});}
+function setMode(m){mode=m;$$('#modesw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===m)));
+  $('#raceRow').hidden=m!=='race';$('#ideaR').hidden=m!=='race';$('#ideaF').hidden=m==='race';buildCtls();}
+function setRace(c,r,tt2){setMode('race');C0=c;R=r;T=tt2;buildCtls();$('#guess').value='';guess=null;reset();}
+function setFreq(c,r){setMode('freq');C0=c;TIN=r;buildCtls();reset();}
+const steps=()=>mode==='race'?T:NS.length-1;
+function reset(){phase=0;target=0;msgFn=null;$('#msg').innerHTML='';$('#msg').className='msg';valid=Number.isFinite(C0)&&C0>0&&C0<=1e9;buildPresets();texts();}
+$$('#modesw button').forEach(b=>b.onclick=()=>{if(b.dataset.m===mode)return;const p=PRE[b.dataset.m][b.dataset.m==='race'?1:1];if(b.dataset.m==='race')setRace(p[1],p[2],p[3]);else setFreq(p[1],p[2]);});
+function start(){if(target===0&&mode==='race'){const g=parseNum($('#guess').value);guess=$('#guess').value.trim()!==''&&Number.isFinite(g)?g:null;}}
+$('#go').onclick=()=>{if(!valid||target>=steps())return;start();target=Math.min(steps(),Math.round(target)+1);};
+$('#fast').onclick=()=>{if(!valid||target>=steps())return;start();target=steps();};
+$('#again').onclick=()=>{$('#guess').value='';guess=null;reset();};
+$('#layers').onchange=()=>draw();
+function setBtns(){const g=$('#go'),f=$('#fast'),k=Math.round(target),S=steps();
+  g.disabled=f.disabled=!valid||k>=S;
+  g.textContent=k>=S?t('go_done'):t(mode==='race'?'go_year':'go_freq');
+  f.textContent=mode==='race'?tt('fast_year',T):t('fast_freq');}
+function dblYear(f){for(let t2=1;t2<=400;t2++)if(f(t2)>=2*C0-1e-9)return t2;return null;}
+function texts(){
+  setBtns();const P=$('#panel'),m=$('#msg');
+  if(!valid){P.innerHTML='';m.className='msg bad';m.textContent=t('bad_in');return;}
+  if(m.textContent===t('bad_in')){m.textContent='';m.className='msg';}
+  const k=Math.floor(phase+1e-9);
+  if(mode==='race'){
+    const y=k,r=R/100,s=simpleV(y),c=compV(y),L=layers(y),col=['--ok','--pa','--pb','--l3'];
+    let h='<p class="big">'+tt('p_year',y)+'</p><div class="ticket">'+tt('p_simple',fI(r),y,eur(s))+'<br>'+tt('p_comp',fI(1+r),sup(y),eur(c))+'<br>'+tt('p_diff',eur(c-s));
+    if(y>=1)h+='<br>'+tt('p_inc',eur(C0*r),eur(compV(y)-compV(y-1)));
+    h+='</div><div class="ticket"><b>'+t('p_layers')+'</b><br>'+['p_l0','p_l1','p_l2','p_l3'].map((kk,i)=>'<span class="dot" style="background:var('+col[i]+')"></span>'+tt(kk,eur(L[i]))).join('<br>');
+    if(y>=2&&c>C0)h+='<br>'+tt('p_share',pct((L[2]+L[3])/(c-C0)*100,1));
+    h+='</div>';
+    if(k>=T){const dc=dblYear(compV),ds=dblYear(simpleV);if(dc!==null&&dc<=T)h+='<p class="big" style="font-size:13.5px">'+(ds!==null&&ds<=T?tt('p_dbl',dc,ds):tt('p_dblc',dc)+' '+t('p_dbl_s'))+'</p>';}
+    P.innerHTML=h;
+  }else{
+    const rows=[];for(let i=0;i<=Math.min(k,NS.length-1);i++){const n=NS[i],v=fV(i);
+      rows.push('<tr><td>'+t('f_n'+(n===Infinity?'inf':n))+'</td><td>'+(n===Infinity?'→ 0':pct(TIN/n,4)+' %')+'</td><td>'+eur(v)+'</td><td><b>'+pct((v/C0-1)*100,2)+' %</b></td></tr>');}
+    const n=NS[Math.min(k,NS.length-1)],cur=fV(Math.min(k,NS.length-1));
+    let h='<p class="big" style="font-size:14px">'+(n===Infinity?tt('f_now_inf',eur(cur)):tt('f_now',t('f_n'+n),n,pct(TIN/n,4)))+'</p>';
+    if(n!==Infinity)h+='<div class="ticket">'+tt('f_formula',eur(C0),fI(1+TIN/100/n),n)+' = <span class="b">'+eur(cur)+'</span></div>';
+    h+='<table class="tbl"><thead><tr><th>'+t('f_head_n')+'</th><th>'+t('f_head_i')+'</th><th>'+t('f_head_c')+'</th><th>'+t('f_head_tae')+'</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+    if(k>=NS.length-1){h+='<div class="ticket">'+tt('f_lim',eur(C0*Math.exp(TIN/100)),pct((Math.exp(TIN/100)-1)*100,2))+(TIN===100?'<br>'+t('f_e'):'')+'</div>';}
+    P.innerHTML=h;
+  }
+  if(msgFn)msgFn();
+}
+function finish(){if(mode!=='race')return;
+  const c=compV(T),s=simpleV(T),near=(a,b)=>Math.abs(a-b)<=0.011+Math.abs(b)*0.005;
+  msgFn=()=>{const m=$('#msg');if(guess===null){m.className='msg';m.innerHTML='';return;}
+    if(near(guess,c)){m.className='msg good';m.innerHTML=tt('g_ok',eur(c));}
+    else if(near(guess,s)){m.className='msg bad';m.innerHTML=tt('g_simple',eur(guess),eur(c));}
+    else{m.className='msg bad';m.innerHTML=tt('g_ko',eur(guess),eur(c));}};
+  texts();}
+/* ---- dibuix ---- */
+function niceStep(range,n){const raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+function kfmt(v){return v>=1e6?pct(v/1e6,1)+' M':v>=1e4?pct(v/1e3,0)+' k':pct(v,0);}
+function drawRace(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok'),l3=css('--l3'),wn=css('--warn'),line=css('--line');
+  const X0=70,X1=W-20,Y0=H-46,Y1=70,mx=Math.max(compV(T),2*C0)*1.06,yy=v=>Y0-(Y0-Y1)*v/mx;
+  /* graella */
+  const st=niceStep(mx,6);cx.font='12px ui-monospace,Menlo,Consolas,monospace';cx.textAlign='right';
+  for(let v=0;v<=mx;v+=st){cx.strokeStyle=line;cx.lineWidth=1;cx.beginPath();cx.moveTo(X0,yy(v));cx.lineTo(X1,yy(v));cx.stroke();cx.fillStyle=mut;cx.fillText(kfmt(v),X0-6,yy(v)+4);}
+  /* 2·C0 */
+  cx.strokeStyle=wn;cx.setLineDash([6,5]);cx.lineWidth=1.5;cx.beginPath();cx.moveTo(X0,yy(2*C0));cx.lineTo(X1,yy(2*C0));cx.stroke();cx.setLineDash([]);
+  cx.fillStyle=wn;cx.font='bold 12px system-ui';cx.textAlign='left';cx.fillText(t('lb_double'),X0+4,yy(2*C0)-5);
+  const sw=(X1-X0)/(T+1),bw=Math.max(2,Math.min(26,sw*.4)),gap=Math.min(2,sw*.05);
+  const lay=$('#layers').checked,colL=[ok,pa,pb,l3];
+  const kf=Math.floor(phase),fr=phase-kf;
+  const ptsS=[],ptsC=[];
+  for(let y=0;y<=T;y++){
+    let f=y<=kf?1:(y===kf+1?fr:0);if(y===0)f=1;if(f<=0)break;
+    const e=REDUCE?1:f*f*(3-2*f),xc=X0+sw*(y+.5);
+    const s=y===0?C0:lerp(simpleV(y-1),simpleV(y),e),c=y===0?C0:lerp(compV(y-1),compV(y),e);
+    ptsS.push([xc-bw/2-gap,yy(s)]);ptsC.push([xc+bw/2+gap,yy(c)]);
+    /* simple */
+    cx.fillStyle=ok;cx.globalAlpha=.7;cx.fillRect(xc-bw-gap,yy(C0),bw,Y0-yy(C0));cx.globalAlpha=1;
+    if(s>C0){cx.fillStyle=pa;cx.globalAlpha=.85;cx.fillRect(xc-bw-gap,yy(s),bw,yy(C0)-yy(s));cx.globalAlpha=1;}
+    /* compost */
+    if(lay&&y>0){const L=layers(y),sc=c/compV(y);let acc=0;
+      L.forEach((v,i)=>{const v2=i===0?v:v*sc;const a=acc,b=acc+v2;acc=b;if(v2<=0)return;cx.fillStyle=colL[i];cx.globalAlpha=i===0?.7:.88;cx.fillRect(xc+gap,yy(b),bw,yy(a)-yy(b));cx.globalAlpha=1;});}
+    else{cx.fillStyle=ok;cx.globalAlpha=.7;cx.fillRect(xc+gap,yy(C0),bw,Y0-yy(C0));cx.globalAlpha=1;if(c>C0){cx.fillStyle=pb;cx.globalAlpha=.88;cx.fillRect(xc+gap,yy(c),bw,yy(C0)-yy(c));cx.globalAlpha=1;}}
+  }
+  /* línies */
+  const pl=(pts,col,dash)=>{if(pts.length<2)return;cx.strokeStyle=col;cx.lineWidth=2.2;cx.setLineDash(dash);cx.beginPath();pts.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.stroke();cx.setLineDash([]);};
+  pl(ptsS,pa,[6,4]);pl(ptsC,pb,[]);
+  /* eix x */
+  cx.strokeStyle=mut;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(X0,Y0);cx.lineTo(X1,Y0);cx.stroke();
+  const ev=T<=12?1:T<=24?2:5;cx.fillStyle=mut;cx.font='12px system-ui';cx.textAlign='center';
+  for(let y=0;y<=T;y+=ev)cx.fillText(String(y),X0+sw*(y+.5),Y0+16);
+  cx.fillText(t('lb_year'),X1-14,Y0+32);
+  /* valors finals */
+  if(ptsS.length>1){const ls=ptsS[ptsS.length-1],lc=ptsC[ptsC.length-1],yv=ptsS.length-1,ve=kf>=T;
+    cx.font='bold 13px ui-monospace,Menlo,Consolas,monospace';cx.textAlign='right';
+    const ys=Math.max(ls[1]-8,lc[1]+30);
+    cx.fillStyle=pb;cx.fillText(eur(ve?compV(T):compV(Math.min(T,kf))),Math.min(X1,lc[0]+bw),lc[1]-8);
+    cx.fillStyle=pa;cx.fillText(eur(ve?simpleV(T):simpleV(Math.min(T,kf))),Math.min(X1,lc[0]+bw),Math.min(Y0-6,ys));}
+  /* llegenda */
+  const items=[[ok,t('lg_cap')],[pa,t('lb_simple')+': '+t('lg_int')]].concat(lay?[[pa,t('lg_l1')],[pb,t('lg_l2')],[l3,t('lg_l3')]]:[[pb,t('lb_comp')+': '+t('lg_int')]]);
+  cx.font='12.5px system-ui';cx.textAlign='left';let lx=X0,ly=20;
+  items.forEach(([c,s],i)=>{if(i===2&&lay){lx=X0;ly=40;cx.fillStyle=ink;cx.font='bold 12.5px system-ui';cx.fillText(t('lb_comp')+':',lx,ly+10);lx+=cx.measureText(t('lb_comp')+': ').width+6;cx.font='12.5px system-ui';}
+    cx.fillStyle=c;cx.fillRect(lx,ly,12,12);cx.fillStyle=ink;cx.fillText(s,lx+17,ly+10);lx+=cx.measureText(s).width+34;});
+  cx.fillStyle=mut;cx.font='11.5px system-ui';cx.textAlign='right';cx.fillText(t('lb_s')+' | '+t('lb_c'),X1,20);
+}
+function drawFreq(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok'),line=css('--line');
+  const r=TIN/100,top=C0*Math.exp(r),X0=80,X1=W-150,Y0=H-50,Y1=40,lo=C0,hi=C0+(top-C0)*1.08,yy=v=>Y0-(Y0-Y1)*(v-lo)/(hi-lo),xx=s=>X0+(X1-X0)*s;
+  const st=niceStep(hi-lo,6);cx.font='12px ui-monospace,Menlo,Consolas,monospace';cx.textAlign='right';
+  for(let v=Math.ceil(lo/st)*st;v<=hi;v+=st){cx.strokeStyle=line;cx.lineWidth=1;cx.beginPath();cx.moveTo(X0,yy(v));cx.lineTo(X1,yy(v));cx.stroke();cx.fillStyle=mut;cx.fillText(kfmt(v),X0-6,yy(v)+4);}
+  cx.strokeStyle=mut;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(X0,Y0);cx.lineTo(X1,Y0);cx.stroke();
+  cx.fillStyle=mut;cx.font='12px system-ui';cx.textAlign='center';
+  const ML=LANG==='es'?['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']:['gen','febr','març','abr','maig','juny','jul','ag','set','oct','nov','des'];
+  for(let i=0;i<12;i++)cx.fillText(ML[i],xx((i+.5)/12),Y0+16);
+  const kf=Math.floor(phase),fr=phase-kf;
+  const stair=(n,f,col,lw,alpha)=>{cx.strokeStyle=col;cx.lineWidth=lw;cx.globalAlpha=alpha;cx.beginPath();
+    if(n===Infinity){const N=200;for(let i=0;i<=N*f;i++){const s=i/N;const v=C0*Math.exp(r*s);i?cx.lineTo(xx(s),yy(v)):cx.moveTo(xx(s),yy(v));}}
+    else{let v=C0;cx.moveTo(xx(0),yy(v));const m=Math.ceil(n*f);for(let i=1;i<=m;i++){const s=Math.min(i/n,f);cx.lineTo(xx(s),yy(v));if(i/n<=f+1e-9){v*=1+r/n;cx.lineTo(xx(s),yy(v));}}}
+    cx.stroke();cx.globalAlpha=1;};
+  const col=[ok,pa,'#7a7a7a',pb,'#7a7a7a','#7a7a7a',ink];
+  for(let i=0;i<=Math.min(kf,NS.length-1);i++){const cur=i===Math.min(kf,NS.length-1)&&phase>=target-1e-9;
+    stair(NS[i],1,i===NS.length-1?css('--ok'):(i===0?pb:pa),cur?3:1.4,cur?1:.35);}
+  if(kf+1<NS.length&&fr>0)stair(NS[kf+1],REDUCE?1:fr,pa,3,1);
+  /* etiquetes a la dreta */
+  cx.font='12.5px ui-monospace,Menlo,Consolas,monospace';cx.textAlign='left';let lastY=-99;
+  for(let i=0;i<=Math.min(kf,NS.length-1);i++){const v=fV(i);let y=yy(v)+4;if(Math.abs(y-lastY)<14)y=lastY-14;lastY=y;
+    cx.fillStyle=i===Math.min(kf,NS.length-1)?ink:mut;cx.fillText(t('f_n'+(NS[i]===Infinity?'inf':NS[i]))+' '+pct((v/C0-1)*100,2)+'%',X1+8,y);}
+  /* límit */
+  cx.strokeStyle=ok;cx.setLineDash([3,4]);cx.lineWidth=1.2;cx.beginPath();cx.moveTo(X0,yy(top));cx.lineTo(X1,yy(top));cx.stroke();cx.setLineDash([]);
+  cx.fillStyle=ok;cx.font='bold 12px system-ui';cx.textAlign='left';cx.fillText('C₀·e^r',X0+4,yy(top)-5);
+}
+function draw(){cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);if(!valid)return;if(mode==='race')drawRace();else drawFreq();}
+function loop(){
+  if(phase<target){const prev=phase,sp=mode==='race'?(target-phase>3?1/14:1/40):1/70;phase=REDUCE?target:Math.min(target,phase+sp);
+    if(Math.floor(prev)!==Math.floor(phase)||phase>=target)texts();
+    if(phase>=target&&target===steps())finish();}
+  draw();requestAnimationFrame(loop);
+}
+App.hooks.push(()=>{buildCtls();buildPresets();texts();});
+document.addEventListener('themechange',draw);
+/* ===== Raona-ho ===== */
+function ldR(c,r,y){guess=null;setRace(c,r,y);phase=target=T;finish();texts();RZ.show($('#cv'));}
+function ldF(c,r,k){setFreq(c,r);phase=target=k;texts();RZ.show($('#cv'));}
+const ok2=x=>Number.isFinite(x)&&x>0;
+RZ.init({
+ sim:null,
+ M:[
+  {id:'m1',f:[{l:'l_years'}],sim:([y])=>ldR(1000,5,Math.max(1,Math.min(40,Math.round(y)))),ok:()=>({k:'m1_ok'}),
+   chk:([y])=>!(Number.isInteger(y)&&y>=1&&y<=200)?{k:'rz_bad'}:y===15?null:{k:'m1_f',p:()=>[y,fI(Math.pow(1.05,y))]}},
+  {id:'m2',f:[{l:'l_rate',u:'%'}],sim:([x])=>ldR(1000,clamp(Math.round(x*2)/2,0.5,20),10),ok:()=>({k:'m2_ok'}),
+   chk:([x])=>!(Number.isInteger(x)&&x>0&&x<=100)?{k:'rz_bad'}:x===8?null:{k:'m2_f',p:()=>[x,fI(Math.pow(1+x/100,10))]}},
+  {id:'m3',f:[{l:'l_rate',u:'%'}],sim:([x])=>ldR(1000,clamp(Math.round(x*2)/2,0.5,20),10),ok:()=>({k:'m3_ok'}),
+   chk:([x])=>!ok2(x)?{k:'rz_bad'}:Math.abs(x-10)<1e-9?null:{k:'m3_f',p:()=>[pct(x),fI(1+x/10)]}},
+  {id:'m4',f:[{l:'l_tae',u:'%'}],sim:()=>ldF(1000,12,3),ok:()=>({k:'m4_ok'}),
+   chk:([x])=>!ok2(x)?{k:'rz_bad'}:Math.abs(x-12.68)<=0.006?null:{k:'m4_f',p:()=>[pct(x)]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',sim:()=>ldR(1000,10,3),f:[{l:'l_t',u:t('years').toLowerCase()}],cxsim:null,
+   cxok:([y])=>({k:'s1.cx',p:()=>[pct(y)]}),
+   cx:([y])=>!(y>0)?{k:'rz_bad'}:y<=1+1e-12?null:{k:'s1_no',p:()=>[pct(y)]}},
+  {id:'s2',ans:'S',sim:()=>ldR(1000,10,10)},
+  {id:'s3',ans:'M',sim:()=>ldR(1000,10,10)},
+  {id:'s4',ans:'M',sim:()=>ldF(1000,100,6)},
+  {id:'s5',ans:'S',sim:()=>ldF(1000,12,3)}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>ldR(1000,4,3)},
+  {id:'e2',who:1,sim:()=>ldF(1000,6,3)},
+  {id:'e3',who:1,sim:()=>ldR(1000,10,2)}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[1,2],fmt:x=>x===1?'A':'B'},f:[{l:'d1.l0',u:'€'}],sim:()=>ldR(5000,4.5,10),
+   chk:([p,d])=>p!==2?{k:'d1_pick'}:Math.abs(d-264.85)>0.021?{k:'d1_diff'}:null},
+  {id:'d2',chips:{vals:[1,2],fmt:x=>x===1?'A':'B'},sim:null,ok:()=>({k:'d2_ok'}),
+   chk:([p])=>p!==2?{k:'d2_no'}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'€'}],sim:()=>ldR(8219.27,4,5),ok:()=>({k:'d3_ok'}),
+   chk:([x])=>!ok2(x)?{k:'rz_bad'}:Math.abs(x-8219.27)<=0.021?null:{k:'d3_no',p:()=>[eur(x),eur(x*Math.pow(1.04,5))]}}
+ ]
+});
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":1210,"tol":0,"u":1},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r4","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"all","type":"num","num":12.55,"tol":0.001,"u":1},{"id":"r6","lvl":"all","type":"mc","n":4,"ans":1}];
+initQuiz(QDATA);
+setRace(1000,10,10);
+initLang();applyLang();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
