@@ -101,8 +101,9 @@ body{overflow:hidden}
 .tile{position:relative;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;padding-top:.7vh;border:0 solid transparent;font-weight:800;font-size:clamp(9px,1.55vh,16px);min-width:0;min-height:0;overflow:visible}
 .tile .ti{width:3.8vh;height:3.8vh;max-width:70%;flex:none}
 .tile .tn{letter-spacing:.02em;line-height:1}
-.tile.hub{border:4px solid #0F172A}
-.tile .wedge{position:absolute;top:2px;right:2px;width:2.9vh;height:2.9vh}
+.tile.hub{border:5px solid #0F172A;transform:scale(1.12);z-index:2;box-shadow:0 4px 12px rgba(15,23,42,.4)}
+.tile .wedge{position:absolute;top:2px;right:2px;width:4.3vh;height:4.3vh;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
+.tile.hub .ti{margin-right:2.2vh}
 .tile.cur{box-shadow:0 0 0 4px #fff,0 0 0 8px #0F172A;z-index:3}
 .tile.opt{cursor:pointer;box-shadow:0 0 0 4px #fff,0 0 0 8px #4338CA;z-index:4;animation:pulse .8s infinite alternate}
 .tile .dir{position:absolute;top:2px;left:2px;background:#fff;color:#4338CA;border-radius:6px;padding:0 .35em;font-size:1.05em}
@@ -143,6 +144,17 @@ body{overflow:hidden}
 .timer{height:1.7em}
 .qcard .big{font-size:1.35em;padding:.65em 1em}
 .final button{font-size:.9em}
+.fprog{display:flex;gap:.45em;align-items:center;flex-wrap:wrap}
+.fprog .fp{width:1.9em;height:1.9em;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;opacity:.4;flex:none}
+.fprog .fp svg{width:64%;height:64%}
+.fprog .fp.cur{opacity:1;box-shadow:0 0 0 3px #fff,0 0 0 5px #0F172A}
+.fprog .fp.ok,.fprog .fp.ko{opacity:1}
+.fprog .fp i{position:absolute;right:-.4em;bottom:-.4em;font-style:normal;font-size:.75em;background:#fff;border-radius:50%;width:1.35em;height:1.35em;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:0 0 0 1.5px #0F172A}
+.fprog .fp.ok i{color:#16a34a}
+.fprog .fp.ko i{color:#dc2626}
+.fprog .fsum{margin-left:auto;font-weight:700;color:var(--muted);font-size:.9em}
+.fintro{display:flex;flex-direction:column;gap:.7em}
+.fintro .fprog .fp{opacity:1;width:2.4em;height:2.4em}
 .opt .dot{width:2em;height:2em}
 @media (max-width:900px){ #app{height:100vh} }
 .bdice{display:none}
@@ -154,8 +166,9 @@ body{overflow:hidden}
   .tile{border-radius:5px;padding-top:0;justify-content:center;gap:0}
   .tile .tn{display:none}
   .tile .ti{width:64%;height:auto;aspect-ratio:1;max-width:none}
-  .tile.hub{border-width:2px}
-  .tile .wedge{width:11px;height:11px;top:0;right:0}
+  .tile.hub{border-width:2.5px;transform:scale(1.1)}
+  .tile.hub .ti{margin-right:0}
+  .tile .wedge{width:15px;height:15px;top:-3px;right:-3px}
   .tile.cur{box-shadow:0 0 0 2px #fff,0 0 0 4px #0F172A}
   .tile.opt{box-shadow:0 0 0 2px #fff,0 0 0 4px #4338CA}
   .tile .dir{font-size:8px;top:0;left:0;padding:0 2px;border-radius:3px}
@@ -1516,17 +1529,17 @@ const I18N = {
  ca:{
   title:'Hexaciència', subtitle:'Matemàtiques · Física · Química · Biologia · Geologia · Tecnologia',
   course:'Curs', c2:'2n ESO', c4:'4t ESO', cmix:'2n i 4t barrejats',
-  teams:"Nombre d'equips", goalT:'Formatgets per a la pregunta final', team:'Equip', timer:'Temps base per pregunta', notime:'Sense temps', start:'Començar a jugar',
+  teams:"Nombre d'equips", goalT:'Formatgets per a la prova final', team:'Equip', timer:'Temps base per pregunta', notime:'Sense temps', start:'Començar a jugar',
   rulesT:'Com es juga',
-  rules:"Cada equip tira el dau i mou la fitxa cap avant o cap arrere. Segons el color de la casella cau una pregunta d'eixa matèria. Si s'encerta, es torna a tirar; si no, passa el torn. Les caselles de vora gruixuda (★) donen el formatget de la matèria si s'encerta. Quan un equip reuneix els formatgets triats al principi, va a per la pregunta final: els rivals trien la matèria. El professor valida cada resposta. Cada pregunta indica el seu tipus (càlcul, test, pistes…) i el temps s\'ajusta al tipus.",
+  rules:"Cada equip tira el dau i mou la fitxa cap avant o cap arrere. Segons el color de la casella cau una pregunta d'eixa matèria. Si s'encerta, es torna a tirar; si no, passa el torn. Les caselles de vora gruixuda (★) donen el formatget de la matèria si s'encerta. Quan un equip reuneix els formatgets (6, si no se'n trien menys al principi), passa la prova final: 6 preguntes, una de cada matèria, i guanya si n'encerta 4. Si no la supera, passa el torn i ho torna a intentar en el seu torn següent. El professor valida cada resposta. Cada pregunta indica el seu tipus (càlcul, test, pistes…) i el temps s\'ajusta al tipus.",
   turn:'Torn de', roll:'Tirar el dau', rolled:'Ha eixit un', choose:'Cap a on mous la fitxa?',
   fwd:'Avançar', back:'Retrocedir', show:'Mostrar resposta', ok:'Correcta', ko:'Incorrecta', skip:'Canviar pregunta', undo:'Desfer decisió',
-  answer:'Resposta', timeup:'Temps esgotat!', final:'Pregunta final',
-  finalHelp:'Ja té prou formatgets! Que els rivals trien la matèria de la pregunta final.',
-  hubHint:'★ Casella de formatget', won:'{n} guanya la partida!', wonSub:'Ha reunit els formatgets i ha encertat la pregunta final.',
+  answer:'Resposta', timeup:'Temps esgotat!', final:'Prova final',
+  finalHelp:'Ja té els formatgets! Ara, {n} preguntes, una de cada matèria: cal encertar-ne {k} per a guanyar.', finalGo:'Començar la prova final', finalSum:'✔ {a} · ✘ {e}',
+  hubHint:'★ Casella de formatget', won:'{n} guanya la partida!', wonSub:'Ha reunit els formatgets i ha superat la prova final amb {a} encerts.',
   newgame:'Nova partida', fullscreen:'Pantalla completa',
   gotwedge:'Formatget de {b}! Torna a tirar.', rightAgain:'Correcta! Torna a tirar.',
-  wrongPass:'Incorrecta. Passa el torn a {n}.', finalWrong:'Pregunta final fallada. Passa el torn a {n}.',
+  wrongPass:'Incorrecta. Passa el torn a {n}.', finalWrong:'Prova final no superada (encerts: {a} de {t}). Passa el torn a {n}; ho tornarà a provar en el seu torn.',
   wedges:'Formatgets', sec:'s', defName:'Equip',
   nextHint:'Següent pista', guess:'Endevina el concepte', hintsUsed:'Pistes usades',
   timerNote:'El temps s\'ajusta al tipus de pregunta:'
@@ -1534,17 +1547,17 @@ const I18N = {
  es:{
   title:'Hexaciencia', subtitle:'Matemáticas · Física · Química · Biología · Geología · Tecnología',
   course:'Curso', c2:'2.º ESO', c4:'4.º ESO', cmix:'2.º y 4.º mezclados',
-  teams:'Número de equipos', goalT:'Quesitos para la pregunta final', team:'Equipo', timer:'Tiempo base por pregunta', notime:'Sin tiempo', start:'Empezar a jugar',
+  teams:'Número de equipos', goalT:'Quesitos para la prueba final', team:'Equipo', timer:'Tiempo base por pregunta', notime:'Sin tiempo', start:'Empezar a jugar',
   rulesT:'Cómo se juega',
-  rules:'Cada equipo tira el dado y mueve la ficha hacia delante o hacia atrás. Según el color de la casilla cae una pregunta de esa materia. Si se acierta, se vuelve a tirar; si no, pasa el turno. Las casillas de borde grueso (★) dan el quesito de la materia si se acierta. Cuando un equipo reúne los quesitos elegidos al principio, va a por la pregunta final: los rivales eligen la materia. El profesor valida cada respuesta. Cada pregunta indica su tipo (cálculo, test, pistas…) y el tiempo se ajusta al tipo.',
+  rules:'Cada equipo tira el dado y mueve la ficha hacia delante o hacia atrás. Según el color de la casilla cae una pregunta de esa materia. Si se acierta, se vuelve a tirar; si no, pasa el turno. Las casillas de borde grueso (★) dan el quesito de la materia si se acierta. Cuando un equipo reúne los quesitos (6, si no se eligen menos al principio), pasa la prueba final: 6 preguntas, una de cada materia, y gana si acierta 4. Si no la supera, pasa el turno y vuelve a intentarlo en su siguiente turno. El profesor valida cada respuesta. Cada pregunta indica su tipo (cálculo, test, pistas…) y el tiempo se ajusta al tipo.',
   turn:'Turno de', roll:'Tirar el dado', rolled:'Ha salido un', choose:'¿Hacia dónde mueves la ficha?',
   fwd:'Avanzar', back:'Retroceder', show:'Mostrar respuesta', ok:'Correcta', ko:'Incorrecta', skip:'Cambiar pregunta', undo:'Deshacer decisión',
-  answer:'Respuesta', timeup:'¡Tiempo agotado!', final:'Pregunta final',
-  finalHelp:'¡Ya tiene suficientes quesitos! Que los rivales elijan la materia de la pregunta final.',
-  hubHint:'★ Casilla de quesito', won:'¡{n} gana la partida!', wonSub:'Ha reunido los quesitos y ha acertado la pregunta final.',
+  answer:'Respuesta', timeup:'¡Tiempo agotado!', final:'Prueba final',
+  finalHelp:'¡Ya tiene los quesitos! Ahora, {n} preguntas, una de cada materia: hay que acertar {k} para ganar.', finalGo:'Empezar la prueba final', finalSum:'✔ {a} · ✘ {e}',
+  hubHint:'★ Casilla de quesito', won:'¡{n} gana la partida!', wonSub:'Ha reunido los quesitos y ha superado la prueba final con {a} aciertos.',
   newgame:'Nueva partida', fullscreen:'Pantalla completa',
   gotwedge:'¡Quesito de {b}! Vuelve a tirar.', rightAgain:'¡Correcta! Vuelve a tirar.',
-  wrongPass:'Incorrecta. Pasa el turno a {n}.', finalWrong:'Pregunta final fallada. Pasa el turno a {n}.',
+  wrongPass:'Incorrecta. Pasa el turno a {n}.', finalWrong:'Prueba final no superada (aciertos: {a} de {t}). Pasa el turno a {n}; volverá a intentarlo en su turno.',
   wedges:'Quesitos', sec:'s', defName:'Equipo',
   nextHint:'Siguiente pista', guess:'Adivina el concepto', hintsUsed:'Pistas usadas',
   timerNote:'El tiempo se ajusta al tipo de pregunta:'
@@ -1573,7 +1586,8 @@ function posOf(i){
   return [1, 8 - (i - 35)];
 }
 
-let cfg = {courses:'mix', teams:3, names:[], timer:30, goal:3};
+let cfg = {courses:'mix', teams:3, names:[], timer:30, goal:6};
+const FIN_N = 6, FIN_OK = 4;   // prova final: 6 preguntes (una per matèria), cal encertar-ne 4
 let S = null;
 
 /* ---------- utilitats ---------- */
@@ -1675,13 +1689,15 @@ function pick(i){
   startQuestion(draw(cells[i].b));
   renderAll();
 }
-function pickFinal(b){
+function startFinal(){
   if (!S || S.phase !== 'roll') return;
   S.undo = null;
   S.finalMode = true; S.msg = null;
-  startQuestion(draw(b));
+  S.fin = {order: shuffle([0,1,2,3,4,5]), res: []};
+  startQuestion(draw(S.fin.order[0]));
   renderAll();
 }
+const finCount = () => { const r = S.fin ? S.fin.res : []; return {a: r.filter(Boolean).length, e: r.filter(x => !x).length}; };
 function showAnswer(){
   if (!S || S.phase !== 'question' || S.showAns) return;
   if (S.qTime > 0) S.tFrozen = Math.max(0, S.tEnd - Date.now());
@@ -1701,16 +1717,22 @@ function skipQ(){
 }
 function nextTeam(){
   S.cur = (S.cur + 1) % S.teams.length;
-  S.phase = 'roll'; S.finalMode = false; S.die = 0; S.q = null;
+  S.phase = 'roll'; S.finalMode = false; S.fin = null; S.die = 0; S.q = null;
 }
 function judge(ok){
   if (!S || S.phase !== 'question' || !S.showAns) return;
   const tm = S.teams[S.cur];
   { const { deck, undo, ...snap } = S; S.undo = JSON.stringify(snap); }
   if (S.finalMode) {
-    if (ok) { S.phase = 'won'; renderAll(); showWin(); return; }
-    nextTeam();
-    S.msg = t('finalWrong', {n: S.teams[S.cur].name}); S.msgBad = true;
+    S.fin.res.push(ok);
+    const {a, e} = finCount();
+    if (a >= FIN_OK) { S.phase = 'won'; renderAll(); showWin(); return; }
+    if (e > FIN_N - FIN_OK) {   // ja no pot arribar als encerts necessaris
+      nextTeam();
+      S.msg = t('finalWrong', {n: S.teams[S.cur].name, a, t: FIN_N}); S.msgBad = true;
+    } else {
+      startQuestion(draw(S.fin.order[S.fin.res.length]));
+    }
   } else if (ok) {
     const c = cells[tm.pos];
     if (c.hub && !tm.w[c.b]) { tm.w[c.b] = true; S.msg = t('gotwedge', {b: bn(c.b)}); }
@@ -1733,7 +1755,7 @@ function undoJudge(){
 function showWin(){
   const tm = S.teams[S.cur];
   const w = $('win');
-  w.innerHTML = `<div class="sc win"><div style="font-size:4em">🏆</div><h1 style="color:${tm.color}">${esc(t('won', {n: tm.name}))}</h1><p>${t('wonSub')}</p><button class="big" onclick="newGame()">${t('newgame')}</button> <button class="small ghost" onclick="undoJudge()">↶ ${t('undo')}</button></div>`;
+  w.innerHTML = `<div class="sc win"><div style="font-size:4em">🏆</div><h1 style="color:${tm.color}">${esc(t('won', {n: tm.name}))}</h1><p>${t('wonSub', {a: finCount().a})}</p><button class="big" onclick="newGame()">${t('newgame')}</button> <button class="small ghost" onclick="undoJudge()">↶ ${t('undo')}</button></div>`;
   w.classList.remove('hidden');
   for (let i = 0; i < 40; i++) {
     const e = document.createElement('div');
@@ -1806,8 +1828,9 @@ function renderPanel(){
 
   if (S.phase === 'roll') {
     if (hasAll(tm)) {
-      h += `<h2 style="margin:0">🏁 ${t('final')}</h2><p style="margin:0;color:var(--muted)">${t('finalHelp')}</p>
-        <div class="final">` + BR.map((b, i) => `<button style="background:${b.color};color:${b.fg}" onclick="pickFinal(${i})">${ico(i, 26)} ${esc(b.n[lang])}</button>`).join('') + `</div>`;
+      h += `<div class="fintro"><h2 style="margin:0">🏁 ${t('final')}</h2><p style="margin:0;color:var(--muted)">${t('finalHelp', {n: FIN_N, k: FIN_OK})}</p>
+        <div class="fprog">` + BR.map((b, i) => `<span class="fp" style="background:${b.color};color:${b.fg}" title="${esc(b.n[lang])}">${ico(i, 26)}</span>`).join('') + `</div>
+        <button class="big" onclick="startFinal()">🏁 ${t('finalGo')}</button></div>`;
     } else {
       h += `<button class="big" onclick="roll()">🎲 ${t('roll')}</button>`;
     }
@@ -1820,7 +1843,7 @@ function renderPanel(){
   } else if (S.phase === 'question' && S.q) {
     const q = S.q, qd = BANK[BR[q.b].id][q.c][q.i], d = qd[lang], tp = TIPOS[qd.t];
     const c = cells[tm.pos], LET = 'ABCD';
-    const flag = S.finalMode ? `🏁 ${t('final')}` : (c.hub && !tm.w[c.b] ? t('hubHint') : '');
+    const flag = S.finalMode ? `🏁 ${t('final')} ${S.fin.res.length + 1}/${FIN_N}` : (c.hub && !tm.w[c.b] ? t('hubHint') : '');
     let body, ansTxt = d.a;
     if (qd.t === 'test') {
       body = `<div class="qtext">${esc(d.q)}</div><div class="opts">` + S.perm.map((k, j) => {
@@ -1842,10 +1865,20 @@ function renderPanel(){
         <div class="row2"><button class="big btn-ok" onclick="judge(true)">✔ ${t('ok')}</button><button class="big btn-ko" onclick="judge(false)">✘ ${t('ko')}</button></div>`;
     } else {
       ctrl = (qd.t === 'pistas' && S.hint < d.p.length ? `<button class="big btn-hint" onclick="nextHint()">💡 ${t('nextHint')} (${S.hint}/${d.p.length})</button>` : '') +
-        `<button class="big" onclick="showAnswer()">👁 ${t('show')}</button><button class="ghost small" onclick="skipQ()">⟳ ${t('skip')}</button>`;
+        `<button class="big" onclick="showAnswer()">👁 ${t('show')}</button><button class="ghost small" onclick="skipQ()">⟳ ${t('skip')}</button>` +
+        (S.finalMode && S.undo && S.fin.res.length ? `<button class="ghost small" onclick="undoJudge()">↶ ${t('undo')}</button>` : '');
+    }
+    let fprog = '';
+    if (S.finalMode) {
+      const {a, e} = finCount();
+      fprog = `<div class="fprog">` + S.fin.order.map((b, j) => {
+        const r = S.fin.res[j], st = r === true ? ' ok' : r === false ? ' ko' : j === S.fin.res.length ? ' cur' : '';
+        return `<span class="fp${st}" style="background:${BR[b].color};color:${BR[b].fg}" title="${esc(bn(b))}">${ico(b, 22)}${r === true ? '<i>✔</i>' : r === false ? '<i>✘</i>' : ''}</span>`;
+      }).join('') + `<span class="fsum">${t('finalSum', {a, e})}</span></div>`;
     }
     h += `<div class="qcard" style="--bc:${BR[q.b].color};--bf:${BR[q.b].fg}">
       <div class="qhead"><span class="bico">${ico(q.b, 34)}</span><span class="bname">${esc(bn(q.b))}</span><span class="tchip">${tp.icon} ${esc(tp.n[lang])}</span><span class="crs">${crsLabel(q.c)}</span>${flag ? `<span class="flag">${flag}</span>` : ''}</div>
+      ${fprog}
       ${body}
       <div class="grow"></div>
       ${S.qTime > 0 ? `<div class="timer"><div id="tbar"></div><span id="tnum"></span></div>` : ''}
