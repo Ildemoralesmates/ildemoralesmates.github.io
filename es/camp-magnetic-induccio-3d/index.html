@@ -1,0 +1,1572 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campo magnético e inducción en 3D: hilos, la Tierra y Faraday-Lenz — simulador interactivo</title>
+<meta name="description" content="Tres escenas 3D que se pueden girar para Física de 2.º de Bachillerato: campo de dos hilos paralelos (suma vectorial, punto de campo nulo y fuerza entre hilos), la Tierra como imán (polos magnéticos, líneas de campo e inclinación de la brújula) y una espira que atraviesa un campo con las gráficas de Φ(t) y ε(t) (Faraday y Lenz). Paso a paso y con actividades para razonar.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/camp-magnetic-induccio-3d/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/camp-magnetic-induccio-3d/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/camp-magnetic-induccio-3d/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/camp-magnetic-induccio-3d/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Campo magnético e inducción en 3D: hilos, la Tierra y Faraday-Lenz — simulador interactivo">
+<meta property="og:description" content="Tres escenas 3D que se pueden girar para Física de 2.º de Bachillerato: campo de dos hilos paralelos (suma vectorial, punto de campo nulo y fuerza entre hilos), la Tierra como imán (polos magnéticos, líneas de campo e inclinación de la brújula) y una espira que atraviesa un campo con las gráficas de Φ(t) y ε(t) (Faraday y Lenz). Paso a paso y con actividades para razonar.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/camp-magnetic-induccio-3d/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.stage svg{display:block;width:100%;height:auto}
+.stage svg text{font-family:var(--f-num);font-size:10.5px;fill:var(--muted)}
+#svg{touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#svg.rot{cursor:grabbing}
+#hP{touch-action:none;cursor:move}
+#gsvg{border-top:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.swatch{width:14px;height:3px;display:inline-block;border-radius:2px}
+.ctls{display:grid;gap:6px;padding:2px 4px}
+.grp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px}
+@media (max-width:620px){.grp{grid-template-columns:1fr}}
+.grp .span{grid-column:1/-1}
+.checks{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:4px 18px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+#stepMsg{margin:0}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Campo magnético e inducción · Bachillerato</p>
+      <h1 data-i18n="h1">🧲 Campo magnético e inducción en 3D</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Tres escenas que puedes girar: el campo de dos hilos paralelos, la Tierra como imán y una espira que atraviesa un campo (Faraday y Lenz). Avanza paso a paso y mira los vectores en el espacio.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="seg tabs" id="scsw" role="group" data-i18n-aria="aria.sc" aria-label="Escena"><button type="button" data-s="w" aria-pressed="true" data-i18n="sc_w">Dos hilos paralelos</button><button type="button" data-s="e" aria-pressed="false" data-i18n="sc_e">🌍 La Tierra como imán</button><button type="button" data-s="i" aria-pressed="false" data-i18n="sc_i">⚡ Inducción: espira y campo</button></div>
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 600 340" role="img" data-i18n-aria="aria.svg" aria-label="Escena 3D que se puede girar: dos hilos con los vectores de campo magnético en un punto P, la Tierra con las líneas de campo y una brújula, o una espira que atraviesa una región con campo"><g id="dyn"></g><circle id="hP" cx="0" cy="0" r="20" fill="transparent"/></svg><svg id="gsvg" viewBox="0 0 600 152" role="img" data-i18n-aria="aria.g" aria-label="Gráficas sincronizadas del flujo y de la fem inducida en función del tiempo" hidden></svg></div>
+<div class="legend" id="lgW">
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="lg_b1">B₁ (hilo 1)</span></span>
+<span><span class="swatch" style="background:var(--pb)"></span><span data-i18n="lg_b2">B₂ (hilo 2)</span></span>
+<span><span class="swatch" style="background:var(--ok)"></span><span data-i18n="lg_b">B total</span></span>
+<span><span class="swatch" style="background:var(--warn)"></span><span data-i18n="lg_f">fuerza entre los hilos</span></span>
+</div>
+<div class="legend" id="lgE" hidden>
+<span><span class="swatch" style="background:var(--pb)"></span><span data-i18n="lg_n">polo norte (imán y aguja)</span></span>
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="lg_s">polo sur</span></span>
+<span><span class="swatch" style="background:var(--muted)"></span><span data-i18n="lg_l">líneas de campo</span></span>
+</div>
+<div class="legend" id="lgI" hidden>
+<span><span class="swatch" style="background:var(--pa)"></span><span data-i18n="i_lg_phi">flujo Φ</span></span>
+<span><span class="swatch" style="background:var(--pb)"></span><span data-i18n="i_lg_e">fem ε y corriente inducida</span></span>
+<span><span class="swatch" style="background:var(--ok)"></span><span data-i18n="i_lg_v">velocidad v</span></span>
+<span><span class="swatch" style="background:var(--warn)"></span><span data-i18n="i_lg_f">fuerza magnética sobre la espira</span></span>
+</div>
+<div class="ctls">
+<div class="btns"><button class="btn primary" id="btnStep" type="button" data-i18n="step">Paso siguiente ▶</button><button class="btn" id="btnPlay" type="button" hidden></button><button class="btn" id="btnAll" type="button" data-i18n="all">Muéstralo todo</button><button class="btn" id="btnReset" type="button" data-i18n="reset">↺ Paso 1</button><span class="pill" id="stepN"></span>
+<div class="seg" id="vw" role="group" data-i18n-aria="aria.vw" aria-label="Punto de vista"><button type="button" data-v="3d" aria-pressed="true" data-i18n="v3d">Vista 3D</button><button type="button" data-v="top" aria-pressed="false" data-i18n="vtop">Desde arriba</button></div></div>
+<div class="grp" id="ctW">
+<div class="ctl"><label for="i1" data-i18n="l_i1">Corriente I₁</label><output id="i1L"></output><input type="range" id="i1" min="0" max="20" step="0.5" value="10"></div>
+<div class="ctl"><label for="i2" data-i18n="l_i2">Corriente I₂</label><output id="i2L"></output><input type="range" id="i2" min="0" max="20" step="0.5" value="10"></div>
+<div class="ctl"><label for="dd" data-i18n="l_d">Distancia d entre los hilos</label><output id="ddL"></output><input type="range" id="dd" min="2" max="20" step="1" value="10"></div>
+<div class="ctl"><label data-i18n="l_s1">Sentido de I₁</label><div class="seg" id="sw1" role="group" style="grid-column:1/-1"><button type="button" data-d="1" aria-pressed="true" data-i18n="dir_out">⊙ hacia arriba</button><button type="button" data-d="-1" aria-pressed="false" data-i18n="dir_in">⊗ hacia abajo</button></div></div>
+<div class="ctl"><label data-i18n="l_s2">Sentido de I₂</label><div class="seg" id="sw2" role="group" style="grid-column:1/-1"><button type="button" data-d="1" aria-pressed="true" data-i18n="dir_out">⊙ hacia arriba</button><button type="button" data-d="-1" aria-pressed="false" data-i18n="dir_in">⊗ hacia abajo</button></div></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="line"><span data-i18n="c_line">Fija P en la recta que une los hilos</span></label>
+<label class="check"><input type="checkbox" id="ndl" checked><span data-i18n="c_ndl">Muestra el campo total con agujas (desde el paso 3)</span></label>
+</div>
+</div>
+<div class="grp" id="ctE" hidden>
+<div class="ctl span"><label for="lam" data-i18n="l_lam">Latitud magnética λ de la brújula</label><output id="lamL"></output><input type="range" id="lam" min="-90" max="90" step="1" value="40"></div>
+</div>
+<div class="grp" id="ctI" hidden>
+<div class="ctl span"><label for="tau" data-i18n="i_l_t">Tiempo</label><output id="tauL"></output><input type="range" id="tau" min="0" max="1" step="0.002" value="0"></div>
+<div class="ctl"><label for="bf" data-i18n="i_l_B">Campo magnético B</label><output id="bfL"></output><input type="range" id="bf" min="0.1" max="1" step="0.05" value="0.5"></div>
+<div class="ctl"><label for="vv" data-i18n="i_l_v">Velocidad v</label><output id="vvL"></output><input type="range" id="vv" min="0.5" max="5" step="0.5" value="2"></div>
+<div class="ctl"><label for="rr" data-i18n="i_l_R">Resistencia R</label><output id="rrL"></output><input type="range" id="rr" min="0.5" max="10" step="0.5" value="2"></div>
+<div class="ctl"><label for="aa" data-i18n="i_l_a">Largo de la espira a (en el sentido de v)</label><output id="aaL"></output><input type="range" id="aa" min="5" max="20" step="1" value="10"></div>
+<div class="ctl"><label for="bb" data-i18n="i_l_b">Alto de la espira b</label><output id="bbL"></output><input type="range" id="bb" min="4" max="14" step="1" value="10"></div>
+<div class="ctl"><label for="nn" data-i18n="i_l_N">Número de vueltas N</label><output id="nnL"></output><input type="range" id="nn" min="1" max="20" step="1" value="1"></div>
+<div class="ctl"><label data-i18n="i_l_dir">Sentido de B</label><div class="seg" id="dirsw" role="group" style="grid-column:1/-1"><button type="button" data-d="-1" aria-pressed="true" data-i18n="i_dir_in">⊗ hacia abajo</button><button type="button" data-d="1" aria-pressed="false" data-i18n="i_dir_out">⊙ hacia arriba</button></div></div>
+<div class="checks">
+<label class="check"><input type="checkbox" id="cur" checked><span data-i18n="i_c_cur">Muestra la corriente inducida, su campo y la fuerza</span></label>
+</div>
+</div>
+</div>
+</div>
+<div class="side">
+<p class="sh" data-i18n="s_step">Paso a paso</p>
+<p class="idea" id="stepMsg" aria-live="polite"></p>
+<p class="sh" data-i18n="s_live">En directo</p>
+<dl class="vals" id="readout"></dl>
+<p class="sh" data-i18n="s_res">Resultados</p>
+<dl class="vals" id="results"></dl>
+<p class="note" id="note"></p>
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Camp magnètic i inducció en 3D: fils, la Terra i Faraday-Lenz — simulador interactiu",
+"eyebrow":"Camp magnètic i inducció · Batxillerat",
+"h1":"🧲 Camp magnètic i inducció en 3D",
+"lede":"Tres escenes que pots girar: el camp de dos fils paral·lels, la Terra com a imant i una espira que travessa un camp (Faraday i Lenz). Avança pas a pas i mira els vectors en l'espai.",
+"aria.svg":"Escena 3D que es pot girar: dos fils amb els vectors de camp magnètic en un punt P, la Terra amb les línies de camp i una brúixola, o una espira que travessa una regió amb camp",
+"aria.sc":"Escena",
+"sc_w":"Dos fils paral·lels",
+"sc_e":"🌍 La Terra com a imant",
+"step":"Pas següent ▶",
+"all":"Mostra-ho tot",
+"reset":"↺ Pas 1",
+"stepn":"Pas {0} de {1}",
+"lg_b1":"B₁ (fil 1)",
+"lg_b2":"B₂ (fil 2)",
+"lg_b":"B total",
+"lg_f":"força entre els fils",
+"lg_n":"pol nord (imant i agulla)",
+"lg_s":"pol sud",
+"lg_l":"línies de camp",
+"l_i1":"Corrent I₁",
+"l_i2":"Corrent I₂",
+"l_d":"Distància d entre els fils",
+"l_s1":"Sentit de I₁",
+"l_s2":"Sentit de I₂",
+"dir_out":"⊙ cap amunt",
+"dir_in":"⊗ cap avall",
+"c_line":"Fixa P a la recta que uneix els fils",
+"c_ndl":"Mostra el camp total amb agulles (des del pas 3)",
+"l_lam":"Latitud magnètica λ de la brúixola",
+"s_step":"Pas a pas",
+"s_live":"En directe",
+"s_res":"Resultats",
+"wait":"· · ·",
+"rd_P":"Punt P (x; y)",
+"rd_r1":"r₁ (distància al fil 1)",
+"rd_r2":"r₂ (distància al fil 2)",
+"rd_b1":"B₁",
+"rd_b2":"B₂",
+"rd_b":"|B| total",
+"rd_ang":"Direcció de B (des de l'eix dels fils)",
+"r_nul":"Punt de camp nul",
+"r_F":"Força per metre F/L",
+"nul_in":"a {0} cm del fil 1, entre els fils",
+"nul_out":"a {0} cm del fil {1}, fora del segment",
+"nul_no":"no n'hi ha",
+"attr":"s'atrauen",
+"rep":"es repel·leixen",
+"lbl_nul":"B = 0",
+"w1":"<b>Fil 1.</b> B₁ = μ₀·I₁/(2π·r₁) = {0}. Està contingut en el pla perpendicular al fil i és tangent a la circumferència centrada en ell: polze en el sentit del corrent i els dits donen el gir (regla de la mà dreta).",
+"w2":"<b>Fil 2.</b> El mateix amb l'altre fil: B₂ = μ₀·I₂/(2π·r₂) = {0}. Cada camp és perpendicular al seu radi.",
+"w3":"<b>Suma vectorial.</b> B = B₁ + B₂, amb la regla del paral·lelogram: |B| = {0}. Els mòduls només se sumen (o es resten) si els dos vectors són paral·lels.",
+"w4_in":"<b>Camp nul.</b> Corrents del mateix sentit: els camps s'oposen <i>entre</i> els fils. I₁/x = I₂/(d − x) → x = {0} cm des del fil 1.",
+"w4_out":"<b>Camp nul.</b> Sentits contraris: entre els fils els camps se sumen; s'anul·len <i>fora</i>, al costat del corrent menor, a {0} cm del fil {1}.",
+"w4_eq":"<b>Camp nul.</b> Sentits contraris i corrents iguals: fora del segment sempre guanya el fil més pròxim. El camp no s'anul·la enlloc.",
+"w4_one":"<b>Camp nul.</b> Amb un sol corrent no hi ha res que el compense: el camp no s'anul·la en cap punt.",
+"w5":"<b>Força entre els fils.</b> Cada fil està dins del camp de l'altre: F/L = μ₀·I₁·I₂/(2π·d) = {0}. Ací {1}; les dues forces són iguals i oposades.",
+"w5_0":"<b>Força entre els fils.</b> Si un dels corrents és zero, no hi ha força: F/L = μ₀·I₁·I₂/(2π·d) = 0.",
+"note_w":"Arrossega el fons per a girar la vista i el punt P per a moure'l pel pla. Vist des de dalt, un corrent cap amunt es veu ⊙ i un cap avall, ⊗. Si els vectors no caben, es redueixen tots en la mateixa proporció. μ₀ = 4π·10⁻⁷ T·m/A.",
+"rd_lam":"Latitud magnètica λ",
+"rd_I":"Inclinació I de l'agulla",
+"rd_B":"|B| a la superfície",
+"rd_H":"Component horitzontal",
+"rd_Z":"Component vertical",
+"r_eq":"B a l'equador magnètic",
+"r_pol":"B als pols magnètics",
+"r_tilt":"Eix magnètic respecte del de rotació",
+"down":"cap avall",
+"up":"cap amunt",
+"horiz":"horitzontal",
+"e_gn":"N geogràfic",
+"e_gs":"S geogràfic",
+"e_mn":"«pol nord magnètic»",
+"e_ms":"«pol sud magnètic»",
+"t1":"<b>La brúixola.</b> L'agulla és un imant xicotet. El seu pol nord (taronja) apunta, més o menys, cap al nord geogràfic. Canvia la latitud i gira la Terra arrossegant.",
+"t2":"<b>El camp de la Terra.</b> S'assembla al d'un imant de barra (un dipol) inclinat uns 10° respecte de l'eix de rotació. Les línies ixen prop del sud geogràfic i entren prop del nord.",
+"t3":"<b>Quin pol hi ha al nord?</b> Pols oposats s'atrauen: si el nord de l'agulla va cap al nord geogràfic, allí hi ha un pol <b>sud</b> magnètic. El «pol nord magnètic» dels mapes és, físicament, el pol sud de l'imant terrestre.",
+"t4":"<b>Inclinació.</b> L'agulla segueix la línia de camp: horitzontal a l'equador magnètic, vertical als pols. tan I = 2·tan λ → ací I = {0} i |B| = {1}.",
+"note_e":"Arrossega per a girar la Terra. Model de dipol amb B = 31 µT a l'equador magnètic; el camp real és més irregular. Els pols magnètics es mouen desenes de quilòmetres cada any i s'han invertit moltes vegades: l'última, fa uns 780 000 anys.",
+"rng":"Escriu un valor dins del rang del simulador.",
+"f_B":"B",
+"f_x":"x",
+"f_F":"F/L",
+"f_I2":"I₂",
+"m1.q":"Un sol fil recte porta un corrent de 10 A. Calcula el <b>camp magnètic</b> (en µT) a 5 cm del fil.",
+"m1_f":"{0} µT no és el valor. B = μ₀·I/(2π·r), amb r en metres (5 cm = 0,05 m) i 1 µT = 10⁻⁶ T.",
+"m1_ok":"✔ Missió complida! B = 4π·10⁻⁷·10/(2π·0,05) = 4·10⁻⁵ T = 40 µT.",
+"m1.more":"Si ens allunyem al doble de distància, el camp passa a ser la meitat o la quarta part? Comprova-ho movent P.",
+"m2.q":"Dos fils separats 10 cm porten 10 A cadascun en <b>sentits contraris</b>. Calcula el camp total (en µT) en el <b>punt mitjà</b>.",
+"m2_0":"No s'anul·len: amb sentits contraris, al mig els dos camps apunten cap al mateix costat. Aplica la regla de la mà dreta a cada fil.",
+"m2_f":"{0} µT no és el valor. Cada fil crea 40 µT al punt mitjà; mira si se sumen o es resten.",
+"m2_ok":"✔ Missió complida! Al mig, B₁ i B₂ tenen el mateix sentit: B = 40 + 40 = 80 µT.",
+"m2.more":"I si els corrents tingueren el mateix sentit? Quant valdria el camp al punt mitjà? Canvia el sentit de I₂ i mira-ho.",
+"m3.q":"Dos fils separats 20 cm porten I₁ = 5 A i I₂ = 15 A en el <b>mateix sentit</b>. A quina distància <b>del fil 1</b> (en cm) s'anul·la el camp?",
+"m3_f":"A {0} cm del fil 1 el camp no és zero. Iguala els mòduls: I₁/x = I₂/(d − x).",
+"m3_ok":"✔ Missió complida! 5/x = 15/(20 − x) → x = 5 cm: el punt nul és més a prop del corrent menor.",
+"m3.more":"Per què el punt de camp nul sempre queda més a prop del fil amb menys corrent? Raona-ho sense fer números.",
+"m4.q":"Dos fils paral·lels separats 10 cm porten 10 A i 20 A. Calcula la <b>força per metre</b> entre ells (en mN/m).",
+"m4_f":"{0} mN/m no és el valor. F/L = μ₀·I₁·I₂/(2π·d), amb d en metres; 1 mN = 10⁻³ N.",
+"m4_ok":"✔ Missió complida! F/L = 4π·10⁻⁷·10·20/(2π·0,1) = 4·10⁻⁴ N/m = 0,4 mN/m.",
+"m4.more":"Quin dels dos fils rep més força, el de 10 A o el de 20 A? Pensa en la tercera llei de Newton abans de mirar el dibuix.",
+"s1.q":"Dos fils paral·lels amb corrents del mateix sentit s'atrauen.",
+"s1.h":"Ves al pas 5 i canvia els sentits dels corrents.",
+"s1.e":"Sempre. El fil 2 està dins del camp del fil 1 i F = I·L×B apunta cap al fil 1 (i a l'inrevés). Compte: és al contrari que les càrregues elèctriques, on els signes iguals es repel·leixen.",
+"s2.q":"Amb I₁ = 10 A cap amunt, hi ha un punt <b>entre</b> els dos fils on el camp total és zero.",
+"s2.h":"Prova els dos sentits de I₂ i mira on apareix el punt B = 0.",
+"s2.e":"De vegades. Només si I₂ té el mateix sentit que I₁: llavors entre els fils els camps s'oposen. Amb sentits contraris, entre els fils se sumen.",
+"s2.cxq":"I₂ (negatiu = cap avall)",
+"s2_cx_no":"Amb I₂ = {0} A (mateix sentit que I₁) sí que hi ha un punt nul entre els fils. Busca un cas on no n'hi haja.",
+"s2_cx":"✔ Amb I₂ = {0} A (sentit contrari), entre els fils els dos camps apunten cap al mateix costat i no es poden anul·lar.",
+"s3.q":"Si dupliquem la distància a un fil recte, el camp magnètic es redueix a la quarta part.",
+"s3.h":"Deixa un sol corrent i compara B a 5 cm i a 10 cm.",
+"s3.e":"Mai. Per a un fil recte B = μ₀·I/(2π·r) és inversament proporcional a r: al doble de distància, la meitat de camp. El quadrat de la distància és cosa de la llei de Coulomb.",
+"s4.q":"El camp creat per un fil recte en un punt és perpendicular a la recta que uneix el punt amb el fil.",
+"s4.h":"Mira l'angle entre el radi (línia de punts) i el vector B₁ mentre mous P.",
+"s4.e":"Sempre. Les línies de camp d'un fil recte són circumferències centrades al fil, i el camp és tangent a elles: perpendicular al radi.",
+"s5.q":"El pol nord de l'agulla d'una brúixola apunta cap a un pol sud magnètic.",
+"s5.h":"Ves a l'escena de la Terra i avança fins al pas 3.",
+"s5.e":"Sempre. Pols de nom contrari s'atrauen. Per això, prop del nord geogràfic, la Terra té un pol sud magnètic, encara que els mapes l'anomenen «pol nord magnètic».",
+"s6.q":"L'agulla d'una brúixola que pot girar lliurement en vertical queda horitzontal.",
+"s6.h":"Mou la brúixola des de l'equador magnètic fins a un pol i mira la inclinació.",
+"s6.e":"De vegades. Només a l'equador magnètic (λ = 0°). A qualsevol altra latitud l'agulla s'inclina, i als pols magnètics queda vertical.",
+"s6.cxq":"λ",
+"s6_cx_no":"A λ = {0}° l'agulla queda horitzontal. Busca una latitud on no ho estiga.",
+"s6_cx":"✔ A λ = {0}° la inclinació és de {1}°: l'agulla no queda horitzontal.",
+"e1.ctx":"Dos fils paral·lels porten corrents iguals en sentits contraris. Es discuteix quant val el camp en el punt mitjà.",
+"e1.n0":"Pau",
+"e1.n1":"Aina",
+"e1.s0":"Com els corrents són contraris, els camps també ho són i al mig s'anul·len.",
+"e1.s1":"Al mig els dos camps apunten cap al mateix costat i se sumen: el camp és el doble del d'un fil.",
+"e1.w0":"El sentit de cada camp depén del sentit del corrent i del costat del fil on és el punt. Al mig, el punt queda a la dreta d'un fil i a l'esquerra de l'altre: els dos canvis es compensen i els camps tenen el mateix sentit.",
+"e1.w1":"Perquè el camp magnètic sempre és positiu i no es pot restar.",
+"e1.w2":"Perquè al punt mitjà la distància als dos fils és zero.",
+"e1.frame":"Pau, al punt mitjà els camps no s'anul·len perquè…",
+"e1.model":"Pau, aplica la regla de la mà dreta a cada fil: el camp gira en sentits contraris al voltant de cadascun, però el punt mitjà queda a costats oposats dels dos fils. Sentit de gir contrari i costat contrari donen vectors iguals: B = 2·μ₀·I/(2π·d/2). S'anul·larien al mig si els corrents tingueren el mateix sentit.",
+"e2.ctx":"Dos fils paral·lels porten 5 A i 20 A. Es discuteix quina força rep cadascun.",
+"e2.n1":"Marc",
+"e2.n0":"Clara",
+"e2.s1":"El fil de 20 A crea més camp, així que espenta el de 5 A amb més força que no al revés.",
+"e2.s0":"Els dos fils reben la mateixa força, encara que els corrents siguen diferents.",
+"e2.w0":"La força sobre cada fil és (camp de l'altre) × (corrent propi): en els dos casos ix F/L = μ₀·I₁·I₂/(2π·d). A més, és un parell d'acció i reacció.",
+"e2.w1":"Perquè la força magnètica no depén dels corrents, només de la distància.",
+"e2.w2":"Perquè el fil de 5 A és més lleuger i es compensa.",
+"e2.frame":"Marc, les dues forces són iguals perquè…",
+"e2.model":"Marc, és veritat que el fil de 20 A crea un camp quatre vegades major, però actua sobre un corrent quatre vegades menor. Sobre el fil 1: F = I₁·L·B₂; sobre el fil 2: F = I₂·L·B₁. Les dues valen μ₀·I₁·I₂·L/(2π·d): tercera llei de Newton.",
+"e3.ctx":"L'agulla d'una brúixola apunta amb el seu pol nord cap al nord geogràfic de la Terra. Es discuteix quin pol magnètic hi ha allí.",
+"e3.n0":"Pau",
+"e3.n1":"Aina",
+"e3.s0":"Al nord geogràfic hi ha el pol nord de l'imant terrestre, per això es diu pol nord magnètic.",
+"e3.s1":"Prop del nord geogràfic hi ha el pol sud de l'imant terrestre.",
+"e3.w0":"Els pols del mateix nom es repel·leixen i els de nom contrari s'atrauen: el que atrau el pol nord de l'agulla ha de ser un pol sud.",
+"e3.w1":"Perquè la brúixola apunta en sentit contrari al camp magnètic.",
+"e3.w2":"Perquè els pols magnètics i els geogràfics coincideixen exactament.",
+"e3.frame":"Pau, al nord geogràfic no pot haver-hi un pol nord magnètic perquè…",
+"e3.model":"Pau, el nom «pol nord magnètic» és geogràfic: és el punt de l'hemisferi nord cap on apunten les brúixoles. Però el nord de l'agulla només pot ser atret per un pol sud. Les línies de camp entren a la Terra per allí, com entren pel pol sud d'un imant de barra.",
+"d1.q":"El fil 1 porta 5 A i el fil 2, en el mateix sentit, està a 6 cm. Volem que el camp s'anul·le <b>a 2 cm del fil 1</b>. Tria el corrent I₂ i calcula la <b>força per metre</b> entre els fils (mN/m).",
+"d1.lc":"Corrent I₂:",
+"d1_p":"Amb I₂ = {0} A el camp s'anul·la a {1} cm del fil 1, no a 2 cm.",
+"d1_F":"El corrent és el bo, però la força no: F/L = μ₀·I₁·I₂/(2π·d) amb d = 0,06 m.",
+"d1_ok":"✔ Ben decidit! 5/2 = I₂/4 → I₂ = 10 A, i F/L = 4π·10⁻⁷·5·10/(2π·0,06) ≈ 0,17 mN/m.",
+"d1.more":"Si volguérem el punt nul exactament al mig, quina relació haurien de tindre els corrents? I just damunt d'un dels fils, seria possible?",
+"d2.q":"Una expedició vol mesurar el camp on l'agulla s'inclina <b>60°</b>. Tria la latitud magnètica on passa i digues el <b>mòdul del camp</b> allí (µT).",
+"d2.lc":"Latitud magnètica:",
+"d2_p":"A λ = {0}° la inclinació és de {1}°, no de 60°. Recorda: tan I = 2·tan λ.",
+"d2_B":"La latitud és la bona, però el camp no. Mira'l al simulador (pas 4).",
+"d2_ok":"✔ Ben decidit! tan 60° = 2·tan λ → λ ≈ 41°, i allí |B| ≈ 47 µT.",
+"d2.more":"A quina latitud magnètica la inclinació val 45°? És més o menys de 45°? Per què?",
+"i_title":"Inducció electromagnètica: espira que travessa un camp — Faraday i Lenz",
+"i_eyebrow":"Inducció electromagnètica · Batxillerat",
+"i_h1":"⚡ Espira que travessa un camp: Faraday i Lenz",
+"i_lede":"No hi ha fem perquè hi haja flux, sinó perquè el flux canvia. Fes passar l'espira per la regió amb camp, pas a pas, i mira alhora Φ(t), ε(t), el sentit del corrent i la força que la frena.",
+"i_aria.svg":"Espira rectangular que travessa una regió amb camp magnètic uniforme, amb les gràfiques sincronitzades del flux i de la fem induïda en funció del temps",
+"i_lg_phi":"flux Φ",
+"i_lg_e":"fem ε i corrent induït",
+"i_lg_v":"velocitat v",
+"i_lg_f":"força magnètica sobre l'espira",
+"i_step":"Fase següent ▶",
+"i_reset":"↺ Reiniciar",
+"i_play":"▶ Reproduir",
+"i_pause":"⏸ Pausa",
+"i_resume":"▶ Continua",
+"i_phn":"Fase {0} de 5",
+"i_l_t":"Temps",
+"i_l_B":"Camp magnètic B",
+"i_l_v":"Velocitat v",
+"i_l_R":"Resistència R",
+"i_l_a":"Llarg de l'espira a (en el sentit de v)",
+"i_l_b":"Alt de l'espira b",
+"i_l_N":"Nombre de voltes N",
+"i_l_dir":"Sentit de B",
+"i_dir_in":"⊗ cap avall",
+"i_dir_out":"⊙ cap amunt",
+"i_c_cur":"Mostra el corrent induït, el seu camp i la força",
+"i_s_step":"Què passa i per què",
+"i_s_live":"En directe",
+"i_s_res":"Resultats",
+"i_rd_t":"Temps t",
+"i_rd_S":"Àrea dins del camp",
+"i_rd_phi":"Flux Φ",
+"i_rd_e":"Fem ε",
+"i_rd_I":"Intensitat I",
+"i_rd_F":"Força de frenada",
+"i_rd_P":"Potència dissipada",
+"i_cw":"horari",
+"i_ccw":"antihorari",
+"i_no_I":"sense corrent",
+"i_r_e":"|ε| en entrar i en eixir",
+"i_r_I":"|I| màxima",
+"i_r_phi":"|Φ| màxim",
+"i_r_t":"Temps d'entrada a/v",
+"i_r_Q":"Calor total dissipada",
+"i_in":"cap avall",
+"i_out":"cap amunt",
+"i_p0":"<b>Encara és fora.</b> No hi ha flux i tampoc canvia: Φ = 0 i ε = 0.",
+"i_p1":"<b>Entra.</b> El flux {0} <b>augmenta</b>. Lenz: el corrent induït crea un camp {1} per a oposar-se a eixe augment → corrent <b>{2}</b>. |ε| = N·B·b·v = {3}.",
+"i_p2":"<b>Tota dins.</b> El flux és màxim, però <b>no canvia</b>: ε = 0 i I = 0. Tindre flux no és tindre fem.",
+"i_p3":"<b>Ix.</b> El flux {0} <b>disminueix</b>. Lenz: el camp induït ara va {0}, per a mantindre el flux que es perd → corrent <b>{1}</b>. La fem canvia de signe.",
+"i_p4":"<b>Ja és fora.</b> Φ = 0 i ε = 0. L'energia dissipada en la resistència ({0}) és el treball fet per a moure l'espira contra la força magnètica.",
+"i_gphi":"Φ (t)",
+"i_ge":"ε (t)",
+"i_lbl_B":"B",
+"i_lbl_Bi":"B induït",
+"i_note":"Arrossega per a girar la vista. Signes: Φ és positiu si B va cap amunt, i ε positiva vol dir corrent antihorari vist des de dalt. L'espira va a velocitat constant (algú l'estira). L'animació dura uns segons; el temps real és el del panell. La regió amb camp fa 30 cm d'ample.",
+"i_rng":"Escriu un valor dins del rang del simulador.",
+"i_f_e":"ε",
+"i_f_I":"I",
+"i_f_phi":"Φ",
+"i_f_v":"v",
+"i_f_t":"t",
+"i_f_F":"F",
+"m5.q":"Una espira d'una volta i 10 cm d'alt entra a 2 m/s en un camp de 0,5 T perpendicular a ella. Calcula la <b>fem induïda</b> (en V) mentre entra.",
+"m5_f":"{0} V no és el valor. Mentre entra, l'àrea dins del camp creix a raó de b·v: |ε| = N·B·b·v, amb b en metres.",
+"m5_ok":"✔ Missió complida! |ε| = 1·0,5·0,10·2 = 0,1 V.",
+"m5.more":"La fem depén del llarg a de l'espira? Canvia'l i mira què canvia a la gràfica i què no.",
+"m6.q":"La mateixa espira (ε = 0,1 V mentre entra) té una resistència de 2 Ω. Calcula la <b>intensitat</b> induïda (en mA).",
+"m6_f":"{0} mA no és el valor. Llei d'Ohm: I = ε/R; 1 A = 1000 mA.",
+"m6_ok":"✔ Missió complida! I = 0,1/2 = 0,05 A = 50 mA.",
+"m6.more":"Si l'espira fora d'un material amb el doble de resistència, canviaria la fem? I la intensitat? I la força de frenada?",
+"m7.q":"Una espira quadrada de 10 cm de costat i una volta està tota dins d'un camp de 0,5 T perpendicular a ella. Calcula el <b>flux</b> (en mWb).",
+"m7_f":"{0} mWb no és el valor. Φ = B·S amb S en m² (10 cm × 10 cm = 0,01 m²); 1 Wb = 1000 mWb.",
+"m7_ok":"✔ Missió complida! Φ = 0,5·0,01 = 0,005 Wb = 5 mWb.",
+"m7.more":"En eixe moment el flux és màxim. Quant val la fem? Per què?",
+"m8.q":"Una espira de 2 voltes i 10 cm d'alt entra en un camp de 0,5 T. A quina <b>velocitat</b> (m/s) ha d'anar perquè la fem induïda siga de 0,3 V?",
+"m8_f":"Amb v = {0} m/s la fem seria de {1} V. Aïlla v en |ε| = N·B·b·v.",
+"m8_ok":"✔ Missió complida! v = ε/(N·B·b) = 0,3/(2·0,5·0,10) = 3 m/s.",
+"m8.more":"Amb quina altra magnitud, a més de la velocitat, podries triplicar la fem sense tocar el camp?",
+"s7.q":"Mentre l'espira està totalment dins del camp uniforme hi ha corrent induït.",
+"s7.h":"Ves a la fase 3 i mira la gràfica de ε.",
+"s7.e":"Mai. Dins del camp uniforme el flux és constant; sense variació de flux no hi ha fem (ε = −dΦ/dt = 0) ni corrent.",
+"s8.q":"El corrent induït té el mateix sentit quan l'espira entra que quan ix.",
+"s8.h":"Compara les fases 2 i 4.",
+"s8.e":"Mai. En entrar el flux augmenta i en eixir disminueix: el corrent s'oposa a canvis contraris i, per tant, canvia de sentit.",
+"s9.q":"Si l'espira entra més de pressa, la fem induïda és més gran.",
+"s9.h":"Canvia v i mira l'altura dels esglaons de ε(t).",
+"s9.e":"Sempre. |ε| = N·B·b·v és proporcional a la velocitat: el flux canvia el mateix, però en menys temps.",
+"s10.q":"Si hi ha flux magnètic a través de l'espira, hi ha fem induïda.",
+"s10.h":"Busca un moment amb Φ ≠ 0 i ε = 0.",
+"s10.e":"De vegades. Només quan el flux canvia. Amb l'espira tota dins hi ha flux (i és el màxim) però la fem és zero.",
+"s10.cxq":"Amb a = 10 cm i v = 1 m/s, un instant t",
+"s10_cx_no":"En t = {0} s no val: o el flux és zero o la fem no ho és. Busca un instant amb l'espira tota dins.",
+"s10_cx":"✔ En t = {0} s l'espira està tota dins: Φ = 5 mWb i ε = 0.",
+"s11.q":"La força magnètica sobre l'espira va en contra del moviment, tant en entrar com en eixir.",
+"s11.h":"Mira la fletxa de la força en les fases 2 i 4.",
+"s11.e":"Sempre. És la llei de Lenz en versió mecànica: el corrent induït s'oposa a la causa que el produeix, que és el moviment. Si la força ajudara, l'espira s'acceleraria sola i tindríem energia de franc.",
+"s12.q":"La fem induïda depén de la resistència de l'espira.",
+"s12.h":"Canvia R i mira ε i I al panell.",
+"s12.e":"Mai. La fem la fixa la variació de flux (N·B·b·v). La resistència decideix quanta intensitat circula: I = ε/R.",
+"e4.ctx":"Una espira travessa una regió amb camp uniforme. Es discuteix en quin moment la fem induïda és màxima.",
+"e4.n0":"Pau",
+"e4.n1":"Aina",
+"e4.s0":"Com més flux, més fem: és màxima quan l'espira està tota dins del camp.",
+"e4.s1":"Quan està tota dins la fem és zero; només n'hi ha mentre entra i mentre ix.",
+"e4.w0":"La fem no depén del valor del flux sinó del ritme al qual canvia (ε = −dΦ/dt): amb l'espira tota dins, el flux és màxim però constant.",
+"e4.w1":"Perquè dins del camp les forces sobre els costats de l'espira es cancel·len.",
+"e4.w2":"Perquè el flux només existeix a les vores del camp.",
+"e4.frame":"Pau, quan l'espira està tota dins no hi ha fem perquè…",
+"e4.model":"Pau, mira les dues gràfiques alhora: la fem és el pendent (canviat de signe) de la gràfica del flux. On Φ puja o baixa hi ha esglaó de ε; on Φ és horitzontal, encara que siga al màxim, ε = 0.",
+"e5.ctx":"El camp va cap avall i l'espira hi està entrant. Es discuteix el sentit del camp creat pel corrent induït.",
+"e5.n0":"Marc",
+"e5.n1":"Clara",
+"e5.s0":"El corrent induït crea un camp cap avall, per a reforçar el camp que troba.",
+"e5.s1":"El corrent induït crea un camp cap amunt, i per això circula en sentit antihorari.",
+"e5.w0":"El flux cap avall està augmentant, i el corrent induït s'oposa a eixe augment creant un camp en sentit contrari (cap amunt); per la regla de la mà dreta, això és un corrent antihorari.",
+"e5.w1":"Perquè el corrent induït sempre és antihorari.",
+"e5.w2":"Perquè el camp induït sempre té el mateix sentit que el camp exterior.",
+"e5.frame":"Marc, el camp induït no pot reforçar l'augment de flux perquè…",
+"e5.model":"Marc, si el corrent induït reforçara l'augment de flux, eixe flux major induiria més corrent, que el reforçaria encara més: energia del no-res. Lenz diu el contrari: s'oposa al canvi. Flux cap avall que creix → camp induït cap amunt → corrent antihorari.",
+"e6.ctx":"El camp va cap avall i l'espira n'està eixint. Es discuteix el sentit del camp induït.",
+"e6.n1":"Pau",
+"e6.n0":"Clara",
+"e6.s1":"Cap a fora, com en entrar: Lenz diu que el camp induït sempre s'oposa al camp exterior.",
+"e6.s0":"Cap a dins: ara el flux disminueix i el corrent induït intenta mantindre'l.",
+"e6.w0":"La llei de Lenz parla d'oposar-se a la variació del flux, no al camp: si el flux cap avall disminueix, el camp induït va cap avall per a compensar la pèrdua.",
+"e6.w1":"Perquè en eixir el camp exterior canvia de sentit.",
+"e6.w2":"Perquè el corrent induït sempre té el sentit del moviment.",
+"e6.frame":"Pau, en eixir el camp induït no va cap amunt perquè…",
+"e6.model":"Pau, Lenz no s'oposa al camp sinó al canvi de flux. En entrar, el flux cap avall creixia i el camp induït anava cap amunt. En eixir, eixe flux minva, i el camp induït va cap avall per a sostindre'l: per això el corrent canvia de sentit i passa a ser horari.",
+"d3.q":"Vols usar l'espira com a <b>fre magnètic</b> i que la força de frenada siga la major possible (B = 0,5 T, b = 10 cm, v = 2 m/s, 1 volta). Tria la resistència i calcula la <b>força</b> (en mN).",
+"d3.lc":"Resistència:",
+"d3_p":"Amb R = {0} Ω la força és de {1} mN, però es pot frenar més.",
+"d3_F":"La resistència és la bona, però la força no: F = N·B·I·b, amb I = ε/R.",
+"d3_ok":"✔ Ben decidit! Menys resistència → més corrent → més força: I = 0,1/0,5 = 0,2 A i F = 0,5·0,2·0,10 = 0,01 N = 10 mN.",
+"d3.more":"Si doblem la velocitat, la força de frenada es dobla o es quadruplica? I la potència dissipada?",
+"aria.g":"Gràfiques sincronitzades del flux i de la fem induïda en funció del temps",
+"aria.vw":"Punt de vista",
+"sc_i":"⚡ Inducció: espira i camp",
+"v3d":"Vista 3D",
+"vtop":"Des de dalt"
+},
+es:{
+"title":"Campo magnético e inducción en 3D: hilos, la Tierra y Faraday-Lenz — simulador interactivo",
+"eyebrow":"Campo magnético e inducción · Bachillerato",
+"h1":"🧲 Campo magnético e inducción en 3D",
+"lede":"Tres escenas que puedes girar: el campo de dos hilos paralelos, la Tierra como imán y una espira que atraviesa un campo (Faraday y Lenz). Avanza paso a paso y mira los vectores en el espacio.",
+"aria.svg":"Escena 3D que se puede girar: dos hilos con los vectores de campo magnético en un punto P, la Tierra con las líneas de campo y una brújula, o una espira que atraviesa una región con campo",
+"aria.sc":"Escena",
+"sc_w":"Dos hilos paralelos",
+"sc_e":"🌍 La Tierra como imán",
+"step":"Paso siguiente ▶",
+"all":"Muéstralo todo",
+"reset":"↺ Paso 1",
+"stepn":"Paso {0} de {1}",
+"lg_b1":"B₁ (hilo 1)",
+"lg_b2":"B₂ (hilo 2)",
+"lg_b":"B total",
+"lg_f":"fuerza entre los hilos",
+"lg_n":"polo norte (imán y aguja)",
+"lg_s":"polo sur",
+"lg_l":"líneas de campo",
+"l_i1":"Corriente I₁",
+"l_i2":"Corriente I₂",
+"l_d":"Distancia d entre los hilos",
+"l_s1":"Sentido de I₁",
+"l_s2":"Sentido de I₂",
+"dir_out":"⊙ hacia arriba",
+"dir_in":"⊗ hacia abajo",
+"c_line":"Fija P en la recta que une los hilos",
+"c_ndl":"Muestra el campo total con agujas (desde el paso 3)",
+"l_lam":"Latitud magnética λ de la brújula",
+"s_step":"Paso a paso",
+"s_live":"En directo",
+"s_res":"Resultados",
+"wait":"· · ·",
+"rd_P":"Punto P (x; y)",
+"rd_r1":"r₁ (distancia al hilo 1)",
+"rd_r2":"r₂ (distancia al hilo 2)",
+"rd_b1":"B₁",
+"rd_b2":"B₂",
+"rd_b":"|B| total",
+"rd_ang":"Dirección de B (desde el eje de los hilos)",
+"r_nul":"Punto de campo nulo",
+"r_F":"Fuerza por metro F/L",
+"nul_in":"a {0} cm del hilo 1, entre los hilos",
+"nul_out":"a {0} cm del hilo {1}, fuera del segmento",
+"nul_no":"no lo hay",
+"attr":"se atraen",
+"rep":"se repelen",
+"lbl_nul":"B = 0",
+"w1":"<b>Hilo 1.</b> B₁ = μ₀·I₁/(2π·r₁) = {0}. Está contenido en el plano perpendicular al hilo y es tangente a la circunferencia centrada en él: pulgar en el sentido de la corriente y los dedos dan el giro (regla de la mano derecha).",
+"w2":"<b>Hilo 2.</b> Lo mismo con el otro hilo: B₂ = μ₀·I₂/(2π·r₂) = {0}. Cada campo es perpendicular a su radio.",
+"w3":"<b>Suma vectorial.</b> B = B₁ + B₂, con la regla del paralelogramo: |B| = {0}. Los módulos solo se suman (o se restan) si los dos vectores son paralelos.",
+"w4_in":"<b>Campo nulo.</b> Corrientes del mismo sentido: los campos se oponen <i>entre</i> los hilos. I₁/x = I₂/(d − x) → x = {0} cm desde el hilo 1.",
+"w4_out":"<b>Campo nulo.</b> Sentidos contrarios: entre los hilos los campos se suman; se anulan <i>fuera</i>, del lado de la corriente menor, a {0} cm del hilo {1}.",
+"w4_eq":"<b>Campo nulo.</b> Sentidos contrarios y corrientes iguales: fuera del segmento siempre gana el hilo más cercano. El campo no se anula en ningún sitio.",
+"w4_one":"<b>Campo nulo.</b> Con una sola corriente no hay nada que la compense: el campo no se anula en ningún punto.",
+"w5":"<b>Fuerza entre los hilos.</b> Cada hilo está dentro del campo del otro: F/L = μ₀·I₁·I₂/(2π·d) = {0}. Aquí {1}; las dos fuerzas son iguales y opuestas.",
+"w5_0":"<b>Fuerza entre los hilos.</b> Si una de las corrientes es cero, no hay fuerza: F/L = μ₀·I₁·I₂/(2π·d) = 0.",
+"note_w":"Arrastra el fondo para girar la vista y el punto P para moverlo por el plano. Visto desde arriba, una corriente hacia arriba se ve ⊙ y una hacia abajo, ⊗. Si los vectores no caben, se reducen todos en la misma proporción. μ₀ = 4π·10⁻⁷ T·m/A.",
+"rd_lam":"Latitud magnética λ",
+"rd_I":"Inclinación I de la aguja",
+"rd_B":"|B| en la superficie",
+"rd_H":"Componente horizontal",
+"rd_Z":"Componente vertical",
+"r_eq":"B en el ecuador magnético",
+"r_pol":"B en los polos magnéticos",
+"r_tilt":"Eje magnético respecto del de rotación",
+"down":"hacia abajo",
+"up":"hacia arriba",
+"horiz":"horizontal",
+"e_gn":"N geográfico",
+"e_gs":"S geográfico",
+"e_mn":"«polo norte magnético»",
+"e_ms":"«polo sur magnético»",
+"t1":"<b>La brújula.</b> La aguja es un imán pequeño. Su polo norte (naranja) apunta, más o menos, hacia el norte geográfico. Cambia la latitud y gira la Tierra arrastrando.",
+"t2":"<b>El campo de la Tierra.</b> Se parece al de un imán de barra (un dipolo) inclinado unos 10° respecto del eje de rotación. Las líneas salen cerca del sur geográfico y entran cerca del norte.",
+"t3":"<b>¿Qué polo hay en el norte?</b> Polos opuestos se atraen: si el norte de la aguja va hacia el norte geográfico, allí hay un polo <b>sur</b> magnético. El «polo norte magnético» de los mapas es, físicamente, el polo sur del imán terrestre.",
+"t4":"<b>Inclinación.</b> La aguja sigue la línea de campo: horizontal en el ecuador magnético, vertical en los polos. tan I = 2·tan λ → aquí I = {0} y |B| = {1}.",
+"note_e":"Arrastra para girar la Tierra. Modelo de dipolo con B = 31 µT en el ecuador magnético; el campo real es más irregular. Los polos magnéticos se mueven decenas de kilómetros cada año y se han invertido muchas veces: la última, hace unos 780 000 años.",
+"rng":"Escribe un valor dentro del rango del simulador.",
+"f_B":"B",
+"f_x":"x",
+"f_F":"F/L",
+"f_I2":"I₂",
+"m1.q":"Un solo hilo recto lleva una corriente de 10 A. Calcula el <b>campo magnético</b> (en µT) a 5 cm del hilo.",
+"m1_f":"{0} µT no es el valor. B = μ₀·I/(2π·r), con r en metros (5 cm = 0,05 m) y 1 µT = 10⁻⁶ T.",
+"m1_ok":"✔ ¡Misión cumplida! B = 4π·10⁻⁷·10/(2π·0,05) = 4·10⁻⁵ T = 40 µT.",
+"m1.more":"Si nos alejamos al doble de distancia, ¿el campo pasa a ser la mitad o la cuarta parte? Compruébalo moviendo P.",
+"m2.q":"Dos hilos separados 10 cm llevan 10 A cada uno en <b>sentidos contrarios</b>. Calcula el campo total (en µT) en el <b>punto medio</b>.",
+"m2_0":"No se anulan: con sentidos contrarios, en el medio los dos campos apuntan hacia el mismo lado. Aplica la regla de la mano derecha a cada hilo.",
+"m2_f":"{0} µT no es el valor. Cada hilo crea 40 µT en el punto medio; mira si se suman o se restan.",
+"m2_ok":"✔ ¡Misión cumplida! En el medio, B₁ y B₂ tienen el mismo sentido: B = 40 + 40 = 80 µT.",
+"m2.more":"¿Y si las corrientes tuvieran el mismo sentido? ¿Cuánto valdría el campo en el punto medio? Cambia el sentido de I₂ y míralo.",
+"m3.q":"Dos hilos separados 20 cm llevan I₁ = 5 A e I₂ = 15 A en el <b>mismo sentido</b>. ¿A qué distancia <b>del hilo 1</b> (en cm) se anula el campo?",
+"m3_f":"A {0} cm del hilo 1 el campo no es cero. Iguala los módulos: I₁/x = I₂/(d − x).",
+"m3_ok":"✔ ¡Misión cumplida! 5/x = 15/(20 − x) → x = 5 cm: el punto nulo está más cerca de la corriente menor.",
+"m3.more":"¿Por qué el punto de campo nulo siempre queda más cerca del hilo con menos corriente? Razónalo sin hacer números.",
+"m4.q":"Dos hilos paralelos separados 10 cm llevan 10 A y 20 A. Calcula la <b>fuerza por metro</b> entre ellos (en mN/m).",
+"m4_f":"{0} mN/m no es el valor. F/L = μ₀·I₁·I₂/(2π·d), con d en metros; 1 mN = 10⁻³ N.",
+"m4_ok":"✔ ¡Misión cumplida! F/L = 4π·10⁻⁷·10·20/(2π·0,1) = 4·10⁻⁴ N/m = 0,4 mN/m.",
+"m4.more":"¿Cuál de los dos hilos recibe más fuerza, el de 10 A o el de 20 A? Piensa en la tercera ley de Newton antes de mirar el dibujo.",
+"s1.q":"Dos hilos paralelos con corrientes del mismo sentido se atraen.",
+"s1.h":"Ve al paso 5 y cambia los sentidos de las corrientes.",
+"s1.e":"Siempre. El hilo 2 está dentro del campo del hilo 1 y F = I·L×B apunta hacia el hilo 1 (y al revés). Ojo: es al contrario que las cargas eléctricas, donde los signos iguales se repelen.",
+"s2.q":"Con I₁ = 10 A hacia arriba, hay un punto <b>entre</b> los dos hilos donde el campo total es cero.",
+"s2.h":"Prueba los dos sentidos de I₂ y mira dónde aparece el punto B = 0.",
+"s2.e":"A veces. Solo si I₂ tiene el mismo sentido que I₁: entonces entre los hilos los campos se oponen. Con sentidos contrarios, entre los hilos se suman.",
+"s2.cxq":"I₂ (negativo = hacia abajo)",
+"s2_cx_no":"Con I₂ = {0} A (mismo sentido que I₁) sí hay un punto nulo entre los hilos. Busca un caso en el que no lo haya.",
+"s2_cx":"✔ Con I₂ = {0} A (sentido contrario), entre los hilos los dos campos apuntan hacia el mismo lado y no pueden anularse.",
+"s3.q":"Si duplicamos la distancia a un hilo recto, el campo magnético se reduce a la cuarta parte.",
+"s3.h":"Deja una sola corriente y compara B a 5 cm y a 10 cm.",
+"s3.e":"Nunca. Para un hilo recto B = μ₀·I/(2π·r) es inversamente proporcional a r: al doble de distancia, la mitad de campo. El cuadrado de la distancia es cosa de la ley de Coulomb.",
+"s4.q":"El campo creado por un hilo recto en un punto es perpendicular a la recta que une el punto con el hilo.",
+"s4.h":"Mira el ángulo entre el radio (línea de puntos) y el vector B₁ mientras mueves P.",
+"s4.e":"Siempre. Las líneas de campo de un hilo recto son circunferencias centradas en el hilo, y el campo es tangente a ellas: perpendicular al radio.",
+"s5.q":"El polo norte de la aguja de una brújula apunta hacia un polo sur magnético.",
+"s5.h":"Ve a la escena de la Tierra y avanza hasta el paso 3.",
+"s5.e":"Siempre. Polos de nombre contrario se atraen. Por eso, cerca del norte geográfico, la Tierra tiene un polo sur magnético, aunque los mapas lo llamen «polo norte magnético».",
+"s6.q":"La aguja de una brújula que puede girar libremente en vertical queda horizontal.",
+"s6.h":"Mueve la brújula desde el ecuador magnético hasta un polo y mira la inclinación.",
+"s6.e":"A veces. Solo en el ecuador magnético (λ = 0°). En cualquier otra latitud la aguja se inclina, y en los polos magnéticos queda vertical.",
+"s6.cxq":"λ",
+"s6_cx_no":"En λ = {0}° la aguja queda horizontal. Busca una latitud en la que no lo esté.",
+"s6_cx":"✔ En λ = {0}° la inclinación es de {1}°: la aguja no queda horizontal.",
+"e1.ctx":"Dos hilos paralelos llevan corrientes iguales en sentidos contrarios. Se discute cuánto vale el campo en el punto medio.",
+"e1.n0":"Pau",
+"e1.n1":"Aina",
+"e1.s0":"Como las corrientes son contrarias, los campos también lo son y en el medio se anulan.",
+"e1.s1":"En el medio los dos campos apuntan hacia el mismo lado y se suman: el campo es el doble del de un hilo.",
+"e1.w0":"El sentido de cada campo depende del sentido de la corriente y del lado del hilo en el que está el punto. En el medio, el punto queda a la derecha de un hilo y a la izquierda del otro: los dos cambios se compensan y los campos tienen el mismo sentido.",
+"e1.w1":"Porque el campo magnético siempre es positivo y no se puede restar.",
+"e1.w2":"Porque en el punto medio la distancia a los dos hilos es cero.",
+"e1.frame":"Pau, en el punto medio los campos no se anulan porque…",
+"e1.model":"Pau, aplica la regla de la mano derecha a cada hilo: el campo gira en sentidos contrarios alrededor de cada uno, pero el punto medio queda a lados opuestos de los dos hilos. Sentido de giro contrario y lado contrario dan vectores iguales: B = 2·μ₀·I/(2π·d/2). Se anularían en el medio si las corrientes tuvieran el mismo sentido.",
+"e2.ctx":"Dos hilos paralelos llevan 5 A y 20 A. Se discute qué fuerza recibe cada uno.",
+"e2.n1":"Marc",
+"e2.n0":"Clara",
+"e2.s1":"El hilo de 20 A crea más campo, así que empuja al de 5 A con más fuerza que al revés.",
+"e2.s0":"Los dos hilos reciben la misma fuerza, aunque las corrientes sean distintas.",
+"e2.w0":"La fuerza sobre cada hilo es (campo del otro) × (corriente propia): en los dos casos sale F/L = μ₀·I₁·I₂/(2π·d). Además, es un par de acción y reacción.",
+"e2.w1":"Porque la fuerza magnética no depende de las corrientes, solo de la distancia.",
+"e2.w2":"Porque el hilo de 5 A es más ligero y se compensa.",
+"e2.frame":"Marc, las dos fuerzas son iguales porque…",
+"e2.model":"Marc, es verdad que el hilo de 20 A crea un campo cuatro veces mayor, pero actúa sobre una corriente cuatro veces menor. Sobre el hilo 1: F = I₁·L·B₂; sobre el hilo 2: F = I₂·L·B₁. Las dos valen μ₀·I₁·I₂·L/(2π·d): tercera ley de Newton.",
+"e3.ctx":"La aguja de una brújula apunta con su polo norte hacia el norte geográfico de la Tierra. Se discute qué polo magnético hay allí.",
+"e3.n0":"Pau",
+"e3.n1":"Aina",
+"e3.s0":"En el norte geográfico está el polo norte del imán terrestre, por eso se llama polo norte magnético.",
+"e3.s1":"Cerca del norte geográfico está el polo sur del imán terrestre.",
+"e3.w0":"Los polos del mismo nombre se repelen y los de nombre contrario se atraen: lo que atrae al polo norte de la aguja tiene que ser un polo sur.",
+"e3.w1":"Porque la brújula apunta en sentido contrario al campo magnético.",
+"e3.w2":"Porque los polos magnéticos y los geográficos coinciden exactamente.",
+"e3.frame":"Pau, en el norte geográfico no puede haber un polo norte magnético porque…",
+"e3.model":"Pau, el nombre «polo norte magnético» es geográfico: es el punto del hemisferio norte hacia el que apuntan las brújulas. Pero el norte de la aguja solo puede ser atraído por un polo sur. Las líneas de campo entran en la Tierra por allí, como entran por el polo sur de un imán de barra.",
+"d1.q":"El hilo 1 lleva 5 A y el hilo 2, en el mismo sentido, está a 6 cm. Queremos que el campo se anule <b>a 2 cm del hilo 1</b>. Elige la corriente I₂ y calcula la <b>fuerza por metro</b> entre los hilos (mN/m).",
+"d1.lc":"Corriente I₂:",
+"d1_p":"Con I₂ = {0} A el campo se anula a {1} cm del hilo 1, no a 2 cm.",
+"d1_F":"La corriente es la buena, pero la fuerza no: F/L = μ₀·I₁·I₂/(2π·d) con d = 0,06 m.",
+"d1_ok":"✔ ¡Bien decidido! 5/2 = I₂/4 → I₂ = 10 A, y F/L = 4π·10⁻⁷·5·10/(2π·0,06) ≈ 0,17 mN/m.",
+"d1.more":"Si quisiéramos el punto nulo exactamente en el medio, ¿qué relación tendrían que tener las corrientes? ¿Y justo encima de uno de los hilos, sería posible?",
+"d2.q":"Una expedición quiere medir el campo donde la aguja se inclina <b>60°</b>. Elige la latitud magnética en la que ocurre y di el <b>módulo del campo</b> allí (µT).",
+"d2.lc":"Latitud magnética:",
+"d2_p":"En λ = {0}° la inclinación es de {1}°, no de 60°. Recuerda: tan I = 2·tan λ.",
+"d2_B":"La latitud es la buena, pero el campo no. Míralo en el simulador (paso 4).",
+"d2_ok":"✔ ¡Bien decidido! tan 60° = 2·tan λ → λ ≈ 41°, y allí |B| ≈ 47 µT.",
+"d2.more":"¿En qué latitud magnética la inclinación vale 45°? ¿Es más o menos de 45°? ¿Por qué?",
+"i_title":"Inducción electromagnética: espira que atraviesa un campo — Faraday y Lenz",
+"i_eyebrow":"Inducción electromagnética · Bachillerato",
+"i_h1":"⚡ Espira que atraviesa un campo: Faraday y Lenz",
+"i_lede":"No hay fem porque haya flujo, sino porque el flujo cambia. Haz pasar la espira por la región con campo, paso a paso, y mira a la vez Φ(t), ε(t), el sentido de la corriente y la fuerza que la frena.",
+"i_aria.svg":"Espira rectangular que atraviesa una región con campo magnético uniforme, con las gráficas sincronizadas del flujo y de la fem inducida en función del tiempo",
+"i_lg_phi":"flujo Φ",
+"i_lg_e":"fem ε y corriente inducida",
+"i_lg_v":"velocidad v",
+"i_lg_f":"fuerza magnética sobre la espira",
+"i_step":"Fase siguiente ▶",
+"i_reset":"↺ Reiniciar",
+"i_play":"▶ Reproducir",
+"i_pause":"⏸ Pausa",
+"i_resume":"▶ Continúa",
+"i_phn":"Fase {0} de 5",
+"i_l_t":"Tiempo",
+"i_l_B":"Campo magnético B",
+"i_l_v":"Velocidad v",
+"i_l_R":"Resistencia R",
+"i_l_a":"Largo de la espira a (en el sentido de v)",
+"i_l_b":"Alto de la espira b",
+"i_l_N":"Número de vueltas N",
+"i_l_dir":"Sentido de B",
+"i_dir_in":"⊗ hacia abajo",
+"i_dir_out":"⊙ hacia arriba",
+"i_c_cur":"Muestra la corriente inducida, su campo y la fuerza",
+"i_s_step":"Qué pasa y por qué",
+"i_s_live":"En directo",
+"i_s_res":"Resultados",
+"i_rd_t":"Tiempo t",
+"i_rd_S":"Área dentro del campo",
+"i_rd_phi":"Flujo Φ",
+"i_rd_e":"Fem ε",
+"i_rd_I":"Intensidad I",
+"i_rd_F":"Fuerza de frenado",
+"i_rd_P":"Potencia disipada",
+"i_cw":"horario",
+"i_ccw":"antihorario",
+"i_no_I":"sin corriente",
+"i_r_e":"|ε| al entrar y al salir",
+"i_r_I":"|I| máxima",
+"i_r_phi":"|Φ| máximo",
+"i_r_t":"Tiempo de entrada a/v",
+"i_r_Q":"Calor total disipado",
+"i_in":"hacia abajo",
+"i_out":"hacia arriba",
+"i_p0":"<b>Todavía está fuera.</b> No hay flujo y tampoco cambia: Φ = 0 y ε = 0.",
+"i_p1":"<b>Entra.</b> El flujo {0} <b>aumenta</b>. Lenz: la corriente inducida crea un campo {1} para oponerse a ese aumento → corriente en sentido <b>{2}</b>. |ε| = N·B·b·v = {3}.",
+"i_p2":"<b>Toda dentro.</b> El flujo es máximo, pero <b>no cambia</b>: ε = 0 e I = 0. Tener flujo no es tener fem.",
+"i_p3":"<b>Sale.</b> El flujo {0} <b>disminuye</b>. Lenz: el campo inducido ahora va {0}, para mantener el flujo que se pierde → corriente en sentido <b>{1}</b>. La fem cambia de signo.",
+"i_p4":"<b>Ya está fuera.</b> Φ = 0 y ε = 0. La energía disipada en la resistencia ({0}) es el trabajo hecho para mover la espira contra la fuerza magnética.",
+"i_gphi":"Φ (t)",
+"i_ge":"ε (t)",
+"i_lbl_B":"B",
+"i_lbl_Bi":"B inducido",
+"i_note":"Arrastra para girar la vista. Signos: Φ es positivo si B va hacia arriba, y ε positiva significa corriente antihoraria vista desde arriba. La espira va a velocidad constante (alguien tira de ella). La animación dura unos segundos; el tiempo real es el del panel. La región con campo mide 30 cm de ancho.",
+"i_rng":"Escribe un valor dentro del rango del simulador.",
+"i_f_e":"ε",
+"i_f_I":"I",
+"i_f_phi":"Φ",
+"i_f_v":"v",
+"i_f_t":"t",
+"i_f_F":"F",
+"m5.q":"Una espira de una vuelta y 10 cm de alto entra a 2 m/s en un campo de 0,5 T perpendicular a ella. Calcula la <b>fem inducida</b> (en V) mientras entra.",
+"m5_f":"{0} V no es el valor. Mientras entra, el área dentro del campo crece a razón de b·v: |ε| = N·B·b·v, con b en metros.",
+"m5_ok":"✔ ¡Misión cumplida! |ε| = 1·0,5·0,10·2 = 0,1 V.",
+"m5.more":"¿La fem depende del largo a de la espira? Cámbialo y mira qué cambia en la gráfica y qué no.",
+"m6.q":"La misma espira (ε = 0,1 V mientras entra) tiene una resistencia de 2 Ω. Calcula la <b>intensidad</b> inducida (en mA).",
+"m6_f":"{0} mA no es el valor. Ley de Ohm: I = ε/R; 1 A = 1000 mA.",
+"m6_ok":"✔ ¡Misión cumplida! I = 0,1/2 = 0,05 A = 50 mA.",
+"m6.more":"Si la espira fuera de un material con el doble de resistencia, ¿cambiaría la fem? ¿Y la intensidad? ¿Y la fuerza de frenado?",
+"m7.q":"Una espira cuadrada de 10 cm de lado y una vuelta está toda dentro de un campo de 0,5 T perpendicular a ella. Calcula el <b>flujo</b> (en mWb).",
+"m7_f":"{0} mWb no es el valor. Φ = B·S con S en m² (10 cm × 10 cm = 0,01 m²); 1 Wb = 1000 mWb.",
+"m7_ok":"✔ ¡Misión cumplida! Φ = 0,5·0,01 = 0,005 Wb = 5 mWb.",
+"m7.more":"En ese momento el flujo es máximo. ¿Cuánto vale la fem? ¿Por qué?",
+"m8.q":"Una espira de 2 vueltas y 10 cm de alto entra en un campo de 0,5 T. ¿A qué <b>velocidad</b> (m/s) tiene que ir para que la fem inducida sea de 0,3 V?",
+"m8_f":"Con v = {0} m/s la fem sería de {1} V. Despeja v en |ε| = N·B·b·v.",
+"m8_ok":"✔ ¡Misión cumplida! v = ε/(N·B·b) = 0,3/(2·0,5·0,10) = 3 m/s.",
+"m8.more":"¿Con qué otra magnitud, además de la velocidad, podrías triplicar la fem sin tocar el campo?",
+"s7.q":"Mientras la espira está totalmente dentro del campo uniforme hay corriente inducida.",
+"s7.h":"Ve a la fase 3 y mira la gráfica de ε.",
+"s7.e":"Nunca. Dentro del campo uniforme el flujo es constante; sin variación de flujo no hay fem (ε = −dΦ/dt = 0) ni corriente.",
+"s8.q":"La corriente inducida tiene el mismo sentido cuando la espira entra que cuando sale.",
+"s8.h":"Compara las fases 2 y 4.",
+"s8.e":"Nunca. Al entrar el flujo aumenta y al salir disminuye: la corriente se opone a cambios contrarios y, por tanto, cambia de sentido.",
+"s9.q":"Si la espira entra más deprisa, la fem inducida es mayor.",
+"s9.h":"Cambia v y mira la altura de los escalones de ε(t).",
+"s9.e":"Siempre. |ε| = N·B·b·v es proporcional a la velocidad: el flujo cambia lo mismo, pero en menos tiempo.",
+"s10.q":"Si hay flujo magnético a través de la espira, hay fem inducida.",
+"s10.h":"Busca un momento con Φ ≠ 0 y ε = 0.",
+"s10.e":"A veces. Solo cuando el flujo cambia. Con la espira toda dentro hay flujo (y es el máximo) pero la fem es cero.",
+"s10.cxq":"Con a = 10 cm y v = 1 m/s, un instante t",
+"s10_cx_no":"En t = {0} s no vale: o el flujo es cero o la fem no lo es. Busca un instante con la espira toda dentro.",
+"s10_cx":"✔ En t = {0} s la espira está toda dentro: Φ = 5 mWb y ε = 0.",
+"s11.q":"La fuerza magnética sobre la espira va en contra del movimiento, tanto al entrar como al salir.",
+"s11.h":"Mira la flecha de la fuerza en las fases 2 y 4.",
+"s11.e":"Siempre. Es la ley de Lenz en versión mecánica: la corriente inducida se opone a la causa que la produce, que es el movimiento. Si la fuerza ayudara, la espira se aceleraría sola y tendríamos energía gratis.",
+"s12.q":"La fem inducida depende de la resistencia de la espira.",
+"s12.h":"Cambia R y mira ε e I en el panel.",
+"s12.e":"Nunca. La fem la fija la variación de flujo (N·B·b·v). La resistencia decide cuánta intensidad circula: I = ε/R.",
+"e4.ctx":"Una espira atraviesa una región con campo uniforme. Se discute en qué momento la fem inducida es máxima.",
+"e4.n0":"Pau",
+"e4.n1":"Aina",
+"e4.s0":"Cuanto más flujo, más fem: es máxima cuando la espira está toda dentro del campo.",
+"e4.s1":"Cuando está toda dentro la fem es cero; solo la hay mientras entra y mientras sale.",
+"e4.w0":"La fem no depende del valor del flujo sino del ritmo al que cambia (ε = −dΦ/dt): con la espira toda dentro, el flujo es máximo pero constante.",
+"e4.w1":"Porque dentro del campo las fuerzas sobre los lados de la espira se cancelan.",
+"e4.w2":"Porque el flujo solo existe en los bordes del campo.",
+"e4.frame":"Pau, cuando la espira está toda dentro no hay fem porque…",
+"e4.model":"Pau, mira las dos gráficas a la vez: la fem es la pendiente (cambiada de signo) de la gráfica del flujo. Donde Φ sube o baja hay escalón de ε; donde Φ es horizontal, aunque esté en el máximo, ε = 0.",
+"e5.ctx":"El campo va hacia abajo y la espira está entrando en él. Se discute el sentido del campo creado por la corriente inducida.",
+"e5.n0":"Marc",
+"e5.n1":"Clara",
+"e5.s0":"La corriente inducida crea un campo hacia abajo, para reforzar el campo que encuentra.",
+"e5.s1":"La corriente inducida crea un campo hacia arriba, y por eso circula en sentido antihorario.",
+"e5.w0":"El flujo hacia abajo está aumentando, y la corriente inducida se opone a ese aumento creando un campo en sentido contrario (hacia arriba); por la regla de la mano derecha, eso es una corriente antihoraria.",
+"e5.w1":"Porque la corriente inducida siempre es antihoraria.",
+"e5.w2":"Porque el campo inducido siempre tiene el mismo sentido que el campo exterior.",
+"e5.frame":"Marc, el campo inducido no puede reforzar el aumento de flujo porque…",
+"e5.model":"Marc, si la corriente inducida reforzara el aumento de flujo, ese flujo mayor induciría más corriente, que lo reforzaría todavía más: energía de la nada. Lenz dice lo contrario: se opone al cambio. Flujo hacia abajo que crece → campo inducido hacia arriba → corriente antihoraria.",
+"e6.ctx":"El campo va hacia abajo y la espira está saliendo de él. Se discute el sentido del campo inducido.",
+"e6.n1":"Pau",
+"e6.n0":"Clara",
+"e6.s1":"Hacia fuera, como al entrar: Lenz dice que el campo inducido siempre se opone al campo exterior.",
+"e6.s0":"Hacia dentro: ahora el flujo disminuye y la corriente inducida intenta mantenerlo.",
+"e6.w0":"La ley de Lenz habla de oponerse a la variación del flujo, no al campo: si el flujo hacia abajo disminuye, el campo inducido va hacia abajo para compensar la pérdida.",
+"e6.w1":"Porque al salir el campo exterior cambia de sentido.",
+"e6.w2":"Porque la corriente inducida siempre tiene el sentido del movimiento.",
+"e6.frame":"Pau, al salir el campo inducido no va hacia arriba porque…",
+"e6.model":"Pau, Lenz no se opone al campo sino al cambio de flujo. Al entrar, el flujo hacia abajo crecía y el campo inducido iba hacia arriba. Al salir, ese flujo mengua, y el campo inducido va hacia abajo para sostenerlo: por eso la corriente cambia de sentido y pasa a ser horaria.",
+"d3.q":"Quieres usar la espira como <b>freno magnético</b> y que la fuerza de frenado sea la mayor posible (B = 0,5 T, b = 10 cm, v = 2 m/s, 1 vuelta). Elige la resistencia y calcula la <b>fuerza</b> (en mN).",
+"d3.lc":"Resistencia:",
+"d3_p":"Con R = {0} Ω la fuerza es de {1} mN, pero se puede frenar más.",
+"d3_F":"La resistencia es la buena, pero la fuerza no: F = N·B·I·b, con I = ε/R.",
+"d3_ok":"✔ ¡Bien decidido! Menos resistencia → más corriente → más fuerza: I = 0,1/0,5 = 0,2 A y F = 0,5·0,2·0,10 = 0,01 N = 10 mN.",
+"d3.more":"Si doblamos la velocidad, ¿la fuerza de frenado se dobla o se cuadruplica? ¿Y la potencia disipada?",
+"aria.g":"Gráficas sincronizadas del flujo y de la fem inducida en función del tiempo",
+"aria.vw":"Punto de vista",
+"sc_i":"⚡ Inducción: espira y campo",
+"v3d":"Vista 3D",
+"vtop":"Desde arriba"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../camp-magnetic-induccio-3d/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== Camp magnètic i inducció en 3D: dos fils, la Terra i una espira ===== */
+const svg=$('#svg'),dyn=$('#dyn'),hP=$('#hP'),gsvg=$('#gsvg');
+const MU=4e-7*Math.PI,B0=31,TILT=10*Math.PI/180,NW=5,NE=4,RAD=Math.PI/180,WR=30,X0=-5,TAIL=5;
+const i1=$('#i1'),i2=$('#i2'),dd=$('#dd'),lam=$('#lam'),lineEl=$('#line'),ndlEl=$('#ndl');
+const bf=$('#bf'),vv=$('#vv'),rr=$('#rr'),aa=$('#aa'),bb=$('#bb'),nn=$('#nn'),tauEl=$('#tau'),curEl=$('#cur');
+const btnPlay=$('#btnPlay'),btnStep=$('#btnStep'),readout=$('#readout'),results=$('#results');
+let scene='w',s1=1,s2=1,P={x:2,y:6},stW=1,stE=1,sB=-1,tau=0,playing=false,last=null;
+const f1=n=>n.toFixed(1);
+const A=[-Math.sin(TILT),0,Math.cos(TILT)],E1=[Math.cos(TILT),0,Math.sin(TILT)];
+/* ----- càmera ortogràfica: z cap amunt; az gira al voltant de z; el = elevació (90° = des de dalt) ----- */
+const CAM0={w:{az:-25,el:32},e:{az:0,el:10},i:{az:-20,el:34}},ELMIN={w:12,e:-80,i:12},TOP={az:0,el:90};
+const CAM={w:{...CAM0.w},e:{...CAM0.e},i:{...CAM0.i}};
+const VIEW={w:{W:600,H:340,cx:300,cy:182,S:10,ox:0},e:{W:600,H:340,cx:300,cy:170,S:68,ox:0},i:{W:600,H:230,cx:300,cy:128,S:7.2,ox:15}};
+let PR;
+function setProj(){const c=CAM[scene],a=c.az*RAD,e=c.el*RAD;PR={ca:Math.cos(a),sa:Math.sin(a),se:Math.sin(e),ce:Math.cos(e),v:VIEW[scene]};}
+function pr(p){const v=PR.v,x=p[0]-v.ox,ux=x*PR.ca+p[1]*PR.sa,wy=-x*PR.sa+p[1]*PR.ca;return [v.cx+v.S*ux,v.cy-v.S*(wy*PR.se+p[2]*PR.ce),-wy*PR.ce+p[2]*PR.se];}
+function fmtU(x,u){const a=Math.abs(x);if(a<1e-15)return '0 '+u;if(a>=1)return fmt(x,2)+' '+u;if(a>=1e-3)return fmt(x*1e3,2)+' m'+u;if(a>=1e-6)return fmt(x*1e6,2)+' µ'+u;return fmt(x*1e9,2)+' n'+u;}
+const uT=x=>fmt(x,x<10?2:1)+' µT';
+const bg=()=>{const v=PR.v;return '<rect x="1" y="1" width="'+(v.W-2)+'" height="'+(v.H-2)+'" rx="6" fill="var(--stage)" stroke="var(--line)"/>';};
+const lbl=(x,y,s,col,anc)=>'<text x="'+f1(x)+'" y="'+f1(y)+'" text-anchor="'+(anc||'middle')+'" style="fill:'+col+';font-weight:700">'+s+'</text>';
+function arrow2(x,y,dx,dy,len,color,w){
+  const h=Math.min(Math.max(4,len*.45),Math.max(7,w*2.7)),x2=x+dx*len,y2=y+dy*len,px=-dy,py=dx;
+  return '<line x1="'+f1(x)+'" y1="'+f1(y)+'" x2="'+f1(x2-dx*h*.6)+'" y2="'+f1(y2-dy*h*.6)+'" stroke="'+color+'" stroke-width="'+w+'"/><polygon points="'+f1(x2)+','+f1(y2)+' '+f1(x2-dx*h+px*h*.5)+','+f1(y2-dy*h+py*h*.5)+' '+f1(x2-dx*h-px*h*.5)+','+f1(y2-dy*h-py*h*.5)+'" fill="'+color+'"/>';
+}
+/* símbol ⊙ / ⊗ per a un vector que apunta cap a l'observador o se n'allunya */
+function sym(x,y,out,color,r){
+  r=r||7;const k=r*.5;
+  return '<circle cx="'+f1(x)+'" cy="'+f1(y)+'" r="'+r+'" fill="var(--panel)" stroke="'+color+'" stroke-width="2"/>'+(out?'<circle cx="'+f1(x)+'" cy="'+f1(y)+'" r="'+f1(r*.3)+'" fill="'+color+'"/>':'<path d="M'+f1(x-k)+','+f1(y-k)+'L'+f1(x+k)+','+f1(y+k)+'M'+f1(x+k)+','+f1(y-k)+'L'+f1(x-k)+','+f1(y+k)+'" stroke="'+color+'" stroke-width="1.8"/>');
+}
+/* fletxa 3D de p a q (coordenades del món) */
+function arr3(p,q,color,w,lab,r){
+  w=w||2.6;const a=pr(p),b=pr(q),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);
+  const L3=Math.hypot(q[0]-p[0],q[1]-p[1],q[2]-p[2])*PR.v.S;
+  if(L3<1.5)return '';
+  if(L<Math.min(7,L3*.35))return sym(a[0],a[1],b[2]>a[2],color,r)+(lab?lbl(a[0]+13,a[1]-9,lab,color):'');
+  return arrow2(a[0],a[1],dx/L,dy/L,L,color,w)+(lab?lbl(b[0]+dx/L*10,b[1]+dy/L*10+3.5,lab,color):'');
+}
+const ln=(p,q,attr)=>{const a=pr(p),b=pr(q);return '<line x1="'+f1(a[0])+'" y1="'+f1(a[1])+'" x2="'+f1(b[0])+'" y2="'+f1(b[1])+'" '+attr+'/>';};
+const poly=(pts,attr,closed)=>'<'+(closed?'polygon':'polyline')+' points="'+pts.map(p=>{const q=pr(p);return f1(q[0])+','+f1(q[1]);}).join(' ')+'" '+attr+'/>';
+const circ=(x,y,r,z,n)=>{const o=[];for(let i=0;i<=n;i++){const a=i/n*2*Math.PI;o.push([x+r*Math.cos(a),y+r*Math.sin(a),z]);}return o;};
+
+/* ================= escena 1: dos fils ================= */
+/* camp d'un fil en µT (x, y en cm; s = +1 corrent cap amunt, gir antihorari vist des de dalt) */
+function Bw(xw,I,s,x,y){const dx=x-xw,dy=y,r2=dx*dx+dy*dy;if(r2<1e-6)return [0,0];const k=MU*I*s/(2*Math.PI*1e-2*r2)*1e6;return [-dy*k,dx*k];}
+function fixP(){
+  const d=+dd.value;
+  if(lineEl.checked)P.y=0;
+  P.x=clamp(P.x,-22,22);P.y=clamp(P.y,-12,12);
+  [-d/2,d/2].forEach(xw=>{const r=Math.hypot(P.x-xw,P.y);if(r<1){if(r<1e-6){P.x=xw+1;P.y=0;}else if(lineEl.checked){P.x=xw+(P.x>=xw?1:-1);}else{P.x=xw+(P.x-xw)/r;P.y=P.y/r;}}});
+}
+function W(){
+  const I1=+i1.value,I2=+i2.value,d=+dd.value,x1=-d/2,x2=d/2;
+  const b1=Bw(x1,I1,s1,P.x,P.y),b2=Bw(x2,I2,s2,P.x,P.y),b=[b1[0]+b2[0],b1[1]+b2[1]];
+  let nul=null,nk,nd=0,nw=1;
+  if(I1===0||I2===0)nk='one';
+  else if(s1===s2){nd=d*I1/(I1+I2);nul=x1+nd;nk='in';}
+  else if(I1===I2)nk='eq';
+  else if(I1<I2){nd=d*I1/(I2-I1);nul=x1-nd;nk='out';nw=1;}
+  else{nd=d*I2/(I1-I2);nul=x2+nd;nk='out';nw=2;}
+  return {I1,I2,d,x1,x2,b1,b2,b,nul,nk,nd,nw,r1:Math.hypot(P.x-x1,P.y),r2:Math.hypot(P.x-x2,P.y),
+    m1:Math.hypot(b1[0],b1[1]),m2:Math.hypot(b2[0],b2[1]),m:Math.hypot(b[0],b[1]),F:MU*I1*I2/(2*Math.PI*d*1e-2)};
+}
+function drawW(){
+  const w=W(),top=CAM.w.el>78,Pw=[P.x,P.y,0];let o=bg();
+  const wires=[[w.x1,w.I1,s1,'var(--pa)','I₁'],[w.x2,w.I2,s2,'var(--pb)','I₂']];
+  /* anell de camp al voltant d'un fil, amb la fletxa en el punt més pròxim a la càmera */
+  const ring=(x,z,s,col,op)=>{const a0=Math.atan2(-PR.ca,PR.sa),c=Math.cos(a0),sn=Math.sin(a0),R=2.6,px=x+R*c,py=R*sn,tx=-sn*s,ty=c*s;
+    return '<g opacity="'+op+'">'+poly(circ(x,0,R,z,48),'fill="none" stroke="'+col+'" stroke-width="1.5"')+arr3([px-tx*.8,py-ty*.8,z],[px+tx*1.1,py+ty*1.1,z],col,1.5)+'</g>';};
+  wires.forEach(([x,I,s,col])=>{o+=ln([x,0,-11],[x,0,0],'stroke="'+col+'" stroke-width="3" opacity=".4"'+(I===0?' stroke-dasharray="4 4"':''));if(I>0&&!top)o+=ring(x,-7,s,col,.3);});
+  o+=poly([[-23,-13,0],[23,-13,0],[23,13,0],[-23,13,0]],'fill="var(--pa)" fill-opacity=".05" stroke="var(--line)"',true);
+  if(stW>=3&&ndlEl.checked){
+    for(let x=-21;x<=21;x+=3)for(let y=-12;y<=12;y+=3){
+      if(Math.hypot(x-w.x1,y)<1.6||Math.hypot(x-w.x2,y)<1.6)continue;
+      const a=Bw(w.x1,w.I1,s1,x,y),b=Bw(w.x2,w.I2,s2,x,y),bx=a[0]+b[0],by=a[1]+b[1],m=Math.hypot(bx,by);
+      if(m<.05)continue;
+      const ux=bx/m*.95,uy=by/m*.95;
+      o+='<g opacity="'+clamp(.16+.2*Math.log10(m+1),.16,.6).toFixed(2)+'">'+arr3([x-ux,y-uy,0],[x+ux,y+uy,0],'var(--muted)',1.2)+'</g>';
+    }
+  }
+  o+=ln([-23,0,0],[23,0,0],'stroke="var(--line)" stroke-dasharray="2 4"');
+  const da=pr([w.x1,-11.6,0]),db=pr([w.x2,-11.6,0]);
+  o+=ln([w.x1,-11.6,0],[w.x2,-11.6,0],'stroke="var(--muted)"')+'<text x="'+f1((da[0]+db[0])/2)+'" y="'+f1((da[1]+db[1])/2+13)+'" text-anchor="middle">d = '+w.d+' cm</text>';
+  /* escala comuna dels vectors (cm per µT) */
+  let k=.18;const mx=Math.max(stW>=1?w.m1:0,stW>=2?w.m2:0,stW>=3?w.m:0)*k;if(mx>9.5)k*=9.5/mx;
+  const vec=(xw,b,m,col,lab)=>{
+    let q=poly(circ(xw,0,Math.hypot(P.x-xw,P.y),0,72),'fill="none" stroke="'+col+'" stroke-dasharray="3 5" opacity=".5"')+ln([xw,0,0],Pw,'stroke="'+col+'" stroke-dasharray="2 3" opacity=".75"');
+    if(m>1e-9)q+=arr3(Pw,[P.x+b[0]*k,P.y+b[1]*k,0],col,2.8,lab);
+    return q;
+  };
+  if(stW>=1)o+=vec(w.x1,w.b1,w.m1,'var(--pa)','B₁');
+  if(stW>=2)o+=vec(w.x2,w.b2,w.m2,'var(--pb)','B₂');
+  const pp=pr(Pw);
+  if(stW>=3){
+    const t1=[P.x+w.b1[0]*k,P.y+w.b1[1]*k,0],t2=[P.x+w.b2[0]*k,P.y+w.b2[1]*k,0],t3=[P.x+w.b[0]*k,P.y+w.b[1]*k,0];
+    o+=ln(t1,t3,'stroke="var(--muted)" stroke-dasharray="3 3"')+ln(t2,t3,'stroke="var(--muted)" stroke-dasharray="3 3"');
+    if(w.m>.02)o+=arr3(Pw,t3,'var(--ok)',3.4,'B');
+    else o+=lbl(pp[0],pp[1]-12,t('lbl_nul'),'var(--ok)');
+  }
+  if(stW>=4&&w.nul!==null&&Math.abs(w.nul)<22.5){
+    const n=w.nul,q=pr([n,0,0]);
+    o+=poly(circ(n,0,.85,0,28),'fill="none" stroke="var(--ok)" stroke-width="2"')+ln([n-.6,-.6,0],[n+.6,.6,0],'stroke="var(--ok)" stroke-width="2"')+ln([n-.6,.6,0],[n+.6,-.6,0],'stroke="var(--ok)" stroke-width="2"')+lbl(q[0],q[1]-13,t('lbl_nul'),'var(--ok)');
+  }
+  wires.forEach(([x,I,s,col,lab])=>{
+    const q0=pr([x,0,0]),qt=pr([x,0,12]);
+    if(I===0)o+=ln([x,0,0],[x,0,12],'stroke="'+col+'" stroke-width="3.2" stroke-dasharray="4 4"')+'<circle cx="'+f1(q0[0])+'" cy="'+f1(q0[1])+'" r="5" fill="var(--panel)" stroke="'+col+'" stroke-dasharray="2 2"/>';
+    else if(s>0)o+=ln([x,0,0],[x,0,8],'stroke="'+col+'" stroke-width="3.2"')+ring(x,6,s,col,.6)+arr3([x,0,8],[x,0,12],col,3.2,'',9);
+    else o+=ln([x,0,0],[x,0,12],'stroke="'+col+'" stroke-width="3.2"')+ring(x,6,s,col,.6)+arr3([x,0,12],[x,0,7.5],col,3.2,'',9);
+    o+=top?lbl(q0[0],q0[1]+24,lab+' = '+fmt(I,1)+' A',col):lbl(qt[0],qt[1]-8,lab+' = '+fmt(I,1)+' A',col);
+  });
+  if(stW>=5&&w.F>0){
+    const L=clamp(1.6+w.F*8e3,1.8,5.5),dir=s1===s2?1:-1,z=top?0:3,y=top?2.6:0;
+    o+=arr3([w.x1,y,z],[w.x1+dir*L,y,z],'var(--warn)',3.2,'F')+arr3([w.x2,y,z],[w.x2-dir*L,y,z],'var(--warn)',3.2,'F');
+  }
+  o+='<circle cx="'+f1(pp[0])+'" cy="'+f1(pp[1])+'" r="5.5" fill="var(--ink)" stroke="var(--panel)" stroke-width="1.5"/>'+lbl(pp[0]-10,pp[1]+15,'P','var(--ink)');
+  dyn.innerHTML=o;hP.setAttribute('cx',f1(pp[0]));hP.setAttribute('cy',f1(pp[1]));
+}
+
+/* ================= escena 2: la Terra (dipol amb moment cap al sud geogràfic) ================= */
+const add3=(a,b,k)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k];
+function earth(){
+  const l=+lam.value*RAD,c=Math.cos(l),sn=Math.sin(l),m=Math.sqrt(1+3*sn*sn);
+  const rh=[c*E1[0]+sn*A[0],0,c*E1[2]+sn*A[2]],nh=[-sn*E1[0]+c*A[0],0,-sn*E1[2]+c*A[2]];
+  const bh=[(c*nh[0]-2*sn*rh[0])/m,0,(c*nh[2]-2*sn*rh[2])/m];
+  const I=Math.abs(+lam.value)===90?(+lam.value):Math.atan(2*Math.tan(l))/RAD;
+  return {rh,nh,bh,m:B0*m,I,H:B0*c,Z:2*B0*Math.abs(sn),lam:+lam.value};
+}
+function drawE(){
+  const e=earth(),V=PR.v,R=V.S;let back='',front='';
+  const hid=q=>Math.hypot(q[0]-V.cx,q[1]-V.cy)<R-.5&&q[2]<0;
+  const put=(q,s)=>{if(q[2]<0)back+=s;else front+=s;};
+  /* polilínia 3D repartida entre darrere i davant de l'esfera; el que queda tapat no es dibuixa */
+  const path3=(pts,attr)=>{
+    let cur=null,L0=null;
+    const flush=()=>{if(cur&&cur.length>1){const s='<polyline points="'+cur.join(' ')+'" '+attr+'/>';if(L0==='b')back+=s;else front+=s;}cur=null;};
+    pts.forEach(p=>{const q=pr(p);if(hid(q)){flush();return;}
+      const L=q[2]<0?'b':'f',s=f1(q[0])+','+f1(q[1]);
+      if(!cur){cur=[s];L0=L;return;}
+      if(L!==L0){cur.push(s);flush();cur=[s];L0=L;return;}
+      cur.push(s);});
+    flush();
+  };
+  const LA='fill="none" stroke="var(--muted)" stroke-width="1.25"';
+  if(stE>=2){
+    [1.5,2.2,3.3,5].forEach(L=>{for(let j=0;j<6;j++){
+      if(j%3&&(L<2||L>4))continue;
+      const ph=j*60*RAD,ef=[E1[0]*Math.cos(ph),Math.sin(ph),E1[2]*Math.cos(ph)],lm=Math.acos(Math.sqrt(1/L)),pts=[];
+      for(let i=0;i<=70;i++){const l=-lm+2*lm*i/70,c=Math.cos(l),r=L*c*c;pts.push(add3([r*c*ef[0],r*c*ef[1],r*c*ef[2]],A,r*Math.sin(l)));}
+      path3(pts,LA);
+      const pm=[L*ef[0],L*ef[1],L*ef[2]],q=pr(pm);
+      if(!hid(q)&&Math.abs(q[0]-300)<296&&Math.abs(q[1]-170)<166)put(q,arr3(add3(pm,A,-.1),add3(pm,A,.16),'var(--muted)',1.25));
+    }});
+    [1,-1].forEach(sg=>{const pts=[];for(let i=0;i<=10;i++)pts.push(add3([0,0,0],A,sg*(1+1.7*i/10)));path3(pts,LA);
+      const pm=add3([0,0,0],A,sg*1.9),q=pr(pm);if(!hid(q))put(q,arr3(add3(pm,A,.1),add3(pm,A,-.16),'var(--muted)',1.25));});
+  }
+  /* reixeta de l'esfera (només la cara visible) */
+  const GA='fill="none" stroke="var(--muted)" stroke-width=".8" opacity=".4"';
+  [-60,-30,0,30,60].forEach(la=>{const c=Math.cos(la*RAD);path3(circ(0,0,c,Math.sin(la*RAD),72),GA);});
+  for(let lo=0;lo<180;lo+=30){const pts=[];for(let i=0;i<=72;i++){const a=i/72*2*Math.PI;pts.push([Math.cos(a)*Math.cos(lo*RAD),Math.cos(a)*Math.sin(lo*RAD),Math.sin(a)]);}path3(pts,GA);}
+  /* eix de rotació i pols */
+  const AX='fill="none" stroke="var(--ink)" stroke-width="1.5"';
+  path3([[0,0,1],[0,0,1.25],[0,0,1.5]],AX);path3([[0,0,-1],[0,0,-1.25],[0,0,-1.5]],AX);
+  const gn=pr([0,0,1.5]),gs=pr([0,0,-1.5]);
+  front+=lbl(gn[0],gn[1]-7,t('e_gn'),'var(--ink)')+lbl(gs[0],gs[1]+15,t('e_gs'),'var(--ink)');
+  if(stE>=2){
+    const n=pr(A),s=pr([-A[0],0,-A[2]]);
+    if(n[2]>-.3)front+='<circle cx="'+f1(n[0])+'" cy="'+f1(n[1])+'" r="3.8" fill="var(--pa)"/>'+lbl(n[0]-9,n[1]-9,t('e_mn'),'var(--pa)','end');
+    if(s[2]>-.3)front+='<circle cx="'+f1(s[0])+'" cy="'+f1(s[1])+'" r="3.8" fill="var(--pb)"/>'+lbl(s[0]+9,s[1]+16,t('e_ms'),'var(--pb)','start');
+  }
+  /* brúixola */
+  const c=[e.rh[0]*1.36,0,e.rh[2]*1.36],qc=pr(c);
+  let cp='';
+  if(stE>=4)cp+=ln(add3(c,e.nh,-.45),add3(c,e.nh,.45),'stroke="var(--ok)" stroke-dasharray="4 3" stroke-width="1.6"');
+  cp+=ln(add3(c,e.bh,-.3),c,'stroke="var(--pa)" stroke-width="6" stroke-linecap="round"')+arr3(c,add3(c,e.bh,.36),'var(--pb)',6)+'<circle cx="'+f1(qc[0])+'" cy="'+f1(qc[1])+'" r="2.4" fill="var(--panel)" stroke="var(--ink)"/>';
+  if(stE>=4){const ql=pr(add3(c,e.rh,.42));cp+=lbl(ql[0],ql[1]+4,'I = '+fmt(Math.abs(e.I),0)+'°','var(--ok)');}
+  put(qc,cp);
+  let o=bg()+'<g opacity=".4">'+back+'</g>';
+  if(stE>=3){
+    const a=pr(add3([0,0,0],A,.62)),b=pr(add3([0,0,0],A,-.62)),m=pr([0,0,0]),ls=pr(add3([0,0,0],A,.33)),lw=pr(add3([0,0,0],A,-.33));
+    o+='<line x1="'+f1(m[0])+'" y1="'+f1(m[1])+'" x2="'+f1(a[0])+'" y2="'+f1(a[1])+'" stroke="var(--pa)" stroke-width="22"/><line x1="'+f1(m[0])+'" y1="'+f1(m[1])+'" x2="'+f1(b[0])+'" y2="'+f1(b[1])+'" stroke="var(--pb)" stroke-width="22"/>';
+    front='<text x="'+f1(ls[0])+'" y="'+f1(ls[1]+4.5)+'" text-anchor="middle" style="fill:var(--panel);font-weight:700;font-size:13px">S</text><text x="'+f1(lw[0])+'" y="'+f1(lw[1]+4.5)+'" text-anchor="middle" style="fill:var(--panel);font-weight:700;font-size:13px">N</text>'+front;
+  }
+  o+='<defs><radialGradient id="gE" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="var(--panel)"/><stop offset="1" stop-color="var(--line)"/></radialGradient></defs><circle cx="'+V.cx+'" cy="'+V.cy+'" r="'+R+'" fill="url(#gE)" fill-opacity="'+(stE>=3?.38:.94)+'" stroke="var(--muted)" stroke-width="1.5"/>'+front;
+  dyn.innerHTML=o;
+}
+function incTxt(e){const a=fmt(Math.abs(e.I),0)+'°';return Math.abs(e.I)<.5?a+' ('+t('horiz')+')':a+' '+t(e.I>0?'down':'up');}
+
+/* ================= escena 3: espira que travessa una regió amb camp ================= */
+function st(){
+  const B=+bf.value,v=+vv.value,R=+rr.value,a=+aa.value,b=+bb.value,N=+nn.value;
+  const span=WR+a-X0+TAIL,x=X0+tau*span,T=span/100/v,tm=tau*T;
+  const l=clamp(Math.min(x,WR)-Math.max(x-a,0),0,a);
+  const ph=x<=1e-9?0:x<a-1e-9?1:x<=WR+1e-9?2:x<WR+a-1e-9?3:4,dl=ph===1?1:ph===3?-1:0;
+  const E0=N*B*(b/100)*v,phi=sB*N*B*(b/100)*(l/100),e=-sB*E0*dl,I=e/R,F=N*B*Math.abs(I)*(b/100);
+  return {B,v,R,a,b,N,span,x,T,t:tm,l,ph,dl,E0,phi,e,I,F,phiM:N*B*(b/100)*(a/100),Q:2*E0*E0/R*(a/100/v)};
+}
+function drawI(){
+  const s=st(),hb=s.b/2,xl=s.x-s.a,xm=s.x-s.a/2,c=s.I>0?1:-1,showI=curEl.checked&&s.I!==0,col='var(--pb)';let o=bg(),lo='',up='';
+  /* línies de camp verticals; les que travessen l'espira es marquen: això és el flux */
+  for(let gx=3;gx<WR;gx+=6)for(const gy of [-6,0,6]){
+    const inn=gx>xl&&gx<s.x&&Math.abs(gy)<hb,g='<g opacity="'+(inn?1:.42)+'">',w=inn?2.6:1.6,at='stroke="var(--pa)" stroke-width="'+w+'"';
+    lo+=g+(sB>0?ln([gx,gy,-6],[gx,gy,0],at):arr3([gx,gy,0],[gx,gy,-6],'var(--pa)',w,'',6))+'</g>';
+    up+=g+(sB>0?arr3([gx,gy,0],[gx,gy,6],'var(--pa)',w,'',6):ln([gx,gy,6],[gx,gy,0],at))+'</g>';
+  }
+  const bi=showI?arr3([xm,0,0],[xm,0,c*6.5],col,3.2,t('i_lbl_Bi'),8):'';
+  o+=lo+(c<0?bi:'');
+  o+=poly([[0,-9,0],[WR,-9,0],[WR,9,0],[0,9,0]],'fill="var(--pa)" fill-opacity=".08" stroke="var(--pa)" stroke-dasharray="4 3" stroke-opacity=".6"',true);
+  const qb=pr([WR,9,0]);o+=lbl(qb[0]+6,qb[1]-4,'B = '+fmt(s.B,2)+' T '+(sB<0?'↓':'↑'),'var(--pa)','start');
+  o+=poly([[xl,-hb,0],[s.x,-hb,0],[s.x,hb,0],[xl,hb,0]],'fill="var(--panel)" fill-opacity=".35" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"',true);
+  if(s.N>1){const q=pr([xm,-hb,0]);o+='<text x="'+f1(q[0])+'" y="'+f1(q[1]+14)+'" text-anchor="middle">N = '+s.N+'</text>';}
+  if(showI)o+=arr3([xm-1.6*c,-hb,0],[xm+1.6*c,-hb,0],col,2.6)+arr3([xm+1.6*c,hb,0],[xm-1.6*c,hb,0],col,2.6)+arr3([s.x,-1.6*c,0],[s.x,1.6*c,0],col,2.6)+arr3([xl,1.6*c,0],[xl,-1.6*c,0],col,2.6);
+  o+=up+(c>0?bi:'');
+  o+=arr3([s.x+.6,0,0],[s.x+2.6+s.v*.8,0,0],'var(--ok)',2.8,'v');
+  if(showI){const L=clamp(2+Math.sqrt(s.F)*14,2.4,9);o+=arr3([xl-.6,0,0],[xl-.6-L,0,0],'var(--warn)',3.2,'F');}
+  dyn.innerHTML=o;
+  /* gràfiques sincronitzades */
+  const GX=x=>50+(x-X0)/s.span*536,xc=GX(s.x);
+  const graph=(y0,amp,title,gc,pts,vmax,unit,val)=>{
+    let q='<text x="6" y="'+(y0-amp-2)+'" style="fill:'+gc+';font-weight:700">'+title+'</text><line x1="50" y1="'+y0+'" x2="586" y2="'+y0+'" stroke="var(--muted)"/><line x1="50" y1="'+(y0-amp-5)+'" x2="50" y2="'+(y0+amp+5)+'" stroke="var(--muted)"/>';
+    q+='<text x="46" y="'+(y0-amp+3.5)+'" text-anchor="end">+</text><text x="46" y="'+(y0+amp+3.5)+'" text-anchor="end">−</text><text x="46" y="'+(y0+3.5)+'" text-anchor="end">0</text><text x="586" y="'+(y0-amp-2)+'" text-anchor="end">max = '+fmtU(vmax,unit)+'</text>';
+    const p=pts.map(([x,y])=>f1(GX(x))+','+f1(y0-amp*y)).join(' ');
+    q+='<polyline points="'+p+'" fill="none" stroke="'+gc+'" stroke-width="1.4" stroke-dasharray="3 4" opacity=".55"/><polyline clip-path="url(#cg)" points="'+p+'" fill="none" stroke="'+gc+'" stroke-width="2.8"/>';
+    return q+'<circle cx="'+f1(xc)+'" cy="'+f1(y0-amp*val)+'" r="4.5" fill="'+gc+'" stroke="var(--panel)" stroke-width="1.5"/>';
+  };
+  let g='<rect x="1" y="1" width="598" height="150" rx="6" fill="var(--stage)" stroke="var(--line)"/><defs><clipPath id="cg"><rect x="0" y="0" width="'+f1(xc)+'" height="152"/></clipPath></defs>';
+  [0,s.a,WR,WR+s.a].forEach(x=>{g+='<line x1="'+f1(GX(x))+'" y1="10" x2="'+f1(GX(x))+'" y2="146" stroke="var(--line)" stroke-dasharray="2 3"/>';});
+  const e1=-sB;
+  g+=graph(44,22,t('i_gphi'),'var(--pa)',[[X0,0],[0,0],[s.a,sB],[WR,sB],[WR+s.a,0],[WR+s.a+TAIL,0]],s.phiM,'Wb',s.phiM?s.phi/s.phiM:0);
+  g+=graph(112,22,t('i_ge'),'var(--pb)',[[X0,0],[0,0],[0,e1],[s.a,e1],[s.a,0],[WR,0],[WR,-e1],[WR+s.a,-e1],[WR+s.a,0],[WR+s.a+TAIL,0]],s.E0,'V',s.E0?s.e/s.E0:0);
+  g+='<line x1="'+f1(xc)+'" y1="8" x2="'+f1(xc)+'" y2="146" stroke="var(--ink)" opacity=".6"/><text x="586" y="147" text-anchor="end">t →</text>';
+  gsvg.innerHTML=g;
+}
+
+/* ================= panell, etiquetes i control ================= */
+function panels(){
+  const row=(k,v)=>'<dt>'+k+'</dt><dd>'+v+'</dd>',wt=t('wait');
+  let msg,r,q,note;
+  if(scene==='w'){
+    const w=W();
+    msg=stW===1?tt('w1',uT(w.m1)):stW===2?tt('w2',uT(w.m2)):stW===3?tt('w3',uT(w.m)):
+      stW===4?(w.nk==='in'?tt('w4_in',fmt(w.nd,2)):w.nk==='out'?tt('w4_out',fmt(w.nd,2),w.nw):t('w4_'+w.nk)):
+      (w.F>0?tt('w5',fmtU(w.F,'N/m'),t(s1===s2?'attr':'rep')):t('w5_0'));
+    r=row(t('rd_P'),'('+fmt(P.x,1)+'; '+fmt(P.y,1)+') cm')+row(t('rd_r1'),fmt(w.r1,2)+' cm')+row(t('rd_r2'),fmt(w.r2,2)+' cm')+
+      row(t('rd_b1'),uT(w.m1))+row(t('rd_b2'),stW>=2?uT(w.m2):wt)+row(t('rd_b'),stW>=3?'<b>'+uT(w.m)+'</b>':wt)+
+      row(t('rd_ang'),stW>=3?(w.m>.02?fmt((Math.atan2(w.b[1],w.b[0])/RAD+360)%360,0)+'°':'—'):wt);
+    q=row(t('r_nul'),stW>=4?(w.nk==='in'?tt('nul_in',fmt(w.nd,2)):w.nk==='out'?tt('nul_out',fmt(w.nd,2),w.nw):t('nul_no')):wt)+
+      row(t('r_F'),stW>=5?fmtU(w.F,'N/m')+(w.F>0?' ('+t(s1===s2?'attr':'rep')+')':''):wt);
+    note=t('note_w');
+  }else if(scene==='e'){
+    const e=earth();
+    msg=stE<4?t('t'+stE):tt('t4',incTxt(e),uT(e.m));
+    r=row(t('rd_lam'),e.lam+'°')+row(t('rd_I'),stE>=4?'<b>'+incTxt(e)+'</b>':wt)+row(t('rd_B'),stE>=4?uT(e.m):wt)+row(t('rd_H'),stE>=4?uT(e.H):wt)+row(t('rd_Z'),stE>=4?uT(e.Z):wt);
+    q=row(t('r_eq'),'≈ 31 µT')+row(t('r_pol'),'≈ 62 µT')+row(t('r_tilt'),'≈ 10°');
+    note=t('note_e');
+  }else{
+    const s=st(),dirB=t(sB<0?'i_in':'i_out'),dirO=t(sB<0?'i_out':'i_in'),I1=-sB;
+    const sense=I=>I===0?t('i_no_I'):t(I>0?'i_ccw':'i_cw');
+    msg=s.ph===0?t('i_p0'):s.ph===1?tt('i_p1',dirB,dirO,t(I1>0?'i_ccw':'i_cw'),fmtU(s.E0,'V')):s.ph===2?t('i_p2'):s.ph===3?tt('i_p3',dirB,t(I1>0?'i_cw':'i_ccw')):tt('i_p4',fmtU(s.Q,'J'));
+    r=row(t('i_rd_t'),fmtU(s.t,'s'))+row(t('i_rd_S'),fmt(s.l*s.b,1)+' cm²')+row(t('i_rd_phi'),'<b>'+fmtU(s.phi,'Wb')+'</b>')+row(t('i_rd_e'),'<b>'+fmtU(s.e,'V')+'</b>')+
+      row(t('i_rd_I'),s.I===0?t('i_no_I'):fmtU(Math.abs(s.I),'A')+' ('+sense(s.I)+')')+row(t('i_rd_F'),fmtU(s.F,'N'))+row(t('i_rd_P'),fmtU(s.e*s.e/s.R,'W'));
+    q=row(t('i_r_e'),fmtU(s.E0,'V'))+row(t('i_r_I'),fmtU(s.E0/s.R,'A'))+row(t('i_r_phi'),fmtU(s.phiM,'Wb'))+row(t('i_r_t'),fmtU(s.a/100/s.v,'s'))+row(t('i_r_Q'),fmtU(s.Q,'J'));
+    note=t('i_note');
+    $('#tauL').textContent=fmtU(s.t,'s');
+  }
+  $('#stepMsg').innerHTML=msg;readout.innerHTML=r;results.innerHTML=q;$('#note').textContent=note;
+}
+function labels(){
+  $('#i1L').textContent=fmt(+i1.value,1)+' A';$('#i2L').textContent=fmt(+i2.value,1)+' A';$('#ddL').textContent=dd.value+' cm';$('#lamL').textContent=lam.value+'°';
+  $('#bfL').textContent=fmt(+bf.value,2)+' T';$('#vvL').textContent=fmt(+vv.value,1)+' m/s';$('#rrL').textContent=fmt(+rr.value,1)+' Ω';
+  $('#aaL').textContent=aa.value+' cm';$('#bbL').textContent=bb.value+' cm';$('#nnL').textContent=nn.value;tauEl.value=tau;
+  const pressed=(sel,f)=>$$(sel).forEach(b=>b.setAttribute('aria-pressed',String(f(b))));
+  pressed('#sw1 button',b=>+b.dataset.d===s1);pressed('#sw2 button',b=>+b.dataset.d===s2);pressed('#dirsw button',b=>+b.dataset.d===sB);
+  pressed('#scsw button',b=>b.dataset.s===scene);pressed('#vw button',b=>(b.dataset.v==='top')===(CAM[scene].el>=89.5&&Math.abs(CAM[scene].az)<.5));
+  ['W','E','I'].forEach(k=>{const on=scene===k.toLowerCase();$('#ct'+k).hidden=!on;$('#lg'+k).hidden=!on;});
+  const ind=scene==='i';gsvg.toggleAttribute('hidden',!ind);btnPlay.hidden=!ind;$('#btnAll').hidden=ind;hP.style.display=scene==='w'?'':'none';
+  const v=VIEW[scene];svg.setAttribute('viewBox','0 0 '+v.W+' '+v.H);
+  if(ind){const ph=st().ph;$('#stepN').textContent=tt('i_phn',ph+1);btnStep.disabled=ph>=4;}
+  else{const s=scene==='w'?stW:stE,n=scene==='w'?NW:NE;$('#stepN').textContent=tt('stepn',s,n);btnStep.disabled=s>=n;}
+}
+function setPlay(){const k=playing?'i_pause':(tau>0&&tau<1?'i_resume':'i_play');if(btnPlay.textContent!==t(k))btnPlay.textContent=t(k);}
+function refresh(){setProj();if(scene==='w'){fixP();drawW();}else if(scene==='e')drawE();else drawI();labels();panels();setPlay();}
+function stop(){playing=false;last=null;}
+function tick(ts){
+  if(!playing)return;
+  if(last===null)last=ts;
+  tau+=(ts-last)/1000/9;last=ts;
+  if(tau>=1){tau=1;stop();}
+  refresh();
+  if(playing)requestAnimationFrame(tick);
+}
+function play(){
+  if(playing){stop();setPlay();return;}
+  if(tau>=1)tau=0;
+  playing=true;last=null;setPlay();requestAnimationFrame(tick);
+}
+/* centre de cada fase de l'espira, en fracció del recorregut */
+function phaseTau(ph){const a=+aa.value,span=WR+a-X0+TAIL,x=[X0/2,a/2,(a+WR)/2,WR+a/2,WR+a+TAIL/2][ph];return (x-X0)/span;}
+[i1,i2,dd,lam,lineEl,ndlEl,bf,vv,rr,aa,bb,nn,curEl].forEach(e=>e.addEventListener('input',refresh));
+tauEl.addEventListener('input',()=>{tau=+tauEl.value;stop();refresh();});
+$$('#sw1 button').forEach(b=>b.addEventListener('click',()=>{s1=+b.dataset.d;refresh();}));
+$$('#sw2 button').forEach(b=>b.addEventListener('click',()=>{s2=+b.dataset.d;refresh();}));
+$$('#dirsw button').forEach(b=>b.addEventListener('click',()=>{sB=+b.dataset.d;refresh();}));
+$$('#scsw button').forEach(b=>b.addEventListener('click',()=>{stop();scene=b.dataset.s;refresh();}));
+$$('#vw button').forEach(b=>b.addEventListener('click',()=>{CAM[scene]=b.dataset.v==='top'?{...TOP}:{...CAM0[scene]};refresh();}));
+btnStep.addEventListener('click',()=>{if(scene==='w')stW=Math.min(NW,stW+1);else if(scene==='e')stE=Math.min(NE,stE+1);else{stop();tau=phaseTau(Math.min(4,st().ph+1));}refresh();});
+$('#btnAll').addEventListener('click',()=>{if(scene==='w')stW=NW;else stE=NE;refresh();});
+$('#btnReset').addEventListener('click',()=>{if(scene==='w')stW=1;else if(scene==='e')stE=1;else{stop();tau=0;}refresh();});
+btnPlay.addEventListener('click',play);
+/* arrossegar: el punt P es mou pel pla z = 0; el fons gira la càmera */
+let dragP=false,rot=null;
+const toSvg=ev=>{const r=svg.getBoundingClientRect(),v=PR.v;return [(ev.clientX-r.left)*v.W/r.width,(ev.clientY-r.top)*v.H/r.height];};
+hP.addEventListener('pointerdown',ev=>{dragP=true;hP.setPointerCapture(ev.pointerId);ev.preventDefault();ev.stopPropagation();});
+hP.addEventListener('pointermove',ev=>{
+  if(!dragP)return;
+  const [x,y]=toSvg(ev),v=PR.v,ux=(x-v.cx)/v.S,wy=(v.cy-y)/v.S/PR.se;
+  P.x=Math.round((ux*PR.ca-wy*PR.sa)*10)/10;P.y=Math.round((ux*PR.sa+wy*PR.ca)*10)/10;refresh();
+});
+['pointerup','pointercancel'].forEach(n=>hP.addEventListener(n,()=>{dragP=false;}));
+svg.addEventListener('pointerdown',ev=>{if(ev.target===hP)return;rot={x:ev.clientX,y:ev.clientY};svg.classList.add('rot');try{svg.setPointerCapture(ev.pointerId);}catch(e){}});
+svg.addEventListener('pointermove',ev=>{
+  if(!rot)return;
+  const c=CAM[scene];c.az-=(ev.clientX-rot.x)*.45;c.el=clamp(c.el+(ev.clientY-rot.y)*.45,ELMIN[scene],90);rot={x:ev.clientX,y:ev.clientY};refresh();
+});
+['pointerup','pointercancel'].forEach(n=>svg.addEventListener(n,()=>{rot=null;svg.classList.remove('rot');}));
+App.hooks.push(refresh);
+
+/* ===== Raona-ho ===== */
+const dv=(x,d)=>x===undefined?d:x;
+function load(o){
+  o=o||{};stop();scene=o.scene||'w';CAM[scene]={...CAM0[scene]};
+  if(scene==='w'){
+    i1.value=dv(o.I1,10);i2.value=dv(o.I2,10);dd.value=dv(o.d,10);s1=dv(o.s1,1);s2=dv(o.s2,1);
+    lineEl.checked=!!o.line;ndlEl.checked=true;P={x:dv(o.x,2),y:dv(o.y,6)};stW=dv(o.st,NW);
+  }else if(scene==='e'){lam.value=dv(o.lam,40);stE=dv(o.st,NE);}
+  else{
+    bf.value=dv(o.B,.5);vv.value=dv(o.v,2);rr.value=dv(o.R,2);aa.value=dv(o.a,10);bb.value=dv(o.b,10);nn.value=dv(o.N,1);sB=dv(o.s,-1);curEl.checked=true;
+    if(o.t!==undefined){const span=WR+(+aa.value)-X0+TAIL;tau=clamp(o.t*(+vv.value)*100/span,0,1);}
+    else tau=phaseTau(dv(o.ph,1));
+  }
+  refresh();
+  if(o.run){tau=0;play();}
+  RZ.show(svg);
+}
+const half=x=>Math.round(x*2)/2;
+const INC=l=>Math.atan(2*Math.tan(l*RAD))/RAD;
+const LI=o=>load(Object.assign({scene:'i'},o));
+RZ.init({
+ sim:()=>load(),
+ M:[
+  {id:'m1',f:[{l:'f_B',u:'µT'}],sim:()=>load({I1:10,I2:0,d:10,x:0,y:0,line:true,st:1}),ok:()=>({k:'m1_ok'}),
+   chk:([B])=>Math.abs(B-40)<=1?null:{k:'m1_f',p:[fmt(B,1)]}},
+  {id:'m2',f:[{l:'f_B',u:'µT'}],sim:()=>load({I1:10,I2:10,s2:-1,d:10,x:0,y:0,line:true,st:3}),ok:()=>({k:'m2_ok'}),
+   chk:([B])=>Math.abs(B-80)<=2?null:B===0?{k:'m2_0'}:{k:'m2_f',p:[fmt(B,1)]}},
+  {id:'m3',f:[{l:'f_x',u:'cm'}],sim:()=>load({I1:5,I2:15,d:20,x:-5,y:0,line:true,st:4}),ok:()=>({k:'m3_ok'}),
+   chk:([x])=>Math.abs(x-5)<=.2?null:{k:'m3_f',p:[fmt(x,1)]}},
+  {id:'m4',f:[{l:'f_F',u:'mN/m'}],sim:()=>load({I1:10,I2:20,d:10}),ok:()=>({k:'m4_ok'}),
+   chk:([F])=>Math.abs(F-.4)<=.02?null:{k:'m4_f',p:[fmt(F,2)]}},
+  {id:'m5',f:[{l:'i_f_e',u:'V'}],sim:()=>LI({ph:1}),ok:()=>({k:'m5_ok'}),
+   chk:([e])=>Math.abs(Math.abs(e)-.1)<=.005?null:{k:'m5_f',p:[fmt(e,3)]}},
+  {id:'m6',f:[{l:'i_f_I',u:'mA'}],sim:()=>LI({ph:1,R:2}),ok:()=>({k:'m6_ok'}),
+   chk:([I])=>Math.abs(Math.abs(I)-50)<=2?null:{k:'m6_f',p:[fmt(I,1)]}},
+  {id:'m7',f:[{l:'i_f_phi',u:'mWb'}],sim:()=>LI({ph:2}),ok:()=>({k:'m7_ok'}),
+   chk:([p])=>Math.abs(Math.abs(p)-5)<=.2?null:{k:'m7_f',p:[fmt(p,2)]}},
+  {id:'m8',f:[{l:'i_f_v',u:'m/s'}],sim:([v])=>LI({ph:1,N:2,v:clamp(half(v),.5,5)}),ok:()=>({k:'m8_ok'}),
+   chk:([v])=>Math.abs(v-3)<=.1?null:{k:'m8_f',p:[fmt(v,2),fmt(.1*v,2)]}}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load({})},
+  {id:'s2',ans:'D',f:[{l:'s2.cxq',u:'A'}],sim:()=>load({st:4,x:0,y:0,line:true}),
+   cxsim:([I])=>load({I1:10,I2:half(Math.abs(I)),s2:I<0?-1:1,st:4,x:0,y:0,line:true}),
+   cxok:([I])=>({k:'s2_cx',p:[fmt(I,1)]}),
+   cx:([I])=>!(Math.abs(I)>=.5&&Math.abs(I)<=20)?{k:'rng'}:I<0?null:{k:'s2_cx_no',p:[fmt(I,1)]}},
+  {id:'s3',ans:'M',sim:()=>load({I1:10,I2:0,d:10,x:0,y:0,line:true,st:1})},
+  {id:'s4',ans:'S',sim:()=>load({I1:10,I2:0,st:1})},
+  {id:'s5',ans:'S',sim:()=>load({scene:'e',st:3})},
+  {id:'s6',ans:'D',f:[{l:'s6.cxq',u:'°'}],sim:()=>load({scene:'e',lam:0}),
+   cxsim:([l])=>load({scene:'e',lam:Math.round(l)}),
+   cxok:([l])=>({k:'s6_cx',p:[fmt(l,0),fmt(Math.abs(Math.abs(l)===90?90:INC(l)),0)]}),
+   cx:([l])=>!(l>=-90&&l<=90)?{k:'rng'}:Math.abs(l)>=1?null:{k:'s6_cx_no',p:[fmt(l,0)]}},
+  {id:'s7',ans:'M',sim:()=>LI({ph:2})},
+  {id:'s8',ans:'M',sim:()=>LI({run:true})},
+  {id:'s9',ans:'S',sim:()=>LI({ph:1,v:4})},
+  {id:'s10',ans:'D',f:[{l:'s10.cxq',u:'s'}],sim:()=>LI({ph:2,v:1}),
+   cxsim:([x])=>LI({v:1,t:x}),
+   cxok:([x])=>({k:'s10_cx',p:[fmt(x,2)]}),
+   cx:([x])=>!(x>=0&&x<=.5)?{k:'rng'}:(x>=.15&&x<=.35)?null:{k:'s10_cx_no',p:[fmt(x,2)]}},
+  {id:'s11',ans:'S',sim:()=>LI({run:true})},
+  {id:'s12',ans:'M',sim:()=>LI({ph:1,R:6})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>load({I1:10,I2:10,s2:-1,x:0,y:0,line:true,st:3})},
+  {id:'e2',who:0,sim:()=>load({I1:5,I2:20})},
+  {id:'e3',who:1,sim:()=>load({scene:'e',st:3})},
+  {id:'e4',who:1,sim:()=>LI({ph:2})},
+  {id:'e5',who:1,sim:()=>LI({ph:1})},
+  {id:'e6',who:0,sim:()=>LI({ph:3})}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[2.5,5,10,20],fmt:x=>fmt(x,1)+' A'},f:[{l:'f_F',u:'mN/m'}],
+   sim:(a)=>load({I1:5,I2:Number.isFinite(a[0])?a[0]:10,d:6,x:-1,y:0,line:true}),ok:()=>({k:'d1_ok'}),
+   chk:([p,F])=>p!==10?{k:'d1_p',p:[fmt(p,1),fmt(30/(5+p),2)]}:Math.abs(F-1/6)>.01?{k:'d1_F'}:null},
+  {id:'d2',chips:{vals:[30,41,60],fmt:x=>x+'°'},f:[{l:'f_B',u:'µT'}],
+   sim:(a)=>load({scene:'e',lam:Number.isFinite(a[0])?a[0]:41}),ok:()=>({k:'d2_ok'}),
+   chk:([p,B])=>p!==41?{k:'d2_p',p:[p,fmt(INC(p),0)]}:Math.abs(B-46.9)>1?{k:'d2_B'}:null},
+  {id:'d3',chips:{vals:[.5,2,10],fmt:x=>fmt(x,1)+' Ω'},f:[{l:'i_f_F',u:'mN'}],
+   sim:(a)=>LI({ph:1,R:Number.isFinite(a[0])?a[0]:.5}),ok:()=>({k:'d3_ok'}),
+   chk:([p,F])=>p!==.5?{k:'d3_p',p:[fmt(p,1),fmt(5/p,1)]}:Math.abs(F-10)>.5?{k:'d3_F'}:null}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+refresh();
+})();
+</script>
+</body>
+</html>
