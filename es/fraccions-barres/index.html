@@ -202,7 +202,10 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .bar .tk{stroke:var(--ink);stroke-opacity:.35;stroke-width:1}
 .bar .tk.w{stroke-opacity:.95;stroke-width:2}
 .bar .tk.s{stroke-opacity:.6;stroke-dasharray:4 3}
-.brow .cap .eqv{display:block;margin-top:4px;font-size:16px;color:var(--muted)}
+.brow .cap .eqv{display:inline-flex;align-items:center;gap:4px;color:var(--muted)}
+.barsbox.stack .brow{grid-template-columns:minmax(0,1fr);gap:4px}
+.barsbox.stack .brow .cap{display:flex;align-items:center;gap:8px;text-align:left}
+.barsbox.stack .brow .cap small{margin:0 4px 0 0}
 .bar .out{fill:none;stroke:var(--ink);stroke-width:2}
 .ta{color:var(--pa);font-weight:700}.tb{color:var(--pb);font-weight:700}
 .read{display:grid;gap:8px;font-size:15px}
@@ -847,7 +850,7 @@ function render(){
       '<p class="note">'+t('sum_note')+'</p>'+
       (se&&(ad!==m||bd!==m)&&m<=24?'<p class="note">'+tt('sum_cut',m)+'</p>':'');
   }
-  bars.innerHTML=b;out.innerHTML=o;
+  bars.classList.toggle('stack',mode==='sum');bars.innerHTML=b;out.innerHTML=o;
   $('#gB').hidden=mode==='eq';$('#gE').hidden=mode!=='sum';$('#gK').hidden=mode!=='eq';
 }
 $$('#modes button').forEach(bt=>bt.addEventListener('click',()=>{setMode(bt.dataset.m);}));
