@@ -53,7 +53,6 @@ def catala(src):
             if len(f) != 3: continue
             form, lemma, tag = f
             if tag.startswith('NP') or tag == 'Y' or lemma in STOP_CA or form in STOP_CA: continue   # noms propis, abreviatures
-            if tag[0] == 'V' and tag[-1] == 'B': continue      # formes verbals només balears
             forms.add(form)
     return forms
 
@@ -111,7 +110,7 @@ if __name__ == '__main__':
     write('ca', catala(ca_src), [
         'Diccionari del joc «Xifres i lletres» (valencià/català). Generat el ' + avui + ' amb tools/simuladors/dicc/genera_diccionaris.py',
         'Font: diccionari de formes de Softcatalà (https://github.com/Softcatala/catalan-dict-tools), amb les entrades del DNV.',
-        'Llicència: LGPL 2.1 / GPL 2 (la de la font). Formes de 2 a 9 lletres; sense noms propis ni formes només balears.'])
+        'Llicència: LGPL 2.1 / GPL 2 (la de la font). Formes de 2 a 9 lletres; sense noms propis; amb les formes valencianes, centrals i balears.'])
     write('es', castella(es_src), [
         'Diccionario del juego «Cifras y letras» (castellano). Generado el ' + avui + ' con tools/simuladors/dicc/genera_diccionaris.py',
         'Fuente: diccionario Hunspell es_ES del proyecto RLA-ES (https://github.com/LibreOffice/dictionaries, carpeta es/), expandido a formas.',
