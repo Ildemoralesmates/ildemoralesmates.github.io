@@ -68,6 +68,9 @@ ol.hist{margin:0;padding-left:1.4em;font-family:var(--f-num);font-size:13.5px;fo
 .stat{font-size:13px;color:var(--muted);margin:0}
 .rules ul{margin:6px 0 0;padding-left:1.2em;color:var(--muted);font-size:13.5px}
 details.rules summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:14px}
+.wl{margin:0 0 4px;font-size:13.5px;line-height:1.55;overflow-wrap:anywhere}
+.wl b{color:var(--pa);margin-right:.5em;white-space:nowrap}
+.wl .more{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.tile.pop,.nchip{animation:none}}
 </style>
 <!--@GC@-->
@@ -146,6 +149,12 @@ details.rules summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:
 <h3 data-i18n="teams_h"></h3>
 <div class="teams" id="teams"></div>
 <label class="nteams"><span data-i18n="n_teams"></span> <select id="nTeams"><option>2</option><option>3</option><option>4</option></select></label>
+<div id="wordBox" hidden>
+<h3 data-i18n="words_h"></h3>
+<div class="rowc" style="margin:6px 0"><button class="btn" id="showW" type="button" data-i18n="words_show" disabled></button></div>
+<div id="wOut" hidden></div>
+<p class="stat" id="wStat" aria-live="polite"></p>
+</div>
 <div id="calcBox" hidden>
 <h3 data-i18n="calc_h"></h3>
 <p class="note" data-i18n="calc_hint"></p>
@@ -220,6 +229,15 @@ ca:{
 "rules_l":"Lletres: cada paraula vàlida suma tants punts com lletres; amb les 9 lletres, 18 punts.",
 "rules_n":"Xifres: 10 punts si s'arriba a l'objectiu, 7 si s'està a 5 o menys, 5 si s'està a 10 o menys.",
 "rules_ops":"Només operacions +, −, ×, ÷ amb enters positius; cada número es pot usar una vegada.",
+"words_h":"Paraules possibles","words_show":"Mostra les millors paraules","words_hide":"Amaga les paraules",
+"words_loading":"Carregant el diccionari…","words_search":"Buscant paraules…",
+"words_ready":"Diccionari carregat: {n} paraules de fins a 9 lletres. Completa el tauler per a buscar-ne.",
+"words_hidden":"Paraules trobades. Mostra-les quan s'acabe el temps.",
+"words_len":"{k} lletres:","words_more":"i {n} més",
+"words_stat":"Amb estes lletres es poden escriure {a} ordenacions diferents d'1 a 9 lletres; el diccionari en reconeix {n} com a paraules.",
+"words_none":"El diccionari no troba cap paraula amb estes lletres.",
+"word_ok_dict":"{n} lletres → {p} punts · ✔ és al diccionari",
+"word_nodict":"{n} lletres → {p} punts · no és al diccionari: decidix el professor",
 /* Raona-ho */
 "rng":"Escriu nombres enters positius.","m_notin":"Només pots usar els números del conjunt, i cada un una vegada.",
 "f_a":"1r número","f_b":"2n número","f_c":"3r número","f_n":"Operacions","d1.l0":"Objectius","d2.l0":"Diferència",
@@ -314,6 +332,15 @@ es:{
 "rules_l":"Letras: cada palabra válida suma tantos puntos como letras; con las 9 letras, 18 puntos.",
 "rules_n":"Cifras: 10 puntos si se llega al objetivo, 7 si se queda a 5 o menos, 5 si se queda a 10 o menos.",
 "rules_ops":"Solo operaciones +, −, ×, ÷ con enteros positivos; cada número se puede usar una vez.",
+"words_h":"Palabras posibles","words_show":"Mostrar las mejores palabras","words_hide":"Ocultar las palabras",
+"words_loading":"Cargando el diccionario…","words_search":"Buscando palabras…",
+"words_ready":"Diccionario cargado: {n} palabras de hasta 9 letras. Completa el tablero para buscarlas.",
+"words_hidden":"Palabras encontradas. Muéstralas cuando se acabe el tiempo.",
+"words_len":"{k} letras:","words_more":"y {n} más",
+"words_stat":"Con estas letras se pueden escribir {a} ordenaciones distintas de 1 a 9 letras; el diccionario reconoce {n} como palabras.",
+"words_none":"El diccionario no encuentra ninguna palabra con estas letras.",
+"word_ok_dict":"{n} letras → {p} puntos · ✔ está en el diccionario",
+"word_nodict":"{n} letras → {p} puntos · no está en el diccionario: decide el profesor",
 /* Raona-ho */
 "rng":"Escribe números enteros positivos.","m_notin":"Solo puedes usar los números del conjunto, y cada uno una vez.",
 "f_a":"1.er número","f_b":"2.º número","f_c":"3.er número","f_n":"Operaciones","d1.l0":"Objetivos","d2.l0":"Diferencia",
@@ -509,7 +536,7 @@ function clearLetters(){S.letters=[];S.bags=null;S.teams.forEach(x=>{x.vL='';x.a
 function afterLetters(){
   if(S.letters.length===9)setMsg('letters_ready','ok');
   else{const k=counts();setMsg('letters_progress','',{n:S.letters.length,v:k.v,c:k.c})}
-  refreshTeamInputs();
+  refreshTeamInputs();dictSync();
 }
 function renderLetters(pop){
   let h='';
@@ -534,6 +561,113 @@ function checkWord(w){
   const bad=[];
   for(const ch of w){if(pool[ch]>0)pool[ch]--;else if(bad.indexOf(ch)<0)bad.push(ch)}
   return{ok:bad.length===0,bad};
+}
+
+/* ---------- diccionari opcional: xifres-i-lletres/diccionari-<idioma>.txt (una paraula per línia) ---------- */
+function dictCore(){ /* autònom: s'executa dins d'un Worker, o al fil principal si no n'hi ha */
+  let W=[],D=[];
+  const AB='ABCDEFGHIJKLMNOPQRSTUVWXYZÑÇ';
+  const nrm=s=>s.toUpperCase().replace(/Ñ/g,'\u0001').replace(/Ç/g,'\u0002').normalize('NFD')
+    .replace(/[̀-ͯ]/g,'').replace(/[^A-Z\u0001\u0002]/g,'').replace(/\u0001/g,'Ñ').replace(/\u0002/g,'Ç');
+  function parse(text){
+    const seen=new Set();W=[];D=[];
+    for(let line of text.split(/\r?\n/)){
+      line=line.trim();if(!line||line[0]==='#')continue;
+      const k=line.indexOf('/');if(k>=0)line=line.slice(0,k);            /* format Hunspell: paraula/FLAGS */
+      if(/[\s\-'’.0-9]/.test(line))continue;                             /* locucions, compostos, abreviatures */
+      if(line!==line.toUpperCase()&&line[0]!==line[0].toLowerCase())continue; /* Noms propis */
+      const w=nrm(line);
+      if(w.length<2||w.length>9||seen.has(w))continue;
+      seen.add(w);W.push(w);D.push(line.toUpperCase());
+    }
+  }
+  function find(letters){
+    const c=new Int8Array(28),u=new Int8Array(28),out=[];
+    for(const ch of letters)c[AB.indexOf(ch)]++;
+    for(let i=0;i<W.length;i++){
+      const w=W[i];let ok=true,j=0;
+      for(;j<w.length;j++){const k=AB.indexOf(w[j]);if(k<0||++u[k]>c[k]){ok=false;j++;break}}
+      for(let q=0;q<j;q++){const k=AB.indexOf(w[q]);if(k>=0)u[k]--}
+      if(ok)out.push([w,D[i]]);
+    }
+    out.sort((a,b)=>b[0].length-a[0].length||(a[0]<b[0]?-1:1));
+    return out;
+  }
+  return{parse,find,count:()=>W.length};
+}
+const DICT={state:'none',n:0,id:0,pending:0,res:null,valid:null,shown:false,post:null};
+const fmtN=n=>n.toLocaleString('es');
+function dictUrl(){
+  const inEs=/\/es\/[^\/]+\/(index\.html)?$/.test(location.pathname);
+  return new URL((inEs?'../../xifres-i-lletres/':'')+'diccionari-'+LANG+'.txt',location.href).href;
+}
+function dictCheck(){
+  if(!/^https?:$/.test(location.protocol))return; /* en file:// no hi ha fetch */
+  let url;try{url=dictUrl()}catch(e){return}
+  try{fetch(url,{method:'HEAD'}).then(r=>{if(r.ok)dictStart(url)}).catch(()=>{})}catch(e){}
+}
+function dictMsg(m){
+  if(m.t==='ready'){if(!m.n){DICT.state='none';renderWords();return}DICT.state='ready';DICT.n=m.n;dictSync()}
+  else if(m.t==='err'){DICT.state='none';renderWords()}
+  else if(m.t==='found'&&m.id===DICT.pending){
+    DICT.pending=0;DICT.res=m.words;DICT.valid=new Set(m.words.map(x=>x[0]));
+    renderWords();refreshTeamInputs();
+  }
+}
+function dictStart(url){
+  DICT.state='loading';renderWords();
+  const local=()=>{
+    const C=dictCore();
+    DICT.post=m=>{if(m.t==='find')setTimeout(()=>dictMsg({t:'found',id:m.id,words:C.find(m.letters)}),0)};
+    fetch(url).then(r=>{if(!r.ok)throw 0;return r.text()}).then(tx=>{C.parse(tx);dictMsg({t:'ready',n:C.count()})}).catch(()=>dictMsg({t:'err'}));
+  };
+  try{
+    const src='const C=('+dictCore.toString()+')();self.onmessage=async e=>{const m=e.data;try{'+
+      'if(m.t==="load"){const r=await fetch(m.url);if(!r.ok)throw 0;C.parse(await r.text());self.postMessage({t:"ready",n:C.count()})}'+
+      'else if(m.t==="find")self.postMessage({t:"found",id:m.id,words:C.find(m.letters)})'+
+      '}catch(err){self.postMessage({t:"err"})}};';
+    const w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+    w.onmessage=e=>dictMsg(e.data);
+    w.onerror=()=>{w.terminate();local()};
+    DICT.post=m=>w.postMessage(m);
+    DICT.post({t:'load',url});
+  }catch(e){local()}
+}
+function dictSync(){
+  if(S.letters.length===9&&DICT.state==='ready'){
+    if(!DICT.res&&!DICT.pending){DICT.pending=++DICT.id;DICT.post({t:'find',id:DICT.pending,letters:S.letters.map(l=>l.ch)})}
+  }else if(S.letters.length<9){DICT.res=null;DICT.valid=null;DICT.shown=false;DICT.pending=0}
+  renderWords();
+}
+/* ordenacions diferents d'1 a 9 lletres d'un multiconjunt: k!·[x^k] ∏(Σ x^j/j!) */
+function arrangements(letters){
+  const cnt={};letters.forEach(ch=>{cnt[ch]=(cnt[ch]||0)+1});
+  const f=[1];for(let i=1;i<=9;i++)f[i]=f[i-1]*i;
+  let P=[1];
+  for(const ch in cnt){
+    const Q=new Array(P.length+cnt[ch]).fill(0);
+    for(let a=0;a<P.length;a++)for(let j=0;j<=cnt[ch];j++)Q[a+j]+=P[a]/f[j];
+    P=Q;
+  }
+  let tot=0;for(let k=1;k<P.length&&k<=9;k++)tot+=P[k]*f[k];
+  return Math.round(tot);
+}
+function renderWords(){
+  const on=S.mode==='L'&&DICT.state!=='none';
+  G('wordBox').hidden=!on;if(!on)return;
+  const b=G('showW'),out=G('wOut'),st=G('wStat');
+  b.disabled=!DICT.res;b.textContent=t(DICT.res&&DICT.shown?'words_hide':'words_show');
+  out.hidden=!(DICT.res&&DICT.shown);out.innerHTML='';
+  if(DICT.state!=='ready'){st.textContent=t('words_loading');return}
+  if(!DICT.res){st.textContent=S.letters.length===9?t('words_search'):t('words_ready',{n:fmtN(DICT.n)});return}
+  if(!DICT.shown){st.textContent=t('words_hidden');return}
+  const ws=DICT.res;
+  if(!ws.length){st.textContent=t('words_none');return}
+  const groups=[];
+  ws.forEach(x=>{const k=x[0].length;let g=groups[groups.length-1];if(!g||g.k!==k){g={k,w:[]};groups.push(g)}g.w.push(x[1])});
+  out.innerHTML=groups.slice(0,4).map(g=>'<p class="wl"><b>'+esc(t('words_len',{k:g.k}))+'</b>'+g.w.slice(0,14).map(esc).join(' · ')+
+    (g.w.length>14?' <span class="more">'+esc(t('words_more',{n:g.w.length-14}))+'</span>':'')+'</p>').join('');
+  st.textContent=t('words_stat',{a:fmtN(arrangements(S.letters.map(l=>l.ch))),n:fmtN(ws.length)});
 }
 
 /* ---------- XIFRES ---------- */
@@ -726,6 +860,7 @@ function evalTeam(i){
     const r=checkWord(w);
     if(!r.ok)return{st:'bad',txt:t('word_bad',{c:r.bad.join(' ')})};
     const p=w.length===9?18:w.length;
+    if(DICT.valid)return DICT.valid.has(w)?{st:'ok',p,txt:t('word_ok_dict',{n:w.length,p})}:{st:'ok',warn:true,p,txt:t('word_nodict',{n:w.length,p})};
     return{st:'ok',p,txt:t('word_ok',{n:w.length,p})};
   }
   if(S.target===null)return{st:'wait',txt:t('sug_wait_target')};
@@ -738,7 +873,7 @@ function evalTeam(i){
 function updateSug(i){
   const card=document.querySelector('.team[data-i="'+i+'"]');if(!card)return;
   const ev=evalTeam(i),x=S.teams[i],sug=card.querySelector('.sug'),btn=card.querySelector('[data-a="apply"]');
-  sug.textContent=ev.txt;sug.className='sug'+(ev.st==='ok'?' ok':ev.st==='bad'?' bad':'');
+  sug.textContent=ev.txt;sug.className='sug'+(ev.st==='ok'&&!ev.warn?' ok':ev.st==='bad'||ev.warn?' bad':'');
   if(x['a'+S.mode]){btn.textContent=t('applied');btn.disabled=true}
   else{btn.textContent=ev.st==='ok'?t('apply',{p:ev.p}):t('apply0');btn.disabled=ev.st!=='ok'}
 }
@@ -756,7 +891,7 @@ function setMode(m){
   G('viewL').hidden=m!=='L';G('viewN').hidden=m!=='N';
   S.dur=m==='L'?30:45;G('dur').value=String(S.dur);clockReset();
   setMsg(m==='L'?'hint_l':'hint_n');
-  refreshTeamInputs();renderCalc();
+  refreshTeamInputs();renderCalc();dictSync();
 }
 function newRound(){
   S.round++;G('roundNum').textContent=S.round;
@@ -765,7 +900,7 @@ function newRound(){
   S.teams.forEach(x=>{x.vL='';x.vN='';x.aL=false;x.aN=false});
   renderLetters(-1);renderNums(false);renderTarget(null);resetPool();clockReset();
   G('stat').textContent='';
-  setMsg('new_round_msg');refreshTeamInputs();save();
+  setMsg('new_round_msg');refreshTeamInputs();dictSync();save();
 }
 let resetArm=0;
 function resetGame(){
@@ -900,12 +1035,14 @@ function init(){
     if(e.code==='Space'&&tg!=='INPUT'&&tg!=='TEXTAREA'&&tg!=='SELECT'&&tg!=='BUTTON'){e.preventDefault();clockToggle()}
   });
   document.addEventListener('langchange',()=>{
-    drawClock();renderTeams();renderTarget(S.target);renderCalc();
+    drawClock();renderTeams();renderTarget(S.target);renderCalc();renderWords();
     G('resetGame').textContent=t('reset_game');
     G('mute').title=t('sound_title');
     if(S.msgKey&&S.msgKey[0])setMsg(S.msgKey[0],'',S.msgKey[1]);else setMsg('msg_welcome');
   });
+  G('showW').onclick=()=>{if(!DICT.res)return;DICT.shown=!DICT.shown;renderWords()};
   setMsg('msg_welcome');
+  dictCheck();
 }
 init();
 initQuiz([]);
