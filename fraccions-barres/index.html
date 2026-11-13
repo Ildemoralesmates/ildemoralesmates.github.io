@@ -201,6 +201,8 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .bar .fb{fill:var(--pb);fill-opacity:.9}
 .bar .tk{stroke:var(--ink);stroke-opacity:.35;stroke-width:1}
 .bar .tk.w{stroke-opacity:.95;stroke-width:2}
+.bar .tk.s{stroke-opacity:.6;stroke-dasharray:4 3}
+.brow .cap .eqv{display:block;margin-top:4px;font-size:16px;color:var(--muted)}
 .bar .out{fill:none;stroke:var(--ink);stroke-width:2}
 .ta{color:var(--pa);font-weight:700}.tb{color:var(--pb);font-weight:700}
 .read{display:grid;gap:8px;font-size:15px}
@@ -243,6 +245,7 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 <fieldset id="gA"><legend class="ta" data-i18n="gA">Fracció A</legend></fieldset>
 <fieldset id="gB" hidden><legend class="tb" data-i18n="gB">Fracció B</legend></fieldset>
 <fieldset id="gK"><legend data-i18n="gK">Multiplica dalt i baix per</legend></fieldset>
+<label class="check" id="gE" hidden><input type="checkbox" id="showEq" checked><span data-i18n="sum_show">Mostra les fraccions equivalents a les barres A i B</span></label>
 <div class="read" id="out" aria-live="polite"></div>
 </div>
 </div>
@@ -275,6 +278,8 @@ ca:{
 "cmp_eq":"Són fraccions equivalents.","cmp_A":"A és més gran que B.","cmp_B":"B és més gran que A.",
 "sum_den":"Denominador comú: mcm({0}, {1}) = <b>{2}</b>",
 "sum_note":"Només es poden sumar trossos de la mateixa mida; per això primer igualem els denominadors.",
+"sum_show":"Mostra les fraccions equivalents a les barres A i B",
+"sum_cut":"Les línies discontínues tallen A i B en trossos d'1/{0}: els mateixos que té la barra de la suma.",
 "idea":"<b>Per a la classe:</b> abans de moure res, demana als alumnes que diguen quina de dues fraccions és més gran i per què. Després comprova-ho amb les barres: les que s'allarguen més són les més grans, vinga el número que vinga.",
 "rng":"Escriu un nombre enter dins del rang.",
 "f_n":"Numerador","f_a":"a =","f_b":"b =","f_d":"Denominador","f_dif":"Diferència",
@@ -391,6 +396,8 @@ es:{
 "cmp_eq":"Son fracciones equivalentes.","cmp_A":"A es mayor que B.","cmp_B":"B es mayor que A.",
 "sum_den":"Denominador común: mcm({0}, {1}) = <b>{2}</b>",
 "sum_note":"Solo se pueden sumar trozos del mismo tamaño; por eso primero igualamos los denominadores.",
+"sum_show":"Mostrar las fracciones equivalentes en las barras A y B",
+"sum_cut":"Las líneas discontinuas cortan A y B en trozos de 1/{0}: los mismos que tiene la barra de la suma.",
 "idea":"<b>Para la clase:</b> antes de mover nada, pide a los alumnos que digan cuál de dos fracciones es mayor y por qué. Después compruébalo con las barras: las que se alargan más son las mayores, salga el número que salga.",
 "rng":"Escribe un número entero dentro del rango.",
 "f_n":"Numerador","f_a":"a =","f_b":"b =","f_d":"Denominador","f_dif":"Diferencia",
@@ -781,7 +788,7 @@ S.bn=mk('#gB','bn','l_num',0,12,3);S.bd=mk('#gB','bd','l_den',1,12,4);
 S.k=mk('#gK','kk','l_k',1,6,2);
 const bars=$('#bars'),out=$('#out');
 let mode='eq';
-function bar(ticks,fills,wholes){
+function bar(ticks,fills,wholes,sub){
   const W=300*wholes,H=44,minor=ticks*wholes<=48;
   let s='<svg viewBox="0 0 '+W+' '+H+'" class="bar" role="img" aria-label="'+t('aria.bar')+'">';
   fills.forEach(q=>{s+='<rect x="'+(q.s*300)+'" y="0" width="'+(q.l*300)+'" height="'+H+'" class="'+q.c+'"/>';});
@@ -790,6 +797,11 @@ function bar(ticks,fills,wholes){
     if(!w&&!minor)continue;
     const x=i/ticks*300;
     s+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+H+'" class="'+(w?'tk w':'tk')+'"/>';
+  }
+  if(sub&&sub>ticks&&sub*wholes<=48)for(let i=1;i<sub*wholes;i++){
+    if(i*ticks%sub===0)continue;
+    const x=i/sub*300;
+    s+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+H+'" class="tk s"/>';
   }
   for(let w=0;w<wholes;w++)s+='<rect x="'+(w*300+1)+'" y="1" width="298" height="'+(H-2)+'" class="out"/>';
   return s+'</svg>';
@@ -822,8 +834,9 @@ function render(){
       '<p class="note">'+t(x===y?'cmp_eq':(x>y?'cmp_A':'cmp_B'))+'</p>';
   }else{
     const m=lcm(ad,bd),na=an*m/ad,nb=bn*m/bd,ns=na+nb,g=gcd(ns,m);
-    b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],2),t('cA'))+
-      row(fr(bn,bd),bar(bd,[{s:0,l:bn/bd,c:'fb'}],2),t('cB'))+
+    const se=$('#showEq').checked,cap=(n,d,nn)=>fr(n,d)+(se&&d!==m?'<span class="eqv">= '+fr(nn,m)+'</span>':'');
+    b=row(cap(an,ad,na),bar(ad,[{s:0,l:an/ad,c:'fa'}],2,se?m:0),t('cA'))+
+      row(cap(bn,bd,nb),bar(bd,[{s:0,l:bn/bd,c:'fb'}],2,se?m:0),t('cB'))+
       row(fr(ns,m),bar(m,[{s:0,l:na/m,c:'fa'},{s:na/m,l:nb/m,c:'fb'}],2),t('cAB'));
     const q=Math.floor(ns/m),r=ns-q*m,g2=gcd(r,m);
     let simp='';
@@ -831,13 +844,15 @@ function render(){
     const mixed=(q>=1&&r>0)?' = '+q+' '+fr(r/g2,m/g2):'';
     o='<p class="eq">'+tt('sum_den',ad,bd,m)+'</p>'+
       '<div class="steps">'+fr(an,ad)+' + '+fr(bn,bd)+' = '+fr(na,m)+' + '+fr(nb,m)+' = '+fr(ns,m)+simp+mixed+'</div>'+
-      '<p class="note">'+t('sum_note')+'</p>';
+      '<p class="note">'+t('sum_note')+'</p>'+
+      (se&&(ad!==m||bd!==m)&&m<=24?'<p class="note">'+tt('sum_cut',m)+'</p>':'');
   }
   bars.innerHTML=b;out.innerHTML=o;
-  $('#gB').hidden=mode==='eq';$('#gK').hidden=mode!=='eq';
+  $('#gB').hidden=mode==='eq';$('#gE').hidden=mode!=='sum';$('#gK').hidden=mode!=='eq';
 }
 $$('#modes button').forEach(bt=>bt.addEventListener('click',()=>{setMode(bt.dataset.m);}));
 function setMode(m){mode=m;$$('#modes button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.m===m)));render();}
+$('#showEq').addEventListener('change',render);
 App.hooks.push(render);
 /* ===== Raona-ho ===== */
 function load(m,an,ad,bn,bd,kv){
