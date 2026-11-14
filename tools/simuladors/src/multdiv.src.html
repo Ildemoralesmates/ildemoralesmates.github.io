@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Multiplicar i dividir fraccions: el rectangle i «quantes vegades cap»</title>
+<meta name="description" content="Multiplicació i divisió de fraccions per a 2n d'ESO: el producte com a àrea d'un rectangle (franges verticals i horitzontals que es creuen) i la divisió com a «quantes vegades cap». Pas a pas amb predicció, per què multiplicar per una fracció menor que 1 fa més menut, activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@STEPS_CSS@*/
+/*@RAONA_CSS@*/
+.stage canvas{display:block;width:100%;height:auto}
+.frs{gap:10px 14px}
+.frin{display:inline-flex;align-items:center;gap:4px;font:600 18px var(--f-num)}
+.frin select{font:inherit;font-size:16px;padding:3px 6px}
+.frin.fa select{color:var(--pa);border-color:var(--pa)}
+.frin.fb select{color:var(--pb);border-color:var(--pb)}
+.mut{color:var(--muted);font-size:13px}
+.ticket{border:1px dashed var(--line);border-radius:8px;padding:8px 12px;background:var(--stage);font-size:14.5px;display:grid;gap:6px}
+.ticket:empty{display:none}
+.ticket p{margin:0}
+.ticket .note{font-size:13px;color:var(--muted)}
+.eq{font-family:var(--f-num);font-size:17px;line-height:2.3}
+.fr{display:inline-grid;vertical-align:middle;text-align:center;line-height:1.2;margin:0 3px;font-family:var(--f-num);font-weight:600}
+.fr i{font-style:normal;padding:0 4px}
+.fr i:first-child{border-bottom:2px solid currentColor}
+.cA{color:var(--pa)}.cB{color:var(--pb)}.cG{color:var(--ok)}.cW{color:var(--warn)}
+#opsw button{font-size:18px;min-width:2.2em}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.stage" aria-label=""></canvas></div>
+<div class="ctrlbar">
+<span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div>
+</div>
+<div class="ctrlbar frs">
+<span class="frin fa"><select id="n1" data-i18n-aria="aria.n1" aria-label=""></select><span>/</span><select id="d1" data-i18n-aria="aria.d1" aria-label=""></select></span>
+<div class="seg" id="opsw" role="group" data-i18n-aria="aria.op" aria-label=""><button type="button" data-op="*" aria-pressed="true">×</button><button type="button" data-op="/" aria-pressed="false">:</button></div>
+<span class="frin fb"><select id="n2" data-i18n-aria="aria.n2" aria-label=""></select><span>/</span><select id="d2" data-i18n-aria="aria.d2" aria-label=""></select></span>
+</div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev"></button><button type="button" class="btn primary" id="next" data-i18n="st_next"></button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="x0.title"></h2>
+<div class="stext" id="stext" data-i18n-html="x0.text"></div>
+<div class="ticket" id="ticket" aria-live="polite"></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart"></button></div>
+</aside>
+</div>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Multiplicar i dividir fraccions: el rectangle i «quantes vegades cap»",
+"eyebrow":"Matemàtiques · 2n ESO · Fraccions",
+"h1":"Multiplicar i dividir fraccions: el rectangle i «quantes vegades cap»",
+"lede":"Multiplicar és prendre una part d'una part: dues famílies de franges que es creuen. Dividir és preguntar quantes vegades cap una fracció dins de l'altra. Predix abans de mirar.",
+"aria.stage":"Dibuix: rectangle de franges o barres amb trossos",
+"aria.steps":"Passos de l'animació",
+"aria.n1":"Numerador de la primera fracció","aria.d1":"Denominador de la primera fracció",
+"aria.n2":"Numerador de la segona fracció","aria.d2":"Denominador de la segona fracció",
+"aria.op":"Operació: multiplicar o dividir",
+"presets":"Casos:",
+"yes":"Sí","no":"No",
+"cv_q":"?","cv_of":"de","cv_cells":"{0} cel·les de {1}","cv_fits":"cap {0} vegades","cv_rest":"i sobra un tros","cv_piece":"tros d'1/{0}",
+"cv_lt":"més menut que {0}","cv_gt":"més gran que {0}","cv_eq":"igual que {0}",
+"tk_mean":"Multiplicar vol dir prendre els <b>{0}</b> de <b>{1}</b>: una part d'una part.",
+"tk_cols":"Franges verticals: {0} de {1} pintades.",
+"tk_rows":"Franges horitzontals: {0} de {1} pintades.",
+"tk_cells":"El quadrat ha quedat tallat en <b>{0} × {1} = {2}</b> cel·les iguals, i n'hi ha <b>{3} × {4} = {5}</b> pintades dels dos colors.",
+"tk_rule":"Numerador per numerador i denominador per denominador.",
+"tk_gcd":"mcd({0}, {1}) = <b>{2}</b>",
+"tk_simpl":"Dividim numerador i denominador entre {0}:",
+"tk_irred":"{0} ja és irreductible.",
+"tk_mixed":"Com a nombre mixt:",
+"tk_lt":"Hem multiplicat <b>{0}</b> per <b>{1}</b>, que és <b>menor que 1</b>, i el resultat ha quedat <b>més menut</b>: {2} &lt; {0}.",
+"tk_gt":"Hem multiplicat <b>{0}</b> per <b>{1}</b>, que és <b>major que 1</b>, i el resultat ha quedat <b>més gran</b>: {2} &gt; {0}.",
+"tk_one":"Hem multiplicat <b>{0}</b> per <b>{1}</b>, que val exactament 1, i el resultat no ha canviat.",
+"tk_ask":"Dividir <b>{0}</b> entre <b>{1}</b> és preguntar: <b>quantes vegades cap {1} dins de {0}?</b>",
+"tk_fits":"Cap <b>{0}</b> vegades senceres.",
+"tk_fits0":"No hi cap ni una vegada sencera: {1} és més gran que {0}.",
+"tk_rest":"I sobra un tros que no arriba a un {0} sencer: el resultat no és enter.",
+"tk_exact":"I no sobra res: el resultat és exactament {0}.",
+"tk_lcm":"mcm({0}, {1}) = <b>{2}</b>: tallem les dues en trossos d'1/{2}.",
+"tk_same":"Amb el mateix denominador, dividir és dividir els numeradors: quantes vegades caben <b>{1}</b> trossos en <b>{0}</b> trossos.",
+"tk_inv":"Dividir entre {0} és el mateix que multiplicar per la fracció inversa, {1}.",
+"tk_big":"Hem dividit entre una fracció <b>menor que 1</b> i el resultat és <b>més gran</b> que el dividend: {0} &gt; {1}.",
+"tk_small":"Hem dividit entre una fracció <b>major que 1</b> i el resultat és <b>més menut</b> que el dividend: {0} &lt; {1}.",
+"x0.title":"Una part d'una part",
+"x0.text":"<p>Multiplicar fraccions és <b>prendre una part d'una part</b>: 2/3 · 3/4 vol dir «els 2/3 de 3/4». Comencem pel quadrat unitat: el tallem en franges <b>verticals</b> segons la <b>1a fracció</b> i en pintem el numerador.</p>",
+"x0.q":"Què vol dir 2/3 · 3/4?",
+"x0.o0":"Els 2/3 de 3/4: una part d'una part","x0.o1":"2/3 més 3/4","x0.o2":"Repartir 3/4 entre 2/3",
+"x0.why":"Multiplicar per una fracció és prendre eixa fracció d'alguna cosa: els 2/3 de 3/4, igual que «la meitat de 3/4».",
+"x1.title":"L'altra fracció, en horitzontal",
+"x1.text":"<p>Ara tallem el mateix quadrat en franges <b>horitzontals</b> segons la <b>2a fracció</b> i pintem les seues. Les dues pintures se superposen.</p>",
+"x1.q":"El producte de les dues fraccions és la zona…",
+"x1.o0":"pintada d'un color o de l'altre","x1.o1":"pintada dels dos colors alhora","x1.o2":"que ha quedat sense pintar",
+"x1.why":"Prendre una part d'una part és quedar-se amb el que és a la vegada dins de la primera i dins de la segona: la zona on es creuen.",
+"x2.title":"On es creuen",
+"x2.text":"<p>Les franges verticals i les horitzontals tallen el quadrat en una <b>quadrícula</b>. Comptem: quantes cel·les hi ha en total i quantes estan pintades dels dos colors.</p>",
+"x2.q":"En quantes cel·les iguals ha quedat tallat el quadrat?",
+"x2.o0":"La suma dels denominadors","x2.o1":"El producte dels denominadors","x2.o2":"El denominador més gran",
+"x2.why":"Hi ha tantes columnes com el primer denominador i tantes files com el segon: les cel·les són el producte.",
+"x3.title":"La regla, ara amb sentit",
+"x3.text":"<p>Les cel·les totals són el producte dels denominadors i les pintades dels dos colors, el producte dels numeradors: <b>numerador per numerador i denominador per denominador</b>. Si es pot, simplifiquem.</p>",
+"x3.tq":"Per a multiplicar fraccions no cal buscar denominador comú. Per a sumar sí. Per què?",
+"x3.th":"En sumar comptem trossos junts, i només es poden comptar si són iguals. En multiplicar prenem una part d'una part: les franges d'una fracció tallen les de l'altra, siga quina siga la seua mida.",
+"x4.title":"Més menut o més gran?",
+"x4.text":"<p>A sota, compara la <b>1a fracció</b> amb el <b>producte</b>. Multiplicar per una fracció <b>menor que 1</b> fa el resultat més menut (prens només una part); multiplicar per una fracció <b>major que 1</b> el fa més gran.</p>",
+"x4.q":"Multiplicar per una fracció menor que 1 fa el resultat…",
+"x4.o0":"més gran, com sempre que multipliques","x4.o1":"més menut","x4.o2":"igual",
+"x4.why":"Prendre els 2/3 d'una cosa és quedar-se amb menys del que tenies. Multiplicar «fa més gran» només quan multipliques per més de 1.",
+"v0.title":"Quantes vegades cap?",
+"v0.text":"<p>Dividir <b>3/4 : 1/8</b> és preguntar <b>quantes vegades cap 1/8 dins de 3/4</b>, igual que 12 : 3 pregunta quantes vegades cap el 3 en el 12. Dalt, el dividend; baix, el tros que volem encabir.</p>",
+"v0.q":"Què vol dir 3/4 : 1/8?",
+"v0.o0":"Quantes vegades cap 1/8 dins de 3/4","v0.o1":"La huitena part de 3/4","v0.o2":"3/4 menys 1/8",
+"v0.why":"Dividir és repartir o encabir. Ací encabim: 1/8 cap 6 vegades dins de 3/4, així que 3/4 : 1/8 = 6.",
+"v1.title":"Encabim trossos",
+"v1.text":"<p>Anem posant còpies del tros dins del dividend i les comptem. Si sobra un tros incomplet, el resultat no és un nombre enter.</p>",
+"v1.q":"Dividir entre una fracció menor que 1, el resultat és…",
+"v1.o0":"més gran que el dividend","v1.o1":"més menut que el dividend","v1.o2":"sempre un nombre enter",
+"v1.why":"Un tros menut cap moltes vegades: 3/4 : 1/8 = 6, molt més que 3/4. Dividir «fa més menut» només quan divideixes entre més de 1.",
+"v2.title":"Trossos iguals",
+"v2.text":"<p>Per a comptar exactament tallem les dues fraccions en trossos de la mateixa mida (el <b>mcm</b> dels denominadors). Ara la pregunta és senzilla: <b>quantes vegades caben b trossos en a trossos</b>? Això és a : b.</p>",
+"v2.q":"Amb el mateix denominador, 9/12 : 2/12 =",
+"v2.o0":"9/2","v2.o1":"9/24","v2.o2":"2/9",
+"v2.why":"9 trossos entre 2 trossos: cap 4 vegades i mitja. Els dotzens desapareixen perquè són la mateixa unitat a dalt i a baix.",
+"w.title":"D'on ix la regla: dos passos",
+"w.text":"<p>Pensem-ho en dos passos. <b>Primer</b>, quantes vegades cap <b>un sol tros d'1/d</b> (el denominador del divisor) dins del dividend: en cada unitat n'hi caben <b>d</b>, així que multipliquem el dividend per d. <b>Segon</b>, el divisor no és un tros sinó <b>n trossos junts</b>: agrupem els trossos de n en n, és a dir, dividim entre n.</p><p>Multiplicar per d i dividir entre n és multiplicar per <b>d/n</b>: la fracció inversa.</p>",
+"w.q":"Per a dividir entre 2/3, primer multipliquem per 3 i després dividim entre 2. Per què es multiplica per 3?",
+"w.o0":"Perquè en cada unitat caben 3 terços","w.o1":"Perquè 3 és més gran que 2","w.o2":"Perquè sempre es multiplica pel nombre de dalt",
+"w.why":"El denominador 3 diu quants terços fan una unitat. Multiplicar per 3 compta tots els terços que hi ha al dividend; després els agrupem de 2 en 2 perquè el divisor són 2 terços.",
+"tk_w1":"<b>1r pas.</b> En cada unitat caben <b>{0}</b> trossos d'1/{0}: dins de {1} n'hi caben {1} × {0} = <b>{2}</b>.",
+"tk_w2":"<b>2n pas.</b> El divisor són <b>{0}</b> trossos junts: agrupem els {1} trossos de {0} en {0}: {1} : {0} = <b>{2}</b>.",
+"tk_w3":"Multiplicar per {0} i dividir entre {1} és multiplicar per {0}/{1}, la inversa de {1}/{0}.",
+"cv_w1":"{0} trossos d'1/{1}","cv_w2":"grups de {0}",
+"v3.title":"La regla: multiplicar per la inversa",
+"v3.text":"<p>El resultat coincideix amb <b>multiplicar la primera fracció per la inversa de la segona</b> (la segona girada). És la regla que es fa servir sempre, i ara ja saps d'on ix.</p>",
+"v3.tq":"Per què dividir entre 1/8 és el mateix que multiplicar per 8?",
+"v3.th":"En cada unitat caben 8 huitens, així que en 3/4 d'unitat caben 8 · 3/4 = 6. Dividir entre un tros és multiplicar pel nombre de trossos que fan una unitat.",
+"v4.title":"Simplifiquem",
+"v4.text":"<p>Si numerador i denominador tenen un divisor comú, els dividim pel <b>mcd</b>. Si el resultat passa de 1, també el podem escriure com a nombre mixt: les vegades senceres que cap més la part que sobra.</p>",
+"v4.tq":"Quan el resultat d'una divisió de fraccions és un nombre enter?",
+"v4.th":"Quan el tros cap un nombre exacte de vegades: amb el mateix denominador, quan el numerador del dividend és múltiple del numerador del divisor (9/12 : 3/12 = 3).",
+"rng":"Escriu fraccions amb denominador de 2 a 12 i numerador de 1 fins al doble del denominador.",
+"l_num":"Numerador","l_den":"Denominador","l_a":"a","l_b":"b","l_c":"c","l_d":"d","l_n":"n",
+"m1.q":"Escriu una fracció que, <b>multiplicada per 3/4</b>, done <b>1/2</b>.",
+"m1_f":"3/4 · {0}/{1} = {2}, no 1/2.",
+"m1_ok":"✔ Missió complida! 3/4 · 2/3 = 6/12 = 1/2 (i qualsevol fracció equivalent a 2/3).",
+"m1.more":"Com es pot trobar directament? Pensa-ho com una divisió: 1/2 : 3/4.",
+"m2.q":"Escriu dues fraccions <b>a/b</b> i <b>c/d</b>, totes dues diferents de 1, que <b>multiplicades donen 1</b>.",
+"m2_one":"Cap de les dues pot valdre 1: busca'n dues que no siguen enteres.",
+"m2_f":"El producte és {0}, no 1.",
+"m2_ok":"✔ Missió complida! Són fraccions inverses: el numerador d'una és el denominador de l'altra (o equivalents).",
+"m2.more":"Quina és la inversa de 5? I la de 1/5? Quin nombre no té inversa?",
+"m3.q":"Troba una fracció <b>n/d</b> tal que <b>3/4 : n/d = 3</b>.",
+"m3_f":"3/4 : {0}/{1} = {2}, no 3.",
+"m3_ok":"✔ Missió complida! 3/4 : 1/4 = 3: un quart cap tres vegades en tres quarts.",
+"m3.more":"I perquè done 6? I perquè done 1/2? Què li passa al divisor quan el resultat creix?",
+"m4.q":"Escriu una fracció <b>n/d</b> tal que <b>2/3 · n/d</b> siga <b>més gran que 2/3</b>.",
+"m4_f":"2/3 · {0}/{1} = {2}, que no passa de 2/3.",
+"m4_ok":"✔ Missió complida! Qualsevol fracció major que 1 fa créixer el producte.",
+"m4.more":"Hi ha alguna fracció amb numerador menor que el denominador que servisca? Per què?",
+"s1.q":"«Multiplicar dos nombres dona sempre un resultat més gran que cadascun.»",
+"s1.h":"Prova 1/2 · 1/2 i després 3/2 · 4/5.",
+"s1.e":"De vegades: 3/2 · 4/5 = 6/5 és més gran que 4/5, però 1/2 · 1/2 = 1/4 és més menut que 1/2. Amb fraccions menors que 1, multiplicar fa més menut.",
+"s1_range":"Escriu dues fraccions vàlides (denominador de 2 a 12, numerador fins al doble).",
+"s1_no":"Ací el producte, {0}, sí que és major que les dues. Busca'n unes de menors que 1.",
+"s2.q":"«Dividir entre una fracció menor que 1 dona un resultat més gran que el dividend.»",
+"s2.h":"Mira 3/4 : 1/8 al pas 2: quantes vegades cap?",
+"s2.e":"Sempre: un tros més menut que la unitat cap més d'una vegada en cada unitat, així que el quocient supera el dividend. Dividir «fa més menut» només si el divisor passa de 1.",
+"s3.q":"«a/b : c/d = (a : c)/(b : d) quan les dues divisions són exactes.»",
+"s3.h":"Prova 6/8 : 3/4 de les dues maneres.",
+"s3.e":"Sempre: (a : c)/(b : d) = (a/c)·(d/b) = (a·d)/(b·c), que és exactament multiplicar per la inversa. Només és incòmode quan les divisions no són exactes.",
+"s4.q":"«El producte de dues fraccions menors que 1 és menor que cadascuna de les dues.»",
+"s4.h":"Prova 2/3 · 3/4 i compara el resultat amb 2/3 i amb 3/4.",
+"s4.e":"Sempre: prendre una part (menys que tot) d'una quantitat deixa menys que la quantitat; i com el producte no depén de l'ordre, és menor que les dues.",
+"s5.q":"«Multiplicar per 1/2 és el mateix que dividir entre 2.»",
+"s5.h":"Compara 3/4 · 1/2 amb 3/4 : 2 (escriu 2 com 2/1 o 4/2).",
+"s5.e":"Sempre: dividir entre 2 és multiplicar per la inversa de 2, que és 1/2. Prendre la meitat i repartir en dos és el mateix.",
+"e1.ctx":"Calculeu <b>2/3 · 3/4</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"6/12 = 1/2: multiplique numeradors i denominadors.",
+"e1.s1":"Primer pose denominador comú: 8/12 · 9/12 = 72/144 = 1/2.",
+"e1.w0":"Tots dos arriben a 1/2. Pau ha fet feina de més: per a multiplicar no cal denominador comú, però les fraccions equivalents donen el mateix producte.",
+"e1.w1":"Només Marta: amb denominador comú el producte canvia.",
+"e1.w2":"Només Pau: sense denominador comú no es pot operar.",
+"e1.frame":"Pau, el teu resultat està bé però…",
+"e1.model":"Pau, el teu resultat està bé perquè 8/12 i 9/12 són equivalents a 2/3 i 3/4, i el producte no canvia. Però el denominador comú només fa falta per a sumar i restar; per a multiplicar, numerador per numerador i denominador per denominador: 6/12 = 1/2.",
+"e2.ctx":"Calculeu <b>1/2 : 1/4</b>.",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"1/8: multiplique numeradors i denominadors.",
+"e2.s1":"2: un quart cap dues vegades en mitja unitat.",
+"e2.w0":"Àlex ha multiplicat en lloc de dividir. Dividir és preguntar quantes vegades cap 1/4 en 1/2, i és 2; 1/8 és més menut que 1/2, i dividir entre menys de 1 fa més gran.",
+"e2.w1":"Laia s'equivoca: dividir sempre fa més menut.",
+"e2.w2":"Les fraccions no es poden dividir si el resultat no és una fracció.",
+"e2.frame":"Àlex, 1/8 no pot ser el resultat perquè…",
+"e2.model":"Àlex, has multiplicat les dues fraccions en lloc de dividir-les. Dividir 1/2 entre 1/4 és preguntar quantes vegades cap 1/4 en 1/2: dues. Amb la regla, 1/2 · 4/1 = 4/2 = 2. A més, 1/8 és més menut que 1/2, i dividir entre menys de 1 fa més gran.",
+"e3.ctx":"Calculeu <b>3/5 · 2</b>.",
+"e3.n0":"Joan","e3.n1":"Rita",
+"e3.s0":"6/10: multiplique dalt i baix per 2.",
+"e3.s1":"6/5: el 2 és 2/1, així que només multiplica el numerador.",
+"e3.w0":"Joan ha multiplicat dalt i baix per 2, que dona una fracció equivalent a 3/5 (no ha multiplicat per 2, sinó per 2/2 = 1). El doble de 3/5 és 6/5.",
+"e3.w1":"Joan té raó: un enter multiplica numerador i denominador.",
+"e3.w2":"Cap dels dos: 3/5 · 2 = 3/10.",
+"e3.frame":"Joan, 6/10 no pot ser el doble de 3/5 perquè…",
+"e3.model":"Joan, 6/10 és equivalent a 3/5: has multiplicat dalt i baix per 2, que és multiplicar per 2/2 = 1, i no has canviat res. El 2 és 2/1: multiplica el numerador i deixa el denominador, 3/5 · 2/1 = 6/5, el doble de 3/5.",
+"d1.q":"Una recepta per a <b>4 persones</b> porta <b>3/4 L</b> de llet. Vols fer-la per a <b>6 persones</b>. Escriu per quina fracció has de multiplicar i quants litres calen (en huitens).",
+"d1.l0":"Factor n","d1.l1":"Factor d","d1.l2":"Huitens de litre",
+"d1_k":"Per a passar de 4 a 6 persones el factor és 6/4 = 3/2 (o equivalent).",
+"d1_n":"3/4 · 3/2 = 9/8: nou huitens de litre.",
+"d1_ok":"✔ Ben decidit! 3/4 · 3/2 = 9/8 L: més d'un litre.",
+"d1.more":"I per a 2 persones? I per a 10? Hi ha algun nombre de persones per al qual calga exactament 1 litre?",
+"d2.q":"Una botella té <b>3/4 L</b> i els gots són d'<b>1/8 L</b>. Quants gots plens pots omplir?",
+"d2.l0":"Gots",
+"d2_n":"Pensa quantes vegades cap 1/8 en 3/4: passa 3/4 a huitens.",
+"d2_ok":"✔ Ben decidit! 3/4 : 1/8 = 6 gots.",
+"d2.more":"I si els gots foren d'1/5 L? Quants gots plens, i quant sobra?",
+"r1.q":"2/3 · 3/4 =",
+"r1.o0":"6/7","r1.o1":"1/2","r1.o2":"17/12","r1.o3":"8/9",
+"r1.e":"Numerador per numerador i denominador per denominador: 6/12 = 1/2.",
+"r2.q":"3/4 : 1/8 =",
+"r2.e":"Un huité cap 6 vegades en 3/4: 3/4 · 8/1 = 24/4 = 6.",
+"r3.q":"Quin producte és més menut que 3/5?",
+"r3.o0":"3/5 · 1/2","r3.o1":"3/5 · 5/4","r3.o2":"3/5 · 2","r3.o3":"3/5 · 7/7",
+"r3.e":"Multiplicar per una fracció menor que 1 fa el resultat més menut: 3/5 · 1/2 = 3/10.",
+"r4.q":"5/6 : 5/12 =",
+"r4.e":"5/12 cap 2 vegades en 5/6 (que és 10/12). Amb la regla: 5/6 · 12/5 = 60/30 = 2.",
+"r5.q":"Quina és la inversa de 2/7?",
+"r5.o0":"−2/7","r5.o1":"7/2","r5.o2":"2/−7","r5.o3":"1 − 2/7",
+"r5.e":"La inversa és la fracció girada: 2/7 · 7/2 = 1.",
+"r6.q":"Algú diu que 1/2 : 1/3 = 1/6. Quin error ha fet?",
+"r6.o0":"Ha multiplicat en lloc de dividir","r6.o1":"No ha simplificat","r6.o2":"Ha sumat els denominadors","r6.o3":"No hi ha cap error",
+"r6.e":"1/2 · 1/3 = 1/6, però dividir és multiplicar per la inversa: 1/2 · 3/1 = 3/2. Un terç cap una vegada i mitja en un mig.",
+"r7.q":"3/2 · 4/5 = x/10. Quant val x?",
+"r7.e":"3 · 4 = 12 i 2 · 5 = 10: 12/10 = 6/5, més gran que 4/5 perquè 3/2 és major que 1."
+},
+es:{
+"title":"Multiplicar y dividir fracciones: el rectángulo y «cuántas veces cabe»",
+"eyebrow":"Matemáticas · 2.º ESO · Fracciones",
+"h1":"Multiplicar y dividir fracciones: el rectángulo y «cuántas veces cabe»",
+"lede":"Multiplicar es tomar una parte de una parte: dos familias de franjas que se cruzan. Dividir es preguntar cuántas veces cabe una fracción dentro de la otra. Predice antes de mirar.",
+"aria.stage":"Dibujo: rectángulo de franjas o barras con trozos",
+"aria.steps":"Pasos de la animación",
+"aria.n1":"Numerador de la primera fracción","aria.d1":"Denominador de la primera fracción",
+"aria.n2":"Numerador de la segunda fracción","aria.d2":"Denominador de la segunda fracción",
+"aria.op":"Operación: multiplicar o dividir",
+"presets":"Casos:",
+"yes":"Sí","no":"No",
+"cv_q":"?","cv_of":"de","cv_cells":"{0} celdas de {1}","cv_fits":"cabe {0} veces","cv_rest":"y sobra un trozo","cv_piece":"trozo de 1/{0}",
+"cv_lt":"menor que {0}","cv_gt":"mayor que {0}","cv_eq":"igual que {0}",
+"tk_mean":"Multiplicar quiere decir tomar los <b>{0}</b> de <b>{1}</b>: una parte de una parte.",
+"tk_cols":"Franjas verticales: {0} de {1} pintadas.",
+"tk_rows":"Franjas horizontales: {0} de {1} pintadas.",
+"tk_cells":"El cuadrado ha quedado cortado en <b>{0} × {1} = {2}</b> celdas iguales, y hay <b>{3} × {4} = {5}</b> pintadas de los dos colores.",
+"tk_rule":"Numerador por numerador y denominador por denominador.",
+"tk_gcd":"mcd({0}, {1}) = <b>{2}</b>",
+"tk_simpl":"Dividimos numerador y denominador entre {0}:",
+"tk_irred":"{0} ya es irreducible.",
+"tk_mixed":"Como número mixto:",
+"tk_lt":"Hemos multiplicado <b>{0}</b> por <b>{1}</b>, que es <b>menor que 1</b>, y el resultado ha quedado <b>más pequeño</b>: {2} &lt; {0}.",
+"tk_gt":"Hemos multiplicado <b>{0}</b> por <b>{1}</b>, que es <b>mayor que 1</b>, y el resultado ha quedado <b>más grande</b>: {2} &gt; {0}.",
+"tk_one":"Hemos multiplicado <b>{0}</b> por <b>{1}</b>, que vale exactamente 1, y el resultado no ha cambiado.",
+"tk_ask":"Dividir <b>{0}</b> entre <b>{1}</b> es preguntar: <b>¿cuántas veces cabe {1} dentro de {0}?</b>",
+"tk_fits":"Cabe <b>{0}</b> veces enteras.",
+"tk_fits0":"No cabe ni una vez entera: {1} es mayor que {0}.",
+"tk_rest":"Y sobra un trozo que no llega a un {0} entero: el resultado no es entero.",
+"tk_exact":"Y no sobra nada: el resultado es exactamente {0}.",
+"tk_lcm":"mcm({0}, {1}) = <b>{2}</b>: cortamos las dos en trozos de 1/{2}.",
+"tk_same":"Con el mismo denominador, dividir es dividir los numeradores: cuántas veces caben <b>{1}</b> trozos en <b>{0}</b> trozos.",
+"tk_inv":"Dividir entre {0} es lo mismo que multiplicar por la fracción inversa, {1}.",
+"tk_big":"Hemos dividido entre una fracción <b>menor que 1</b> y el resultado es <b>mayor</b> que el dividendo: {0} &gt; {1}.",
+"tk_small":"Hemos dividido entre una fracción <b>mayor que 1</b> y el resultado es <b>menor</b> que el dividendo: {0} &lt; {1}.",
+"x0.title":"Una parte de una parte",
+"x0.text":"<p>Multiplicar fracciones es <b>tomar una parte de una parte</b>: 2/3 · 3/4 quiere decir «los 2/3 de 3/4». Empezamos por el cuadrado unidad: lo cortamos en franjas <b>verticales</b> según la <b>1.ª fracción</b> y pintamos el numerador.</p>",
+"x0.q":"¿Qué quiere decir 2/3 · 3/4?",
+"x0.o0":"Los 2/3 de 3/4: una parte de una parte","x0.o1":"2/3 más 3/4","x0.o2":"Repartir 3/4 entre 2/3",
+"x0.why":"Multiplicar por una fracción es tomar esa fracción de algo: los 2/3 de 3/4, igual que «la mitad de 3/4».",
+"x1.title":"La otra fracción, en horizontal",
+"x1.text":"<p>Ahora cortamos el mismo cuadrado en franjas <b>horizontales</b> según la <b>2.ª fracción</b> y pintamos las suyas. Las dos pinturas se superponen.</p>",
+"x1.q":"El producto de las dos fracciones es la zona…",
+"x1.o0":"pintada de un color o del otro","x1.o1":"pintada de los dos colores a la vez","x1.o2":"que ha quedado sin pintar",
+"x1.why":"Tomar una parte de una parte es quedarse con lo que está a la vez dentro de la primera y dentro de la segunda: la zona donde se cruzan.",
+"x2.title":"Donde se cruzan",
+"x2.text":"<p>Las franjas verticales y las horizontales cortan el cuadrado en una <b>cuadrícula</b>. Contamos: cuántas celdas hay en total y cuántas están pintadas de los dos colores.</p>",
+"x2.q":"¿En cuántas celdas iguales ha quedado cortado el cuadrado?",
+"x2.o0":"La suma de los denominadores","x2.o1":"El producto de los denominadores","x2.o2":"El denominador mayor",
+"x2.why":"Hay tantas columnas como el primer denominador y tantas filas como el segundo: las celdas son el producto.",
+"x3.title":"La regla, ahora con sentido",
+"x3.text":"<p>Las celdas totales son el producto de los denominadores y las pintadas de los dos colores, el producto de los numeradores: <b>numerador por numerador y denominador por denominador</b>. Si se puede, simplificamos.</p>",
+"x3.tq":"Para multiplicar fracciones no hace falta buscar denominador común. Para sumar sí. ¿Por qué?",
+"x3.th":"Al sumar contamos trozos juntos, y solo se pueden contar si son iguales. Al multiplicar tomamos una parte de una parte: las franjas de una fracción cortan las de la otra, sea cual sea su tamaño.",
+"x4.title":"¿Más pequeño o más grande?",
+"x4.text":"<p>Debajo, compara la <b>1.ª fracción</b> con el <b>producto</b>. Multiplicar por una fracción <b>menor que 1</b> hace el resultado más pequeño (tomas solo una parte); multiplicar por una fracción <b>mayor que 1</b> lo hace más grande.</p>",
+"x4.q":"Multiplicar por una fracción menor que 1 hace el resultado…",
+"x4.o0":"más grande, como siempre que multiplicas","x4.o1":"más pequeño","x4.o2":"igual",
+"x4.why":"Tomar los 2/3 de algo es quedarse con menos de lo que tenías. Multiplicar «hace más grande» solo cuando multiplicas por más de 1.",
+"v0.title":"¿Cuántas veces cabe?",
+"v0.text":"<p>Dividir <b>3/4 : 1/8</b> es preguntar <b>cuántas veces cabe 1/8 dentro de 3/4</b>, igual que 12 : 3 pregunta cuántas veces cabe el 3 en el 12. Arriba, el dividendo; abajo, el trozo que queremos encajar.</p>",
+"v0.q":"¿Qué quiere decir 3/4 : 1/8?",
+"v0.o0":"Cuántas veces cabe 1/8 dentro de 3/4","v0.o1":"La octava parte de 3/4","v0.o2":"3/4 menos 1/8",
+"v0.why":"Dividir es repartir o encajar. Aquí encajamos: 1/8 cabe 6 veces dentro de 3/4, así que 3/4 : 1/8 = 6.",
+"v1.title":"Encajamos trozos",
+"v1.text":"<p>Vamos poniendo copias del trozo dentro del dividendo y las contamos. Si sobra un trozo incompleto, el resultado no es un número entero.</p>",
+"v1.q":"Al dividir entre una fracción menor que 1, el resultado es…",
+"v1.o0":"mayor que el dividendo","v1.o1":"menor que el dividendo","v1.o2":"siempre un número entero",
+"v1.why":"Un trozo pequeño cabe muchas veces: 3/4 : 1/8 = 6, mucho más que 3/4. Dividir «hace más pequeño» solo cuando divides entre más de 1.",
+"v2.title":"Trozos iguales",
+"v2.text":"<p>Para contar exactamente cortamos las dos fracciones en trozos del mismo tamaño (el <b>mcm</b> de los denominadores). Ahora la pregunta es sencilla: <b>¿cuántas veces caben b trozos en a trozos?</b> Eso es a : b.</p>",
+"v2.q":"Con el mismo denominador, 9/12 : 2/12 =",
+"v2.o0":"9/2","v2.o1":"9/24","v2.o2":"2/9",
+"v2.why":"9 trozos entre 2 trozos: cabe 4 veces y media. Los doceavos desaparecen porque son la misma unidad arriba y abajo.",
+"w.title":"De dónde sale la regla: dos pasos",
+"w.text":"<p>Pensémoslo en dos pasos. <b>Primero</b>, cuántas veces cabe <b>un solo trozo de 1/d</b> (el denominador del divisor) dentro del dividendo: en cada unidad caben <b>d</b>, así que multiplicamos el dividendo por d. <b>Segundo</b>, el divisor no es un trozo sino <b>n trozos juntos</b>: agrupamos los trozos de n en n, es decir, dividimos entre n.</p><p>Multiplicar por d y dividir entre n es multiplicar por <b>d/n</b>: la fracción inversa.</p>",
+"w.q":"Para dividir entre 2/3, primero multiplicamos por 3 y después dividimos entre 2. ¿Por qué se multiplica por 3?",
+"w.o0":"Porque en cada unidad caben 3 tercios","w.o1":"Porque 3 es mayor que 2","w.o2":"Porque siempre se multiplica por el número de arriba",
+"w.why":"El denominador 3 dice cuántos tercios forman una unidad. Multiplicar por 3 cuenta todos los tercios que hay en el dividendo; después los agrupamos de 2 en 2 porque el divisor son 2 tercios.",
+"tk_w1":"<b>1.er paso.</b> En cada unidad caben <b>{0}</b> trozos de 1/{0}: dentro de {1} caben {1} × {0} = <b>{2}</b>.",
+"tk_w2":"<b>2.º paso.</b> El divisor son <b>{0}</b> trozos juntos: agrupamos los {1} trozos de {0} en {0}: {1} : {0} = <b>{2}</b>.",
+"tk_w3":"Multiplicar por {0} y dividir entre {1} es multiplicar por {0}/{1}, la inversa de {1}/{0}.",
+"cv_w1":"{0} trozos de 1/{1}","cv_w2":"grupos de {0}",
+"v3.title":"La regla: multiplicar por la inversa",
+"v3.text":"<p>El resultado coincide con <b>multiplicar la primera fracción por la inversa de la segunda</b> (la segunda dada la vuelta). Es la regla que se usa siempre, y ahora ya sabes de dónde sale.</p>",
+"v3.tq":"¿Por qué dividir entre 1/8 es lo mismo que multiplicar por 8?",
+"v3.th":"En cada unidad caben 8 octavos, así que en 3/4 de unidad caben 8 · 3/4 = 6. Dividir entre un trozo es multiplicar por el número de trozos que forman una unidad.",
+"v4.title":"Simplificamos",
+"v4.text":"<p>Si numerador y denominador tienen un divisor común, los dividimos por el <b>mcd</b>. Si el resultado pasa de 1, también podemos escribirlo como número mixto: las veces enteras que cabe más la parte que sobra.</p>",
+"v4.tq":"¿Cuándo el resultado de una división de fracciones es un número entero?",
+"v4.th":"Cuando el trozo cabe un número exacto de veces: con el mismo denominador, cuando el numerador del dividendo es múltiplo del numerador del divisor (9/12 : 3/12 = 3).",
+"rng":"Escribe fracciones con denominador de 2 a 12 y numerador de 1 hasta el doble del denominador.",
+"l_num":"Numerador","l_den":"Denominador","l_a":"a","l_b":"b","l_c":"c","l_d":"d","l_n":"n",
+"m1.q":"Escribe una fracción que, <b>multiplicada por 3/4</b>, dé <b>1/2</b>.",
+"m1_f":"3/4 · {0}/{1} = {2}, no 1/2.",
+"m1_ok":"✔ ¡Misión cumplida! 3/4 · 2/3 = 6/12 = 1/2 (y cualquier fracción equivalente a 2/3).",
+"m1.more":"¿Cómo se puede encontrar directamente? Piénsalo como una división: 1/2 : 3/4.",
+"m2.q":"Escribe dos fracciones <b>a/b</b> y <b>c/d</b>, las dos distintas de 1, que <b>multiplicadas den 1</b>.",
+"m2_one":"Ninguna de las dos puede valer 1: busca dos que no sean enteras.",
+"m2_f":"El producto es {0}, no 1.",
+"m2_ok":"✔ ¡Misión cumplida! Son fracciones inversas: el numerador de una es el denominador de la otra (o equivalentes).",
+"m2.more":"¿Cuál es la inversa de 5? ¿Y la de 1/5? ¿Qué número no tiene inversa?",
+"m3.q":"Encuentra una fracción <b>n/d</b> tal que <b>3/4 : n/d = 3</b>.",
+"m3_f":"3/4 : {0}/{1} = {2}, no 3.",
+"m3_ok":"✔ ¡Misión cumplida! 3/4 : 1/4 = 3: un cuarto cabe tres veces en tres cuartos.",
+"m3.more":"¿Y para que dé 6? ¿Y para que dé 1/2? ¿Qué le pasa al divisor cuando el resultado crece?",
+"m4.q":"Escribe una fracción <b>n/d</b> tal que <b>2/3 · n/d</b> sea <b>mayor que 2/3</b>.",
+"m4_f":"2/3 · {0}/{1} = {2}, que no pasa de 2/3.",
+"m4_ok":"✔ ¡Misión cumplida! Cualquier fracción mayor que 1 hace crecer el producto.",
+"m4.more":"¿Hay alguna fracción con numerador menor que el denominador que sirva? ¿Por qué?",
+"s1.q":"«Multiplicar dos números da siempre un resultado mayor que cada uno de ellos.»",
+"s1.h":"Prueba 1/2 · 1/2 y después 3/2 · 4/5.",
+"s1.e":"A veces: 3/2 · 4/5 = 6/5 es mayor que 4/5, pero 1/2 · 1/2 = 1/4 es menor que 1/2. Con fracciones menores que 1, multiplicar hace más pequeño.",
+"s1_range":"Escribe dos fracciones válidas (denominador de 2 a 12, numerador hasta el doble).",
+"s1_no":"Aquí el producto, {0}, sí es mayor que las dos. Busca unas menores que 1.",
+"s2.q":"«Dividir entre una fracción menor que 1 da un resultado mayor que el dividendo.»",
+"s2.h":"Mira 3/4 : 1/8 en el paso 2: ¿cuántas veces cabe?",
+"s2.e":"Siempre: un trozo más pequeño que la unidad cabe más de una vez en cada unidad, así que el cociente supera al dividendo. Dividir «hace más pequeño» solo si el divisor pasa de 1.",
+"s3.q":"«a/b : c/d = (a : c)/(b : d) cuando las dos divisiones son exactas.»",
+"s3.h":"Prueba 6/8 : 3/4 de las dos maneras.",
+"s3.e":"Siempre: (a : c)/(b : d) = (a/c)·(d/b) = (a·d)/(b·c), que es exactamente multiplicar por la inversa. Solo es incómodo cuando las divisiones no son exactas.",
+"s4.q":"«El producto de dos fracciones menores que 1 es menor que cada una de las dos.»",
+"s4.h":"Prueba 2/3 · 3/4 y compara el resultado con 2/3 y con 3/4.",
+"s4.e":"Siempre: tomar una parte (menos que todo) de una cantidad deja menos que la cantidad; y como el producto no depende del orden, es menor que las dos.",
+"s5.q":"«Multiplicar por 1/2 es lo mismo que dividir entre 2.»",
+"s5.h":"Compara 3/4 · 1/2 con 3/4 : 2 (escribe 2 como 2/1 o 4/2).",
+"s5.e":"Siempre: dividir entre 2 es multiplicar por la inversa de 2, que es 1/2. Tomar la mitad y repartir en dos es lo mismo.",
+"e1.ctx":"Calculad <b>2/3 · 3/4</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"6/12 = 1/2: multiplico numeradores y denominadores.",
+"e1.s1":"Primero pongo denominador común: 8/12 · 9/12 = 72/144 = 1/2.",
+"e1.w0":"Los dos llegan a 1/2. Pau ha trabajado de más: para multiplicar no hace falta denominador común, pero las fracciones equivalentes dan el mismo producto.",
+"e1.w1":"Solo Marta: con denominador común el producto cambia.",
+"e1.w2":"Solo Pau: sin denominador común no se puede operar.",
+"e1.frame":"Pau, tu resultado está bien pero…",
+"e1.model":"Pau, tu resultado está bien porque 8/12 y 9/12 son equivalentes a 2/3 y 3/4, y el producto no cambia. Pero el denominador común solo hace falta para sumar y restar; para multiplicar, numerador por numerador y denominador por denominador: 6/12 = 1/2.",
+"e2.ctx":"Calculad <b>1/2 : 1/4</b>.",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"1/8: multiplico numeradores y denominadores.",
+"e2.s1":"2: un cuarto cabe dos veces en media unidad.",
+"e2.w0":"Álex ha multiplicado en lugar de dividir. Dividir es preguntar cuántas veces cabe 1/4 en 1/2, y es 2; 1/8 es menor que 1/2, y dividir entre menos de 1 hace más grande.",
+"e2.w1":"Laia se equivoca: dividir siempre hace más pequeño.",
+"e2.w2":"Las fracciones no se pueden dividir si el resultado no es una fracción.",
+"e2.frame":"Álex, 1/8 no puede ser el resultado porque…",
+"e2.model":"Álex, has multiplicado las dos fracciones en lugar de dividirlas. Dividir 1/2 entre 1/4 es preguntar cuántas veces cabe 1/4 en 1/2: dos. Con la regla, 1/2 · 4/1 = 4/2 = 2. Además, 1/8 es menor que 1/2, y dividir entre menos de 1 hace más grande.",
+"e3.ctx":"Calculad <b>3/5 · 2</b>.",
+"e3.n0":"Joan","e3.n1":"Rita",
+"e3.s0":"6/10: multiplico arriba y abajo por 2.",
+"e3.s1":"6/5: el 2 es 2/1, así que solo multiplica el numerador.",
+"e3.w0":"Joan ha multiplicado arriba y abajo por 2, que da una fracción equivalente a 3/5 (no ha multiplicado por 2, sino por 2/2 = 1). El doble de 3/5 es 6/5.",
+"e3.w1":"Joan tiene razón: un entero multiplica numerador y denominador.",
+"e3.w2":"Ninguno de los dos: 3/5 · 2 = 3/10.",
+"e3.frame":"Joan, 6/10 no puede ser el doble de 3/5 porque…",
+"e3.model":"Joan, 6/10 es equivalente a 3/5: has multiplicado arriba y abajo por 2, que es multiplicar por 2/2 = 1, y no has cambiado nada. El 2 es 2/1: multiplica el numerador y deja el denominador, 3/5 · 2/1 = 6/5, el doble de 3/5.",
+"d1.q":"Una receta para <b>4 personas</b> lleva <b>3/4 L</b> de leche. Quieres hacerla para <b>6 personas</b>. Escribe por qué fracción tienes que multiplicar y cuántos litros hacen falta (en octavos).",
+"d1.l0":"Factor n","d1.l1":"Factor d","d1.l2":"Octavos de litro",
+"d1_k":"Para pasar de 4 a 6 personas el factor es 6/4 = 3/2 (o equivalente).",
+"d1_n":"3/4 · 3/2 = 9/8: nueve octavos de litro.",
+"d1_ok":"✔ ¡Bien decidido! 3/4 · 3/2 = 9/8 L: más de un litro.",
+"d1.more":"¿Y para 2 personas? ¿Y para 10? ¿Hay algún número de personas para el que haga falta exactamente 1 litro?",
+"d2.q":"Una botella tiene <b>3/4 L</b> y los vasos son de <b>1/8 L</b>. ¿Cuántos vasos llenos puedes servir?",
+"d2.l0":"Vasos",
+"d2_n":"Piensa cuántas veces cabe 1/8 en 3/4: pasa 3/4 a octavos.",
+"d2_ok":"✔ ¡Bien decidido! 3/4 : 1/8 = 6 vasos.",
+"d2.more":"¿Y si los vasos fueran de 1/5 L? ¿Cuántos vasos llenos, y cuánto sobra?",
+"r1.q":"2/3 · 3/4 =",
+"r1.o0":"6/7","r1.o1":"1/2","r1.o2":"17/12","r1.o3":"8/9",
+"r1.e":"Numerador por numerador y denominador por denominador: 6/12 = 1/2.",
+"r2.q":"3/4 : 1/8 =",
+"r2.e":"Un octavo cabe 6 veces en 3/4: 3/4 · 8/1 = 24/4 = 6.",
+"r3.q":"¿Qué producto es menor que 3/5?",
+"r3.o0":"3/5 · 1/2","r3.o1":"3/5 · 5/4","r3.o2":"3/5 · 2","r3.o3":"3/5 · 7/7",
+"r3.e":"Multiplicar por una fracción menor que 1 hace el resultado más pequeño: 3/5 · 1/2 = 3/10.",
+"r4.q":"5/6 : 5/12 =",
+"r4.e":"5/12 cabe 2 veces en 5/6 (que es 10/12). Con la regla: 5/6 · 12/5 = 60/30 = 2.",
+"r5.q":"¿Cuál es la inversa de 2/7?",
+"r5.o0":"−2/7","r5.o1":"7/2","r5.o2":"2/−7","r5.o3":"1 − 2/7",
+"r5.e":"La inversa es la fracción dada la vuelta: 2/7 · 7/2 = 1.",
+"r6.q":"Alguien dice que 1/2 : 1/3 = 1/6. ¿Qué error ha cometido?",
+"r6.o0":"Ha multiplicado en lugar de dividir","r6.o1":"No ha simplificado","r6.o2":"Ha sumado los denominadores","r6.o3":"No hay ningún error",
+"r6.e":"1/2 · 1/3 = 1/6, pero dividir es multiplicar por la inversa: 1/2 · 3/1 = 3/2. Un tercio cabe una vez y media en un medio.",
+"r7.q":"3/2 · 4/5 = x/10. ¿Cuánto vale x?",
+"r7.e":"3 · 4 = 12 y 2 · 5 = 10: 12/10 = 6/5, mayor que 4/5 porque 3/2 es mayor que 1."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@STEPS_JS@*/
+/*@RAONA_JS@*/
+
+/* ===== càlcul ===== */
+const g2=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const r=a%b;a=b;b=r;}return a;};
+const lcm=(a,b)=>a/g2(a,b)*b;
+const fs=(n,d)=>{const g=g2(n,d)||1;n/=g;d/=g;return d===1?String(n):n+'/'+d;};
+const fr=(n,d,cls)=>'<span class="fr'+(cls?' '+cls:'')+'"><i>'+n+'</i><i>'+d+'</i></span>';
+const TIMES='·';
+let S={n1:2,d1:3,op:'*',n2:3,d2:4},V={};
+function derive(){
+  const {n1,d1,n2,d2,op}=S;
+  const f1=n1/d1,f2=n2/d2;
+  if(op==='*'){
+    const P=n1*n2,Q=d1*d2,g=g2(P,Q);
+    V={f1,f2,P,Q,g,R:P/Q,mx1:Math.ceil(n1/d1),mx2:Math.ceil(n2/d2)};
+  }else{
+    const m=lcm(d1,d2),na=n1*m/d1,nb=n2*m/d2;
+    const P=n1*d2,Q=d1*n2,g=g2(P,Q);
+    V={f1,f2,m,na,nb,P,Q,g,R:P/Q,q:Math.floor(na/nb),rem:na%nb,mx:Math.ceil(Math.max(f1,f2))};
+  }
+}
+
+/* ===== controls ===== */
+function fillSel(sel,from,to,keep){
+  sel.innerHTML='';
+  for(let k=from;k<=to;k++){const o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o);}
+  sel.value=clamp(keep,from,to);
+}
+function syncControls(){
+  fillSel($('#d1'),2,12,S.d1);fillSel($('#d2'),2,12,S.d2);
+  fillSel($('#n1'),1,2*S.d1,S.n1);fillSel($('#n2'),1,2*S.d2,S.n2);
+  $$('#opsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.op===S.op)));
+}
+function readControls(from){
+  S.d1=+$('#d1').value;S.d2=+$('#d2').value;
+  if(from==='d1')fillSel($('#n1'),1,2*S.d1,+$('#n1').value);
+  if(from==='d2')fillSel($('#n2'),1,2*S.d2,+$('#n2').value);
+  S.n1=+$('#n1').value;S.n2=+$('#n2').value;
+  derive();paint();
+}
+function setFr(n1,d1,op,n2,d2){
+  d1=clamp(Math.round(d1),2,12);d2=clamp(Math.round(d2),2,12);
+  const chg=op!==S.op;
+  S={n1:clamp(Math.round(n1),1,2*d1),d1,op,n2:clamp(Math.round(n2),1,2*d2),d2};
+  derive();syncControls();
+  if(chg)setSteps();else paint();
+}
+const PRE=[[2,3,'*',3,4],[1,2,'*',1,2],[3,2,'*',4,5],[4,5,'*',5,4],[3,4,'/',1,8],[1,2,'/',1,3],[2,3,'/',4,5],[5,4,'/',1,2]];
+function buildPresets(){
+  const h=$('#presets');h.innerHTML='';
+  PRE.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=p[0]+'/'+p[1]+' '+(p[2]==='*'?TIMES:':')+' '+p[3]+'/'+p[4];
+    b.onclick=()=>setFr(...p);h.appendChild(b);});
+}
+
+/* ===== text del panell ===== */
+function simplHTML(P,Q,g){
+  let h='';
+  const rs=P/g,ms=Q/g,sh=ms===1?'<b class="cG">'+rs+'</b>':fr(rs,ms,'cG');
+  if(g>1)h+='<p>'+tt('tk_gcd',P,Q,g)+'. '+tt('tk_simpl',g)+'</p><div class="eq">'+fr(P,Q)+' = '+fr(P+' ÷ '+g,Q+' ÷ '+g)+' = '+sh+'</div>';
+  else h+='<p>'+tt('tk_irred',P+'/'+Q)+'</p>';
+  if(ms>1&&rs>ms){const w=Math.floor(rs/ms),q=rs%ms;h+='<p>'+t('tk_mixed')+' <span class="eq"><b class="cG">'+w+'</b>'+(q?fr(q,ms,'cG'):'')+'</span></p>';}
+  return h;
+}
+function ticketHTML(i){
+  const {n1,d1,n2,d2,op}=S,{P,Q,g,f1,f2,R}=V,a=n1+'/'+d1,b=n2+'/'+d2;
+  let h='';
+  if(op==='*'){
+    h+='<div class="eq">'+fr(n1,d1,'cA')+' '+TIMES+' '+fr(n2,d2,'cB')+(i>=3?' = '+fr(n1+'·'+n2,d1+'·'+d2)+' = '+fr(P,Q,'cG'):' = ?')+'</div>';
+    if(i===0)h+='<p>'+tt('tk_mean',a,b)+'</p><p class="note">'+tt('tk_cols',n1,d1)+'</p>';
+    else if(i===1)h+='<p class="note">'+tt('tk_cols',n1,d1)+' '+tt('tk_rows',n2,d2)+'</p>';
+    else if(i===2)h+='<p>'+tt('tk_cells',d1,d2,Q,n1,n2,P)+'</p>';
+    else if(i===3)h+='<p class="note">'+t('tk_rule')+'</p>'+simplHTML(P,Q,g);
+    else if(i===4){
+      const r=fs(P,Q);
+      h+='<p>'+(f2<1?tt('tk_lt',a,b,r):f2>1?tt('tk_gt',a,b,r):tt('tk_one',a,b))+'</p>';
+    }
+  }else{
+    const {m,na,nb,q,rem}=V;
+    const K=n1*d2;
+    h+='<div class="eq">'+fr(n1,d1,'cA')+' : '+fr(n2,d2,'cB')+(i>=4?' = '+fr(n1,d1,'cA')+' '+TIMES+' '+fr(d2,n2,'cB')+' = '+fr(P,Q,'cG'):i===3?' = '+fr(n1,d1,'cA')+' × '+d2+' : '+n2+' = '+fr(K,d1)+' : '+n2+' = '+fr(P,Q,'cG'):i===2?' = '+fr(na,m,'cA')+' : '+fr(nb,m,'cB')+' = '+fr(na,nb,'cG'):' = ?')+'</div>';
+    if(i===0)h+='<p>'+tt('tk_ask',a,b)+'</p>';
+    else if(i===1){
+      h+='<p>'+(q>0?tt('tk_fits',q):tt('tk_fits0',a,b))+'</p>';
+      h+='<p class="note">'+(rem?tt('tk_rest',b):tt('tk_exact',q))+'</p>';
+    }else if(i===2)h+='<p>'+tt('tk_lcm',d1,d2,m)+'</p><p class="note">'+tt('tk_same',na,nb)+'</p>';
+    else if(i===3)h+='<p>'+tt('tk_w1',d2,a,fs(K,d1))+'</p><p>'+tt('tk_w2',n2,fs(K,d1),fs(P,Q))+'</p><p class="note">'+tt('tk_w3',d2,n2)+'</p>';
+    else if(i===4)h+='<p>'+tt('tk_inv',b,d2+'/'+n2)+'</p>';
+    else if(i===5){
+      h+=simplHTML(P,Q,g);
+      const r=fs(P,Q);
+      if(f2<1)h+='<p class="note">'+tt('tk_big',r,a)+'</p>';else if(f2>1)h+='<p class="note">'+tt('tk_small',r,a)+'</p>';
+    }
+  }
+  return h;
+}
+function paint(){$('#ticket').innerHTML=ticketHTML(SE.i);}
+
+/* ===== dibuix ===== */
+const W=640,H=380;
+const cv=$('#cv'),ctx=cv.getContext('2d');
+function fitCv(){const r=cv.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(window.devicePixelRatio||1,2.5);
+  cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.width*dpr*H/W);const sc=cv.width/W;ctx.setTransform(sc,0,0,sc,0,0);}
+cv.style.aspectRatio=W+'/'+H;new ResizeObserver(fitCv).observe(cv);fitCv();
+const ease=x=>x*x*(3-2*x);
+const FM='ui-monospace,Menlo,Consolas,monospace';
+let ph=0,target=0;
+function txt(x,s,px,py,col,size,al){x.font='700 '+(size||18)+'px '+FM;x.fillStyle=col;x.textAlign=al||'left';x.fillText(s,px,py);}
+function drawMul(){
+  const c=C(),x=ctx,{n1,d1,n2,d2}=S,{mx1,mx2,P,Q,f1,f2,R}=V;
+  const e1=ease(clamp(ph,0,1)),e2=ease(clamp(ph-1,0,1)),e3=ease(clamp(ph-2,0,1)),e4=ease(clamp(ph-3,0,1));
+  const BX=90,BY=36,BW=500,BH=236;
+  const U=Math.min(BW/mx1,BH/mx2),GW=U*mx1,GH=U*mx2,gx=BX+(BW-GW)/2,gy=BY+(BH-GH)/2;
+  const cw=U/d1,chh=U/d2;
+  x.fillStyle=c.panel;x.fillRect(gx,gy,GW,GH);
+  /* columnes (1a fracció) */
+  x.globalAlpha=.55;x.fillStyle=c.pa;x.fillRect(gx,gy,cw*n1*e1,GH);x.globalAlpha=1;
+  /* files (2a fracció) */
+  if(e2>0){x.globalAlpha=.55*e2;x.fillStyle=c.pb;x.fillRect(gx,gy+GH-chh*n2,GW,chh*n2);x.globalAlpha=1;}
+  /* intersecció */
+  if(e3>0){x.globalAlpha=.75*e3;x.fillStyle=c.ok;x.fillRect(gx,gy+GH-chh*n2,cw*n1,chh*n2);x.globalAlpha=1;}
+  /* línies de la quadrícula */
+  x.strokeStyle=c.ink;x.lineWidth=1;
+  for(let k=1;k<d1*mx1;k++){x.globalAlpha=(k%d1===0)?.9:.35*e1;x.lineWidth=(k%d1===0)?2.5:1;x.beginPath();x.moveTo(gx+k*cw,gy);x.lineTo(gx+k*cw,gy+GH);x.stroke();}
+  for(let k=1;k<d2*mx2;k++){x.globalAlpha=(k%d2===0)?.9:.35*e2;x.lineWidth=(k%d2===0)?2.5:1;x.beginPath();x.moveTo(gx,gy+GH-k*chh);x.lineTo(gx+GW,gy+GH-k*chh);x.stroke();}
+  x.globalAlpha=1;x.lineWidth=2;x.strokeRect(gx,gy,GW,GH);
+  /* etiquetes */
+  txt(x,n1+'/'+d1,gx,gy-9,c.pa,18);
+  if(e2>0){x.save();x.translate(gx-10,gy+GH-chh*n2/2);x.rotate(-Math.PI/2);x.globalAlpha=e2;txt(x,n2+'/'+d2,0,0,c.pb,18,'center');x.restore();x.globalAlpha=1;}
+  if(e3>.5)txt(x,tt('cv_cells',P,Q),gx+GW,gy-9,c.ok,15,'right');
+  /* comparació (pas 5) */
+  if(e4>0){
+    const y0=300,bh=22,sc=Math.min(150,480/Math.max(f1,R,1));
+    x.globalAlpha=e4;
+    txt(x,n1+'/'+d1,gx-8,y0+16,c.pa,15,'right');
+    x.fillStyle=c.panel;x.fillRect(gx,y0,sc*Math.max(f1,R,1)+2,bh);x.strokeStyle=c.line;x.lineWidth=1;x.strokeRect(gx,y0,sc*Math.max(f1,R,1)+2,bh);
+    x.fillStyle=c.pa;x.globalAlpha=.85*e4;x.fillRect(gx,y0,sc*f1,bh);x.globalAlpha=e4;
+    const y1=y0+bh+16;
+    txt(x,fs(P,Q),gx-8,y1+16,c.ok,15,'right');
+    x.fillStyle=c.panel;x.fillRect(gx,y1,sc*Math.max(f1,R,1)+2,bh);x.strokeStyle=c.line;x.strokeRect(gx,y1,sc*Math.max(f1,R,1)+2,bh);
+    x.fillStyle=c.ok;x.globalAlpha=.85*e4;x.fillRect(gx,y1,sc*R*e4,bh);x.globalAlpha=e4;
+    x.strokeStyle=c.ink;x.setLineDash([3,3]);x.beginPath();x.moveTo(gx+sc*f1,y0-4);x.lineTo(gx+sc*f1,y1+bh+4);x.stroke();x.setLineDash([]);
+    const k=f2<1?'cv_lt':f2>1?'cv_gt':'cv_eq';
+    txt(x,tt(k,n1+'/'+d1),gx+sc*Math.max(f1,R,1)+10,y1+16,c.muted,14);
+    x.globalAlpha=1;
+  }
+}
+function drawDiv(){
+  const c=C(),x=ctx,{n1,d1,n2,d2}=S,{f1,f2,m,na,nb,q,rem,mx,P,Q}=V;
+  const e1=ease(clamp(ph,0,1)),e2=ease(clamp(ph-1,0,1)),eW=ease(clamp(ph-2,0,1)),e3=ease(clamp(ph-3,0,1));
+  const X0=70,LW=540,BH=44,YA=44,YB=140,YC=250;
+  const U=LW/mx,X=v=>X0+v*U;
+  const frame=y=>{x.fillStyle=c.panel;x.fillRect(X0,y,LW,BH);x.strokeStyle=c.line;x.lineWidth=1.5;x.strokeRect(X0,y,LW,BH);
+    for(let k=1;k<mx;k++){x.strokeStyle=c.ink;x.lineWidth=2.5;x.globalAlpha=.85;x.beginPath();x.moveTo(X(k),y);x.lineTo(X(k),y+BH);x.stroke();x.globalAlpha=1;}};
+  const ticks=(y,den,al)=>{x.strokeStyle=c.ink;x.lineWidth=1;for(let k=1;k<den*mx;k++){if(k%den===0)continue;x.globalAlpha=al;x.beginPath();x.moveTo(X(k/den),y);x.lineTo(X(k/den),y+BH);x.stroke();}x.globalAlpha=1;};
+  const block=(v0,v1,y,col,al,den)=>{if(v1<=v0)return;x.globalAlpha=al;x.fillStyle=col;x.fillRect(X(v0),y,(v1-v0)*U,BH);
+    x.strokeStyle=c.panel;x.lineWidth=1.5;x.globalAlpha=al*.85;for(let k=1;v0+k/den<v1-1e-9;k++){x.beginPath();x.moveTo(X(v0+k/den),y);x.lineTo(X(v0+k/den),y+BH);x.stroke();}x.globalAlpha=1;};
+  /* dividend */
+  frame(YA);ticks(YA,d1,.22);block(0,f1,YA,c.pa,.9,d1);
+  txt(x,n1+'/'+d1,X0,YA-9,c.pa,18);
+  /* divisor */
+  frame(YB);ticks(YB,d2,.22);block(0,f2,YB,c.pb,.9,d2);
+  txt(x,n2+'/'+d2,X0,YB-9,c.pb,18);
+  if(e2>0){ticks(YA,m,.5*e2);ticks(YB,m,.5*e2);if(m*mx<=48)txt(x,tt('cv_piece',m),X0+LW,YB-9,c.muted,14,'right');}
+  /* encabir */
+  frame(YC);
+  if(e1<.02)txt(x,'?',X0+LW/2,YC+BH/2+9,c.muted,28,'center');
+  if(e1>0){
+    x.globalAlpha=.25*e1;x.fillStyle=c.pa;x.fillRect(X0,YC,f1*U,BH);x.globalAlpha=1;
+    const total=q+(rem?1:0),shown=e1*total;
+    for(let k=0;k<total;k++){
+      const prog=clamp(shown-k,0,1);if(prog<=0)break;
+      const v0=k*f2,full=k<q,v1=full?v0+f2:f1;
+      const yy=lerp(YB,YC,ease(prog));
+      block(v0,v1,yy,c.pb,full?.9:.45,d2);
+      if(!full){x.save();x.beginPath();x.rect(X(v0),yy,(v1-v0)*U,BH);x.clip();x.strokeStyle=c.pb;x.globalAlpha=.8;x.lineWidth=2;
+        for(let s=-BH;s<(v1-v0)*U;s+=8){x.beginPath();x.moveTo(X(v0)+s,yy+BH);x.lineTo(X(v0)+s+BH,yy);x.stroke();}x.restore();x.globalAlpha=1;}
+      if(full&&prog>.9)txt(x,String(k+1),X((v0+v1)/2),yy+BH/2+6,c.panel,15,'center');
+    }
+    if(e1>.95){
+      x.strokeStyle=c.ink;x.lineWidth=2;x.globalAlpha=.85;x.beginPath();x.moveTo(X(f1),YC-6);x.lineTo(X(f1),YC+BH+6);x.stroke();x.globalAlpha=1;
+      let lab=q>0?tt('cv_fits',q):'';if(rem)lab+=(lab?' ':'')+t('cv_rest');
+      txt(x,lab,X0,YC-9,c.ink,15);
+    }
+  }
+  if(e2>0){ticks(YC,m,.5*e2);}
+  /* dos passos: trossos d'1/d2 agrupats de n2 en n2 */
+  if(eW>0&&d2*mx<=60){
+    const K=n1*d2,y=YA+BH+6;
+    x.strokeStyle=c.pb;x.lineWidth=2;x.globalAlpha=.9*eW;
+    for(let k=1;k<d2*mx;k++){x.beginPath();x.moveTo(X(k/d2),YA);x.lineTo(X(k/d2),YA+BH);x.stroke();}
+    const groups=q;
+    for(let g=0;g<groups;g++){const x1=X(g*n2/d2)+2,x2=X((g+1)*n2/d2)-2;x.beginPath();x.moveTo(x1,y);x.lineTo(x1,y+6);x.lineTo(x2,y+6);x.lineTo(x2,y);x.stroke();}
+    x.globalAlpha=1;
+    txt(x,tt('cv_w1',fs(K,d1),d2)+(n2>1?' → '+tt('cv_w2',n2):''),X0+LW,YA-9,c.pb,14,'right');
+  }
+  /* resultat */
+  if(e3>0){
+    x.globalAlpha=e3;
+    const r=fs(P,Q),mixed=(P>Q&&P%Q)?Math.floor(P/Q)+' '+fs(P%Q,Q):'';
+    txt(x,'= '+r+(mixed?'  ('+mixed+')':''),X0+LW,YC+BH+30,c.ok,20,'right');
+    x.globalAlpha=1;
+  }
+}
+function draw(){ctx.clearRect(0,0,W,H);if(S.op==='*')drawMul();else drawDiv();}
+function loop(){
+  if(ph!==target){const d=target-ph;ph=REDUCE||Math.abs(d)<.002?target:ph+Math.sign(d)*Math.min(Math.abs(d),.035);}
+  draw();requestAnimationFrame(loop);
+}
+
+/* ===== passos (un joc per operació) ===== */
+const STEPS_MUL=[
+ {id:'x0',ask:{n:3,ok:0}},
+ {id:'x1',ask:{n:3,ok:1}},
+ {id:'x2',ask:{n:3,ok:1}},
+ {id:'x3',think:true},
+ {id:'x4',ask:{n:3,ok:1}}
+];
+const STEPS_DIV=[
+ {id:'v0',ask:{n:3,ok:0}},
+ {id:'v1',ask:{n:3,ok:0}},
+ {id:'v2',ask:{n:3,ok:0}},
+ {id:'w',ask:{n:3,ok:0}},
+ {id:'v3',think:true},
+ {id:'v4',think:true}
+];
+function setSteps(){
+  $('#stepper').innerHTML='';ph=0;target=0;
+  stepsInit(S.op==='*'?STEPS_MUL:STEPS_DIV,(i)=>{target=i;paint();});
+}
+
+/* ===== Raona-ho ===== */
+const isI=Number.isInteger;
+const okFr=(n,d)=>isI(n)&&isI(d)&&d>=2&&d<=12&&n>=1&&n<=2*d;
+const RNG={k:'rng'};
+function load(n1,d1,op,n2,d2,step){
+  setFr(n1,d1,op,n2,d2);
+  stepGo(step===undefined?SE.steps.length-1:step);
+  RZ.show($('#cv'));
+}
+RZ.init({
+ sim:v=>load(...v),
+ M:[
+  {id:'m1',f:['l_num','l_den'],sim:([n,d])=>load(3,4,'*',n,d),ok:()=>({k:'m1_ok'}),
+   chk:([n,d])=>!okFr(n,d)?RNG:(3*n*2===4*d?null:{k:'m1_f',p:[n,d,fs(3*n,4*d)]})},
+  {id:'m2',f:['l_a','l_b','l_c','l_d'],sim:([a,b,c,d])=>load(a,b,'*',c,d),ok:()=>({k:'m2_ok'}),
+   chk:([a,b,c,d])=>!(okFr(a,b)&&okFr(c,d))?RNG:(a===b||c===d)?{k:'m2_one'}:(a*c===b*d?null:{k:'m2_f',p:[fs(a*c,b*d)]})},
+  {id:'m3',f:['l_num','l_den'],sim:([n,d])=>load(3,4,'/',n,d),ok:()=>({k:'m3_ok'}),
+   chk:([n,d])=>!okFr(n,d)?RNG:(3*d===3*4*n?null:{k:'m3_f',p:[n,d,fs(3*d,4*n)]})},
+  {id:'m4',f:['l_num','l_den'],sim:([n,d])=>load(2,3,'*',n,d),ok:()=>({k:'m4_ok'}),
+   chk:([n,d])=>!okFr(n,d)?RNG:(n>d?null:{k:'m4_f',p:[n,d,fs(2*n,3*d)]})}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:['l_a','l_b','l_c','l_d'],cxsim:([a,b,c,d])=>load(a,b,'*',c,d),sim:()=>load(1,2,'*',1,2),
+   cx:([a,b,c,d])=>!(okFr(a,b)&&okFr(c,d))?{k:'s1_range'}:(a<b||c<d)?null:{k:'s1_no',p:[fs(a*c,b*d)]}},
+  {id:'s2',ans:'S',sim:()=>load(3,4,'/',1,8,1)},
+  {id:'s3',ans:'S',sim:()=>load(6,8,'/',3,4)},
+  {id:'s4',ans:'S',sim:()=>load(2,3,'*',3,4)},
+  {id:'s5',ans:'S',sim:()=>load(3,4,'*',1,2)}
+ ],
+ E:[{id:'e1',who:2,args:[2,3,'*',3,4,3]},{id:'e2',who:1,args:[1,2,'/',1,4,1]},{id:'e3',who:1,args:[3,5,'*',2,1]}],
+ D:[
+  {id:'d1',f:['d1.l0','d1.l1','d1.l2'],sim:()=>load(3,4,'*',3,2),ok:()=>({k:'d1_ok'}),
+   chk:([n,d,l])=>!(isI(n)&&isI(d)&&d>0&&2*n===3*d)?{k:'d1_k'}:l!==9?{k:'d1_n'}:null},
+  {id:'d2',f:['d2.l0'],sim:()=>load(3,4,'/',1,8,1),ok:()=>({k:'d2_ok'}),
+   chk:([n])=>n===6?null:{k:'d2_n'}}
+ ]
+});
+const QDATA=[
+ {"id":"r1","lvl":"all","type":"mc","n":4,"ans":1},
+ {"id":"r2","lvl":"all","type":"num","num":6,"tol":0},
+ {"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},
+ {"id":"r4","lvl":"all","type":"num","num":2,"tol":0},
+ {"id":"r5","lvl":"all","type":"mc","n":4,"ans":1},
+ {"id":"r6","lvl":"all","type":"mc","n":4,"ans":0},
+ {"id":"r7","lvl":"all","type":"num","num":12,"tol":0}
+];
+initQuiz(QDATA);
+initLang();
+$$('#opsw button').forEach(b=>b.addEventListener('click',()=>{if(S.op!==b.dataset.op){S.op=b.dataset.op;derive();syncControls();setSteps();}}));
+['n1','n2'].forEach(id=>$('#'+id).addEventListener('change',()=>readControls()));
+['d1','d2'].forEach(id=>$('#'+id).addEventListener('change',()=>readControls(id)));
+derive();syncControls();applyLang();
+document.addEventListener('langchange',()=>{buildPresets();paint();});
+document.addEventListener('themechange',draw);
+buildPresets();
+setSteps();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
