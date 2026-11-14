@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mitjana, mediana i moda: la dada que s'escapa</title>
+<meta name="description" content="Mitjana, mediana, moda i rang per a 2n d'ESO: arrossega les dades sobre la recta i mira com la mitjana persegueix la dada atípica mentre la mediana quasi no es mou. Càlcul pas a pas, activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+.simcv canvas{touch-action:none;cursor:grab}
+.simcv canvas.drag{cursor:grabbing}
+.st2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.st2 .stat{padding:5px 10px}
+.st2 .stat .v{font-size:17px}
+.st2 .stat.mean .v{color:var(--pa)}.st2 .stat.med .v{color:var(--pb)}.st2 .stat.mode .v{color:var(--ok)}
+.datain{display:grid;gap:4px;font-size:13.5px}
+.datain input{font:inherit;font-family:var(--f-num);font-size:15px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.msg{min-height:0;font-size:14px;margin:0}
+.msg.bad{color:var(--warn);font-weight:600}
+#steps{margin:0;padding-left:1.3em;display:grid;gap:3px;font-size:13.5px;color:var(--ink)}
+#steps:empty{display:none}
+#steps b{font-family:var(--f-num)}
+.shows{display:flex;flex-wrap:wrap;gap:6px 14px}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="row">
+<div class="chips" id="sets" role="group" data-i18n-aria="aria.sets" aria-label=""></div>
+</div>
+<div class="row">
+<button class="btn" id="add" type="button" data-i18n="b_add"></button>
+<button class="btn" id="del" type="button" data-i18n="b_del"></button>
+<button class="btn" id="out" type="button" data-i18n="b_out"></button>
+<span class="shows">
+<label class="chk"><input type="checkbox" id="shMean" checked><span data-i18n="mean"></span></label>
+<label class="chk"><input type="checkbox" id="shMed" checked><span data-i18n="median"></span></label>
+<label class="chk"><input type="checkbox" id="shMode" checked><span data-i18n="mode"></span></label>
+<label class="chk"><input type="checkbox" id="shRng" checked><span data-i18n="range"></span></label>
+</span>
+</div>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="side">
+<div class="st2" aria-live="polite">
+<div class="stat mean"><span class="k" data-i18n="mean"></span><span class="v" id="vMean"></span></div>
+<div class="stat med"><span class="k" data-i18n="median"></span><span class="v" id="vMed"></span></div>
+<div class="stat mode"><span class="k" data-i18n="mode"></span><span class="v" id="vMode"></span></div>
+<div class="stat"><span class="k" data-i18n="count"></span><span class="v" id="vN"></span></div>
+<div class="stat" style="grid-column:2/-1"><span class="k" data-i18n="range"></span><span class="v" id="vRng"></span></div>
+</div>
+<label class="datain"><span data-i18n="data_lbl"></span><input type="text" id="datain" inputmode="text" autocomplete="off"></label>
+<p class="msg" id="dmsg" aria-live="polite"></p>
+<div class="row"><button class="btn primary" id="stepb" type="button"></button><span class="mut" id="stepn"></span></div>
+<ol id="steps" aria-live="polite"></ol>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Mitjana, mediana i moda: la dada que s'escapa",
+"eyebrow":"Matemàtiques · 2n ESO · Estadística",
+"h1":"Mitjana, mediana i moda",
+"lede":"Arrossega una dada lluny de les altres: la mitjana corre darrere d'ella i la mediana quasi ni es mou.",
+"sim_title":"Les dades sobre la recta",
+"story":"Cada boleta és una <b>dada</b>. Arrossega-les per la recta, afig-ne o lleva'n, i mira com es mouen la <b>mitjana</b> (el triangle: el punt on la recta quedaria en equilibri), la <b>mediana</b> (la línia: la dada del mig), la <b>moda</b> (la pila més alta) i el <b>rang</b>.",
+"aria.sets":"Conjunts de dades","aria.cv":"Diagrama de punts amb les dades, la mitjana, la mediana, la moda i el rang",
+"set0":"Notes d'un examen","set1":"Paga setmanal (€)","set2":"Nombre de germans","set3":"Talles de sabata","set4":"Dades simètriques",
+"b_add":"+ Afig una dada","b_del":"− Lleva l'última","b_out":"Afig una dada atípica",
+"mean":"Mitjana","median":"Mediana","mode":"Moda","range":"Rang","count":"Dades",
+"mode_none":"no n'hi ha",
+"data_lbl":"Dades (pots escriure-les, separades per espais):",
+"bad_data":"Escriu entre 1 i 15 nombres enters, de 0 a 99, que no estiguen separats més de 36 unitats.",
+"step_go":"Calcula-ho pas a pas ▶","step_next":"Pas següent ▶","step_again":"Torna a començar ↺","step_n":"Pas {0} de 6",
+"st1":"<b>Ordena</b> les dades: <b>{0}</b>",
+"st2":"<b>Suma-les</b>: {0} = <b>{1}</b>",
+"st3":"<b>Mitjana</b> = suma : nombre de dades = {0} : {1} = <b>{2}</b>",
+"st4o":"<b>Mediana</b>: hi ha {0} dades, la del mig és la {1}a → <b>{2}</b>",
+"st4e":"<b>Mediana</b>: hi ha {0} dades, les del mig són la {1}a i la {2}a → ({3} + {4}) : 2 = <b>{5}</b>",
+"st5":"<b>Moda</b>: la dada que més es repeteix és <b>{0}</b> ({1} vegades)",
+"st5m":"<b>Moda</b>: n'hi ha més d'una, <b>{0}</b> ({1} vegades cadascuna)",
+"st5n":"<b>Moda</b>: cap dada es repeteix, <b>no n'hi ha</b>",
+"st5u":"<b>Moda</b>: només hi ha una dada, <b>{0}</b>",
+"st6":"<b>Rang</b> = màxima − mínima = {0} − {1} = <b>{2}</b>",
+"idea":"<b>La idea:</b> la mitjana reparteix el total a parts iguals, i per això una sola dada molt allunyada (una <b>dada atípica</b>) l'arrossega. La mediana només mira qui està al mig, així que no li importa com de lluny estiguen les dades dels extrems. Quan hi ha dades atípiques, la mediana sol descriure millor el valor «normal».",
+"rng":"Escriu nombres enters entre 0 i 30.",
+"l_x":"Dada","l_x1":"Dada 1","l_x2":"Dada 2","l_x3":"Dada 3","l_x4":"Dada 4",
+"m1.q":"Les notes de quatre exàmens són <b>4, 5, 6 i 7</b>. Quina nota ha de tindre el cinqué perquè la mitjana siga <b>6</b>?",
+"m1_f":"Amb un {0}, la mitjana de les cinc notes és {1}, no 6.",
+"m1.more":"La mitjana 6 amb 5 dades vol dir que sumen 30. Com trobaries la nota que falta sense provar?",
+"m2.q":"Inventa <b>tres dades</b> que tinguen <b>mediana 5</b> i <b>mitjana 7</b>.",
+"m2_med":"La mediana de {0}, {1} i {2} és {3}, no 5.",
+"m2_mean":"La mediana és 5, però la mitjana és {0}, no 7.",
+"m2.more":"Hi ha moltes solucions. Què han de sumar sempre la dada xicoteta i la gran?",
+"m3.q":"Les dades són <b>4, 5, 5 i 6</b>. Afig una cinquena dada perquè la mitjana passe a ser <b>9</b>.",
+"m3_f":"Amb la dada {0}, la mitjana és {1}, no 9.",
+"m3.more":"La mitjana ha passat de 5 a 9. Quant ha canviat la mediana? Per què?",
+"m4.q":"Les dades són <b>2, 4, 6, 8</b> i una cinquena dada. Troba un valor per a eixa dada que faça que la mitjana i la mediana <b>coincidisquen</b>.",
+"m4_f":"Amb la dada {0}, la mitjana és {1} i la mediana és {2}: no coincideixen.",
+"m4.more":"N'hi ha tres solucions. Troba-les totes: què tenen en comú els tres conjunts de dades?",
+"s1.q":"«La mitjana d'unes dades és una de les dades.»",
+"s1.h":"Prova amb 2, 4 i 6, i després amb 1, 2 i 6.",
+"s1_no":"La mitjana de {0}, {1} i {2} és {3}, que sí que és una de les dades. Busca'n unes altres.",
+"s1.e":"De vegades: en 2, 4 i 6 la mitjana és 4, que és una dada; en 1, 2 i 6 és 3, que no hi és. La mitjana pot ser fins i tot un decimal encara que totes les dades siguen enteres.",
+"s2.q":"«En un conjunt de 5 dades diferents, si la dada més gran es fa encara més gran, la mediana no canvia.»",
+"s2.h":"Arrossega la boleta de més a la dreta encara més a la dreta i mira la línia de la mediana.",
+"s2.e":"Sempre: la mediana és la tercera dada en ordre, i la més gran continua sent l'última per molt que cresca. La mitjana, en canvi, sí que puja.",
+"s3.q":"«Si sumem 2 a totes les dades, la mitjana augmenta 2.»",
+"s3.h":"Prova amb 2, 4 i 9, i després amb 4, 6 i 11.",
+"s3.e":"Sempre: si hi ha n dades, la suma augmenta 2·n, i en dividir entre n queda exactament 2 més. Tot el dibuix es desplaça dues unitats, i la mediana i la moda també.",
+"s4.q":"«La mitjana és més gran que la mediana.»",
+"s4.h":"Compara 1, 2, 9 amb 1, 8, 9.",
+"s4_no":"En {0}, {1} i {2} la mitjana ({3}) sí que és més gran que la mediana ({4}). Busca'n unes altres.",
+"s4.e":"De vegades: depén de cap a on s'allarguen les dades. En 1, 2, 9 la mitjana (4) supera la mediana (2); en 1, 8, 9 passa al revés (6 i 8); i en 4, 5, 6 coincideixen.",
+"s5.q":"«El rang d'unes dades és un nombre negatiu.»",
+"s5.h":"El rang és la dada màxima menys la mínima. Pot ser la màxima més xicoteta que la mínima?",
+"s5.e":"Mai: màxima − mínima sempre és zero o positiu. Val exactament 0 només quan totes les dades són iguals.",
+"s6.q":"«Un conjunt de dades té exactament una moda.»",
+"s6.h":"Prova amb 1, 1, 2, 2 i amb 1, 2, 3, 4.",
+"s6_no":"En {0}, {1}, {2} i {3} hi ha exactament una moda: {4}. Busca'n unes altres.",
+"s6.e":"De vegades: en 1, 1, 2, 2 hi ha dues modes, i en 1, 2, 3, 4 cap dada es repeteix i no hi ha moda. La mitjana i la mediana sempre existeixen i són úniques; la moda, no.",
+"e1.ctx":"Cinc amics reben de paga setmanal <b>2, 3, 3, 4 i 18 €</b>.",
+"e1.n0":"Anna","e1.n1":"Marc",
+"e1.s0":"La mitjana és 6 €, així que el normal en el grup és rebre uns 6 €.",
+"e1.s1":"La mediana és 3 €: descriu millor el que rep la majoria.",
+"e1.w0":"La dada 18 estira la mitjana cap amunt: quatre dels cinc amics reben menys de 6 €. La mediana no es deixa arrossegar per la dada atípica.",
+"e1.w1":"Perquè la mitjana està mal calculada: no dona 6.",
+"e1.w2":"Perquè la mediana sempre és millor que la mitjana.",
+"e1.frame":"Anna, 6 € no és la paga normal del grup perquè…",
+"e1.model":"Anna, el càlcul és correcte (30 : 5 = 6), però quatre dels cinc amics reben 4 € o menys. La mitjana ix alta només perquè una persona rep 18 €. Si vols dir el que rep un amic normal, la mediana (3 €) ho descriu millor.",
+"e2.ctx":"Cal trobar la mediana de <b>7, 3, 9, 4 i 5</b>.",
+"e2.n0":"Pau","e2.n1":"Júlia",
+"e2.s0":"És 9, perquè és la dada que està al mig de la llista.",
+"e2.s1":"Primer les ordene: 3, 4, 5, 7, 9. La del mig és 5.",
+"e2.w0":"La mediana és la dada central <b>després d'ordenar-les</b>. Pau ha agafat la del mig tal com estaven escrites.",
+"e2.w1":"Perquè 9 és la dada més gran, i la més gran no pot ser mai la mediana.",
+"e2.w2":"Perquè la mediana és la suma de totes les dades dividida entre 5.",
+"e2.frame":"Pau, la mediana no és 9 perquè…",
+"e2.model":"Pau, la mediana és la dada que queda al mig quan les dades estan ordenades de menor a major, no al mig de com estan escrites. Ordenades són 3, 4, 5, 7, 9 i la del mig és 5: en té dues per davall i dues per damunt.",
+"e3.ctx":"Cal trobar la mediana de <b>2, 4, 6 i 10</b>.",
+"e3.n0":"Laia","e3.n1":"Hugo",
+"e3.s0":"És 4, la segona de les quatre.",
+"e3.s1":"És 6, la tercera.",
+"e3.w0":"Amb un nombre parell de dades no hi ha cap dada central: la mediana és la mitjana de les dues del mig, (4 + 6) : 2 = 5.",
+"e3.w1":"Perquè la mediana és 5,5, que és el que dona sumar-les totes i dividir entre 4.",
+"e3.w2":"Perquè amb quatre dades la mediana no existeix.",
+"e3.frame":"Laia i Hugo, la mediana és 5 perquè…",
+"e3.model":"Laia i Hugo, amb quatre dades no n'hi ha cap al mig: el 4 i el 6 comparteixen el centre. La mediana és el punt mitjà entre totes dues, (4 + 6) : 2 = 5, que deixa dues dades a cada costat encara que no siga cap de les dades.",
+"d1.q":"En una empresa hi ha 5 persones i els seus sous, en centenars d'euros, són <b>12, 13, 13, 14 i 33</b> (el 33 és el de la gerent). Quina mesura descriu millor el sou d'una persona normal de l'empresa?",
+"d1.lc":"Tria:",
+"d1_c0":"la mitjana (17)","d1_c1":"la mediana (13)","d1_c2":"el rang (21)",
+"d1_m":"La mitjana és 17, però quatre de les cinc persones cobren 14 o menys: el sou de la gerent l'estira cap amunt.",
+"d1_r":"El rang diu com de separades estan les dades, no quin és un valor típic.",
+"d1.more":"Si l'empresa volguera presumir de bons sous en un anunci, quina mesura triaria? Estaria mentint?",
+"d2.q":"Portes un <b>4, un 6 i un 7</b> en tres exàmens. Quina nota necessites en el quart per a tindre un <b>6 de mitjana</b>?",
+"d2.l0":"Nota del quart examen",
+"d2_f":"Amb un {0}, la mitjana seria {1}.",
+"d2.more":"I per a tindre un 7 de mitjana? És possible si la nota màxima és un 10?",
+"d3.q":"Una sabateria ha venut en un matí aquestes talles: <b>37, 38, 38, 39, 39, 39, 39, 40, 41 i 43</b>. De quina talla li convé demanar més parells?",
+"d3.lc":"Tria:",
+"d3_c0":"la 39 (la moda)","d3_c1":"la 39,3 (la mitjana)","d3_c2":"la 40 (el punt mitjà entre 37 i 43)",
+"d3_m":"La mitjana és 39,3, però no existeix cap sabata d'eixa talla.",
+"d3_r":"El punt mitjà entre la talla mínima i la màxima no diu quina es ven més: de la 40 només se n'ha venut un parell.",
+"d3_ok":"✔ Ben decidit! La 39 és la que més es ven: ací la moda és la mesura útil.",
+"d3.more":"Inventa una altra situació on la moda siga més útil que la mitjana.",
+"r1.q":"La mitjana de 2, 4 i 9 és…",
+"r1.o0":"5","r1.o1":"4","r1.o2":"15","r1.o3":"7,5",
+"r1.e":"2 + 4 + 9 = 15 i 15 : 3 = 5.",
+"r2.q":"Quina és la mediana de 8, 1, 5, 3 i 10?",
+"r2.e":"Ordenades: 1, 3, 5, 8, 10. La del mig és 5.",
+"r3.q":"La moda de 3, 5, 5, 6, 7, 7, 7, 9 és…",
+"r3.o0":"5","r3.o1":"7","r3.o2":"6","r3.o3":"9",
+"r3.e":"El 7 apareix tres vegades, més que cap altra dada.",
+"r4.q":"Quin és el rang de 4, 9, 15 i 6?",
+"r4.e":"Màxima − mínima = 15 − 4 = 11.",
+"r5.q":"A les dades 3, 4, 5, 6 i 7 se'ls afig la dada 50. Què passa?",
+"r5.o0":"La mitjana puja molt i la mediana, molt poc","r5.o1":"Totes dues pugen molt","r5.o2":"La mediana puja molt i la mitjana, molt poc","r5.o3":"No canvia cap de les dues",
+"r5.e":"La mitjana passa de 5 a 75 : 6 = 12,5; la mediana, de 5 a (5 + 6) : 2 = 5,5.",
+"r6.q":"Quina és la mediana de 1, 3, 7 i 9?",
+"r6.e":"Amb quatre dades, la mitjana de les dues del mig: (3 + 7) : 2 = 5."
+},
+es:{
+"title":"Media, mediana y moda: el dato que se escapa",
+"eyebrow":"Matemáticas · 2.º ESO · Estadística",
+"h1":"Media, mediana y moda",
+"lede":"Arrastra un dato lejos de los demás: la media corre detrás de él y la mediana casi ni se mueve.",
+"sim_title":"Los datos sobre la recta",
+"story":"Cada bolita es un <b>dato</b>. Arrástralas por la recta, añade o quita, y mira cómo se mueven la <b>media</b> (el triángulo: el punto donde la recta quedaría en equilibrio), la <b>mediana</b> (la línea: el dato del medio), la <b>moda</b> (la pila más alta) y el <b>rango</b>.",
+"aria.sets":"Conjuntos de datos","aria.cv":"Diagrama de puntos con los datos, la media, la mediana, la moda y el rango",
+"set0":"Notas de un examen","set1":"Paga semanal (€)","set2":"Número de hermanos","set3":"Tallas de zapato","set4":"Datos simétricos",
+"b_add":"+ Añade un dato","b_del":"− Quita el último","b_out":"Añade un dato atípico",
+"mean":"Media","median":"Mediana","mode":"Moda","range":"Rango","count":"Datos",
+"mode_none":"no hay",
+"data_lbl":"Datos (puedes escribirlos, separados por espacios):",
+"bad_data":"Escribe entre 1 y 15 números enteros, de 0 a 99, que no estén separados más de 36 unidades.",
+"step_go":"Calcúlalo paso a paso ▶","step_next":"Paso siguiente ▶","step_again":"Volver a empezar ↺","step_n":"Paso {0} de 6",
+"st1":"<b>Ordena</b> los datos: <b>{0}</b>",
+"st2":"<b>Súmalos</b>: {0} = <b>{1}</b>",
+"st3":"<b>Media</b> = suma : número de datos = {0} : {1} = <b>{2}</b>",
+"st4o":"<b>Mediana</b>: hay {0} datos, el del medio es el {1}.º → <b>{2}</b>",
+"st4e":"<b>Mediana</b>: hay {0} datos, los del medio son el {1}.º y el {2}.º → ({3} + {4}) : 2 = <b>{5}</b>",
+"st5":"<b>Moda</b>: el dato que más se repite es <b>{0}</b> ({1} veces)",
+"st5m":"<b>Moda</b>: hay más de una, <b>{0}</b> ({1} veces cada una)",
+"st5n":"<b>Moda</b>: ningún dato se repite, <b>no hay</b>",
+"st5u":"<b>Moda</b>: solo hay un dato, <b>{0}</b>",
+"st6":"<b>Rango</b> = máximo − mínimo = {0} − {1} = <b>{2}</b>",
+"idea":"<b>La idea:</b> la media reparte el total a partes iguales, y por eso un solo dato muy alejado (un <b>dato atípico</b>) la arrastra. La mediana solo mira quién está en el medio, así que no le importa lo lejos que estén los datos de los extremos. Cuando hay datos atípicos, la mediana suele describir mejor el valor «normal».",
+"rng":"Escribe números enteros entre 0 y 30.",
+"l_x":"Dato","l_x1":"Dato 1","l_x2":"Dato 2","l_x3":"Dato 3","l_x4":"Dato 4",
+"m1.q":"Las notas de cuatro exámenes son <b>4, 5, 6 y 7</b>. ¿Qué nota tiene que sacar en el quinto para que la media sea <b>6</b>?",
+"m1_f":"Con un {0}, la media de las cinco notas es {1}, no 6.",
+"m1.more":"La media 6 con 5 datos quiere decir que suman 30. ¿Cómo encontrarías la nota que falta sin probar?",
+"m2.q":"Inventa <b>tres datos</b> que tengan <b>mediana 5</b> y <b>media 7</b>.",
+"m2_med":"La mediana de {0}, {1} y {2} es {3}, no 5.",
+"m2_mean":"La mediana es 5, pero la media es {0}, no 7.",
+"m2.more":"Hay muchas soluciones. ¿Qué tienen que sumar siempre el dato pequeño y el grande?",
+"m3.q":"Los datos son <b>4, 5, 5 y 6</b>. Añade un quinto dato para que la media pase a ser <b>9</b>.",
+"m3_f":"Con el dato {0}, la media es {1}, no 9.",
+"m3.more":"La media ha pasado de 5 a 9. ¿Cuánto ha cambiado la mediana? ¿Por qué?",
+"m4.q":"Los datos son <b>2, 4, 6, 8</b> y un quinto dato. Encuentra un valor para ese dato que haga que la media y la mediana <b>coincidan</b>.",
+"m4_f":"Con el dato {0}, la media es {1} y la mediana es {2}: no coinciden.",
+"m4.more":"Hay tres soluciones. Encuéntralas todas: ¿qué tienen en común los tres conjuntos de datos?",
+"s1.q":"«La media de unos datos es uno de los datos.»",
+"s1.h":"Prueba con 2, 4 y 6, y después con 1, 2 y 6.",
+"s1_no":"La media de {0}, {1} y {2} es {3}, que sí es uno de los datos. Busca otros.",
+"s1.e":"A veces: en 2, 4 y 6 la media es 4, que es un dato; en 1, 2 y 6 es 3, que no está. La media puede ser incluso un decimal aunque todos los datos sean enteros.",
+"s2.q":"«En un conjunto de 5 datos distintos, si el dato mayor se hace todavía mayor, la mediana no cambia.»",
+"s2.h":"Arrastra la bolita de más a la derecha todavía más a la derecha y mira la línea de la mediana.",
+"s2.e":"Siempre: la mediana es el tercer dato en orden, y el mayor sigue siendo el último por mucho que crezca. La media, en cambio, sí sube.",
+"s3.q":"«Si sumamos 2 a todos los datos, la media aumenta 2.»",
+"s3.h":"Prueba con 2, 4 y 9, y después con 4, 6 y 11.",
+"s3.e":"Siempre: si hay n datos, la suma aumenta 2·n, y al dividir entre n queda exactamente 2 más. Todo el dibujo se desplaza dos unidades, y la mediana y la moda también.",
+"s4.q":"«La media es mayor que la mediana.»",
+"s4.h":"Compara 1, 2, 9 con 1, 8, 9.",
+"s4_no":"En {0}, {1} y {2} la media ({3}) sí es mayor que la mediana ({4}). Busca otros.",
+"s4.e":"A veces: depende de hacia dónde se alarguen los datos. En 1, 2, 9 la media (4) supera a la mediana (2); en 1, 8, 9 pasa al revés (6 y 8); y en 4, 5, 6 coinciden.",
+"s5.q":"«El rango de unos datos es un número negativo.»",
+"s5.h":"El rango es el dato máximo menos el mínimo. ¿Puede ser el máximo menor que el mínimo?",
+"s5.e":"Nunca: máximo − mínimo siempre es cero o positivo. Vale exactamente 0 solo cuando todos los datos son iguales.",
+"s6.q":"«Un conjunto de datos tiene exactamente una moda.»",
+"s6.h":"Prueba con 1, 1, 2, 2 y con 1, 2, 3, 4.",
+"s6_no":"En {0}, {1}, {2} y {3} hay exactamente una moda: {4}. Busca otros.",
+"s6.e":"A veces: en 1, 1, 2, 2 hay dos modas, y en 1, 2, 3, 4 ningún dato se repite y no hay moda. La media y la mediana siempre existen y son únicas; la moda, no.",
+"e1.ctx":"Cinco amigos reciben de paga semanal <b>2, 3, 3, 4 y 18 €</b>.",
+"e1.n0":"Anna","e1.n1":"Marc",
+"e1.s0":"La media es 6 €, así que lo normal en el grupo es recibir unos 6 €.",
+"e1.s1":"La mediana es 3 €: describe mejor lo que recibe la mayoría.",
+"e1.w0":"El dato 18 estira la media hacia arriba: cuatro de los cinco amigos reciben menos de 6 €. La mediana no se deja arrastrar por el dato atípico.",
+"e1.w1":"Porque la media está mal calculada: no da 6.",
+"e1.w2":"Porque la mediana siempre es mejor que la media.",
+"e1.frame":"Anna, 6 € no es la paga normal del grupo porque…",
+"e1.model":"Anna, el cálculo es correcto (30 : 5 = 6), pero cuatro de los cinco amigos reciben 4 € o menos. La media sale alta solo porque una persona recibe 18 €. Si quieres decir lo que recibe un amigo normal, la mediana (3 €) lo describe mejor.",
+"e2.ctx":"Hay que hallar la mediana de <b>7, 3, 9, 4 y 5</b>.",
+"e2.n0":"Pau","e2.n1":"Júlia",
+"e2.s0":"Es 9, porque es el dato que está en medio de la lista.",
+"e2.s1":"Primero los ordeno: 3, 4, 5, 7, 9. El del medio es 5.",
+"e2.w0":"La mediana es el dato central <b>después de ordenarlos</b>. Pau ha cogido el del medio tal como estaban escritos.",
+"e2.w1":"Porque 9 es el dato mayor, y el mayor no puede ser nunca la mediana.",
+"e2.w2":"Porque la mediana es la suma de todos los datos dividida entre 5.",
+"e2.frame":"Pau, la mediana no es 9 porque…",
+"e2.model":"Pau, la mediana es el dato que queda en medio cuando los datos están ordenados de menor a mayor, no en medio de como están escritos. Ordenados son 3, 4, 5, 7, 9 y el del medio es 5: tiene dos por debajo y dos por encima.",
+"e3.ctx":"Hay que hallar la mediana de <b>2, 4, 6 y 10</b>.",
+"e3.n0":"Laia","e3.n1":"Hugo",
+"e3.s0":"Es 4, el segundo de los cuatro.",
+"e3.s1":"Es 6, el tercero.",
+"e3.w0":"Con un número par de datos no hay ningún dato central: la mediana es la media de los dos del medio, (4 + 6) : 2 = 5.",
+"e3.w1":"Porque la mediana es 5,5, que es lo que da sumarlos todos y dividir entre 4.",
+"e3.w2":"Porque con cuatro datos la mediana no existe.",
+"e3.frame":"Laia y Hugo, la mediana es 5 porque…",
+"e3.model":"Laia y Hugo, con cuatro datos no hay ninguno en medio: el 4 y el 6 comparten el centro. La mediana es el punto medio entre los dos, (4 + 6) : 2 = 5, que deja dos datos a cada lado aunque no sea ninguno de los datos.",
+"d1.q":"En una empresa hay 5 personas y sus sueldos, en cientos de euros, son <b>12, 13, 13, 14 y 33</b> (el 33 es el de la gerente). ¿Qué medida describe mejor el sueldo de una persona normal de la empresa?",
+"d1.lc":"Elige:",
+"d1_c0":"la media (17)","d1_c1":"la mediana (13)","d1_c2":"el rango (21)",
+"d1_m":"La media es 17, pero cuatro de las cinco personas cobran 14 o menos: el sueldo de la gerente la estira hacia arriba.",
+"d1_r":"El rango dice lo separados que están los datos, no cuál es un valor típico.",
+"d1.more":"Si la empresa quisiera presumir de buenos sueldos en un anuncio, ¿qué medida elegiría? ¿Estaría mintiendo?",
+"d2.q":"Llevas un <b>4, un 6 y un 7</b> en tres exámenes. ¿Qué nota necesitas en el cuarto para tener un <b>6 de media</b>?",
+"d2.l0":"Nota del cuarto examen",
+"d2_f":"Con un {0}, la media sería {1}.",
+"d2.more":"¿Y para tener un 7 de media? ¿Es posible si la nota máxima es un 10?",
+"d3.q":"Una zapatería ha vendido en una mañana estas tallas: <b>37, 38, 38, 39, 39, 39, 39, 40, 41 y 43</b>. ¿De qué talla le conviene pedir más pares?",
+"d3.lc":"Elige:",
+"d3_c0":"la 39 (la moda)","d3_c1":"la 39,3 (la media)","d3_c2":"la 40 (el punto medio entre 37 y 43)",
+"d3_m":"La media es 39,3, pero no existe ningún zapato de esa talla.",
+"d3_r":"El punto medio entre la talla mínima y la máxima no dice cuál se vende más: de la 40 solo se ha vendido un par.",
+"d3_ok":"✔ ¡Bien decidido! La 39 es la que más se vende: aquí la moda es la medida útil.",
+"d3.more":"Inventa otra situación en la que la moda sea más útil que la media.",
+"r1.q":"La media de 2, 4 y 9 es…",
+"r1.o0":"5","r1.o1":"4","r1.o2":"15","r1.o3":"7,5",
+"r1.e":"2 + 4 + 9 = 15 y 15 : 3 = 5.",
+"r2.q":"¿Cuál es la mediana de 8, 1, 5, 3 y 10?",
+"r2.e":"Ordenados: 1, 3, 5, 8, 10. El del medio es 5.",
+"r3.q":"La moda de 3, 5, 5, 6, 7, 7, 7, 9 es…",
+"r3.o0":"5","r3.o1":"7","r3.o2":"6","r3.o3":"9",
+"r3.e":"El 7 aparece tres veces, más que ningún otro dato.",
+"r4.q":"¿Cuál es el rango de 4, 9, 15 y 6?",
+"r4.e":"Máximo − mínimo = 15 − 4 = 11.",
+"r5.q":"A los datos 3, 4, 5, 6 y 7 se les añade el dato 50. ¿Qué pasa?",
+"r5.o0":"La media sube mucho y la mediana, muy poco","r5.o1":"Las dos suben mucho","r5.o2":"La mediana sube mucho y la media, muy poco","r5.o3":"No cambia ninguna de las dos",
+"r5.e":"La media pasa de 5 a 75 : 6 = 12,5; la mediana, de 5 a (5 + 6) : 2 = 5,5.",
+"r6.q":"¿Cuál es la mediana de 1, 3, 7 y 9?",
+"r6.e":"Con cuatro datos, la media de los dos del medio: (3 + 7) : 2 = 5."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Mitjana, mediana i moda ===== */
+const cv=$('#cv'),NMAX=15;
+let W=900,H=450,AL=40,AR=860,AY=300,cx=null,NARROW=false;
+function sizeCv(){const w=cv.parentElement.clientWidth||900,nw=w<520;
+  if(cx&&nw===NARROW)return;NARROW=nw;W=nw?440:900;H=nw?400:450;AL=nw?22:40;AR=W-AL;AY=H-150;
+  cv.style.aspectRatio=W+'/'+H;cx=fitCanvas(cv,W,H);}
+sizeCv();new ResizeObserver(sizeCv).observe(cv.parentElement);
+const SETS=[[3,5,5,6,6,6,7,8,9],[5,5,5,6,7,9,26],[0,1,1,1,2,2,3,5],[37,38,38,39,39,39,39,40,41,43],[4,5,6,6,6,7,8]];
+let data=[],lo=0,hi=10,step=0,drag=-1,curSet=0,sMean=0,sMed=0;
+
+/* --- càlculs --- */
+function stats(d){
+  const s=[...d].sort((a,b)=>a-b),n=s.length,sum=s.reduce((a,b)=>a+b,0);
+  const med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;
+  const f={};s.forEach(v=>{f[v]=(f[v]||0)+1;});
+  const mf=Math.max(...Object.values(f));
+  const modes=(mf===1&&n>1)?[]:Object.keys(f).map(Number).filter(v=>f[v]===mf).sort((a,b)=>a-b);
+  return {s,n,sum,mean:sum/n,med,modes,mf,min:s[0],max:s[n-1],rng:s[n-1]-s[0]};
+}
+function axisFor(v){
+  const mn=Math.min(...v),mx=Math.max(...v);
+  if(mx<=10)return [0,10];if(mx<=20)return [0,20];if(mx<=30)return [0,30];
+  const l=Math.max(0,mn-2);return [l,Math.max(mx+2,l+10)];
+}
+const valid=v=>v.length>=1&&v.length<=NMAX&&v.every(x=>Number.isInteger(x)&&x>=0&&x<=99)&&Math.max(...v)-Math.min(...v)<=36;
+function setData(v,keepAxis){
+  data=[...v];$('#dmsg').textContent='';delete $('#dmsg').dataset.k;
+  if(!keepAxis||Math.min(...data)<lo||Math.max(...data)>hi)[lo,hi]=axisFor(data);
+  step=0;upd();
+}
+function loadSet(i){curSet=i;setData(SETS[i]);const s=stats(data);sMean=s.mean;sMed=s.med;}
+
+/* --- panell --- */
+function modeTxt(s){return s.modes.length?s.modes.join(', '):t('mode_none');}
+function stepHTML(k,s){
+  if(k===1)return tt('st1',s.s.join(', '));
+  if(k===2)return tt('st2',s.s.join(' + '),s.sum);
+  if(k===3)return tt('st3',s.sum,s.n,nf(s.mean,2));
+  if(k===4)return s.n%2?tt('st4o',s.n,(s.n+1)/2,s.med):tt('st4e',s.n,s.n/2,s.n/2+1,s.s[s.n/2-1],s.s[s.n/2],nf(s.med,2));
+  if(k===5)return s.n===1?tt('st5u',s.s[0]):!s.modes.length?t('st5n'):s.modes.length===1?tt('st5',s.modes[0],s.mf):tt('st5m',s.modes.join(', '),s.mf);
+  return tt('st6',s.max,s.min,s.rng);
+}
+function upd(){
+  const s=stats(data);
+  $('#vN').textContent=s.n;$('#vRng').textContent=s.rng;
+  $('#vMean').textContent=nf(s.mean,2);$('#vMed').textContent=nf(s.med,2);$('#vMode').textContent=modeTxt(s);
+  if(document.activeElement!==$('#datain'))$('#datain').value=data.join(' ');
+  $('#add').disabled=data.length>=NMAX;$('#del').disabled=data.length<=1;
+  $('#out').disabled=data.length>=NMAX||s.max+12>99||s.max+12-s.min>36;
+  $('#stepb').textContent=t(step===0?'step_go':step<6?'step_next':'step_again');
+  $('#stepn').textContent=step?tt('step_n',step):'';
+  let h='';for(let k=1;k<=step;k++)h+='<li>'+stepHTML(k,s)+'</li>';
+  $('#steps').innerHTML=h;
+  $$('#sets .chip').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===curSet)));
+}
+
+/* --- dibuix --- */
+const X=v=>AL+(AR-AL)*(v-lo)/(hi-lo);
+function layout(){
+  const sp=(AR-AL)/(hi-lo);
+  const f={};data.forEach(v=>{f[v]=(f[v]||0)+1;});
+  const mf=Math.max(...Object.values(f));
+  let r=Math.min(14,sp*0.46);const room=AY-96;if(mf*(2*r+2)>room)r=(room/mf-2)/2;
+  const order=data.map((v,i)=>i);if(drag>=0){order.splice(order.indexOf(drag),1);order.push(drag);}
+  const cnt={},P=[];
+  order.forEach(i=>{const v=data[i],k=cnt[v]||0;cnt[v]=k+1;P[i]={i,v,k,x:X(v),y:AY-8-r-k*(2*r+2),r};});
+  /* posició en l'ordre (per al pas a pas) */
+  [...P].sort((a,b)=>a.v-b.v||a.k-b.k).forEach((p,j)=>{p.rank=j+1;});
+  return P;
+}
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok'),panel=css('--panel');
+  const s=stats(data),P=layout(),r=P[0].r;
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  /* recta */
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(AL-14,AY);cx.lineTo(AR+14,AY);cx.stroke();
+  const sp=(AR-AL)/(hi-lo),every=[1,2,5,10].find(e=>e*sp>=21)||10;
+  cx.textAlign='center';cx.font='13px system-ui';
+  for(let v=lo;v<=hi;v++){const x=X(v),big=v%every===0;
+    cx.strokeStyle=ink;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(x,AY-(big?6:3));cx.lineTo(x,AY+(big?6:3));cx.stroke();
+    if(v%every===0){cx.fillStyle=mut;cx.fillText(String(v),x,AY+21);}}
+  /* rang */
+  if($('#shRng').checked&&s.n>1){const y=AY+96,a=X(s.min),b=X(s.max);
+    cx.strokeStyle=mut;cx.lineWidth=2;cx.beginPath();cx.moveTo(a,y-7);cx.lineTo(a,y+7);cx.moveTo(a,y);cx.lineTo(b,y);cx.moveTo(b,y-7);cx.lineTo(b,y+7);cx.stroke();
+    cx.fillStyle=mut;cx.font='bold 14px system-ui';cx.textAlign='center';
+    cx.fillText(t('range')+' = '+s.max+' − '+s.min+' = '+s.rng,clamp((a+b)/2,AL+80,AR-80),y+24);}
+  /* mediana */
+  if($('#shMed').checked){const x=X(sMed);
+    cx.strokeStyle=pb;cx.lineWidth=2.5;cx.setLineDash([8,6]);cx.beginPath();cx.moveTo(x,44);cx.lineTo(x,AY);cx.stroke();cx.setLineDash([]);
+    cx.fillStyle=pb;cx.font='bold 15px system-ui';cx.textAlign=x<AL+70?'left':x>AR-70?'right':'center';
+    cx.fillText(t('median')+' = '+nf(s.med,2),x<AL+70?AL-12:x>AR-70?AR+12:x,32);}
+  /* boletes */
+  const mid=s.n%2?[(s.n+1)/2]:[s.n/2,s.n/2+1];
+  P.forEach(p=>{
+    const isMode=$('#shMode').checked&&s.modes.includes(p.v),isMid=step>=4&&mid.includes(p.rank);
+    cx.beginPath();cx.arc(p.x,p.y,p.r,0,TAU);
+    cx.fillStyle=isMid?pb:mut;cx.globalAlpha=isMid?.9:(p.i===drag?.75:.45);cx.fill();cx.globalAlpha=1;
+    cx.strokeStyle=isMode?ok:ink;cx.lineWidth=isMode?3:1.5;cx.stroke();
+    if(step>=1&&p.r>=5){cx.fillStyle=isMid?panel:ink;cx.font='bold '+Math.max(9,Math.round(p.r*0.95))+'px system-ui';cx.textAlign='center';cx.fillText(String(p.rank),p.x,p.y+p.r*0.34);}
+  });
+  /* moda */
+  if($('#shMode').checked)s.modes.forEach(m=>{const top=AY-8-s.mf*(2*r+2);
+    const tx=t('mode')+' = '+m,xx=clamp(X(m),AL+26,AR-26),yy=Math.max(top-8,62);cx.font='bold 14px system-ui';cx.textAlign='center';const tw=cx.measureText(tx).width;
+    cx.fillStyle=css('--stage');cx.fillRect(xx-tw/2-4,yy-14,tw+8,19);cx.fillStyle=ok;cx.fillText(tx,xx,yy);});
+  /* mitjana: el fulcre */
+  if($('#shMean').checked){const x=X(sMean),y=AY+30;
+    cx.fillStyle=pa;cx.beginPath();cx.moveTo(x,y);cx.lineTo(x-13,y+22);cx.lineTo(x+13,y+22);cx.closePath();cx.fill();
+    cx.font='bold 15px system-ui';cx.textAlign=x<AL+60?'left':x>AR-60?'right':'center';
+    cx.fillText(t('mean')+' = '+nf(s.mean,2),x<AL+60?AL-12:x>AR-60?AR+12:x,y+41);}
+}
+function loop(){const s=stats(data);
+  sMean=REDUCE?s.mean:sMean+(s.mean-sMean)*0.2;if(Math.abs(sMean-s.mean)<0.005)sMean=s.mean;
+  sMed=REDUCE?s.med:sMed+(s.med-sMed)*0.2;if(Math.abs(sMed-s.med)<0.005)sMed=s.med;
+  draw();requestAnimationFrame(loop);}
+
+/* --- interacció --- */
+const pt=ev=>{const b=cv.getBoundingClientRect();return {x:(ev.clientX-b.left)*W/b.width,y:(ev.clientY-b.top)*H/b.height};};
+cv.addEventListener('pointerdown',ev=>{
+  const p=pt(ev);let best=-1,bd=1e9;
+  layout().forEach(q=>{const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<q.r+12&&d<bd){bd=d;best=q.i;}});
+  if(best<0)return;drag=best;cv.classList.add('drag');try{cv.setPointerCapture(ev.pointerId);}catch(e){}ev.preventDefault();});
+cv.addEventListener('pointermove',ev=>{
+  if(drag<0)return;const p=pt(ev),v=clamp(Math.round(lo+(p.x-AL)/(AR-AL)*(hi-lo)),lo,hi);
+  if(v!==data[drag]){data[drag]=v;step=0;curSet=-1;upd();}});
+const endDrag=()=>{drag=-1;cv.classList.remove('drag');};
+cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+SETS.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n='set'+i;b.onclick=()=>loadSet(i);$('#sets').appendChild(b);});
+$('#add').onclick=()=>{if(data.length>=NMAX)return;curSet=-1;setData(data.concat(clamp(Math.round(stats(data).mean),lo,hi)),true);};
+$('#del').onclick=()=>{if(data.length<=1)return;curSet=-1;setData(data.slice(0,-1),true);};
+$('#out').onclick=()=>{const v=Math.max(...data)+12;const d=data.concat(v);if(!valid(d))return;curSet=-1;setData(d);};
+['shMean','shMed','shMode','shRng'].forEach(id=>$('#'+id).addEventListener('change',()=>{}));
+function readData(){
+  const raw=$('#datain').value.trim().split(/[\s;]+|,\s+|,(?=\d)/).filter(x=>x!=='');
+  const v=raw.map(x=>/^\d+$/.test(x)?Number(x):NaN);
+  if(!valid(v)){$('#dmsg').className='msg bad';$('#dmsg').dataset.k='bad_data';$('#dmsg').textContent=t('bad_data');return;}
+  $('#dmsg').textContent='';delete $('#dmsg').dataset.k;curSet=-1;setData(v);
+}
+$('#datain').addEventListener('change',readData);
+$('#datain').addEventListener('keydown',e=>{if(e.key==='Enter'){readData();$('#datain').blur();}});
+$('#stepb').onclick=()=>{step=step>=6?0:step+1;upd();};
+App.hooks.push(()=>{upd();const m=$('#dmsg');if(m.dataset.k)m.textContent=t(m.dataset.k);});
+
+/* ===== Raona-ho ===== */
+const in30=v=>v.every(x=>Number.isInteger(x)&&x>=0&&x<=30);
+const ld=d=>{curSet=-1;setData(d);const s=stats(d);sMean=s.mean;sMed=s.med;RZ.show(cv);};
+const one=s=>s.modes.length===1;
+RZ.init({
+ F:{x:{l:'l_x'},x1:{l:'l_x1'},x2:{l:'l_x2'},x3:{l:'l_x3'},x4:{l:'l_x4'}},
+ M:[
+  {id:'m1',f:['x'],sim:([x])=>ld(in30([x])?[4,5,6,7,x]:[4,5,6,7]),
+   chk:v=>!in30(v)?{k:'rng'}:v[0]!==8?{k:'m1_f',p:()=>[v[0],nf((22+v[0])/5,2)]}:null},
+  {id:'m2',f:['x1','x2','x3'],sim:v=>ld(in30(v)?v:[3,5,13]),
+   chk:v=>{if(!in30(v))return {k:'rng'};const s=stats(v);
+     return s.med!==5?{k:'m2_med',p:[v[0],v[1],v[2],s.med]}:s.sum!==21?{k:'m2_mean',p:()=>[nf(s.mean,2)]}:null;}},
+  {id:'m3',f:['x'],sim:([x])=>ld(in30([x])?[4,5,5,6,x]:[4,5,5,6]),
+   chk:v=>!in30(v)?{k:'rng'}:v[0]!==25?{k:'m3_f',p:()=>[v[0],nf((20+v[0])/5,2)]}:null},
+  {id:'m4',f:['x'],sim:([x])=>ld(in30([x])?[2,4,6,8,x]:[2,4,6,8]),
+   chk:v=>{if(!in30(v))return {k:'rng'};const s=stats([2,4,6,8,v[0]]);
+     return s.sum!==5*s.med?{k:'m4_f',p:()=>[v[0],nf(s.mean,2),s.med]}:null;}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:['x1','x2','x3'],cxsim:v=>ld(v),
+   cx:v=>{if(!in30(v))return {k:'rng'};const s=stats(v);return v.includes(s.mean)?{k:'s1_no',p:()=>[v[0],v[1],v[2],nf(s.mean,2)]}:null;}},
+  {id:'s2',ans:'S',sim:()=>ld([2,4,5,7,9])},
+  {id:'s3',ans:'S',sim:()=>ld([2,4,9])},
+  {id:'s4',ans:'D',f:['x1','x2','x3'],cxsim:v=>ld(v),
+   cx:v=>{if(!in30(v))return {k:'rng'};const s=stats(v);return s.mean>s.med?{k:'s4_no',p:()=>[v[0],v[1],v[2],nf(s.mean,2),s.med]}:null;}},
+  {id:'s5',ans:'M',sim:()=>ld([6,6,6,6])},
+  {id:'s6',ans:'D',f:['x1','x2','x3','x4'],cxsim:v=>ld(v),
+   cx:v=>{if(!in30(v))return {k:'rng'};const s=stats(v);return one(s)?{k:'s6_no',p:[v[0],v[1],v[2],v[3],s.modes[0]]}:null;}}
+ ],
+ E:[{id:'e1',who:1,sim:()=>ld([2,3,3,4,18])},{id:'e2',who:1,sim:()=>ld([7,3,9,4,5])},{id:'e3',who:3,sim:()=>ld([2,4,6,10])}],
+ D:[
+  {id:'d1',chips:{vals:[17,13,21],fmt:x=>t('d1_c'+[17,13,21].indexOf(x))},sim:()=>ld([12,13,13,14,33]),
+   chk:([p])=>p===17?{k:'d1_m'}:p===21?{k:'d1_r'}:null},
+  {id:'d2',f:[{l:'d2.l0'}],sim:v=>ld(v&&v.length&&in30(v)?[4,6,7,v[0]]:[4,6,7]),
+   chk:v=>!in30(v)?{k:'rng'}:v[0]!==7?{k:'d2_f',p:()=>[v[0],nf((17+v[0])/4,2)]}:null},
+  {id:'d3',chips:{vals:[39,39.3,40],fmt:x=>t('d3_c'+[39,39.3,40].indexOf(x))},sim:()=>ld(SETS[3]),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>p===39.3?{k:'d3_m'}:p===40?{k:'d3_r'}:null}
+ ]
+});
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":5,"tol":0},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r4","lvl":"all","type":"num","num":11,"tol":0},{"id":"r5","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r6","lvl":"all","type":"num","num":5,"tol":0}];
+initQuiz(QDATA);
+loadSet(1);
+initLang();applyLang();
+document.addEventListener('themechange',draw);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
