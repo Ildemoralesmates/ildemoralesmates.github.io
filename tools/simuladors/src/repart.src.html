@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repartiments proporcionals: repartir el premi</title>
+<meta name="description" content="Repartiments directament i inversament proporcionals per a 2n d'ESO: una barra que es trosseja en parts iguals, càlcul pas a pas i problemes de context (loteria a mitges, propines, sòcies, receptes, premis). Amb activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+.st2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.st2 .stat{padding:5px 10px}.st2 .stat .v{font-size:17px}
+.ins{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:13.5px}
+.ins label{display:grid;gap:3px}
+.ins input[type=text]{font:inherit;font-family:var(--f-num);font-size:15px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.side .msg{min-height:0;font-size:14px;margin:0}
+.side .msg.bad{color:var(--warn);font-weight:600}
+#steps{margin:0;padding-left:1.3em;display:grid;gap:3px;font-size:13.5px;color:var(--ink)}
+#steps:empty{display:none}
+#cstory{color:var(--ink)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="row"><div class="chips" id="sets" role="group" data-i18n-aria="aria.sets" aria-label=""></div></div>
+<p id="cstory" aria-live="polite"></p>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="side">
+<div class="ins">
+<label><span data-i18n="in_total"></span><input type="text" id="inT" inputmode="decimal" autocomplete="off"></label>
+<label><span data-i18n="in_parts"></span><input type="text" id="inP" inputmode="text" autocomplete="off"></label>
+</div>
+<label class="chk"><input type="checkbox" id="inv"><span data-i18n="in_inv"></span></label>
+<p class="msg bad" id="dmsg" aria-live="polite"></p>
+<div class="st2" id="shares" aria-live="polite"></div>
+<div class="row"><button class="btn primary" id="stepb" type="button"></button><span class="mut" id="stepn"></span></div>
+<ol id="steps" aria-live="polite"></ol>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Repartiments proporcionals: repartir el premi",
+"eyebrow":"Matemàtiques · 2n ESO · Proporcionalitat",
+"h1":"Repartiments proporcionals",
+"lede":"Qui posa el doble, s'emporta el doble. Trosseja el total en parts iguals i dona a cadascú les que li toquen.",
+"sim_title":"Trossejar el total",
+"aria.sets":"Situacions","aria.cv":"Barra amb el total dividit en parts iguals i repartit entre les persones",
+"ctx0":"Loteria a mitges","ctx1":"Propines","ctx2":"Dues sòcies","ctx3":"Recepta de suc","ctx4":"Premi d'una carrera (invers)","ctx5":"Menys errades, més punts (invers)",
+"cs0":"Tres amics compren un dècim: posen <b>2, 3 i 5 €</b>. Guanyen <b>600 €</b>. Com els han de repartir perquè siga just?",
+"cs1":"Tres cambrers han treballat <b>4, 6 i 10 hores</b> i hi ha <b>140 €</b> de propines. Quant li toca a cadascú?",
+"cs2":"Dues sòcies obrin una botiga: una posa <b>3 mil €</b> i l'altra <b>5 mil €</b>. El primer any guanyen <b>2.400 €</b>.",
+"cs3":"Un suc es fa amb <b>2 parts de taronja, 1 de llima i 3 d'aigua</b>. En vols preparar <b>3.000 ml</b>.",
+"cs4":"Un premi de <b>120 €</b> es reparteix de manera <b>inversament</b> proporcional als minuts que han tardat: <b>2, 3 i 6</b>. Qui tarda menys, rep més.",
+"cs5":"Es reparteixen <b>190 punts</b> de manera <b>inversament</b> proporcional a les errades de cada equip: <b>1, 3 i 4</b>.",
+"cs_x":"Segueix el repartiment pas a pas.",
+"nm0":"Aina","nm1":"Biel","nm2":"Carla","nm3":"Dani",
+"ns0":"Taronja","ns1":"Llima","ns2":"Aigua",
+"nc0":"Ciment","nc1":"Arena",
+"nv0":"Pis de 60 m²","nv1":"Pis de 90 m²","nv2":"Pis de 150 m²",
+"ng0":"Germà de 10 anys","ng1":"Germana de 15 anys",
+"nk0":"Maria","nk1":"Lluís","nd0":"Carla","nd1":"Dani",
+"ut_eur":"€","ut_ml":"ml","ut_pts":"punts","ut_kg":"kg",
+"up_eur":"€","up_h":"h","up_mil":"mil €","up_p":"parts","up_min":"min","up_err":"err.","up_m2":"m²","up_anys":"anys","up_x":"",
+"in_total":"Total a repartir","in_parts":"Parts (separades per espais)","in_inv":"Repartiment inversament proporcional",
+"bad_in":"Escriu un total positiu i entre 2 i 4 parts enteres positives.",
+"one_part":"1 part","total":"Total","parts_w":"parts",
+"step_go":"Reparteix pas a pas ▶","step_next":"Pas següent ▶","step_again":"Torna a començar ↺","step_n":"Pas {0} de {1}",
+"st_conv":"<b>Invers:</b> es reparteix segons <b>{0}</b>. Multiplicant per {1} queden <b>{2}</b> parts",
+"st_sum":"<b>Suma les parts</b>: {0} = <b>{1}</b>",
+"st_unit":"<b>Valor d'una part</b>: {0} : {1} = <b>{2} {3}</b>",
+"st_mult":"<b>Multiplica</b> per les parts de cadascú:",
+"st_chk":"<b>Comprova</b>: {0} = <b>{1} {2}</b> ✔",
+"idea":"<b>La idea:</b> repartir proporcionalment no és repartir a parts iguals entre les persones, sinó entre les <b>parts</b>. Suma les parts, divideix el total entre eixa suma per a saber quant val una part i multiplica. Si el repartiment és <b>invers</b>, primer inverteix els nombres (qui té 2 compta com 1/2) i després fes el mateix.",
+"rng":"Escriu nombres positius.",
+"l_aina":"Aina (€)","l_p1":"Part 1","l_p2":"Part 2","l_p3":"Part 3","l_h3":"Hores del tercer","l_e":"€","l_cim":"Ciment (kg)","l_are":"Arena (kg)","l_mar":"Maria (€)","l_v90":"Pis de 90 m² (€)",
+"m1.q":"Aina i Biel compren un dècim: Aina posa <b>3 €</b> i Biel <b>2 €</b>. Guanyen <b>400 €</b>. Quant li toca a Aina?",
+"m1_half":"200 € seria repartir a mitges, però Aina ha posat més que Biel.",
+"m1_f":"Entre els dos han posat 3 + 2 = 5 parts. Quant val cada part? I Aina en té 3.",
+"m1.more":"Si hagueren posat 30 € i 20 €, canviaria el repartiment? Per què?",
+"m2.q":"Vols repartir <b>180 €</b> entre dues persones en parts proporcionals a dos nombres, de manera que una de les dues reba exactament <b>120 €</b>. Escriu les dues parts.",
+"m2_int":"Les parts han de ser nombres enters positius.",
+"m2_f":"Amb parts {0} i {1} reben {2} € i {3} €: ningú rep 120 €.",
+"m2.more":"Hi ha moltes parelles que funcionen (2 i 1, 4 i 2, 10 i 5…). Què tenen totes en comú?",
+"m3.q":"Tres cambrers es reparteixen <b>90 €</b> de propines segons les hores treballades: <b>2 h, 3 h</b> i el tercer no ho recorda. El primer s'emporta <b>20 €</b>. Quantes hores ha treballat el tercer?",
+"m3_f":"Si el tercer haguera treballat {0} h, hi hauria {1} parts i el primer rebria {2} €, no 20.",
+"m3.more":"Quant val cada hora? Com ho pots saber només amb la dada del primer cambrer?",
+"m4.q":"Es reparteixen <b>100 €</b> de manera <b>inversament</b> proporcional a <b>1 i 4</b>. Quant rep qui té l'1?",
+"m4_dir":"20 € és el que rebria en un repartiment directe. En l'invers, qui té el nombre menut rep més.",
+"m4_f":"Inverteix: 1/1 i 1/4. Multiplicant per 4 queden 4 parts i 1 part. Quant val cada part?",
+"m4.more":"I si es repartira inversament a 2 i 8? Canviaria alguna cosa?",
+"s1.q":"«En un repartiment directament proporcional, qui ha posat el doble rep el doble.»",
+"s1.h":"Mira el cas de 2 i 4 parts amb el botó del simulador.",
+"s1.e":"Sempre: cada part val el mateix, així que qui té el doble de parts rep el doble de diners.",
+"s2.q":"«Si totes les persones posen el mateix, a totes els toca la mateixa quantitat.»",
+"s2.h":"Prova amb parts 3, 3 i 3.",
+"s2.e":"Sempre: amb les mateixes parts, el repartiment proporcional és un repartiment a parts iguals.",
+"s3.q":"«Repartir en parts proporcionals a 2 i 3 dona el mateix que repartir en parts proporcionals a 4 i 6.»",
+"s3.h":"Hi ha el doble de parts, però cada part val…",
+"s3.e":"Sempre: 4 i 6 són el doble de 2 i 3. Hi ha el doble de parts, cada una val la meitat i a cadascú li toca el mateix. Passa igual que amb les fraccions equivalents.",
+"s4.q":"«Repartir en parts proporcionals a 2 i 3 dona el mateix que fer-ho a 3 i 4 (sumar 1 a cada part no canvia res).»",
+"s4.h":"Reparteix 350 € de les dues maneres.",
+"s4.e":"Mai: amb 2 i 3, de 350 € toquen 140 i 210; amb 3 i 4, toquen 150 i 200. Multiplicar totes les parts pel mateix nombre no canvia res; sumar-los el mateix nombre, sí.",
+"s5.q":"«En un repartiment inversament proporcional, qui té el nombre més gran rep més.»",
+"s5.h":"Mira el premi de la carrera: qui ha tardat 6 minuts, quant rep?",
+"s5.e":"Mai: en l'invers passa al revés. Qui té el nombre més gran (més minuts, més errades) rep la part més xicoteta.",
+"s6.q":"«En un repartiment entre tres, qui té més parts s'emporta més de la meitat del total.»",
+"s6.h":"Compara les parts 1, 1 i 8 amb les parts 2, 3 i 4.",
+"s6_no":"Amb aquestes parts, qui en té {0} de {1} sí que s'emporta més de la meitat. Busca'n unes altres.",
+"s6.e":"De vegades: amb 1, 1 i 8 qui té 8 s'emporta 8 de 10 parts; amb 2, 3 i 4, qui té 4 només s'emporta 4 de 9, menys de la meitat.",
+"e1.ctx":"Carla posa <b>1 €</b> i Dani <b>3 €</b> en una porra. Guanyen <b>200 €</b>.",
+"e1.n0":"Carla","e1.n1":"Dani",
+"e1.s0":"Som dos: 100 € per a cadascú.",
+"e1.s1":"Jo he posat el triple: 50 € per a tu i 150 € per a mi.",
+"e1.w0":"El premi es reparteix segons el que ha posat cadascú: hi ha 4 parts de 50 €, una de Carla i tres de Dani.",
+"e1.w1":"Perquè Dani és qui ha triat els números.",
+"e1.w2":"Perquè 200 no es pot dividir entre 2.",
+"e1.frame":"Carla, no toca a 100 € cadascú perquè…",
+"e1.model":"Carla, entre els dos heu posat 4 €, i cada euro posat guanya 200 : 4 = 50 €. Tu n'has posat un i et toquen 50 €; Dani n'ha posat tres i li toquen 150 €. Repartir a mitges només seria just si haguéreu posat el mateix.",
+"e2.ctx":"Cal repartir <b>120 €</b> en parts proporcionals a <b>1, 2 i 3</b>.",
+"e2.n0":"Pau","e2.n1":"Rita",
+"e2.s0":"Són tres: 120 : 3 = 40. Els toquen 40, 80 i 120 €.",
+"e2.s1":"Hi ha 1 + 2 + 3 = 6 parts: 120 : 6 = 20. Els toquen 20, 40 i 60 €.",
+"e2.w0":"El total es divideix entre la suma de les parts (6), no entre el nombre de persones (3). Les quantitats de Pau sumen 240 €, el doble del que hi ha.",
+"e2.w1":"Perquè 120 sempre s'ha de dividir entre 6.",
+"e2.w2":"Perquè Pau hauria d'haver simplificat primer les parts.",
+"e2.frame":"Pau, no poden ser 40, 80 i 120 € perquè…",
+"e2.model":"Pau, 40 + 80 + 120 = 240 €, i només n'hi ha 120 per a repartir. Has dividit entre les 3 persones, però el que es reparteix són parts: n'hi ha 1 + 2 + 3 = 6, cada una val 120 : 6 = 20 €, i toquen 20, 40 i 60 €.",
+"e3.ctx":"Un premi de <b>90 €</b> es reparteix de manera <b>inversament</b> proporcional al temps de dos corredors: <b>1 minut i 2 minuts</b>.",
+"e3.n0":"Laia","e3.n1":"Hugo",
+"e3.s0":"30 € per al d'1 minut i 60 € per al de 2 minuts.",
+"e3.s1":"45 € per a cadascú, i així no hi ha discussions.",
+"e3.w0":"En l'invers, qui tarda la meitat rep el doble: 60 € per al d'1 minut i 30 € per al de 2. Laia ha fet un repartiment directe i Hugo, a parts iguals.",
+"e3.w1":"Perquè 90 no es pot repartir entre 3 parts.",
+"e3.w2":"Perquè el premi sencer ha de ser per a qui guanya.",
+"e3.frame":"Laia i Hugo, toquen 60 € i 30 € perquè…",
+"e3.model":"Laia, has donat més diners a qui ha tardat més: això és un repartiment directe. Hugo, a parts iguals no es té en compte el temps. En l'invers es reparteix segons 1/1 i 1/2, és a dir, 2 parts i 1 part: 90 : 3 = 30 €, i toquen 60 € al d'1 minut i 30 € al de 2.",
+"d1.q":"Tres veïns paguen <b>900 €</b> d'una reparació de l'edifici segons els metres del seu pis: <b>60, 90 i 150 m²</b>. Quant paga el del pis de 90 m²?",
+"d1_eq":"300 € seria pagar a parts iguals, però els pisos no són igual de grans.",
+"d1_f":"Suma els metres: 60 + 90 + 150 = 300 m². Quant es paga per cada metre quadrat?",
+"d1.more":"El veí del pis gran diu que és injust. Quin altre criteri de repartiment se t'acut? Canviaria molt el que paga?",
+"d2.q":"Per a fer morter es mesclen <b>2 parts de ciment per cada 3 d'arena</b>. Necessites <b>40 kg</b> de mescla. Quants quilos de cada cosa?",
+"d2_sum":"Entre les dues quantitats sumen {0} kg, i han de ser 40.",
+"d2_f":"Sumen 40 kg, però no guarden la proporció 2 a 3: hi ha 5 parts de 8 kg cada una.",
+"d2.more":"I si només tens 10 kg de ciment? Quanta mescla pots fer com a màxim?",
+"d3.q":"Els iaios donen <b>50 €</b> a dos germans, de <b>10 i 15 anys</b>, i volen repartir-los de manera proporcional a l'edat. Quin repartiment és el correcte?",
+"d3.lc":"Tria:",
+"d3_c0":"25 € i 25 €","d3_c1":"20 € i 30 €","d3_c2":"10 € i 40 €",
+"d3_a":"Això és repartir a parts iguals, sense tindre en compte l'edat.",
+"d3_b":"10 i 40 no guarden la proporció de 10 a 15: la germana tindria el quàdruple i només és una vegada i mitja més gran.",
+"d3.more":"D'ací a 10 anys en tindran 20 i 25. El repartiment proporcional seria el mateix? Per què?",
+"d4.q":"Maria posa <b>2.000 €</b> i Lluís <b>6.000 €</b> per a muntar una parada. Guanyen <b>1.200 €</b>. Quant li toca a Maria?",
+"d4_half":"600 € seria repartir a mitges, i Lluís ha posat el triple que Maria.",
+"d4_f":"Entre els dos han posat 8.000 €. Quina part del total ha posat Maria?",
+"d4.more":"Si Maria treballa a la parada i Lluís no, et sembla just repartir només segons els diners posats?",
+"r1.q":"Repartir 100 € en parts proporcionals a 1 i 4 dona…",
+"r1.o0":"20 € i 80 €","r1.o1":"25 € i 75 €","r1.o2":"50 € i 50 €","r1.o3":"10 € i 40 €",
+"r1.e":"Hi ha 5 parts de 20 €: una part són 20 € i quatre parts són 80 €.",
+"r2.q":"Tres amics posen 1, 2 i 2 € i guanyen 250 €. Quants euros rep qui ha posat 1 €?",
+"r2.e":"Hi ha 5 parts i 250 : 5 = 50 €.",
+"r3.q":"Per a repartir 360 en parts proporcionals a 2, 3 i 4, el primer que cal fer és…",
+"r3.o0":"Dividir 360 entre 3","r3.o1":"Dividir 360 entre 4","r3.o2":"Dividir 360 entre 9","r3.o3":"Multiplicar 360 per 9",
+"r3.e":"Les parts sumen 2 + 3 + 4 = 9, i cada part val 360 : 9 = 40.",
+"r4.q":"Reparteix 84 en parts proporcionals a 3 i 4. Quant li toca a la part gran?",
+"r4.e":"Hi ha 7 parts de 12: la gran són 4 · 12 = 48.",
+"r5.q":"Es reparteixen 100 € de manera inversament proporcional a 2 i 3. Qui té el 2 rep…",
+"r5.o0":"40 €","r5.o1":"60 €","r5.o2":"50 €","r5.o3":"66,67 €",
+"r5.e":"Invertint queden 1/2 i 1/3, que són 3 parts i 2 parts. Cada part val 20 €, i qui té el 2 rep 3 · 20 = 60 €.",
+"r6.q":"Una beguda porta 1 part de suc per cada 4 d'aigua. En 2.000 ml de beguda, quants ml són de suc?",
+"r6.e":"Hi ha 5 parts de 400 ml, i el suc n'és una: 400 ml."
+},
+es:{
+"title":"Repartos proporcionales: repartir el premio",
+"eyebrow":"Matemáticas · 2.º ESO · Proporcionalidad",
+"h1":"Repartos proporcionales",
+"lede":"Quien pone el doble, se lleva el doble. Trocea el total en partes iguales y da a cada uno las que le tocan.",
+"sim_title":"Trocear el total",
+"aria.sets":"Situaciones","aria.cv":"Barra con el total dividido en partes iguales y repartido entre las personas",
+"ctx0":"Lotería a medias","ctx1":"Propinas","ctx2":"Dos socias","ctx3":"Receta de zumo","ctx4":"Premio de una carrera (inverso)","ctx5":"Menos errores, más puntos (inverso)",
+"cs0":"Tres amigos compran un décimo: ponen <b>2, 3 y 5 €</b>. Ganan <b>600 €</b>. ¿Cómo tienen que repartirlos para que sea justo?",
+"cs1":"Tres camareros han trabajado <b>4, 6 y 10 horas</b> y hay <b>140 €</b> de propinas. ¿Cuánto le toca a cada uno?",
+"cs2":"Dos socias abren una tienda: una pone <b>3 mil €</b> y la otra <b>5 mil €</b>. El primer año ganan <b>2.400 €</b>.",
+"cs3":"Un zumo se hace con <b>2 partes de naranja, 1 de lima y 3 de agua</b>. Quieres preparar <b>3.000 ml</b>.",
+"cs4":"Un premio de <b>120 €</b> se reparte de manera <b>inversamente</b> proporcional a los minutos que han tardado: <b>2, 3 y 6</b>. Quien tarda menos, recibe más.",
+"cs5":"Se reparten <b>190 puntos</b> de manera <b>inversamente</b> proporcional a los errores de cada equipo: <b>1, 3 y 4</b>.",
+"cs_x":"Sigue el reparto paso a paso.",
+"nm0":"Aina","nm1":"Biel","nm2":"Carla","nm3":"Dani",
+"ns0":"Naranja","ns1":"Lima","ns2":"Agua",
+"nc0":"Cemento","nc1":"Arena",
+"nv0":"Piso de 60 m²","nv1":"Piso de 90 m²","nv2":"Piso de 150 m²",
+"ng0":"Hermano de 10 años","ng1":"Hermana de 15 años",
+"nk0":"Maria","nk1":"Lluís","nd0":"Carla","nd1":"Dani",
+"ut_eur":"€","ut_ml":"ml","ut_pts":"puntos","ut_kg":"kg",
+"up_eur":"€","up_h":"h","up_mil":"mil €","up_p":"partes","up_min":"min","up_err":"err.","up_m2":"m²","up_anys":"años","up_x":"",
+"in_total":"Total a repartir","in_parts":"Partes (separadas por espacios)","in_inv":"Reparto inversamente proporcional",
+"bad_in":"Escribe un total positivo y entre 2 y 4 partes enteras positivas.",
+"one_part":"1 parte","total":"Total","parts_w":"partes",
+"step_go":"Reparte paso a paso ▶","step_next":"Paso siguiente ▶","step_again":"Volver a empezar ↺","step_n":"Paso {0} de {1}",
+"st_conv":"<b>Inverso:</b> se reparte según <b>{0}</b>. Multiplicando por {1} quedan <b>{2}</b> partes",
+"st_sum":"<b>Suma las partes</b>: {0} = <b>{1}</b>",
+"st_unit":"<b>Valor de una parte</b>: {0} : {1} = <b>{2} {3}</b>",
+"st_mult":"<b>Multiplica</b> por las partes de cada uno:",
+"st_chk":"<b>Comprueba</b>: {0} = <b>{1} {2}</b> ✔",
+"idea":"<b>La idea:</b> repartir proporcionalmente no es repartir a partes iguales entre las personas, sino entre las <b>partes</b>. Suma las partes, divide el total entre esa suma para saber cuánto vale una parte y multiplica. Si el reparto es <b>inverso</b>, primero invierte los números (quien tiene 2 cuenta como 1/2) y después haz lo mismo.",
+"rng":"Escribe números positivos.",
+"l_aina":"Aina (€)","l_p1":"Parte 1","l_p2":"Parte 2","l_p3":"Parte 3","l_h3":"Horas del tercero","l_e":"€","l_cim":"Cemento (kg)","l_are":"Arena (kg)","l_mar":"Maria (€)","l_v90":"Piso de 90 m² (€)",
+"m1.q":"Aina y Biel compran un décimo: Aina pone <b>3 €</b> y Biel <b>2 €</b>. Ganan <b>400 €</b>. ¿Cuánto le toca a Aina?",
+"m1_half":"200 € sería repartir a medias, pero Aina ha puesto más que Biel.",
+"m1_f":"Entre los dos han puesto 3 + 2 = 5 partes. ¿Cuánto vale cada parte? Y Aina tiene 3.",
+"m1.more":"Si hubieran puesto 30 € y 20 €, ¿cambiaría el reparto? ¿Por qué?",
+"m2.q":"Quieres repartir <b>180 €</b> entre dos personas en partes proporcionales a dos números, de manera que una de las dos reciba exactamente <b>120 €</b>. Escribe las dos partes.",
+"m2_int":"Las partes tienen que ser números enteros positivos.",
+"m2_f":"Con partes {0} y {1} reciben {2} € y {3} €: nadie recibe 120 €.",
+"m2.more":"Hay muchas parejas que funcionan (2 y 1, 4 y 2, 10 y 5…). ¿Qué tienen todas en común?",
+"m3.q":"Tres camareros se reparten <b>90 €</b> de propinas según las horas trabajadas: <b>2 h, 3 h</b> y el tercero no lo recuerda. El primero se lleva <b>20 €</b>. ¿Cuántas horas ha trabajado el tercero?",
+"m3_f":"Si el tercero hubiera trabajado {0} h, habría {1} partes y el primero recibiría {2} €, no 20.",
+"m3.more":"¿Cuánto vale cada hora? ¿Cómo puedes saberlo solo con el dato del primer camarero?",
+"m4.q":"Se reparten <b>100 €</b> de manera <b>inversamente</b> proporcional a <b>1 y 4</b>. ¿Cuánto recibe quien tiene el 1?",
+"m4_dir":"20 € es lo que recibiría en un reparto directo. En el inverso, quien tiene el número pequeño recibe más.",
+"m4_f":"Invierte: 1/1 y 1/4. Multiplicando por 4 quedan 4 partes y 1 parte. ¿Cuánto vale cada parte?",
+"m4.more":"¿Y si se repartiera inversamente a 2 y 8? ¿Cambiaría algo?",
+"s1.q":"«En un reparto directamente proporcional, quien ha puesto el doble recibe el doble.»",
+"s1.h":"Mira el caso de 2 y 4 partes con el botón del simulador.",
+"s1.e":"Siempre: cada parte vale lo mismo, así que quien tiene el doble de partes recibe el doble de dinero.",
+"s2.q":"«Si todas las personas ponen lo mismo, a todas les toca la misma cantidad.»",
+"s2.h":"Prueba con partes 3, 3 y 3.",
+"s2.e":"Siempre: con las mismas partes, el reparto proporcional es un reparto a partes iguales.",
+"s3.q":"«Repartir en partes proporcionales a 2 y 3 da lo mismo que repartir en partes proporcionales a 4 y 6.»",
+"s3.h":"Hay el doble de partes, pero cada parte vale…",
+"s3.e":"Siempre: 4 y 6 son el doble de 2 y 3. Hay el doble de partes, cada una vale la mitad y a cada uno le toca lo mismo. Pasa igual que con las fracciones equivalentes.",
+"s4.q":"«Repartir en partes proporcionales a 2 y 3 da lo mismo que hacerlo a 3 y 4 (sumar 1 a cada parte no cambia nada).»",
+"s4.h":"Reparte 350 € de las dos maneras.",
+"s4.e":"Nunca: con 2 y 3, de 350 € tocan 140 y 210; con 3 y 4, tocan 150 y 200. Multiplicar todas las partes por el mismo número no cambia nada; sumarles el mismo número, sí.",
+"s5.q":"«En un reparto inversamente proporcional, quien tiene el número mayor recibe más.»",
+"s5.h":"Mira el premio de la carrera: quien ha tardado 6 minutos, ¿cuánto recibe?",
+"s5.e":"Nunca: en el inverso pasa al revés. Quien tiene el número mayor (más minutos, más errores) recibe la parte más pequeña.",
+"s6.q":"«En un reparto entre tres, quien tiene más partes se lleva más de la mitad del total.»",
+"s6.h":"Compara las partes 1, 1 y 8 con las partes 2, 3 y 4.",
+"s6_no":"Con estas partes, quien tiene {0} de {1} sí se lleva más de la mitad. Busca otras.",
+"s6.e":"A veces: con 1, 1 y 8 quien tiene 8 se lleva 8 de 10 partes; con 2, 3 y 4, quien tiene 4 solo se lleva 4 de 9, menos de la mitad.",
+"e1.ctx":"Carla pone <b>1 €</b> y Dani <b>3 €</b> en una porra. Ganan <b>200 €</b>.",
+"e1.n0":"Carla","e1.n1":"Dani",
+"e1.s0":"Somos dos: 100 € para cada uno.",
+"e1.s1":"Yo he puesto el triple: 50 € para ti y 150 € para mí.",
+"e1.w0":"El premio se reparte según lo que ha puesto cada uno: hay 4 partes de 50 €, una de Carla y tres de Dani.",
+"e1.w1":"Porque Dani es quien ha elegido los números.",
+"e1.w2":"Porque 200 no se puede dividir entre 2.",
+"e1.frame":"Carla, no toca a 100 € cada uno porque…",
+"e1.model":"Carla, entre los dos habéis puesto 4 €, y cada euro puesto gana 200 : 4 = 50 €. Tú has puesto uno y te tocan 50 €; Dani ha puesto tres y le tocan 150 €. Repartir a medias solo sería justo si hubierais puesto lo mismo.",
+"e2.ctx":"Hay que repartir <b>120 €</b> en partes proporcionales a <b>1, 2 y 3</b>.",
+"e2.n0":"Pau","e2.n1":"Rita",
+"e2.s0":"Son tres: 120 : 3 = 40. Les tocan 40, 80 y 120 €.",
+"e2.s1":"Hay 1 + 2 + 3 = 6 partes: 120 : 6 = 20. Les tocan 20, 40 y 60 €.",
+"e2.w0":"El total se divide entre la suma de las partes (6), no entre el número de personas (3). Las cantidades de Pau suman 240 €, el doble de lo que hay.",
+"e2.w1":"Porque 120 siempre se tiene que dividir entre 6.",
+"e2.w2":"Porque Pau tendría que haber simplificado primero las partes.",
+"e2.frame":"Pau, no pueden ser 40, 80 y 120 € porque…",
+"e2.model":"Pau, 40 + 80 + 120 = 240 €, y solo hay 120 para repartir. Has dividido entre las 3 personas, pero lo que se reparte son partes: hay 1 + 2 + 3 = 6, cada una vale 120 : 6 = 20 €, y tocan 20, 40 y 60 €.",
+"e3.ctx":"Un premio de <b>90 €</b> se reparte de manera <b>inversamente</b> proporcional al tiempo de dos corredores: <b>1 minuto y 2 minutos</b>.",
+"e3.n0":"Laia","e3.n1":"Hugo",
+"e3.s0":"30 € para el de 1 minuto y 60 € para el de 2 minutos.",
+"e3.s1":"45 € para cada uno, y así no hay discusiones.",
+"e3.w0":"En el inverso, quien tarda la mitad recibe el doble: 60 € para el de 1 minuto y 30 € para el de 2. Laia ha hecho un reparto directo y Hugo, a partes iguales.",
+"e3.w1":"Porque 90 no se puede repartir entre 3 partes.",
+"e3.w2":"Porque el premio entero tiene que ser para quien gana.",
+"e3.frame":"Laia y Hugo, tocan 60 € y 30 € porque…",
+"e3.model":"Laia, has dado más dinero a quien ha tardado más: eso es un reparto directo. Hugo, a partes iguales no se tiene en cuenta el tiempo. En el inverso se reparte según 1/1 y 1/2, es decir, 2 partes y 1 parte: 90 : 3 = 30 €, y tocan 60 € al de 1 minuto y 30 € al de 2.",
+"d1.q":"Tres vecinos pagan <b>900 €</b> de una reparación del edificio según los metros de su piso: <b>60, 90 y 150 m²</b>. ¿Cuánto paga el del piso de 90 m²?",
+"d1_eq":"300 € sería pagar a partes iguales, pero los pisos no son igual de grandes.",
+"d1_f":"Suma los metros: 60 + 90 + 150 = 300 m². ¿Cuánto se paga por cada metro cuadrado?",
+"d1.more":"El vecino del piso grande dice que es injusto. ¿Qué otro criterio de reparto se te ocurre? ¿Cambiaría mucho lo que paga?",
+"d2.q":"Para hacer mortero se mezclan <b>2 partes de cemento por cada 3 de arena</b>. Necesitas <b>40 kg</b> de mezcla. ¿Cuántos kilos de cada cosa?",
+"d2_sum":"Entre las dos cantidades suman {0} kg, y tienen que ser 40.",
+"d2_f":"Suman 40 kg, pero no guardan la proporción 2 a 3: hay 5 partes de 8 kg cada una.",
+"d2.more":"¿Y si solo tienes 10 kg de cemento? ¿Cuánta mezcla puedes hacer como máximo?",
+"d3.q":"Los abuelos dan <b>50 €</b> a dos hermanos, de <b>10 y 15 años</b>, y quieren repartirlos de manera proporcional a la edad. ¿Qué reparto es el correcto?",
+"d3.lc":"Elige:",
+"d3_c0":"25 € y 25 €","d3_c1":"20 € y 30 €","d3_c2":"10 € y 40 €",
+"d3_a":"Eso es repartir a partes iguales, sin tener en cuenta la edad.",
+"d3_b":"10 y 40 no guardan la proporción de 10 a 15: la hermana tendría el cuádruple y solo es una vez y media mayor.",
+"d3.more":"Dentro de 10 años tendrán 20 y 25. ¿El reparto proporcional sería el mismo? ¿Por qué?",
+"d4.q":"Maria pone <b>2.000 €</b> y Lluís <b>6.000 €</b> para montar un puesto. Ganan <b>1.200 €</b>. ¿Cuánto le toca a Maria?",
+"d4_half":"600 € sería repartir a medias, y Lluís ha puesto el triple que Maria.",
+"d4_f":"Entre los dos han puesto 8.000 €. ¿Qué parte del total ha puesto Maria?",
+"d4.more":"Si Maria trabaja en el puesto y Lluís no, ¿te parece justo repartir solo según el dinero puesto?",
+"r1.q":"Repartir 100 € en partes proporcionales a 1 y 4 da…",
+"r1.o0":"20 € y 80 €","r1.o1":"25 € y 75 €","r1.o2":"50 € y 50 €","r1.o3":"10 € y 40 €",
+"r1.e":"Hay 5 partes de 20 €: una parte son 20 € y cuatro partes son 80 €.",
+"r2.q":"Tres amigos ponen 1, 2 y 2 € y ganan 250 €. ¿Cuántos euros recibe quien ha puesto 1 €?",
+"r2.e":"Hay 5 partes y 250 : 5 = 50 €.",
+"r3.q":"Para repartir 360 en partes proporcionales a 2, 3 y 4, lo primero que hay que hacer es…",
+"r3.o0":"Dividir 360 entre 3","r3.o1":"Dividir 360 entre 4","r3.o2":"Dividir 360 entre 9","r3.o3":"Multiplicar 360 por 9",
+"r3.e":"Las partes suman 2 + 3 + 4 = 9, y cada parte vale 360 : 9 = 40.",
+"r4.q":"Reparte 84 en partes proporcionales a 3 y 4. ¿Cuánto le toca a la parte grande?",
+"r4.e":"Hay 7 partes de 12: la grande son 4 · 12 = 48.",
+"r5.q":"Se reparten 100 € de manera inversamente proporcional a 2 y 3. Quien tiene el 2 recibe…",
+"r5.o0":"40 €","r5.o1":"60 €","r5.o2":"50 €","r5.o3":"66,67 €",
+"r5.e":"Invirtiendo quedan 1/2 y 1/3, que son 3 partes y 2 partes. Cada parte vale 20 €, y quien tiene el 2 recibe 3 · 20 = 60 €.",
+"r6.q":"Una bebida lleva 1 parte de zumo por cada 4 de agua. En 2.000 ml de bebida, ¿cuántos ml son de zumo?",
+"r6.e":"Hay 5 partes de 400 ml, y el zumo es una: 400 ml."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Repartiments proporcionals ===== */
+const cv=$('#cv');
+let W=900,H=392,cx=null,NARROW=false;
+function sizeCv(){const w=cv.parentElement.clientWidth||900,nw=w<520;
+  if(cx&&nw===NARROW)return;NARROW=nw;W=nw?440:900;H=nw?360:392;
+  cv.style.aspectRatio=W+'/'+H;cx=fitCanvas(cv,W,H);}
+sizeCv();new ResizeObserver(sizeCv).observe(cv.parentElement);
+const CT=[
+ {T:600,a:[2,3,5],ut:'ut_eur',up:'up_eur',nm:'nm',cs:'cs0'},
+ {T:140,a:[4,6,10],ut:'ut_eur',up:'up_h',nm:'nm',cs:'cs1'},
+ {T:2400,a:[3,5],ut:'ut_eur',up:'up_mil',nm:'nm',cs:'cs2'},
+ {T:3000,a:[2,1,3],ut:'ut_ml',up:'up_p',nm:'ns',cs:'cs3'},
+ {T:120,a:[2,3,6],inv:true,ut:'ut_eur',up:'up_min',nm:'nm',cs:'cs4'},
+ {T:190,a:[1,3,4],inv:true,ut:'ut_pts',up:'up_err',nm:'nm',cs:'cs5'}];
+let cur=CT[0],ci=0,T=600,a=[2,3,5],inv=false,step=0;
+const gcd=(p,q)=>q?gcd(q,p%q):p,lcm=(p,q)=>p/gcd(p,q)*q;
+function calc(){
+  const L=inv?a.reduce(lcm,1):1,w=inv?a.map(v=>L/v):a.slice(),N=w.reduce((p,q)=>p+q,0),u=T/N;
+  return {L,w,N,u,sh:w.map(v=>v*u),cells:N<=60&&Math.max(...w)<=24&&Math.max(...a)<=24};
+}
+const okIn=(t,p)=>Number.isFinite(t)&&t>0&&t<=1e6&&p.length>=2&&p.length<=4&&p.every(v=>Number.isInteger(v)&&v>=1&&v<=100000);
+const pname=i=>t(cur.nm+i);
+const LG=()=>inv?step:step+(step?1:0);   /* 0 res, 1 conversió, 2 suma, 3 valor d'una part, 4 multiplica, 5 comprova */
+const NS=()=>inv?5:4;
+function load(c,i){cur=c;ci=i;T=c.T;a=c.a.slice();inv=!!c.inv;step=0;$('#inv').checked=inv;$('#dmsg').textContent='';upd();}
+function upd(){
+  const k=calc(),g=LG(),ut=t(cur.ut);
+  if(document.activeElement!==$('#inT'))$('#inT').value=String(T);
+  if(document.activeElement!==$('#inP'))$('#inP').value=a.join(' ');
+  $('#cstory').innerHTML=t(ci>=0?cur.cs:'cs_x');
+  $('#shares').innerHTML=a.map((v,i)=>'<div class="stat"><span class="k">'+pname(i)+'</span><span class="v" style="color:var('+PCV[i]+')">'+(g>=4?nf(k.sh[i],2)+' '+ut:'?')+'</span></div>').join('');
+  $('#stepb').textContent=t(step===0?'step_go':step<NS()?'step_next':'step_again');
+  $('#stepn').textContent=step?tt('step_n',step,NS()):'';
+  let h='';
+  if(inv&&g>=1)h+='<li>'+tt('st_conv',a.map(v=>'1/'+v).join(', '),k.L,k.w.join(', '))+'</li>';
+  if(g>=2)h+='<li>'+tt('st_sum',k.w.join(' + '),k.N)+'</li>';
+  if(g>=3)h+='<li>'+tt('st_unit',nf(T,2),k.N,nf(k.u,2),ut)+'</li>';
+  if(g>=4)h+='<li>'+t('st_mult')+'<br>'+k.w.map((v,i)=>pname(i)+': '+v+' · '+nf(k.u,2)+' = <b>'+nf(k.sh[i],2)+' '+ut+'</b>').join('<br>')+'</li>';
+  if(g>=5)h+='<li>'+tt('st_chk',k.sh.map(v=>nf(v,2)).join(' + '),nf(T,2),ut)+'</li>';
+  $('#steps').innerHTML=h;
+  $$('#sets .chip').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===ci)));
+}
+const PCV=['--pa','--pb','--ok','--warn'];
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),line=css('--line'),PC=PCV.map(c=>css(c));
+  const k=calc(),g=LG(),ut=t(cur.ut),up=t(cur.up),n=a.length;
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  /* files de persones amb les seues parts */
+  const lw=NARROW?150:230,rh=NARROW?30:34,y0=NARROW?16:22,conv=inv&&g>=1;
+  const cnt=conv?k.w:a,mx=Math.max(...cnt),sq=Math.min(NARROW?16:22,(W-lw-(NARROW?70:120))/Math.max(mx,6)-3);
+  a.forEach((v,i)=>{const y=y0+i*rh;
+    cx.fillStyle=PC[i];cx.font='bold '+(NARROW?12.5:15)+'px system-ui';cx.textAlign='left';
+    cx.fillText(pname(i)+': '+v+(up?' '+up:''),NARROW?8:18,y+rh*0.62);
+    if(k.cells){for(let j=0;j<cnt[i];j++){const x=lw+j*(sq+3);
+        if(inv&&!conv){cx.strokeStyle=PC[i];cx.lineWidth=1.5;cx.strokeRect(x+1,y+(rh-sq)/2,sq-2,sq-2);}
+        else{cx.fillStyle=PC[i];cx.globalAlpha=.85;cx.fillRect(x,y+(rh-sq)/2,sq,sq);cx.globalAlpha=1;}}}
+    if(g>=(inv?1:2)){cx.fillStyle=mut;cx.font=(NARROW?12:13.5)+'px system-ui';
+      const tx=(conv?'1/'+v+' → ':'')+k.w[i]+' '+t('parts_w');
+      cx.fillText(tx,k.cells?lw+cnt[i]*(sq+3)+8:lw,y+rh*0.62);}
+  });
+  /* la barra del total */
+  const bx=NARROW?12:30,bw=W-2*bx,by=NARROW?178:206,bh=NARROW?44:52;
+  cx.fillStyle=ink;cx.font='bold '+(NARROW?14:16)+'px system-ui';cx.textAlign='left';
+  cx.fillText(t('total')+': '+nf(T,2)+' '+ut,bx,by-10);
+  if(g>=4){let x=bx;k.w.forEach((v,i)=>{const w=bw*v/k.N;cx.fillStyle=PC[i];cx.globalAlpha=.85;cx.fillRect(x,by,w,bh);cx.globalAlpha=1;x+=w;});}
+  else{cx.fillStyle=mut;cx.globalAlpha=.28;cx.fillRect(bx,by,bw,bh);cx.globalAlpha=1;}
+  if(g===3){cx.fillStyle=css('--pa');cx.globalAlpha=.8;cx.fillRect(bx,by,bw/k.N,bh);cx.globalAlpha=1;}
+  if(g>=2&&k.cells){cx.strokeStyle=css('--stage');cx.lineWidth=2;cx.beginPath();for(let j=1;j<k.N;j++){const x=bx+bw*j/k.N;cx.moveTo(x,by);cx.lineTo(x,by+bh);}cx.stroke();}
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.strokeRect(bx,by,bw,bh);
+  if(g===2||g===3){cx.fillStyle=mut;cx.font='bold '+(NARROW?13:15)+'px system-ui';cx.textAlign='right';cx.fillText(k.N+' '+t('parts_w'),bx+bw,by-10);}
+  if(g===3){cx.fillStyle=css('--pa');cx.font='bold '+(NARROW?14:16)+'px system-ui';cx.textAlign='left';
+    cx.fillText('↑ '+t('one_part')+' = '+nf(T,2)+' : '+k.N+' = '+nf(k.u,2)+' '+ut,bx,by+bh+24);}
+  if(g>=4){let x=bx;const tight=k.w.some(v=>bw*v/k.N<(NARROW?92:120));
+    k.w.forEach((v,i)=>{const w=bw*v/k.N,m=clamp(x+w/2,bx+46,bx+bw-46),yy=by+bh+(tight&&i%2?(NARROW?58:62):20);
+      cx.strokeStyle=PC[i];cx.lineWidth=1.5;if(tight&&i%2){cx.beginPath();cx.moveTo(x+w/2,by+bh+2);cx.lineTo(x+w/2,yy-14);cx.stroke();}
+      cx.fillStyle=PC[i];cx.textAlign='center';cx.font='bold '+(NARROW?12.5:14)+'px system-ui';cx.fillText(pname(i),m,yy);
+      cx.font='bold '+(NARROW?14:17)+'px system-ui';cx.fillText(nf(k.sh[i],2)+' '+ut,m,yy+(NARROW?17:20));x+=w;});}
+  if(g>=5){cx.fillStyle=css('--ok');cx.font='bold '+(NARROW?13:16)+'px system-ui';cx.textAlign='center';
+    cx.fillText(k.sh.map(v=>nf(v,2)).join(' + ')+' = '+nf(T,2)+' '+ut+' ✔',W/2,H-16);}
+}
+CT.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n='ctx'+i;b.onclick=()=>load(c,i);$('#sets').appendChild(b);});
+function readIn(){
+  const tv=parseNum($('#inT').value),p=$('#inP').value.trim().split(/[\s,;]+/).filter(s=>s!=='').map(s=>/^\d+$/.test(s)?Number(s):NaN);
+  if(!okIn(tv,p)){$('#dmsg').dataset.k='bad_in';$('#dmsg').textContent=t('bad_in');return;}
+  $('#dmsg').textContent='';delete $('#dmsg').dataset.k;
+  cur=Object.assign({},cur,{nm:p.length<=({nm:4,ns:3,nc:2,nv:3,ng:2,nk:2,nd:2})[cur.nm]?cur.nm:'nm'});
+  ci=-1;T=tv;a=p;step=0;upd();
+}
+['inT','inP'].forEach(id=>{$('#'+id).addEventListener('change',readIn);$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter'){readIn();e.target.blur();}});});
+$('#inv').addEventListener('change',()=>{inv=$('#inv').checked;ci=-1;step=0;upd();});
+$('#stepb').onclick=()=>{step=step>=NS()?0:step+1;upd();};
+App.hooks.push(()=>{upd();const m=$('#dmsg');if(m.dataset.k)m.textContent=t(m.dataset.k);});
+function loop(){draw();requestAnimationFrame(loop);}
+
+/* ===== Raona-ho ===== */
+const pos=v=>v.every(x=>Number.isFinite(x)&&x>0),ints=v=>v.every(x=>Number.isInteger(x)&&x>=1&&x<=1000);
+const ld=(T0,a0,o)=>{o=o||{};load({T:T0,a:a0,inv:!!o.inv,ut:o.ut||'ut_eur',up:o.up||'up_x',nm:o.nm||'nm'},-1);RZ.show(cv);};
+RZ.init({
+ F:{},
+ M:[
+  {id:'m1',f:[{l:'l_aina'}],sim:()=>ld(400,[3,2],{up:'up_eur'}),
+   chk:v=>!pos(v)?{k:'rng'}:v[0]===200?{k:'m1_half'}:v[0]!==240?{k:'m1_f'}:null},
+  {id:'m2',f:[{l:'l_p1'},{l:'l_p2'}],sim:v=>ld(180,v&&v.length===2&&ints(v)?v:[1,1]),
+   chk:v=>!ints(v)?{k:'m2_int'}:(v[0]!==2*v[1]&&v[1]!==2*v[0])?{k:'m2_f',p:()=>[v[0],v[1],nf(180*v[0]/(v[0]+v[1]),2),nf(180*v[1]/(v[0]+v[1]),2)]}:null},
+  {id:'m3',f:[{l:'l_h3'}],sim:v=>ld(90,[2,3,v&&ints(v)?v[0]:1],{up:'up_h'}),
+   chk:v=>!pos(v)?{k:'rng'}:v[0]!==4?{k:'m3_f',p:()=>[nf(v[0],2),nf(5+v[0],2),nf(180/(5+v[0]),2)]}:null},
+  {id:'m4',f:[{l:'l_e'}],sim:()=>ld(100,[1,4],{inv:true}),
+   chk:v=>!pos(v)?{k:'rng'}:v[0]===20?{k:'m4_dir'}:v[0]!==80?{k:'m4_f'}:null}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>ld(600,[2,4])},
+  {id:'s2',ans:'S',sim:()=>ld(600,[3,3,3])},
+  {id:'s3',ans:'S',sim:()=>ld(600,[4,6])},
+  {id:'s4',ans:'M',sim:()=>ld(350,[3,4])},
+  {id:'s5',ans:'M',sim:()=>ld(120,[2,3,6],{inv:true,up:'up_min'})},
+  {id:'s6',ans:'D',f:[{l:'l_p1'},{l:'l_p2'},{l:'l_p3'}],cxsim:v=>ld(600,ints(v)?v:[2,3,4]),
+   cx:v=>{if(!ints(v))return {k:'m2_int'};const s=v[0]+v[1]+v[2],m=Math.max(...v);return 2*m>s?{k:'s6_no',p:[m,s]}:null;}}
+ ],
+ E:[{id:'e1',who:1,sim:()=>ld(200,[1,3],{up:'up_eur',nm:'nd'})},{id:'e2',who:1,sim:()=>ld(120,[1,2,3])},{id:'e3',who:3,sim:()=>ld(90,[1,2],{inv:true,up:'up_min'})}],
+ D:[
+  {id:'d1',f:[{l:'l_v90'}],sim:()=>ld(900,[60,90,150],{up:'up_m2',nm:'nv'}),
+   chk:v=>!pos(v)?{k:'rng'}:v[0]===300?{k:'d1_eq'}:v[0]!==270?{k:'d1_f'}:null},
+  {id:'d2',f:[{l:'l_cim'},{l:'l_are'}],sim:()=>ld(40,[2,3],{ut:'ut_kg',up:'up_p',nm:'nc'}),
+   chk:v=>!pos(v)?{k:'rng'}:v[0]+v[1]!==40?{k:'d2_sum',p:()=>[nf(v[0]+v[1],2)]}:v[0]!==16?{k:'d2_f'}:null},
+  {id:'d3',chips:{vals:[0,1,2],fmt:i=>t('d3_c'+i)},sim:()=>ld(50,[10,15],{up:'up_anys',nm:'ng'}),chk:([p])=>p===0?{k:'d3_a'}:p===2?{k:'d3_b'}:null},
+  {id:'d4',f:[{l:'l_mar'}],sim:()=>ld(1200,[2000,6000],{up:'up_eur',nm:'nk'}),
+   chk:v=>!pos(v)?{k:'rng'}:v[0]===600?{k:'d4_half'}:v[0]!==300?{k:'d4_f'}:null}
+ ]
+});
+const QDATA=[{"id":"r1","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r2","lvl":"all","type":"num","num":50,"tol":0},{"id":"r3","lvl":"all","type":"mc","n":4,"ans":2},{"id":"r4","lvl":"all","type":"num","num":48,"tol":0},{"id":"r5","lvl":"all","type":"mc","n":4,"ans":1},{"id":"r6","lvl":"all","type":"num","num":400,"tol":0}];
+initQuiz(QDATA);
+load(CT[0],0);
+initLang();applyLang();
+document.addEventListener('themechange',draw);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
