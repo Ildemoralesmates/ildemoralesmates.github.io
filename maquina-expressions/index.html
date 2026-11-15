@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Màquina d&#x27;expressions: valor numèric i regles</title>
+<meta name="description" content="Màquina d'expressions per a 2n d'ESO: encadena operacions i mira com es construeix l'expressió algebraica i com es calcula el valor numèric pas a pas. O endevina la regla secreta d'una màquina provant entrades. Amb activitats per a raonar.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/maquina-expressions/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/maquina-expressions/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/maquina-expressions/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/maquina-expressions/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:site_name" content="Recursos de matemàtiques">
+<meta property="og:title" content="Màquina d&#x27;expressions: valor numèric i regles">
+<meta property="og:description" content="Màquina d'expressions per a 2n d'ESO: encadena operacions i mira com es construeix l'expressió algebraica i com es calcula el valor numèric pas a pas. O endevina la regla secreta d'una màquina provant entrades. Amb activitats per a raonar.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/maquina-expressions/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+#svg{display:block;width:100%;height:auto}
+#svg .pipe{stroke:var(--muted);stroke-width:8;stroke-linecap:round}
+#svg .box rect{fill:var(--panel);stroke:var(--ink);stroke-width:2.5}
+#svg .box text{fill:var(--ink);font:700 22px var(--f-num);text-anchor:middle;dominant-baseline:central}
+#svg .box.hid rect{fill:var(--chip)}
+#svg .io circle{fill:var(--panel);stroke:var(--pa);stroke-width:3}
+#svg .io.out circle{stroke:var(--pb)}
+#svg .io text{fill:var(--ink);font-family:var(--f-num);font-weight:700;text-anchor:middle;dominant-baseline:central}
+#svg .io.pulse circle{animation:pulse .6s ease 2}
+#svg .cap{fill:var(--muted);font:600 12px var(--f-body);text-anchor:middle;letter-spacing:.06em;text-transform:uppercase}
+#svg .pill rect{fill:var(--chip);stroke:var(--line)}
+#svg .pill text{fill:var(--ink);font:700 14px var(--f-num);text-anchor:middle;dominant-baseline:central}
+#svg .ex{fill:var(--pa);font-family:var(--f-num);font-weight:600;text-anchor:middle}
+#svg .ball circle{fill:var(--pa);stroke:var(--ink);stroke-width:1.5}
+#svg .ball text{fill:var(--panel);font:700 14px var(--f-num);text-anchor:middle;dominant-baseline:central}
+#svg .gearc{fill:none;stroke:var(--muted);stroke-width:8;stroke-dasharray:5.6 3.4}
+#svg .gearh{fill:var(--muted)}
+#svg .spin{animation:spin 1s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{stroke-width:7}}
+@media (prefers-reduced-motion: reduce){#svg .spin,#svg .io.pulse circle{animation:none}}
+.eqbig{font:700 clamp(1.25rem,3vw,1.75rem)/1.25 var(--f-num);letter-spacing:-.01em;overflow-wrap:anywhere}
+.read{display:grid;gap:6px;font-size:15px}
+.read p{margin:0}
+.lbl{font-size:13px;color:var(--muted)}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:3px;font:500 14.5px/1.35 var(--f-num);overflow-wrap:anywhere}
+.steps li:not(:first-child)::before{content:"= ";color:var(--muted)}
+.steps li:last-child{font-weight:700}
+.red{font:600 14.5px var(--f-num)}
+#msg p{margin:0}
+#msg .ok{color:var(--ok);font-weight:700}
+#msg .bad{color:var(--warn);font-weight:700}
+#msg .tip{color:var(--ink);font-size:14px}
+.inrow .btn{font-family:var(--f-body)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sub{margin:4px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
+.stp button{font:700 15px var(--f-num);border:0;background:var(--chip);color:var(--ink);width:30px;height:30px;cursor:pointer}
+.stp button:disabled{opacity:.4;cursor:default}
+.stp output{min-width:2em;text-align:center;font:700 15px var(--f-num)}
+.opseg button{font-family:var(--f-num);font-weight:700;min-width:44px}
+.xin,.gin{font:600 15px var(--f-num);width:5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.gin.wide{width:10em}
+.inrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:600 15px var(--f-num)}
+.chips .chip{font-family:var(--f-num)}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.toolbar .sub{margin:0}
+.gtab{border-collapse:collapse;font:600 14px var(--f-num);min-width:12em}
+.gtab td,.gtab th{border:1px solid var(--line);padding:3px 10px;text-align:center}
+.gtab th{color:var(--muted);background:var(--chip);font-weight:600}
+.gtab td.dl{color:var(--pb)}
+.gtab tr.last td{background:var(--chip)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../">← Recursos de matemàtiques</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemàtiques · 2n ESO · Àlgebra</p>
+      <h1 data-i18n="h1">Màquina d'expressions</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Entra un nombre, ix un altre. Cada caixa és una operació i la cadena de caixes és una expressió algebraica.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title">Construeix la màquina o endevina-la</h2>
+<p data-i18n-html="story">Cada caixa fa una operació amb el nombre que hi entra. Si encadenes <b>× 3</b> i <b>+ 2</b>, la màquina calcula <b>3x + 2</b>. Canvia l'ordre de les caixes i mira com canvia l'expressió, o prova entrades per a descobrir la <b>regla secreta</b> d'una màquina tancada.</p>
+<div class="seg tabs" id="modes" role="group" data-i18n-aria="aria.mode" aria-label="Mode">
+<button type="button" data-m="build" aria-pressed="true" data-i18n="m_build">Construeix</button>
+<button type="button" data-m="guess" aria-pressed="false" data-i18n="m_guess">Endevina la regla</button>
+</div>
+<div class="toolbar" id="tbB"><span class="sub" data-i18n="g_pre">Exemples</span><div class="chips" id="preB"></div></div>
+<div class="toolbar" id="tbG" hidden>
+<div class="seg" id="lvl" role="group" data-i18n-aria="aria.lvl2" aria-label="Dificultat"><button type="button" data-l="easy" aria-pressed="true" data-i18n="l_easy">Fàcil</button><button type="button" data-l="hard" aria-pressed="false" data-i18n="l_hard">Repte</button></div>
+<button class="btn" type="button" id="gNew" data-i18n="g_new">Màquina nova</button>
+</div>
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 56 640 180" role="img" data-i18n-aria="aria.svg" aria-label="Màquina amb caixes d&#x27;operacions"></svg></div>
+<p class="note" id="snote"></p>
+</div>
+<div class="side">
+<div class="read">
+<div class="eqbig" id="eq"></div>
+<p class="red" id="red"></p>
+<p class="lbl" id="subl"></p>
+<ol class="steps" id="steps"></ol>
+</div>
+<div id="cB">
+<div class="inrow"><span>x =</span><span class="stp"><button type="button" id="xm">−</button></span><input class="xin" id="xin" type="text" inputmode="decimal" autocomplete="off" data-i18n-aria="aria.x" aria-label="Valor de x"><span class="stp"><button type="button" id="xp">+</button></span><button class="btn primary" type="button" id="run" data-i18n="b_run">▶ Engega</button></div>
+<p class="sub" data-i18n="g_box">Afig una caixa</p>
+<div class="seg opseg" id="opsel" role="group" data-i18n-aria="aria.op" aria-label="Operació de la caixa">
+<button type="button" data-o="+" aria-pressed="false">+ k</button><button type="button" data-o="-" aria-pressed="false">− k</button><button type="button" data-o="*" aria-pressed="true">× k</button><button type="button" data-o="/" aria-pressed="false">÷ k</button><button type="button" data-o="^" aria-pressed="false">( )²</button>
+</div>
+<div class="btns"><span id="kbox" class="inrow">k =<span class="stp"><button type="button" id="km">−</button><output id="kout"></output><button type="button" id="kp">+</button></span></span>
+<button class="btn primary" type="button" id="addBox" data-i18n="b_add">Afig la caixa</button><button class="btn" type="button" id="popBox" data-i18n="b_pop">Lleva l'última</button><button class="btn" type="button" id="clrBox" data-i18n="b_clr">Buida</button></div>
+</div>
+<div id="cG" hidden>
+<div class="inrow"><span>x =</span><input class="gin" id="gin" type="text" inputmode="decimal" autocomplete="off" data-i18n-aria="aria.x" aria-label="Valor de x"><button class="btn primary" type="button" id="gGo" data-i18n="b_in">Fes-la funcionar</button></div>
+<div class="chips" id="gchips"></div>
+<table class="gtab" id="gtab"></table>
+<label class="check"><input type="checkbox" id="gdiff"><span data-i18n="g_diff">Ordena les entrades i mira els salts</span></label>
+<div class="inrow"><span>y =</span><input class="gin wide" id="gguess" type="text" autocomplete="off" data-i18n-aria="aria.guess" aria-label="La teua regla"><button class="btn" type="button" id="gChk" data-i18n="check">Comprova</button></div>
+<div class="btns"><button class="btn" type="button" id="gRev" data-i18n="b_rev">Mostra la regla</button></div>
+</div>
+<div id="msg" aria-live="polite"></div>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"><b>Per a la classe:</b> a «Endevina la regla», un alumne pensa una màquina en secret i la resta li diu entrades. Guanya qui encerta la regla amb menys entrades. Discutiu per què, si la regla és del tipus ax + b, dues entrades ja basten.</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Raona-ho</small><span data-i18n="rz_title">Pensa abans de tocar</span></h2><p data-i18n="rz_intro">Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipus d&#x27;activitat"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Missions</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">Sempre, de vegades o mai?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">Qui té raó?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decideix</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca" style="color:inherit">CC BY-NC-SA 4.0</a> · Les imatges i materials de tercers conserven la seua pròpia llicència.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Màquina d'expressions: valor numèric i regles",
+"eyebrow":"Matemàtiques · 2n ESO · Àlgebra",
+"h1":"Màquina d'expressions",
+"lede":"Entra un nombre, ix un altre. Cada caixa és una operació i la cadena de caixes és una expressió algebraica.",
+"sim_title":"Construeix la màquina o endevina-la",
+"story":"Cada caixa fa una operació amb el nombre que hi entra. Si encadenes <b>× 3</b> i <b>+ 2</b>, la màquina calcula <b>3x + 2</b>. Canvia l'ordre de les caixes i mira com canvia l'expressió, o prova entrades per a descobrir la <b>regla secreta</b> d'una màquina tancada.",
+"aria.svg":"Màquina amb caixes d'operacions","aria.mode":"Mode","aria.lvl2":"Dificultat","aria.op":"Operació de la caixa","aria.x":"Valor de x","aria.guess":"La teua regla",
+"m_build":"Construeix","m_guess":"Endevina la regla",
+"g_pre":"Exemples","g_box":"Afig una caixa",
+"l_easy":"Fàcil","l_hard":"Repte","g_new":"Màquina nova",
+"b_run":"▶ Engega","b_add":"Afig la caixa","b_pop":"Lleva l'última","b_clr":"Buida",
+"b_in":"Fes-la funcionar","b_rev":"Mostra la regla","g_diff":"Ordena les entrades i mira els salts",
+"cap_in":"entrada","cap_out":"eixida",
+"red":"Forma reduïda: {0}",
+"subl":"Valor numèric per a x = {0}:",
+"snote_b":"Davall de cada tram de canonada hi ha l'expressió que porta el nombre en eixe moment.",
+"snote_g":"La màquina està tancada: només en veus el que entra i el que ix.",
+"max":"Com a màxim hi caben 4 caixes.","max2":"Com a màxim, dues caixes de quadrat.",
+"empty_b":"La màquina encara no fa res: ix el mateix nombre que entra. Afig-hi caixes.",
+"xbad":"Escriu un nombre per a x (per exemple, −2 o 1,5).",
+"th_x":"x","th_y":"y","th_d":"salt",
+"g_start":"Fes funcionar la màquina amb uns quants nombres i escriu la regla com a expressió en x.",
+"g_parse":"No entenc l'expressió. Exemples: 3x + 2, 2(x − 1), x² + 4, x^2 − 3.",
+"g_bad1":"Per a x = {0} la màquina dona {1}, però la teua expressió dona {2}.",
+"g_bad2":"Encaixa amb les entrades que has provat, però per a x = {0} la màquina dona {1} i la teua expressió {2}. Prova més entrades!",
+"g_ok":"✔ Correcte! La màquina feia y = {0}, i la teua expressió val el mateix per a qualsevol x.",
+"g_rev":"La regla era y = {0}.",
+"rng":"Escriu un nombre enter dins del rang.",
+"f_x":"x =","f_k":"k =","f_v":"Valor =","f_a":"a =",
+"m1.q":"La màquina fa <b>× 3</b> i després <b>+ 2</b>. Quin nombre hi has de fer entrar perquè isca <b>20</b>?",
+"m1_f":"Amb {0} ix {1}.",
+"m1_ok":"✔ Missió complida! 3 · 6 + 2 = 20. Per a tornar arrere es desfà al revés: 20 − 2 = 18 i 18 : 3 = 6.",
+"m1.more":"Si la màquina fa × 3 i + 2, quina màquina desfà el que fa? Quines caixes té i en quin ordre?",
+"m2.q":"Ara la màquina fa <b>+ 2</b> i després <b>× 3</b>. Quin nombre hi has de fer entrar perquè isca <b>21</b>?",
+"m2_f":"Amb {0} ix {1}.",
+"m2_ok":"✔ Missió complida! (5 + 2) · 3 = 21. Aquesta màquina calcula 3(x + 2).",
+"m2.more":"Les màquines de les missions 1 i 2 tenen les mateixes caixes. Per què donen resultats diferents?",
+"m3.q":"Calcula el valor numèric de <b>2x² − 5</b> per a <b>x = −3</b>.",
+"m3_sq":"Compte: (−3)² = 9, no −9. El quadrat d'un nombre negatiu és positiu.",
+"m3_ord":"Primer el quadrat i després el producte: 2 · (−3)² = 2 · 9, no (2 · (−3))².",
+"m3_f":"Torna-ho a calcular: 2 · (−3)² − 5. Primer la potència, després el producte i al final la resta.",
+"m3_ok":"✔ Missió complida! 2 · (−3)² − 5 = 2 · 9 − 5 = 13.",
+"m3.more":"Quines caixes, i en quin ordre, ha de tindre una màquina que calcule 2x² − 5?",
+"m4.q":"Quin nombre <b>k</b> fa que la màquina <b>× k</b> i després <b>− 5</b> trega <b>9</b> quan hi entra <b>2</b>?",
+"m4_f":"Amb k = {0}: 2 · {0} − 5 = {1}.",
+"m4_ok":"✔ Missió complida! 2 · 7 − 5 = 9.",
+"m4.more":"Si vols que isca 9 quan hi entra 3, quin k cal? Ix un nombre enter?",
+"m5.q":"Una màquina dona <b>5, 8, 11 i 14</b> per a les entrades <b>1, 2, 3 i 4</b>. Per quin nombre multiplica la x?",
+"m5_f":"Si multiplicara per {0}, cada vegada que l'entrada puja 1 l'eixida pujaria {0}. Mira quant puja ací.",
+"m5_ok":"✔ Missió complida! L'eixida puja 3 cada vegada que l'entrada puja 1: la màquina fa × 3.",
+"m5.more":"I quin nombre suma després de multiplicar? Escriu la regla completa i comprova-la a «Endevina la regla».",
+"s1.q":"«Si canvies l'ordre de dues caixes de la màquina, el resultat no canvia.»",
+"s1.h":"Prova × 3 i + 2 en els dos ordres. I després × 2 i × 3.",
+"s1.e":"De vegades: dues multiplicacions es poden canviar d'ordre (× 2 i × 3 fan sempre × 6), però × 3 i + 2 dona 3x + 2, mentre que + 2 i × 3 dona 3x + 6.",
+"s1.l":"Màquines «× k, + 2» i «+ 2, × k». k",
+"s1_cx_no":"Amb k = 1 totes dues màquines fan x + 2. Busca un altre k.",
+"s2.q":"«El valor numèric de x² sempre és positiu.»",
+"s2.h":"Quant val el quadrat de 0?",
+"s2.e":"De vegades: per a x ≠ 0, x² és positiu (també si x és negatiu), però per a x = 0 val 0, que no és positiu.",
+"s2_cx_no":"{0}² = {1}, que sí és positiu. Busca un altre valor.",
+"s3.q":"«2x és més gran que x.»",
+"s3.h":"Prova amb un nombre negatiu.",
+"s3.e":"De vegades: per a x positiu, sí. Per a x = 0 són iguals i per a x negatiu 2x és més xicotet: 2 · (−3) = −6, i −6 < −3.",
+"s3_cx_no":"Amb x = {0}: 2x = {1}, que és més gran que {0}. Busca un altre valor.",
+"s4.q":"«x + x + x i 3x tenen el mateix valor numèric per a qualsevol x.»",
+"s4.h":"Substituïx el mateix valor en totes dues.",
+"s4.e":"Sempre: sumar tres vegades el mateix nombre és el mateix que multiplicar-lo per 3.",
+"s5.q":"«Per a qualsevol nombre a, (−a)² = −a².»",
+"s5.h":"Compara (−3)² i −3²: en el segon, el quadrat només afecta el 3.",
+"s5.e":"De vegades, i només per a a = 0. Per a la resta, (−a)² és positiu i −a² negatiu: (−3)² = 9, però −3² = −9.",
+"s5_cx_no":"Amb a = 0 totes dues valen 0. Busca un altre valor de a.",
+"s6.q":"«Si una màquina fa × 2 i després + 3, quan hi entra el doble d'un nombre n'ix el doble de resultat.»",
+"s6.h":"Prova amb 1 i amb 2. Què ix?",
+"s6.e":"Mai: per a x ix 2x + 3, i per a 2x ix 4x + 3, mentre que el doble del resultat és 4x + 6. El + 3 no es duplica.",
+"e1.ctx":"Calcula el valor numèric de <b>3x²</b> per a <b>x = 2</b>.",
+"e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"3 · 2² = 3 · 4 = 12.",
+"e1.s1":"(3 · 2)² = 6² = 36.",
+"e1.w0":"El quadrat només afecta la x: primer la potència i després el producte.",
+"e1.w1":"Perquè 12 és més xicotet que 36.",
+"e1.w2":"Perquè 3 · 2 = 6 i 6 + 6 = 12.",
+"e1.frame":"Biel, 3x² no val 36 perquè…",
+"e1.model":"Biel, a 3x² només està elevada al quadrat la x, no el 3. Primer es calcula 2² = 4 i després 3 · 4 = 12. El que tu has calculat, (3 · 2)², és el valor de (3x)², que és una altra màquina: primer × 3 i després al quadrat.",
+"e2.ctx":"Calcula el valor numèric de <b>2x² − 1</b> per a <b>x = −3</b>.",
+"e2.n0":"Carla","e2.n1":"Dani",
+"e2.s0":"2 · 9 − 1 = 17.",
+"e2.s1":"2 · (−9) − 1 = −19.",
+"e2.w0":"(−3)² = (−3) · (−3) = 9: el quadrat d'un nombre negatiu és positiu.",
+"e2.w1":"Perquè el resultat mai no pot ser negatiu.",
+"e2.w2":"Perquè 2 · 9 = 18.",
+"e2.frame":"Dani, (−3)² no és −9 perquè…",
+"e2.model":"Dani, (−3)² vol dir (−3) · (−3), i menys per menys és més: dona 9. Per això 2 · (−3)² − 1 = 2 · 9 − 1 = 17. Si ho escrius sense parèntesi, −3², sí que val −9, però en substituir x = −3 sempre cal posar el parèntesi.",
+"e3.ctx":"Una màquina fa <b>+ 4</b> i després <b>× 2</b>. Quina expressió li correspon?",
+"e3.n0":"Eva","e3.n1":"Pau",
+"e3.s0":"2x + 4.",
+"e3.s1":"2(x + 4), que és 2x + 8.",
+"e3.w0":"El × 2 actua sobre tot el que ix de la primera caixa, x + 4: per això cal el parèntesi.",
+"e3.w1":"Perquè la x sempre va davant.",
+"e3.w2":"Perquè 2 + 4 = 6.",
+"e3.frame":"Eva, 2x + 4 no és aquesta màquina perquè…",
+"e3.model":"Eva, quan el nombre arriba a la caixa × 2 ja porta sumat el 4: el que es multiplica és x + 4 sencer. Per això és 2(x + 4) = 2x + 8. Comprova-ho amb x = 1: (1 + 4) · 2 = 10, i 2 · 1 + 4 = 6.",
+"e4.ctx":"Una màquina dona 1 → 3, 2 → 5 i 3 → 7. Quina és la regla?",
+"e4.n0":"Marta","e4.n1":"Joan",
+"e4.s0":"x + 2, perquè 1 + 2 = 3.",
+"e4.s1":"2x + 1.",
+"e4.w0":"Una regla ha de funcionar per a totes les entrades: x + 2 dona 4 per a x = 2, no 5.",
+"e4.w1":"Perquè les regles sempre multipliquen.",
+"e4.w2":"Perquè 3 és un nombre imparell.",
+"e4.frame":"Marta, x + 2 no és la regla perquè…",
+"e4.model":"Marta, x + 2 funciona per a la primera fila, però per a x = 2 dona 4 i la màquina en dona 5. Cada vegada que l'entrada puja 1, l'eixida puja 2: la màquina multiplica per 2. I com que 2 · 1 = 2 i n'ix 3, després suma 1: 2x + 1.",
+"e5.ctx":"Escriu l'expressió de «el triple d'un nombre, menys 5».",
+"e5.n0":"Laia","e5.n1":"Nil",
+"e5.s0":"3x − 5.",
+"e5.s1":"x · 3 − 5.",
+"e5.w0":"x · 3 i 3x són el mateix producte: l'ordre dels factors no altera el producte.",
+"e5.w1":"Perquè totes dues tenen un 5.",
+"e5.w2":"Perquè la resta es pot fer en qualsevol ordre.",
+"e5.frame":"Laia i Nil, totes dues expressions valen perquè…",
+"e5.model":"Laia i Nil, x · 3 i 3x volen dir el mateix: el triple del nombre. Normalment s'escriu 3x, amb el nombre davant, però el valor és igual per a qualsevol x. En canvi, 3(x − 5) seria una altra cosa: el triple de la resta.",
+"d1.q":"Un taxi cobra <b>3 €</b> per pujar-hi i <b>1,5 €</b> per cada km: el preu és <b>1,5x + 3</b>. Si tens <b>15 €</b>, quants km pots fer com a màxim?",
+"d1.l0":"Distància",
+"d1_n":"Busca l'entrada que fa eixir 15: desfés la màquina, primer − 3 i després ÷ 1,5.",
+"d1_ok":"✔ Ben decidit! 15 − 3 = 12 i 12 : 1,5 = 8 km. Comprovació: 1,5 · 8 + 3 = 15 €.",
+"d1.more":"I si el taxi cobrara 4 € per pujar-hi? Quants km faries amb els mateixos 15 €?",
+"d2.q":"Dues tarifes de mòbil: <b>A</b> cobra <b>10 + 2x</b> euros i <b>B</b> cobra <b>4x</b> euros, on x són els GB gastats. Si gastes <b>4 GB</b>, quina et convé?",
+"d2.lc":"Em convé:",
+"d2.c1":"A","d2.c2":"B","d2.c3":"Igual",
+"d2_n":"Calcula els dos valors numèrics amb x = 4: A = 10 + 2 · 4 i B = 4 · 4.",
+"d2_ok":"✔ Ben decidit! A = 10 + 2 · 4 = 18 € i B = 4 · 4 = 16 €: amb 4 GB convé B.",
+"d2.more":"A partir de quants GB convé més A? Prova amb 5, 6, 7…",
+"d3.q":"Per a passar de graus Celsius a Fahrenheit es fa <b>F = 1,8C + 32</b>. A l'estiu fa <b>35 °C</b>. Quants graus Fahrenheit són?",
+"d3.l0":"Temperatura",
+"d3_n":"Fes funcionar la màquina × 1,8 i després + 32 amb l'entrada 35.",
+"d3_ok":"✔ Ben decidit! 1,8 · 35 + 32 = 63 + 32 = 95 °F.",
+"d3.more":"A quina temperatura els dos termòmetres marquen el mateix nombre? Pista: és un nombre negatiu.",
+"idea":"<b>Per a la classe:</b> a «Endevina la regla», un alumne pensa una màquina en secret i la resta li diu entrades. Guanya qui encerta la regla amb menys entrades. Discutiu per què, si la regla és del tipus ax + b, dues entrades ja basten."
+},
+es:{
+"title":"Máquina de expresiones: valor numérico y reglas",
+"eyebrow":"Matemáticas · 2.º ESO · Álgebra",
+"h1":"Máquina de expresiones",
+"lede":"Entra un número, sale otro. Cada caja es una operación y la cadena de cajas es una expresión algebraica.",
+"sim_title":"Construye la máquina o adivínala",
+"story":"Cada caja hace una operación con el número que entra. Si encadenas <b>× 3</b> y <b>+ 2</b>, la máquina calcula <b>3x + 2</b>. Cambia el orden de las cajas y mira cómo cambia la expresión, o prueba entradas para descubrir la <b>regla secreta</b> de una máquina cerrada.",
+"aria.svg":"Máquina con cajas de operaciones","aria.mode":"Modo","aria.lvl2":"Dificultad","aria.op":"Operación de la caja","aria.x":"Valor de x","aria.guess":"Tu regla",
+"m_build":"Construye","m_guess":"Adivina la regla",
+"g_pre":"Ejemplos","g_box":"Añade una caja",
+"l_easy":"Fácil","l_hard":"Reto","g_new":"Máquina nueva",
+"b_run":"▶ Ponla en marcha","b_add":"Añade la caja","b_pop":"Quita la última","b_clr":"Vacía",
+"b_in":"Hazla funcionar","b_rev":"Muestra la regla","g_diff":"Ordena las entradas y mira los saltos",
+"cap_in":"entrada","cap_out":"salida",
+"red":"Forma reducida: {0}",
+"subl":"Valor numérico para x = {0}:",
+"snote_b":"Debajo de cada tramo de tubería está la expresión que lleva el número en ese momento.",
+"snote_g":"La máquina está cerrada: solo ves lo que entra y lo que sale.",
+"max":"Como máximo caben 4 cajas.","max2":"Como máximo, dos cajas de cuadrado.",
+"empty_b":"La máquina aún no hace nada: sale el mismo número que entra. Añádele cajas.",
+"xbad":"Escribe un número para x (por ejemplo, −2 o 1,5).",
+"th_x":"x","th_y":"y","th_d":"salto",
+"g_start":"Haz funcionar la máquina con unos cuantos números y escribe la regla como expresión en x.",
+"g_parse":"No entiendo la expresión. Ejemplos: 3x + 2, 2(x − 1), x² + 4, x^2 − 3.",
+"g_bad1":"Para x = {0} la máquina da {1}, pero tu expresión da {2}.",
+"g_bad2":"Encaja con las entradas que has probado, pero para x = {0} la máquina da {1} y tu expresión {2}. ¡Prueba más entradas!",
+"g_ok":"✔ ¡Correcto! La máquina hacía y = {0}, y tu expresión vale lo mismo para cualquier x.",
+"g_rev":"La regla era y = {0}.",
+"rng":"Escribe un número entero dentro del rango.",
+"f_x":"x =","f_k":"k =","f_v":"Valor =","f_a":"a =",
+"m1.q":"La máquina hace <b>× 3</b> y después <b>+ 2</b>. ¿Qué número tienes que meter para que salga <b>20</b>?",
+"m1_f":"Con {0} sale {1}.",
+"m1_ok":"✔ ¡Misión cumplida! 3 · 6 + 2 = 20. Para volver atrás se deshace al revés: 20 − 2 = 18 y 18 : 3 = 6.",
+"m1.more":"Si la máquina hace × 3 y + 2, ¿qué máquina deshace lo que hace? ¿Qué cajas tiene y en qué orden?",
+"m2.q":"Ahora la máquina hace <b>+ 2</b> y después <b>× 3</b>. ¿Qué número tienes que meter para que salga <b>21</b>?",
+"m2_f":"Con {0} sale {1}.",
+"m2_ok":"✔ ¡Misión cumplida! (5 + 2) · 3 = 21. Esta máquina calcula 3(x + 2).",
+"m2.more":"Las máquinas de las misiones 1 y 2 tienen las mismas cajas. ¿Por qué dan resultados distintos?",
+"m3.q":"Calcula el valor numérico de <b>2x² − 5</b> para <b>x = −3</b>.",
+"m3_sq":"Cuidado: (−3)² = 9, no −9. El cuadrado de un número negativo es positivo.",
+"m3_ord":"Primero el cuadrado y después el producto: 2 · (−3)² = 2 · 9, no (2 · (−3))².",
+"m3_f":"Vuelve a calcularlo: 2 · (−3)² − 5. Primero la potencia, después el producto y al final la resta.",
+"m3_ok":"✔ ¡Misión cumplida! 2 · (−3)² − 5 = 2 · 9 − 5 = 13.",
+"m3.more":"¿Qué cajas, y en qué orden, tiene que tener una máquina que calcule 2x² − 5?",
+"m4.q":"¿Qué número <b>k</b> hace que la máquina <b>× k</b> y después <b>− 5</b> saque <b>9</b> cuando entra <b>2</b>?",
+"m4_f":"Con k = {0}: 2 · {0} − 5 = {1}.",
+"m4_ok":"✔ ¡Misión cumplida! 2 · 7 − 5 = 9.",
+"m4.more":"Si quieres que salga 9 cuando entra 3, ¿qué k hace falta? ¿Sale un número entero?",
+"m5.q":"Una máquina da <b>5, 8, 11 y 14</b> para las entradas <b>1, 2, 3 y 4</b>. ¿Por qué número multiplica la x?",
+"m5_f":"Si multiplicara por {0}, cada vez que la entrada sube 1 la salida subiría {0}. Mira cuánto sube aquí.",
+"m5_ok":"✔ ¡Misión cumplida! La salida sube 3 cada vez que la entrada sube 1: la máquina hace × 3.",
+"m5.more":"¿Y qué número suma después de multiplicar? Escribe la regla completa y compruébala en «Adivina la regla».",
+"s1.q":"«Si cambias el orden de dos cajas de la máquina, el resultado no cambia.»",
+"s1.h":"Prueba × 3 y + 2 en los dos órdenes. Y después × 2 y × 3.",
+"s1.e":"A veces: dos multiplicaciones se pueden cambiar de orden (× 2 y × 3 hacen siempre × 6), pero × 3 y + 2 da 3x + 2, mientras que + 2 y × 3 da 3x + 6.",
+"s1.l":"Máquinas «× k, + 2» y «+ 2, × k». k",
+"s1_cx_no":"Con k = 1 las dos máquinas hacen x + 2. Busca otro k.",
+"s2.q":"«El valor numérico de x² siempre es positivo.»",
+"s2.h":"¿Cuánto vale el cuadrado de 0?",
+"s2.e":"A veces: para x ≠ 0, x² es positivo (también si x es negativo), pero para x = 0 vale 0, que no es positivo.",
+"s2_cx_no":"{0}² = {1}, que sí es positivo. Busca otro valor.",
+"s3.q":"«2x es mayor que x.»",
+"s3.h":"Prueba con un número negativo.",
+"s3.e":"A veces: para x positivo, sí. Para x = 0 son iguales y para x negativo 2x es menor: 2 · (−3) = −6, y −6 < −3.",
+"s3_cx_no":"Con x = {0}: 2x = {1}, que es mayor que {0}. Busca otro valor.",
+"s4.q":"«x + x + x y 3x tienen el mismo valor numérico para cualquier x.»",
+"s4.h":"Sustituye el mismo valor en las dos.",
+"s4.e":"Siempre: sumar tres veces el mismo número es lo mismo que multiplicarlo por 3.",
+"s5.q":"«Para cualquier número a, (−a)² = −a².»",
+"s5.h":"Compara (−3)² y −3²: en el segundo, el cuadrado solo afecta al 3.",
+"s5.e":"A veces, y solo para a = 0. Para el resto, (−a)² es positivo y −a² negativo: (−3)² = 9, pero −3² = −9.",
+"s5_cx_no":"Con a = 0 las dos valen 0. Busca otro valor de a.",
+"s6.q":"«Si una máquina hace × 2 y después + 3, cuando entra el doble de un número sale el doble de resultado.»",
+"s6.h":"Prueba con 1 y con 2. ¿Qué sale?",
+"s6.e":"Nunca: para x sale 2x + 3, y para 2x sale 4x + 3, mientras que el doble del resultado es 4x + 6. El + 3 no se duplica.",
+"e1.ctx":"Calcula el valor numérico de <b>3x²</b> para <b>x = 2</b>.",
+"e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"3 · 2² = 3 · 4 = 12.",
+"e1.s1":"(3 · 2)² = 6² = 36.",
+"e1.w0":"El cuadrado solo afecta a la x: primero la potencia y después el producto.",
+"e1.w1":"Porque 12 es menor que 36.",
+"e1.w2":"Porque 3 · 2 = 6 y 6 + 6 = 12.",
+"e1.frame":"Biel, 3x² no vale 36 porque…",
+"e1.model":"Biel, en 3x² solo está elevada al cuadrado la x, no el 3. Primero se calcula 2² = 4 y después 3 · 4 = 12. Lo que tú has calculado, (3 · 2)², es el valor de (3x)², que es otra máquina: primero × 3 y después al cuadrado.",
+"e2.ctx":"Calcula el valor numérico de <b>2x² − 1</b> para <b>x = −3</b>.",
+"e2.n0":"Carla","e2.n1":"Dani",
+"e2.s0":"2 · 9 − 1 = 17.",
+"e2.s1":"2 · (−9) − 1 = −19.",
+"e2.w0":"(−3)² = (−3) · (−3) = 9: el cuadrado de un número negativo es positivo.",
+"e2.w1":"Porque el resultado nunca puede ser negativo.",
+"e2.w2":"Porque 2 · 9 = 18.",
+"e2.frame":"Dani, (−3)² no es −9 porque…",
+"e2.model":"Dani, (−3)² quiere decir (−3) · (−3), y menos por menos es más: da 9. Por eso 2 · (−3)² − 1 = 2 · 9 − 1 = 17. Si lo escribes sin paréntesis, −3², sí vale −9, pero al sustituir x = −3 siempre hay que poner el paréntesis.",
+"e3.ctx":"Una máquina hace <b>+ 4</b> y después <b>× 2</b>. ¿Qué expresión le corresponde?",
+"e3.n0":"Eva","e3.n1":"Pau",
+"e3.s0":"2x + 4.",
+"e3.s1":"2(x + 4), que es 2x + 8.",
+"e3.w0":"El × 2 actúa sobre todo lo que sale de la primera caja, x + 4: por eso hace falta el paréntesis.",
+"e3.w1":"Porque la x siempre va delante.",
+"e3.w2":"Porque 2 + 4 = 6.",
+"e3.frame":"Eva, 2x + 4 no es esta máquina porque…",
+"e3.model":"Eva, cuando el número llega a la caja × 2 ya lleva sumado el 4: lo que se multiplica es x + 4 entero. Por eso es 2(x + 4) = 2x + 8. Compruébalo con x = 1: (1 + 4) · 2 = 10, y 2 · 1 + 4 = 6.",
+"e4.ctx":"Una máquina da 1 → 3, 2 → 5 y 3 → 7. ¿Cuál es la regla?",
+"e4.n0":"Marta","e4.n1":"Joan",
+"e4.s0":"x + 2, porque 1 + 2 = 3.",
+"e4.s1":"2x + 1.",
+"e4.w0":"Una regla tiene que funcionar para todas las entradas: x + 2 da 4 para x = 2, no 5.",
+"e4.w1":"Porque las reglas siempre multiplican.",
+"e4.w2":"Porque 3 es un número impar.",
+"e4.frame":"Marta, x + 2 no es la regla porque…",
+"e4.model":"Marta, x + 2 funciona para la primera fila, pero para x = 2 da 4 y la máquina da 5. Cada vez que la entrada sube 1, la salida sube 2: la máquina multiplica por 2. Y como 2 · 1 = 2 y sale 3, después suma 1: 2x + 1.",
+"e5.ctx":"Escribe la expresión de «el triple de un número, menos 5».",
+"e5.n0":"Laia","e5.n1":"Nil",
+"e5.s0":"3x − 5.",
+"e5.s1":"x · 3 − 5.",
+"e5.w0":"x · 3 y 3x son el mismo producto: el orden de los factores no altera el producto.",
+"e5.w1":"Porque las dos tienen un 5.",
+"e5.w2":"Porque la resta se puede hacer en cualquier orden.",
+"e5.frame":"Laia y Nil, las dos expresiones valen porque…",
+"e5.model":"Laia y Nil, x · 3 y 3x quieren decir lo mismo: el triple del número. Normalmente se escribe 3x, con el número delante, pero el valor es igual para cualquier x. En cambio, 3(x − 5) sería otra cosa: el triple de la resta.",
+"d1.q":"Un taxi cobra <b>3 €</b> por subir y <b>1,5 €</b> por cada km: el precio es <b>1,5x + 3</b>. Si tienes <b>15 €</b>, ¿cuántos km puedes hacer como máximo?",
+"d1.l0":"Distancia",
+"d1_n":"Busca la entrada que hace salir 15: deshaz la máquina, primero − 3 y después ÷ 1,5.",
+"d1_ok":"✔ ¡Bien decidido! 15 − 3 = 12 y 12 : 1,5 = 8 km. Comprobación: 1,5 · 8 + 3 = 15 €.",
+"d1.more":"¿Y si el taxi cobrara 4 € por subir? ¿Cuántos km harías con los mismos 15 €?",
+"d2.q":"Dos tarifas de móvil: <b>A</b> cobra <b>10 + 2x</b> euros y <b>B</b> cobra <b>4x</b> euros, donde x son los GB gastados. Si gastas <b>4 GB</b>, ¿cuál te conviene?",
+"d2.lc":"Me conviene:",
+"d2.c1":"A","d2.c2":"B","d2.c3":"Igual",
+"d2_n":"Calcula los dos valores numéricos con x = 4: A = 10 + 2 · 4 y B = 4 · 4.",
+"d2_ok":"✔ ¡Bien decidido! A = 10 + 2 · 4 = 18 € y B = 4 · 4 = 16 €: con 4 GB conviene B.",
+"d2.more":"¿A partir de cuántos GB conviene más A? Prueba con 5, 6, 7…",
+"d3.q":"Para pasar de grados Celsius a Fahrenheit se hace <b>F = 1,8C + 32</b>. En verano hace <b>35 °C</b>. ¿Cuántos grados Fahrenheit son?",
+"d3.l0":"Temperatura",
+"d3_n":"Haz funcionar la máquina × 1,8 y después + 32 con la entrada 35.",
+"d3_ok":"✔ ¡Bien decidido! 1,8 · 35 + 32 = 63 + 32 = 95 °F.",
+"d3.more":"¿A qué temperatura los dos termómetros marcan el mismo número? Pista: es un número negativo.",
+"idea":"<b>Para la clase:</b> en «Adivina la regla», un alumno piensa una máquina en secreto y el resto le dice entradas. Gana quien acierta la regla con menos entradas. Discutid por qué, si la regla es del tipo ax + b, dos entradas ya bastan."
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='ca';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'../es/maquina-expressions/':'./';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* ===== Màquina d'expressions ===== */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const r=a%b;a=b;b=r;}return a||1;}
+class Q{constructor(n,d){if(d===undefined)d=1;if(d<0){n=-n;d=-d;}const g=gcd(n,d);this.n=n/g;this.d=d/g;}
+  static of(v){return v instanceof Q?v:Number.isInteger(v)?new Q(v,1):new Q(Math.round(v*1000),1000);}
+  add(o){return new Q(this.n*o.d+o.n*this.d,this.d*o.d);} sub(o){return new Q(this.n*o.d-o.n*this.d,this.d*o.d);}
+  mul(o){return new Q(this.n*o.n,this.d*o.d);} div(o){return new Q(this.n*o.d,this.d*o.n);}
+  get z(){return this.n===0;} num(){return this.n/this.d;}}
+const Q0=new Q(0);
+function qs(v){const a=Math.abs(v.n);let s;
+  if(v.d===1)s=String(a);
+  else{let d=v.d;while(d%2===0)d/=2;while(d%5===0)d/=5;const x=a/v.d;s=(d===1&&String(x).length<=8)?String(x).replace('.',','):a+'/'+v.d;}
+  return (v.n<0?'−':'')+s;}
+const kStr=k=>qs(Q.of(k));
+function ap(op,v){const K=Q.of(op.k||0);switch(op.o){case '+':return v.add(K);case '-':return v.sub(K);case '*':return v.mul(K);case '/':return v.div(K);default:return v.mul(v);}}
+const chainVals=(x,ops)=>{const r=[x];ops.forEach(o=>r.push(ap(o,r[r.length-1])));return r;};
+function step(c,op){const k=kStr(op.k),hasX=c.s.indexOf('x')>=0;
+  switch(op.o){
+  case '+':return {s:c.s+' + '+k,t:'sum'};
+  case '-':return {s:c.s+' − '+k,t:'sum'};
+  case '*':
+    if(c.t==='x')return {s:(k==='1'?'1·':k)+'x',t:'prod'};
+    if(c.t==='pow'&&c.s[0]==='x')return {s:k+c.s,t:'prod'};
+    if(c.t==='num')return {s:k+'·'+c.s,t:'prod'};
+    if(c.t==='neg'||c.t==='fr')return {s:k+'·('+c.s+')',t:'prod'};
+    if(c.t==='sum')return {s:hasX?k+'('+c.s+')':k+'·('+c.s+')',t:'prod'};
+    if(c.t==='pow')return {s:(hasX&&c.s[0]==='('?k:k+'·')+c.s,t:'prod'};
+    return {s:k+'·'+c.s,t:'prod'};
+  case '/':
+    if(c.t==='sum'||c.t==='neg'||c.t==='fr')return {s:'('+c.s+')/'+k,t:'fr'};
+    return {s:c.s+'/'+k,t:'fr'};
+  default:
+    if(c.t==='x'||c.t==='num')return {s:c.s+'²',t:'pow'};
+    return {s:'('+c.s+')²',t:'pow'};
+  }}
+const atomX={s:'x',t:'x'};
+function atomV(v){const s=qs(v);return {s:s,t:v.n<0?'neg':(s.indexOf('/')>=0?'fr':'num')};}
+const buildStr=(atom,ops)=>ops.reduce(step,atom).s;
+function pap(op,p){const K=Q.of(op.k||0);switch(op.o){
+  case '+':{const r=p.slice();r[0]=r[0].add(K);return r;}
+  case '-':{const r=p.slice();r[0]=r[0].sub(K);return r;}
+  case '*':return p.map(c=>c.mul(K));
+  case '/':return p.map(c=>c.div(K));
+  default:{const r=Array(p.length*2-1).fill(Q0);p.forEach((a,i)=>p.forEach((b,j)=>{r[i+j]=r[i+j].add(a.mul(b));}));return r;}}}
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+const litx=d=>d===0?'':d===1?'x':'x'+String(d).split('').map(c=>SUP[+c]).join('');
+function pstr(p){const ts=[];
+  for(let d=p.length-1;d>=0;d--){const c=p[d];if(c.z)continue;const a=new Q(Math.abs(c.n),c.d),dec=qs(a);let body;
+    if(dec.indexOf('/')<0)body=(dec==='1'&&d>0?'':dec)+litx(d);else body=(a.n===1&&d>0?'':String(a.n))+litx(d)+'/'+a.d;
+    ts.push([c.n<0,body]);}
+  if(!ts.length)return '0';return ts.map((q,i)=>i?(q[0]?' − ':' + ')+q[1]:(q[0]?'−':'')+q[1]).join('');}
+const polyOf=ops=>ops.reduce((p,o)=>pap(o,p),[Q0,new Q(1)]);
+const ruleStr=ops=>ops.length?buildStr(atomX,ops):'x';
+const opLbl=o=>o.o==='^'?'( )²':({'+':'+ ','-':'− ','*':'× ','/':'÷ '})[o.o]+kStr(o.k);
+const fs=(s,max,w)=>Math.max(10,Math.min(max,w/(Math.max(1,s.length)*0.62)));
+
+const svg=$('#svg'),eqEl=$('#eq'),redEl=$('#red'),sublEl=$('#subl'),stepsEl=$('#steps'),msg=$('#msg'),snote=$('#snote');
+let MODE='build',anim=0,info=null;
+const B={ops:[{o:'*',k:3},{o:'+',k:2}],x:2,o:'*',k:3,pre:0};
+const PRE_B=[[{o:'*',k:3},{o:'+',k:2}],[{o:'+',k:2},{o:'*',k:3}],[{o:'^'},{o:'+',k:1}],[{o:'+',k:1},{o:'^'}],[{o:'^'},{o:'*',k:2},{o:'-',k:5}],[{o:'-',k:4},{o:'/',k:2}]];
+const G={ops:[],lvl:'easy',entries:[],revealed:false,diff:false,msg:null,last:null};
+const X0=52,X1=588,YP=140;
+function boxXs(n){const r=[];for(let i=0;i<n;i++)r.push(X0+46+(i+0.5)*(X1-X0-92)/n);return r;}
+function ioSvg(cx,cls,val,cap){const s=val===null?'?':val;
+  return '<g class="io '+cls+'" id="io-'+cls+'"><circle cx="'+cx+'" cy="'+YP+'" r="34"/><text x="'+cx+'" y="'+YP+'" style="font-size:'+fs(s,22,62).toFixed(1)+'px">'+s+'</text></g><text class="cap" x="'+cx+'" y="'+(YP-46)+'">'+cap+'</text>';}
+function drawBuild(){
+  const n=B.ops.length,xs=boxXs(n),vals=chainVals(Q.of(B.x),B.ops),pts=[X0].concat(xs,[X1]);
+  const bw=n?Math.min(100,(X1-X0-92)/n-22):0;
+  let s='<line class="pipe" x1="'+X0+'" y1="'+YP+'" x2="'+X1+'" y2="'+YP+'"/>';
+  for(let i=0;i<=n;i++){const a=pts[i]+(i?bw/2:34),b=pts[i+1]-(i<n?bw/2:34),m=(a+b)/2,w=b-a;
+    const e=buildStr(atomX,B.ops.slice(0,i));
+    s+='<text class="ex" x="'+m.toFixed(1)+'" y="'+(YP+52)+'" style="font-size:'+fs(e,16,w+20).toFixed(1)+'px">'+e+'</text>';
+    if(i>0&&i<n){const v=qs(vals[i]),pw=Math.min(w-6,Math.max(34,v.length*9+14));
+      s+='<g class="pill"><rect x="'+(m-pw/2).toFixed(1)+'" y="'+(YP-46)+'" width="'+pw.toFixed(1)+'" height="26" rx="13"/><text x="'+m.toFixed(1)+'" y="'+(YP-33)+'" style="font-size:'+fs(v,14,pw-4).toFixed(1)+'px">'+v+'</text></g>';}}
+  s+='<g id="ballG"></g>';
+  xs.forEach((cx,i)=>{const l=opLbl(B.ops[i]);s+='<g class="box"><rect x="'+(cx-bw/2).toFixed(1)+'" y="'+(YP-36)+'" width="'+bw.toFixed(1)+'" height="72" rx="12"/><text x="'+cx.toFixed(1)+'" y="'+YP+'" style="font-size:'+fs(l,22,bw-6).toFixed(1)+'px">'+l+'</text></g>';});
+  s+=ioSvg(X0,'in',qs(vals[0]),t('cap_in'))+ioSvg(X1,'out',qs(vals[n]),t('cap_out'));
+  svg.innerHTML=s;info={pts:xs,vals:vals};
+}
+function drawGuess(){
+  const last=G.last,cx=320,bw=190;
+  let s='<line class="pipe" x1="'+X0+'" y1="'+YP+'" x2="'+X1+'" y2="'+YP+'"/><g id="ballG"></g>';
+  const lab=G.revealed?ruleStr(G.ops):'?';
+  s+='<g class="box hid"><rect x="'+(cx-bw/2)+'" y="'+(YP-60)+'" width="'+bw+'" height="120" rx="14"/><text x="'+cx+'" y="'+(YP-12)+'" style="font-size:'+fs(lab,40,bw-16).toFixed(1)+'px">'+lab+'</text></g>';
+  s+='<g transform="translate('+(cx-58)+','+(YP+30)+')"><g id="gear"><circle class="gearc" cx="0" cy="0" r="13"/><circle class="gearh" cx="0" cy="0" r="5"/></g></g>';
+  s+='<g transform="translate('+(cx+58)+','+(YP+30)+')"><g id="gear2"><circle class="gearc" cx="0" cy="0" r="13"/><circle class="gearh" cx="0" cy="0" r="5"/></g></g>';
+  s+=ioSvg(X0,'in',last?qs(last.x):null,t('cap_in'))+ioSvg(X1,'out',last?qs(last.y):null,t('cap_out'));
+  svg.innerHTML=s;info={pts:[cx],vals:last?[last.x,last.y]:null};
+}
+function ballRun(vals,centers,onEnd){
+  cancelAnimationFrame(anim);
+  if(REDUCE||!vals){if(onEnd)onEnd();return;}
+  const g=$('#ballG'),t0=performance.now(),dur=1600+centers.length*250,gears=$$('#gear,#gear2');
+  gears.forEach(e=>e.classList.add('spin'));
+  (function fr(now){const p=Math.min(1,(now-t0)/dur),x=X0+(X1-X0)*p;let k=0;while(k<centers.length&&x>centers[k])k++;
+    const v=qs(vals[Math.min(k,vals.length-1)]);
+    g.innerHTML='<g class="ball"><circle cx="'+x.toFixed(1)+'" cy="'+YP+'" r="21"/><text x="'+x.toFixed(1)+'" y="'+YP+'" style="font-size:'+fs(v,14,38).toFixed(1)+'px">'+v+'</text></g>';
+    if(p<1)anim=requestAnimationFrame(fr);
+    else{g.innerHTML='';gears.forEach(e=>e.classList.remove('spin'));const o=$('#io-out');if(o)o.classList.add('pulse');if(onEnd)onEnd();}})(t0);
+}
+function panelBuild(){
+  const n=B.ops.length,e=ruleStr(B.ops),r=pstr(polyOf(B.ops)),vals=chainVals(Q.of(B.x),B.ops);
+  eqEl.textContent='y = '+e;
+  redEl.textContent=r.replace(/\s/g,'')!==e.replace(/\s/g,'')?tt('red',r):'';
+  sublEl.textContent=tt('subl',qs(Q.of(B.x)));
+  const lines=[];for(let i=0;i<=n;i++){const L=i===n?qs(vals[n]):buildStr(atomV(vals[i]),B.ops.slice(i));if(!lines.length||lines[lines.length-1]!==L)lines.push(L);}
+  stepsEl.innerHTML=lines.map(l=>'<li>'+l+'</li>').join('');
+  const sq=B.ops.filter(o=>o.o==='^').length;
+  $('#addBox').disabled=n>=4||(B.o==='^'&&sq>=2);$('#popBox').disabled=!n;$('#clrBox').disabled=!n;
+  $$('#opsel button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.o===B.o)));
+  $('#kbox').hidden=B.o==='^';$('#kout').textContent=B.k;$('#km').disabled=B.k<=1;$('#kp').disabled=B.k>=9;
+  if($('#xin')!==document.activeElement)$('#xin').value=qs(Q.of(B.x));
+  let m='';if(!n)m='<p class="tip">'+t('empty_b')+'</p>';else if(n>=4)m='<p class="tip">'+t('max')+'</p>';else if(B.o==='^'&&sq>=2)m='<p class="tip">'+t('max2')+'</p>';
+  if(B.xbad)m='<p class="bad">'+t('xbad')+'</p>';
+  msg.innerHTML=m;snote.textContent=t('snote_b');
+  $$('#preB .chip').forEach((c,i)=>c.setAttribute('aria-pressed',String(i===B.pre)));
+}
+function panelGuess(){
+  eqEl.textContent='y = '+(G.revealed?ruleStr(G.ops):'?');
+  const r=pstr(polyOf(G.ops)),e=ruleStr(G.ops);
+  redEl.textContent=G.revealed&&r.replace(/\s/g,'')!==e.replace(/\s/g,'')?tt('red',r):'';
+  sublEl.textContent='';stepsEl.innerHTML='';
+  let rows=G.entries.slice();if(G.diff)rows.sort((a,b)=>a.x.num()-b.x.num());else rows=rows.slice(-8);
+  let h='';
+  if(rows.length){h='<tr><th>'+t('th_x')+'</th><th>'+t('th_y')+'</th>'+(G.diff?'<th>'+t('th_d')+'</th>':'')+'</tr>';
+    rows.forEach((r,i)=>{let d='';if(G.diff){if(i){const dx=r.x.sub(rows[i-1].x);d=dx.n===1&&dx.d===1?(()=>{const dy=r.y.sub(rows[i-1].y);return (dy.n>=0?'+':'')+qs(dy);})():'—';}d='<td class="dl">'+d+'</td>';}
+      h+='<tr'+(r===G.last&&!G.diff?' class="last"':'')+'><td>'+qs(r.x)+'</td><td>'+qs(r.y)+'</td>'+d+'</tr>';});}
+  $('#gtab').innerHTML=h;$('#gdiff').checked=G.diff;
+  $$('#lvl button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===G.lvl)));
+  const M=G.msg;msg.innerHTML=M?'<p class="'+(M.c||'tip')+'">'+tt(M.k,...(M.p||[]))+'</p>':'<p class="tip">'+t('g_start')+'</p>';
+  snote.textContent=t('snote_g');$('#gRev').disabled=G.revealed;
+}
+function render(){
+  cancelAnimationFrame(anim);
+  $$('#modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===MODE)));
+  $('#tbB').hidden=MODE!=='build';$('#tbG').hidden=MODE!=='guess';$('#cB').hidden=MODE!=='build';$('#cG').hidden=MODE!=='guess';
+  if(MODE==='build'){drawBuild();panelBuild();}else{drawGuess();panelGuess();}
+}
+/* --- construeix --- */
+$('#preB').innerHTML=PRE_B.map((p,i)=>'<button class="chip" type="button" data-i="'+i+'">'+ruleStr(p)+'</button>').join('');
+$$('#preB .chip').forEach(c=>c.addEventListener('click',()=>{B.ops=PRE_B[+c.dataset.i].map(o=>Object.assign({},o));B.pre=+c.dataset.i;render();}));
+$$('#opsel button').forEach(b=>b.addEventListener('click',()=>{B.o=b.dataset.o;panelBuild();}));
+$('#km').onclick=()=>{B.k=Math.max(1,B.k-1);panelBuild();};$('#kp').onclick=()=>{B.k=Math.min(9,B.k+1);panelBuild();};
+$('#addBox').onclick=()=>{if(B.ops.length>=4)return;B.ops.push(B.o==='^'?{o:'^'}:{o:B.o,k:B.k});B.pre=-1;render();};
+$('#popBox').onclick=()=>{B.ops.pop();B.pre=-1;render();};
+$('#clrBox').onclick=()=>{B.ops=[];B.pre=-1;render();};
+function setXv(v){B.x=v;B.xbad=false;render();}
+$('#xin').addEventListener('change',()=>{const v=parseNum($('#xin').value);if($('#xin').value.trim()===''||!Number.isFinite(v)){B.xbad=true;panelBuild();return;}setXv(clamp(v,-999,999));});
+$('#xin').addEventListener('keydown',e=>{if(e.key==='Enter'){$('#xin').blur();}});
+$('#xm').onclick=()=>setXv(Math.round(B.x)-1);$('#xp').onclick=()=>setXv(Math.round(B.x)+1);
+$('#run').onclick=()=>{render();ballRun(info.vals,info.pts);};
+/* --- endevina --- */
+const rnd=n=>Math.floor(Math.random()*n);
+function genRule(lvl){
+  const a=2+rnd(4),b=1+rnd(7);
+  if(lvl==='easy')return [[{o:'*',k:a},{o:'+',k:b}],[{o:'*',k:a},{o:'-',k:b}],[{o:'*',k:a}],[{o:'+',k:b}],[{o:'*',k:a},{o:'+',k:b}]][rnd(5)];
+  return [[{o:'+',k:b},{o:'*',k:a}],[{o:'-',k:b},{o:'*',k:a}],[{o:'^'},{o:'+',k:b}],[{o:'^'},{o:'*',k:a}],[{o:'^'},{o:'-',k:b}],[{o:'*',k:a},{o:'^'}],[{o:'^'},{o:'*',k:2},{o:'+',k:b}]][rnd(7)];
+}
+function newRule(){let r;do{r=genRule(G.lvl);}while(G.ops.length&&ruleStr(r)===ruleStr(G.ops));G.ops=r;G.entries=[];G.revealed=false;G.msg=null;G.last=null;$('#gguess').value='';render();}
+function feed(v,silent){const x=Q.of(v),y=chainVals(x,G.ops).pop();G.entries=G.entries.filter(e=>!(e.x.n===x.n&&e.x.d===x.d));const e={x:x,y:y};G.entries.push(e);G.last=e;
+  if(silent)return;G.msg=null;const prev=G.entries.length>1?G.entries[G.entries.length-2]:null;
+  const done=()=>{render();};
+  if(REDUCE){done();return;}
+  const keep=G.last;G.last=prev;drawGuess();panelGuess();G.last=keep;ballRun([x,y],[320],done);}
+$('#gGo').onclick=()=>{const v=parseNum($('#gin').value);if($('#gin').value.trim()===''||!Number.isFinite(v)){G.msg={k:'xbad',c:'bad'};panelGuess();return;}feed(clamp(v,-999,999));};
+$('#gin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#gGo').click();});
+$('#gchips').innerHTML=[0,1,2,3,4,5,10,-1].map(v=>'<button class="chip" type="button" data-v="'+v+'">'+String(v).replace('-','−')+'</button>').join('');
+$$('#gchips .chip').forEach(c=>c.addEventListener('click',()=>feed(+c.dataset.v)));
+$('#gdiff').addEventListener('change',()=>{G.diff=$('#gdiff').checked;panelGuess();});
+$$('#lvl button').forEach(b=>b.addEventListener('click',()=>{G.lvl=b.dataset.l;newRule();}));
+$('#gNew').onclick=newRule;
+$('#gRev').onclick=()=>{G.revealed=true;G.msg={k:'g_rev',p:[ruleStr(G.ops)],c:'tip'};render();};
+function parseExpr(src){
+  const s=src.toLowerCase().replace(/\s+/g,'').replace(/^y=/,'').replace(/[−–]/g,'-').replace(/[·×]/g,'*').replace(/:/g,'/').replace(/²/g,'^2').replace(/³/g,'^3').replace(/,/g,'.').replace(/n/g,'x');
+  if(!s)return null;let i=0;const pk=()=>s[i];
+  const num=()=>{const m=/^\d+(\.\d+)?/.exec(s.slice(i));if(!m)return null;i+=m[0].length;return parseFloat(m[0]);};
+  function prim(){const c=pk();if(c==='('){i++;const e=expr();if(pk()!==')')throw 0;i++;return e;}if(c==='x'){i++;return x=>x;}const v=num();if(v===null)throw 0;return ()=>v;}
+  function pow(){const b=prim();if(pk()==='^'){i++;const e=num();if(e===null||!Number.isInteger(e)||e>6)throw 0;return x=>Math.pow(b(x),e);}return b;}
+  function un(){if(pk()==='-'){i++;const u=un();return x=>-u(x);}if(pk()==='+'){i++;return un();}return pow();}
+  function term(){let a=un();for(;;){const c=pk();
+    if(c==='*'||c==='/'){i++;const b=un(),A=a;a=c==='*'?x=>A(x)*b(x):x=>A(x)/b(x);}
+    else if(c==='x'||c==='('||(c!==undefined&&/\d/.test(c))){const b=pow(),A=a;a=x=>A(x)*b(x);}
+    else break;}return a;}
+  function expr(){let a=term();while(pk()==='+'||pk()==='-'){const c=s[i++],b=term(),A=a;a=c==='+'?x=>A(x)+b(x):x=>A(x)-b(x);}return a;}
+  try{const f=expr();return i===s.length?f:null;}catch(e){return null;}
+}
+const same=(a,b)=>Math.abs(a-b)<=1e-9*Math.max(1,Math.abs(a),Math.abs(b));
+const fy=y=>Math.abs(y-Math.round(y))<1e-9?String(Math.round(y)).replace('-','−'):nf(y,3).replace('-','−');
+function checkGuess(){
+  const f=parseExpr($('#gguess').value);
+  if(!f){G.msg={k:'g_parse',c:'bad'};panelGuess();return;}
+  for(const e of G.entries){const yu=f(e.x.num());if(!same(yu,e.y.num())){G.msg={k:'g_bad1',p:[qs(e.x),qs(e.y),fy(yu)],c:'bad'};panelGuess();return;}}
+  for(const x of [-3,-2,-1,0,1,2,3,4,5,10,0.5,-0.5]){const yr=chainVals(Q.of(x),G.ops).pop(),yu=f(x);
+    if(!same(yu,yr.num())){G.msg={k:'g_bad2',p:[qs(Q.of(x)),qs(yr),fy(yu)],c:'bad'};panelGuess();return;}}
+  G.revealed=true;G.msg={k:'g_ok',p:[ruleStr(G.ops)],c:'ok'};render();
+}
+$('#gChk').onclick=checkGuess;$('#gguess').addEventListener('keydown',e=>{if(e.key==='Enter')checkGuess();});
+$$('#modes button').forEach(b=>b.addEventListener('click',()=>{MODE=b.dataset.m;if(MODE==='guess'&&!G.ops.length)newRule();else render();}));
+App.hooks.push(render);
+
+/* ===== Raona-ho ===== */
+const O=(o,k)=>k===undefined?{o:o}:{o:o,k:k};
+function loadB(ops,x){MODE='build';B.ops=ops.map(o=>Object.assign({},o));B.pre=-1;B.x=x;B.xbad=false;render();RZ.show(svg);}
+function loadG(ops,xs){MODE='guess';G.ops=ops;G.entries=[];G.revealed=false;G.msg=null;G.last=null;xs.forEach(x=>feed(x,true));$('#gguess').value='';render();RZ.show(svg);}
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+const out=(ops,x)=>qs(chainVals(Q.of(x),ops).pop());
+RZ.init({
+ F:{x:{l:'f_x'},k:{l:'f_k'},v:{l:'f_v'},a:{l:'f_a'}},
+ M:[
+  {id:'m1',f:['x'],sim:([x])=>loadB([O('*',3),O('+',2)],Number.isFinite(x)?x:6),ok:()=>({k:'m1_ok'}),
+   chk:([x])=>x===6?null:{k:'m1_f',p:[qs(Q.of(x)),out([O('*',3),O('+',2)],x)]}},
+  {id:'m2',f:['x'],sim:([x])=>loadB([O('+',2),O('*',3)],Number.isFinite(x)?x:5),ok:()=>({k:'m2_ok'}),
+   chk:([x])=>x===5?null:{k:'m2_f',p:[qs(Q.of(x)),out([O('+',2),O('*',3)],x)]}},
+  {id:'m3',f:['v'],sim:()=>loadB([O('^'),O('*',2),O('-',5)],-3),ok:()=>({k:'m3_ok'}),
+   chk:([v])=>v===13?null:v===-23?{k:'m3_sq'}:v===31?{k:'m3_ord'}:{k:'m3_f'}},
+  {id:'m4',f:['k'],sim:([k])=>loadB([O('*',isI(k,1,9)?k:7),O('-',5)],2),ok:()=>({k:'m4_ok'}),
+   chk:([k])=>!isI(k,-20,20)?RNG:k===7?null:{k:'m4_f',p:[qs(Q.of(k)),qs(Q.of(2*k-5))]}},
+  {id:'m5',f:['k'],sim:()=>loadG([O('*',3),O('+',2)],[1,2,3,4]),ok:()=>({k:'m5_ok'}),
+   chk:([k])=>!isI(k,-20,20)?RNG:k===3?null:{k:'m5_f',p:[qs(Q.of(k))]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[{l:'s1.l'}],sim:()=>loadB([O('*',3),O('+',2)],1),
+   cx:([k])=>!isI(k,1,9)?RNG:k===1?{k:'s1_cx_no'}:null,cxsim:([k])=>loadB([O('+',2),O('*',k)],1)},
+  {id:'s2',ans:'D',f:['x'],sim:()=>loadB([O('^')],-3),
+   cx:([x])=>x===0?null:{k:'s2_cx_no',p:[qs(Q.of(x)).indexOf('−')===0?'('+qs(Q.of(x))+')':qs(Q.of(x)),out([O('^')],x)]},cxsim:([x])=>loadB([O('^')],x)},
+  {id:'s3',ans:'D',f:['x'],sim:()=>loadB([O('*',2)],-3),
+   cx:([x])=>x<=0?null:{k:'s3_cx_no',p:[qs(Q.of(x)),out([O('*',2)],x)]},cxsim:([x])=>loadB([O('*',2)],x)},
+  {id:'s4',ans:'S',sim:()=>loadB([O('*',3)],-2)},
+  {id:'s5',ans:'D',f:['a'],sim:()=>loadB([O('^')],-3),
+   cx:([a])=>a===0?{k:'s5_cx_no'}:null,cxsim:null},
+  {id:'s6',ans:'M',sim:()=>loadB([O('*',2),O('+',3)],1)}
+ ],
+ E:[
+  {id:'e1',who:0,sim:()=>loadB([O('^'),O('*',3)],2)},
+  {id:'e2',who:0,sim:()=>loadB([O('^'),O('*',2),O('-',1)],-3)},
+  {id:'e3',who:1,sim:()=>loadB([O('+',4),O('*',2)],1)},
+  {id:'e4',who:1,sim:()=>loadG([O('*',2),O('+',1)],[1,2,3])},
+  {id:'e5',who:2,sim:()=>loadB([O('*',3),O('-',5)],4)}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'km'}],sim:()=>loadB([O('*',1.5),O('+',3)],8),ok:()=>({k:'d1_ok'}),
+   chk:([x])=>x!==8?{k:'d1_n'}:null},
+  {id:'d2',chips:{vals:[1,2,3],fmt:x=>t('d2.c'+x)},sim:()=>loadB([O('*',2),O('+',10)],4),ok:()=>({k:'d2_ok'}),
+   chk:([p])=>p===2?null:{k:'d2_n'}},
+  {id:'d3',f:[{l:'d3.l0',u:'°F'}],sim:()=>loadB([O('*',1.8),O('+',32)],35),ok:()=>({k:'d3_ok'}),
+   chk:([x])=>x!==95?{k:'d3_n'}:null}
+ ]
+});
+initQuiz([]);
+render();
+initLang();applyLang();
+</script>
+</body>
+</html>

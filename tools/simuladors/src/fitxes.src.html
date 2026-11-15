@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fitxes algebraiques: monomis i binomis amb àrees</title>
+<meta name="description" content="Fitxes algebraiques per a 2n d'ESO: x², x i 1 com a peces. Suma i resta monomis ajuntant termes semblants i anul·lant parelles zero, i multiplica monomis i binomis omplint un rectangle (model d'àrea). Amb activitats per a raonar.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+#svg{display:block;width:100%;height:auto}
+#svg .tile{transition:transform .55s ease,opacity .45s ease}
+#svg .tile rect{stroke:var(--ink);stroke-width:1.3;transition:fill .5s ease}
+#svg .tile.pos rect,#svg .cell.pos rect{fill:var(--pa)}
+#svg .tile.neg rect,#svg .cell.neg rect{fill:var(--pb)}
+#svg .tile.hl rect{stroke:var(--ok);stroke-width:3.5;stroke-dasharray:5 3}
+#svg .tile.gone{opacity:0}
+#svg .tile.new{animation:fadein .45s ease both}
+#svg text.tl{fill:var(--panel);font-family:var(--f-num);font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+#svg .frame{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:6 4}
+#svg .flbl,#svg .zlbl{fill:var(--muted);font:600 14px var(--f-num)}
+#svg .zlbl{text-anchor:middle}
+#svg .cell rect{stroke:var(--ink);stroke-width:1.2}
+#svg .cell.anim{animation:pop .4s ease both;transform-box:fill-box;transform-origin:center}
+#svg .slot{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4}
+#svg .outline{fill:none;stroke:var(--ink);stroke-width:2.5}
+#svg .seg rect{stroke:var(--ink);stroke-width:1.2}
+#svg .seg.pos rect{fill:var(--pa)}
+#svg .seg.neg rect{fill:var(--pb)}
+#svg .times{fill:var(--muted);font:700 20px var(--f-num);text-anchor:middle;dominant-baseline:central}
+@keyframes pop{from{opacity:0;transform:scale(.4)}}
+@keyframes fadein{from{opacity:0}}
+@media (prefers-reduced-motion: reduce){#svg .tile,#svg .tile rect{transition:none}#svg .cell.anim,#svg .tile.new{animation:none}}
+.eqbig{font:700 clamp(1.25rem,3vw,1.75rem)/1.25 var(--f-num);letter-spacing:-.01em;overflow-wrap:anywhere}
+.read{display:grid;gap:8px;font-size:15px}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:3px;font:500 14.5px/1.35 var(--f-num);overflow-wrap:anywhere}
+.steps li:not(:first-child)::before{content:"= ";color:var(--muted)}
+.steps li:last-child{font-weight:700;color:var(--ink)}
+#msg{display:grid;gap:4px}
+#msg .ok{color:var(--ok);font-weight:700;margin:0}
+#msg .tip{color:var(--ink);margin:0;font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn.tl{font-family:var(--f-num);min-width:52px;font-weight:700}
+.btn.tl.p{border-color:var(--pa);color:var(--pa)}
+.btn.tl.n{border-color:var(--pb);color:var(--pb)}
+.sub{margin:4px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fac{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font:600 15px var(--f-num)}
+.fac .nm{font:600 13px var(--f-body);color:var(--muted);min-width:7.5em}
+.stp{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
+.stp button{font:700 15px var(--f-num);border:0;background:var(--chip);color:var(--ink);width:30px;height:30px;cursor:pointer}
+.stp button:disabled{opacity:.4;cursor:default}
+.stp output{min-width:2.2em;text-align:center;font:700 15px var(--f-num)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--ink)}
+.legend .lp{background:var(--pa)}.legend .ln{background:var(--pb)}
+.ptab{border-collapse:collapse;font:600 14px var(--f-num);margin:2px 0}
+.ptab td,.ptab th{border:1px solid var(--line);padding:4px 8px;text-align:center}
+.ptab th{color:var(--muted);background:var(--chip);font-weight:600}
+.chips .chip{font-family:var(--f-num)}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.toolbar .sub{margin:0}
+#msg p{margin:0}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="seg tabs" id="modes" role="group" data-i18n-aria="aria.mode" aria-label="">
+<button type="button" data-m="add" aria-pressed="true" data-i18n="m_add"></button>
+<button type="button" data-m="mul" aria-pressed="false" data-i18n="m_mul"></button>
+</div>
+<div class="toolbar"><span class="sub" id="preLbl"></span><div class="chips" id="preA"></div><div class="chips" id="preM" hidden></div></div>
+<div class="simgrid">
+<div class="simcv">
+<div class="stage"><svg id="svg" viewBox="0 0 640 380" role="img" data-i18n-aria="aria.svg" aria-label=""><g id="gAdd"><g id="deco"></g><g id="tilesG"></g></g><g id="gMul"></g></svg></div>
+<p class="note" data-i18n="xs_note"></p>
+</div>
+<div class="side">
+<div class="read">
+<div class="eqbig" id="eq"></div>
+<ol class="steps" id="steps"></ol>
+<div id="ptab"></div>
+</div>
+<div id="fsAdd">
+<div class="btns" id="stepBtns">
+<button class="btn" type="button" id="bFlip" data-i18n="b_flip"></button>
+<button class="btn" type="button" id="bGroup" data-i18n="b_group"></button>
+<button class="btn" type="button" id="bCancel" data-i18n="b_cancel"></button>
+<button class="btn" type="button" id="bReset" data-i18n="b_reset"></button>
+</div>
+<div id="freeBox">
+<p class="sub" data-i18n="g_add"></p>
+<div class="btns">
+<button class="btn tl p" type="button" data-add="2,1">+x²</button>
+<button class="btn tl p" type="button" data-add="1,1">+x</button>
+<button class="btn tl p" type="button" data-add="0,1">+1</button>
+<button class="btn tl n" type="button" data-add="2,-1">−x²</button>
+<button class="btn tl n" type="button" data-add="1,-1">−x</button>
+<button class="btn tl n" type="button" data-add="0,-1">−1</button>
+</div>
+</div>
+</div>
+<div id="fsMul" hidden>
+<div class="fac"><span class="nm" data-i18n="f_top"></span><span class="stp" data-k="a"><button type="button" data-d="-1">−</button><output></output><button type="button" data-d="1">+</button></span>x +<span class="stp" data-k="b"><button type="button" data-d="-1">−</button><output></output><button type="button" data-d="1">+</button></span></div>
+<div class="fac"><span class="nm" data-i18n="f_side"></span><span class="stp" data-k="c"><button type="button" data-d="-1">−</button><output></output><button type="button" data-d="1">+</button></span>x +<span class="stp" data-k="d"><button type="button" data-d="-1">−</button><output></output><button type="button" data-d="1">+</button></span></div>
+<div class="btns"><button class="btn primary" type="button" id="bFill"></button></div>
+</div>
+<div id="msg" aria-live="polite"></div>
+<p class="note" id="val"></p>
+<div id="slhost"></div>
+<div class="legend"><span><i class="lp"></i><span data-i18n="lg_pos"></span></span><span><i class="ln"></i><span data-i18n="lg_neg"></span></span></div>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Fitxes algebraiques: monomis i binomis amb àrees",
+"eyebrow":"Matemàtiques · 2n ESO · Àlgebra",
+"h1":"Fitxes algebraiques",
+"lede":"x², x i 1 com a peces: sumar és ajuntar peces iguals i multiplicar és omplir un rectangle.",
+"sim_title":"Monomis i binomis amb peces",
+"story":"La fitxa <b>1</b> és un quadrat d'1 × 1, la fitxa <b>x</b> és una tira d'1 × x i la fitxa <b>x²</b> és un quadrat de x × x. Les <b>blaves</b> sumen i les <b>taronges</b> resten. Una blava i una taronja de la mateixa forma fan <b>zero</b>.",
+"aria.svg":"Tauler amb fitxes algebraiques","aria.mode":"Operació",
+"m_add":"Sumar i restar","m_mul":"Multiplicar (àrea)",
+"xs_l":"Longitud de la x (en unitats)",
+"xs_note":"La x és una longitud qualsevol: mou el lliscador i mira que el resultat val per a totes. Només per a valors concrets una tira x mesura un nombre exacte d'unitats.",
+"lg_pos":"positiva (+)","lg_neg":"negativa (−)",
+"g_expr":"Expressió","g_add":"Afig fitxes","g_mul":"Factors del rectangle",
+"free":"Lliure",
+"b_flip":"1. Canvia els signes de −( )","b_group":"2. Ajunta les semblants","b_cancel":"3. Anul·la els zeros","b_reset":"Torna a començar",
+"f_top":"Factor de dalt","f_side":"Factor del costat",
+"b_fill":"Omple el rectangle","b_empty":"Buida el rectangle",
+"msg_empty":"Afig fitxes amb els botons o tria una expressió.",
+"msg_flip":"Davant del segon parèntesi hi ha un signe menys: primer canvia el signe de <b>totes</b> les seues fitxes.",
+"msg_group":"Ara ajunta les fitxes de la mateixa forma: són els <b>termes semblants</b>.",
+"msg_cancel":"Cada fitxa blava amb una taronja de la mateixa forma fa zero: anul·la les parelles.",
+"msg_done":"Ja no es pot reduir més: <b>{0}</b>. Les fitxes x², x i 1 queden separades perquè tenen formes diferents.",
+"val":"Valor numèric amb x = {0}: {1}. Cada pas canvia l'aspecte de l'expressió, però no el seu valor.",
+"msg_pred":"Abans d'omplir-lo: quantes fitxes x², x i 1 caben al rectangle? I de quin color seran?",
+"msg_mdone":"Cada fitxa del rectangle és el producte d'una peça de dalt per una del costat. Les tires x s'ajunten perquè són termes semblants.",
+"msg_sign":"Regla dels signes: blava · taronja = taronja (+ · − = −) i taronja · taronja = blava (− · − = +).",
+"valm":"Amb x = {0}: {1} · {2} = {3}, el mateix que val el resultat.",
+"rng":"Escriu un nombre enter dins del rang.",
+"f_n":"□ =","f_g":"n =","f_x":"x =","f_a":"a =","f_b":"b =",
+"m1.q":"Quin nombre va en el requadre perquè <b>(2x + 3) + (□x − 1) = 5x + 2</b>?",
+"m1_f":"Amb □ = {0}: 2x + {0}x = {1}x, i el resultat seria {2}.",
+"m1_ok":"✔ Missió complida! 2x + 3x = 5x i 3 − 1 = 2.",
+"m1.more":"I si volguérem que el resultat fóra 2 a seques, sense cap x? Quant hauria de valdre el requadre?",
+"m2.q":"Quin nombre va en el requadre perquè <b>2x · □x = 6x²</b>?",
+"m2_f":"Amb □ = {0}: 2x · {0}x = {1}x². Al rectangle hi hauria {2} fitxes x².",
+"m2_ok":"✔ Missió complida! Un rectangle de 2x per 3x conté 2 · 3 = 6 fitxes x².",
+"m2.more":"Per què el resultat és 6x² i no 6x? Mira la forma de les fitxes que omplin el rectangle.",
+"m3.q":"Quin nombre va en el requadre perquè <b>2x(x + □) = 2x² + 8x</b>?",
+"m3_f":"Amb □ = {0}: 2x(x + {0}) = {1}. Compta les tires x del rectangle.",
+"m3_ok":"✔ Missió complida! 2x · x = 2x² i 2x · 4 = 8x.",
+"m3.more":"Fes-ho al revés: com escriuries 3x² + 6x com un producte 3x(…)?",
+"m4.q":"Quin nombre va en el requadre perquè <b>(x + 2)(x + □) = x² + 5x + 6</b>?",
+"m4_f":"Amb □ = {0}: (x + 2)(x + {0}) = {1}.",
+"m4_ok":"✔ Missió complida! Les tires x fan 2x + 3x = 5x, i les unitats 2 · 3 = 6.",
+"m4.more":"Busca dos nombres que sumen 7 i multiplicats donen 12. Quin producte de binomis dona x² + 7x + 12?",
+"m5.q":"Quin nombre va en el requadre perquè <b>(4x + 1) − (□x − 3) = x + 4</b>?",
+"m5_f":"Amb □ = {0}: 4x − {0}x = {1}, i el resultat seria {2}.",
+"m5_ok":"✔ Missió complida! (4x + 1) − (3x − 3) = 4x + 1 − 3x + 3 = x + 4.",
+"m5.more":"D'on ix el +4? Per què el −3 del parèntesi s'ha convertit en +3?",
+"s1.q":"«Si sumes dos monomis, sempre obtens un monomi.»",
+"s1.h":"Prova a ajuntar una fitxa x amb una x².",
+"s1.e":"De vegades: dos monomis semblants es poden ajuntar (2x + 3x = 5x), però si no són semblants el resultat té dos termes (2x + x² no es pot reduir).",
+"s1.l":"Prova 2x + xⁿ. Exponent",
+"s1_cx_no":"2x + x = 3x, que sí és un monomi. Prova un altre exponent.",
+"s2.q":"«x + x i x² valen el mateix.»",
+"s2.h":"Posa la longitud de x a 2 i després a 3, i compara l'àrea de dues tires amb la del quadrat.",
+"s2.e":"De vegades: només per a x = 0 i x = 2 (prova la longitud x = 2: dues tires omplin el quadrat). Com a expressions no són iguals: x + x = 2x.",
+"s2_cx_no":"Amb x = {0}: x + x = {1} i x² = {1}. Valen el mateix! Busca un altre valor.",
+"s3.q":"«Si multipliques dos monomis, sempre obtens un monomi.»",
+"s3.h":"Omple un rectangle de 2x per 3x: quantes formes de fitxa hi apareixen?",
+"s3.e":"Sempre: es multipliquen els coeficients i se sumen els exponents, i queda un sol terme (2x · 3x = 6x²).",
+"s4.q":"«(x + a)(x + b), una vegada reduït, sempre té tres termes.»",
+"s4.h":"Prova amb un a positiu i un b negatiu. O amb un zero.",
+"s4.e":"De vegades: normalment ix x² + (a + b)x + a·b, però si a + b = 0 les tires x s'anul·len, (x + 2)(x − 2) = x² − 4, i si a o b val 0 falta el terme sense x.",
+"s4_cx_no":"(x {0})(x {1}) = {2}: té tres termes. Busca uns altres a i b.",
+"s5.q":"«2x · 3x = 6x»",
+"s5.h":"Omple el rectangle de 2x per 3x i mira la forma de les fitxes.",
+"s5.e":"Mai: el rectangle té costats que mesuren x tots dos, així que les fitxes són x². 2x · 3x = 6x².",
+"s6.q":"«−(x − 3) = −x − 3»",
+"s6.h":"El signe menys canvia el signe de totes les fitxes del parèntesi, també el de les taronges.",
+"s6.e":"Mai: −(x − 3) = −x + 3. Les tres fitxes taronges −1 passen a ser blaves +1.",
+"e1.ctx":"Reduïx <b>3x + 2x²</b>.",
+"e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"3x + 2x² = 5x³.",
+"e1.s1":"No es pot reduir més: 2x² + 3x.",
+"e1.w0":"Les fitxes x² i x tenen formes diferents: no es poden ajuntar en una de sola.",
+"e1.w1":"Perquè 3 + 2 no és 5.",
+"e1.w2":"Perquè només es poden sumar monomis que tenen el mateix coeficient.",
+"e1.frame":"Ana, 3x + 2x² no és 5x³ perquè…",
+"e1.model":"Ana, 3x són tres tires i 2x² són dos quadrats grans: són peces de formes diferents, i per molt que les ajuntes no formen cap peça nova. Només s'ajunten els termes semblants. Per això 3x + 2x² ja està reduït (o, ordenat, 2x² + 3x).",
+"e2.ctx":"Multiplica <b>2x(x + 3)</b>.",
+"e2.n0":"Carla","e2.n1":"Dani",
+"e2.s0":"2x · x = 2x² i em queda 2x² + 3.",
+"e2.s1":"2x · x + 2x · 3 = 2x² + 6x.",
+"e2.w0":"El 2x multiplica els dos termes del parèntesi: el rectangle té dues zones, 2x · x i 2x · 3.",
+"e2.w1":"Perquè 2x² + 3 té massa termes.",
+"e2.w2":"Perquè 2 + 3 = 5.",
+"e2.frame":"Carla, el 3 també s'ha de multiplicar perquè…",
+"e2.model":"Carla, el rectangle té de costat 2x i a dalt x + 3. La part de x · 2x dona 2x², però també hi ha la part de 3 · 2x, que són sis tires x. Si no la multipliques, et deixes mig rectangle: 2x(x + 3) = 2x² + 6x.",
+"e3.ctx":"Calcula <b>(5x − 2) − (3x − 4)</b>.",
+"e3.n0":"Eva","e3.n1":"Pau",
+"e3.s0":"5x − 3x = 2x i −2 − 4 = −6: 2x − 6.",
+"e3.s1":"5x − 2 − 3x + 4 = 2x + 2.",
+"e3.w0":"El signe menys canvia el signe de totes les fitxes del segon parèntesi: −(3x − 4) = −3x + 4.",
+"e3.w1":"Perquè les unitats sempre s'han de sumar.",
+"e3.w2":"Perquè 5 − 3 = 2.",
+"e3.frame":"Eva, −(3x − 4) no és −3x − 4 perquè…",
+"e3.model":"Eva, el signe menys de davant del parèntesi afecta totes les fitxes de dins: les tres tires x passen a ser −3x i les quatre unitats taronges −4 passen a ser +4. Queda 5x − 2 − 3x + 4 = 2x + 2.",
+"e4.ctx":"Multiplica <b>(x + 3)(x + 2)</b>.",
+"e4.n0":"Marta","e4.n1":"Joan",
+"e4.s0":"x · x = x² i 3 · 2 = 6: x² + 6.",
+"e4.s1":"x² + 2x + 3x + 6 = x² + 5x + 6.",
+"e4.w0":"Al rectangle també hi ha dues zones de tires x: x · 2 i 3 · x, que fan 5x.",
+"e4.w1":"Perquè x² + 6 no té cap x.",
+"e4.w2":"Perquè 3 + 2 = 5.",
+"e4.frame":"Marta, a x² + 6 li falta alguna cosa perquè…",
+"e4.model":"Marta, has multiplicat el primer pel primer i l'últim per l'últim, però el rectangle té quatre zones: x², dues tires x a una banda, tres a l'altra i sis unitats. Les cinc tires són el 5x que falta: (x + 3)(x + 2) = x² + 5x + 6.",
+"e5.ctx":"Reduïx <b>2x + 3x</b>.",
+"e5.n0":"Laia","e5.n1":"Nil",
+"e5.s0":"2x + 3x = 5x².",
+"e5.s1":"2x + 3x = 6x.",
+"e5.w0":"Es sumen els coeficients i la part literal no canvia: dues tires més tres tires són cinc tires, 5x.",
+"e5.w1":"Perquè 2 · 3 = 6 i s'han de multiplicar.",
+"e5.w2":"Perquè la x també s'ha de sumar: x + x = x².",
+"e5.frame":"Laia i Nil, 2x + 3x no és 5x² ni 6x perquè…",
+"e5.model":"Laia i Nil, ajuntar dues tires x amb tres tires x dona cinc tires x, no cap quadrat x². Sumar no canvia la forma de les peces, i tampoc es multiplica res. 2x + 3x = 5x.",
+"d1.q":"Hi ha dues parcel·les. La <b>A</b> és un rectangle de costats x i x + 5. La <b>B</b> és un quadrat de costat x + 2. Si <b>x = 4 m</b>, quina té més superfície?",
+"d1.lc":"Té més superfície:",
+"d1.c1":"A","d1.c2":"B","d1.c3":"Igual",
+"d1_n":"Calcula-les: A = 4 · 9 i B = 6 · 6.",
+"d1_ok":"✔ Ben decidit! A = 4 · 9 = 36 m² i B = 6 · 6 = 36 m²: fan el mateix.",
+"d1.more":"I si x = 10? Compara x² + 5x amb x² + 4x + 4: en què es diferencien les dues expressions?",
+"d2.q":"Una foto quadrada de <b>x cm</b> de costat té un marc de 2 cm per cada banda, així que tot plegat és un quadrat de costat <b>x + 4</b>. Si x = 10, quina superfície ocupa <b>només el marc</b>?",
+"d2.l0":"Marc",
+"d2_n":"Àrea total (x + 4)² menys l'àrea de la foto x².",
+"d2_ok":"✔ Ben decidit! 14 · 14 − 10 · 10 = 196 − 100 = 96 cm². En general, (x + 4)² − x² = 8x + 16.",
+"d2.more":"Per què l'àrea del marc, 8x + 16, no té cap terme x²? Mira-ho al rectangle.",
+"d3.q":"Un camp rectangular fa <b>3x + 2</b> metres de llarg i <b>x − 1</b> metres d'ample. Si x = 5, quants metres de tanca calen per a envoltar-lo?",
+"d3.l0":"Tanca",
+"d3_n":"El perímetre és (3x + 2) + (x − 1) + (3x + 2) + (x − 1).",
+"d3_ok":"✔ Ben decidit! El perímetre és 8x + 2, i amb x = 5 fa 42 m.",
+"d3.more":"Al simulador ix 4x + 1, que és mig perímetre. Per què el perímetre és 2(4x + 1) = 8x + 2?",
+"idea":"<b>Per a la classe:</b> abans d'agrupar, demana quantes fitxes quedaran de cada forma. I abans d'omplir el rectangle, que dibuixen quines peces hi cabran. Si algú diu que 3x + 2x² = 5x³, que intente ajuntar les fitxes: no encaixen."
+},
+es:{
+"title":"Fichas algebraicas: monomios y binomios con áreas",
+"eyebrow":"Matemáticas · 2.º ESO · Álgebra",
+"h1":"Fichas algebraicas",
+"lede":"x², x y 1 como piezas: sumar es juntar piezas iguales y multiplicar es llenar un rectángulo.",
+"sim_title":"Monomios y binomios con piezas",
+"story":"La ficha <b>1</b> es un cuadrado de 1 × 1, la ficha <b>x</b> es una tira de 1 × x y la ficha <b>x²</b> es un cuadrado de x × x. Las <b>azules</b> suman y las <b>naranjas</b> restan. Una azul y una naranja de la misma forma hacen <b>cero</b>.",
+"aria.svg":"Tablero con fichas algebraicas","aria.mode":"Operación",
+"m_add":"Sumar y restar","m_mul":"Multiplicar (área)",
+"xs_l":"Longitud de la x (en unidades)",
+"xs_note":"La x es una longitud cualquiera: mueve el deslizador y mira que el resultado vale para todas. Solo para valores concretos una tira x mide un número exacto de unidades.",
+"lg_pos":"positiva (+)","lg_neg":"negativa (−)",
+"g_expr":"Expresión","g_add":"Añade fichas","g_mul":"Factores del rectángulo",
+"free":"Libre",
+"b_flip":"1. Cambia los signos de −( )","b_group":"2. Junta las semejantes","b_cancel":"3. Anula los ceros","b_reset":"Volver a empezar",
+"f_top":"Factor de arriba","f_side":"Factor del lado",
+"b_fill":"Llena el rectángulo","b_empty":"Vacía el rectángulo",
+"msg_empty":"Añade fichas con los botones o elige una expresión.",
+"msg_flip":"Delante del segundo paréntesis hay un signo menos: primero cambia el signo de <b>todas</b> sus fichas.",
+"msg_group":"Ahora junta las fichas de la misma forma: son los <b>términos semejantes</b>.",
+"msg_cancel":"Cada ficha azul con una naranja de la misma forma hace cero: anula las parejas.",
+"msg_done":"Ya no se puede reducir más: <b>{0}</b>. Las fichas x², x y 1 quedan separadas porque tienen formas distintas.",
+"val":"Valor numérico con x = {0}: {1}. Cada paso cambia el aspecto de la expresión, pero no su valor.",
+"msg_pred":"Antes de llenarlo: ¿cuántas fichas x², x y 1 caben en el rectángulo? ¿Y de qué color serán?",
+"msg_mdone":"Cada ficha del rectángulo es el producto de una pieza de arriba por una del lado. Las tiras x se juntan porque son términos semejantes.",
+"msg_sign":"Regla de los signos: azul · naranja = naranja (+ · − = −) y naranja · naranja = azul (− · − = +).",
+"valm":"Con x = {0}: {1} · {2} = {3}, lo mismo que vale el resultado.",
+"rng":"Escribe un número entero dentro del rango.",
+"f_n":"□ =","f_g":"n =","f_x":"x =","f_a":"a =","f_b":"b =",
+"m1.q":"¿Qué número va en el recuadro para que <b>(2x + 3) + (□x − 1) = 5x + 2</b>?",
+"m1_f":"Con □ = {0}: 2x + {0}x = {1}x, y el resultado sería {2}.",
+"m1_ok":"✔ ¡Misión cumplida! 2x + 3x = 5x y 3 − 1 = 2.",
+"m1.more":"¿Y si quisiéramos que el resultado fuera 2 a secas, sin ninguna x? ¿Cuánto tendría que valer el recuadro?",
+"m2.q":"¿Qué número va en el recuadro para que <b>2x · □x = 6x²</b>?",
+"m2_f":"Con □ = {0}: 2x · {0}x = {1}x². En el rectángulo habría {2} fichas x².",
+"m2_ok":"✔ ¡Misión cumplida! Un rectángulo de 2x por 3x contiene 2 · 3 = 6 fichas x².",
+"m2.more":"¿Por qué el resultado es 6x² y no 6x? Mira la forma de las fichas que llenan el rectángulo.",
+"m3.q":"¿Qué número va en el recuadro para que <b>2x(x + □) = 2x² + 8x</b>?",
+"m3_f":"Con □ = {0}: 2x(x + {0}) = {1}. Cuenta las tiras x del rectángulo.",
+"m3_ok":"✔ ¡Misión cumplida! 2x · x = 2x² y 2x · 4 = 8x.",
+"m3.more":"Hazlo al revés: ¿cómo escribirías 3x² + 6x como un producto 3x(…)?",
+"m4.q":"¿Qué número va en el recuadro para que <b>(x + 2)(x + □) = x² + 5x + 6</b>?",
+"m4_f":"Con □ = {0}: (x + 2)(x + {0}) = {1}.",
+"m4_ok":"✔ ¡Misión cumplida! Las tiras x hacen 2x + 3x = 5x, y las unidades 2 · 3 = 6.",
+"m4.more":"Busca dos números que sumen 7 y multiplicados den 12. ¿Qué producto de binomios da x² + 7x + 12?",
+"m5.q":"¿Qué número va en el recuadro para que <b>(4x + 1) − (□x − 3) = x + 4</b>?",
+"m5_f":"Con □ = {0}: 4x − {0}x = {1}, y el resultado sería {2}.",
+"m5_ok":"✔ ¡Misión cumplida! (4x + 1) − (3x − 3) = 4x + 1 − 3x + 3 = x + 4.",
+"m5.more":"¿De dónde sale el +4? ¿Por qué el −3 del paréntesis se ha convertido en +3?",
+"s1.q":"«Si sumas dos monomios, siempre obtienes un monomio.»",
+"s1.h":"Prueba a juntar una ficha x con una x².",
+"s1.e":"A veces: dos monomios semejantes se pueden juntar (2x + 3x = 5x), pero si no son semejantes el resultado tiene dos términos (2x + x² no se puede reducir).",
+"s1.l":"Prueba 2x + xⁿ. Exponente",
+"s1_cx_no":"2x + x = 3x, que sí es un monomio. Prueba otro exponente.",
+"s2.q":"«x + x y x² valen lo mismo.»",
+"s2.h":"Pon la longitud de x en 2 y después en 3, y compara el área de dos tiras con la del cuadrado.",
+"s2.e":"A veces: solo para x = 0 y x = 2 (prueba la longitud x = 2: dos tiras llenan el cuadrado). Como expresiones no son iguales: x + x = 2x.",
+"s2_cx_no":"Con x = {0}: x + x = {1} y x² = {1}. ¡Valen lo mismo! Busca otro valor.",
+"s3.q":"«Si multiplicas dos monomios, siempre obtienes un monomio.»",
+"s3.h":"Llena un rectángulo de 2x por 3x: ¿cuántas formas de ficha aparecen?",
+"s3.e":"Siempre: se multiplican los coeficientes y se suman los exponentes, y queda un solo término (2x · 3x = 6x²).",
+"s4.q":"«(x + a)(x + b), una vez reducido, siempre tiene tres términos.»",
+"s4.h":"Prueba con un a positivo y un b negativo. O con un cero.",
+"s4.e":"A veces: normalmente sale x² + (a + b)x + a·b, pero si a + b = 0 las tiras x se anulan, (x + 2)(x − 2) = x² − 4, y si a o b vale 0 falta el término sin x.",
+"s4_cx_no":"(x {0})(x {1}) = {2}: tiene tres términos. Busca otros a y b.",
+"s5.q":"«2x · 3x = 6x»",
+"s5.h":"Llena el rectángulo de 2x por 3x y mira la forma de las fichas.",
+"s5.e":"Nunca: los dos lados del rectángulo miden x, así que las fichas son x². 2x · 3x = 6x².",
+"s6.q":"«−(x − 3) = −x − 3»",
+"s6.h":"El signo menos cambia el signo de todas las fichas del paréntesis, también el de las naranjas.",
+"s6.e":"Nunca: −(x − 3) = −x + 3. Las tres fichas naranjas −1 pasan a ser azules +1.",
+"e1.ctx":"Reduce <b>3x + 2x²</b>.",
+"e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"3x + 2x² = 5x³.",
+"e1.s1":"No se puede reducir más: 2x² + 3x.",
+"e1.w0":"Las fichas x² y x tienen formas distintas: no se pueden juntar en una sola.",
+"e1.w1":"Porque 3 + 2 no es 5.",
+"e1.w2":"Porque solo se pueden sumar monomios que tienen el mismo coeficiente.",
+"e1.frame":"Ana, 3x + 2x² no es 5x³ porque…",
+"e1.model":"Ana, 3x son tres tiras y 2x² son dos cuadrados grandes: son piezas de formas distintas, y por mucho que las juntes no forman ninguna pieza nueva. Solo se juntan los términos semejantes. Por eso 3x + 2x² ya está reducido (u, ordenado, 2x² + 3x).",
+"e2.ctx":"Multiplica <b>2x(x + 3)</b>.",
+"e2.n0":"Carla","e2.n1":"Dani",
+"e2.s0":"2x · x = 2x² y me queda 2x² + 3.",
+"e2.s1":"2x · x + 2x · 3 = 2x² + 6x.",
+"e2.w0":"El 2x multiplica los dos términos del paréntesis: el rectángulo tiene dos zonas, 2x · x y 2x · 3.",
+"e2.w1":"Porque 2x² + 3 tiene demasiados términos.",
+"e2.w2":"Porque 2 + 3 = 5.",
+"e2.frame":"Carla, el 3 también se tiene que multiplicar porque…",
+"e2.model":"Carla, el rectángulo tiene de lado 2x y arriba x + 3. La parte de x · 2x da 2x², pero también está la parte de 3 · 2x, que son seis tiras x. Si no la multiplicas, te dejas medio rectángulo: 2x(x + 3) = 2x² + 6x.",
+"e3.ctx":"Calcula <b>(5x − 2) − (3x − 4)</b>.",
+"e3.n0":"Eva","e3.n1":"Pau",
+"e3.s0":"5x − 3x = 2x y −2 − 4 = −6: 2x − 6.",
+"e3.s1":"5x − 2 − 3x + 4 = 2x + 2.",
+"e3.w0":"El signo menos cambia el signo de todas las fichas del segundo paréntesis: −(3x − 4) = −3x + 4.",
+"e3.w1":"Porque las unidades siempre se tienen que sumar.",
+"e3.w2":"Porque 5 − 3 = 2.",
+"e3.frame":"Eva, −(3x − 4) no es −3x − 4 porque…",
+"e3.model":"Eva, el signo menos de delante del paréntesis afecta a todas las fichas de dentro: las tres tiras x pasan a ser −3x y las cuatro unidades naranjas −4 pasan a ser +4. Queda 5x − 2 − 3x + 4 = 2x + 2.",
+"e4.ctx":"Multiplica <b>(x + 3)(x + 2)</b>.",
+"e4.n0":"Marta","e4.n1":"Joan",
+"e4.s0":"x · x = x² y 3 · 2 = 6: x² + 6.",
+"e4.s1":"x² + 2x + 3x + 6 = x² + 5x + 6.",
+"e4.w0":"En el rectángulo también hay dos zonas de tiras x: x · 2 y 3 · x, que hacen 5x.",
+"e4.w1":"Porque x² + 6 no tiene ninguna x.",
+"e4.w2":"Porque 3 + 2 = 5.",
+"e4.frame":"Marta, a x² + 6 le falta algo porque…",
+"e4.model":"Marta, has multiplicado el primero por el primero y el último por el último, pero el rectángulo tiene cuatro zonas: x², dos tiras x a un lado, tres al otro y seis unidades. Las cinco tiras son el 5x que falta: (x + 3)(x + 2) = x² + 5x + 6.",
+"e5.ctx":"Reduce <b>2x + 3x</b>.",
+"e5.n0":"Laia","e5.n1":"Nil",
+"e5.s0":"2x + 3x = 5x².",
+"e5.s1":"2x + 3x = 6x.",
+"e5.w0":"Se suman los coeficientes y la parte literal no cambia: dos tiras más tres tiras son cinco tiras, 5x.",
+"e5.w1":"Porque 2 · 3 = 6 y se tienen que multiplicar.",
+"e5.w2":"Porque la x también se tiene que sumar: x + x = x².",
+"e5.frame":"Laia y Nil, 2x + 3x no es 5x² ni 6x porque…",
+"e5.model":"Laia y Nil, juntar dos tiras x con tres tiras x da cinco tiras x, no ningún cuadrado x². Sumar no cambia la forma de las piezas, y tampoco se multiplica nada. 2x + 3x = 5x.",
+"d1.q":"Hay dos parcelas. La <b>A</b> es un rectángulo de lados x y x + 5. La <b>B</b> es un cuadrado de lado x + 2. Si <b>x = 4 m</b>, ¿cuál tiene más superficie?",
+"d1.lc":"Tiene más superficie:",
+"d1.c1":"A","d1.c2":"B","d1.c3":"Igual",
+"d1_n":"Calcúlalas: A = 4 · 9 y B = 6 · 6.",
+"d1_ok":"✔ ¡Bien decidido! A = 4 · 9 = 36 m² y B = 6 · 6 = 36 m²: miden lo mismo.",
+"d1.more":"¿Y si x = 10? Compara x² + 5x con x² + 4x + 4: ¿en qué se diferencian las dos expresiones?",
+"d2.q":"Una foto cuadrada de <b>x cm</b> de lado tiene un marco de 2 cm por cada lado, así que todo junto es un cuadrado de lado <b>x + 4</b>. Si x = 10, ¿qué superficie ocupa <b>solo el marco</b>?",
+"d2.l0":"Marco",
+"d2_n":"Área total (x + 4)² menos el área de la foto x².",
+"d2_ok":"✔ ¡Bien decidido! 14 · 14 − 10 · 10 = 196 − 100 = 96 cm². En general, (x + 4)² − x² = 8x + 16.",
+"d2.more":"¿Por qué el área del marco, 8x + 16, no tiene ningún término x²? Míralo en el rectángulo.",
+"d3.q":"Un campo rectangular mide <b>3x + 2</b> metros de largo y <b>x − 1</b> metros de ancho. Si x = 5, ¿cuántos metros de valla hacen falta para rodearlo?",
+"d3.l0":"Valla",
+"d3_n":"El perímetro es (3x + 2) + (x − 1) + (3x + 2) + (x − 1).",
+"d3_ok":"✔ ¡Bien decidido! El perímetro es 8x + 2, y con x = 5 son 42 m.",
+"d3.more":"En el simulador sale 4x + 1, que es medio perímetro. ¿Por qué el perímetro es 2(4x + 1) = 8x + 2?",
+"idea":"<b>Para la clase:</b> antes de agrupar, pregunta cuántas fichas quedarán de cada forma. Y antes de llenar el rectángulo, que dibujen qué piezas cabrán. Si alguien dice que 3x + 2x² = 5x³, que intente juntar las fichas: no encajan."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Fitxes algebraiques ===== */
+const svg=$('#svg'),gAdd=$('#gAdd'),gMul=$('#gMul'),decoG=$('#deco'),tilesG=$('#tilesG');
+const eqEl=$('#eq'),stepsEl=$('#steps'),ptabEl=$('#ptab'),msg=$('#msg'),valEl=$('#val');
+const NS='http://www.w3.org/2000/svg';
+let MODE='add',XS=3.3,tok=0;
+const LIT=['','x','x²'];
+const fnum=v=>nf(v,2).replace('-','−');
+const term=(c,d)=>{const a=Math.abs(c);return (a===1&&d>0?'':String(a))+LIT[d];};
+function poly(p){const ts=[];for(let d=2;d>=0;d--)if(p[d])ts.push([p[d]<0,term(p[d],d)]);
+  if(!ts.length)return '0';return ts.map((q,i)=>i?(q[0]?' − ':' + ')+q[1]:(q[0]?'−':'')+q[1]).join('');}
+const pval=(p,x)=>p[0]+p[1]*x+p[2]*x*x;
+const neg=p=>p.map(c=>-c||0);
+const tw=d=>d===2?XS:1, th=d=>d===0?1:XS;
+const later=(f,ms)=>{const k=tok;if(REDUCE||!ms){f();return;}setTimeout(()=>{if(k===tok)f();},ms);};
+
+/* ---------- Sumar i restar ---------- */
+const PRE_A=[
+ {a:[2,3,0],op:'+',b:[-1,2,0]},
+ {a:[-3,1,2],op:'+',b:[1,-2,1]},
+ {a:[1,4,0],op:'−',b:[3,1,0]},
+ {a:[-2,3,1],op:'−',b:[-4,-1,2]},
+ {a:[0,3,2],op:null,b:null},
+ {a:[-3,2,0],op:'−',b:[-3,2,0]}
+];
+let A={tiles:[],pa:null,op:null,pb:null,flipped:false,grouped:false,log:[],pre:0,nid:0,busy:false};
+function tilesFrom(p,g){const r=[];for(let d=2;d>=0;d--)for(let i=0;i<Math.abs(p[d]);i++)r.push({id:++A.nid,d:d,s:Math.sign(p[d]),g:g});return r;}
+function wrapP(p){return '('+poly(p)+')';}
+function written(){
+  if(!A.pa) return A.tiles.length?A.tiles.map((x,i)=>(x.s<0?(i?' − ':'−'):(i?' + ':''))+(x.d?LIT[x.d]:'1')).join(''):'0';
+  if(!A.op) return poly(A.pa);
+  const z=A.pa.every(c=>!c);
+  return (z?'':wrapP(A.pa)+' ')+A.op+(z?'':' ')+wrapP(A.pb);
+}
+function flippedLine(){const z=A.pa.every(c=>!c);return z?poly(neg(A.pb)):wrapP(A.pa)+' + '+wrapP(neg(A.pb));}
+function groupedLine(){
+  const parts=[];
+  [2,1,0].forEach(d=>{
+    const cs=[];
+    [0,1].forEach(g=>[1,-1].forEach(s=>{const n=A.tiles.filter(x=>x.d===d&&x.g===g&&x.s===s).length;if(n)cs.push(s*n);}));
+    if(!cs.length)return;
+    if(cs.length===1)parts.push({neg:cs[0]<0,s:term(cs[0],d)});
+    else parts.push({neg:false,s:'('+cs.map((c,i)=>(c<0?(i?' − ':'−'):(i?' + ':''))+term(c,d)).join('')+')'});
+  });
+  if(!parts.length)return '0';
+  return parts.map((q,i)=>i?(q.neg?' − ':' + ')+q.s:(q.neg?'−':'')+q.s).join('');
+}
+function net(){const p=[0,0,0];A.tiles.forEach(x=>{p[x.d]+=x.s;});return p;}
+function value(){let v=0;A.tiles.forEach(x=>{const f=(A.op==='−'&&x.g===1&&!A.flipped)?-1:1;v+=f*x.s*Math.pow(XS,x.d);});return v;}
+function pairs(){const r=[];[2,1,0].forEach(d=>{const P=A.tiles.filter(x=>x.d===d&&x.s>0),N=A.tiles.filter(x=>x.d===d&&x.s<0);for(let i=0;i<Math.min(P.length,N.length);i++)r.push(P[i],N[i]);});return r;}
+const GAP=0.35;
+function layRaw(Wmax){
+  const pos={},frames=[];let y=1.1;
+  (A.op?[0,1]:[0]).forEach(g=>{
+    const ts=A.tiles.filter(x=>x.g===g);const y0=y;let x=0,rowH=0,maxW=0,yy=y0+0.4;
+    ts.forEach(t=>{const w=tw(t.d),h=th(t.d);if(x>0&&x+w>Wmax){yy+=rowH+GAP;x=0;rowH=0;}
+      pos[t.id]={x:x+0.4,y:yy,w:w,h:h};x+=w+GAP;rowH=Math.max(rowH,h);maxW=Math.max(maxW,x);});
+    const fh=(ts.length?yy+rowH:yy+1)-y0+0.4;
+    frames.push({x:0,y:y0,w:Math.max(maxW,2.5)+0.45,h:fh,g:g});
+    y=y0+fh+1.6;
+  });
+  return {pos:pos,frames:frames,H:y-0.5};
+}
+function layGroup(){
+  const pos={},zones=[];let x=0;const y0=0.4,yN=y0+XS+1.1;
+  [2,1,0].forEach(d=>{const P=A.tiles.filter(t=>t.d===d&&t.s>0),N=A.tiles.filter(t=>t.d===d&&t.s<0),n=Math.max(P.length,N.length);if(!n)return;
+    const w=tw(d);P.forEach((t,i)=>{pos[t.id]={x:x+i*(w+GAP),y:y0,w:w,h:th(d)};});N.forEach((t,i)=>{pos[t.id]={x:x+i*(w+GAP),y:yN,w:w,h:th(d)};});
+    const zw=n*(w+GAP)-GAP;zones.push({x:x,w:zw,d:d});x+=zw+1.4;});
+  return {pos:pos,zones:zones,W:Math.max(x-1.4,0),H:yN+XS+1.6};
+}
+function scaleAdd(){let k=40;for(let i=0;i<30;i++){const g=layGroup(),r=layRaw(600/k-1);if(g.W*k<=600&&g.H*k<=355&&r.H*k<=355)break;k*=0.93;}return k;}
+const tileEls=new Map();
+function drawAdd(){
+  const k=scaleAdd(),OX=20,OY=14,L=A.grouped?layGroup():layRaw(600/k-1);
+  let deco='';
+  if(!A.grouped){L.frames.forEach(f=>{
+    if(A.op)deco+='<rect class="frame" x="'+(OX+f.x*k-4).toFixed(1)+'" y="'+(OY+f.y*k).toFixed(1)+'" width="'+(f.w*k+8).toFixed(1)+'" height="'+(f.h*k).toFixed(1)+'" rx="8"/>';
+    let lb='';if(A.pa&&A.op){lb=f.g===0?(A.pa.every(c=>!c)?'':wrapP(A.pa)):(A.flipped?'+ '+wrapP(neg(A.pb)):A.op+' '+wrapP(A.pb));}
+    if(lb)deco+='<text class="flbl" x="'+(OX+f.x*k)+'" y="'+(OY+f.y*k-6).toFixed(1)+'">'+lb+'</text>';});}
+  else L.zones.forEach(z=>{deco+='<text class="zlbl" x="'+(OX+(z.x+z.w/2)*k).toFixed(1)+'" y="'+(OY+(L.H-0.3)*k).toFixed(1)+'">'+(z.d?LIT[z.d]:'1')+'</text>';});
+  decoG.innerHTML=deco;
+  const live=new Set(),fs=Math.max(9,Math.min(16,k*0.55));
+  A.tiles.forEach(t=>{live.add(t.id);const p=L.pos[t.id];if(!p)return;let el=tileEls.get(t.id),fresh=false;
+    if(!el){el=document.createElementNS(NS,'g');el.innerHTML='<rect></rect><text class="tl"></text>';tilesG.appendChild(el);tileEls.set(t.id,el);fresh=true;}
+    const w=p.w*k,h=p.h*k;
+    el.style.transform='translate('+(OX+p.x*k).toFixed(1)+'px,'+(OY+p.y*k).toFixed(1)+'px)';
+    const r=el.firstChild;r.setAttribute('width',w.toFixed(1));r.setAttribute('height',h.toFixed(1));r.setAttribute('rx',Math.min(5,k*0.18).toFixed(1));
+    el.setAttribute('class','tile '+(t.s>0?'pos':'neg')+(t.hl?' hl':'')+(t.gone?' gone':'')+(fresh?' new':''));
+    const tx=el.lastChild;tx.setAttribute('x',(w/2).toFixed(1));tx.setAttribute('y',(h/2).toFixed(1));tx.style.fontSize=(t.d===0?Math.min(fs,k*0.5):fs).toFixed(1)+'px';
+    tx.textContent=(t.s<0?'−':'')+(t.d?LIT[t.d]:'1');});
+  for(const [id,el] of tileEls)if(!live.has(id)){el.remove();tileEls.delete(id);}
+}
+function panelAdd(){
+  eqEl.textContent=A.log[0]||written();
+  const lines=A.log.length?A.log:[written()];
+  stepsEl.innerHTML=lines.slice(1).map(s=>'<li>'+s+'</li>').join('');
+  ptabEl.innerHTML='';
+  const free=!A.pa;
+  $('#freeBox').hidden=!free;
+  $('#bFlip').hidden=A.op!=='−';
+  $('#bFlip').disabled=A.busy||A.flipped;
+  $('#bGroup').disabled=A.busy||A.grouped||!A.tiles.length||(A.op==='−'&&!A.flipped);
+  $('#bCancel').disabled=A.busy||!A.grouped||!pairs().length;
+  let m;
+  if(!A.tiles.length)m='<p class="tip">'+t('msg_empty')+'</p>';
+  else if(A.op==='−'&&!A.flipped)m='<p class="tip">'+t('msg_flip')+'</p>';
+  else if(!A.grouped)m='<p class="tip">'+t('msg_group')+'</p>';
+  else if(pairs().length)m='<p class="tip">'+t('msg_cancel')+'</p>';
+  else m='<p class="ok">'+tt('msg_done',poly(net()))+'</p>';
+  msg.innerHTML=m;
+  valEl.textContent=A.tiles.length||A.pa?tt('val',nf(XS,1),fnum(value())):'';
+  $$('#preA .chip').forEach((c,i)=>c.setAttribute('aria-pressed',String(i===A.pre)));
+}
+function setPre(i){
+  tok++;A.pre=i;A.flipped=false;A.grouped=false;A.busy=false;
+  if(i<PRE_A.length){const P=PRE_A[i];A.pa=P.a.slice();A.op=P.op;A.pb=P.b?P.b.slice():null;A.tiles=tilesFrom(A.pa,0).concat(A.pb?tilesFrom(A.pb,1):[]);}
+  else{A.pa=null;A.op=null;A.pb=null;A.tiles=[];}
+  A.log=[written()];render();
+}
+function custom(pa,op,pb){tok++;A.pre=-1;A.flipped=false;A.grouped=false;A.busy=false;A.pa=pa.slice();A.op=op;A.pb=pb?pb.slice():null;
+  A.tiles=tilesFrom(A.pa,0).concat(A.pb?tilesFrom(A.pb,1):[]);A.log=[written()];}
+function doFlip(){if(A.op!=='−'||A.flipped)return;A.tiles.forEach(x=>{if(x.g===1)x.s=-x.s;});A.flipped=true;A.log.push(flippedLine());render();}
+function doGroup(){if(A.grouped||(A.op==='−'&&!A.flipped))return;A.log.push(groupedLine());A.grouped=true;render();}
+function doCancel(instant){
+  const ps=pairs();if(!A.grouped||!ps.length)return;
+  const fin=()=>{A.tiles=A.tiles.filter(x=>!x.gone);A.busy=false;A.log.push(poly(net()));render();};
+  if(instant||REDUCE){ps.forEach(x=>{x.gone=true;});fin();return;}
+  A.busy=true;ps.forEach(x=>{x.hl=true;});render();
+  later(()=>{ps.forEach(x=>{x.gone=true;});render();later(fin,480);},850);
+}
+function addTile(d,s){if(A.busy)return;if(A.pa)setPre(PRE_A.length);
+  A.tiles.push({id:++A.nid,d:d,s:s,g:0});A.grouped=false;A.log=[written()];render();}
+$('#bFlip').onclick=doFlip;$('#bGroup').onclick=doGroup;$('#bCancel').onclick=()=>doCancel(false);
+$('#bReset').onclick=()=>setPre(A.pre>=0?A.pre:PRE_A.length);
+$$('[data-add]').forEach(b=>b.addEventListener('click',()=>{const [d,s]=b.dataset.add.split(',').map(Number);addTile(d,s);}));
+
+/* ---------- Multiplicar ---------- */
+const PRE_M=[[0,3,1,2],[2,0,3,0],[2,0,1,3],[1,2,1,3],[1,3,1,-1],[1,2,1,2]];
+const LIM={a:3,b:4,c:3,d:4};
+let Mu={a:1,b:2,c:1,d:3,filled:false,anim:false,pre:3};
+const fac=(a,b)=>poly([b,a,0]);
+function prodStr(a,b,c,d){
+  const s1=fac(a,b),s2=fac(c,d),p1=!!(a&&b),p2=!!(c&&d);
+  if(p1&&p2&&a===c&&b===d)return '('+s1+')²';
+  const f1=p1?'('+s1+')':s1,f2=p2||s2[0]==='−'?'('+s2+')':s2;
+  return f1+(p2||f2[0]==='('?'':'·')+f2;
+}
+const mpoly=()=>[Mu.b*Mu.d,Mu.a*Mu.d+Mu.b*Mu.c,Mu.a*Mu.c];
+function segs(a,b){const r=[];for(let i=0;i<Math.abs(a);i++)r.push({d:1,s:Math.sign(a)});for(let i=0;i<Math.abs(b);i++)r.push({d:0,s:Math.sign(b)});return r;}
+function drawMul(){
+  const top=segs(Mu.a,Mu.b),side=segs(Mu.c,Mu.d);
+  const Wu=Math.abs(Mu.a)*XS+Math.abs(Mu.b),Hu=Math.abs(Mu.c)*XS+Math.abs(Mu.d);
+  const k=Math.min(44,580/(Wu+1.5),345/(Hu+1.5)),ox=24+1.35*k,oy=18+1.35*k;
+  let s='';
+  if(!top.length||!side.length){gMul.innerHTML='<text class="times" x="320" y="190">0</text>';return;}
+  const tl=(x,y,w,h,cls,lab,fs,extra)=>'<g class="'+cls+'"'+(extra||'')+'><rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="'+Math.min(4,k*0.15).toFixed(1)+'"/><text class="tl" x="'+(x+w/2).toFixed(1)+'" y="'+(y+h/2).toFixed(1)+'" style="font-size:'+fs.toFixed(1)+'px">'+lab+'</text></g>';
+  const fs=Math.max(9,Math.min(16,k*0.5));
+  let x=ox;top.forEach(q=>{const w=(q.d?XS:1)*k;s+=tl(x,oy-1.15*k,w,k,'seg '+(q.s>0?'pos':'neg'),(q.s<0?'−':'')+(q.d?'x':'1'),Math.min(fs,k*0.5));x+=w;});
+  let y=oy;side.forEach(q=>{const h=(q.d?XS:1)*k;s+=tl(ox-1.15*k,y,k,h,'seg '+(q.s>0?'pos':'neg'),(q.s<0?'−':'')+(q.d?'x':'1'),Math.min(fs,k*0.5));y+=h;});
+  s+='<text class="times" x="'+(ox-0.6*k).toFixed(1)+'" y="'+(oy-0.6*k).toFixed(1)+'">·</text>';
+  let idx=0;y=oy;
+  side.forEach(qj=>{const h=(qj.d?XS:1)*k;let x=ox;top.forEach(qi=>{const w=(qi.d?XS:1)*k,d=qi.d+qj.d,sg=qi.s*qj.s;
+    if(Mu.filled)s+=tl(x+1,y+1,w-2,h-2,'cell '+(sg>0?'pos':'neg')+(Mu.anim?' anim':''),(sg<0?'−':'')+(d?LIT[d]:'1'),d===0?Math.min(fs,k*0.45):fs,Mu.anim?' style="animation-delay:'+(idx*55)+'ms"':'');
+    else s+='<rect class="slot" x="'+(x+1).toFixed(1)+'" y="'+(y+1).toFixed(1)+'" width="'+(w-2).toFixed(1)+'" height="'+(h-2).toFixed(1)+'"/>';
+    idx++;x+=w;});y+=h;});
+  s+='<rect class="outline" x="'+ox.toFixed(1)+'" y="'+oy.toFixed(1)+'" width="'+(Wu*k).toFixed(1)+'" height="'+(Hu*k).toFixed(1)+'"/>';
+  gMul.innerHTML=s;Mu.anim=false;
+}
+function panelMul(){
+  const {a,b,c,d}=Mu,P=mpoly();
+  eqEl.textContent=prodStr(a,b,c,d);
+  const parts=[[a*c,2],[a*d,1],[b*c,1],[b*d,0]].filter(q=>q[0]);
+  const raw=parts.length?parts.map((q,i)=>(q[0]<0?(i?' − ':'−'):(i?' + ':''))+term(q[0],q[1])).join(''):'0';
+  const lines=[];if(Mu.filled){lines.push(raw);if(raw!==poly(P))lines.push(poly(P));}
+  stepsEl.innerHTML=lines.map(s=>'<li>'+s+'</li>').join('');
+  if(Mu.filled&&(a||b)&&(c||d)){
+    const cols=[],rows=[];if(a)cols.push([a,1]);if(b)cols.push([b,0]);if(c)rows.push([c,1]);if(d)rows.push([d,0]);
+    const tm=q=>q[0]<0?'−'+term(-q[0],q[1]):term(q[0],q[1]);
+    let h='<table class="ptab"><tr><th>·</th>'+cols.map(q=>'<th>'+tm(q)+'</th>').join('')+'</tr>';
+    rows.forEach(r=>{h+='<tr><th>'+tm(r)+'</th>'+cols.map(q=>'<td>'+tm([q[0]*r[0],q[1]+r[1]])+'</td>').join('')+'</tr>';});
+    ptabEl.innerHTML=h+'</table>';
+  }else ptabEl.innerHTML='';
+  const anyNeg=a<0||b<0||c<0||d<0;
+  msg.innerHTML=(Mu.filled?'<p class="tip">'+t('msg_mdone')+'</p>':'<p class="tip">'+t('msg_pred')+'</p>')+(anyNeg?'<p class="tip">'+t('msg_sign')+'</p>':'');
+  const v1=a*XS+b,v2=c*XS+d;
+  valEl.textContent=Mu.filled?tt('valm',nf(XS,1),fnum(v1),fnum(v2),fnum(pval(P,XS))):'';
+  $('#bFill').textContent=t(Mu.filled?'b_empty':'b_fill');
+  $$('.stp').forEach(sp=>{const key=sp.dataset.k,v=Mu[key];sp.querySelector('output').textContent=String(v).replace('-','−');
+    sp.querySelector('[data-d="-1"]').disabled=v<=-LIM[key];sp.querySelector('[data-d="1"]').disabled=v>=LIM[key];});
+  $$('#preM .chip').forEach((ch,i)=>ch.setAttribute('aria-pressed',String(i===Mu.pre)));
+}
+$$('.stp').forEach(sp=>sp.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{const key=sp.dataset.k;Mu[key]=clamp(Mu[key]+Number(b.dataset.d),-LIM[key],LIM[key]);Mu.filled=false;Mu.pre=-1;render();})));
+$('#bFill').onclick=()=>{Mu.filled=!Mu.filled;Mu.anim=Mu.filled;render();};
+function setMul(a,b,c,d,filled,pre){Mu={a:a,b:b,c:c,d:d,filled:!!filled,anim:!!filled,pre:pre===undefined?-1:pre};}
+
+/* ---------- comú ---------- */
+function render(){
+  gAdd.style.display=MODE==='add'?'':'none';gMul.style.display=MODE==='mul'?'':'none';
+  $('#fsAdd').hidden=MODE!=='add';$('#fsMul').hidden=MODE!=='mul';$('#preA').hidden=MODE!=='add';$('#preM').hidden=MODE!=='mul';$('#preLbl').textContent=t(MODE==='add'?'g_expr':'g_mul');
+  $$('#modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===MODE)));
+  if(MODE==='add'){drawAdd();panelAdd();}else{drawMul();panelMul();}
+  const fc=$('#preA .chip:last-child');if(fc)fc.textContent=t('free');
+}
+function setMode(m){MODE=m;render();}
+$$('#modes button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
+$('#preA').innerHTML=PRE_A.map((P,i)=>{const pa=P.a,op=P.op,pb=P.b;const z=pa.every(c=>!c);
+  return '<button class="chip" type="button" data-i="'+i+'">'+(op?(z?'':wrapP(pa)+' ')+op+' '+wrapP(pb):poly(pa))+'</button>';}).join('')+'<button class="chip" type="button" data-i="'+PRE_A.length+'"></button>';
+$$('#preA .chip').forEach(c=>c.addEventListener('click',()=>setPre(+c.dataset.i)));
+$('#preM').innerHTML=PRE_M.map((q,i)=>'<button class="chip" type="button" data-i="'+i+'">'+prodStr(...q)+'</button>').join('');
+$$('#preM .chip').forEach(c=>c.addEventListener('click',()=>{const q=PRE_M[+c.dataset.i];setMul(q[0],q[1],q[2],q[3],false,+c.dataset.i);render();}));
+const sl=slider($('#slhost'),{id:'xs',key:'xs_l',min:1.6,max:4.4,step:0.1,val:XS,fmtv:v=>nf(v,1),on:v=>{XS=v;render();}});
+App.hooks.push(render);
+
+/* ===== Raona-ho ===== */
+function loadAdd(pa,op,pb,steps){
+  MODE='add';custom(pa,op,pb);
+  if(steps>=1&&A.op==='−')doFlip();
+  if(steps>=2)doGroup();
+  if(steps>=3)doCancel(true);
+  render();RZ.show(svg);
+}
+function loadMul(a,b,c,d){MODE='mul';setMul(clamp(a,-3,3),clamp(b,-4,4),clamp(c,-3,3),clamp(d,-4,4),true);render();RZ.show(svg);}
+function setX(v){XS=clamp(v,1.6,4.4);sl.set(XS);}
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+const sgn=n=>n<0?'− '+(-n):'+ '+n;
+RZ.init({
+ F:{n:{l:'f_n'},x:{l:'f_x'},a:{l:'f_a'},b:{l:'f_b'}},
+ M:[
+  {id:'m1',f:['n'],sim:([n])=>loadAdd([3,2,0],'+',[-1,isI(n,-4,4)?n:3,0],3),ok:()=>({k:'m1_ok'}),
+   chk:([n])=>!isI(n,-9,9)?RNG:n===3?null:{k:'m1_f',p:[n,2+n,poly([2,2+n,0])]}},
+  {id:'m2',f:['n'],sim:([n])=>loadMul(2,0,isI(n,-3,3)&&n?n:3,0),ok:()=>({k:'m2_ok'}),
+   chk:([n])=>!isI(n,-9,9)?RNG:n===3?null:{k:'m2_f',p:[n,2*n,Math.abs(2*n)]}},
+  {id:'m3',f:['n'],sim:([n])=>loadMul(1,isI(n,-4,4)?n:4,2,0),ok:()=>({k:'m3_ok'}),
+   chk:([n])=>!isI(n,-9,9)?RNG:n===4?null:{k:'m3_f',p:[n,poly([0,2*n,2])]}},
+  {id:'m4',f:['n'],sim:([n])=>loadMul(1,2,1,isI(n,-4,4)?n:3),ok:()=>({k:'m4_ok'}),
+   chk:([n])=>!isI(n,-9,9)?RNG:n===3?null:{k:'m4_f',p:[n,poly([2*n,2+n,1])]}},
+  {id:'m5',f:['n'],sim:([n])=>loadAdd([1,4,0],'−',[-3,isI(n,0,4)?n:3,0],3),ok:()=>({k:'m5_ok'}),
+   chk:([n])=>!isI(n,-9,9)?RNG:n===3?null:{k:'m5_f',p:[n,poly([0,4-n,0]),poly([4,4-n,0])]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[{l:'s1.l'}],sim:()=>loadAdd([0,2,1],null,null,0),
+   cx:([g])=>!isI(g,0,9)?RNG:g===1?{k:'s1_cx_no'}:null,
+   cxsim:([g])=>{if(g===0)loadAdd([1,2,0],null,null,2);else if(g===2)loadAdd([0,2,1],null,null,2);}},
+  {id:'s2',ans:'D',f:['x'],sim:()=>{setX(2);loadAdd([0,1,0],'+',[0,1,0],0);},
+   cx:([x])=>!Number.isFinite(x)?RNG:(Math.abs(x)<1e-9||Math.abs(x-2)<1e-9)?{k:'s2_cx_no',p:[nf(x,2),nf(2*x,2)]}:null,
+   cxsim:([x])=>{if(x>=1.6&&x<=4.4)setX(x);loadAdd([0,1,0],'+',[0,1,0],2);}},
+  {id:'s3',ans:'S',sim:()=>loadMul(2,0,3,0)},
+  {id:'s4',ans:'D',f:['a','b'],sim:()=>loadMul(1,2,1,3),
+   cx:([a,b])=>!isI(a,-4,4)||!isI(b,-4,4)?RNG:(a+b===0||a*b===0)?null:{k:'s4_cx_no',p:[sgn(a),sgn(b),poly([a*b,a+b,1])]},
+   cxsim:([a,b])=>loadMul(1,a,1,b)},
+  {id:'s5',ans:'M',sim:()=>loadMul(2,0,3,0)},
+  {id:'s6',ans:'M',sim:()=>loadAdd([0,0,0],'−',[-3,1,0],1)}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>loadAdd([0,3,2],null,null,2)},
+  {id:'e2',who:1,sim:()=>loadMul(1,3,2,0)},
+  {id:'e3',who:1,sim:()=>loadAdd([-2,5,0],'−',[-4,3,0],3)},
+  {id:'e4',who:1,sim:()=>loadMul(1,3,1,2)},
+  {id:'e5',who:3,sim:()=>loadAdd([0,2,0],'+',[0,3,0],2)}
+ ],
+ D:[
+  {id:'d1',chips:{vals:[1,2,3],fmt:x=>t('d1.c'+x)},sim:()=>loadMul(1,5,1,0),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>p===3?null:{k:'d1_n'}},
+  {id:'d2',f:[{l:'d2.l0',u:'cm²'}],sim:()=>loadMul(1,4,1,4),ok:()=>({k:'d2_ok'}),
+   chk:([x])=>x!==96?{k:'d2_n'}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'m'}],sim:()=>loadAdd([2,3,0],'+',[-1,1,0],3),ok:()=>({k:'d3_ok'}),
+   chk:([x])=>x!==42?{k:'d3_n'}:null}
+ ]
+});
+initQuiz([]);
+setPre(0);
+initLang();applyLang();
+</script>
+</body>
+</html>
