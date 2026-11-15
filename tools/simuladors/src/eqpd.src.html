@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Equacions amb parèntesis i denominadors</title>
+<meta name="description" content="Treu parèntesis, lleva denominadors i aïlla la x. Cada costat de l'equació és un plat de la balança: si un pas canvia la solució, la balança es tomba. Amb demostració pas a pas i activitats per a raonar.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+#svg{display:block;width:100%;height:auto}
+#svg .beam{stroke:var(--ink);stroke-width:9;stroke-linecap:round}
+#svg .pivot{fill:var(--panel);stroke:var(--ink);stroke-width:4}
+#svg .stand{fill:var(--ink)}
+#svg .rope{stroke:var(--muted);stroke-width:2}
+#svg .plate{fill:var(--ink)}
+#svg .wt{fill:var(--muted);font:600 17px var(--f-num)}
+#svg .wt.off{fill:var(--warn)}
+#svg .tag{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+#svg .ex text{fill:var(--ink);font-family:var(--f-num);font-weight:600}
+#svg .ex line{stroke:var(--ink)}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.2;margin:0 .1em}
+.fr>span:first-child{border-bottom:.09em solid currentColor;padding:0 .22em .05em}
+.fr>span:last-child{padding:.05em .22em 0}
+.o{padding:0 .32em}
+.eqs{padding:0 .4em}
+.eqbig{font:700 clamp(1.25rem,3.2vw,1.8rem)/1.7 var(--f-num);letter-spacing:-.01em;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.eqbig.off{color:var(--warn)}
+.read{display:grid;gap:8px;font-size:15px}
+.read .ok{color:var(--ok);font-weight:700;margin:0}
+.read .bad{color:var(--warn);font-weight:700;margin:0}
+.read p{margin:0}
+.read .step{margin:0;color:var(--ink)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.opr{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:14px}
+.opr input[type=text]{font:inherit;font-size:15px;width:4.2em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.opr select{font:inherit;font-size:14px;padding:5px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.btn.small{padding:5px 10px;font-size:13.5px}
+.btn .m{font-family:var(--f-num)}
+.btn .fr{font-size:.9em}
+.qd{list-style:none;margin:0;padding:0;display:grid;gap:4px;max-height:300px;overflow:auto}
+.qd li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 14px;padding:3px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.qd li.cur{border-color:var(--pa);box-shadow:inset 3px 0 0 var(--pa)}
+.qd li.bad{border-color:var(--warn)}
+.qe{font:600 16px/1.6 var(--f-num)}
+.ql{font-size:12.5px;color:var(--muted)}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<p data-i18n-html="story"></p>
+<div class="simgrid">
+<div class="simcv">
+<div class="stage" id="svgwrap"><svg id="svg" viewBox="0 0 760 340" role="img" data-i18n-aria="aria.svg" aria-label=""></svg></div>
+<ol class="qd" id="qd" data-i18n-aria="aria.qd" aria-label=""></ol>
+</div>
+<div class="side">
+<div class="read">
+<div class="eqbig" id="eq"></div>
+<div class="note" id="orig"></div>
+<div id="msg" aria-live="polite"></div>
+</div>
+<fieldset>
+<legend data-i18n="gt_demo"></legend>
+<div class="btns">
+<button class="btn primary" type="button" id="demo" data-i18n="b_demo"></button>
+<button class="btn" type="button" id="undo" data-i18n="undo"></button>
+</div>
+<div class="btns">
+<div class="seg" role="group" id="lvsw" data-i18n-aria="aria.lv" aria-label="">
+<button type="button" data-lv="p" aria-pressed="true" data-i18n="lv_p"></button>
+<button type="button" data-lv="d" aria-pressed="false" data-i18n="lv_d"></button>
+<button type="button" data-lv="pd" aria-pressed="false" data-i18n="lv_pd"></button>
+</div>
+<button class="btn" type="button" id="new" data-i18n="new"></button>
+</div>
+</fieldset>
+<fieldset>
+<legend data-i18n="gt_own"></legend>
+<div class="seg" role="group" data-i18n-aria="aria.side" aria-label="">
+<button type="button" id="both" aria-pressed="true" data-i18n="both"></button>
+<button type="button" id="left" aria-pressed="false" data-i18n="left"></button>
+</div>
+<div class="btns" id="pbtns"></div>
+<div class="opr"><span data-i18n="l_mul"></span><input type="text" inputmode="numeric" autocomplete="off" id="mulm" data-i18n-aria="aria.mul" aria-label=""><button class="btn small" type="button" id="mulgo" data-i18n="b_apply"></button></div>
+<div class="opr"><button class="btn small" type="button" id="redgo" data-i18n="b_red"></button></div>
+<div class="opr"><span data-i18n="l_add"></span>
+<select id="addsg" data-i18n-aria="aria.sg" aria-label=""><option value="1">+</option><option value="-1">−</option></select>
+<input type="text" inputmode="numeric" autocomplete="off" id="addn" data-i18n-aria="aria.num" aria-label="">
+<select id="addk" data-i18n-aria="aria.kind" aria-label=""><option value="x">x</option><option value="n" data-i18n="o_units"></option></select>
+<button class="btn small" type="button" id="addgo" data-i18n="b_apply"></button></div>
+<div class="opr"><span data-i18n="l_div"></span><input type="text" inputmode="numeric" autocomplete="off" id="divk" data-i18n-aria="aria.num" aria-label=""><button class="btn small" type="button" id="divgo" data-i18n="b_apply"></button></div>
+</fieldset>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Equacions amb parèntesis i denominadors",
+"eyebrow":"Matemàtiques · 2n ESO · Àlgebra",
+"h1":"Equacions amb parèntesis i denominadors",
+"lede":"Treu els parèntesis, lleva els denominadors i aïlla la x. La balança t'avisa si algun pas canvia la solució.",
+"sim_title":"Resol-la pas a pas sense descompensar la balança",
+"story":"Cada plat és un costat de l'equació. Primer fes desaparéixer <b>els denominadors</b> (multiplica <i>tots</i> els termes pel m.c.m.) i <b>els parèntesis</b> (el nombre de fora multiplica <i>cada</i> terme de dins); després aïlla la x com a la balança de blocs. Si un pas canvia la solució, la balança es tomba.",
+"aria.svg":"Balança amb els dos costats de l'equació","aria.qd":"Passos fets","aria.lv":"Tipus d'equació","aria.side":"Costat",
+"aria.mul":"Nombre pel qual multipliques","aria.sg":"Sumar o restar","aria.num":"Nombre","aria.kind":"Què sumes o restes",
+"gt_demo":"Un pas més","gt_own":"Tria el teu pas",
+"b_demo":"Fes el pas següent","undo":"Desfés","new":"Equació nova",
+"lv_p":"Parèntesis","lv_d":"Denominadors","lv_pd":"Tots dos",
+"both":"Als dos costats","left":"Només a l'esquerra",
+"b_exp":"Treu el parèntesi de","l_mul":"Multiplica per","b_apply":"Aplica","b_red":"Redueix termes semblants",
+"l_add":"Suma o resta","o_units":"nombre","l_div":"Divideix per",
+"w_val":"val {0}",
+"and":"i",
+"orig":"Equació inicial:",
+"solved":"Resolt: x = {0}. Comprova-ho a l'equació inicial: l'esquerra val {1} i la dreta val {2}.",
+"off":"La balança s'ha descompensat: este pas ha canviat la solució. Desfés-lo i revisa que has fet la mateixa operació a <b>tots</b> els termes dels dos costats.",
+"off_demo":"Primer desfés el pas que ha descompensat la balança.",
+"keep":"Equilibri. Vés traient denominadors i parèntesis i aïllant la x.",
+"idea":"<b>Per a la classe:</b> abans de prémer «Fes el pas següent», demana als alumnes què toca: denominadors o parèntesis? Per quin nombre es multiplica i a quins termes? Si algun pas és il·legal (per exemple, multiplicar només un costat), la balança es tomba.",
+"lb_init":"Equació inicial","lb_try":"Pas d'un company","lb_clear":"× {0} a tots els termes","lb_exp":"Treu el parèntesi","lb_red":"Redueix","lb_add":"{0} als dos costats","lb_div":"÷ {0} als dos costats","lb_left":"(només a l'esquerra)",
+"er_mult":"{0} no és múltiple de {1}: el denominador {1} no desapareixeria. Prova amb un múltiple comú de tots els denominadors.",
+"er_red":"No hi ha res per a reduir: cada costat té com a molt un terme amb x i un nombre.",
+"er_div":"Per a dividir, primer treu parèntesis i denominadors i redueix: cada costat ha de ser del tipus ax + b.",
+"er_in":"Escriu un nombre enter (diferent de 0) al requadre.",
+"er_mulmin":"Escriu un nombre enter major que 1.",
+"ex_clear":"Els denominadors són {0}: el m.c.m. és {1}. Multipliquem els dos costats per {1}, <b>cada terme</b> (també els que no tenen denominador).",
+"ex_clear1":"El denominador és {0}. Multipliquem els dos costats per {0}, <b>cada terme</b> (també els que no tenen denominador).",
+"ex_clear_big":"Amb {0} també desapareixen els denominadors, però el m.c.m. és {1} i fa els nombres més xicotets.",
+"ex_exp":"Treiem el parèntesi: el {0} de fora multiplica <b>cada terme</b> de dins.",
+"ex_exp_neg":"Treiem el parèntesi: el {0} de fora multiplica <b>cada terme</b> de dins, així que <b>tots els signes canvien</b>.",
+"ex_red":"Reduïm: a cada costat sumem els termes amb x entre ells i els nombres entre ells.",
+"ex_addx":"Perquè la x quede en un sol costat, fem {0} als dos costats.",
+"ex_addn":"Perquè els nombres queden a l'altre costat, fem {0} als dos costats.",
+"ex_div":"Dividim els dos costats pel coeficient de la x ({0}): ja tenim la x aïllada.",
+"rng":"Escriu un nombre enter dins del rang.",
+"f_m":"m =","f_k":"k =","f_b":"b =","f_c":"c =","f_x":"x =",
+"m1.q":"Per a llevar els denominadors de <b>(x + 1)/2 + (x − 2)/3 = 4</b> multiplicaràs els dos costats per un nombre <b>m</b>. Escriu el més xicotet que ho aconseguix.",
+"m1_no":"Amb m = {0} algun denominador continua: {0} no és múltiple de 2 i de 3 alhora.",
+"m1_big":"Amb m = {0} també desapareixen els denominadors, però n'hi ha un de més xicotet.",
+"m1_ok":"✔ Missió complida! 6 és el m.c.m. de 2 i de 3: 3(x + 1) + 2(x − 2) = 24.",
+"m1.more":"Quin seria el m.c.m. si els denominadors foren 4 i 6? I si foren 5 i 7? Què passa quan un denominador és múltiple de l'altre?",
+"m2.q":"Escriu el nombre <b>k</b> perquè <b>k(x − 3) = 12</b> tinga com a solució <b>x = 7</b>.",
+"m2_f":"Amb x = 7 el parèntesi val 4 i l'esquerra val {0} · 4 = {1}, no 12.",
+"m2_ok":"✔ Missió complida! 3(7 − 3) = 3 · 4 = 12.",
+"m2.more":"Què passaria amb k = 0? Quantes solucions tindria l'equació?",
+"m3.q":"Escriu el nombre <b>b</b> perquè <b>−2(x + b) = 10</b> tinga com a solució <b>x = −3</b>.",
+"m3_f":"Amb x = −3 l'esquerra val −2 · (−3 + {0}) = {1}, no 10.",
+"m3_ok":"✔ Missió complida! −2(−3 − 2) = −2 · (−5) = 10.",
+"m3.more":"I si en lloc de −2 fóra +2? Quin b donaria la mateixa solució x = −3?",
+"m4.q":"Escriu el nombre <b>c</b> perquè <b>x/2 + x/3 = c</b> tinga com a solució <b>x = 6</b>.",
+"m4_f":"Amb x = 6 l'esquerra val 6/2 + 6/3 = 5, no {0}.",
+"m4_ok":"✔ Missió complida! 6/2 + 6/3 = 3 + 2 = 5.",
+"m4.more":"I per a x = 12? Troba una fórmula per a c en funció de la solució.",
+"s1.q":"«Per a resoldre x/2 + 3 = 5 pots multiplicar per 2 només el terme x/2 i deixar el 3 i el 5 com estan.»",
+"s1.h":"Compara la solució de x/2 + 3 = 5 amb la de x + 3 = 5.",
+"s1.e":"Mai: x/2 + 3 = 5 té solució x = 4, però x + 3 = 5 en té x = 2. Cal multiplicar <b>tots</b> els termes: x + 6 = 10.",
+"s2.q":"«Quan treus un parèntesi precedit pel signe menys, canvien els signes de tots els termes de dins.»",
+"s2.h":"Pensa que −(x − 2) és −1 · (x − 2). Què fa el −1 a cada terme?",
+"s2.e":"Sempre: −(x − 2) = −x + 2, perquè el −1 multiplica cada terme del parèntesi.",
+"s3.q":"«Si multipliques els dos costats per un múltiple comú dels denominadors (encara que no siga el mínim), desapareixen tots els denominadors.»",
+"s3.h":"Prova x/2 + x/3 = 5 multiplicant per 12.",
+"s3.e":"Sempre: 12 és múltiple de 2 i de 3, així que 6x + 4x = 60 i la solució és la mateixa (x = 6). El m.c.m. només fa els nombres més xicotets.",
+"s4.q":"«L'equació 2(x + 1) = b té una solució entera per a qualsevol nombre enter b.»",
+"s4.h":"Prova amb b parell i amb b imparell.",
+"s4.e":"De vegades: amb b = 8 surt x = 3 (entera); amb b = 7 surt x = 5/2 (no entera). Només és entera si b és parell.",
+"s4_cx_no":"Amb b = {0} la solució és x = {1}, que és entera. Busca un b que no ho complisca.",
+"s5.q":"«Les expressions 2(x + 3) i 2x + 3 valen igual per a qualsevol valor de x.»",
+"s5.h":"Calcula les dues expressions amb x = 0.",
+"s5.e":"Mai: 2(x + 3) = 2x + 6, que val sempre 3 més que 2x + 3. Per això 2(x + 3) = 2x + 3 no té solució.",
+"e1.ctx":"Resol <b>2(x + 3) = 14</b>.",
+"e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"2x + 3 = 14, així que 2x = 11 i x = 5,5.",
+"e1.s1":"2x + 6 = 14, així que 2x = 8 i x = 4.",
+"e1.w0":"El 2 de fora multiplica <b>tots</b> els termes del parèntesi: 2(x + 3) = 2x + 6. Ana només el multiplica per la x.",
+"e1.w1":"Perquè els parèntesis es lleven sumant el nombre de fora a cada terme.",
+"e1.w2":"Perquè 2(x + 3) = 14 no té solució.",
+"e1.frame":"Ana, 2(x + 3) no és 2x + 3 perquè…",
+"e1.model":"Ana, el 2 de fora multiplica <b>tots</b> els termes del parèntesi: 2(x + 3) = 2x + 6, no 2x + 3. Comprovem amb x = 5,5: 2(5,5 + 3) = 17, no 14. Amb 2x + 6 = 14 resulta x = 4, i 2(4 + 3) = 14.",
+"e2.ctx":"Resol <b>5 − (x − 2) = 4</b>.",
+"e2.n0":"Dani","e2.n1":"Carla",
+"e2.s0":"5 − x + 2 = 4, així que −x = −3 i x = 3.",
+"e2.s1":"5 − x − 2 = 4, així que −x = 1 i x = −1.",
+"e2.w0":"El signe menys de davant del parèntesi canvia el signe de tots els termes de dins: −(x − 2) = −x + 2.",
+"e2.w1":"Perquè el parèntesi es lleva sense canviar res del que hi ha dins.",
+"e2.w2":"Perquè el 5 també ha de canviar de signe.",
+"e2.frame":"Carla, −(x − 2) no és −x − 2 perquè…",
+"e2.model":"Carla, −(x − 2) = −1 · (x − 2) = −x + 2: el menys canvia el signe de la x <b>i</b> del 2. Comprovem amb x = −1: 5 − (−1 − 2) = 8, no 4. Amb x = 3: 5 − (3 − 2) = 4.",
+"e3.ctx":"Resol <b>x/2 + x/3 = 5</b>.",
+"e3.n0":"Eva","e3.n1":"Pau",
+"e3.s0":"x/2 + x/3 = 2x/5, així que 2x/5 = 5 i x = 12,5.",
+"e3.s1":"Multiplique per 6: 3x + 2x = 5, així que 5x = 5 i x = 1.",
+"e3.w0":"Eva suma els numeradors i els denominadors per separat (no es pot), i Pau no multiplica el 5 per 6. Cal 3x + 2x = 30, així que x = 6.",
+"e3.w1":"Perquè la solució ha de ser un nombre enter.",
+"e3.w2":"Perquè només es pot multiplicar per 6 el costat esquerre.",
+"e3.frame":"Eva i Pau, x no és 12,5 ni 1 perquè…",
+"e3.model":"Eva, 1/2 + 1/3 no és 2/5: per a sumar fraccions cal reduir-les al mateix denominador (3/6 + 2/6 = 5/6). Pau, en multiplicar per 6 el 5 també passa a 30: 3x + 2x = 30. Comprovem: amb x = 6, 6/2 + 6/3 = 5.",
+"e4.ctx":"Resol <b>(x + 1)/2 = (x − 1)/4 + 2</b>.",
+"e4.n0":"Eva","e4.n1":"Pau",
+"e4.s0":"Multiplique per 4: 2(x + 1) = (x − 1) + 8, així que x = 5.",
+"e4.s1":"Multiplique per 8: 4(x + 1) = 2(x − 1) + 16, així que x = 5.",
+"e4.w0":"Tots dos fan passos legals: 4 i 8 són múltiples comuns dels denominadors, i en multiplicar tots els termes la solució no canvia.",
+"e4.w1":"Perquè només el m.c.m. (4) dóna una solució correcta.",
+"e4.w2":"Perquè x = 5 no complix l'equació.",
+"e4.frame":"Eva i Pau, tots dos teniu raó perquè…",
+"e4.model":"Eva i Pau, tots dos multipliqueu <b>cada</b> terme per un múltiple comú de 2 i 4. Amb 8 els nombres són més grans, però la solució és la mateixa. Comprovem: (5 + 1)/2 = 3 i (5 − 1)/4 + 2 = 3.",
+"d1.q":"Tres amics compren cada u una entrada de <b>x</b> € i un entrepà de 4 €. Entre els tres paguen 36 €. Quant val l'entrada?",
+"d1.l0":"Entrada","d1_n":"Planteja 3(x + 4) = 36, treu el parèntesi i aïlla la x.",
+"d1_ok":"✔ Ben decidit! 3(x + 4) = 36 → 3x + 12 = 36 → 3x = 24 → x = 8 €.",
+"d1.more":"I si foren 5 amics i pagaren 70 € en total? Planteja l'equació i resol-la.",
+"d2.q":"La meitat d'un nombre més la tercera part del mateix nombre fan 25. Quin és el nombre?",
+"d2.l0":"Nombre","d2_n":"Planteja x/2 + x/3 = 25 i multiplica per 6: 3x + 2x = 150.",
+"d2_ok":"✔ Ben decidit! 3x + 2x = 150 → 5x = 150 → x = 30. Comprovació: 15 + 10 = 25.",
+"d2.more":"I si en lloc de 25 fóra 24? Torna a eixir un nombre enter?",
+"d3.q":"Quin d'estos valors compleix <b>(x + 1)/2 = (x − 1)/3 + 1</b>?",
+"d3.lc":"x val:",
+"d3_l":"Amb x = {0}, l'esquerra val {1} i la dreta val {2}: l'esquerra val més, i la balança es tomba cap a l'esquerra.",
+"d3_r":"Amb x = {0}, l'esquerra val {1} i la dreta val {2}: la dreta val més, i la balança es tomba cap a la dreta.",
+"d3_ok":"✔ Ben decidit! Amb x = 1, l'esquerra val 1 i la dreta val 0 + 1 = 1: equilibri.",
+"d3.more":"Sense provar valors: multiplica per 6 i resol. Quants passos necessites?"
+},
+es:{
+"title":"Ecuaciones con paréntesis y denominadores",
+"eyebrow":"Matemáticas · 2.º ESO · Álgebra",
+"h1":"Ecuaciones con paréntesis y denominadores",
+"lede":"Quita los paréntesis, elimina los denominadores y despeja la x. La balanza te avisa si algún paso cambia la solución.",
+"sim_title":"Resuélvela paso a paso sin descompensar la balanza",
+"story":"Cada plato es un lado de la ecuación. Primero haz desaparecer <b>los denominadores</b> (multiplica <i>todos</i> los términos por el m.c.m.) y <b>los paréntesis</b> (el número de fuera multiplica <i>cada</i> término de dentro); después despeja la x como en la balanza de bloques. Si un paso cambia la solución, la balanza se inclina.",
+"aria.svg":"Balanza con los dos lados de la ecuación","aria.qd":"Pasos realizados","aria.lv":"Tipo de ecuación","aria.side":"Lado",
+"aria.mul":"Número por el que multiplicas","aria.sg":"Sumar o restar","aria.num":"Número","aria.kind":"Qué sumas o restas",
+"gt_demo":"Un paso más","gt_own":"Elige tu paso",
+"b_demo":"Haz el paso siguiente","undo":"Deshacer","new":"Ecuación nueva",
+"lv_p":"Paréntesis","lv_d":"Denominadores","lv_pd":"Los dos",
+"both":"En los dos lados","left":"Solo a la izquierda",
+"b_exp":"Quita el paréntesis de","l_mul":"Multiplica por","b_apply":"Aplica","b_red":"Reduce términos semejantes",
+"l_add":"Suma o resta","o_units":"número","l_div":"Divide entre",
+"w_val":"vale {0}",
+"and":"y",
+"orig":"Ecuación inicial:",
+"solved":"Resuelto: x = {0}. Compruébalo en la ecuación inicial: la izquierda vale {1} y la derecha vale {2}.",
+"off":"La balanza se ha descompensado: este paso ha cambiado la solución. Deshazlo y revisa que has hecho la misma operación con <b>todos</b> los términos de los dos lados.",
+"off_demo":"Primero deshaz el paso que ha descompensado la balanza.",
+"keep":"Equilibrio. Ve quitando denominadores y paréntesis y despejando la x.",
+"idea":"<b>Para la clase:</b> antes de pulsar «Haz el paso siguiente», pide a los alumnos qué toca: ¿denominadores o paréntesis? ¿Por qué número se multiplica y a qué términos? Si algún paso es ilegal (por ejemplo, multiplicar solo un lado), la balanza se inclina.",
+"lb_init":"Ecuación inicial","lb_try":"Paso de un compañero","lb_clear":"× {0} a todos los términos","lb_exp":"Quita el paréntesis","lb_red":"Reduce","lb_add":"{0} en los dos lados","lb_div":"÷ {0} en los dos lados","lb_left":"(solo a la izquierda)",
+"er_mult":"{0} no es múltiplo de {1}: el denominador {1} no desaparecería. Prueba con un múltiplo común de todos los denominadores.",
+"er_red":"No hay nada que reducir: cada lado tiene como mucho un término con x y un número.",
+"er_div":"Para dividir, primero quita paréntesis y denominadores y reduce: cada lado debe ser del tipo ax + b.",
+"er_in":"Escribe un número entero (distinto de 0) en el recuadro.",
+"er_mulmin":"Escribe un número entero mayor que 1.",
+"ex_clear":"Los denominadores son {0}: el m.c.m. es {1}. Multiplicamos los dos lados por {1}, <b>cada término</b> (también los que no tienen denominador).",
+"ex_clear1":"El denominador es {0}. Multiplicamos los dos lados por {0}, <b>cada término</b> (también los que no tienen denominador).",
+"ex_clear_big":"Con {0} también desaparecen los denominadores, pero el m.c.m. es {1} y hace los números más pequeños.",
+"ex_exp":"Quitamos el paréntesis: el {0} de fuera multiplica <b>cada término</b> de dentro.",
+"ex_exp_neg":"Quitamos el paréntesis: el {0} de fuera multiplica <b>cada término</b> de dentro, así que <b>todos los signos cambian</b>.",
+"ex_red":"Reducimos: en cada lado sumamos los términos con x entre sí y los números entre sí.",
+"ex_addx":"Para que la x quede en un solo lado, hacemos {0} en los dos lados.",
+"ex_addn":"Para que los números queden en el otro lado, hacemos {0} en los dos lados.",
+"ex_div":"Dividimos los dos lados entre el coeficiente de la x ({0}): ya tenemos la x despejada.",
+"rng":"Escribe un número entero dentro del rango.",
+"f_m":"m =","f_k":"k =","f_b":"b =","f_c":"c =","f_x":"x =",
+"m1.q":"Para quitar los denominadores de <b>(x + 1)/2 + (x − 2)/3 = 4</b> multiplicarás los dos lados por un número <b>m</b>. Escribe el más pequeño que lo consigue.",
+"m1_no":"Con m = {0} algún denominador continúa: {0} no es múltiplo de 2 y de 3 a la vez.",
+"m1_big":"Con m = {0} también desaparecen los denominadores, pero hay uno más pequeño.",
+"m1_ok":"✔ ¡Misión cumplida! 6 es el m.c.m. de 2 y de 3: 3(x + 1) + 2(x − 2) = 24.",
+"m1.more":"¿Cuál sería el m.c.m. si los denominadores fueran 4 y 6? ¿Y si fueran 5 y 7? ¿Qué pasa cuando un denominador es múltiplo del otro?",
+"m2.q":"Escribe el número <b>k</b> para que <b>k(x − 3) = 12</b> tenga como solución <b>x = 7</b>.",
+"m2_f":"Con x = 7 el paréntesis vale 4 y la izquierda vale {0} · 4 = {1}, no 12.",
+"m2_ok":"✔ ¡Misión cumplida! 3(7 − 3) = 3 · 4 = 12.",
+"m2.more":"¿Qué pasaría con k = 0? ¿Cuántas soluciones tendría la ecuación?",
+"m3.q":"Escribe el número <b>b</b> para que <b>−2(x + b) = 10</b> tenga como solución <b>x = −3</b>.",
+"m3_f":"Con x = −3 la izquierda vale −2 · (−3 + {0}) = {1}, no 10.",
+"m3_ok":"✔ ¡Misión cumplida! −2(−3 − 2) = −2 · (−5) = 10.",
+"m3.more":"¿Y si en lugar de −2 fuera +2? ¿Qué b daría la misma solución x = −3?",
+"m4.q":"Escribe el número <b>c</b> para que <b>x/2 + x/3 = c</b> tenga como solución <b>x = 6</b>.",
+"m4_f":"Con x = 6 la izquierda vale 6/2 + 6/3 = 5, no {0}.",
+"m4_ok":"✔ ¡Misión cumplida! 6/2 + 6/3 = 3 + 2 = 5.",
+"m4.more":"¿Y para x = 12? Encuentra una fórmula para c en función de la solución.",
+"s1.q":"«Para resolver x/2 + 3 = 5 puedes multiplicar por 2 solo el término x/2 y dejar el 3 y el 5 como están.»",
+"s1.h":"Compara la solución de x/2 + 3 = 5 con la de x + 3 = 5.",
+"s1.e":"Nunca: x/2 + 3 = 5 tiene solución x = 4, pero x + 3 = 5 tiene x = 2. Hay que multiplicar <b>todos</b> los términos: x + 6 = 10.",
+"s2.q":"«Cuando quitas un paréntesis precedido del signo menos, cambian los signos de todos los términos de dentro.»",
+"s2.h":"Piensa que −(x − 2) es −1 · (x − 2). ¿Qué hace el −1 a cada término?",
+"s2.e":"Siempre: −(x − 2) = −x + 2, porque el −1 multiplica cada término del paréntesis.",
+"s3.q":"«Si multiplicas los dos lados por un múltiplo común de los denominadores (aunque no sea el mínimo), desaparecen todos los denominadores.»",
+"s3.h":"Prueba x/2 + x/3 = 5 multiplicando por 12.",
+"s3.e":"Siempre: 12 es múltiplo de 2 y de 3, así que 6x + 4x = 60 y la solución es la misma (x = 6). El m.c.m. solo hace los números más pequeños.",
+"s4.q":"«La ecuación 2(x + 1) = b tiene una solución entera para cualquier número entero b.»",
+"s4.h":"Prueba con b par y con b impar.",
+"s4.e":"A veces: con b = 8 sale x = 3 (entera); con b = 7 sale x = 5/2 (no entera). Solo es entera si b es par.",
+"s4_cx_no":"Con b = {0} la solución es x = {1}, que es entera. Busca un b que no lo cumpla.",
+"s5.q":"«Las expresiones 2(x + 3) y 2x + 3 valen lo mismo para cualquier valor de x.»",
+"s5.h":"Calcula las dos expresiones con x = 0.",
+"s5.e":"Nunca: 2(x + 3) = 2x + 6, que vale siempre 3 más que 2x + 3. Por eso 2(x + 3) = 2x + 3 no tiene solución.",
+"e1.ctx":"Resuelve <b>2(x + 3) = 14</b>.",
+"e1.n0":"Ana","e1.n1":"Biel",
+"e1.s0":"2x + 3 = 14, así que 2x = 11 y x = 5,5.",
+"e1.s1":"2x + 6 = 14, así que 2x = 8 y x = 4.",
+"e1.w0":"El 2 de fuera multiplica <b>todos</b> los términos del paréntesis: 2(x + 3) = 2x + 6. Ana solo lo multiplica por la x.",
+"e1.w1":"Porque los paréntesis se quitan sumando el número de fuera a cada término.",
+"e1.w2":"Porque 2(x + 3) = 14 no tiene solución.",
+"e1.frame":"Ana, 2(x + 3) no es 2x + 3 porque…",
+"e1.model":"Ana, el 2 de fuera multiplica <b>todos</b> los términos del paréntesis: 2(x + 3) = 2x + 6, no 2x + 3. Comprobemos con x = 5,5: 2(5,5 + 3) = 17, no 14. Con 2x + 6 = 14 resulta x = 4, y 2(4 + 3) = 14.",
+"e2.ctx":"Resuelve <b>5 − (x − 2) = 4</b>.",
+"e2.n0":"Dani","e2.n1":"Carla",
+"e2.s0":"5 − x + 2 = 4, así que −x = −3 y x = 3.",
+"e2.s1":"5 − x − 2 = 4, así que −x = 1 y x = −1.",
+"e2.w0":"El signo menos delante del paréntesis cambia el signo de todos los términos de dentro: −(x − 2) = −x + 2.",
+"e2.w1":"Porque el paréntesis se quita sin cambiar nada de lo que hay dentro.",
+"e2.w2":"Porque el 5 también tiene que cambiar de signo.",
+"e2.frame":"Carla, −(x − 2) no es −x − 2 porque…",
+"e2.model":"Carla, −(x − 2) = −1 · (x − 2) = −x + 2: el menos cambia el signo de la x <b>y</b> del 2. Comprobemos con x = −1: 5 − (−1 − 2) = 8, no 4. Con x = 3: 5 − (3 − 2) = 4.",
+"e3.ctx":"Resuelve <b>x/2 + x/3 = 5</b>.",
+"e3.n0":"Eva","e3.n1":"Pau",
+"e3.s0":"x/2 + x/3 = 2x/5, así que 2x/5 = 5 y x = 12,5.",
+"e3.s1":"Multiplico por 6: 3x + 2x = 5, así que 5x = 5 y x = 1.",
+"e3.w0":"Eva suma los numeradores y los denominadores por separado (no se puede), y Pau no multiplica el 5 por 6. Hace falta 3x + 2x = 30, así que x = 6.",
+"e3.w1":"Porque la solución tiene que ser un número entero.",
+"e3.w2":"Porque solo se puede multiplicar por 6 el lado izquierdo.",
+"e3.frame":"Eva y Pau, x no es 12,5 ni 1 porque…",
+"e3.model":"Eva, 1/2 + 1/3 no es 2/5: para sumar fracciones hay que reducirlas al mismo denominador (3/6 + 2/6 = 5/6). Pau, al multiplicar por 6 el 5 también pasa a 30: 3x + 2x = 30. Comprobemos: con x = 6, 6/2 + 6/3 = 5.",
+"e4.ctx":"Resuelve <b>(x + 1)/2 = (x − 1)/4 + 2</b>.",
+"e4.n0":"Eva","e4.n1":"Pau",
+"e4.s0":"Multiplico por 4: 2(x + 1) = (x − 1) + 8, así que x = 5.",
+"e4.s1":"Multiplico por 8: 4(x + 1) = 2(x − 1) + 16, así que x = 5.",
+"e4.w0":"Los dos hacen pasos legales: 4 y 8 son múltiplos comunes de los denominadores, y al multiplicar todos los términos la solución no cambia.",
+"e4.w1":"Porque solo el m.c.m. (4) da una solución correcta.",
+"e4.w2":"Porque x = 5 no cumple la ecuación.",
+"e4.frame":"Eva y Pau, los dos tenéis razón porque…",
+"e4.model":"Eva y Pau, los dos multiplicáis <b>cada</b> término por un múltiplo común de 2 y 4. Con 8 los números son más grandes, pero la solución es la misma. Comprobemos: (5 + 1)/2 = 3 y (5 − 1)/4 + 2 = 3.",
+"d1.q":"Tres amigos compran cada uno una entrada de <b>x</b> € y un bocadillo de 4 €. Entre los tres pagan 36 €. ¿Cuánto vale la entrada?",
+"d1.l0":"Entrada","d1_n":"Plantea 3(x + 4) = 36, quita el paréntesis y despeja la x.",
+"d1_ok":"✔ ¡Bien decidido! 3(x + 4) = 36 → 3x + 12 = 36 → 3x = 24 → x = 8 €.",
+"d1.more":"¿Y si fueran 5 amigos y pagaran 70 € en total? Plantea la ecuación y resuélvela.",
+"d2.q":"La mitad de un número más la tercera parte del mismo número suman 25. ¿Cuál es el número?",
+"d2.l0":"Número","d2_n":"Plantea x/2 + x/3 = 25 y multiplica por 6: 3x + 2x = 150.",
+"d2_ok":"✔ ¡Bien decidido! 3x + 2x = 150 → 5x = 150 → x = 30. Comprobación: 15 + 10 = 25.",
+"d2.more":"¿Y si en lugar de 25 fuera 24? ¿Vuelve a salir un número entero?",
+"d3.q":"¿Cuál de estos valores cumple <b>(x + 1)/2 = (x − 1)/3 + 1</b>?",
+"d3.lc":"x vale:",
+"d3_l":"Con x = {0}, la izquierda vale {1} y la derecha vale {2}: la izquierda vale más, y la balanza se inclina hacia la izquierda.",
+"d3_r":"Con x = {0}, la izquierda vale {1} y la derecha vale {2}: la derecha vale más, y la balanza se inclina hacia la derecha.",
+"d3_ok":"✔ ¡Bien decidido! Con x = 1, la izquierda vale 1 y la derecha vale 0 + 1 = 1: equilibrio.",
+"d3.more":"Sin probar valores: multiplica por 6 y resuelve. ¿Cuántos pasos necesitas?"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== motor algebraic: fraccions racionals i termes ===== */
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const r=a%b;a=b;b=r;}return a;};
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const Fr=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return {n:n/g,d:d/g};};
+const fa=(p,q)=>Fr(p.n*q.d+q.n*p.d,p.d*q.d);
+const fm=(p,q)=>Fr(p.n*q.n,p.d*q.d);
+const fdv=(p,q)=>Fr(p.n*q.d,p.d*q.n);
+const fe=(p,q)=>p.n===q.n&&p.d===q.d;
+const fi=p=>p.d===1;
+const F0=Fr(0),F1=Fr(1),FM=Fr(-1);
+const fnum=p=>p.n/p.d;
+const MIN='−';
+const sg=n=>n<0?MIN+(-n):String(n);
+const fstr=p=>fi(p)?sg(p.n):sg(p.n)+'/'+p.d;
+/* termes: n (v) · x (v·x) · p m(ax+b) · f s(ax+b)/d */
+const N=v=>({k:'n',v:Fr(v)}),X=v=>({k:'x',v:Fr(v)}),P=(m,a,b)=>({k:'p',m:m,a:a,b:b}),Q=(s,a,b,d)=>({k:'f',s:s,a:a,b:b,d:d});
+function tv(t,x){
+  if(t.k==='n')return t.v;
+  if(t.k==='x')return fm(t.v,x);
+  if(t.k==='p')return fm(Fr(t.m),fa(fm(Fr(t.a),x),Fr(t.b)));
+  return fm(Fr(t.s),fdv(fa(fm(Fr(t.a),x),Fr(t.b)),Fr(t.d)));
+}
+const sv=(side,x)=>side.reduce((s,t)=>fa(s,tv(t,x)),F0);
+function solve(L,R){
+  const g0=fa(sv(L,F0),fm(FM,sv(R,F0))),g1=fa(sv(L,F1),fm(FM,sv(R,F1))),al=fa(g1,fm(FM,g0));
+  return al.n===0?null:fm(FM,fdv(g0,al));
+}
+const cps=side=>side.map(t=>Object.assign({},t));
+const cp=s=>({L:cps(s.L),R:cps(s.R)});
+function norm(side){
+  const o=[];
+  side.forEach(t=>{
+    if(t.k==='n'||t.k==='x'){if(t.v.n!==0)o.push(t);}
+    else if(t.k==='p'&&t.m===1){if(t.a!==0)o.push(X(t.a));if(t.b!==0)o.push(N(t.b));}
+    else if(t.k==='p'&&(t.m===0||t.a===0||t.b===0)){if(t.m*t.a!==0)o.push(X(t.m*t.a));if(t.m*t.b!==0)o.push(N(t.m*t.b));}
+    else o.push(t);
+  });
+  return o;
+}
+/* moviments: cadascun torna un estat nou o null si no es pot */
+function mExpand(s,sd,i){
+  const r=cp(s),t=r[sd][i],rep=[];
+  if(t.m*t.a!==0)rep.push(X(t.m*t.a));
+  if(t.m*t.b!==0)rep.push(N(t.m*t.b));
+  r[sd].splice(i,1,...rep);return r;
+}
+function mulSide(side,M){
+  const o=[];
+  for(const t of side){
+    if(t.k==='n'||t.k==='x')o.push({k:t.k,v:fm(t.v,Fr(M))});
+    else if(t.k==='p')o.push(P(t.m*M,t.a,t.b));
+    else{
+      if(M%t.d)return null;
+      const c=t.s*M/t.d;
+      if(t.a===0)o.push(N(c*t.b));else if(t.b===0)o.push(X(c*t.a));else o.push(P(c,t.a,t.b));
+    }
+  }
+  return norm(o);
+}
+function mClear(s,M,onlyLeft){
+  const L=mulSide(s.L,M),R=onlyLeft?cps(s.R):mulSide(s.R,M);
+  return (!L||!R)?null:{L:L,R:R};
+}
+function redSide(side){
+  let nx=0,nn=0,sx=F0,sn=F0;const rest=[];
+  side.forEach(t=>{if(t.k==='x'){nx++;sx=fa(sx,t.v);}else if(t.k==='n'){nn++;sn=fa(sn,t.v);}else rest.push(t);});
+  if(nx<2&&nn<2)return null;
+  const o=rest.slice();if(sx.n)o.push({k:'x',v:sx});if(sn.n)o.push({k:'n',v:sn});return o;
+}
+function mReduce(s){
+  const L=redSide(s.L),R=redSide(s.R);
+  return (!L&&!R)?null:{L:L||cps(s.L),R:R||cps(s.R)};
+}
+function addSide(side,kind,v){
+  const o=cps(side),i=o.findIndex(t=>t.k===kind);
+  if(i>=0)o[i].v=fa(o[i].v,v);else o.push({k:kind,v:v});
+  return norm(o);
+}
+function mAdd(s,kind,v,onlyLeft){return {L:addSide(s.L,kind,v),R:onlyLeft?cps(s.R):addSide(s.R,kind,v)};}
+const simple=side=>side.every(t=>t.k==='x'||t.k==='n')&&side.filter(t=>t.k==='x').length<2&&side.filter(t=>t.k==='n').length<2;
+const isSimple=s=>simple(s.L)&&simple(s.R);
+const divSide=(side,k)=>side.map(t=>({k:t.k,v:fdv(t.v,k)}));
+function mDiv(s,k,onlyLeft){
+  if(!isSimple(s)||k.n===0)return null;
+  return {L:divSide(s.L,k),R:onlyLeft?cps(s.R):divSide(s.R,k)};
+}
+function solvedVal(s){
+  const sx=side=>side.length===1&&side[0].k==='x'&&fe(side[0].v,F1);
+  const cs=side=>side.length===0||(side.length===1&&side[0].k==='n');
+  const cv=side=>side.length?side[0].v:F0;
+  if(sx(s.L)&&cs(s.R))return cv(s.R);
+  if(sx(s.R)&&cs(s.L))return cv(s.L);
+  return null;
+}
+const allT=s=>s.L.concat(s.R);
+const dens=s=>{const d=[];allT(s).forEach(t=>{if(t.k==='f'&&d.indexOf(t.d)<0)d.push(t.d);});return d.sort((a,b)=>a-b);};
+const pidx=s=>{const o=[];['L','R'].forEach(sd=>s[sd].forEach((t,i)=>{if(t.k==='p')o.push({sd:sd,i:i,t:t});}));return o;};
+/* pas recomanat (demostració) */
+function suggest(s){
+  if(solvedVal(s))return null;
+  const ds=dens(s);
+  if(ds.length)return {op:'clear',M:ds.reduce(lcm,1),ds:ds};
+  const ps=pidx(s);
+  if(ps.length)return {op:'exp',sd:ps[0].sd,i:ps[0].i,m:ps[0].t.m};
+  if(mReduce(s))return {op:'red'};
+  const fx=side=>side.find(t=>t.k==='x'),fn=side=>side.find(t=>t.k==='n');
+  const xl=fx(s.L),xr=fx(s.R);
+  if(xl&&xr){
+    const lo=fnum(xl.v)<=fnum(xr.v)?xl.v:xr.v;
+    return {op:'add',kind:'x',v:fm(FM,lo)};
+  }
+  const sd=xl?'L':xr?'R':null;if(!sd)return null;
+  const cn=fn(s[sd]);
+  if(cn)return {op:'add',kind:'n',v:fm(FM,cn.v)};
+  const xt=fx(s[sd]);
+  if(!fe(xt.v,F1)&&isSimple(s))return {op:'div',k:xt.v};
+  return null;
+}
+/* aplica una operació (de la demostració o de l'alumne); torna {s} o {err:{k,p}} */
+function applyOp(s,op,onlyLeft){
+  let r=null;
+  if(op.op==='exp')r=mExpand(s,op.sd,op.i);
+  else if(op.op==='clear'){
+    r=mClear(s,op.M,onlyLeft);
+    if(!r){const bad=dens(s).find(d=>op.M%d);return {err:{k:'er_mult',p:[op.M,bad===undefined?'?':bad]}};}
+  }
+  else if(op.op==='red'){r=mReduce(s);if(!r)return {err:{k:'er_red'}};}
+  else if(op.op==='add')r=mAdd(s,op.kind,op.v,onlyLeft);
+  else if(op.op==='div'){r=mDiv(s,op.k,onlyLeft);if(!r)return {err:{k:'er_div'}};}
+  return {s:r};
+}
+/* generació d'equacions amb solució entera */
+const rnd=n=>Math.floor(Math.random()*n);
+const ri=(a,b)=>a+rnd(b-a+1);
+const pick=a=>a[rnd(a.length)];
+const nz=(a,b)=>{let v;do v=ri(a,b);while(v===0);return v;};
+const sgn=()=>pick([1,-1]);
+const TPL={
+ p:[
+  ()=>({L:[P(pick([2,3,4,5,-2,-3]),1,nz(-6,6))],R:[N(ri(-12,24))]}),
+  ()=>({L:[P(pick([2,3,4,5]),1,nz(-6,6)),N(nz(-8,8))],R:[N(ri(-6,30))]}),
+  ()=>({L:[P(pick([2,3,4]),pick([2,3]),nz(-5,5))],R:[N(ri(-10,40))]}),
+  ()=>({L:[P(pick([2,3,4,5,-2,-3]),1,nz(-6,6))],R:[P(pick([2,3,4,-1,-2]),1,nz(-6,6))]}),
+  ()=>({L:[P(pick([2,3,4,5]),1,nz(-6,6)),P(-pick([1,2,3]),1,nz(-6,6))],R:[N(ri(-6,20))]}),
+  ()=>({L:[N(nz(-9,9)),P(-pick([1,2,3]),1,nz(-6,6))],R:[N(ri(-9,12))]}),
+  ()=>({L:[P(pick([2,3,4]),1,nz(-6,6))],R:[X(pick([1,2,3,5])),N(ri(-8,10))]}),
+  ()=>({L:[X(pick([1,2,3])),P(pick([2,3,-2]),1,nz(-5,5))],R:[N(ri(-8,24))]})
+ ],
+ d:[
+  ()=>({L:[Q(1,1,nz(-6,6),pick([2,3,4,5]))],R:[N(ri(-4,8))]}),
+  ()=>({L:[Q(1,1,0,pick([2,3,4,5])),N(nz(-6,6))],R:[N(ri(-4,10))]}),
+  ()=>({L:[Q(1,1,0,pick([2,3,4])),Q(1,1,0,pick([3,5,6]))],R:[N(ri(1,20))]}),
+  ()=>({L:[Q(1,1,nz(-5,5),pick([2,3,4]))],R:[Q(1,1,nz(-5,5),pick([3,5,6]))]}),
+  ()=>({L:[Q(1,1,nz(-5,5),pick([2,3,4])),Q(1,1,nz(-5,5),pick([3,5,6]))],R:[N(ri(-3,9))]}),
+  ()=>({L:[Q(1,1,nz(-5,5),pick([2,3,4])),Q(-1,1,nz(-5,5),pick([3,5,6]))],R:[N(ri(-3,6))]}),
+  ()=>({L:[X(1),Q(-1,1,nz(-5,5),pick([2,3,4]))],R:[N(ri(-3,9))]}),
+  ()=>({L:[Q(1,pick([2,3]),nz(-5,5),pick([2,3,4,5]))],R:[X(1),N(nz(-4,4))]}),
+  ()=>({L:[Q(1,1,0,pick([2,4])),Q(1,0,nz(1,3),pick([4,6]))],R:[N(ri(1,8))]})
+ ],
+ pd:[
+  ()=>({L:[P(pick([2,3,4]),1,nz(-5,5))],R:[Q(1,1,nz(-5,5),pick([2,3,4]))]}),
+  ()=>({L:[Q(1,1,nz(-5,5),pick([2,3,4])),P(pick([2,3,-2]),1,nz(-5,5))],R:[N(ri(-4,12))]}),
+  ()=>({L:[Q(1,1,0,pick([2,3,4])),P(-pick([1,2]),1,nz(-5,5))],R:[N(ri(-4,8))]}),
+  ()=>({L:[Q(1,pick([2,3]),nz(-5,5),pick([2,3,4,5]))],R:[P(pick([2,3,-1]),1,nz(-5,5))]}),
+  ()=>({L:[Q(1,1,nz(-5,5),pick([2,3,4])),P(-pick([1,2,3]),1,nz(-5,5))],R:[N(ri(-6,6))]}),
+  ()=>({L:[P(pick([2,3]),1,nz(-4,4)),Q(-1,1,nz(-5,5),pick([2,3,4]))],R:[N(ri(0,12))]}),
+  ()=>({L:[Q(1,1,nz(-4,4),pick([2,3])),Q(1,1,nz(-4,4),pick([4,5,6]))],R:[P(pick([2,3]),1,nz(-3,3))]})
+ ]
+};
+function mkEq(L,R){const s={L:norm(L),R:norm(R)};return {s:s,xs:solve(s.L,s.R)};}
+function okFr(s){
+  const f=allT(s).filter(t=>t.k==='f'),seen={};
+  for(const t of f){
+    if(gcd(gcd(t.a,t.b),t.d)>1)return false;
+    const k=t.a+','+t.b+','+t.d;if(seen[k])return false;seen[k]=1;
+  }
+  return true;
+}
+function gen(level,avoid){
+  for(let n=0;n<6000;n++){
+    const t=pick(TPL[level])(),e=mkEq(t.L,t.R);
+    if(!e.xs||!fi(e.xs)||e.xs.n===0||Math.abs(e.xs.n)>9)continue;
+    const ds=dens(e.s),M=ds.reduce(lcm,1);if(M>12||!okFr(e.s))continue;
+    const np=pidx(e.s).length;
+    if(level==='p'&&(np===0||ds.length))continue;
+    if(level==='d'&&(ds.length===0||np))continue;
+    if(level==='pd'&&(ds.length===0||np===0))continue;
+    if(avoid&&eqKey(e.s)===avoid)continue;
+    return e;
+  }
+  return mkEq([P(2,1,3)],[N(14)]);
+}
+function eqKey(s){return JSON.stringify(s);}
+
+/* ===== presentació: fraccions i termes en HTML ===== */
+const frH=(n,d)=>'<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>';
+function linH(a,b){
+  let s='';
+  if(a!==0)s+=(a===1?'':a===-1?MIN:sg(a))+'x';
+  if(b!==0)s+=a!==0?(b>0?' + ':' '+MIN+' ')+Math.abs(b):sg(b);
+  return s||'0';
+}
+function termH(q){
+  if(q.k==='n'){const a=Fr(Math.abs(q.v.n),q.v.d);return {neg:q.v.n<0,h:fi(a)?String(a.n):frH(a.n,a.d)};}
+  if(q.k==='x'){const a=Fr(Math.abs(q.v.n),q.v.d);return {neg:q.v.n<0,h:(fi(a)?(a.n===1?'':a.n):frH(a.n,a.d))+'x'};}
+  if(q.k==='p'){const am=Math.abs(q.m);return {neg:q.m<0,h:(am===1?'':am)+'('+linH(q.a,q.b)+')'};}
+  return {neg:q.s<0,h:frH(linH(q.a,q.b),q.d)};
+}
+function sideH(side){
+  if(!side.length)return '0';
+  return side.map((q,i)=>{const r=termH(q);return i===0?(r.neg?MIN:'')+r.h:'<span class="o">'+(r.neg?MIN:'+')+'</span>'+r.h;}).join('');
+}
+let S=null,OR=null,XS=F0,hist=[],mode='both',level='p',flash=null,note=null,theta=0,target=0,raf=0;
+const bal=s=>fe(sv(s.L,XS),sv(s.R,XS));
+const eqH=s=>sideH(s.L)+'<span class="eqs">'+(bal(s)?'=':'≠')+'</span>'+sideH(s.R);
+const sgp=n=>n<0?'('+sg(n)+')':String(n);
+const jn=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' '+t('and')+' '+a[a.length-1];
+const msgT=m=>m?tt(m.k,...(m.p||[])):'';
+const svg=$('#svg'),eqEl=$('#eq'),origEl=$('#orig'),msgEl=$('#msg'),qd=$('#qd'),pbtns=$('#pbtns');
+const demo=$('#demo'),undoB=$('#undo'),btnBoth=$('#both'),btnLeft=$('#left');
+/* etiquetes dels passos */
+function addStr(op){
+  const a=Fr(Math.abs(op.v.n),op.v.d);
+  return (op.v.n<0?MIN:'+')+' '+((op.kind==='x'&&fe(a,F1))?'':fstr(a))+(op.kind==='x'?'x':'');
+}
+function lblOf(op){
+  if(op.op==='clear')return {k:'lb_clear',p:[op.M]};
+  if(op.op==='exp')return {k:'lb_exp'};
+  if(op.op==='red')return {k:'lb_red'};
+  if(op.op==='add')return {k:'lb_add',p:[addStr(op)]};
+  return {k:'lb_div',p:[fstr(op.k)]};
+}
+function explain(op,prev,left){
+  if(left)return null;
+  if(op.op==='clear'){const ds=dens(prev),m=ds.reduce(lcm,1);return op.M===m?(ds.length>1?{k:'ex_clear',p:[jn(ds),m]}:{k:'ex_clear1',p:[m]}):{k:'ex_clear_big',p:[op.M,m]};}
+  if(op.op==='exp'){const m=prev[op.sd][op.i].m;return {k:m<0?'ex_exp_neg':'ex_exp',p:[sg(m)]};}
+  if(op.op==='red')return {k:'ex_red'};
+  if(op.op==='add')return {k:op.kind==='x'?'ex_addx':'ex_addn',p:[addStr(op)]};
+  return {k:'ex_div',p:[fstr(op.k)]};
+}
+/* balança */
+function layoutS(side){
+  if(!side.length)return [{s:'0'}];
+  const out=[];
+  side.forEach((q,i)=>{
+    let neg,body;
+    if(q.k==='n'){const a=Fr(Math.abs(q.v.n),q.v.d);neg=q.v.n<0;body=fi(a)?[{s:String(a.n)}]:[{n:String(a.n),d:String(a.d)}];}
+    else if(q.k==='x'){const a=Fr(Math.abs(q.v.n),q.v.d);neg=q.v.n<0;body=fi(a)?[{s:(a.n===1?'':String(a.n))+'x'}]:[{n:String(a.n),d:String(a.d)},{s:'x'}];}
+    else if(q.k==='p'){const am=Math.abs(q.m);neg=q.m<0;body=[{s:(am===1?'':am)+'('+linH(q.a,q.b)+')'}];}
+    else{neg=q.s<0;body=[{n:linH(q.a,q.b),d:String(q.d)}];}
+    out.push({s:i===0?(neg?MIN:''):' '+(neg?MIN:'+')+' '});
+    body.forEach(e=>out.push(e));
+  });
+  return out.filter(e=>e.n!==undefined||e.s!=='');
+}
+/* expressió d'un plat en SVG pur (sense foreignObject): font monoespaiada i fraccions dibuixades */
+function exprSVG(side){
+  const els=layoutS(side),wOf=(e,f)=>e.n!==undefined?(Math.max(e.n.length,e.d.length)+0.8)*0.6*f:e.s.length*0.6*f;
+  let fs=26,W=els.reduce((a,e)=>a+wOf(e,fs),0);
+  if(W>204){fs=Math.max(11,fs*204/W);W=els.reduce((a,e)=>a+wOf(e,fs),0);}
+  const y0=110;let x=-W/2,o='<g class="ex" font-size="'+fs.toFixed(1)+'">';
+  els.forEach(e=>{
+    const w=wOf(e,fs);
+    if(e.n!==undefined){
+      const c=(x+w/2).toFixed(1);
+      o+='<text x="'+c+'" y="'+(y0-0.26*fs).toFixed(1)+'" text-anchor="middle">'+e.n+'</text>'+
+         '<line x1="'+(x+0.1*fs).toFixed(1)+'" x2="'+(x+w-0.1*fs).toFixed(1)+'" y1="'+y0+'" y2="'+y0+'" stroke-width="'+(0.08*fs).toFixed(1)+'"/>'+
+         '<text x="'+c+'" y="'+(y0+0.95*fs).toFixed(1)+'" text-anchor="middle">'+e.d+'</text>';
+    }else o+='<text x="'+x.toFixed(1)+'" y="'+(y0+0.3*fs).toFixed(1)+'">'+e.s.replace(/ /g,'\u00a0')+'</text>';
+    x+=w;
+  });
+  return o+'</g>';
+}
+function pan(x,y,side,w,ok){
+  return '<g transform="translate('+x.toFixed(1)+','+y.toFixed(1)+')"><line x1="0" y1="0" x2="-110" y2="150" class="rope"/><line x1="0" y1="0" x2="110" y2="150" class="rope"/>'+
+    '<rect x="-112" y="72" width="224" height="76" rx="10" class="tag"/>'+exprSVG(side)+
+    '<rect x="-118" y="150" width="236" height="12" rx="5" class="plate"/>'+
+    '<text x="0" y="186" text-anchor="middle" class="wt'+(ok?'':' off')+'">'+tt('w_val',fstr(w))+'</text></g>';
+}
+function draw(){
+  const cx=380,cy=80,arm=250,r=theta*Math.PI/180,co=Math.cos(r),si=Math.sin(r);
+  const A=[cx-arm*co,cy-arm*si],B=[cx+arm*co,cy+arm*si],ok=bal(S);
+  let s='<polygon points="'+(cx-12)+','+cy+' '+(cx+12)+','+cy+' '+(cx+34)+',318 '+(cx-34)+',318" class="stand"/>';
+  s+='<rect x="'+(cx-150)+'" y="318" width="300" height="16" rx="6" class="stand"/>';
+  s+=pan(A[0],A[1],S.L,sv(S.L,XS),ok)+pan(B[0],B[1],S.R,sv(S.R,XS),ok);
+  s+='<line x1="'+A[0].toFixed(1)+'" y1="'+A[1].toFixed(1)+'" x2="'+B[0].toFixed(1)+'" y2="'+B[1].toFixed(1)+'" class="beam"/>';
+  s+='<circle cx="'+cx+'" cy="'+cy+'" r="11" class="pivot"/>';
+  svg.innerHTML=s;
+}
+function animate(){
+  cancelAnimationFrame(raf);
+  if(REDUCE){theta=target;draw();return;}
+  (function step(){
+    theta+=(target-theta)*0.16;
+    if(Math.abs(target-theta)<0.04){theta=target;draw();return;}
+    draw();raf=requestAnimationFrame(step);
+  })();
+}
+function render(){
+  const ok=bal(S),solved=solvedVal(S);
+  eqEl.innerHTML=eqH(S);eqEl.classList.toggle('off',!ok);
+  origEl.innerHTML=t('orig')+' <span class="m">'+eqH(OR)+'</span>';
+  let h;
+  if(flash)h='<p class="bad">'+msgT(flash)+'</p>';
+  else if(solved&&ok)h='<p class="ok">'+tt('solved',fstr(solved),fstr(sv(OR.L,solved)),fstr(sv(OR.R,solved)))+'</p>';
+  else if(!ok)h='<p class="bad">'+t('off')+'</p>';
+  else h=note?'<p class="step">'+msgT(note)+'</p>':'<p class="note">'+t('keep')+'</p>';
+  msgEl.innerHTML=h;
+  qd.innerHTML=hist.map((e,i)=>'<li class="'+(i===hist.length-1?'cur':'')+(bal(e.s)?'':' bad')+'"><span class="qe">'+eqH(e.s)+'</span><span class="ql">'+msgT(e.lbl)+(e.left?' '+t('lb_left'):'')+'</span></li>').join('');
+  qd.scrollTop=qd.scrollHeight;
+  pbtns.innerHTML=pidx(S).map(q=>{const r=termH(q.t);return '<button class="btn small" type="button" data-sd="'+q.sd+'" data-i="'+q.i+'">'+t('b_exp')+' <span class="m">'+(r.neg?MIN:'')+r.h+'</span></button>';}).join('');
+  const nd=dens(S).length>0;
+  $('#mulgo').disabled=$('#mulm').disabled=!nd;
+  $('#redgo').disabled=!mReduce(S);
+  $('#divgo').disabled=$('#divk').disabled=!isSimple(S);
+  undoB.disabled=hist.length<2;
+  demo.disabled=!!(solved&&ok);
+  $$('#lvsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lv===level)));
+  const w0=fnum(sv(S.L,XS)),w1=fnum(sv(S.R,XS)),sc=Math.max(Math.abs(w0),Math.abs(w1),1);
+  let a=-13*clamp((w0-w1)/sc*3,-1,1);
+  if(!ok&&Math.abs(a)<3)a=a<0?-3:3;
+  target=ok?0:a;
+  animate();
+}
+function push(s,lbl,left){hist.push({s:s,lbl:lbl,left:!!left});S=s;}
+function act(op,left){
+  const prev=S,r=applyOp(S,op,left);
+  if(r.err){flash=r.err;note=null;render();return false;}
+  const lf=!!left&&(op.op==='clear'||op.op==='add'||op.op==='div');
+  push(r.s,lblOf(op),lf);
+  note=explain(op,prev,lf);flash=null;render();return true;
+}
+function fail(k){flash={k:k};note=null;render();}
+function setMode(m){mode=m;btnBoth.setAttribute('aria-pressed',String(m==='both'));btnLeft.setAttribute('aria-pressed',String(m==='left'));}
+function setCase(o,xs,st){
+  OR=o;XS=xs;S=st||o;
+  hist=[{s:o,lbl:{k:'lb_init'}}];if(st)hist.push({s:st,lbl:{k:'lb_try'}});
+  flash=note=null;theta=0;setMode('both');
+  ['#mulm','#addn','#divk'].forEach(i=>{$(i).value='';});
+  render();
+}
+function fresh(){const e=gen(level,OR?eqKey(OR):null);setCase(e.s,e.xs,null);}
+/* controls */
+demo.addEventListener('click',()=>{
+  if(!bal(S)){fail('off_demo');return;}
+  const g=suggest(S);if(g)act(g,false);
+});
+undoB.addEventListener('click',()=>{if(hist.length<2)return;hist.pop();S=hist[hist.length-1].s;flash=note=null;render();});
+$('#new').addEventListener('click',fresh);
+btnBoth.addEventListener('click',()=>setMode('both'));
+btnLeft.addEventListener('click',()=>setMode('left'));
+$$('#lvsw button').forEach(b=>b.addEventListener('click',()=>{level=b.dataset.lv;fresh();}));
+pbtns.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-sd]');if(!b)return;
+  act({op:'exp',sd:b.dataset.sd,i:+b.dataset.i},false);
+});
+function goMul(){
+  const M=parseNum($('#mulm').value);
+  if(!Number.isInteger(M)||M<2){fail('er_mulmin');return;}
+  if(act({op:'clear',M:M},mode==='left'))$('#mulm').value='';
+}
+function goAdd(){
+  const n=parseNum($('#addn').value),sgn_=+$('#addsg').value;
+  if(!Number.isInteger(n)||n<1){fail('er_in');return;}
+  if(act({op:'add',kind:$('#addk').value,v:Fr(sgn_*n)},mode==='left'))$('#addn').value='';
+}
+function goDiv(){
+  const k=parseNum($('#divk').value);
+  if(!Number.isInteger(k)||k===0){fail('er_in');return;}
+  if(act({op:'div',k:Fr(k)},mode==='left'))$('#divk').value='';
+}
+$('#mulgo').addEventListener('click',goMul);
+$('#addgo').addEventListener('click',goAdd);
+$('#divgo').addEventListener('click',goDiv);
+$('#redgo').addEventListener('click',()=>act({op:'red'},false));
+[['#mulm',goMul],['#addn',goAdd],['#divk',goDiv]].forEach(p=>$(p[0]).addEventListener('keydown',e=>{if(e.key==='Enter')p[1]();}));
+App.hooks.push(render);
+/* ===== Raona-ho ===== */
+function loadCase(L,R,o){
+  o=o||{};const e=mkEq(L,R);
+  setCase(e.s,o.xs||e.xs||Fr(2),o.st?{L:norm(o.st.L),R:norm(o.st.R)}:null);
+  if(o.m)$('#mulm').value=o.m;
+  RZ.show($('#svgwrap'));
+}
+const isI=(x,a,b)=>Number.isInteger(x)&&x>=a&&x<=b;
+const RNG={k:'rng'};
+RZ.init({
+ F:{m:{l:'f_m'},k:{l:'f_k'},b:{l:'f_b'},c:{l:'f_c'},x:{l:'f_x'}},
+ sim:()=>{},
+ M:[
+  {id:'m1',f:['m'],sim:([m])=>loadCase([Q(1,1,1,2),Q(1,1,-2,3)],[N(4)],{m:isI(m,2,99)?m:0}),ok:()=>({k:'m1_ok'}),
+   chk:([m])=>!isI(m,1,200)?RNG:(m%2||m%3)?{k:'m1_no',p:[m]}:m===6?null:{k:'m1_big',p:[m]}},
+  {id:'m2',f:['k'],sim:([k])=>loadCase([P(isI(k,-30,30)?k:3,1,-3)],[N(12)],{xs:Fr(7)}),ok:()=>({k:'m2_ok'}),
+   chk:([k])=>!isI(k,-30,30)?RNG:k===3?null:{k:'m2_f',p:[sgp(k),sg(4*k)]}},
+  {id:'m3',f:['b'],sim:([b])=>loadCase([P(-2,1,isI(b,-30,30)?b:1)],[N(10)],{xs:Fr(-3)}),ok:()=>({k:'m3_ok'}),
+   chk:([b])=>!isI(b,-30,30)?RNG:b===-2?null:{k:'m3_f',p:[sgp(b),sg(-2*(-3+b))]}},
+  {id:'m4',f:['c'],sim:([c])=>loadCase([Q(1,1,0,2),Q(1,1,0,3)],[N(isI(c,0,60)?c:5)],{xs:Fr(6)}),ok:()=>({k:'m4_ok'}),
+   chk:([c])=>!isI(c,0,60)?RNG:c===5?null:{k:'m4_f',p:[c]}}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>loadCase([Q(1,1,0,2),N(3)],[N(5)],{st:{L:[X(1),N(3)],R:[N(5)]}})},
+  {id:'s2',ans:'S',sim:()=>loadCase([N(5),P(-1,1,-2)],[N(4)])},
+  {id:'s3',ans:'S',sim:()=>loadCase([Q(1,1,0,2),Q(1,1,0,3)],[N(5)],{m:12})},
+  {id:'s4',ans:'D',f:['b'],sim:()=>loadCase([P(2,1,1)],[N(8)]),
+   cxsim:([b])=>loadCase([P(2,1,1)],[N(isI(b,-30,30)?b:7)]),
+   cx:([b])=>!isI(b,-30,30)?RNG:b%2===0?{k:'s4_cx_no',p:[b,sg(b/2-1)]}:null},
+  {id:'s5',ans:'M',sim:()=>loadCase([P(2,1,3)],[X(2),N(3)],{xs:Fr(2)})}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>loadCase([P(2,1,3)],[N(14)])},
+  {id:'e2',who:0,sim:()=>loadCase([N(5),P(-1,1,-2)],[N(4)])},
+  {id:'e3',who:3,sim:()=>loadCase([Q(1,1,0,2),Q(1,1,0,3)],[N(5)])},
+  {id:'e4',who:2,sim:()=>loadCase([Q(1,1,1,2)],[Q(1,1,-1,4),N(2)])}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'€'}],sim:()=>loadCase([P(3,1,4)],[N(36)]),ok:()=>({k:'d1_ok'}),chk:([x])=>x!==8?{k:'d1_n'}:null},
+  {id:'d2',f:[{l:'d2.l0'}],sim:()=>loadCase([Q(1,1,0,2),Q(1,1,0,3)],[N(25)]),ok:()=>({k:'d2_ok'}),chk:([x])=>x!==30?{k:'d2_n'}:null},
+  {id:'d3',chips:{vals:[1,3,5,7]},sim:()=>loadCase([Q(1,1,1,2)],[Q(1,1,-1,3),N(1)]),ok:()=>({k:'d3_ok'}),
+   chk:([p])=>{if(p===1)return null;const l=Fr(p+1,2),r=fa(Fr(p-1,3),F1);return {k:fnum(l)>fnum(r)?'d3_l':'d3_r',p:[p,fstr(l),fstr(r)]};}}
+ ]
+});
+initQuiz([]);
+fresh();
+initLang();applyLang();
+
+</script>
+</body>
+</html>
