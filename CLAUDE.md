@@ -101,3 +101,9 @@
 - Fonts `tools/simuladors/src/cossos.src.html` i `moviments.src.html`, amb el motor de passos (`steps.js`) i «Raona-ho»; es generen amb `python3 tools/simuladors/genera.py cossos moviments`. No s'editen les pàgines generades.
 - `cossos`: canvas amb projecció 3D pròpia (cares que es despleguen: `prismFaces`, `pyrFaces`, `coneFaces`; el cilindre és un prisma de 48 costats) i pestanya «💧 Aigua» (con→cilindre, piràmide→prisma, esfera→cilindre). `moviments`: SVG amb quadrícula de −9 a 9, vèrtexs i centre arrossegables, taula de coordenades al panell i botó «Continua des de la imatge» per a encadenar moviments. En tots dos, `ld(...)` carrega un cas des de les activitats.
 - Les targetes i les 4 URLs del sitemap es mantenen a mà (ja hi són).
+
+# Interpretació de gràfiques (`interpretar-grafiques`, `de-la-grafica-a-la-historia`)
+
+- Fonts `tools/simuladors/src/grafiques.src.html` i `grafhist.src.html`, amb «Raona-ho»; es generen amb `python3 tools/simuladors/genera.py grafiques grafhist`. No s'editen les pàgines generades.
+- `grafiques` (història → gràfica): 9 històries `SC` amb trams `{d, y, e}` i escenes `road`/`tank`/`gauge`/`dial`; modes «Mira la història», «Tria la gràfica» (distractors generats per mutació dels trams) i «Construeix-la». `grafhist` (gràfica → història): famílies `FAM` de 4 històries semblants (frases per tram) amb justificació del tram on falla cada descartada, i moviments `MOT` amb les gràfiques de distància i velocitat. En tots dos, `load`/`loadA`/`loadB` carreguen un cas des de les activitats.
+- Les targetes i les 4 URLs del sitemap es mantenen a mà (ja hi són).

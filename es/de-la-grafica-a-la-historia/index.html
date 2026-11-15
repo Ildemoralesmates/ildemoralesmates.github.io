@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De la gráfica a la historia: ¿qué situación encaja? — simulador interactivo</title>
+<meta name="description" content="Interpretar gráficas al revés: tienes una gráfica y cuatro historias parecidas (bici, depósito, congelador, móvil, coche, excursión). Elige la que encaja y justifica en qué tramo fallan las otras. Y con una misma historia, distingue la gráfica de la distancia de la de la velocidad. Con actividades para razonar.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/de-la-grafica-a-la-historia/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/de-la-grafica-a-la-historia/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/de-la-grafica-a-la-historia/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/de-la-grafica-a-la-historia/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="De la gráfica a la historia: ¿qué situación encaja? — simulador interactivo">
+<meta property="og:description" content="Interpretar gráficas al revés: tienes una gráfica y cuatro historias parecidas (bici, depósito, congelador, móvil, coche, excursión). Elige la que encaja y justifica en qué tramo fallan las otras. Y con una misma historia, distingue la gráfica de la distancia de la de la velocidad. Con actividades para razonar.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/de-la-grafica-a-la-historia/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+.stage canvas{display:block;width:100%;height:auto;touch-action:manipulation}
+.ctls{display:grid;gap:8px;padding:2px 4px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sh{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vals{margin:0}
+#pA,#pB,#roBox,#why{display:grid;gap:8px;align-content:start}
+.cards{display:grid;gap:6px}
+.scard{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;text-align:left;font:inherit;font-size:13.5px;line-height:1.4;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}
+.scard:hover:not(:disabled){border-color:var(--pa)}
+.scard:disabled{cursor:default}
+.scard .L{font-weight:700;font-size:15px;color:var(--muted)}
+.scard.right{border-color:var(--ok);border-width:2px;box-shadow:inset 4px 0 0 var(--ok)}
+.scard.right .L{color:var(--ok)}
+.scard.wrong{border-color:var(--warn);border-style:dashed}
+.scard.wrong .L{color:var(--warn)}
+.scard .snt{border-radius:4px;padding:0 2px}
+.scard .snt.cur{background:var(--chip);box-shadow:inset 0 -2px 0 var(--pa);font-weight:600}
+.side .msg{margin:0;font-size:14px;color:var(--ink)}
+.side .msg:empty{display:none}
+.side .msg.good{color:var(--ok);font-weight:600}
+.side .msg.bad{color:var(--warn);font-weight:600}
+.whyrow{display:grid;gap:4px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.whyrow:last-child{border-bottom:0}
+.whyrow p{margin:0;font-size:13.5px;color:var(--ink)}
+.whyrow .mk{font-weight:700;margin-left:6px}
+.whyrow .mk.good{color:var(--ok)}.whyrow .mk.bad{color:var(--warn)}
+.story{margin:0;padding-left:1.4em;display:grid;gap:5px;font-size:14px;color:var(--muted)}
+.story li{padding:2px 6px;margin-left:-6px;border-radius:6px}
+.story li.done{color:var(--ink)}
+.story li.done::marker{color:var(--ok);font-weight:700}
+.story li.cur{color:var(--ink);font-weight:600;background:var(--chip);box-shadow:inset 3px 0 0 var(--pa)}
+.bopts{display:grid;gap:6px}
+.bopts .opt{text-align:center}
+.opt.right{border-color:var(--ok);border-width:2px;color:var(--ok)}
+.opt.wrong{border-color:var(--warn);border-width:2px;color:var(--warn)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Funciones · 1.º, 2.º y 3.º ESO</p>
+      <h1 data-i18n="h1">🔎 De la gráfica a la historia</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Ahora al revés: tienes la gráfica y debes encontrar la historia. Elige entre cuatro historias parecidas, justifica por qué las otras no encajan y aprende a no confundir la gráfica de la distancia con la de la velocidad.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<div class="simgrid">
+<div class="simcv">
+<div class="seg tabs" id="modes" role="group" data-i18n-aria="aria.mode" aria-label="Modo de trabajo">
+<button type="button" data-m="A" aria-pressed="true" data-i18n="mode_A">🔍 ¿Qué historia es?</button><button type="button" data-m="B" aria-pressed="false" data-i18n="mode_B">📏 ¿Distancia o velocidad?</button>
+</div>
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label="Escena de la historia arriba y la gráfica abajo"></canvas></div>
+<div class="ctls">
+<div class="btns"><button class="btn primary" id="btnStep" type="button"></button><button class="btn" id="btnReset" type="button" data-i18n="reset">↺ Reiniciar</button><button class="btn" id="btnRnd" type="button" data-i18n="rnd">🎲 Otra</button></div>
+<div class="ctl"><label for="tsl" data-i18n="l_t">Tiempo</label><output id="tslL"></output><input type="range" id="tsl" min="0" max="50" step="0.1" value="0"></div>
+<p class="sh" data-i18n="l_sc">Contextos</p>
+<div class="chips" id="scs" role="group" data-i18n-aria="aria.sc" aria-label="Contexto"></div>
+</div>
+</div>
+<div class="side">
+<div id="pA">
+<p class="note" data-i18n="a_intro">La gráfica es de una de estas cuatro historias. Todas se parecen: léelas con calma y compáralas con la gráfica tramo a tramo.</p>
+<div class="cards" id="cardsA"></div>
+<p class="msg" id="msgA" aria-live="polite"></p>
+<div id="why" hidden>
+<p class="sh" data-i18n="why_t">¿Por qué no son las otras?</p>
+<p class="note" data-i18n="why_intro">Para cada historia descartada, elige un tramo en el que su gráfica no coincide con la azul. Al tocar una, verás su gráfica en naranja.</p>
+<div id="whyRows"></div>
+</div>
+<p class="score" id="scA"></p>
+</div>
+<div id="pB" hidden>
+<p class="note" data-i18n="b_intro">Las dos gráficas son del mismo movimiento: una es la distancia y la otra, la velocidad. Lee la historia y decide cuál es cuál.</p>
+<ol class="story" id="storyB"></ol>
+<div class="bopts" id="optsB"></div>
+<p class="msg" id="msgB" aria-live="polite"></p>
+<p class="score" id="scB"></p>
+</div>
+<div id="roBox">
+<p class="sh" data-i18n="s_now">Ahora mismo</p>
+<dl class="vals" id="ro"></dl>
+</div>
+<p class="note" id="noteS"></p>
+</div>
+</div>
+</section>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"De la gràfica a la història: quina situació hi encaixa? — simulador interactiu",
+"eyebrow":"Funcions · 1r, 2n i 3r ESO",
+"h1":"🔎 De la gràfica a la història",
+"lede":"Ara al revés: tens la gràfica i has de trobar la història. Tria entre quatre històries semblants, justifica per què les altres no hi encaixen i aprén a no confondre la gràfica de la distància amb la de la velocitat.",
+"aria.cv":"Escena de la història a dalt i la gràfica a baix","aria.mode":"Mode de treball","aria.sc":"Context",
+"mode_A":"🔍 Quina història és?","mode_B":"📏 Distància o velocitat?",
+"reset":"↺ Reinicia","rnd":"🎲 Una altra","l_t":"Temps","l_sc":"Contextos",
+"step":"▶ Tram {0}","again":"↺ Torna a començar","locked_A":"Primer, tria la història","locked_B":"Primer, respon","tram_n":"Tram {0}",
+"s_now":"Ara mateix","r_t":"Temps","r_tram":"Tram",
+"a_intro":"La gràfica és d’una d’aquestes quatre històries. Totes s’assemblen: llig-les amb calma i compara-les amb la gràfica tram a tram.",
+"a_ok":"✔ Correcte! És la història {0}. Prem «▶ Tram 1» per a veure-la a l’escena tram a tram.",
+"a_ko":"✘ La història {0} no hi encaixa: en el tram {1} la seua gràfica seria la taronja discontínua. Torna-ho a provar.",
+"a_ok2":"✔ Ara sí: és la història {0}.",
+"why_t":"Per què no són les altres?","why_intro":"Per a cada història descartada, tria un tram en què la seua gràfica no coincideix amb la blava. En tocar-ne una, en veuràs la gràfica en taronja.",
+"why_ok":"✔","why_ko":"✘ en eixe tram coincideixen",
+"why_all":"✔ Molt bé: has justificat totes les descartades.",
+"a_score":"Encerts a la primera: {0} de {1}",
+"lg_real":"gràfica donada","lg_other":"gràfica de la història {0}",
+"b_intro":"Les dues gràfiques són del mateix moviment: una és la distància i l’altra, la velocitat. Llig la història i decideix quina és quina.",
+"b_o1":"1 → distància · 2 → velocitat","b_o2":"1 → velocitat · 2 → distància",
+"b_ok":"✔ Correcte! Prem «▶ Tram 1» per a veure el moviment i les dues gràfiques alhora.",
+"b_ko":"✘ És al revés.",
+"b_why":"Pista: busca un tram en què està parat. La distància no canvia (gràfica horitzontal) i la velocitat val 0. I quan torna cap a casa, la distància baixa, però la velocitat continua sent positiva: només diu com de ràpid va.",
+"b_score":"Encerts: {0} de {1}","g_q":"Gràfica {0}: ?",
+"note_A":"Compara forma i números: on puja, baixa o és horitzontal, i quant temps dura cada tram. Una sola diferència ja descarta una història.",
+"note_B":"La velocitat ací va sempre en positiu (rapidesa). Els salts verticals són una simplificació: en realitat, arrancar o parar sempre tarda un poquet.",
+"bici.name":"🚲 Bici al parc","bici.y":"Distància a casa (km)","bici.x":"Temps (min)",
+"bici.a1":"L’Aina va amb bici al parc, que és a 4 km, en 20 minuts.",
+"bici.a2":"L’Aina va amb bici al parc, que és a 4 km, en només 10 minuts.",
+"bici.stay":"S’hi queda 15 minuts berenant.",
+"bici.back10":"Torna a casa en 10 minuts.",
+"bici.back20":"Torna a casa amb calma, en 20 minuts.",
+"bici.back10now":"Sense parar, torna a casa en 10 minuts.",
+"bici.home":"Descansa 15 minuts al sofà de casa.",
+"bici.iaia":"Després pedala 2 km més, fins a casa de la iaia, en 10 minuts.",
+"diposit.name":"🛢️ El depòsit","diposit.y":"Volum d’aigua (L)","diposit.x":"Temps (min)",
+"diposit.fill10":"Una aixeta omple el depòsit buit fins a 200 L en 10 minuts.",
+"diposit.fill20":"Una aixeta més fluixa omple el depòsit buit fins a 200 L en 20 minuts.",
+"diposit.closed10":"Es tanca l’aixeta durant 10 minuts.",
+"diposit.drain20":"S’obri el desguàs i es buida del tot en 20 minuts.",
+"diposit.drain20now":"Tot seguit s’obri el desguàs i es buida del tot en 20 minuts.",
+"diposit.drain10":"S’obri el desguàs i es buida del tot en 10 minuts.",
+"diposit.empty10":"Queda buit 10 minuts.",
+"diposit.small":"Es tanca l’aixeta gran i se n’obri una de xicoteta: entren 100 L més en 10 minuts.",
+"diposit.drain20b":"S’obri el desguàs i es buida del tot en 20 minuts.",
+"gel.name":"🧊 Un got al congelador","gel.y":"Temperatura (°C)","gel.x":"Temps (min)",
+"gel.cool30":"Posem un got d’aigua a 20 °C al congelador: en 30 minuts arriba a 0 °C.",
+"gel.cool10":"Posem un got d’aigua a 20 °C al congelador: en només 10 minuts arriba a 0 °C.",
+"gel.freeze40":"Mentre es congela, la temperatura es queda a 0 °C durant 40 minuts.",
+"gel.ice20":"Després el gel es refreda fins a −10 °C en 20 minuts.",
+"gel.ice20b":"Després el gel es refreda fins a −20 °C en 20 minuts.",
+"gel.nofreeze20":"Sense aturar-se, continua refredant-se fins a −10 °C en 20 minuts.",
+"gel.stay40":"Es queda a −10 °C durant 40 minuts.",
+"mobil.name":"🔋 El mòbil","mobil.y":"Bateria (%)","mobil.x":"Temps (h)",
+"mobil.play3":"Amb vídeos i jocs, en 3 hores la bateria baixa del 100 % al 40 %.",
+"mobil.charge1":"El carrega 1 hora i torna al 100 %.",
+"mobil.normal4":"Després, amb un ús normal, en 4 hores baixa al 80 %.",
+"mobil.off4":"L’apaga durant 4 hores.",
+"mobil.normal4a":"Amb un ús normal, en 4 hores la bateria baixa del 100 % al 80 %.",
+"mobil.play3b":"Després, amb vídeos i jocs, en 3 hores baixa fins al 20 %.",
+"mobil.charge1c":"El carrega 1 hora fins al 80 %.",
+"mobil.plugged4":"El deixa endollat 4 hores més: es queda al 100 %.",
+"cotxe.name":"🚗 La velocitat del cotxe","cotxe.y":"Velocitat (km/h)","cotxe.x":"Temps (s)",
+"cotxe.acc10":"Un cotxe arranca i en 10 segons arriba a 50 km/h.",
+"cotxe.acc20":"Un cotxe arranca a poc a poc: tarda 20 segons a arribar a 50 km/h.",
+"cotxe.cruise20":"Circula 20 segons a 50 km/h.",
+"cotxe.cruise10":"Circula 10 segons a 50 km/h.",
+"cotxe.brake10":"Frena i s’atura en 10 segons.",
+"cotxe.brake10now":"De seguida frena i s’atura en 10 segons.",
+"cotxe.wait20":"Espera 20 segons parat al semàfor.",
+"cotxe.motorway":"Entra a l’autovia i accelera fins a 90 km/h en 10 segons.",
+"cotxe.dist":"recorregut: {0} m",
+"excursio.name":"⛰️ L’excursió","excursio.y":"Altitud (m)","excursio.x":"Temps (h)",
+"excursio.up2":"Un grup puja del poble (400 m) al cim (1000 m) en 2 hores.",
+"excursio.up3":"Un grup puja del poble (400 m) al cim (1000 m) en 3 hores.",
+"excursio.lunch":"Dina al cim durant 1 hora.",
+"excursio.down3":"Baixa al poble amb calma, en 3 hores.",
+"excursio.down2":"Baixa al poble en 2 hores.",
+"excursio.down3now":"Sense parar, baixa al poble en 3 hores.",
+"excursio.rest":"Descansa 1 hora al poble.",
+"excursio.ridge":"Continua per la carena fins a un altre cim de 1300 m, en 3 hores.",
+"mb.bici.name":"🚲 Bici al parc","mb.bici.d":"Distància a casa (km)","mb.bici.v":"Velocitat (km/h)","mb.bici.x":"Temps (min)",
+"mb.bici.s0":"L’Aina va amb bici al parc, a 4 km, a 12 km/h: tarda 20 minuts.",
+"mb.bici.s1":"S’hi queda 15 minuts.",
+"mb.bici.s2":"Torna a casa a 24 km/h: tarda 10 minuts.",
+"mb.escola.name":"🎒 Cap a l’institut","mb.escola.d":"Distància a casa (m)","mb.escola.v":"Velocitat (m/min)","mb.escola.x":"Temps (min)",
+"mb.escola.s0":"En Marc camina 5 minuts a 80 m/min (fa 400 m).",
+"mb.escola.s1":"Para 3 minuts al quiosc.",
+"mb.escola.s2":"Corre 4 minuts a 200 m/min fins a l’institut.",
+"mb.escola.s3":"Espera 4 minuts a la porta.",
+"mb.claus.name":"🔑 Les claus oblidades","mb.claus.d":"Distància a casa (m)","mb.claus.v":"Velocitat (m/min)","mb.claus.x":"Temps (min)",
+"mb.claus.s0":"La Laia camina 4 minuts a 75 m/min i s’allunya 300 m de casa.",
+"mb.claus.s1":"Se n’adona que no du les claus i torna corrent a 150 m/min.",
+"mb.claus.s2":"Passa 2 minuts buscant-les per casa.",
+"mb.claus.s3":"Torna a eixir i camina 8 minuts fins a la parada, que és a 900 m.",
+"mb.cotxe.name":"🚦 El cotxe i el semàfor","mb.cotxe.d":"Distància recorreguda (m)","mb.cotxe.v":"Velocitat (km/h)","mb.cotxe.x":"Temps (s)",
+"mb.cotxe.s0":"Un cotxe arranca i en 10 s arriba a 50 km/h.",
+"mb.cotxe.s1":"Circula 20 s a 50 km/h.",
+"mb.cotxe.s2":"Frena davant d’un semàfor roig i s’atura en 5 s.",
+"mb.cotxe.s3":"Espera 10 s al semàfor.",
+"mb.cotxe.s4":"Es posa verd i en 8 s va a 40 km/h.",
+"l_km":"Distància","l_vel":"Velocitat","l_temps":"Temps","l_desn":"Pujada","l_acc":"Augment",
+"m1.q":"<b>🚲 Bici al parc</b>, història de la gràfica de 20, 15 i 10 minuts. Quants <b>quilòmetres</b> pedala l’Aina en total?",
+"m1_half":"4 km és només l’anada. La gràfica torna a 0: compta també la tornada.",
+"m1_f":"{0} km no és el total. La gràfica puja fins a 4 km i després torna a 0.",
+"m1_ok":"✔ Missió complida! 4 km d’anada i 4 de tornada: 8 km, encara que la gràfica acabe on va començar.",
+"m1.more":"Si la gràfica no tornara a 0 sinó que es quedara a 4 km, quants quilòmetres hauria fet? I si pujara de 4 a 6 km?",
+"m2.q":"<b>🔑 Les claus oblidades</b> (mode «Distància o velocitat?»). A quina <b>velocitat</b> (m/min) torna la Laia corrent a casa? Llig-ho en la gràfica de la distància.",
+"m2_d":"300 és la distància que desfà, no la velocitat. Quants minuts tarda?",
+"m2_f":"Amb {0} m/min, en 2 minuts faria {1} m, i ha de desfer-ne 300.",
+"m2_ok":"✔ Missió complida! 300 m en 2 minuts: 150 m/min, el doble que a l’anada. És el tram més inclinat de la gràfica de la distància.",
+"m2.more":"En la gràfica de la velocitat, com es veu que torna el doble de ràpid? I en la de la distància?",
+"m3.q":"<b>🧊 Un got al congelador</b>, història A de la gràfica que té un tram horitzontal llarg a 0 °C. Quants <b>minuts</b> passa la temperatura a 0 °C?",
+"m3_f":"Busca el tram horitzontal a 0 °C: quan comença i quan acaba? {0} min no és la seua durada.",
+"m3_ok":"✔ Missió complida! De 30 a 70 min: 40 minuts a 0 °C mentre es congela.",
+"m3.more":"Per què la temperatura no baixa mentre l’aigua es congela, si el congelador continua refredant?",
+"m4.q":"<b>⛰️ L’excursió</b> en què la pujada dura 3 hores. Quants <b>metres d’altitud puja cada hora</b>?",
+"m4_f":"Puja de 400 a 1000 m en 3 hores. Amb {0} m/h, en 3 hores pujaria {1} m.",
+"m4_ok":"✔ Missió complida! 600 m en 3 h: 200 m cada hora. Per això el tram de pujada és menys inclinat que el de baixada (300 m/h).",
+"m4.more":"Quina de les quatre històries de l’excursió té el tram de pujada més inclinat? Per què?",
+"m5.q":"<b>🚗 La velocitat del cotxe</b> que arranca a poc a poc (20 s fins a 50 km/h). Quants <b>km/h augmenta la velocitat cada segon</b>?",
+"m5_f":"De 0 a 50 km/h en 20 s. Amb {0} km/h cada segon, en 20 s arribaria a {1} km/h.",
+"m5_ok":"✔ Missió complida! 50 ÷ 20 = 2,5 km/h cada segon. Amb 10 s seria el doble: 5 km/h cada segon, una gràfica més inclinada.",
+"m5.more":"Quina de les dues arrancades fa que la gràfica puge més inclinada: la de 10 s o la de 20 s?",
+"s1.q":"Si la gràfica de la <b>velocitat</b> és horitzontal, la de la <b>distància</b> també és horitzontal.",
+"s1.h":"Mira el tram 1 de la bici: la velocitat és horitzontal a 12 km/h. Què fa la distància?",
+"s1.e":"De vegades. Només si la velocitat és 0 (parat). Amb una velocitat constant que no és 0, la distància canvia sempre al mateix ritme: la seua gràfica és una recta inclinada.",
+"s1_cx_no":"Amb {0} km/h està parat, i llavors la distància sí que és horitzontal. Busca una velocitat que no siga 0.",
+"s1_cx":"✔ A {0} km/h constants, la velocitat és horitzontal, però la distància augmenta {0} km cada hora: recta inclinada.",
+"s2.q":"Quan algú torna cap a casa, la gràfica de la <b>distància a casa</b> baixa.",
+"s2.h":"Mira el tram 2 de les claus oblidades.",
+"s2.e":"Sempre. Tornar vol dir acostar-se a casa: la distància a casa disminueix i la gràfica baixa. La velocitat, en canvi, pot ser alta: va corrent!",
+"s3.q":"Quan la velocitat val 0, la gràfica de la distància és horitzontal.",
+"s3.h":"Mira el quiosc de «Cap a l’institut».",
+"s3.e":"Sempre. Velocitat 0 vol dir que no es mou: la distància no canvia i la gràfica és horitzontal.",
+"s4.q":"La gràfica d’una història té la mateixa forma que el camí que es recorre.",
+"s4.h":"Què hi ha a l’eix horitzontal de totes les gràfiques?",
+"s4.e":"Mai. L’eix horitzontal és el temps. Una gràfica de l’altitud d’una excursió s’hi pot assemblar, però és per casualitat: la mateixa forma pot ser un depòsit que s’omple i es buida.",
+"s5.q":"Com més inclinada és la gràfica de la distància en un tram, més alta és la gràfica de la velocitat en eixe tram.",
+"s5.h":"Compara els trams 1 i 3 de la bici en les dues gràfiques.",
+"s5.e":"Sempre. La inclinació de la gràfica de la distància és la rapidesa: si en el tram 3 baixa el doble d’inclinada que puja en el tram 1, la velocitat és el doble (24 km/h davant de 12).",
+"e1.ctx":"<b>🧊 Un got al congelador.</b> En el tram 2 la gràfica és horitzontal a 0 °C durant 40 minuts.",
+"e1.n0":"Nil","e1.n1":"Sara",
+"e1.s0":"En el tram 2 no passa res: l’aigua ha deixat de refredar-se.",
+"e1.s1":"En el tram 2 l’aigua s’està congelant: continua perdent calor, però la temperatura es queda a 0 °C.",
+"e1.w0":"Mentre l’aigua es converteix en gel, perd calor sense que baixe la temperatura; quan tot és gel, torna a baixar (tram 3).",
+"e1.w1":"Perquè a 0 °C els congeladors s’apaguen sols.",
+"e1.w2":"Perquè una gràfica horitzontal vol dir sempre que el fenomen s’ha acabat.",
+"e1.frame":"Nil, que la temperatura no canvie no vol dir que no passe res perquè…",
+"e1.model":"Nil, en el tram 2 l’aigua s’està fent gel. El congelador continua traient-li calor, però eixa calor ix del canvi d’aigua a gel, no de baixar la temperatura. Per això es queda a 0 °C fins que tot és gel, i després torna a baixar en el tram 3.",
+"e2.ctx":"<b>🚲 Bici al parc</b> (mode «Distància o velocitat?»). En el tram 3 la gràfica de la distància a casa baixa.",
+"e2.n0":"Pau","e2.n1":"Clara",
+"e2.s0":"Llavors la gràfica de la velocitat també baixa: l’Aina va més a poc a poc.",
+"e2.s1":"La gràfica de la velocitat és la més alta: és el tram en què va més de pressa.",
+"e2.w0":"La distància baixa perquè s’acosta a casa, i ho fa 4 km en 10 minuts: 24 km/h, el doble que a l’anada. Que la distància baixe no vol dir anar a poc a poc.",
+"e2.w1":"Perquè les dues gràfiques sempre fan el mateix dibuix.",
+"e2.w2":"Perquè quan es torna a casa sempre es va més de pressa.",
+"e2.frame":"Pau, que la distància baixe no vol dir que la velocitat baixe perquè…",
+"e2.model":"Pau, la gràfica de la distància baixa perquè l’Aina s’acosta a casa. Però baixa molt inclinada: desfà 4 km en 10 minuts, a 24 km/h. Per tant, la gràfica de la velocitat és ben alta en eixe tram, més que a l’anada (12 km/h).",
+"e3.ctx":"<b>🚗 La velocitat del cotxe.</b> En el tram 1 la gràfica puja de 0 a 50 km/h.",
+"e3.n0":"Marc","e3.n1":"Aina",
+"e3.s0":"En el tram 1 el cotxe puja una costa, perquè la gràfica puja.",
+"e3.s1":"En el tram 1 el cotxe accelera: cada segon va més de pressa.",
+"e3.w0":"L’eix vertical és la velocitat: que la gràfica puge vol dir que la velocitat augmenta. No diu res de si la carretera puja o baixa.",
+"e3.w1":"Perquè els cotxes no poden pujar costes en 10 segons.",
+"e3.w2":"Perquè les gràfiques de velocitat sempre comencen pujant.",
+"e3.frame":"Marc, que la gràfica puge no vol dir que el cotxe puge una costa perquè…",
+"e3.model":"Marc, a l’eix vertical hi ha la velocitat, no l’altura. Pujar de 0 a 50 km/h vol dir que el cotxe va cada vegada més de pressa. Podria fer-ho en un pla o fins i tot costa avall.",
+"d1.q":"<b>🔋 El mòbil.</b> Comences amb el 100 % i jugues 2 hores al ritme de la història «vídeos i jocs, del 100 % al 40 % en 3 hores». Amb quin percentatge acabes?",
+"d1.l0":"Bateria",
+"d1_f":"Del 100 % al 40 % en 3 hores: baixa 20 punts cada hora. Quant baixa en 2 hores?",
+"d1_ok":"✔ Ben decidit! 20 % cada hora: en 2 hores, 40 punts. Acabes amb el 60 %.",
+"d1.more":"Quantes hores podries jugar abans d’arribar al 10 %?",
+"d2.q":"<b>🛢️ El depòsit.</b> Has d’omplir 300 L en menys de 20 minuts. Quina aixeta tries i quants minuts tardaràs?",
+"d2.lc":"Aixeta:","d2.c1":"la ràpida (200 L en 10 min)","d2.c2":"la fluixa (200 L en 20 min)","d2.l0":"Temps",
+"d2_slow":"Amb la fluixa entren 10 L cada minut: per a 300 L tardaries 30 minuts. No arribes.",
+"d2_f":"Bona aixeta! Però fa 20 L cada minut: quants minuts per a 300 L?",
+"d2_ok":"✔ Ben decidit! La ràpida posa 20 L/min: 300 L en 15 minuts.",
+"d2.more":"Dibuixa a mà les gràfiques de les dues aixetes omplint 300 L en els mateixos eixos. Quina és més inclinada?",
+"d3.q":"<b>🚦 El cotxe i el semàfor</b> (mode «Distància o velocitat?»). En el tram 2 va 20 s a 50 km/h. Quants <b>metres</b> recorre? (50 km/h són uns 13,9 m cada segon.)",
+"d3.l0":"Distància",
+"d3_f":"A 13,9 m cada segon durant 20 s… {0} m no hi quadra.",
+"d3_ok":"✔ Ben decidit! 13,9 m/s × 20 s ≈ 278 m. Mira-ho en la gràfica de la distància: en el tram 2 puja uns 278 m.",
+"d3.more":"En la gràfica de la velocitat, eixos 278 m són l’àrea d’un rectangle. Quines són la base i l’altura?"
+},
+es:{
+"title":"De la gráfica a la historia: ¿qué situación encaja? — simulador interactivo",
+"eyebrow":"Funciones · 1.º, 2.º y 3.º ESO",
+"h1":"🔎 De la gráfica a la historia",
+"lede":"Ahora al revés: tienes la gráfica y debes encontrar la historia. Elige entre cuatro historias parecidas, justifica por qué las otras no encajan y aprende a no confundir la gráfica de la distancia con la de la velocidad.",
+"aria.cv":"Escena de la historia arriba y la gráfica abajo","aria.mode":"Modo de trabajo","aria.sc":"Contexto",
+"mode_A":"🔍 ¿Qué historia es?","mode_B":"📏 ¿Distancia o velocidad?",
+"reset":"↺ Reiniciar","rnd":"🎲 Otra","l_t":"Tiempo","l_sc":"Contextos",
+"step":"▶ Tramo {0}","again":"↺ Volver a empezar","locked_A":"Primero, elige la historia","locked_B":"Primero, responde","tram_n":"Tramo {0}",
+"s_now":"Ahora mismo","r_t":"Tiempo","r_tram":"Tramo",
+"a_intro":"La gráfica es de una de estas cuatro historias. Todas se parecen: léelas con calma y compáralas con la gráfica tramo a tramo.",
+"a_ok":"✔ ¡Correcto! Es la historia {0}. Pulsa «▶ Tramo 1» para verla en la escena tramo a tramo.",
+"a_ko":"✘ La historia {0} no encaja: en el tramo {1} su gráfica sería la naranja discontinua. Vuelve a intentarlo.",
+"a_ok2":"✔ Ahora sí: es la historia {0}.",
+"why_t":"¿Por qué no son las otras?","why_intro":"Para cada historia descartada, elige un tramo en el que su gráfica no coincide con la azul. Al tocar una, verás su gráfica en naranja.",
+"why_ok":"✔","why_ko":"✘ en ese tramo coinciden",
+"why_all":"✔ Muy bien: has justificado todas las descartadas.",
+"a_score":"Aciertos a la primera: {0} de {1}",
+"lg_real":"gráfica dada","lg_other":"gráfica de la historia {0}",
+"b_intro":"Las dos gráficas son del mismo movimiento: una es la distancia y la otra, la velocidad. Lee la historia y decide cuál es cuál.",
+"b_o1":"1 → distancia · 2 → velocidad","b_o2":"1 → velocidad · 2 → distancia",
+"b_ok":"✔ ¡Correcto! Pulsa «▶ Tramo 1» para ver el movimiento y las dos gráficas a la vez.",
+"b_ko":"✘ Es al revés.",
+"b_why":"Pista: busca un tramo en el que esté parado. La distancia no cambia (gráfica horizontal) y la velocidad vale 0. Y cuando vuelve a casa, la distancia baja, pero la velocidad sigue siendo positiva: solo dice lo rápido que va.",
+"b_score":"Aciertos: {0} de {1}","g_q":"Gráfica {0}: ?",
+"note_A":"Compara forma y números: dónde sube, baja o es horizontal, y cuánto dura cada tramo. Una sola diferencia ya descarta una historia.",
+"note_B":"Aquí la velocidad va siempre en positivo (rapidez). Los saltos verticales son una simplificación: en realidad, arrancar o parar siempre tarda un poquito.",
+"bici.name":"🚲 Bici al parque","bici.y":"Distancia a casa (km)","bici.x":"Tiempo (min)",
+"bici.a1":"Aina va en bici al parque, que está a 4 km, en 20 minutos.",
+"bici.a2":"Aina va en bici al parque, que está a 4 km, en solo 10 minutos.",
+"bici.stay":"Se queda allí 15 minutos merendando.",
+"bici.back10":"Vuelve a casa en 10 minutos.",
+"bici.back20":"Vuelve a casa con calma, en 20 minutos.",
+"bici.back10now":"Sin parar, vuelve a casa en 10 minutos.",
+"bici.home":"Descansa 15 minutos en el sofá de casa.",
+"bici.iaia":"Después pedalea 2 km más, hasta casa de su abuela, en 10 minutos.",
+"diposit.name":"🛢️ El depósito","diposit.y":"Volumen de agua (L)","diposit.x":"Tiempo (min)",
+"diposit.fill10":"Un grifo llena el depósito vacío hasta 200 L en 10 minutos.",
+"diposit.fill20":"Un grifo más flojo llena el depósito vacío hasta 200 L en 20 minutos.",
+"diposit.closed10":"Se cierra el grifo durante 10 minutos.",
+"diposit.drain20":"Se abre el desagüe y se vacía del todo en 20 minutos.",
+"diposit.drain20now":"Enseguida se abre el desagüe y se vacía del todo en 20 minutos.",
+"diposit.drain10":"Se abre el desagüe y se vacía del todo en 10 minutos.",
+"diposit.empty10":"Queda vacío 10 minutos.",
+"diposit.small":"Se cierra el grifo grande y se abre uno pequeño: entran 100 L más en 10 minutos.",
+"diposit.drain20b":"Se abre el desagüe y se vacía del todo en 20 minutos.",
+"gel.name":"🧊 Un vaso en el congelador","gel.y":"Temperatura (°C)","gel.x":"Tiempo (min)",
+"gel.cool30":"Ponemos un vaso de agua a 20 °C en el congelador: en 30 minutos llega a 0 °C.",
+"gel.cool10":"Ponemos un vaso de agua a 20 °C en el congelador: en solo 10 minutos llega a 0 °C.",
+"gel.freeze40":"Mientras se congela, la temperatura se queda en 0 °C durante 40 minutos.",
+"gel.ice20":"Después el hielo se enfría hasta −10 °C en 20 minutos.",
+"gel.ice20b":"Después el hielo se enfría hasta −20 °C en 20 minutos.",
+"gel.nofreeze20":"Sin detenerse, sigue enfriándose hasta −10 °C en 20 minutos.",
+"gel.stay40":"Se queda a −10 °C durante 40 minutos.",
+"mobil.name":"🔋 El móvil","mobil.y":"Batería (%)","mobil.x":"Tiempo (h)",
+"mobil.play3":"Con vídeos y juegos, en 3 horas la batería baja del 100 % al 40 %.",
+"mobil.charge1":"Lo carga 1 hora y vuelve al 100 %.",
+"mobil.normal4":"Después, con un uso normal, en 4 horas baja al 80 %.",
+"mobil.off4":"Lo apaga durante 4 horas.",
+"mobil.normal4a":"Con un uso normal, en 4 horas la batería baja del 100 % al 80 %.",
+"mobil.play3b":"Después, con vídeos y juegos, en 3 horas baja hasta el 20 %.",
+"mobil.charge1c":"Lo carga 1 hora hasta el 80 %.",
+"mobil.plugged4":"Lo deja enchufado 4 horas más: se queda al 100 %.",
+"cotxe.name":"🚗 La velocidad del coche","cotxe.y":"Velocidad (km/h)","cotxe.x":"Tiempo (s)",
+"cotxe.acc10":"Un coche arranca y en 10 segundos llega a 50 km/h.",
+"cotxe.acc20":"Un coche arranca despacio: tarda 20 segundos en llegar a 50 km/h.",
+"cotxe.cruise20":"Circula 20 segundos a 50 km/h.",
+"cotxe.cruise10":"Circula 10 segundos a 50 km/h.",
+"cotxe.brake10":"Frena y se para en 10 segundos.",
+"cotxe.brake10now":"Enseguida frena y se para en 10 segundos.",
+"cotxe.wait20":"Espera 20 segundos parado en el semáforo.",
+"cotxe.motorway":"Entra en la autovía y acelera hasta 90 km/h en 10 segundos.",
+"cotxe.dist":"recorrido: {0} m",
+"excursio.name":"⛰️ La excursión","excursio.y":"Altitud (m)","excursio.x":"Tiempo (h)",
+"excursio.up2":"Un grupo sube del pueblo (400 m) a la cima (1000 m) en 2 horas.",
+"excursio.up3":"Un grupo sube del pueblo (400 m) a la cima (1000 m) en 3 horas.",
+"excursio.lunch":"Come en la cima durante 1 hora.",
+"excursio.down3":"Baja al pueblo con calma, en 3 horas.",
+"excursio.down2":"Baja al pueblo en 2 horas.",
+"excursio.down3now":"Sin parar, baja al pueblo en 3 horas.",
+"excursio.rest":"Descansa 1 hora en el pueblo.",
+"excursio.ridge":"Sigue por la cresta hasta otra cima de 1300 m, en 3 horas.",
+"mb.bici.name":"🚲 Bici al parque","mb.bici.d":"Distancia a casa (km)","mb.bici.v":"Velocidad (km/h)","mb.bici.x":"Tiempo (min)",
+"mb.bici.s0":"Aina va en bici al parque, a 4 km, a 12 km/h: tarda 20 minutos.",
+"mb.bici.s1":"Se queda allí 15 minutos.",
+"mb.bici.s2":"Vuelve a casa a 24 km/h: tarda 10 minutos.",
+"mb.escola.name":"🎒 Hacia el instituto","mb.escola.d":"Distancia a casa (m)","mb.escola.v":"Velocidad (m/min)","mb.escola.x":"Tiempo (min)",
+"mb.escola.s0":"Marc anda 5 minutos a 80 m/min (recorre 400 m).",
+"mb.escola.s1":"Se para 3 minutos en el quiosco.",
+"mb.escola.s2":"Corre 4 minutos a 200 m/min hasta el instituto.",
+"mb.escola.s3":"Espera 4 minutos en la puerta.",
+"mb.claus.name":"🔑 Las llaves olvidadas","mb.claus.d":"Distancia a casa (m)","mb.claus.v":"Velocidad (m/min)","mb.claus.x":"Tiempo (min)",
+"mb.claus.s0":"Laia anda 4 minutos a 75 m/min y se aleja 300 m de casa.",
+"mb.claus.s1":"Se da cuenta de que no lleva las llaves y vuelve corriendo a 150 m/min.",
+"mb.claus.s2":"Pasa 2 minutos buscándolas por casa.",
+"mb.claus.s3":"Vuelve a salir y anda 8 minutos hasta la parada, que está a 900 m.",
+"mb.cotxe.name":"🚦 El coche y el semáforo","mb.cotxe.d":"Distancia recorrida (m)","mb.cotxe.v":"Velocidad (km/h)","mb.cotxe.x":"Tiempo (s)",
+"mb.cotxe.s0":"Un coche arranca y en 10 s llega a 50 km/h.",
+"mb.cotxe.s1":"Circula 20 s a 50 km/h.",
+"mb.cotxe.s2":"Frena ante un semáforo en rojo y se para en 5 s.",
+"mb.cotxe.s3":"Espera 10 s en el semáforo.",
+"mb.cotxe.s4":"Se pone verde y en 8 s va a 40 km/h.",
+"l_km":"Distancia","l_vel":"Velocidad","l_temps":"Tiempo","l_desn":"Subida","l_acc":"Aumento",
+"m1.q":"<b>🚲 Bici al parque</b>, historia de la gráfica de 20, 15 y 10 minutos. ¿Cuántos <b>kilómetros</b> pedalea Aina en total?",
+"m1_half":"4 km es solo la ida. La gráfica vuelve a 0: cuenta también la vuelta.",
+"m1_f":"{0} km no es el total. La gráfica sube hasta 4 km y después vuelve a 0.",
+"m1_ok":"✔ ¡Misión cumplida! 4 km de ida y 4 de vuelta: 8 km, aunque la gráfica acabe donde empezó.",
+"m1.more":"Si la gráfica no volviera a 0 sino que se quedara en 4 km, ¿cuántos kilómetros habría hecho? ¿Y si subiera de 4 a 6 km?",
+"m2.q":"<b>🔑 Las llaves olvidadas</b> (modo «¿Distancia o velocidad?»). ¿A qué <b>velocidad</b> (m/min) vuelve Laia corriendo a casa? Léelo en la gráfica de la distancia.",
+"m2_d":"300 es la distancia que deshace, no la velocidad. ¿Cuántos minutos tarda?",
+"m2_f":"Con {0} m/min, en 2 minutos haría {1} m, y tiene que deshacer 300.",
+"m2_ok":"✔ ¡Misión cumplida! 300 m en 2 minutos: 150 m/min, el doble que a la ida. Es el tramo más inclinado de la gráfica de la distancia.",
+"m2.more":"En la gráfica de la velocidad, ¿cómo se ve que vuelve el doble de rápido? ¿Y en la de la distancia?",
+"m3.q":"<b>🧊 Un vaso en el congelador</b>, historia A de la gráfica que tiene un tramo horizontal largo a 0 °C. ¿Cuántos <b>minutos</b> pasa la temperatura en 0 °C?",
+"m3_f":"Busca el tramo horizontal en 0 °C: ¿cuándo empieza y cuándo acaba? {0} min no es su duración.",
+"m3_ok":"✔ ¡Misión cumplida! De 30 a 70 min: 40 minutos a 0 °C mientras se congela.",
+"m3.more":"¿Por qué la temperatura no baja mientras el agua se congela, si el congelador sigue enfriando?",
+"m4.q":"<b>⛰️ La excursión</b> en la que la subida dura 3 horas. ¿Cuántos <b>metros de altitud sube cada hora</b>?",
+"m4_f":"Sube de 400 a 1000 m en 3 horas. Con {0} m/h, en 3 horas subiría {1} m.",
+"m4_ok":"✔ ¡Misión cumplida! 600 m en 3 h: 200 m cada hora. Por eso el tramo de subida es menos inclinado que el de bajada (300 m/h).",
+"m4.more":"¿Cuál de las cuatro historias de la excursión tiene el tramo de subida más inclinado? ¿Por qué?",
+"m5.q":"<b>🚗 La velocidad del coche</b> que arranca despacio (20 s hasta 50 km/h). ¿Cuántos <b>km/h aumenta la velocidad cada segundo</b>?",
+"m5_f":"De 0 a 50 km/h en 20 s. Con {0} km/h cada segundo, en 20 s llegaría a {1} km/h.",
+"m5_ok":"✔ ¡Misión cumplida! 50 ÷ 20 = 2,5 km/h cada segundo. Con 10 s sería el doble: 5 km/h cada segundo, una gráfica más inclinada.",
+"m5.more":"¿Cuál de los dos arranques hace que la gráfica suba más inclinada: el de 10 s o el de 20 s?",
+"s1.q":"Si la gráfica de la <b>velocidad</b> es horizontal, la de la <b>distancia</b> también es horizontal.",
+"s1.h":"Mira el tramo 1 de la bici: la velocidad es horizontal en 12 km/h. ¿Qué hace la distancia?",
+"s1.e":"A veces. Solo si la velocidad es 0 (parado). Con una velocidad constante que no es 0, la distancia cambia siempre al mismo ritmo: su gráfica es una recta inclinada.",
+"s1_cx_no":"Con {0} km/h está parado, y entonces la distancia sí es horizontal. Busca una velocidad que no sea 0.",
+"s1_cx":"✔ A {0} km/h constantes, la velocidad es horizontal, pero la distancia aumenta {0} km cada hora: recta inclinada.",
+"s2.q":"Cuando alguien vuelve a casa, la gráfica de la <b>distancia a casa</b> baja.",
+"s2.h":"Mira el tramo 2 de las llaves olvidadas.",
+"s2.e":"Siempre. Volver quiere decir acercarse a casa: la distancia a casa disminuye y la gráfica baja. La velocidad, en cambio, puede ser alta: ¡va corriendo!",
+"s3.q":"Cuando la velocidad vale 0, la gráfica de la distancia es horizontal.",
+"s3.h":"Mira el quiosco de «Hacia el instituto».",
+"s3.e":"Siempre. Velocidad 0 quiere decir que no se mueve: la distancia no cambia y la gráfica es horizontal.",
+"s4.q":"La gráfica de una historia tiene la misma forma que el camino que se recorre.",
+"s4.h":"¿Qué hay en el eje horizontal de todas las gráficas?",
+"s4.e":"Nunca. El eje horizontal es el tiempo. Una gráfica de la altitud de una excursión se le puede parecer, pero es casualidad: la misma forma puede ser un depósito que se llena y se vacía.",
+"s5.q":"Cuanto más inclinada es la gráfica de la distancia en un tramo, más alta es la gráfica de la velocidad en ese tramo.",
+"s5.h":"Compara los tramos 1 y 3 de la bici en las dos gráficas.",
+"s5.e":"Siempre. La inclinación de la gráfica de la distancia es la rapidez: si en el tramo 3 baja el doble de inclinada que sube en el tramo 1, la velocidad es el doble (24 km/h frente a 12).",
+"e1.ctx":"<b>🧊 Un vaso en el congelador.</b> En el tramo 2 la gráfica es horizontal en 0 °C durante 40 minutos.",
+"e1.n0":"Nil","e1.n1":"Sara",
+"e1.s0":"En el tramo 2 no pasa nada: el agua ha dejado de enfriarse.",
+"e1.s1":"En el tramo 2 el agua se está congelando: sigue perdiendo calor, pero la temperatura se queda en 0 °C.",
+"e1.w0":"Mientras el agua se convierte en hielo, pierde calor sin que baje la temperatura; cuando todo es hielo, vuelve a bajar (tramo 3).",
+"e1.w1":"Porque a 0 °C los congeladores se apagan solos.",
+"e1.w2":"Porque una gráfica horizontal quiere decir siempre que el fenómeno ha terminado.",
+"e1.frame":"Nil, que la temperatura no cambie no quiere decir que no pase nada porque…",
+"e1.model":"Nil, en el tramo 2 el agua se está haciendo hielo. El congelador sigue quitándole calor, pero ese calor sale del cambio de agua a hielo, no de bajar la temperatura. Por eso se queda en 0 °C hasta que todo es hielo, y después vuelve a bajar en el tramo 3.",
+"e2.ctx":"<b>🚲 Bici al parque</b> (modo «¿Distancia o velocidad?»). En el tramo 3 la gráfica de la distancia a casa baja.",
+"e2.n0":"Pau","e2.n1":"Clara",
+"e2.s0":"Entonces la gráfica de la velocidad también baja: Aina va más despacio.",
+"e2.s1":"La gráfica de la velocidad es la más alta: es el tramo en el que va más deprisa.",
+"e2.w0":"La distancia baja porque se acerca a casa, y lo hace 4 km en 10 minutos: 24 km/h, el doble que a la ida. Que la distancia baje no quiere decir ir despacio.",
+"e2.w1":"Porque las dos gráficas siempre hacen el mismo dibujo.",
+"e2.w2":"Porque cuando se vuelve a casa siempre se va más deprisa.",
+"e2.frame":"Pau, que la distancia baje no quiere decir que la velocidad baje porque…",
+"e2.model":"Pau, la gráfica de la distancia baja porque Aina se acerca a casa. Pero baja muy inclinada: deshace 4 km en 10 minutos, a 24 km/h. Por tanto, la gráfica de la velocidad está muy alta en ese tramo, más que a la ida (12 km/h).",
+"e3.ctx":"<b>🚗 La velocidad del coche.</b> En el tramo 1 la gráfica sube de 0 a 50 km/h.",
+"e3.n0":"Marc","e3.n1":"Aina",
+"e3.s0":"En el tramo 1 el coche sube una cuesta, porque la gráfica sube.",
+"e3.s1":"En el tramo 1 el coche acelera: cada segundo va más deprisa.",
+"e3.w0":"El eje vertical es la velocidad: que la gráfica suba quiere decir que la velocidad aumenta. No dice nada de si la carretera sube o baja.",
+"e3.w1":"Porque los coches no pueden subir cuestas en 10 segundos.",
+"e3.w2":"Porque las gráficas de velocidad siempre empiezan subiendo.",
+"e3.frame":"Marc, que la gráfica suba no quiere decir que el coche suba una cuesta porque…",
+"e3.model":"Marc, en el eje vertical está la velocidad, no la altura. Subir de 0 a 50 km/h quiere decir que el coche va cada vez más deprisa. Podría hacerlo en un llano o incluso cuesta abajo.",
+"d1.q":"<b>🔋 El móvil.</b> Empiezas con el 100 % y juegas 2 horas al ritmo de la historia «vídeos y juegos, del 100 % al 40 % en 3 horas». ¿Con qué porcentaje acabas?",
+"d1.l0":"Batería",
+"d1_f":"Del 100 % al 40 % en 3 horas: baja 20 puntos cada hora. ¿Cuánto baja en 2 horas?",
+"d1_ok":"✔ ¡Bien decidido! 20 % cada hora: en 2 horas, 40 puntos. Acabas con el 60 %.",
+"d1.more":"¿Cuántas horas podrías jugar antes de llegar al 10 %?",
+"d2.q":"<b>🛢️ El depósito.</b> Tienes que llenar 300 L en menos de 20 minutos. ¿Qué grifo eliges y cuántos minutos tardarás?",
+"d2.lc":"Grifo:","d2.c1":"el rápido (200 L en 10 min)","d2.c2":"el flojo (200 L en 20 min)","d2.l0":"Tiempo",
+"d2_slow":"Con el flojo entran 10 L cada minuto: para 300 L tardarías 30 minutos. No llegas.",
+"d2_f":"¡Buen grifo! Pero echa 20 L cada minuto: ¿cuántos minutos para 300 L?",
+"d2_ok":"✔ ¡Bien decidido! El rápido echa 20 L/min: 300 L en 15 minutos.",
+"d2.more":"Dibuja a mano las gráficas de los dos grifos llenando 300 L en los mismos ejes. ¿Cuál es más inclinada?",
+"d3.q":"<b>🚦 El coche y el semáforo</b> (modo «¿Distancia o velocidad?»). En el tramo 2 va 20 s a 50 km/h. ¿Cuántos <b>metros</b> recorre? (50 km/h son unos 13,9 m cada segundo.)",
+"d3.l0":"Distancia",
+"d3_f":"A 13,9 m cada segundo durante 20 s… {0} m no cuadra.",
+"d3_ok":"✔ ¡Bien decidido! 13,9 m/s × 20 s ≈ 278 m. Míralo en la gráfica de la distancia: en el tramo 2 sube unos 278 m.",
+"d3.more":"En la gráfica de la velocidad, esos 278 m son el área de un rectángulo. ¿Cuáles son la base y la altura?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../de-la-grafica-a-la-historia/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+(function(){
+/* ===== De la gràfica a la història ===== */
+const W=720,H=436;
+const EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Segoe UI Symbol",sans-serif';
+/* Mode A: famílies de quatre històries semblants; cada història = frases (una per tram) i trams {d,y,e} */
+const FAM={
+ bici:{scene:'road',y0:0,ymin:0,ymax:6,tmax:50,dec:1,em:'🚲',dest:'🌳',dd:4,V:[
+  {s:['a1','stay','back10'],segs:[{d:20,y:4},{d:15,y:4,e:'🧺'},{d:10,y:0}]},
+  {s:['a2','stay','back20'],segs:[{d:10,y:4},{d:15,y:4,e:'🧺'},{d:20,y:0}]},
+  {s:['a1','back10now','home'],segs:[{d:20,y:4},{d:10,y:0},{d:15,y:0,e:'🛋️'}]},
+  {s:['a1','stay','iaia'],segs:[{d:20,y:4},{d:15,y:4,e:'🧺'},{d:10,y:6}]}]},
+ diposit:{scene:'tank',y0:0,ymin:0,ymax:350,tmax:45,dec:0,V:[
+  {s:['fill10','closed10','drain20'],segs:[{d:10,y:200,taps:1},{d:10,y:200},{d:20,y:0,drain:1}]},
+  {s:['fill10','drain20now','empty10'],segs:[{d:10,y:200,taps:1},{d:20,y:0,drain:1},{d:10,y:0}]},
+  {s:['fill20','closed10','drain10'],segs:[{d:20,y:200,taps:1},{d:10,y:200},{d:10,y:0,drain:1}]},
+  {s:['fill10','small','drain20b'],segs:[{d:10,y:200,taps:1},{d:10,y:300,taps:1},{d:20,y:0,drain:1}]}]},
+ gel:{scene:'gauge',kind:'thermo',y0:20,ymin:-30,ymax:30,tmax:100,dec:0,em:'🌡️',V:[
+  {s:['cool30','freeze40','ice20'],segs:[{d:30,y:0},{d:40,y:0,e:'❄️'},{d:20,y:-10,e:'🧊'}]},
+  {s:['cool30','nofreeze20','stay40'],segs:[{d:30,y:0},{d:20,y:-10},{d:40,y:-10,e:'🧊'}]},
+  {s:['cool10','freeze40','ice20'],segs:[{d:10,y:0},{d:40,y:0,e:'❄️'},{d:20,y:-10,e:'🧊'}]},
+  {s:['cool30','freeze40','ice20b'],segs:[{d:30,y:0},{d:40,y:0,e:'❄️'},{d:20,y:-20,e:'🧊'}]}]},
+ mobil:{scene:'gauge',kind:'battery',y0:100,ymin:0,ymax:100,tmax:9,dec:0,em:'🔋',V:[
+  {s:['play3','charge1','normal4'],segs:[{d:3,y:40,e:'🎮'},{d:1,y:100,e:'🔌'},{d:4,y:80,e:'💬'}]},
+  {s:['play3','off4','charge1'],segs:[{d:3,y:40,e:'🎮'},{d:4,y:40,e:'📴'},{d:1,y:100,e:'🔌'}]},
+  {s:['normal4a','play3b','charge1c'],segs:[{d:4,y:80,e:'💬'},{d:3,y:20,e:'🎮'},{d:1,y:80,e:'🔌'}]},
+  {s:['play3','charge1','plugged4'],segs:[{d:3,y:40,e:'🎮'},{d:1,y:100,e:'🔌'},{d:4,y:100,e:'🔌'}]}]},
+ cotxe:{scene:'dial',y0:0,ymin:0,ymax:100,tmax:45,dec:0,em:'🚗',V:[
+  {s:['acc10','cruise20','brake10'],segs:[{d:10,y:50},{d:20,y:50},{d:10,y:0}]},
+  {s:['acc10','cruise20','motorway'],segs:[{d:10,y:50},{d:20,y:50},{d:10,y:90}]},
+  {s:['acc20','cruise10','brake10'],segs:[{d:20,y:50},{d:10,y:50},{d:10,y:0}]},
+  {s:['acc10','brake10now','wait20'],segs:[{d:10,y:50},{d:10,y:0},{d:20,y:0,e:'🚦'}]}]},
+ excursio:{scene:'gauge',kind:'alt',y0:400,ymin:0,ymax:1500,tmax:7,dec:0,em:'🥾',V:[
+  {s:['up2','lunch','down3'],segs:[{d:2,y:1000},{d:1,y:1000,e:'🥪'},{d:3,y:400}]},
+  {s:['up3','lunch','down2'],segs:[{d:3,y:1000},{d:1,y:1000,e:'🥪'},{d:2,y:400}]},
+  {s:['up2','down3now','rest'],segs:[{d:2,y:1000},{d:3,y:400},{d:1,y:400,e:'🏡'}]},
+  {s:['up2','lunch','ridge'],segs:[{d:2,y:1000},{d:1,y:1000,e:'🥪'},{d:3,y:1300}]}]}
+};
+/* Mode B: moviments (velocitat per tram, de v0 a v1; dir +1 s'allunya, −1 torna); k passa velocitat×temps a distància */
+const MOT={
+ bici:{k:1/60,tmax:50,dmax:5,vmax:30,em:'🚲',dest:'🌳',dd:4,segs:[{d:20,v0:12,v1:12,dir:1},{d:15,v0:0,v1:0,dir:1,e:'🧺'},{d:10,v0:24,v1:24,dir:-1}]},
+ escola:{k:1,tmax:18,dmax:1300,vmax:250,em:'🚶',dest:'🏫',dd:1200,segs:[{d:5,v0:80,v1:80,dir:1},{d:3,v0:0,v1:0,dir:1,e:'🗞️'},{d:4,v0:200,v1:200,dir:1,e:'🏃'},{d:4,v0:0,v1:0,dir:1,e:'🧍'}]},
+ claus:{k:1,tmax:18,dmax:1000,vmax:200,em:'🚶',dest:'🚏',dd:900,segs:[{d:4,v0:75,v1:75,dir:1},{d:2,v0:150,v1:150,dir:-1,e:'🏃'},{d:2,v0:0,v1:0,dir:1,e:'🔑'},{d:8,v0:112.5,v1:112.5,dir:1}]},
+ cotxe:{k:1/3.6,tmax:60,dmax:500,vmax:60,em:'🚗',dest:'',dd:0,segs:[{d:10,v0:0,v1:50,dir:1},{d:20,v0:50,v1:50,dir:1},{d:5,v0:50,v1:0,dir:1},{d:10,v0:0,v1:0,dir:1,e:'🚦'},{d:8,v0:0,v1:40,dir:1}]}
+};
+const FIDS=Object.keys(FAM),MIDS=Object.keys(MOT);
+const cv=$('#cv'),tEl=$('#tsl'),tOut=$('#tslL'),btnStep=$('#btnStep');
+let mode='A',fam='bici',mot='bici',tcur=0,stepI=0,anim=null,A=null,B=null,ready=false;
+const SCORE={A:[0,0],B:[0,0]};
+const SCN={x:0,y:0,w:W,h:126};
+const GB={x:66,y:158,w:W-66-26,h:H-158-40};
+const cvO=makeCanvas(cv,W,H,()=>{if(ready)draw();});
+const ctx=cvO.ctx;
+const BF=()=>getComputedStyle(document.body).fontFamily;
+const NF=()=>getComputedStyle(document.documentElement).getPropertyValue('--f-num');
+
+/* ---------- trams ---------- */
+const tot=segs=>segs.reduce((a,s)=>a+s.d,0);
+function pts(sc,segs){const p=[[0,sc.y0]];let t0=0;segs.forEach(s=>{t0+=s.d;p.push([t0,s.y]);});return p;}
+function starts(segs){const a=[0];segs.forEach(s=>a.push(a[a.length-1]+s.d));return a;}
+function y0Of(sc,segs,i){return i?segs[i-1].y:sc.y0;}
+function valAt(sc,segs,tm){let t0=0,y=sc.y0;for(const s of segs){if(tm<=t0+s.d+1e-9){const f=s.d?(tm-t0)/s.d:1;return y+(s.y-y)*clamp(f,0,1);}t0+=s.d;y=s.y;}return y;}
+function tramAt(segs,tm){let t0=0;for(let i=0;i<segs.length;i++){if(tm<t0+segs[i].d-1e-9)return i;t0+=segs[i].d;}return segs.length-1;}
+function nice(span,n){const rough=span/n,mag=Math.pow(10,Math.floor(Math.log10(rough))),norm=rough/mag;return (norm<1.5?1:norm<3.5?2:norm<7.5?5:10)*mag;}
+const tl=g=>String(+g.toFixed(2)).replace('.',',');
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const unitOf=k=>{const m=/\(([^)]+)\)\s*$/.exec(t(k));return m?m[1]:'';};
+const noUnit=k=>t(k).replace(/\s*\(.*$/,'');
+/* trams en què dues històries no coincideixen */
+function diffTrams(sc,P,Q){const out=[];for(let i=0;i<P.length;i++){const q=Q[i];if(!q||Math.abs(P[i].d-q.d)>1e-9||Math.abs(P[i].y-q.y)>1e-9||Math.abs(y0Of(sc,P,i)-y0Of(sc,Q,i))>1e-9)out.push(i);}return out;}
+/* història actual del mode A com a objecte d'escena */
+function scA(v){const F=FAM[fam];return Object.assign({},F,{id:fam,segs:F.V[v===undefined?A.target:v].segs});}
+/* moviment del mode B: valors de distància i velocitat en un instant */
+function motV(M,tm){let t0=0;for(const s of M.segs){if(tm<=t0+s.d+1e-9){const f=s.d?clamp((tm-t0)/s.d,0,1):1;return s.v0+(s.v1-s.v0)*f;}t0+=s.d;}return M.segs[M.segs.length-1].v1;}
+function motX(M,tm){let x=0,t0=0;for(const s of M.segs){const te=Math.min(tm,t0+s.d);if(te<=t0)break;const f=(te-t0)/s.d,ve=s.v0+(s.v1-s.v0)*f;x+=s.dir*(s.v0+ve)/2*(te-t0)*M.k;t0+=s.d;}return x;}
+const motTot=M=>tot(M.segs);
+
+/* ---------- escena ---------- */
+function emoji(ch,x,y,size){if(!ch)return;ctx.save();ctx.font=size+'px '+EMO;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ch,x,y);ctx.restore();}
+function label(s,x,y,o){ctx.save();ctx.font=(o&&o.font)||'12px '+BF();ctx.fillStyle=(o&&o.color)||C().muted;ctx.textAlign=(o&&o.align)||'left';ctx.textBaseline=(o&&o.base)||'alphabetic';ctx.fillText(s,x,y);ctx.restore();}
+const NUMF=()=>'12px ui-monospace,"SF Mono",Menlo,Consolas,monospace';
+function road(name,v,vmax,unit,em,dest,dd,dr){
+  const c=C(),x0=86,x1=W-56,yR=92,X=q=>x0+q/vmax*(x1-x0);
+  ctx.strokeStyle=c.line;ctx.lineWidth=12;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x0,yR);ctx.lineTo(x1,yR);ctx.stroke();
+  const st=nice(vmax,6);
+  for(let g=0;g<=vmax+1e-9;g+=st){ctx.strokeStyle=c.muted;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(g),yR+8);ctx.lineTo(X(g),yR+13);ctx.stroke();label(tl(g),X(g),yR+27,{font:NUMF(),align:'center'});}
+  label(unit,x1+14,yR+27,{font:NUMF()});
+  emoji('🏠',x0-40,yR-14,30);if(dest)emoji(dest,X(dd),yR-50,24);
+  const mx=X(v);emoji(em,mx,yR-20,32);
+  if(dr){ctx.strokeStyle=c.pa;ctx.fillStyle=c.pa;ctx.lineWidth=3;const a=mx+dr*22,b=mx+dr*46;ctx.beginPath();ctx.moveTo(a,yR-50);ctx.lineTo(b,yR-50);ctx.stroke();ctx.beginPath();ctx.moveTo(b+dr*6,yR-50);ctx.lineTo(b-dr*2,yR-55);ctx.lineTo(b-dr*2,yR-45);ctx.closePath();ctx.fill();}
+}
+function bigVal(s,x,y){label(s,x,y,{font:'600 26px '+NF(),color:C().ink,base:'middle'});}
+function drawScene(sc,tm,hide){
+  const c=C(),segs=sc.segs,v=valAt(sc,segs,tm),i=tramAt(segs,Math.max(0,tm-1e-6)),seg=segs[i];
+  const moving=tm>1e-9&&tm<tot(segs)-1e-9&&Math.abs(seg.y-y0Of(sc,segs,i))>1e-9,dr=moving?Math.sign(seg.y-y0Of(sc,segs,i)):0;
+  const se=tm>1e-9&&!hide?seg.e:null,fy=x=>nf(x,sc.dec)+' '+unitOf(sc.id+'.y');
+  ctx.fillStyle=c.stage;ctx.fillRect(SCN.x,SCN.y,SCN.w,SCN.h);
+  label(t(sc.id+'.name'),12,20,{font:'600 13px '+BF(),color:c.ink});
+  if(sc.scene==='road'){road('',v,sc.ymax,unitOf(sc.id+'.y'),se||sc.em,sc.dest,sc.dd,dr);}
+  else if(sc.scene==='tank'){
+    const L0=250,R0=470,T0=34,B0=116,lv=B0-(v-sc.ymin)/(sc.ymax-sc.ymin)*(B0-T0);
+    ctx.save();ctx.globalAlpha=.32;ctx.fillStyle=c.pa;ctx.fillRect(L0,lv,R0-L0,B0-lv);ctx.restore();
+    ctx.strokeStyle=c.pa;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(L0,lv);ctx.lineTo(R0,lv);ctx.stroke();
+    ctx.strokeStyle=c.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(L0,T0-8);ctx.lineTo(L0,B0);ctx.lineTo(R0,B0);ctx.lineTo(R0,T0-8);ctx.stroke();
+    const st=nice(sc.ymax-sc.ymin,4);
+    for(let g=sc.ymin;g<=sc.ymax+1e-9;g+=st){const yy=B0-(g-sc.ymin)/(sc.ymax-sc.ymin)*(B0-T0);ctx.strokeStyle=c.muted;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(L0-6,yy);ctx.lineTo(L0,yy);ctx.stroke();label(tl(g),L0-10,yy+4,{font:NUMF(),align:'right'});}
+    const tx=L0+24;ctx.fillStyle=c.muted;ctx.fillRect(tx-22,T0-26,30,8);ctx.fillRect(tx+2,T0-26,8,14);
+    if(moving&&dr>0&&seg.taps){ctx.strokeStyle=c.pa;ctx.lineWidth=4;ctx.globalAlpha=.75;ctx.beginPath();ctx.moveTo(tx+6,T0-12);ctx.lineTo(tx+6,lv);ctx.stroke();ctx.globalAlpha=1;}
+    ctx.fillStyle=c.muted;ctx.fillRect(R0-30,B0,10,10);
+    if(moving&&dr<0&&seg.drain){ctx.strokeStyle=c.pa;ctx.lineWidth=4;ctx.globalAlpha=.75;ctx.beginPath();ctx.moveTo(R0-25,B0+10);ctx.lineTo(R0-25,SCN.h-2);ctx.stroke();ctx.globalAlpha=1;}
+    bigVal(fy(v),R0+40,72);
+  }else if(sc.scene==='gauge'){
+    const gx=250,gw=34,T0=24,B0=116,lv=B0-(v-sc.ymin)/(sc.ymax-sc.ymin)*(B0-T0);
+    const col=sc.kind==='thermo'?c.pa:sc.kind==='battery'?c.ok:c.pb;
+    ctx.fillStyle=c.panel;rrect(ctx,gx,T0,gw,B0-T0,8);ctx.fill();
+    ctx.save();rrect(ctx,gx,T0,gw,B0-T0,8);ctx.clip();ctx.fillStyle=col;ctx.globalAlpha=.8;ctx.fillRect(gx,lv,gw,B0-lv);ctx.restore();
+    ctx.strokeStyle=c.ink;ctx.lineWidth=2;rrect(ctx,gx,T0,gw,B0-T0,8);ctx.stroke();
+    const st=nice(sc.ymax-sc.ymin,4);
+    for(let g=Math.ceil(sc.ymin/st)*st;g<=sc.ymax+1e-9;g+=st){const yy=B0-(g-sc.ymin)/(sc.ymax-sc.ymin)*(B0-T0);ctx.strokeStyle=c.muted;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(gx-6,yy);ctx.lineTo(gx,yy);ctx.stroke();label(tl(g),gx-10,yy+4,{font:NUMF(),align:'right'});}
+    ctx.fillStyle=c.ink;ctx.beginPath();ctx.moveTo(gx+gw+4,lv);ctx.lineTo(gx+gw+14,lv-6);ctx.lineTo(gx+gw+14,lv+6);ctx.closePath();ctx.fill();
+    emoji(sc.em,gx+gw+32,lv,24);
+    if(se)emoji(se,gx+gw+84,72,34);else if(moving)emoji(dr>0?'⬆️':'⬇️',gx+gw+84,72,26);
+    bigVal(fy(v),gx+gw+130,72);
+  }else if(sc.scene==='dial'){
+    const cx=200,cy=100,r=74;
+    ctx.strokeStyle=c.line;ctx.lineWidth=14;ctx.lineCap='butt';ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,2*Math.PI);ctx.stroke();
+    ctx.strokeStyle=c.pa;ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,Math.PI+(v-sc.ymin)/(sc.ymax-sc.ymin)*Math.PI);ctx.stroke();
+    const st=nice(sc.ymax,5);
+    for(let g=0;g<=sc.ymax+1e-9;g+=st){const a=Math.PI+g/sc.ymax*Math.PI;label(tl(g),cx+Math.cos(a)*(r+20),cy+Math.sin(a)*(r+20)+4,{font:NUMF(),align:'center'});}
+    const a=Math.PI+(v-sc.ymin)/(sc.ymax-sc.ymin)*Math.PI;
+    ctx.strokeStyle=c.pb;ctx.lineWidth=3.5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*(r-12),cy+Math.sin(a)*(r-12));ctx.stroke();
+    ctx.fillStyle=c.ink;ctx.beginPath();ctx.arc(cx,cy,5,0,TAU);ctx.fill();
+    label(fy(v),cx,cy+20,{font:'600 13px '+NF(),color:c.ink,align:'center'});
+    /* carretera: la posició és l'àrea sota la velocitat */
+    const x0=330,x1=W-30,yR=94,dA=q=>distAt(sc,q),D=Math.max(1,dA(tot(segs))),X=q=>x0+q/D*(x1-x0-30);
+    ctx.strokeStyle=c.line;ctx.lineWidth=10;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x0,yR);ctx.lineTo(x1,yR);ctx.stroke();
+    const li=segs.findIndex(s=>s.e==='🚦');if(li>=0)emoji('🚦',X(dA(starts(segs)[li]))+26,yR-40,24);
+    const d=dA(tm);emoji(sc.em,X(d),yR-14,30);
+    label(tt('cotxe.dist',nf(d,0)),X(d),yR+24,{font:NUMF(),align:'center'});
+  }
+}
+function distAt(sc,tm){const p=pts(sc,sc.segs);let s=0;for(let k=1;k<p.length;k++){const [ta,va]=p[k-1],[tb,vb]=p[k];if(tm<=ta)break;const te=Math.min(tm,tb),ve=va+(vb-va)*(tb>ta?(te-ta)/(tb-ta):1);s+=(va+ve)/2*(te-ta)/3.6;}return s;}
+
+/* ---------- gràfiques ---------- */
+function axes(box,R,lab,small){
+  const c=C(),X=q=>box.x+q/R.tmax*box.w,Y=q=>box.y+box.h-(q-R.ymin)/(R.ymax-R.ymin)*box.h;
+  ctx.fillStyle=c.stage;ctx.fillRect(box.x,box.y,box.w,box.h);
+  const st=nice(R.tmax,10),sy=nice(R.ymax-R.ymin,small?3:5);
+  ctx.lineWidth=1;
+  for(let g=0;g<=R.tmax+1e-9;g+=st){ctx.strokeStyle=c.line;ctx.beginPath();ctx.moveTo(X(g),box.y);ctx.lineTo(X(g),box.y+box.h);ctx.stroke();if(lab.xt)label(tl(g),X(g),box.y+box.h+14,{font:NUMF(),align:'center'});}
+  for(let g=Math.ceil(R.ymin/sy-1e-9)*sy;g<=R.ymax+1e-9;g+=sy){ctx.strokeStyle=Math.abs(g)<1e-9?c.muted:c.line;ctx.beginPath();ctx.moveTo(box.x,Y(g));ctx.lineTo(box.x+box.w,Y(g));ctx.stroke();label(tl(g),box.x-7,Y(g)+4,{font:NUMF(),align:'right'});}
+  ctx.strokeStyle=c.muted;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(box.x,box.y);ctx.lineTo(box.x,box.y+box.h);ctx.lineTo(box.x+box.w,box.y+box.h);ctx.stroke();
+  if(lab.y)label(lab.y,box.x,box.y-7,{color:c.ink,font:'600 12.5px '+BF()});
+  if(lab.x)label(lab.x,box.x+box.w,box.y+box.h+30,{align:'right',color:c.ink,font:'600 12.5px '+BF()});
+  return {X,Y};
+}
+function line(M,P,upto,color,w,dash){
+  ctx.beginPath();let first=true;
+  for(const [x,y] of P){if(x>upto+1e-9)break;if(first){ctx.moveTo(M.X(x),M.Y(y));first=false;}else ctx.lineTo(M.X(x),M.Y(y));}
+  if(upto<P[P.length-1][0]){/* tros parcial fins a upto */const k=P.findIndex(p=>p[0]>upto);if(k>0){const [xa,ya]=P[k-1],[xb,yb]=P[k],f=(upto-xa)/((xb-xa)||1);ctx.lineTo(M.X(upto),M.Y(ya+(yb-ya)*f));}}
+  ctx.strokeStyle=color;ctx.lineWidth=w;ctx.setLineDash(dash||[]);ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();ctx.setLineDash([]);
+}
+function tramLabels(M,box,st,midY,color){
+  const c=C();for(let i=0;i<st.length-1;i++){const x=M.X((st[i]+st[i+1])/2),yy=clamp(midY(i)-16,box.y+10,box.y+box.h-10);
+    ctx.fillStyle=c.panel;ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,yy,9,0,TAU);ctx.fill();ctx.stroke();
+    label(String(i+1),x,yy+4,{font:'700 11px '+BF(),color,align:'center'});}
+}
+function legend(box,items){let x=box.x+box.w-6;ctx.save();ctx.font='12px '+BF();
+  items.slice().reverse().forEach(([txt,col,dash])=>{const w=ctx.measureText(txt).width;label(txt,x,box.y-7,{align:'right'});x-=w+8;
+    ctx.strokeStyle=col;ctx.lineWidth=3;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(x-22,box.y-11);ctx.lineTo(x,box.y-11);ctx.stroke();ctx.setLineDash([]);x-=34;});ctx.restore();}
+function bandAt(M,box,a,b){ctx.save();ctx.fillStyle=C().pa;ctx.globalAlpha=.08;ctx.fillRect(M.X(a),box.y,Math.max(2,M.X(b)-M.X(a)),box.h);ctx.restore();}
+function dot(M,box,x,y){const c=C();ctx.strokeStyle=c.muted;ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(M.X(x),box.y+box.h);ctx.lineTo(M.X(x),M.Y(y));ctx.lineTo(box.x,M.Y(y));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=c.pa;ctx.beginPath();ctx.arc(M.X(x),M.Y(y),5.5,0,TAU);ctx.fill();ctx.strokeStyle=c.panel;ctx.lineWidth=2;ctx.stroke();}
+
+function draw(){
+  const c=C();ctx.clearRect(0,0,W,H);ctx.fillStyle=c.panel;ctx.fillRect(0,0,W,H);
+  if(mode==='A')drawA();else drawB();
+}
+function drawA(){
+  const c=C(),sc=scA(),R=sc.segs,solved=A.solved;
+  drawScene(sc,solved?tcur:0,!solved);
+  const M=axes(GB,sc,{y:t(fam+'.y'),x:t(fam+'.x'),xt:true}),st=starts(R);
+  const ci=curTram();if(solved&&ci>=0)bandAt(M,GB,st[ci],st[ci+1]);
+  if(A.over!==null&&A.over!==A.target)line(M,pts(sc,FAM[fam].V[A.over].segs),Infinity,c.pb,2.6,[7,5]);
+  line(M,pts(sc,R),Infinity,c.pa,3.2);
+  tramLabels(M,GB,st,i=>M.Y((y0Of(sc,R,i)+R[i].y)/2),c.pa);
+  if(A.over!==null&&A.over!==A.target)legend(GB,[[t('lg_real'),c.pa],[tt('lg_other',A.letters[A.over]),c.pb,[7,5]]]);
+  if(solved&&(tcur>0||stepI>0))dot(M,GB,tcur,valAt(sc,R,tcur));
+}
+function boxesB(){const g=30,h=(GB.h-g)/2;return [{x:GB.x,y:GB.y,w:GB.w,h},{x:GB.x,y:GB.y+h+g,w:GB.w,h}];}
+function drawB(){
+  const c=C(),M0=MOT[mot],done=B.ans!==null,st=starts(M0.segs.map(s=>({d:s.d}))),T=M0.tmax;
+  /* escena: carretera amb el mòbil */
+  ctx.fillStyle=c.stage;ctx.fillRect(SCN.x,SCN.y,SCN.w,SCN.h);
+  label(t('mb.'+mot+'.name'),12,20,{font:'600 13px '+BF(),color:c.ink});
+  const tm=done?tcur:0,i=tramAt(M0.segs,Math.max(0,tm-1e-6)),seg=M0.segs[i],v=motV(M0,tm),x=motX(M0,tm);
+  const dr=done&&tm>1e-9&&tm<motTot(M0)-1e-9&&v>1e-9?seg.dir:0;
+  if(mot==='cotxe'){const D=motX(M0,motTot(M0));road('',x,Math.ceil(D/100)*100,'m',M0.em,'',0,dr);
+    const li=M0.segs.findIndex(s=>s.e==='🚦');const x0=86,x1=W-56,X=q=>x0+q/(Math.ceil(D/100)*100)*(x1-x0);emoji('🚦',X(motX(M0,st[li]))+24,52,22);}
+  else road('',x,M0.dmax,unitOf('mb.'+mot+'.d'),(done&&tm>1e-9&&seg.e)||M0.em,M0.dest,M0.dd,dr);
+  if(done)label(nf(v,v%1?1:0)+' '+unitOf('mb.'+mot+'.v'),W-14,20,{font:'600 13px '+NF(),color:c.ink,align:'right'});
+  /* dues gràfiques: distància i velocitat (ordre de B.top) */
+  const N=160,PD=[],PV=[];for(let k=0;k<=N;k++){const q=k/N*motTot(M0);PD.push([q,motX(M0,q)]);PV.push([q,motV(M0,q)]);}
+  /* la velocitat té salts: hi afegim els extrems de cada tram */
+  const PVx=[];let t0=0;M0.segs.forEach(s=>{PVx.push([t0,s.v0]);PVx.push([t0+s.d,s.v1]);t0+=s.d;});
+  const G={d:{P:PD,R:{tmax:T,ymin:0,ymax:M0.dmax},y:t('mb.'+mot+'.d')},v:{P:PVx,R:{tmax:T,ymin:0,ymax:M0.vmax},y:t('mb.'+mot+'.v')}};
+  const order=B.top==='d'?['d','v']:['v','d'];
+  boxesB().forEach((box,k)=>{const g=G[order[k]],lab={y:done?g.y:tt('g_q',k+1),xt:k===1,x:k===1?t('mb.'+mot+'.x'):''};
+    const M=axes(box,g.R,lab,true);
+    const ci=curTram();if(done&&ci>=0)bandAt(M,box,st[ci],st[ci+1]);
+    line(M,g.P,Infinity,done?c.muted:c.ink,done?1.6:2.6,done?[5,5]:[]);
+    if(done){line(M,g.P,tcur,order[k]==='d'?c.pa:c.ok,3.2);
+      const yv=order[k]==='d'?motX(M0,tcur):motV(M0,tcur);if(tcur>0||stepI>0)dot(M,box,tcur,yv);}
+  });
+}
+function curTram(){const segs=mode==='A'?scA().segs:MOT[mot].segs;if(anim)return anim.i;if(tcur<=1e-9)return -1;return tramAt(segs,tcur-1e-6);}
+function nSegs(){return mode==='A'?scA().segs.length:MOT[mot].segs.length;}
+function stList(){return mode==='A'?starts(scA().segs):starts(MOT[mot].segs);}
+const unlocked=()=>mode==='A'?A.solved:B.ans!==null;
+
+/* ---------- animació pas a pas ---------- */
+function stepOnce(){
+  const st=stList(),n=nSegs();
+  if(anim){finishAnim();return;}
+  if(stepI>=n){stepI=0;tcur=0;refresh();return;}
+  const i=stepI,a=st[i],b=st[i+1],dur=REDUCE?0:1700;
+  tcur=a;anim={i,a,b,t0:performance.now(),dur};
+  if(!dur){finishAnim();return;}
+  refresh();requestAnimationFrame(tick);
+}
+function tick(now){if(!anim)return;const f=clamp((now-anim.t0)/anim.dur,0,1);tcur=lerp(anim.a,anim.b,f);if(f>=1){finishAnim();return;}draw();renderNow();requestAnimationFrame(tick);}
+function finishAnim(){if(!anim)return;tcur=anim.b;stepI=anim.i+1;anim=null;refresh();}
+
+/* ---------- panell ---------- */
+function cardHTML(k,ci){
+  const F=FAM[fam],V=F.V[k],sol=A.solved&&k===A.target;
+  let cl='scard';if(sol)cl+=' right';else if(A.tried.includes(k))cl+=' wrong';
+  const txt=V.s.map((s,i)=>'<span class="snt'+(sol&&i===ci?' cur':'')+'">'+t(fam+'.'+s)+'</span>').join(' ');
+  return '<button type="button" class="'+cl+'" data-k="'+k+'"'+(A.solved||A.tried.includes(k)?' disabled':'')+'><span class="L">'+A.letters[k]+'</span><span>'+txt+'</span></button>';
+}
+function renderNow(){
+  const ci=curTram();
+  if(mode==='A'){$$('#cardsA .scard.right .snt').forEach((e,i)=>e.classList.toggle('cur',i===ci));}
+  if(mode==='B'){$$('#storyB li').forEach((e,i)=>{e.className=i===ci?'cur':(i<ci||(!anim&&tcur>=motTot(MOT[mot])-1e-9))?'done':'';});}
+  const n=nSegs(),u=mode==='A'?unitOf(fam+'.x'):unitOf('mb.'+mot+'.x');
+  $('#ro').innerHTML='<dt>'+t('r_t')+'</dt><dd>'+nf(tcur,2)+' '+u+'</dd><dt>'+t('r_tram')+'</dt><dd>'+(ci>=0?(ci+1)+' / '+n:'—')+'</dd>';
+  tOut.textContent=nf(tcur,2)+' '+u;tEl.value=tcur;
+  btnStep.disabled=!unlocked();
+  btnStep.textContent=!unlocked()?t(mode==='A'?'locked_A':'locked_B'):anim?tt('step',anim.i+1):stepI>=n?t('again'):tt('step',stepI+1);
+}
+function renderPanel(){
+  $('#pA').hidden=mode!=='A';$('#pB').hidden=mode!=='B';$('#roBox').hidden=!unlocked();
+  $('#noteS').textContent=t(mode==='A'?'note_A':'note_B');
+  if(mode==='A'){
+    const ci=curTram();
+    $('#cardsA').innerHTML=A.order.map(k=>cardHTML(k,ci)).join('');
+    $$('#cardsA .scard').forEach(b=>b.onclick=()=>pickA(+b.dataset.k));
+    const m=$('#msgA');m.className='msg'+(A.msg?(A.msg.good?' good':' bad'):'');m.innerHTML=A.msg?tt(A.msg.k,...A.msg.p):'';
+    $('#why').hidden=!A.solved;
+    if(A.solved){const sc=scA(),n=sc.segs.length,others=A.order.filter(k=>k!==A.target);
+      $('#whyRows').innerHTML=others.map(k=>{const st=A.why[k],ok=st!=null&&diffTrams(sc,sc.segs,FAM[fam].V[k].segs).includes(st);
+        return '<div class="whyrow"><p><b>'+A.letters[k]+'.</b> '+(st!=null?'<span class="mk '+(ok?'good':'bad')+'">'+(ok?t('why_ok')+' '+tt('tram_n',st+1):t('why_ko'))+'</span>':'')+'</p><div class="chips">'+
+          Array.from({length:n},(_,i)=>'<button type="button" class="chip" data-o="'+k+'" data-i="'+i+'" aria-pressed="'+(st===i)+'">'+tt('tram_n',i+1)+'</button>').join('')+'</div></div>';}).join('')+
+        (others.every(k=>A.why[k]!=null&&diffTrams(sc,sc.segs,FAM[fam].V[k].segs).includes(A.why[k]))?'<p class="msg good">'+t('why_all')+'</p>':'');
+      $$('#whyRows [data-o]').forEach(b=>b.onclick=()=>{A.why[+b.dataset.o]=+b.dataset.i;A.over=+b.dataset.o;refresh();});}
+    $('#scA').textContent=tt('a_score',SCORE.A[0],SCORE.A[1]);
+  }else{
+    $('#storyB').innerHTML=MOT[mot].segs.map((s,i)=>'<li>'+t('mb.'+mot+'.s'+i)+'</li>').join('');
+    const right=B.top==='d'?0:1;
+    $('#optsB').innerHTML=[0,1].map(k=>{let cl='opt';if(B.ans!==null){if(k===right)cl+=' right';else if(k===B.ans)cl+=' wrong';}
+      return '<button type="button" class="'+cl+'" data-k="'+k+'"'+(B.ans!==null?' disabled':'')+'>'+t('b_o'+(k+1))+'</button>';}).join('');
+    $$('#optsB [data-k]').forEach(b=>b.onclick=()=>pickB(+b.dataset.k));
+    const m=$('#msgB'),ok=B.ans===right;m.className='msg'+(B.ans!==null?(ok?' good':' bad'):'');
+    m.innerHTML=B.ans!==null?t(ok?'b_ok':'b_ko')+'<br><span style="font-weight:400;color:var(--ink)">'+t('b_why')+'</span>':'';
+    $('#scB').textContent=tt('b_score',SCORE.B[0],SCORE.B[1]);
+  }
+  tEl.disabled=!unlocked();
+  renderNow();
+}
+function refresh(){tEl.max=mode==='A'?FAM[fam].tmax:MOT[mot].tmax;tEl.step=(+tEl.max)/300;draw();renderPanel();}
+
+/* ---------- jugades ---------- */
+function newA(v){const F=FAM[fam],order=shuffle([0,1,2,3]);const letters={};order.forEach((k,i)=>letters[k]='ABCD'[i]);
+  A={target:v===undefined?Math.floor(Math.random()*F.V.length):v,order,letters,tried:[],solved:false,first:true,msg:null,over:null,why:{}};}
+function pickA(k){
+  if(A.solved)return;const sc=scA();
+  if(A.first){SCORE.A[1]++;}
+  if(k===A.target){if(A.first)SCORE.A[0]++;A.solved=true;A.over=null;A.msg={k:A.first?'a_ok':'a_ok2',p:[A.letters[k]],good:true};}
+  else{A.tried.push(k);A.over=k;const d=diffTrams(sc,sc.segs,FAM[fam].V[k].segs);A.msg={k:'a_ko',p:[A.letters[k],(d[0]||0)+1]};}
+  A.first=false;stepI=0;tcur=0;anim=null;refresh();
+}
+function newB(){B={top:Math.random()<.5?'d':'v',ans:null};}
+function pickB(k){if(B.ans!==null)return;B.ans=k;SCORE.B[1]++;if(k===(B.top==='d'?0:1))SCORE.B[0]++;stepI=0;tcur=0;anim=null;refresh();}
+function setCtx(id){anim=null;stepI=0;tcur=0;if(mode==='A'){fam=id;newA();}else{mot=id;newB();}renderChips();refresh();}
+function setMode(m){mode=m;$$('#modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===m)));setCtx(m==='A'?fam:mot);}
+function renderChips(){const L=mode==='A'?FIDS:MIDS,cur=mode==='A'?fam:mot,pre=mode==='A'?'':'mb.';
+  $('#scs').innerHTML=L.map(id=>'<button type="button" class="chip" data-id="'+id+'" aria-pressed="'+(id===cur)+'">'+t(pre+id+'.name')+'</button>').join('');
+  $$('#scs .chip').forEach(b=>b.onclick=()=>setCtx(b.dataset.id));}
+$$('#modes button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
+btnStep.addEventListener('click',stepOnce);
+$('#btnReset').addEventListener('click',()=>setCtx(mode==='A'?fam:mot));
+$('#btnRnd').addEventListener('click',()=>{if(mode==='A'){const o=FIDS.filter(x=>x!==fam);fam=o[Math.floor(Math.random()*o.length)];setCtx(fam);}else{const o=MIDS.filter(x=>x!==mot);setCtx(o[Math.floor(Math.random()*o.length)]);}});
+tEl.addEventListener('input',()=>{anim=null;tcur=+tEl.value;stepI=stList().filter((s,k)=>k>0&&s<=tcur+1e-9).length;draw();renderNow();});
+document.addEventListener('langchange',()=>{renderChips();refresh();});
+document.addEventListener('themechange',()=>draw());
+App.hooks.push(()=>refresh());
+
+/* ===== Raona-ho ===== */
+/* carrega un cas resolt: mode A (família, història, trams recorreguts) o mode B (moviment, trams recorreguts) */
+function setModeQuiet(m){mode=m;$$('#modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===m)));}
+function loadA(f,v,k){setModeQuiet('A');fam=f;newA(v);A.solved=true;A.first=false;A.msg={k:'a_ok2',p:[A.letters[v]],good:true};
+  const R=FAM[f].V[v].segs,n=k===undefined?R.length:clamp(k,0,R.length);anim=null;stepI=n;tcur=starts(R)[n];renderChips();refresh();RZ.show(cv);}
+function loadB(m,k){setModeQuiet('B');mot=m;B={top:'d',ans:0};const R=MOT[m].segs,n=k===undefined?R.length:clamp(k,0,R.length);anim=null;stepI=n;tcur=starts(R)[n];renderChips();refresh();RZ.show(cv);}
+const near=(a,b,e)=>Math.abs(a-b)<=(e||1e-6);
+RZ.init({
+ sim:()=>mode==='A'?loadA(fam,A.target):loadB(mot),
+ M:[
+  {id:'m1',f:[{l:'l_km',u:'km'}],sim:()=>loadA('bici',0),ok:()=>({k:'m1_ok'}),
+   chk:([x])=>near(x,8,.01)?null:near(x,4,.01)?{k:'m1_half'}:{k:'m1_f',p:[nf(x,2)]}},
+  {id:'m2',f:[{l:'l_vel',u:'m/min'}],sim:()=>loadB('claus',2),ok:()=>({k:'m2_ok'}),
+   chk:([v])=>near(v,150,.5)?null:near(v,300,.5)?{k:'m2_d'}:{k:'m2_f',p:[nf(v,1),nf(v*2,0)]}},
+  {id:'m3',f:[{l:'l_temps',u:'min'}],sim:()=>loadA('gel',0,2),ok:()=>({k:'m3_ok'}),
+   chk:([m])=>near(m,40,.05)?null:{k:'m3_f',p:[nf(m,1)]}},
+  {id:'m4',f:[{l:'l_desn',u:'m/h'}],sim:()=>loadA('excursio',1,1),ok:()=>({k:'m4_ok'}),
+   chk:([r])=>near(r,200,.5)?null:{k:'m4_f',p:[nf(r,0),nf(r*3,0)]}},
+  {id:'m5',f:[{l:'l_acc',u:'(km/h)/s'}],sim:()=>loadA('cotxe',2,1),ok:()=>({k:'m5_ok'}),
+   chk:([a])=>near(a,2.5,.01)?null:{k:'m5_f',p:[nf(a,2),nf(a*20,1)]}}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[{l:'l_vel',u:'km/h'}],sim:()=>loadB('bici',1),cxsim:()=>loadB('bici',1),
+   cxok:([v])=>({k:'s1_cx',p:[nf(v,1)]}),cx:([v])=>v!==0?null:{k:'s1_cx_no',p:[nf(v,1)]}},
+  {id:'s2',ans:'S',sim:()=>loadB('claus',2)},
+  {id:'s3',ans:'S',sim:()=>loadB('escola',2)},
+  {id:'s4',ans:'M',sim:()=>loadA('excursio',0)},
+  {id:'s5',ans:'S',sim:()=>loadB('bici')}
+ ],
+ E:[
+  {id:'e1',who:1,sim:()=>loadA('gel',0,2)},
+  {id:'e2',who:1,sim:()=>loadB('bici')},
+  {id:'e3',who:1,sim:()=>loadA('cotxe',0,1)}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'%'}],sim:()=>loadA('mobil',0,1),ok:()=>({k:'d1_ok'}),
+   chk:([p])=>near(p,60,.05)?null:{k:'d1_f'}},
+  {id:'d2',chips:{vals:[1,2],fmt:x=>t('d2.c'+x)},f:[{l:'d2.l0',u:'min'}],sim:()=>loadA('diposit',0,1),ok:()=>({k:'d2_ok'}),
+   chk:([p,m])=>p===2?{k:'d2_slow'}:near(m,15,.05)?null:{k:'d2_f'}},
+  {id:'d3',f:[{l:'d3.l0',u:'m'}],sim:()=>loadB('cotxe',2),ok:()=>({k:'d3_ok'}),
+   chk:([d])=>near(d,277.8,4)?null:{k:'d3_f',p:[nf(d,0)]}}
+ ]
+});
+initQuiz([]);
+newA();newB();
+ready=true;
+initLang();applyLang();
+renderChips();refresh();
+})();
+</script>
+</body>
+</html>
