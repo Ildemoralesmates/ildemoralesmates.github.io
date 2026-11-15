@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cossos geomètrics i volums</title>
+<meta name="description" content="Desplega prismes, cilindres, piràmides i cons per a veure el seu desenvolupament pla i d'on ixen les fórmules de l'àrea, i ompli un cilindre amb l'aigua d'un con: en calen tres. Pas a pas, amb predicció i activitats per a raonar.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+/*@STEPS_CSS@*/
+#cv{display:block;width:100%;max-width:calc(min(52vh,440px)*1.4);margin-inline:auto;touch-action:pan-y;cursor:grab}
+#cv:active{cursor:grabbing}
+.stage-card .idea{margin:10px 12px 12px}
+.sidep .stats{grid-template-columns:1fr}
+.sidep .stat{padding:6px 10px}
+.sidep .stat .v{font-size:14px}
+.bar .seg[hidden]{display:none}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="bar">
+<div class="seg" id="shapesw" role="group" data-i18n-aria="aria.shape" aria-label="">
+<button type="button" data-shape="pri" aria-pressed="true" data-i18n="shape_pri"></button>
+<button type="button" data-shape="cil" aria-pressed="false" data-i18n="shape_cil"></button>
+<button type="button" data-shape="pir" aria-pressed="false" data-i18n="shape_pir"></button>
+<button type="button" data-shape="con" aria-pressed="false" data-i18n="shape_con"></button>
+<button type="button" data-shape="esf" aria-pressed="false" data-i18n="shape_esf"></button>
+<button type="button" data-shape="aig" aria-pressed="false" data-i18n="shape_aig"></button>
+</div>
+<div class="seg" id="pairsw" role="group" data-i18n-aria="aria.pair" aria-label="" hidden>
+<button type="button" data-pair="con" aria-pressed="true" data-i18n="pair_con"></button>
+<button type="button" data-pair="pir" aria-pressed="false" data-i18n="pair_pir"></button>
+<button type="button" data-pair="esf" aria-pressed="false" data-i18n="pair_esf"></button>
+</div>
+</div>
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="ctrlbar" id="ctrl"></div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev"></button><button type="button" class="btn primary" id="next" data-i18n="st_next"></button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="p0.title"></h2>
+<div class="stext" id="stext" data-i18n-html="p0.text"></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart"></button></div>
+</aside>
+</div>
+
+<!--@RAONA@-->
+
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Cossos geomètrics i volums",
+"eyebrow":"Matemàtiques · 2n i 3r ESO · Geometria",
+"h1":"Cossos geomètrics i volums",
+"lede":"Desplega prismes, cilindres, piràmides i cons per a veure d'on ixen les fórmules de l'àrea, i ompli un cilindre amb l'aigua d'un con: en calen exactament tres.",
+"aria.shape":"Cos geomètric","aria.pair":"Recipients","aria.cv":"Dibuix del cos geomètric, del seu desenvolupament pla o dels recipients amb aigua",
+"shape_pri":"Prisma","shape_cil":"Cilindre","shape_pir":"Piràmide","shape_con":"Con","shape_esf":"Esfera","shape_aig":"💧 Aigua",
+"pair_con":"Con → cilindre","pair_pir":"Piràmide → prisma","pair_esf":"Esfera → cilindre",
+"idea":"<b>Per a la classe:</b> arrossega el dibuix per a girar el cos. Abans de pulsar «Següent», digueu en veu alta què creieu que passarà.",
+"l_n":"Costats de la base n","l_a":"Aresta de la base a (cm)","l_r":"Radi r (cm)","l_h":"Altura h (cm)",
+"f_a":"aresta a","f_h":"altura h","f_r":"radi r",
+"k_n":"Costats de la base","k_a":"Aresta de la base","k_r":"Radi","k_h":"Altura","k_P":"Perímetre de la base","k_w":"Amplària del rectangle",
+"k_Ab":"Àrea de la base","k_Al":"Àrea lateral","k_At":"Àrea total","k_V":"Volum","k_apb":"Apotema de la base","k_ap":"Apotema de la piràmide",
+"k_g":"Generatriu g","k_ang":"Angle del sector","k_Acl":"Àrea lateral del cilindre","k_A":"Àrea de l'esfera","k_hc":"Altura del cilindre",
+"k_Vcil":"Volum del cilindre","k_Vcon":"Volum del con","k_Vpri":"Volum del prisma","k_Vpir":"Volum de la piràmide","k_Vesf":"Volum de l'esfera","k_lvl":"Nivell de l'aigua",
+"rng":"Escriu nombres enters dins dels límits del simulador (aresta de 2 a 8, radi d'1 a 6 i altura d'1 a 12).",
+"p0.title":"Un prisma recte",
+"p0.text":"<p>Un prisma té <b>dues bases iguals</b> i paral·leles (ací, polígons regulars de n costats) i tantes <b>cares laterals</b> com costats té la base.</p>",
+"p0.q":"Predix: si l'obrim i l'estenem damunt la taula, quina forma faran totes les cares laterals juntes?",
+"p0.o0":"Un rectangle gran","p0.o1":"Un triangle","p0.o2":"Un cercle",
+"p0.why":"Cada cara lateral és un rectangle d'altura h, i totes juntes en formen un de sol, tan ample com el perímetre de la base.",
+"p1.title":"El desenvolupament pla",
+"p1.text":"<p>Obrim les dues bases i desenrotllem les cares laterals: queda un <b>rectangle</b> d'altura <b>h</b> i amplària igual al <b>perímetre P</b> de la base, més els dos polígons de les bases.</p>",
+"p1.tq":"Canvia el nombre de costats n. Què li passa al rectangle lateral? I a les bases?",
+"p1.th":"El rectangle sempre és un rectangle: només canvia l'amplària, que és n · a. Les bases sí que canvien de forma: triangle, quadrat, pentàgon…",
+"p2.title":"L'àrea: sumem les peces",
+"p2.text":"<p>L'àrea total és la del rectangle lateral, <b>P · h</b>, més la de les dues bases: <b>A = P · h + 2 · A<sub>b</sub></b>.</p>",
+"p2.q":"Un prisma de base quadrada té a = 3 cm i h = 5 cm. Quina és la seua àrea lateral?",
+"p2.o0":"15 cm²","p2.o1":"60 cm²","p2.o2":"45 cm²",
+"p2.why":"El perímetre és 4 · 3 = 12 cm i l'àrea lateral 12 · 5 = 60 cm². 15 cm² és només una cara, i 45 és el volum (en cm³).",
+"p3.title":"El volum: capes apilades",
+"p3.text":"<p>Tornem a tancar-lo. Una capa d'1 cm d'altura conté tants cm³ com cm² té la base. Amb h capes: <b>V = A<sub>b</sub> · h</b>.</p>",
+"p3.tq":"Dos prismes tenen la mateixa base i la mateixa altura, però un està inclinat, com una pila de monedes torta. Tenen el mateix volum?",
+"p3.th":"Sí: les capes són les mateixes, només estan desplaçades (principi de Cavalieri). El volum depén de l'àrea de la base i de l'altura, no de la inclinació.",
+"c0.title":"Un cilindre",
+"c0.text":"<p>Un cilindre és com un prisma amb una base de «infinits costats»: dues <b>bases circulars</b> de radi <b>r</b> i una superfície lateral corba d'altura <b>h</b>.</p>",
+"c0.q":"Predix: si tallem la superfície lateral de dalt a baix i la desenrotllem, quina figura queda?",
+"c0.o0":"Un rectangle","c0.o1":"Un cercle","c0.o2":"Un trapezi",
+"c0.why":"Pensa en l'etiqueta d'una llanda de conserva: quan la despegues, és un rectangle.",
+"c1.title":"El desenvolupament pla",
+"c1.text":"<p>La superfície lateral és un <b>rectangle</b> d'altura <b>h</b>. La seua amplària ha de donar la volta sencera a la base: mesura <b>2πr</b>, la longitud de la circumferència.</p>",
+"c1.tq":"Per què l'amplària del rectangle és 2πr i no el diàmetre, 2r?",
+"c1.th":"Perquè el rectangle s'enrotlla al voltant del cercle: el seu costat ha de coincidir amb tota la circumferència, que mesura π vegades el diàmetre (una mica més del triple).",
+"c2.title":"L'àrea: un rectangle i dos cercles",
+"c2.text":"<p>Àrea lateral: <b>2πr · h</b>. Cada base: <b>πr²</b>. En total: <b>A = 2πrh + 2πr²</b>.</p>",
+"c2.q":"Si dobles l'altura d'un cilindre sense tocar el radi, què li passa a l'àrea lateral?",
+"c2.o0":"Es dobla","c2.o1":"Es multiplica per 4","c2.o2":"No canvia",
+"c2.why":"El rectangle lateral es fa el doble d'alt i igual d'ample: 2πr · 2h = 2 · (2πrh). Les bases no canvien.",
+"c3.title":"El volum: capes circulars",
+"c3.text":"<p>Igual que en el prisma, apilem capes: <b>V = A<sub>b</sub> · h = πr² · h</b>.</p>",
+"c3.tq":"Què fa créixer més el volum: doblar el radi o doblar l'altura? Prova-ho amb els lliscadors.",
+"c3.th":"Doblar l'altura dobla el volum, però doblar el radi el multiplica per 4, perquè el radi està elevat al quadrat.",
+"y0.title":"Una piràmide regular",
+"y0.text":"<p>Una piràmide té <b>una sola base</b> (un polígon) i cares laterals que són <b>triangles</b> que es troben en un punt, el <b>vèrtex</b>. L'altura <b>h</b> va del vèrtex al centre de la base.</p>",
+"y0.q":"Predix: l'altura d'un dels triangles laterals (l'apotema de la piràmide) és igual a l'altura h de la piràmide?",
+"y0.o0":"Sí, és la mateixa","y0.o1":"No, és més llarga","y0.o2":"No, és més curta",
+"y0.why":"L'apotema baixa inclinada per la cara, mentre que l'altura baixa recta pel centre. L'apotema és la hipotenusa d'un triangle rectangle que té l'altura com a catet.",
+"y1.title":"El desenvolupament pla",
+"y1.text":"<p>Cada triangle lateral s'obri al voltant de la seua aresta de la base. Queda una <b>estrela</b>: el polígon de la base i n triangles isòsceles iguals, d'altura <b>ap</b> (l'apotema de la piràmide).</p>",
+"y1.tq":"Com es calcula l'apotema ap si coneixes l'altura h i l'apotema de la base?",
+"y1.th":"Amb el teorema de Pitàgores: ap² = h² + (apotema de la base)². En una base quadrada, l'apotema de la base és la meitat de l'aresta.",
+"y2.title":"L'àrea: la base i els triangles",
+"y2.text":"<p>Cada triangle té àrea a · ap ÷ 2, i n'hi ha n: l'àrea lateral és <b>P · ap ÷ 2</b>. Amb la base: <b>A = A<sub>b</sub> + P · ap ÷ 2</b>.</p>",
+"y3.title":"El volum: un terç del prisma",
+"y3.text":"<p>Tanquem la piràmide dins del prisma que té la mateixa base i la mateixa altura. La piràmide n'ocupa exactament <b>la tercera part</b>: <b>V = A<sub>b</sub> · h ÷ 3</b>.</p>",
+"y3.q":"Una piràmide de base quadrada té a = 6 cm i h = 5 cm. Quin és el seu volum?",
+"y3.o0":"180 cm³","y3.o1":"90 cm³","y3.o2":"60 cm³",
+"y3.why":"L'àrea de la base és 36 cm², el prisma tindria 36 · 5 = 180 cm³ i la piràmide n'és un terç: 60 cm³.",
+"y3.tq":"Com podries comprovar a classe que és un terç i no la meitat?",
+"y3.th":"Omplint la piràmide d'aigua o d'arròs i abocant-la dins del prisma: en calen tres. Mira-ho a la pestanya «💧 Aigua».",
+"k0.title":"Un con",
+"k0.text":"<p>Un con té una <b>base circular</b> de radi <b>r</b> i una superfície lateral corba que acaba en el <b>vèrtex</b>. La <b>generatriu g</b> és el segment que va del vèrtex a la vora de la base.</p>",
+"k0.q":"Predix: si tallem la superfície lateral per una generatriu i l'estenem, quina figura queda?",
+"k0.o0":"Un triangle","k0.o1":"Un sector circular","k0.o2":"Un cercle sencer",
+"k0.why":"Tots els punts de la vora estan a la mateixa distància g del vèrtex: en estendre-la, la vora es converteix en un arc de circumferència de radi g.",
+"k1.title":"El desenvolupament pla",
+"k1.text":"<p>La superfície lateral és un <b>sector circular</b> de radi <b>g</b>. El seu arc ha de donar la volta sencera a la base: mesura <b>2πr</b>.</p>",
+"k1.tq":"Fes el con més alt sense canviar el radi. Què li passa a l'angle del sector? Per què?",
+"k1.th":"Es fa més xicotet: l'arc continua mesurant 2πr, però el radi del sector (g) és més gran, així que eixe arc és una part més xicoteta de la circumferència sencera. Angle = 360° · r ÷ g.",
+"k2.title":"L'àrea: un sector i un cercle",
+"k2.text":"<p>El sector és la fracció r ÷ g d'un cercle de radi g: la seua àrea és πg² · r ÷ g = <b>πrg</b>. Amb la base: <b>A = πr² + πrg</b>.</p>",
+"k2.q":"Un con té r = 3 cm i h = 4 cm. Quant mesura la generatriu?",
+"k2.o0":"7 cm","k2.o1":"5 cm","k2.o2":"12 cm",
+"k2.why":"El radi, l'altura i la generatriu formen un triangle rectangle: g² = 3² + 4² = 25, així que g = 5 cm.",
+"k3.title":"El volum: un terç del cilindre",
+"k3.text":"<p>Tanquem el con dins del cilindre que té la mateixa base i la mateixa altura. El con n'ocupa exactament <b>la tercera part</b>: <b>V = πr² · h ÷ 3</b>.</p>",
+"k3.tq":"A ull, sembla que el con ocupe la meitat del cilindre. Com ho comprovaries?",
+"k3.th":"Omplint el con d'aigua i abocant-lo dins del cilindre: en calen tres, no dos. Mira-ho a la pestanya «💧 Aigua».",
+"f0.title":"Una esfera",
+"f0.text":"<p>Tots els punts de la superfície d'una esfera estan a la mateixa distància <b>r</b> del centre. No té cares, ni arestes, ni vèrtexs.</p>",
+"f0.q":"Predix: es pot fer un desenvolupament pla exacte d'una esfera, com hem fet amb el cilindre o amb el con?",
+"f0.o0":"Sí, és un cercle gran","f0.o1":"Sí, és un rectangle","f0.o2":"No, és impossible sense deformar-la",
+"f0.why":"Una esfera no es pot aplanar sense estirar-la o arrugar-la. Per això tots els mapes del món deformen alguna cosa: les àrees, les formes o les distàncies.",
+"f1.title":"L'àrea: la del cilindre que l'envolta",
+"f1.text":"<p>Fiquem l'esfera dins d'un cilindre ajustat: radi <b>r</b> i altura <b>2r</b>. Arquimedes va demostrar que l'esfera té la mateixa àrea que la superfície lateral d'eixe cilindre: 2πr · 2r = <b>4πr²</b>.</p>",
+"f1.tq":"4πr² és exactament l'àrea de quants cercles de radi r?",
+"f1.th":"De quatre cercles màxims. Pela una taronja i ompli amb la corfa cercles del seu diàmetre: n'ompliràs quatre.",
+"f2.title":"El volum: dos terços del cilindre",
+"f2.text":"<p>El cilindre ajustat té volum πr² · 2r = 2πr³. L'esfera n'ocupa <b>dos terços</b>: <b>V = <sup>4</sup>⁄<sub>3</sub> πr³</b>.</p>",
+"f2.q":"Si dobles el radi d'una esfera, per quant es multiplica el seu volum?",
+"f2.o0":"Per 2","f2.o1":"Per 4","f2.o2":"Per 8",
+"f2.why":"El radi està elevat al cub: 2³ = 8. L'àrea, en canvi, es multiplica per 2² = 4.",
+"a0.title":"Un con ple d'aigua",
+"a0.text":"<p>El con i el cilindre tenen <b>la mateixa base</b> i <b>la mateixa altura</b>. El con està ple d'aigua fins dalt.</p>",
+"a0.q":"Predix: quants cons plens calen per a omplir el cilindre?",
+"a0.o0":"2","a0.o1":"3","a0.o2":"4",
+"a0.why":"Molta gent diu 2, perquè vist de costat el con és un triangle que ocupa la meitat del rectangle. Però el con s'estreteix en totes les direccions: en calen 3. Comprova-ho.",
+"a1.title":"Primer con",
+"a1.text":"<p>Aboquem el primer con. L'aigua arriba a <b>un terç</b> de l'altura del cilindre.</p>",
+"a1.tq":"Quan el con ha perdut la meitat de l'aigua, el nivell està a la meitat de la seua altura?",
+"a1.th":"No. El con és estret baix i ample dalt, així que la major part de l'aigua està en la part alta: el nivell baixa a poc a poc al principi i de pressa al final.",
+"a2.title":"Segon con",
+"a2.text":"<p>Tornem a omplir el con i l'aboquem. L'aigua arriba a <b>dos terços</b>.</p>",
+"a3.title":"Tercer con: ple!",
+"a3.text":"<p>Amb el tercer con, el cilindre queda ple exactament. Per tant, el volum del con és <b>la tercera part</b> del volum del cilindre: <b>V = πr² · h ÷ 3</b>.</p>",
+"a3.tq":"Canvia el radi i l'altura i repeteix l'experiment. Continuen fent falta tres cons?",
+"a3.th":"Sí, sempre: mentre el con i el cilindre tinguen la mateixa base i la mateixa altura, la relació és d'1 a 3, siguen alts, baixos, amples o estrets.",
+"b0.title":"Una piràmide plena d'aigua",
+"b0.text":"<p>La piràmide i el prisma tenen <b>la mateixa base</b> i <b>la mateixa altura</b>. La piràmide està plena d'aigua.</p>",
+"b0.q":"Predix: quantes piràmides plenes calen per a omplir el prisma?",
+"b0.o0":"2","b0.o1":"3","b0.o2":"4",
+"b0.why":"Igual que amb el con i el cilindre: en calen 3. Comprova-ho.",
+"b1.title":"Primera piràmide",
+"b1.text":"<p>Aboquem la primera piràmide. L'aigua arriba a <b>un terç</b> de l'altura del prisma.</p>",
+"b2.title":"Segona piràmide",
+"b2.text":"<p>Tornem a omplir-la i l'aboquem. L'aigua arriba a <b>dos terços</b>.</p>",
+"b2.tq":"Canvia el nombre de costats de la base. Canvia el resultat?",
+"b2.th":"No: amb base triangular, quadrada o hexagonal, sempre calen tres piràmides. El con és el cas límit, amb una base de «infinits costats».",
+"b3.title":"Tercera piràmide: ple!",
+"b3.text":"<p>El prisma queda ple exactament. El volum de la piràmide és la tercera part del volum del prisma: <b>V = A<sub>b</sub> · h ÷ 3</b>.</p>",
+"w0.title":"Una esfera plena d'aigua",
+"w0.text":"<p>L'esfera cap justa dins del cilindre: tenen el mateix radi <b>r</b>, i el cilindre té altura <b>2r</b>, el diàmetre de l'esfera.</p>",
+"w0.q":"Predix: fins on arribarà l'aigua de l'esfera dins del cilindre?",
+"w0.o0":"Fins a la meitat","w0.o1":"Fins a dos terços","w0.o2":"Fins a tres quarts",
+"w0.why":"Arquimedes estava tan orgullós d'aquest resultat que va demanar que gravaren una esfera dins d'un cilindre a la seua tomba.",
+"w1.title":"Aboquem l'esfera",
+"w1.text":"<p>L'aigua arriba a <b>dos terços</b> de l'altura del cilindre.</p>",
+"w1.tq":"El cilindre té volum πr² · 2r = 2πr³. Quant val, doncs, el volum de l'esfera?",
+"w1.th":"Dos terços de 2πr³: (2 ÷ 3) · 2πr³ = (4 ÷ 3) · πr³.",
+"w2.title":"Con, esfera i cilindre",
+"w2.text":"<p>El terç que falta per a omplir el cilindre és justament el volum d'un <b>con</b> de radi r i altura 2r. Amb el mateix radi i l'altura 2r: <b>con : esfera : cilindre = 1 : 2 : 3</b>.</p>",
+"m1.q":"Un <b>prisma de base quadrada</b> té altura <b>6 cm</b> i volum <b>96 cm³</b>. Quant mesura l'aresta de la base?",
+"m1_f":"{0} · {0} · 6 = {1}, no 96.","m1_ok":"✔ Missió complida! 4 · 4 · 6 = 96 cm³.",
+"m1.more":"I si el volum fora el doble, 192 cm³, amb la mateixa altura? L'aresta seria el doble?",
+"m2.q":"Troba el <b>radi</b> i l'<b>altura</b> (nombres enters) d'un <b>con</b> que tinga exactament el mateix volum que un <b>cilindre de radi 2 cm i altura 3 cm</b>.",
+"m2_f":"El cilindre té volum π · 2² · 3 = 12π. El teu con té π · {0}² · {1} ÷ 3 = {2}π.","m2_ok":"✔ Missió complida! π · {0}² · {1} ÷ 3 = 12π cm³.",
+"m2.more":"Hi ha dues solucions dins dels límits del simulador. Si el con té el mateix radi que el cilindre, quantes vegades ha de ser més alt?",
+"m3.q":"Una <b>esfera de radi 3 cm</b> cap justa dins d'un cilindre. Quin radi i quina altura té el cilindre?",
+"m3_r":"El cilindre ha de tocar l'esfera pels costats: el seu radi és el de l'esfera.","m3_h":"L'altura del cilindre ha de ser el diàmetre de l'esfera, no {0}.",
+"m3_ok":"✔ Missió complida! Radi 3 cm i altura 6 cm.",
+"m3.more":"Quin volum té el cilindre? I l'esfera? Quina fracció del cilindre queda buida?",
+"m4.q":"Una <b>piràmide de base quadrada</b> té aresta de la base <b>6 cm</b> i volum <b>48 cm³</b>. Quina és la seua altura?",
+"m4_f":"6 · 6 · {0} ÷ 3 = {1}, no 48.","m4_ok":"✔ Missió complida! 36 · 4 ÷ 3 = 48 cm³.",
+"m4.more":"Quin volum tindria el prisma amb la mateixa base i la mateixa altura?",
+"s1.q":"«Si dobles l'altura d'un cilindre (sense canviar el radi), el seu volum es dobla.»",
+"s1.h":"Mira la fórmula V = πr² · h: què passa si canvies h per 2h?",
+"s1.e":"Sempre: V = πr² · h és proporcional a l'altura. Amb el doble de capes, el doble de volum.",
+"s2.q":"«Si dobles el radi d'un cilindre (sense canviar l'altura), el seu volum es dobla.»",
+"s2.h":"Prova amb r = 2 i després amb r = 4, i compara els volums.",
+"s2.e":"Mai: el radi està elevat al quadrat, així que el volum es multiplica per 4, no per 2.",
+"s3.q":"«Un con té menys volum que un cilindre.»",
+"s3.h":"Sempre? I si el con és molt gran i el cilindre molt xicotet?",
+"s3.e":"De vegades: és cert si tenen la mateixa base i la mateixa altura (el con és un terç), però un con gran pot tindre més volum que un cilindre xicotet.",
+"s3.l0":"radi del con","s3.l1":"altura del con","s3.l2":"radi del cilindre","s3.l3":"altura del cilindre",
+"s3_f":"El teu con té volum {0}π i el cilindre {1}π: el con continua sent més xicotet.",
+"s4.q":"«Dos prismes de base quadrada amb el mateix volum tenen la mateixa àrea total.»",
+"s4.h":"Compara un prisma d'aresta 2 i altura 8 amb un d'aresta 4 i altura 2.",
+"s4.e":"De vegades: només si són iguals. Amb aresta 2 i altura 8 (V = 32, A = 72) i amb aresta 4 i altura 2 (V = 32, A = 64) el volum coincideix, però l'àrea no. El mateix volum es pot «embolicar» amb més o menys paper.",
+"s4.l0":"aresta 1","s4.l1":"altura 1","s4.l2":"aresta 2","s4.l3":"altura 2",
+"s4_v":"Els volums són {0} i {1}: han de ser iguals.","s4_same":"Tenen la mateixa àrea total ({0}). Busca dos prismes diferents amb el mateix volum.",
+"s5.q":"«La superfície lateral d'un con, estesa damunt la taula, és un triangle.»",
+"s5.h":"Desplega el con al simulador i fixa't en la vora.",
+"s5.e":"Mai: és un sector circular. Vist de costat el con sembla un triangle, però la seua vora és corba i, en estendre'l, es converteix en un arc.",
+"e1.ctx":"Un con té <b>radi 3 cm</b> i <b>altura 4 cm</b>. Quina és la seua àrea lateral?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"π · 3 · 4 = 12π cm².","e1.s1":"La generatriu fa 5 cm: π · 3 · 5 = 15π cm².",
+"e1.w0":"L'àrea lateral és π · r · g, amb la <b>generatriu</b> g i no amb l'altura. Per Pitàgores, g = 5 cm.",
+"e1.w1":"Perquè l'àrea lateral sempre és més gran que 12π.",
+"e1.w2":"Perquè cal multiplicar el radi per la suma de l'altura i el radi.",
+"e1.frame":"Marta, l'àrea lateral no és 12π perquè…",
+"e1.model":"Marta, el sector que forma la superfície lateral té de radi la generatriu, no l'altura: la generatriu baixa inclinada per la superfície i l'altura baixa recta pel centre. Amb r = 3 i h = 4, g = √(9 + 16) = 5, i l'àrea és π · 3 · 5 = 15π cm².",
+"e2.ctx":"Una piràmide de base quadrada té <b>aresta de la base 6 cm</b> i <b>altura 4 cm</b>. Quin és el seu volum?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"6 · 6 · 4 = 144 cm³.","e2.s1":"6 · 6 · 4 ÷ 3 = 48 cm³.",
+"e2.w0":"144 cm³ és el volum del prisma amb la mateixa base i la mateixa altura; la piràmide n'ocupa només un terç.",
+"e2.w1":"Perquè en les piràmides sempre es divideix entre 2.",
+"e2.w2":"Perquè l'altura d'una piràmide es mesura per la cara.",
+"e2.frame":"Àlex, el volum no és 144 perquè…",
+"e2.model":"Àlex, 6 · 6 · 4 = 144 cm³ és el volum del prisma que envolta la piràmide. Si omplires la piràmide d'aigua i l'abocares dins del prisma, en necessitaries tres: la piràmide és un terç, 144 ÷ 3 = 48 cm³.",
+"e3.ctx":"Un cilindre té <b>radi 2 cm</b> i <b>altura 5 cm</b>. Quina és la seua <b>àrea total</b>?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"2 · π · 2 · 5 = 20π cm².","e3.s1":"π · 2² · 5 = 20π cm².",
+"e3.w0":"Rita només ha calculat l'àrea lateral i Joan ha calculat el volum. L'àrea total és 20π + 2 · 4π = 28π cm².",
+"e3.w1":"Perquè tots dos han oblidat multiplicar per 2.",
+"e3.w2":"Perquè l'àrea total d'un cilindre és 2πr²h.",
+"e3.frame":"Rita i Joan, l'àrea total no és 20π perquè…",
+"e3.model":"Rita, 2π · 2 · 5 = 20π és només el rectangle lateral: hi falten els dos cercles de les bases, 2 · π · 2² = 8π. Joan, π · 2² · 5 és la fórmula del volum (i es mesura en cm³, no en cm²). L'àrea total és 20π + 8π = 28π cm².",
+"d1.q":"Un cucurutxo de gelat té forma de con: <b>radi 3 cm</b> i <b>altura 12 cm</b>. Quin volum de gelat hi cap, a ras? (usa π ≈ 3,14). I quants cucurutxos plens caldrien per a omplir un got cilíndric amb el mateix radi i la mateixa altura?",
+"d1.l0":"Volum","d1.l1":"Cucurutxos",
+"d1_cyl":"339,12 cm³ és el volum del got cilíndric. El con n'és un terç.","d1_v":"π · 3² · 12 ÷ 3 no val {0}. Torna-ho a calcular.",
+"d1_n":"El volum és correcte. Mira la pestanya «💧 Aigua»: quants cons omplin el cilindre?",
+"d1_ok":"✔ Ben decidit! 3,14 · 9 · 12 ÷ 3 = 113,04 cm³, i en calen 3.",
+"d1.more":"Si el cucurutxo fora el doble d'ample (radi 6 cm) amb la mateixa altura, quant de gelat hi cabria?",
+"d2.q":"Vols embolicar una capsa amb forma de prisma de base quadrada: <b>aresta de la base 5 cm</b> i <b>altura 12 cm</b>. Quant de paper necessites com a mínim (àrea total)? I quin volum té la capsa?",
+"d2.l0":"Paper","d2.l1":"Volum",
+"d2_lat":"240 cm² és només l'àrea lateral: hi falten les dues bases.","d2_a":"L'àrea total és P · h + 2 · A<sub>b</sub> = 20 · 12 + 2 · 25. No val {0}.",
+"d2_v":"L'àrea és correcta. El volum és A<sub>b</sub> · h = 25 · 12, no {0}.",
+"d2_ok":"✔ Ben decidit! 240 + 50 = 290 cm² de paper i 25 · 12 = 300 cm³.",
+"d2.more":"Una altra capsa té el mateix volum, però és més baixa i més ampla. Necessitarà la mateixa quantitat de paper?",
+"d3.q":"Un dipòsit cilíndric té <b>radi 1 m</b> i <b>altura 2 m</b>. Quants <b>litres</b> d'aigua hi caben? (usa π ≈ 3,14; 1 m³ = 1000 L)",
+"d3.l0":"Capacitat",
+"d3_m3":"6,28 és el volum en m³. Passa'l a litres: 1 m³ = 1000 L.","d3_f":"π · 1² · 2 = 6,28 m³. En litres no són {0}.",
+"d3_ok":"✔ Ben decidit! 6,28 m³ = 6280 L.",
+"d3.more":"I si el dipòsit fora una esfera de radi 1 m? Hi cabrien més litres o menys?"
+},
+es:{
+"title":"Cuerpos geométricos y volúmenes",
+"eyebrow":"Matemáticas · 2.º y 3.º ESO · Geometría",
+"h1":"Cuerpos geométricos y volúmenes",
+"lede":"Despliega prismas, cilindros, pirámides y conos para ver de dónde salen las fórmulas del área, y llena un cilindro con el agua de un cono: hacen falta exactamente tres.",
+"aria.shape":"Cuerpo geométrico","aria.pair":"Recipientes","aria.cv":"Dibujo del cuerpo geométrico, de su desarrollo plano o de los recipientes con agua",
+"shape_pri":"Prisma","shape_cil":"Cilindro","shape_pir":"Pirámide","shape_con":"Cono","shape_esf":"Esfera","shape_aig":"💧 Agua",
+"pair_con":"Cono → cilindro","pair_pir":"Pirámide → prisma","pair_esf":"Esfera → cilindro",
+"idea":"<b>Para la clase:</b> arrastra el dibujo para girar el cuerpo. Antes de pulsar «Siguiente», decid en voz alta qué creéis que va a pasar.",
+"l_n":"Lados de la base n","l_a":"Arista de la base a (cm)","l_r":"Radio r (cm)","l_h":"Altura h (cm)",
+"f_a":"arista a","f_h":"altura h","f_r":"radio r",
+"k_n":"Lados de la base","k_a":"Arista de la base","k_r":"Radio","k_h":"Altura","k_P":"Perímetro de la base","k_w":"Anchura del rectángulo",
+"k_Ab":"Área de la base","k_Al":"Área lateral","k_At":"Área total","k_V":"Volumen","k_apb":"Apotema de la base","k_ap":"Apotema de la pirámide",
+"k_g":"Generatriz g","k_ang":"Ángulo del sector","k_Acl":"Área lateral del cilindro","k_A":"Área de la esfera","k_hc":"Altura del cilindro",
+"k_Vcil":"Volumen del cilindro","k_Vcon":"Volumen del cono","k_Vpri":"Volumen del prisma","k_Vpir":"Volumen de la pirámide","k_Vesf":"Volumen de la esfera","k_lvl":"Nivel del agua",
+"rng":"Escribe números enteros dentro de los límites del simulador (arista de 2 a 8, radio de 1 a 6 y altura de 1 a 12).",
+"p0.title":"Un prisma recto",
+"p0.text":"<p>Un prisma tiene <b>dos bases iguales</b> y paralelas (aquí, polígonos regulares de n lados) y tantas <b>caras laterales</b> como lados tiene la base.</p>",
+"p0.q":"Predice: si lo abrimos y lo extendemos sobre la mesa, ¿qué forma tendrán todas las caras laterales juntas?",
+"p0.o0":"Un rectángulo grande","p0.o1":"Un triángulo","p0.o2":"Un círculo",
+"p0.why":"Cada cara lateral es un rectángulo de altura h, y todas juntas forman uno solo, tan ancho como el perímetro de la base.",
+"p1.title":"El desarrollo plano",
+"p1.text":"<p>Abrimos las dos bases y desenrollamos las caras laterales: queda un <b>rectángulo</b> de altura <b>h</b> y anchura igual al <b>perímetro P</b> de la base, más los dos polígonos de las bases.</p>",
+"p1.tq":"Cambia el número de lados n. ¿Qué le pasa al rectángulo lateral? ¿Y a las bases?",
+"p1.th":"El rectángulo siempre es un rectángulo: solo cambia la anchura, que es n · a. Las bases sí cambian de forma: triángulo, cuadrado, pentágono…",
+"p2.title":"El área: sumamos las piezas",
+"p2.text":"<p>El área total es la del rectángulo lateral, <b>P · h</b>, más la de las dos bases: <b>A = P · h + 2 · A<sub>b</sub></b>.</p>",
+"p2.q":"Un prisma de base cuadrada tiene a = 3 cm y h = 5 cm. ¿Cuál es su área lateral?",
+"p2.o0":"15 cm²","p2.o1":"60 cm²","p2.o2":"45 cm²",
+"p2.why":"El perímetro es 4 · 3 = 12 cm y el área lateral 12 · 5 = 60 cm². 15 cm² es solo una cara, y 45 es el volumen (en cm³).",
+"p3.title":"El volumen: capas apiladas",
+"p3.text":"<p>Volvemos a cerrarlo. Una capa de 1 cm de altura contiene tantos cm³ como cm² tiene la base. Con h capas: <b>V = A<sub>b</sub> · h</b>.</p>",
+"p3.tq":"Dos prismas tienen la misma base y la misma altura, pero uno está inclinado, como una pila de monedas torcida. ¿Tienen el mismo volumen?",
+"p3.th":"Sí: las capas son las mismas, solo están desplazadas (principio de Cavalieri). El volumen depende del área de la base y de la altura, no de la inclinación.",
+"c0.title":"Un cilindro",
+"c0.text":"<p>Un cilindro es como un prisma con una base de «infinitos lados»: dos <b>bases circulares</b> de radio <b>r</b> y una superficie lateral curva de altura <b>h</b>.</p>",
+"c0.q":"Predice: si cortamos la superficie lateral de arriba abajo y la desenrollamos, ¿qué figura queda?",
+"c0.o0":"Un rectángulo","c0.o1":"Un círculo","c0.o2":"Un trapecio",
+"c0.why":"Piensa en la etiqueta de una lata de conservas: cuando la despegas, es un rectángulo.",
+"c1.title":"El desarrollo plano",
+"c1.text":"<p>La superficie lateral es un <b>rectángulo</b> de altura <b>h</b>. Su anchura tiene que dar la vuelta entera a la base: mide <b>2πr</b>, la longitud de la circunferencia.</p>",
+"c1.tq":"¿Por qué la anchura del rectángulo es 2πr y no el diámetro, 2r?",
+"c1.th":"Porque el rectángulo se enrolla alrededor del círculo: su lado tiene que coincidir con toda la circunferencia, que mide π veces el diámetro (algo más del triple).",
+"c2.title":"El área: un rectángulo y dos círculos",
+"c2.text":"<p>Área lateral: <b>2πr · h</b>. Cada base: <b>πr²</b>. En total: <b>A = 2πrh + 2πr²</b>.</p>",
+"c2.q":"Si duplicas la altura de un cilindro sin tocar el radio, ¿qué le pasa al área lateral?",
+"c2.o0":"Se duplica","c2.o1":"Se multiplica por 4","c2.o2":"No cambia",
+"c2.why":"El rectángulo lateral se hace el doble de alto e igual de ancho: 2πr · 2h = 2 · (2πrh). Las bases no cambian.",
+"c3.title":"El volumen: capas circulares",
+"c3.text":"<p>Igual que en el prisma, apilamos capas: <b>V = A<sub>b</sub> · h = πr² · h</b>.</p>",
+"c3.tq":"¿Qué hace crecer más el volumen: duplicar el radio o duplicar la altura? Pruébalo con los deslizadores.",
+"c3.th":"Duplicar la altura duplica el volumen, pero duplicar el radio lo multiplica por 4, porque el radio está elevado al cuadrado.",
+"y0.title":"Una pirámide regular",
+"y0.text":"<p>Una pirámide tiene <b>una sola base</b> (un polígono) y caras laterales que son <b>triángulos</b> que se juntan en un punto, el <b>vértice</b>. La altura <b>h</b> va del vértice al centro de la base.</p>",
+"y0.q":"Predice: la altura de uno de los triángulos laterales (la apotema de la pirámide), ¿es igual a la altura h de la pirámide?",
+"y0.o0":"Sí, es la misma","y0.o1":"No, es más larga","y0.o2":"No, es más corta",
+"y0.why":"La apotema baja inclinada por la cara, mientras que la altura baja recta por el centro. La apotema es la hipotenusa de un triángulo rectángulo que tiene la altura como cateto.",
+"y1.title":"El desarrollo plano",
+"y1.text":"<p>Cada triángulo lateral se abre alrededor de su arista de la base. Queda una <b>estrella</b>: el polígono de la base y n triángulos isósceles iguales, de altura <b>ap</b> (la apotema de la pirámide).</p>",
+"y1.tq":"¿Cómo se calcula la apotema ap si conoces la altura h y la apotema de la base?",
+"y1.th":"Con el teorema de Pitágoras: ap² = h² + (apotema de la base)². En una base cuadrada, la apotema de la base es la mitad de la arista.",
+"y2.title":"El área: la base y los triángulos",
+"y2.text":"<p>Cada triángulo tiene área a · ap ÷ 2, y hay n: el área lateral es <b>P · ap ÷ 2</b>. Con la base: <b>A = A<sub>b</sub> + P · ap ÷ 2</b>.</p>",
+"y3.title":"El volumen: un tercio del prisma",
+"y3.text":"<p>Encerramos la pirámide en el prisma que tiene la misma base y la misma altura. La pirámide ocupa exactamente <b>la tercera parte</b>: <b>V = A<sub>b</sub> · h ÷ 3</b>.</p>",
+"y3.q":"Una pirámide de base cuadrada tiene a = 6 cm y h = 5 cm. ¿Cuál es su volumen?",
+"y3.o0":"180 cm³","y3.o1":"90 cm³","y3.o2":"60 cm³",
+"y3.why":"El área de la base es 36 cm², el prisma tendría 36 · 5 = 180 cm³ y la pirámide es un tercio: 60 cm³.",
+"y3.tq":"¿Cómo podrías comprobar en clase que es un tercio y no la mitad?",
+"y3.th":"Llenando la pirámide de agua o de arroz y vertiéndola en el prisma: hacen falta tres. Míralo en la pestaña «💧 Agua».",
+"k0.title":"Un cono",
+"k0.text":"<p>Un cono tiene una <b>base circular</b> de radio <b>r</b> y una superficie lateral curva que acaba en el <b>vértice</b>. La <b>generatriz g</b> es el segmento que va del vértice al borde de la base.</p>",
+"k0.q":"Predice: si cortamos la superficie lateral por una generatriz y la extendemos, ¿qué figura queda?",
+"k0.o0":"Un triángulo","k0.o1":"Un sector circular","k0.o2":"Un círculo entero",
+"k0.why":"Todos los puntos del borde están a la misma distancia g del vértice: al extenderla, el borde se convierte en un arco de circunferencia de radio g.",
+"k1.title":"El desarrollo plano",
+"k1.text":"<p>La superficie lateral es un <b>sector circular</b> de radio <b>g</b>. Su arco tiene que dar la vuelta entera a la base: mide <b>2πr</b>.</p>",
+"k1.tq":"Haz el cono más alto sin cambiar el radio. ¿Qué le pasa al ángulo del sector? ¿Por qué?",
+"k1.th":"Se hace más pequeño: el arco sigue midiendo 2πr, pero el radio del sector (g) es mayor, así que ese arco es una parte más pequeña de la circunferencia entera. Ángulo = 360° · r ÷ g.",
+"k2.title":"El área: un sector y un círculo",
+"k2.text":"<p>El sector es la fracción r ÷ g de un círculo de radio g: su área es πg² · r ÷ g = <b>πrg</b>. Con la base: <b>A = πr² + πrg</b>.</p>",
+"k2.q":"Un cono tiene r = 3 cm y h = 4 cm. ¿Cuánto mide la generatriz?",
+"k2.o0":"7 cm","k2.o1":"5 cm","k2.o2":"12 cm",
+"k2.why":"El radio, la altura y la generatriz forman un triángulo rectángulo: g² = 3² + 4² = 25, así que g = 5 cm.",
+"k3.title":"El volumen: un tercio del cilindro",
+"k3.text":"<p>Encerramos el cono en el cilindro que tiene la misma base y la misma altura. El cono ocupa exactamente <b>la tercera parte</b>: <b>V = πr² · h ÷ 3</b>.</p>",
+"k3.tq":"A ojo, parece que el cono ocupa la mitad del cilindro. ¿Cómo lo comprobarías?",
+"k3.th":"Llenando el cono de agua y vertiéndolo en el cilindro: hacen falta tres, no dos. Míralo en la pestaña «💧 Agua».",
+"f0.title":"Una esfera",
+"f0.text":"<p>Todos los puntos de la superficie de una esfera están a la misma distancia <b>r</b> del centro. No tiene caras, ni aristas, ni vértices.</p>",
+"f0.q":"Predice: ¿se puede hacer un desarrollo plano exacto de una esfera, como hemos hecho con el cilindro o con el cono?",
+"f0.o0":"Sí, es un círculo grande","f0.o1":"Sí, es un rectángulo","f0.o2":"No, es imposible sin deformarla",
+"f0.why":"Una esfera no se puede aplanar sin estirarla o arrugarla. Por eso todos los mapas del mundo deforman algo: las áreas, las formas o las distancias.",
+"f1.title":"El área: la del cilindro que la envuelve",
+"f1.text":"<p>Metemos la esfera en un cilindro ajustado: radio <b>r</b> y altura <b>2r</b>. Arquímedes demostró que la esfera tiene la misma área que la superficie lateral de ese cilindro: 2πr · 2r = <b>4πr²</b>.</p>",
+"f1.tq":"4πr² es exactamente el área de ¿cuántos círculos de radio r?",
+"f1.th":"De cuatro círculos máximos. Pela una naranja y rellena con la cáscara círculos de su diámetro: llenarás cuatro.",
+"f2.title":"El volumen: dos tercios del cilindro",
+"f2.text":"<p>El cilindro ajustado tiene volumen πr² · 2r = 2πr³. La esfera ocupa <b>dos tercios</b>: <b>V = <sup>4</sup>⁄<sub>3</sub> πr³</b>.</p>",
+"f2.q":"Si duplicas el radio de una esfera, ¿por cuánto se multiplica su volumen?",
+"f2.o0":"Por 2","f2.o1":"Por 4","f2.o2":"Por 8",
+"f2.why":"El radio está elevado al cubo: 2³ = 8. El área, en cambio, se multiplica por 2² = 4.",
+"a0.title":"Un cono lleno de agua",
+"a0.text":"<p>El cono y el cilindro tienen <b>la misma base</b> y <b>la misma altura</b>. El cono está lleno de agua hasta arriba.</p>",
+"a0.q":"Predice: ¿cuántos conos llenos hacen falta para llenar el cilindro?",
+"a0.o0":"2","a0.o1":"3","a0.o2":"4",
+"a0.why":"Mucha gente dice 2, porque visto de lado el cono es un triángulo que ocupa la mitad del rectángulo. Pero el cono se estrecha en todas las direcciones: hacen falta 3. Compruébalo.",
+"a1.title":"Primer cono",
+"a1.text":"<p>Vertemos el primer cono. El agua llega a <b>un tercio</b> de la altura del cilindro.</p>",
+"a1.tq":"Cuando el cono ha perdido la mitad del agua, ¿el nivel está a la mitad de su altura?",
+"a1.th":"No. El cono es estrecho abajo y ancho arriba, así que la mayor parte del agua está en la parte alta: el nivel baja despacio al principio y deprisa al final.",
+"a2.title":"Segundo cono",
+"a2.text":"<p>Volvemos a llenar el cono y lo vertemos. El agua llega a <b>dos tercios</b>.</p>",
+"a3.title":"Tercer cono: ¡lleno!",
+"a3.text":"<p>Con el tercer cono, el cilindro queda lleno exactamente. Por tanto, el volumen del cono es <b>la tercera parte</b> del volumen del cilindro: <b>V = πr² · h ÷ 3</b>.</p>",
+"a3.tq":"Cambia el radio y la altura y repite el experimento. ¿Siguen haciendo falta tres conos?",
+"a3.th":"Sí, siempre: mientras el cono y el cilindro tengan la misma base y la misma altura, la relación es de 1 a 3, sean altos, bajos, anchos o estrechos.",
+"b0.title":"Una pirámide llena de agua",
+"b0.text":"<p>La pirámide y el prisma tienen <b>la misma base</b> y <b>la misma altura</b>. La pirámide está llena de agua.</p>",
+"b0.q":"Predice: ¿cuántas pirámides llenas hacen falta para llenar el prisma?",
+"b0.o0":"2","b0.o1":"3","b0.o2":"4",
+"b0.why":"Igual que con el cono y el cilindro: hacen falta 3. Compruébalo.",
+"b1.title":"Primera pirámide",
+"b1.text":"<p>Vertemos la primera pirámide. El agua llega a <b>un tercio</b> de la altura del prisma.</p>",
+"b2.title":"Segunda pirámide",
+"b2.text":"<p>Volvemos a llenarla y la vertemos. El agua llega a <b>dos tercios</b>.</p>",
+"b2.tq":"Cambia el número de lados de la base. ¿Cambia el resultado?",
+"b2.th":"No: con base triangular, cuadrada o hexagonal, siempre hacen falta tres pirámides. El cono es el caso límite, con una base de «infinitos lados».",
+"b3.title":"Tercera pirámide: ¡lleno!",
+"b3.text":"<p>El prisma queda lleno exactamente. El volumen de la pirámide es la tercera parte del volumen del prisma: <b>V = A<sub>b</sub> · h ÷ 3</b>.</p>",
+"w0.title":"Una esfera llena de agua",
+"w0.text":"<p>La esfera cabe justa en el cilindro: tienen el mismo radio <b>r</b>, y el cilindro tiene altura <b>2r</b>, el diámetro de la esfera.</p>",
+"w0.q":"Predice: ¿hasta dónde llegará el agua de la esfera dentro del cilindro?",
+"w0.o0":"Hasta la mitad","w0.o1":"Hasta dos tercios","w0.o2":"Hasta tres cuartos",
+"w0.why":"Arquímedes estaba tan orgulloso de este resultado que pidió que grabaran una esfera dentro de un cilindro en su tumba.",
+"w1.title":"Vertemos la esfera",
+"w1.text":"<p>El agua llega a <b>dos tercios</b> de la altura del cilindro.</p>",
+"w1.tq":"El cilindro tiene volumen πr² · 2r = 2πr³. ¿Cuánto vale, entonces, el volumen de la esfera?",
+"w1.th":"Dos tercios de 2πr³: (2 ÷ 3) · 2πr³ = (4 ÷ 3) · πr³.",
+"w2.title":"Cono, esfera y cilindro",
+"w2.text":"<p>El tercio que falta para llenar el cilindro es justamente el volumen de un <b>cono</b> de radio r y altura 2r. Con el mismo radio y la altura 2r: <b>cono : esfera : cilindro = 1 : 2 : 3</b>.</p>",
+"m1.q":"Un <b>prisma de base cuadrada</b> tiene altura <b>6 cm</b> y volumen <b>96 cm³</b>. ¿Cuánto mide la arista de la base?",
+"m1_f":"{0} · {0} · 6 = {1}, no 96.","m1_ok":"✔ ¡Misión cumplida! 4 · 4 · 6 = 96 cm³.",
+"m1.more":"¿Y si el volumen fuera el doble, 192 cm³, con la misma altura? ¿La arista sería el doble?",
+"m2.q":"Encuentra el <b>radio</b> y la <b>altura</b> (números enteros) de un <b>cono</b> que tenga exactamente el mismo volumen que un <b>cilindro de radio 2 cm y altura 3 cm</b>.",
+"m2_f":"El cilindro tiene volumen π · 2² · 3 = 12π. Tu cono tiene π · {0}² · {1} ÷ 3 = {2}π.","m2_ok":"✔ ¡Misión cumplida! π · {0}² · {1} ÷ 3 = 12π cm³.",
+"m2.more":"Hay dos soluciones dentro de los límites del simulador. Si el cono tiene el mismo radio que el cilindro, ¿cuántas veces tiene que ser más alto?",
+"m3.q":"Una <b>esfera de radio 3 cm</b> cabe justa en un cilindro. ¿Qué radio y qué altura tiene el cilindro?",
+"m3_r":"El cilindro tiene que tocar la esfera por los lados: su radio es el de la esfera.","m3_h":"La altura del cilindro tiene que ser el diámetro de la esfera, no {0}.",
+"m3_ok":"✔ ¡Misión cumplida! Radio 3 cm y altura 6 cm.",
+"m3.more":"¿Qué volumen tiene el cilindro? ¿Y la esfera? ¿Qué fracción del cilindro queda vacía?",
+"m4.q":"Una <b>pirámide de base cuadrada</b> tiene arista de la base <b>6 cm</b> y volumen <b>48 cm³</b>. ¿Cuál es su altura?",
+"m4_f":"6 · 6 · {0} ÷ 3 = {1}, no 48.","m4_ok":"✔ ¡Misión cumplida! 36 · 4 ÷ 3 = 48 cm³.",
+"m4.more":"¿Qué volumen tendría el prisma con la misma base y la misma altura?",
+"s1.q":"«Si duplicas la altura de un cilindro (sin cambiar el radio), su volumen se duplica.»",
+"s1.h":"Mira la fórmula V = πr² · h: ¿qué pasa si cambias h por 2h?",
+"s1.e":"Siempre: V = πr² · h es proporcional a la altura. Con el doble de capas, el doble de volumen.",
+"s2.q":"«Si duplicas el radio de un cilindro (sin cambiar la altura), su volumen se duplica.»",
+"s2.h":"Prueba con r = 2 y después con r = 4, y compara los volúmenes.",
+"s2.e":"Nunca: el radio está elevado al cuadrado, así que el volumen se multiplica por 4, no por 2.",
+"s3.q":"«Un cono tiene menos volumen que un cilindro.»",
+"s3.h":"¿Siempre? ¿Y si el cono es muy grande y el cilindro muy pequeño?",
+"s3.e":"A veces: es cierto si tienen la misma base y la misma altura (el cono es un tercio), pero un cono grande puede tener más volumen que un cilindro pequeño.",
+"s3.l0":"radio del cono","s3.l1":"altura del cono","s3.l2":"radio del cilindro","s3.l3":"altura del cilindro",
+"s3_f":"Tu cono tiene volumen {0}π y el cilindro {1}π: el cono sigue siendo más pequeño.",
+"s4.q":"«Dos prismas de base cuadrada con el mismo volumen tienen la misma área total.»",
+"s4.h":"Compara un prisma de arista 2 y altura 8 con uno de arista 4 y altura 2.",
+"s4.e":"A veces: solo si son iguales. Con arista 2 y altura 8 (V = 32, A = 72) y con arista 4 y altura 2 (V = 32, A = 64) el volumen coincide, pero el área no. El mismo volumen se puede «envolver» con más o menos papel.",
+"s4.l0":"arista 1","s4.l1":"altura 1","s4.l2":"arista 2","s4.l3":"altura 2",
+"s4_v":"Los volúmenes son {0} y {1}: tienen que ser iguales.","s4_same":"Tienen la misma área total ({0}). Busca dos prismas distintos con el mismo volumen.",
+"s5.q":"«La superficie lateral de un cono, extendida sobre la mesa, es un triángulo.»",
+"s5.h":"Despliega el cono en el simulador y fíjate en el borde.",
+"s5.e":"Nunca: es un sector circular. Visto de lado el cono parece un triángulo, pero su borde es curvo y, al extenderlo, se convierte en un arco.",
+"e1.ctx":"Un cono tiene <b>radio 3 cm</b> y <b>altura 4 cm</b>. ¿Cuál es su área lateral?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"π · 3 · 4 = 12π cm².","e1.s1":"La generatriz mide 5 cm: π · 3 · 5 = 15π cm².",
+"e1.w0":"El área lateral es π · r · g, con la <b>generatriz</b> g y no con la altura. Por Pitágoras, g = 5 cm.",
+"e1.w1":"Porque el área lateral siempre es mayor que 12π.",
+"e1.w2":"Porque hay que multiplicar el radio por la suma de la altura y el radio.",
+"e1.frame":"Marta, el área lateral no es 12π porque…",
+"e1.model":"Marta, el sector que forma la superficie lateral tiene de radio la generatriz, no la altura: la generatriz baja inclinada por la superficie y la altura baja recta por el centro. Con r = 3 y h = 4, g = √(9 + 16) = 5, y el área es π · 3 · 5 = 15π cm².",
+"e2.ctx":"Una pirámide de base cuadrada tiene <b>arista de la base 6 cm</b> y <b>altura 4 cm</b>. ¿Cuál es su volumen?",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"6 · 6 · 4 = 144 cm³.","e2.s1":"6 · 6 · 4 ÷ 3 = 48 cm³.",
+"e2.w0":"144 cm³ es el volumen del prisma con la misma base y la misma altura; la pirámide ocupa solo un tercio.",
+"e2.w1":"Porque en las pirámides siempre se divide entre 2.",
+"e2.w2":"Porque la altura de una pirámide se mide por la cara.",
+"e2.frame":"Álex, el volumen no es 144 porque…",
+"e2.model":"Álex, 6 · 6 · 4 = 144 cm³ es el volumen del prisma que envuelve la pirámide. Si llenaras la pirámide de agua y la vertieras en el prisma, necesitarías tres: la pirámide es un tercio, 144 ÷ 3 = 48 cm³.",
+"e3.ctx":"Un cilindro tiene <b>radio 2 cm</b> y <b>altura 5 cm</b>. ¿Cuál es su <b>área total</b>?",
+"e3.n0":"Rita","e3.n1":"Juan",
+"e3.s0":"2 · π · 2 · 5 = 20π cm².","e3.s1":"π · 2² · 5 = 20π cm².",
+"e3.w0":"Rita solo ha calculado el área lateral y Juan ha calculado el volumen. El área total es 20π + 2 · 4π = 28π cm².",
+"e3.w1":"Porque los dos han olvidado multiplicar por 2.",
+"e3.w2":"Porque el área total de un cilindro es 2πr²h.",
+"e3.frame":"Rita y Juan, el área total no es 20π porque…",
+"e3.model":"Rita, 2π · 2 · 5 = 20π es solo el rectángulo lateral: faltan los dos círculos de las bases, 2 · π · 2² = 8π. Juan, π · 2² · 5 es la fórmula del volumen (y se mide en cm³, no en cm²). El área total es 20π + 8π = 28π cm².",
+"d1.q":"Un cucurucho de helado tiene forma de cono: <b>radio 3 cm</b> y <b>altura 12 cm</b>. ¿Qué volumen de helado cabe, a ras? (usa π ≈ 3,14). ¿Y cuántos cucuruchos llenos harían falta para llenar un vaso cilíndrico con el mismo radio y la misma altura?",
+"d1.l0":"Volumen","d1.l1":"Cucuruchos",
+"d1_cyl":"339,12 cm³ es el volumen del vaso cilíndrico. El cono es un tercio.","d1_v":"π · 3² · 12 ÷ 3 no vale {0}. Vuelve a calcularlo.",
+"d1_n":"El volumen es correcto. Mira la pestaña «💧 Agua»: ¿cuántos conos llenan el cilindro?",
+"d1_ok":"✔ ¡Bien decidido! 3,14 · 9 · 12 ÷ 3 = 113,04 cm³, y hacen falta 3.",
+"d1.more":"Si el cucurucho fuera el doble de ancho (radio 6 cm) con la misma altura, ¿cuánto helado cabría?",
+"d2.q":"Quieres envolver una caja con forma de prisma de base cuadrada: <b>arista de la base 5 cm</b> y <b>altura 12 cm</b>. ¿Cuánto papel necesitas como mínimo (área total)? ¿Y qué volumen tiene la caja?",
+"d2.l0":"Papel","d2.l1":"Volumen",
+"d2_lat":"240 cm² es solo el área lateral: faltan las dos bases.","d2_a":"El área total es P · h + 2 · A<sub>b</sub> = 20 · 12 + 2 · 25. No vale {0}.",
+"d2_v":"El área es correcta. El volumen es A<sub>b</sub> · h = 25 · 12, no {0}.",
+"d2_ok":"✔ ¡Bien decidido! 240 + 50 = 290 cm² de papel y 25 · 12 = 300 cm³.",
+"d2.more":"Otra caja tiene el mismo volumen, pero es más baja y más ancha. ¿Necesitará la misma cantidad de papel?",
+"d3.q":"Un depósito cilíndrico tiene <b>radio 1 m</b> y <b>altura 2 m</b>. ¿Cuántos <b>litros</b> de agua caben? (usa π ≈ 3,14; 1 m³ = 1000 L)",
+"d3.l0":"Capacidad",
+"d3_m3":"6,28 es el volumen en m³. Pásalo a litros: 1 m³ = 1000 L.","d3_f":"π · 1² · 2 = 6,28 m³. En litros no son {0}.",
+"d3_ok":"✔ ¡Bien decidido! 6,28 m³ = 6280 L.",
+"d3.more":"¿Y si el depósito fuera una esfera de radio 1 m? ¿Cabrían más litros o menos?"
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/*@STEPS_JS@*/
+/* ===== Cossos geomètrics i volums ===== */
+const cv=$('#cv'),W=588,H=420,PI=Math.PI,NS=48,PITCH=0.42;
+const STEPDEF={
+ pri:[{id:'p0',ask:{n:3,ok:0}},{id:'p1',think:true},{id:'p2',ask:{n:3,ok:1}},{id:'p3',think:true}],
+ cil:[{id:'c0',ask:{n:3,ok:0}},{id:'c1',think:true},{id:'c2',ask:{n:3,ok:0}},{id:'c3',think:true}],
+ pir:[{id:'y0',ask:{n:3,ok:1}},{id:'y1',think:true},{id:'y2'},{id:'y3',ask:{n:3,ok:2},think:true}],
+ con:[{id:'k0',ask:{n:3,ok:1}},{id:'k1',think:true},{id:'k2',ask:{n:3,ok:1}},{id:'k3',think:true}],
+ esf:[{id:'f0',ask:{n:3,ok:2}},{id:'f1',think:true},{id:'f2',ask:{n:3,ok:2}}],
+ aig_con:[{id:'a0',ask:{n:3,ok:1}},{id:'a1',think:true},{id:'a2'},{id:'a3',think:true}],
+ aig_pir:[{id:'b0',ask:{n:3,ok:1}},{id:'b1'},{id:'b2',think:true},{id:'b3'}],
+ aig_esf:[{id:'w0',ask:{n:3,ok:1}},{id:'w1',think:true},{id:'w2'}]
+};
+const ST={shape:'pri',pair:'con',n:4,a:4,r:3,h:6,yaw:-0.45};
+let P=0,raf=0,K=null;
+const ease=x=>x*x*(3-2*x);
+const f2=x=>nf(x,2);
+const defKey=()=>ST.shape==='aig'?'aig_'+ST.pair:ST.shape;
+/* controls */
+const ctrl=$('#ctrl');
+const sN=slider(ctrl,{id:'sn',key:'l_n',min:3,max:8,step:1,val:4,on:v=>{ST.n=v;refresh();}});
+const sA=slider(ctrl,{id:'sa',key:'l_a',min:2,max:8,step:1,val:4,on:v=>{ST.a=v;refresh();}});
+const sR=slider(ctrl,{id:'sr',key:'l_r',min:1,max:6,step:1,val:3,on:v=>{ST.r=v;refresh();}});
+const sH=slider(ctrl,{id:'sh',key:'l_h',min:1,max:12,step:1,val:6,on:v=>{ST.h=v;refresh();}});
+function showCtl(){
+  const s=ST.shape,poly=s==='pri'||s==='pir'||(s==='aig'&&ST.pair==='pir'),sph=s==='esf'||(s==='aig'&&ST.pair==='esf');
+  sN.el.hidden=!poly;sA.el.hidden=!poly;sR.el.hidden=poly;sH.el.hidden=sph;
+  $('#pairsw').hidden=s!=='aig';
+}
+/* ===== geometria 3D: x a la dreta, y cap al fons, z cap amunt ===== */
+function ngon(n,a){const R=a/(2*Math.sin(PI/n)),v=[];for(let i=0;i<n;i++){const g=-PI/2-PI/n+i*TAU/n;v.push([R*Math.cos(g),R*Math.sin(g)]);}return v;}
+/* prisma (o cilindre, amb molts costats): les bases s'obrin i les cares laterals es desenrotllen */
+function prismFaces(n,a,h,u,smooth){
+  const ul=ease(clamp(u/0.45,0,1)),us=ease(clamp((u-0.3)/0.7,0,1));
+  const th=(1-us)*TAU/n,al=ul*PI/2,v=ngon(n,a),y0=v[0][1];
+  const omin=-Math.floor((n-1)/2),omax=n-1+omin,Q={};
+  Q[0]=[v[0][0],y0];Q[1]=[v[1][0],y0];
+  for(let o=1;o<=omax;o++)Q[o+1]=[Q[o][0]+a*Math.cos(o*th),Q[o][1]+a*Math.sin(o*th)];
+  for(let o=-1;o>=omin;o--)Q[o]=[Q[o+1][0]-a*Math.cos(o*th),Q[o+1][1]-a*Math.sin(o*th)];
+  const F=[];
+  for(let o=omin;o<=omax;o++)F.push({k:'lat',smooth,ia:0,ib:1,ta:3,tb:2,end:us>0&&(o===omin||o===omax),
+    p:[[Q[o][0],Q[o][1],0],[Q[o+1][0],Q[o+1][1],0],[Q[o+1][0],Q[o+1][1],h],[Q[o][0],Q[o][1],h]]});
+  const ca=Math.cos(al),sa=Math.sin(al);
+  F.push({k:'base',top:true,surf:true,p:v.map(q=>[q[0],y0+(q[1]-y0)*ca,h+(q[1]-y0)*sa])});
+  F.push({k:'base',p:v.slice().reverse().map(q=>[q[0],y0+(q[1]-y0)*ca,-(q[1]-y0)*sa])});
+  return F;
+}
+/* piràmide: cada triangle s'obri al voltant de la seua aresta de la base */
+function pyrFaces(n,a,h,u){
+  const e=ease(u),v=ngon(n,a),ap=a/(2*Math.tan(PI/n)),s=Math.hypot(h,ap),g=(PI-Math.atan2(h,ap))*(1-e),F=[];
+  for(let i=0;i<n;i++){const A=v[i],B=v[(i+1)%n],M=[(A[0]+B[0])/2,(A[1]+B[1])/2],m=Math.hypot(M[0],M[1]);
+    F.push({k:'lat',ia:0,ib:1,p:[[A[0],A[1],0],[B[0],B[1],0],[M[0]+s*Math.cos(g)*M[0]/m,M[1]+s*Math.cos(g)*M[1]/m,s*Math.sin(g)]]});}
+  F.push({k:'base',p:v.slice().reverse().map(q=>[q[0],q[1],0])});
+  return F;
+}
+/* con: la superfície lateral s'obri com un paraigua fins a quedar plana (sector de radi g) */
+function coneFaces(r,h,u){
+  const el=ease(clamp(u/0.5,0,1)),e=ease(clamp((u-0.25)/0.75,0,1)),g=Math.hypot(r,h),rho=lerp(r,g,e);
+  const zA=h*(1-e),zr=zA-Math.sqrt(Math.max(0,g*g-rho*rho)),Ph=TAU*r/rho,F=[],rim=[];
+  for(let k=0;k<=NS;k++){const an=-PI/2-Ph/2+k*Ph/NS;rim.push([rho*Math.cos(an),rho*Math.sin(an),zr]);}
+  for(let k=0;k<NS;k++)F.push({k:'lat',smooth:true,ia:0,ib:1,end:e>0&&(k===0||k===NS-1),p:[rim[k],rim[k+1],[0,0,zA]]});
+  const ps=PI*el,cy=-rho+r*Math.cos(ps),cz=zr-r*Math.sin(ps),d=[];
+  for(let k=0;k<NS;k++){const tt_=-k*TAU/NS;d.push([r*Math.cos(tt_),cy+r*Math.sin(tt_)*Math.cos(ps),cz-r*Math.sin(tt_)*Math.sin(ps)]);}
+  F.push({k:'base',p:d});
+  return F;
+}
+/* con o piràmide invertits (recipient amb el vèrtex baix) */
+function invFaces(n,a,h,smooth,top){
+  const v=ngon(n,a),F=[];
+  for(let i=0;i<n;i++){const A=v[i],B=v[(i+1)%n];F.push({k:'lat',smooth,ia:1,ib:0,p:[[B[0],B[1],h],[A[0],A[1],h],[0,0,0]]});}
+  if(top)F.push({k:'base',surf:true,p:v.map(q=>[q[0],q[1],h])});
+  return F;
+}
+/* projecció */
+function raw(yaw,pitch,ox){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+  return p=>{const x1=p[0]*cy-p[1]*sy+(ox||0),y1=p[0]*sy+p[1]*cy;return [x1,p[2]*cp+y1*sp,y1*cp-p[2]*sp];};}
+function fit(rw,sc,mx,my){return p=>{const q=rw(p);return [W/2+sc*(q[0]-mx),H/2-sc*(q[1]-my),q[2]];};}
+function path(c,pts,close){c.beginPath();pts.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));if(close)c.closePath();}
+/* pinta una llista de cares: o.glass (recipient transparent), o.water (aigua) o sòlid */
+function paint(F,pr,o){
+  const c=K.ctx,col=C();
+  F.forEach(f=>{const s=f.s=f.p.map(pr);let ar=0,z=0;for(let i=0;i<s.length;i++){const a=s[i],b=s[(i+1)%s.length];ar+=a[0]*b[1]-b[0]*a[1];z+=a[2];}f.front=ar<0;f.z=z/s.length;});
+  const D=[],L=F.filter(f=>f.k==='lat'&&f.smooth);
+  F.forEach(f=>{if(!(f.k==='lat'&&f.smooth))D.push({z:f.z,f,poly:f.s,front:f.front,base:f.k!=='lat'});});
+  if(L.length){
+    const open=!!(L[0].end||L[L.length-1].end),runs=[];let cur=null;
+    L.forEach(f=>{if(cur&&cur.front===f.front)cur.fs.push(f);else{cur={front:f.front,fs:[f]};runs.push(cur);}});
+    if(!open&&runs.length>1&&runs[0].front===runs[runs.length-1].front){const last=runs.pop();runs[0].fs=last.fs.concat(runs[0].fs);}
+    runs.forEach(r=>{const fs=r.fs,q=fs[0].s.length===4,f0=fs[0],f1=fs[fs.length-1];
+      const rim=[f0.s[f0.ia]];fs.forEach(f=>rim.push(f.s[f.ib]));
+      let top=null,poly;
+      if(q){top=[f0.s[f0.ta]];fs.forEach(f=>top.push(f.s[f.tb]));poly=rim.concat(top.slice().reverse());}else poly=rim.concat([f0.s[2]]);
+      const edges=(!open&&runs.length===1)?[]:[[f0.s[f0.ia],q?f0.s[f0.ta]:f0.s[2]],[f1.s[f1.ib],q?f1.s[f1.tb]:f1.s[2]]];
+      D.push({z:fs.reduce((a,f)=>a+f.z,0)/fs.length,poly,front:r.front,run:true,rim,top,edges});});
+  }
+  D.sort((a,b)=>b.z-a.z);
+  c.lineJoin='round';c.lineCap='round';
+  D.forEach(d=>{
+    path(c,d.poly,true);
+    if(o.water){
+      c.globalAlpha=(d.base?o.ab:o.al)*(d.front?1:.45);c.fillStyle=o.cl;c.fill();
+      if(d.f&&d.f.surf){c.globalAlpha=.9;c.strokeStyle=o.cl;c.lineWidth=1.2;c.stroke();}
+      return;
+    }
+    if(o.glass){c.globalAlpha=.045*(o.sa===undefined?1:o.sa);c.fillStyle=col.ink;c.fill();}
+    else{c.globalAlpha=1;c.fillStyle=col.stage;c.fill();c.globalAlpha=(d.base?o.ab:o.al)*(d.front?1:.7);c.fillStyle=d.base?o.cb:o.cl;c.fill();}
+    c.globalAlpha=o.sa===undefined?1:o.sa;c.strokeStyle=o.sc||col.ink;c.lineWidth=o.lw||1.5;
+    if(!d.run)c.stroke();
+    else{
+      if(d.front||o.glass){path(c,d.rim);c.stroke();if(d.top){path(c,d.top);c.stroke();}}
+      d.edges.forEach(e=>{path(c,e);c.stroke();});
+    }
+  });
+  c.globalAlpha=1;
+}
+function txt(s,x,y,o){
+  o=o||{};const c=K.ctx,col=C();c.save();c.globalAlpha=o.a===undefined?1:o.a;
+  c.font=(o.b?'700 ':'600 ')+(o.sz||13)+'px ui-monospace,"SF Mono",Menlo,Consolas,monospace';
+  c.textAlign=o.al||'center';c.textBaseline='middle';c.lineWidth=4;c.lineJoin='round';c.strokeStyle=col.stage;c.strokeText(s,x,y);
+  c.fillStyle=o.c||col.ink;c.fillText(s,x,y);c.restore();
+}
+function geo(){const {n,a,r,h}=ST,per=n*a,apb=a/(2*Math.tan(PI/n));return {per,apb,Ab:per*apb/2,ap:Math.hypot(h,apb),g:Math.hypot(r,h),Rp:a/(2*Math.sin(PI/n))};}
+function bodyFaces(u){
+  const {shape,n,a,r,h}=ST;
+  if(shape==='pri')return prismFaces(n,a,h,u,false);
+  if(shape==='cil')return prismFaces(NS,2*r*Math.sin(PI/NS),h,u,true);
+  if(shape==='pir')return pyrFaces(n,a,h,u);
+  return coneFaces(r,h,u);
+}
+function drawBody(){
+  const c=K.ctx,col=C(),{shape,n,a,r,h}=ST,G=geo(),flat=shape==='pri'||shape==='cil',poly=shape==='pri'||shape==='pir';
+  const u=P<=2?clamp(P,0,1):1-clamp((P-2)/0.6,0,1),ev=ease(u);
+  const la=clamp((u-0.9)/0.1,0,1),la2=la*clamp(P-1,0,1),fv=P>2?clamp((P-2.6)/0.4,0,1):0;
+  const Rb=poly?G.Rp:r,Rs=Math.hypot(Rb,h/2),p1=flat?0:PI/2;
+  const rw=raw(ST.yaw*(1-ev),lerp(PITCH,p1,ev)),s0=Math.min(62,(Math.min(W,H)-56)/(2*Rs));
+  const rw1=raw(0,p1);let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  bodyFaces(1).forEach(f=>f.p.forEach(q=>{const w=rw1(q);x0=Math.min(x0,w[0]);x1=Math.max(x1,w[0]);y0=Math.min(y0,w[1]);y1=Math.max(y1,w[1]);}));
+  const s1=Math.min(62,(W-(flat?130:50))/(x1-x0),(H-44)/(y1-y0));
+  const c0=rw([0,0,h/2]),sc=lerp(s0,s1,ev),pr=fit(rw,sc,lerp(c0[0],(x0+x1)/2,ev),lerp(c0[1],(y0+y1)/2,ev));
+  const F=bodyFaces(u);
+  paint(F,pr,{cl:col.pa,cb:col.pb,al:.32,ab:.34});
+  const mid=f=>{let x=0,y=0;f.s.forEach(q=>{x+=q[0];y+=q[1];});return [x/f.s.length,y/f.s.length];};
+  if(la>0){
+    if(flat){
+      const nl=F.length-2,A=F[0].s[0],B=F[nl-1].s[1],T=F[0].s[3],xm=(A[0]+B[0])/2,ym=(A[1]+T[1])/2;
+      txt(shape==='pri'?'P = '+n+' · '+a+' = '+f2(G.per)+' cm':'2πr = '+f2(2*PI*r)+' cm',xm,ym-(la2>0?10*la2:0),{a:la});
+      txt('h = '+h,A[0]-8,ym,{a:la,al:'right'});
+      if(la2>0){
+        txt(shape==='pri'?'P · h = '+f2(G.per*h)+' cm²':'2πr · h = '+f2(2*PI*r*h)+' cm²',xm,ym+10,{a:la2,c:col.pa,b:1});
+        [F[nl],F[nl+1]].forEach(f=>{const m=mid(f);txt((shape==='pri'?'Ab = ':'πr² = ')+f2(shape==='pri'?G.Ab:PI*r*r),m[0],m[1],{a:la2,c:col.pb,b:1});});
+      }
+    }else if(shape==='pir'){
+      const s=F[0].s,M=[(s[0][0]+s[1][0])/2,(s[0][1]+s[1][1])/2];
+      c.save();c.globalAlpha=la;c.strokeStyle=col.ok;c.lineWidth=2;c.setLineDash([5,4]);path(c,[M,s[2]]);c.stroke();c.restore();
+      txt('ap = '+f2(G.ap),(M[0]+s[2][0])/2+7,(M[1]+s[2][1])/2,{a:la,al:'left',c:col.ok,b:1});
+      if(la2>0){
+        const o=pr([0,0,0]);txt('Ab = '+f2(G.Ab),o[0],o[1],{a:la2,c:col.pb,b:1});
+        const m=mid(F[1]);txt('a·ap÷2 = '+f2(a*G.ap/2),m[0],m[1],{a:la2,c:col.pa,b:1});
+      }
+    }else{
+      const g=G.g,ap=F[0].s[2],r0=F[0].s[0],q=y=>pr([0,-g*y,0]);
+      txt('g = '+f2(g),(ap[0]+r0[0])/2-7,(ap[1]+r0[1])/2,{a:la,al:'right',c:col.ok,b:1});
+      let w=q(0.8);txt('2πr = '+f2(2*PI*r)+' cm',w[0],w[1],{a:la});
+      w=q(0.26);txt(nf(360*r/g,1)+'°',w[0],w[1],{a:la});
+      if(la2>0){
+        w=q(0.54);txt('πrg = '+f2(PI*r*g)+' cm²',w[0],w[1],{a:la2,c:col.pa,b:1});
+        w=q(1+r/g);txt('πr² = '+f2(PI*r*r),w[0],w[1],{a:la2,c:col.pb,b:1});
+      }
+    }
+  }
+  if(fv>0){
+    const ring=ngon(poly?n:NS,poly?a:2*r*Math.sin(PI/NS));
+    c.save();c.globalAlpha=fv*.9;c.lineJoin='round';
+    if(flat){
+      c.strokeStyle=col.ok;c.lineWidth=1.3;
+      for(let z=1;z<=h;z++){path(c,ring.map(q=>pr([q[0],q[1],z])),true);c.stroke();}
+    }else{
+      c.strokeStyle=col.pb;c.lineWidth=1.6;c.setLineDash([6,4]);
+      const top=ring.map(q=>pr([q[0],q[1],h])),bot=ring.map(q=>pr([q[0],q[1],0]));
+      path(c,top,true);c.stroke();
+      let idx=ring.map((q,i)=>i);
+      if(!poly){let lo=0,hi=0;top.forEach((q,i)=>{if(q[0]<top[lo][0])lo=i;if(q[0]>top[hi][0])hi=i;});idx=[lo,hi];}
+      idx.forEach(i=>{path(c,[bot[i],top[i]]);c.stroke();});
+    }
+    c.restore();
+  }
+}
+function drawSphere(){
+  const c=K.ctx,col=C(),r=ST.r,ca=clamp(P,0,1),rw=raw(0,PITCH),sc=Math.min(62,(Math.min(W,H)-70)/(2*Math.hypot(r,r)));
+  const c0=rw([0,0,r]),pr=fit(rw,sc,c0[0],c0[1]),o=pr([0,0,r]),R=r*sc,sq=Math.sin(PITCH);
+  c.beginPath();c.arc(o[0],o[1],R,0,TAU);c.fillStyle=col.stage;c.fill();c.globalAlpha=.32;c.fillStyle=col.pa;c.fill();c.globalAlpha=1;
+  c.strokeStyle=col.ink;c.lineWidth=1.5;c.stroke();
+  c.beginPath();c.ellipse(o[0],o[1],R,R*sq,0,0,PI);c.stroke();
+  c.save();c.setLineDash([4,4]);c.globalAlpha=.6;c.beginPath();c.ellipse(o[0],o[1],R,R*sq,0,PI,TAU);c.stroke();c.restore();
+  c.save();c.strokeStyle=col.ok;c.lineWidth=2;path(c,[[o[0],o[1]],[o[0]+R,o[1]]]);c.stroke();c.restore();
+  c.beginPath();c.arc(o[0],o[1],3,0,TAU);c.fillStyle=col.ink;c.fill();
+  txt('r = '+r,o[0]+R/2,o[1]-10,{c:col.ok,b:1});
+  if(ca>0){
+    paint(prismFaces(NS,2*r*Math.sin(PI/NS),2*r,0,true),pr,{glass:true,sa:ca,sc:col.pb,lw:1.6});
+    txt('2r = '+(2*r),o[0]+R+9,o[1],{a:ca,al:'left',c:col.pb,b:1});
+  }
+}
+function drawWater(){
+  const c=K.ctx,col=C(),{pair,n,a,r,h}=ST,rnd=pair!=='pir',G=geo();
+  const nn=rnd?NS:n,aa=rnd?2*r*Math.sin(PI/NS):a,R=rnd?r:G.Rp,Hh=pair==='esf'?2*r:h,d=R+0.9,cp=Math.cos(PITCH),sp=Math.sin(PITCH);
+  const sc=Math.min(58,(W-96)/(2*d+2*R),(H-96)/(Hh*cp+2*R*sp)),yaw=rnd?0:ST.yaw;
+  const c0=raw(0,PITCH)([0,0,Hh/2]),prL=fit(raw(yaw,PITCH,-d),sc,c0[0],c0[1]-10/sc),prR=fit(raw(yaw,PITCH,d),sc,c0[0],c0[1]-10/sc);
+  let fl,fr,pour;
+  if(pair==='esf'){const q=clamp(P/0.8,0,1);fl=1-q;fr=2/3*q;pour=P>0&&P<0.8;}
+  else{const k=Math.min(Math.floor(P+1e-9),2),q=Math.min(P-k,1),w=Math.min(q/0.8,1);fr=(k+w)/3;fl=q<0.8?1-w:(k<2?(q-0.8)/0.2:0);pour=q>0&&q<0.8;}
+  const wo={water:true,cl:col.pa,al:.42,ab:.55};
+  /* aigua del recipient gran */
+  if(fr>0.002)paint(prismFaces(nn,aa,fr*Hh,0,rnd),prR,wo);
+  /* recipient xicotet */
+  let S;
+  if(pair==='esf'){
+    const o=prL([0,0,r]),Rp=r*sc;
+    if(fl>0.002){
+      let lo=0,hi=2*r;for(let i=0;i<32;i++){const m=(lo+hi)/2;if(m*m*(3*r-m)/(4*r*r*r)<fl)lo=m;else hi=m;}
+      const z=lo-r,ys=o[1]-z*cp*sc,rad=Math.sqrt(Math.max(0,r*r-z*z))*sc;
+      c.save();c.beginPath();c.arc(o[0],o[1],Rp,0,TAU);c.clip();c.globalAlpha=.42;c.fillStyle=col.pa;c.fillRect(o[0]-Rp,ys,2*Rp,2*Rp);c.restore();
+      c.beginPath();c.ellipse(o[0],ys,rad,rad*sp,0,0,TAU);c.globalAlpha=.5;c.fillStyle=col.pa;c.fill();c.globalAlpha=.9;c.strokeStyle=col.pa;c.lineWidth=1.2;c.stroke();c.globalAlpha=1;
+    }
+    c.beginPath();c.arc(o[0],o[1],Rp,0,TAU);c.strokeStyle=col.ink;c.lineWidth=1.5;c.stroke();
+    c.save();c.globalAlpha=.45;c.setLineDash([4,4]);c.beginPath();c.ellipse(o[0],o[1],Rp,Rp*sp,0,0,TAU);c.stroke();c.restore();
+    S=[o[0]+Rp*0.72,o[1]-Rp*0.72];
+  }else{
+    if(fl>0.002){const s=Math.cbrt(fl);paint(invFaces(nn,aa*s,h*s,rnd,true),prL,wo);}
+    paint(invFaces(nn,aa,h,rnd,false),prL,{glass:true});
+    S=prL([R*0.92,0,h]);
+  }
+  /* recipient gran i marques de nivell */
+  const big=prismFaces(nn,aa,Hh,0,rnd).filter(f=>!f.top);
+  paint(big,prR,{glass:true});
+  const ring=ngon(nn,aa),marks=pair==='esf'?[[2/3,'⅔']]:[[1/3,'⅓'],[2/3,'⅔'],[1,'1']];
+  marks.forEach(m=>{if(fr<m[0]-1e-4)return;const pts=ring.map(q=>prR([q[0],q[1],m[0]*Hh]));let hi=0;pts.forEach((q,i)=>{if(q[0]>pts[hi][0])hi=i;});
+    txt(m[1],pts[hi][0]+8,pts[hi][1],{al:'left',c:col.ok,b:1,sz:15});});
+  /* raig d'aigua */
+  if(pour&&fl>0.002){
+    const E=prR([-R*0.35,0,fr*Hh]);
+    c.save();c.globalAlpha=.62;c.strokeStyle=col.pa;c.lineWidth=5;c.lineCap='round';c.beginPath();c.moveTo(S[0],S[1]);
+    c.quadraticCurveTo((S[0]+E[0])/2+10,Math.min(S[1],E[1])-52,E[0],E[1]);c.stroke();c.restore();
+  }
+  const bl=prL([0,0,0]),br=prR([0,0,0]),dy=R*sp*sc+18;
+  txt(t(pair==='con'?'shape_con':pair==='pir'?'shape_pir':'shape_esf'),bl[0],bl[1]+dy,{c:col.muted});
+  txt(t(pair==='pir'?'shape_pri':'shape_cil'),br[0],br[1]+dy,{c:col.muted});
+}
+function draw(){
+  if(!K)return;
+  K.ctx.clearRect(0,0,W,H);
+  if(ST.shape==='aig')drawWater();else if(ST.shape==='esf')drawSphere();else drawBody();
+}
+/* dades del panell segons el cos i el pas */
+function statsFor(i){
+  const {shape,pair,n,a,r,h}=ST,G=geo(),Ab='A<sub>b</sub>',cm=' cm',c2=' cm²',c3=' cm³';
+  if(shape==='pri'){
+    if(i===0)return [['k_n',n],['k_a',a+cm],['k_h',h+cm]];
+    if(i===1)return [['k_P','n · a = '+n+' · '+a+' = '+f2(G.per)+cm],['k_h',h+cm]];
+    if(i===2)return [['k_Ab',f2(G.Ab)+c2],['k_Al','P · h = '+f2(G.per)+' · '+h+' = '+f2(G.per*h)+c2],['k_At',f2(G.per*h)+' + 2 · '+f2(G.Ab)+' = '+f2(G.per*h+2*G.Ab)+c2]];
+    return [['k_Ab',f2(G.Ab)+c2],['k_V',Ab+' · h = '+f2(G.Ab)+' · '+h+' = '+f2(G.Ab*h)+c3]];
+  }
+  if(shape==='cil'){
+    const B=PI*r*r,L=2*PI*r*h;
+    if(i===0)return [['k_r',r+cm],['k_h',h+cm]];
+    if(i===1)return [['k_w','2πr = 2 · π · '+r+' = '+f2(2*PI*r)+cm],['k_h',h+cm]];
+    if(i===2)return [['k_Ab','πr² = '+f2(B)+c2],['k_Al','2πr · h = '+f2(L)+c2],['k_At',f2(L)+' + 2 · '+f2(B)+' = '+f2(L+2*B)+c2]];
+    return [['k_Ab','πr² = '+f2(B)+c2],['k_V','πr² · h = '+f2(B)+' · '+h+' = '+f2(B*h)+c3]];
+  }
+  if(shape==='pir'){
+    const L=G.per*G.ap/2;
+    if(i===0)return [['k_n',n],['k_a',a+cm],['k_h',h+cm]];
+    if(i===1)return [['k_apb',f2(G.apb)+cm],['k_ap','√('+h+'² + '+f2(G.apb)+'²) = '+f2(G.ap)+cm]];
+    if(i===2)return [['k_Ab',f2(G.Ab)+c2],['k_Al','P · ap ÷ 2 = '+f2(G.per)+' · '+f2(G.ap)+' ÷ 2 = '+f2(L)+c2],['k_At',f2(G.Ab)+' + '+f2(L)+' = '+f2(G.Ab+L)+c2]];
+    return [['k_Vpri',Ab+' · h = '+f2(G.Ab)+' · '+h+' = '+f2(G.Ab*h)+c3],['k_V',f2(G.Ab*h)+' ÷ 3 = '+f2(G.Ab*h/3)+c3]];
+  }
+  if(shape==='con'){
+    const B=PI*r*r,L=PI*r*G.g;
+    if(i===0)return [['k_r',r+cm],['k_h',h+cm]];
+    if(i===1)return [['k_g','√('+r+'² + '+h+'²) = '+f2(G.g)+cm],['k_ang','360° · r ÷ g = '+nf(360*r/G.g,1)+'°']];
+    if(i===2)return [['k_Ab','πr² = '+f2(B)+c2],['k_Al','π · r · g = '+f2(L)+c2],['k_At',f2(B)+' + '+f2(L)+' = '+f2(B+L)+c2]];
+    return [['k_Vcil','πr² · h = '+f2(B*h)+c3],['k_V',f2(B*h)+' ÷ 3 = '+f2(B*h/3)+c3]];
+  }
+  const Vc=2*PI*r*r*r;
+  if(shape==='esf'){
+    if(i===0)return [['k_r',r+cm]];
+    if(i===1)return [['k_Acl','2πr · 2r = '+f2(4*PI*r*r)+c2],['k_A','4πr² = '+f2(4*PI*r*r)+c2]];
+    return [['k_Vcil','2πr³ = '+f2(Vc)+c3],['k_V','⅔ · '+f2(Vc)+' = '+f2(Vc*2/3)+c3]];
+  }
+  if(pair==='esf'){
+    if(i===0)return [['k_r',r+cm],['k_hc','2r = '+(2*r)+cm]];
+    if(i===1)return [['k_lvl','⅔ · '+(2*r)+' = '+f2(4*r/3)+cm]];
+    return [['k_Vcon','⅓ · '+f2(Vc)+' = '+f2(Vc/3)+c3],['k_Vesf','⅔ · '+f2(Vc)+' = '+f2(Vc*2/3)+c3],['k_Vcil','2πr³ = '+f2(Vc)+c3]];
+  }
+  const cone=pair==='con',Vb=cone?PI*r*r*h:G.Ab*h;
+  if(i===0)return cone?[['k_r',r+cm],['k_h',h+cm]]:[['k_n',n],['k_a',a+cm],['k_h',h+cm]];
+  if(i<3)return [['k_lvl',(i===1?'⅓':'⅔')+' · '+h+' = '+f2(i*h/3)+cm]];
+  return [[cone?'k_Vcil':'k_Vpri',(cone?'πr² · h = ':Ab+' · h = ')+f2(Vb)+c3],[cone?'k_Vcon':'k_Vpir',f2(Vb)+' ÷ 3 = '+f2(Vb/3)+c3]];
+}
+function refresh(){
+  SE.steps.forEach((s,i)=>{s.stats=statsFor(i).map(p=>[p[0],String(p[1])]);});
+  stepRender();draw();
+}
+/* animació entre passos */
+function animateTo(i){
+  cancelAnimationFrame(raf);
+  const from=P,to=i;
+  if(REDUCE||Math.abs(to-from)<1e-6){P=to;draw();return;}
+  const dur=(ST.shape==='aig'?2400:1500)*Math.max(0.5,Math.abs(to-from)),t0=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-t0)/dur);
+    P=from+(to-from)*(ST.shape==='aig'?p:ease(p));draw();
+    if(p<1)raf=requestAnimationFrame(step);
+  }
+  raf=requestAnimationFrame(step);
+}
+function rebuildStepper(){
+  const sp=$('#stepper');sp.innerHTML='';
+  SE.steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+}
+function setShape(sh,pair){
+  cancelAnimationFrame(raf);
+  ST.shape=sh;if(pair)ST.pair=pair;
+  SE.steps=STEPDEF[defKey()].map(x=>Object.assign({},x));SE.ans={};SE.hint={};SE.i=0;P=0;
+  rebuildStepper();showCtl();
+  $$('#shapesw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.shape===sh)));
+  $$('#pairsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pair===ST.pair)));
+  refresh();
+}
+$$('#shapesw button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.shape!==ST.shape)setShape(b.dataset.shape);}));
+$$('#pairsw button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.pair!==ST.pair)setShape('aig',b.dataset.pair);}));
+/* girar el cos arrossegant */
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag=e.clientX;cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{if(drag===null)return;ST.yaw+=(e.clientX-drag)*0.012;drag=e.clientX;draw();});
+['pointerup','pointercancel'].forEach(n=>cv.addEventListener(n,()=>{drag=null;}));
+/* càrrega d'un cas des de les activitats */
+function ld(shape,v,step){
+  const c=(x,a,z)=>clamp(Math.round(x),a,z);v=v||{};
+  if(v.n!==undefined){ST.n=c(v.n,3,8);sN.set(ST.n);}
+  if(v.a!==undefined){ST.a=c(v.a,2,8);sA.set(ST.a);}
+  if(v.r!==undefined){ST.r=c(v.r,1,6);sR.set(ST.r);}
+  if(v.h!==undefined){ST.h=c(v.h,1,12);sH.set(ST.h);}
+  setShape(shape,v.pair);
+  const i=Math.min(step||0,SE.steps.length-1);
+  P=i;SE.i=i;refresh();
+  RZ.show(cv);
+}
+App.hooks.push(()=>{if(!SE.steps.length)return;showCtl();refresh();});
+document.addEventListener('themechange',draw);
+/* ===== Raona-ho ===== */
+const isI=Number.isInteger,inA=x=>isI(x)&&x>=2&&x<=8,inR=x=>isI(x)&&x>=1&&x<=6,inH=x=>isI(x)&&x>=1&&x<=12;
+RZ.init({
+ F:{a:{l:'f_a',u:'cm'},h:{l:'f_h',u:'cm'},r:{l:'f_r',u:'cm'},
+    r1:{l:'s3.l0'},h1:{l:'s3.l1'},r2:{l:'s3.l2'},h2:{l:'s3.l3'},
+    a1:{l:'s4.l0'},g1:{l:'s4.l1'},a2:{l:'s4.l2'},g2:{l:'s4.l3'}},
+ sim:()=>{},
+ M:[
+  {id:'m1',f:['a'],sim:([a])=>ld('pri',{n:4,a,h:6},3),ok:()=>({k:'m1_ok'}),
+   chk:([a])=>!inA(a)?{k:'rng'}:a*a*6!==96?{k:'m1_f',p:[a,a*a*6]}:null},
+  {id:'m2',f:['r','h'],sim:([r,h])=>ld('con',{r,h},3),ok:([r,h])=>({k:'m2_ok',p:[r,h]}),
+   chk:([r,h])=>(!inR(r)||!inH(h))?{k:'rng'}:r*r*h!==36?{k:'m2_f',p:[r,h,f2(r*r*h/3)]}:null},
+  {id:'m3',f:['r','h'],sim:()=>ld('esf',{r:3},1),ok:()=>({k:'m3_ok'}),
+   chk:([r,h])=>r!==3?{k:'m3_r'}:h!==6?{k:'m3_h',p:[f2(h)]}:null},
+  {id:'m4',f:['h'],sim:([h])=>ld('pir',{n:4,a:6,h},3),ok:()=>({k:'m4_ok'}),
+   chk:([h])=>!inH(h)?{k:'rng'}:12*h!==48?{k:'m4_f',p:[h,12*h]}:null}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>ld('cil',{r:2,h:4},3)},
+  {id:'s2',ans:'M',sim:()=>ld('cil',{r:4,h:4},3)},
+  {id:'s3',ans:'D',f:['r1','h1','r2','h2'],sim:()=>ld('aig',{pair:'con',r:3,h:6},0),cxsim:([r1,h1])=>ld('con',{r:r1,h:h1},3),
+   cx:([r1,h1,r2,h2])=>(!inR(r1)||!inH(h1)||!inR(r2)||!inH(h2))?{k:'rng'}:r1*r1*h1/3<r2*r2*h2?{k:'s3_f',p:[f2(r1*r1*h1/3),r2*r2*h2]}:null},
+  {id:'s4',ans:'D',f:['a1','g1','a2','g2'],sim:()=>ld('pri',{n:4,a:2,h:8},2),cxsim:([a1,h1,a2,h2])=>ld('pri',{n:4,a:a2,h:h2},2),
+   cx:([a1,h1,a2,h2])=>(!inA(a1)||!inH(h1)||!inA(a2)||!inH(h2))?{k:'rng'}:a1*a1*h1!==a2*a2*h2?{k:'s4_v',p:[a1*a1*h1,a2*a2*h2]}:
+     (2*a1*a1+4*a1*h1===2*a2*a2+4*a2*h2)?{k:'s4_same',p:[2*a1*a1+4*a1*h1]}:null},
+  {id:'s5',ans:'M',sim:()=>ld('con',{r:3,h:4},1)}
+ ],
+ E:[
+  {id:'e1',who:1,args:[],sim:()=>ld('con',{r:3,h:4},2)},
+  {id:'e2',who:1,args:[],sim:()=>ld('pir',{n:4,a:6,h:4},3)},
+  {id:'e3',who:3,args:[],sim:()=>ld('cil',{r:2,h:5},2)}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0',u:'cm³'},{l:'d1.l1'}],sim:()=>ld('aig',{pair:'con',r:3,h:12},0),ok:()=>({k:'d1_ok'}),
+   chk:([v,k])=>Math.abs(v-113.07)>0.08?(Math.abs(v-339.2)<0.2?{k:'d1_cyl'}:{k:'d1_v',p:[f2(v)]}):k!==3?{k:'d1_n'}:null},
+  {id:'d2',f:[{l:'d2.l0',u:'cm²'},{l:'d2.l1',u:'cm³'}],sim:()=>ld('pri',{n:4,a:5,h:12},2),ok:()=>({k:'d2_ok'}),
+   chk:([s,v])=>s!==290?(s===240?{k:'d2_lat'}:{k:'d2_a',p:[f2(s)]}):v!==300?{k:'d2_v',p:[f2(v)]}:null},
+  {id:'d3',f:[{l:'d3.l0',u:'L'}],sim:null,ok:()=>({k:'d3_ok'}),
+   chk:([v])=>Math.abs(v-6281.5)<=2?null:Math.abs(v-6.28)<0.01?{k:'d3_m3'}:{k:'d3_f',p:[f2(v)]}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+showCtl();
+K=makeCanvas(cv,W,H,draw);
+stepsInit(STEPDEF.pri.map(x=>Object.assign({},x)),i=>animateTo(i));
+refresh();
+</script>
+</body>
+</html>

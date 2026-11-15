@@ -1,0 +1,1169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Movimientos en el plano: traslaciones, giros y simetrías</title>
+<meta name="description" content="Movimientos en el plano para 2.º y 3.º de ESO: traslada, gira y refleja un polígono sobre la cuadrícula y mira cómo cambian las coordenadas de sus vértices. Traslaciones, giros, simetría axial y simetría central, con la regla de cada movimiento, predicción y actividades para razonar.">
+<meta name="author" content="Ilde">
+<link rel="canonical" href="https://ildemoralesmates.github.io/es/moviments-pla/">
+<link rel="alternate" hreflang="ca" href="https://ildemoralesmates.github.io/moviments-pla/">
+<link rel="alternate" hreflang="es" href="https://ildemoralesmates.github.io/es/moviments-pla/">
+<link rel="alternate" hreflang="x-default" href="https://ildemoralesmates.github.io/moviments-pla/">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:site_name" content="Recursos de matemáticas">
+<meta property="og:title" content="Movimientos en el plano: traslaciones, giros y simetrías">
+<meta property="og:description" content="Movimientos en el plano para 2.º y 3.º de ESO: traslada, gira y refleja un polígono sobre la cuadrícula y mira cómo cambian las coordenadas de sus vértices. Traslaciones, giros, simetría axial y simetría central, con la regla de cada movimiento, predicción y actividades para razonar.">
+<meta property="og:url" content="https://ildemoralesmates.github.io/es/moviments-pla/">
+<meta property="og:image" content="https://ildemoralesmates.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<style>
+:root{
+  --bg:#e9edf4; --panel:#ffffff; --stage:#f7f8fb; --ink:#121a2c; --muted:#59647a; --line:#d2d8e5;
+  --pa:#2350c8; --pb:#c0480f; --ok:#1d8a4e; --warn:#b9770e; --chip:#eef1f7;
+  --f-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0a0e18; --panel:#121929; --stage:#070a12; --ink:#e4e9f4; --muted:#8a95ac; --line:#243049;
+  --pa:#76a2ff; --pb:#ff8d50; --ok:#4cd08a; --warn:#f0b24a; --chip:#1a2338; color-scheme:dark }}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.page{max-width:1280px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:46ch}
+.topr{display:grid;gap:8px;justify-items:end}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:16px;align-items:start}
+@media (max-width:880px){.app{grid-template-columns:minmax(0,1fr)}}
+.stage-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bar .sp{margin-left:auto}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600;min-width:6.5em}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,.seg button:focus-visible,summary:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stage{position:relative;background:var(--stage)}
+.stage canvas{display:block;width:100%;height:auto}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px 14px 14px;display:grid;gap:4px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 4px;display:grid;gap:10px;min-width:0}
+fieldset:first-child{border-top:0}
+legend{padding:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;float:left;width:100%;margin-bottom:2px}
+.ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px}
+.ctl label{font-size:13.5px}
+.ctl output{font-family:var(--f-num);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--pa);margin:0}
+.ctl.off{opacity:.45}
+select{font:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--stage);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--pa)}
+.chip[aria-pressed=true]{border-color:var(--pa);background:var(--pa);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--pa)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;justify-self:start;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12.5px;border:0;background:var(--panel);color:var(--muted);padding:5px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--chip);color:var(--ink);font-weight:600}
+.langsw button{padding:4px 10px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.card h2 small{display:block;font-family:var(--f-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card p b{color:var(--ink);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+dd.hl{color:var(--pa);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-weight:600;font-size:12px;color:var(--muted);text-align:right;padding:3px 0 5px 6px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:0}
+.tbl td{padding:5px 0 5px 6px;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line)}
+.tbl td:first-child{font-family:var(--f-body)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.plot{position:relative}
+.plot canvas{display:block;width:100%;height:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer.cc{margin:1.5rem auto 0;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit}
+footer.cc a{color:inherit}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+
+:root{--mut:var(--muted);--acc:var(--pa);--acc2:var(--pb);--ko:var(--warn);--cv:var(--stage);--card:var(--panel)}
+[hidden]{display:none!important}
+h3{font-size:15px;margin:6px 0 2px}
+.card canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--stage)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gridS{display:grid;grid-template-columns:3fr 1.2fr;gap:14px;align-items:start}
+.gridW{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){.grid2,.gridS,.gridW{grid-template-columns:1fr}}
+.ctrl{margin:4px 0 8px}
+.ctrl label{display:block;font-size:13.5px;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:var(--pa)}
+.mut{color:var(--muted);font-size:13px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.stat .k{display:block;font-size:12px;color:var(--muted)}
+.stat .v{display:block;font-size:17px;font-weight:600;font-family:var(--f-num)}
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mono{font-family:var(--f-num);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.quizc{padding-bottom:12px}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.qcard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:var(--stage)}
+.qcard.ok{border-color:var(--ok)}
+.qcard.ko{border-color:var(--warn)}
+.qtext{margin:0 0 8px;color:var(--ink)!important;font-size:15px!important}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.opt.right{border-color:var(--ok);background:rgba(29,138,78,.16)}
+.opt.wrong{border-color:var(--warn);background:rgba(185,119,14,.18)}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{font:inherit;font-size:14px;width:160px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.numrow input.bad{border-color:var(--warn)}
+.unit{color:var(--muted);font-size:13px}
+.fb{margin:8px 0 0;font-size:13.5px;color:var(--ink)!important}
+.ladder{display:grid;gap:4px}
+.ladder .lr{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.ladder .bar2{height:12px;border-radius:4px;background:var(--pa);opacity:.4}
+.ladder .lr.on{color:var(--ink);font-weight:600}
+.ladder .lr.on .bar2{opacity:1;background:var(--pb)}
+
+/* ===== maquetació dibuix a l'esquerra + panell a la dreta, i secció «Raona-ho» ===== */
+.simgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(15rem,1fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:1fr}}
+.simcv{display:grid;gap:8px;min-width:0}
+.side{display:grid;gap:10px;align-content:start;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.side .stats{grid-template-columns:1fr}
+.side .msg:empty,.side .ticket:empty{display:none}
+.tabs button{padding:7px 12px;font-size:13.5px}
+[hidden]{display:none!important}
+/* estils base que Raona-ho necessita encara que la pàgina no porte el test (mateixes regles que quiz.css) */
+.idea{border-left:4px solid var(--pa);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;color:var(--ink);font-size:14px}
+.card p.idea,.card div.idea{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.score{margin:0;font-size:14px;color:var(--muted)}
+.opt{text-align:left;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pa)}
+.opt:disabled{opacity:1;cursor:default}
+.rzp{display:grid;gap:12px}
+.task{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--stage);display:grid;gap:8px}
+.task.done{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.task p{margin:0}
+.task .q{color:var(--ink)!important;font-size:15px!important}
+.task .msg{min-height:0;font-size:14.5px}
+.task .msg.good{color:var(--ok);font-weight:600}
+.task .msg.bad{color:var(--warn);font-weight:600}
+.pairin{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pairin input,.task input[type=text]{font:inherit;font-size:15px;width:4.5em;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.sdm{display:flex;gap:6px;flex-wrap:wrap}
+.sdm .opt,.whobtn .opt{min-width:7em;text-align:center}
+.opt[aria-pressed=true]{border-color:var(--pa);border-width:2px}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.who{grid-template-columns:1fr}}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.bubble b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.whobtn,.whyopts{display:grid;gap:6px}
+.whobtn{grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))}
+.task textarea{font:inherit;font-size:14.5px;width:100%;min-height:4.5em;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);resize:vertical}
+.model{border-left:4px solid var(--ok);background:var(--chip);padding:8px 12px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink)}
+.more{font-size:14px;color:var(--ink);background:var(--chip);border-radius:8px;padding:8px 12px}
+.more::before{content:"🤔 ";}
+
+/* ===== passos amb predicció (meiosi, òsmosi, fotosíntesi) ===== */
+.sidep{display:grid;gap:8px;align-content:start}
+.stepper{display:flex;gap:5px;flex-wrap:wrap}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer}
+.stepper button.done{background:var(--chip)}
+.stepper button[aria-current=step]{background:var(--pa);border-color:var(--pa);color:var(--panel);font-weight:600}
+.stepper button:focus-visible{outline:2px solid var(--pa);outline-offset:2px}
+.stepno{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sidep h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.15}
+.stext{font-size:14.5px}
+.stext p{margin:.45em 0}
+.sidep .stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.sidep .stat .v{font-size:15px}
+.pred,.think{border:1px solid var(--line);border-left:4px solid var(--pa);border-radius:8px;padding:10px 12px;background:var(--stage)}
+.think{border-left-color:var(--warn)}
+.pred .eb,.think .eb{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--pa);margin-bottom:3px}
+.think .eb{color:var(--warn)}
+.pred .qtext,.think .qtext{margin:0 0 6px!important;font-size:14.5px!important;font-weight:600}
+.pred .fb{padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.think .fb{margin-top:8px;padding:7px 10px;border:1px dashed var(--line);border-radius:7px;background:var(--panel)}
+.linkb{font:inherit;font-size:13px;color:var(--pa);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+.stepnav{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
+.rowlinks{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+.lgd i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.hintline{min-height:1.4em;margin:0;padding:6px 12px 0;font-size:13.5px;font-weight:600;color:var(--warn)}
+.ctrlbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.ctrlbar .ctl{min-width:11rem;flex:1 1 11rem}
+.ctrlbar .btn[aria-pressed=true]{background:var(--pa);border-color:var(--pa);color:var(--panel)}
+.readout{padding:8px 12px 12px;font-size:13.5px;display:grid;gap:6px}
+.readout .two{display:flex;flex-wrap:wrap;gap:12px 24px}
+.readout .two>div{flex:1 1 13rem}
+.meter{height:7px;background:var(--chip);border:1px solid var(--line);border-radius:4px;margin:3px 0}
+.meter i{display:block;height:100%;background:var(--pb);border-radius:3px}
+
+#svg{display:block;width:100%;height:auto;max-height:min(56vh,480px);margin-inline:auto;user-select:none;-webkit-user-select:none}
+#svg .gr{stroke:var(--line);stroke-width:1}
+#svg .ax{stroke:var(--ink);stroke-width:1.6}
+#svg .num{fill:var(--muted);font:500 8.5px var(--f-num)}
+#svg .axn{fill:var(--ink);font:700 12px var(--f-num)}
+#svg .f1{fill:var(--pa);fill-opacity:.26;stroke:var(--pa);stroke-width:2.2;stroke-linejoin:round}
+#svg .f2{fill:var(--pb);fill-opacity:.32;stroke:var(--pb);stroke-width:2.2;stroke-linejoin:round}
+#svg .v1{fill:var(--pa);stroke:var(--panel);stroke-width:1.5}
+#svg .v2{fill:var(--pb);stroke:var(--panel);stroke-width:1.5}
+#svg .hd{fill:transparent;cursor:grab;touch-action:none}
+#svg .lab{fill:var(--pa);font:700 13px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:3px;stroke-linejoin:round}
+#svg .labi{fill:var(--pb);font:700 13px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:3px;stroke-linejoin:round}
+#svg .labk{fill:var(--ok);font:700 12.5px var(--f-num);paint-order:stroke;stroke:var(--stage);stroke-width:3px;stroke-linejoin:round}
+#svg .vec{stroke:var(--ok);stroke-width:2.4;fill:none;stroke-linecap:round}
+#svg .vech{fill:var(--ok)}
+#svg .tr{stroke:var(--muted);stroke-width:1.3;stroke-dasharray:4 3;fill:none}
+#svg .axl{stroke:var(--ok);stroke-width:2.6;stroke-dasharray:9 5}
+#svg .ctr{fill:var(--ok);stroke:var(--panel);stroke-width:1.5}
+.stage-card .idea{margin:10px 12px 12px}
+.sidep .stats{grid-template-columns:1fr}
+.sidep .stat{padding:6px 10px}
+.sidep .stat .v{font-size:14.5px}
+#coords .tbl td,#coords .tbl th{text-align:left;padding-left:0}
+#coords .tbl td.im{color:var(--pb);font-weight:600}
+.ctrlbar .grp{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.ctrlbar .grp>span{font-size:13px;color:var(--muted)}
+.back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
+.back:hover{color:var(--ink);text-decoration:underline}
+.back:focus-visible{outline:3px solid var(--pa);outline-offset:3px;border-radius:4px}
+</style>
+<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../../">← Recursos de matemáticas</a>
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Matemáticas · 2.º y 3.º ESO · Geometría</p>
+      <h1 data-i18n="h1">Movimientos en el plano</h1>
+    </div>
+    <div class="topr">
+      <div class="seg langsw" role="group" aria-label="Idioma / Idioma"><button type="button" data-lang="ca" aria-pressed="true">Valencià</button><button type="button" data-lang="es" aria-pressed="false">Castellano</button></div>
+      <p class="lede" data-i18n="lede">Traslada, gira y refleja un polígono sobre la cuadrícula y mira cómo cambian las coordenadas de sus vértices. Cada movimiento tiene su regla.</p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="bar">
+<div class="seg" id="typesw" role="group" data-i18n-aria="aria.type" aria-label="Tipo de movimiento">
+<button type="button" data-type="tra" aria-pressed="true" data-i18n="type_tra">Traslación</button>
+<button type="button" data-type="gir" aria-pressed="false" data-i18n="type_gir">Giro</button>
+<button type="button" data-type="axi" aria-pressed="false" data-i18n="type_axi">Simetría axial</button>
+<button type="button" data-type="cen" aria-pressed="false" data-i18n="type_cen">Simetría central</button>
+</div>
+<button type="button" class="btn sp" id="chain" data-i18n="chain">Continúa desde la imagen</button>
+</div>
+<div class="stage"><svg id="svg" viewBox="0 0 400 400" role="img" data-i18n-aria="aria.svg" aria-label="Cuadrícula con un polígono y su imagen por un movimiento"></svg></div>
+<div class="ctrlbar" id="ctrl">
+<div class="grp" id="figsw" role="group" data-i18n-aria="aria.fig" aria-label="Figura"><span data-i18n="lg_fig">Figura:</span>
+<button type="button" class="chip" data-fig="tri" aria-pressed="true" data-i18n="fig_tri">Triángulo</button>
+<button type="button" class="chip" data-fig="quad" aria-pressed="false" data-i18n="fig_quad">Cuadrilátero</button>
+<button type="button" class="chip" data-fig="L" aria-pressed="false" data-i18n="fig_L">Letra L</button>
+</div>
+<div class="grp" id="angsw" role="group" data-i18n-aria="aria.ang" aria-label="Ángulo de giro"><span data-i18n="lg_ang">Ángulo (antihorario):</span>
+<button type="button" class="chip" data-ang="90" aria-pressed="true">90°</button>
+<button type="button" class="chip" data-ang="180" aria-pressed="false">180°</button>
+<button type="button" class="chip" data-ang="270" aria-pressed="false">270°</button>
+</div>
+<div class="grp" id="axsw" role="group" data-i18n-aria="aria.axis" aria-label="Eje de simetría"><span data-i18n="lg_axis">Eje:</span>
+<button type="button" class="chip" data-axis="x" aria-pressed="false" data-i18n="ax_x">Eje X</button>
+<button type="button" class="chip" data-axis="y" aria-pressed="true" data-i18n="ax_y">Eje Y</button>
+<button type="button" class="chip" data-axis="d1" aria-pressed="false">y = x</button>
+<button type="button" class="chip" data-axis="d2" aria-pressed="false">y = −x</button>
+<button type="button" class="chip" data-axis="v" aria-pressed="false">x = k</button>
+<button type="button" class="chip" data-axis="h" aria-pressed="false">y = k</button>
+</div>
+</div>
+<div class="idea" data-i18n-html="idea"><b>Para la clase:</b> arrastra los vértices (y el centro) para cambiar la figura. Antes de pulsar «Siguiente», escribid en el cuaderno adónde creéis que irá cada vértice.</div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="Pasos de la animación">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev">← Anterior</button><button type="button" class="btn primary" id="next" data-i18n="st_next">Siguiente →</button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="t0.title">Una traslación</h2>
+<div class="stext" id="stext" data-i18n-html="t0.text"><p>Una traslación desplaza <b>todos</b> los puntos de la figura según un mismo <b>vector</b> (a, b): a unidades en horizontal y b en vertical.</p></div>
+<div id="coords"></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart">Volver al inicio</button></div>
+</aside>
+</div>
+
+<section class="card" id="reason"><h2><small data-i18n="rz_eyebrow">Razónalo</small><span data-i18n="rz_title">Piensa antes de tocar</span></h2><p data-i18n="rz_intro">Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.</p><div class="seg tabs" id="rztabs" role="group" data-i18n-aria="aria.rz" aria-label="Tipo de actividad"><button type="button" data-t="M" aria-pressed="true" data-i18n="rz_tM">🎯 Misiones</button><button type="button" data-t="S" aria-pressed="false" data-i18n="rz_tS">¿Siempre, a veces o nunca?</button><button type="button" data-t="E" aria-pressed="false" data-i18n="rz_tE">¿Quién tiene razón?</button><button type="button" data-t="D" aria-pressed="false" data-i18n="rz_tD">Decide</button></div><div id="rzM" class="rzp"></div><div id="rzS" class="rzp" hidden></div><div id="rzE" class="rzp" hidden></div><div id="rzD" class="rzp" hidden></div></section>
+
+  </main>
+  <footer data-cc style="margin:2.5rem auto 1.5rem;padding:0 16px;max-width:60rem;text-align:center;font:12.5px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:.7;color:inherit">© Ilde Morales · <a href="https://ildemoralesmates.github.io/" style="color:inherit">Recursos de matemáticas</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" style="color:inherit">CC BY-NC-SA 4.0</a> · Las imágenes y materiales de terceros conservan su propia licencia.</footer>
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Moviments en el pla: translacions, girs i simetries",
+"eyebrow":"Matemàtiques · 2n i 3r ESO · Geometria",
+"h1":"Moviments en el pla",
+"lede":"Trasllada, gira i reflecteix un polígon damunt la quadrícula i mira com canvien les coordenades dels seus vèrtexs. Cada moviment té la seua regla.",
+"aria.type":"Tipus de moviment","aria.svg":"Quadrícula amb un polígon i la seua imatge per un moviment","aria.fig":"Figura","aria.ang":"Angle de gir","aria.axis":"Eix de simetria",
+"type_tra":"Translació","type_gir":"Gir","type_axi":"Simetria axial","type_cen":"Simetria central",
+"lg_fig":"Figura:","fig_tri":"Triangle","fig_quad":"Quadrilàter","fig_L":"Lletra L",
+"lg_ang":"Angle (antihorari):","lg_axis":"Eix:","ax_x":"Eix X","ax_y":"Eix Y",
+"chain":"Continua des de la imatge",
+"idea":"<b>Per a la classe:</b> arrossega els vèrtexs (i el centre) per a canviar la figura. Abans de pulsar «Següent», escriviu a la llibreta on creieu que anirà cada vèrtex.",
+"l_a":"Vector: a (horitzontal)","l_b":"Vector: b (vertical)","l_cx":"Centre: x","l_cy":"Centre: y","l_k":"Posició de l'eix: k",
+"th_v":"Vèrtex","th_o":"Figura","th_i":"Imatge",
+"k_vec":"Vector","k_ctr":"Centre","k_ang":"Angle","k_axis":"Eix","k_rule":"Regla",
+"f_a":"a","f_b":"b","f_ang":"angle","f_k":"k","f_x":"x","f_y":"y","f_cx":"centre: x","f_cy":"y",
+"rng":"Escriu nombres enters dins de la quadrícula (entre −8 i 8).",
+"t0.title":"Una translació",
+"t0.text":"<p>Una translació desplaça <b>tots</b> els punts de la figura segons un mateix <b>vector</b> (a, b): a unitats en horitzontal i b en vertical.</p>",
+"t0.q":"Predix: amb el vector (4, 2), a quin punt va a parar el punt (1, 1)?",
+"t0.o0":"(5, 3)","t0.o1":"(4, 2)","t0.o2":"(−3, −1)",
+"t0.why":"A cada coordenada li sumem la del vector: (1 + 4, 1 + 2) = (5, 3). Dir (4, 2) seria confondre el vector amb el punt d'arribada.",
+"t1.title":"La figura llisca",
+"t1.text":"<p>Cada vèrtex recorre una fletxa <b>igual i paral·lela</b> al vector. La figura no gira ni canvia de mida: només canvia de lloc.</p>",
+"t1.tq":"Compara les fletxes de tots els vèrtexs. Què tenen en comú?",
+"t1.th":"Totes tenen la mateixa longitud, la mateixa direcció i el mateix sentit: són el mateix vector dibuixat en llocs diferents.",
+"t2.title":"La regla de les coordenades",
+"t2.text":"<p>Mira la taula: a totes les x se'ls ha sumat <b>a</b> i a totes les y se'ls ha sumat <b>b</b>: <b>(x, y) → (x + a, y + b)</b>.</p>",
+"t2.tq":"Quin vector desfà aquesta translació i torna la figura al seu lloc?",
+"t2.th":"El vector oposat, (−a, −b). Prova-ho: pulsa «Continua des de la imatge» i posa el vector oposat.",
+"g0.title":"Un gir",
+"g0.text":"<p>Un gir fa voltar tots els punts un mateix <b>angle</b> al voltant d'un punt fix, el <b>centre</b>. Ací els angles positius giren en sentit <b>antihorari</b>.</p>",
+"g0.q":"Predix: un gir de 90° amb centre l'origen, a quin punt envia el punt (3, 1)?",
+"g0.o0":"(−1, 3)","g0.o1":"(1, −3)","g0.o2":"(−3, −1)",
+"g0.why":"Un quart de volta antihorari porta el punt del primer quadrant al segon: (3, 1) → (−1, 3). (1, −3) seria un gir horari i (−3, −1), mitja volta.",
+"g1.title":"Cada vèrtex recorre un arc",
+"g1.text":"<p>Cada vèrtex es mou per un <b>arc de circumferència</b> centrat en el centre de gir. Tots giren el mateix angle, però els més llunyans recorren un arc més llarg.</p>",
+"g1.tq":"Què es conserva en un gir: la distància de cada vèrtex al centre, la forma, la mida?",
+"g1.th":"Tot això es conserva. El que canvia és l'orientació de la figura: els costats ja no són paral·lels als originals (excepte amb 180°).",
+"g2.title":"La regla de les coordenades",
+"g2.text":"<p>Amb centre l'origen: 90° → <b>(−y, x)</b>; 180° → <b>(−x, −y)</b>; 270° → <b>(y, −x)</b>. Si el centre és un altre punt, la regla es desplaça amb ell.</p>",
+"g2.tq":"Quin gir, amb el mateix centre, desfà un gir de 90°?",
+"g2.th":"Un de 270° (o, cosa que és el mateix, un de 90° en sentit horari): entre els dos fan una volta sencera, 360°.",
+"x0.title":"Una simetria axial",
+"x0.text":"<p>Una simetria axial reflecteix la figura en una recta, l'<b>eix</b>, com si fora un espill. Cada punt i la seua imatge queden a la <b>mateixa distància</b> de l'eix, un a cada costat.</p>",
+"x0.q":"Predix: quin és el simètric del punt (3, 2) respecte a l'eix Y?",
+"x0.o0":"(3, −2)","x0.o1":"(−3, 2)","x0.o2":"(−3, −2)",
+"x0.why":"L'eix Y és vertical: el punt salta a l'altre costat en horitzontal i la x canvia de signe, però l'altura (la y) no canvia.",
+"x1.title":"Cada vèrtex travessa l'eix",
+"x1.text":"<p>Cada vèrtex es mou <b>perpendicularment</b> a l'eix fins a quedar a la mateixa distància per l'altre costat. Els punts que estan damunt de l'eix no es mouen.</p>",
+"x1.tq":"Recorre els vèrtexs A → B → C en la figura i en la imatge. Giren en el mateix sentit?",
+"x1.th":"No: la simetria axial inverteix el sentit de gir, com la mà dreta i la mà esquerra. Per això la imatge no es pot obtindre fent lliscar o girar l'original.",
+"x2.title":"La regla de les coordenades",
+"x2.text":"<p>Eix X: <b>(x, −y)</b>. Eix Y: <b>(−x, y)</b>. Recta y = x: <b>(y, x)</b>. Recta vertical x = k: <b>(2k − x, y)</b>.</p>",
+"x2.tq":"Què passa si apliques dues vegades seguides la mateixa simetria?",
+"x2.th":"La figura torna on estava: una simetria axial es desfà amb ella mateixa. Comprova-ho amb «Continua des de la imatge».",
+"z0.title":"Una simetria central",
+"z0.text":"<p>En una simetria central cada punt passa a l'altre costat d'un punt fix, el <b>centre</b>, a la mateixa distància i en línia recta. El centre és el <b>punt mitjà</b> entre cada punt i la seua imatge.</p>",
+"z0.q":"Predix: quin és el simètric del punt (3, 2) respecte a l'origen?",
+"z0.o0":"(−3, −2)","z0.o1":"(−3, 2)","z0.o2":"(2, 3)",
+"z0.why":"Canvien de signe les dues coordenades: el punt queda a l'altre costat de l'origen, a la mateixa distància.",
+"z1.title":"Mitja volta",
+"z1.text":"<p>La figura fa <b>mitja volta</b> al voltant del centre: una simetria central és el mateix que un <b>gir de 180°</b>.</p>",
+"z1.tq":"La imatge té el mateix sentit de gir (A → B → C) que l'original, o està invertit com en la simetria axial?",
+"z1.th":"Té el mateix sentit: com que és un gir, no inverteix la figura. Només la deixa «cap per avall».",
+"z2.title":"La regla de les coordenades",
+"z2.text":"<p>Amb centre l'origen: <b>(x, y) → (−x, −y)</b>. Amb centre C(p, q): <b>(x, y) → (2p − x, 2q − y)</b>.</p>",
+"z2.tq":"Es pot aconseguir una simetria central fent dues simetries axials seguides?",
+"z2.th":"Sí: reflectint primer en l'eix X i després en l'eix Y (dues rectes perpendiculars que es tallen en el centre). (x, y) → (x, −y) → (−x, −y).",
+"m1.q":"El triangle A(1, 1), B(4, 1), C(2, 3) s'ha traslladat i ara el vèrtex A està en <b>A′(−3, 4)</b>. Quin vector s'ha aplicat?",
+"m1_f":"Amb el vector ({0}, {1}), A aniria a ({2}, {3}), no a (−3, 4).","m1_ok":"✔ Missió complida! (1 − 4, 1 + 3) = (−3, 4).",
+"m1.more":"On han anat a parar B i C? Calcula-ho abans de mirar el simulador.",
+"m2.q":"Quin gir <b>antihorari</b> amb centre l'origen porta el punt <b>(3, 1)</b> al punt <b>(1, −3)</b>? Escriu l'angle: 90, 180 o 270.",
+"m2_f":"Amb un gir de {0}°, (3, 1) va a ({1}, {2}).","m2_bad":"Escriu 90, 180 o 270.","m2_ok":"✔ Missió complida! 270° en sentit antihorari és el mateix que 90° en sentit horari.",
+"m2.more":"Quin angle portaria (3, 1) a (−3, −1)? I a (−1, 3)?",
+"m3.q":"Una simetria respecte a la recta vertical <b>x = k</b> porta el punt <b>A(1, 1)</b> a <b>A′(7, 1)</b>. Quant val k?",
+"m3_f":"Amb l'eix x = {0}, el simètric d'A seria ({1}, 1).","m3_ok":"✔ Missió complida! L'eix passa pel punt mitjà: (1 + 7) ÷ 2 = 4.",
+"m3.more":"On va a parar un punt que està damunt de l'eix, com (4, 3)?",
+"m4.q":"Una simetria central porta el punt <b>(2, 1)</b> al punt <b>(−4, 5)</b>. On és el centre?",
+"m4_f":"Amb centre ({0}, {1}), el simètric de (2, 1) és ({2}, {3}).","m4_ok":"✔ Missió complida! El centre és el punt mitjà: ((2 − 4) ÷ 2, (1 + 5) ÷ 2) = (−1, 3).",
+"m4.more":"Com trobaries el centre amb un regle, sense fer cap càlcul?",
+"s1.q":"«Una translació canvia la mida o la forma de la figura.»",
+"s1.h":"Mesura els costats abans i després (compta quadradets).",
+"s1.e":"Mai: la translació només desplaça. Els costats, els angles i l'àrea es conserven; per això diem que és un moviment.",
+"s2.q":"«El simètric d'un punt respecte a l'eix Y és un punt diferent d'ell mateix.»",
+"s2.h":"Pensa en un punt que estiga damunt de l'eix.",
+"s2.e":"De vegades: si el punt està damunt de l'eix Y (x = 0), el seu simètric és ell mateix. Els punts de l'eix són els únics que no es mouen.",
+"s2_f":"El simètric de ({0}, {1}) és ({2}, {1}), que és un punt diferent. Busca'n un que no es moga.",
+"s3.q":"«Si apliques dues vegades seguides la mateixa simetria axial, la figura torna on estava.»",
+"s3.h":"Prova-ho amb «Continua des de la imatge».",
+"s3.e":"Sempre: la segona reflexió desfà la primera. Amb l'eix X: (x, y) → (x, −y) → (x, y).",
+"s4.q":"«Un gir de 180° i una simetria central amb el mateix centre donen la mateixa imatge.»",
+"s4.h":"Compara les dues regles amb centre l'origen.",
+"s4.e":"Sempre: són el mateix moviment. Les dues regles són (x, y) → (−x, −y).",
+"s5.q":"«Una simetria axial conserva el sentit en què es recorren els vèrtexs (A → B → C).»",
+"s5.h":"Recorre amb el dit A, B, C en la figura i A′, B′, C′ en la imatge.",
+"s5.e":"Mai: la reflexió inverteix l'orientació. Si l'original es recorre en sentit antihorari, la imatge es recorre en sentit horari.",
+"e1.ctx":"Es gira el punt <b>(4, 1)</b> un angle de <b>90° antihorari</b> amb centre l'origen. On va a parar?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Va a (−1, 4).","e1.s1":"Va a (1, −4).",
+"e1.w0":"Un gir de 90° antihorari porta el punt del primer quadrant al segon: (x, y) → (−y, x). Pau ha girat en sentit horari.",
+"e1.w1":"Perquè en un gir només canvia de signe la primera coordenada.",
+"e1.w2":"Perquè en girar 90° les coordenades no canvien de lloc.",
+"e1.frame":"Pau, el punt no va a (1, −4) perquè…",
+"e1.model":"Pau, (1, −4) està en el quart quadrant: hi arribes girant cap a la dreta, en sentit horari. En sentit antihorari el punt puja cap al segon quadrant: (x, y) → (−y, x), és a dir, (4, 1) → (−1, 4).",
+"e2.ctx":"Quin és el simètric del punt <b>(2, 5)</b> respecte a l'<b>eix X</b>?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"És (−2, 5).","e2.s1":"És (2, −5).",
+"e2.w0":"L'eix X és horitzontal: el punt passa de dalt a baix i canvia de signe la y. Àlex ha fet la simetria respecte a l'eix Y.",
+"e2.w1":"Perquè respecte a l'eix X sempre canvia de signe la x.",
+"e2.w2":"Perquè en una simetria canvien de signe les dues coordenades.",
+"e2.frame":"Àlex, el simètric no és (−2, 5) perquè…",
+"e2.model":"Àlex, (−2, 5) està a la mateixa altura que (2, 5) però a l'altre costat de l'eix Y: és el simètric respecte a l'eix Y. Respecte a l'eix X, que és horitzontal, el punt baixa: la x es queda igual i la y canvia de signe, (2, −5).",
+"e3.ctx":"S'aplica al punt <b>(1, 4)</b> la translació de vector <b>(−3, 2)</b>. On va a parar?",
+"e3.n0":"Rita","e3.n1":"Joan",
+"e3.s0":"Va a (4, 2).","e3.s1":"Va a (−3, 8).",
+"e3.w0":"Cal sumar coordenada a coordenada: (1 − 3, 4 + 2) = (−2, 6). Rita ha restat el vector i Joan ha multiplicat.",
+"e3.w1":"Perquè el punt d'arribada és sempre el mateix vector.",
+"e3.w2":"Perquè en una translació només canvia la x.",
+"e3.frame":"Rita i Joan, el punt no va ni a (4, 2) ni a (−3, 8) perquè…",
+"e3.model":"Una translació suma el vector al punt: (1 + (−3), 4 + 2) = (−2, 6). Rita, has restat el vector en lloc de sumar-lo: (1 + 3, 4 − 2). Joan, has multiplicat les coordenades: 1 · (−3) i 4 · 2.",
+"d1.q":"En un videojoc, un personatge està en <b>(−5, −2)</b> i ha d'arribar al tresor, en <b>(3, 4)</b>, amb una sola translació. Quin vector necessita? Quina distància recorre en línia recta?",
+"d1.l0":"a","d1.l1":"b","d1.l2":"Distància",
+"d1_v":"Amb el vector ({0}, {1}) arribaria a ({2}, {3}), no a (3, 4).","d1_d":"El vector és correcte. La distància és la hipotenusa d'un triangle rectangle de catets 8 i 6.",
+"d1_ok":"✔ Ben decidit! Vector (8, 6) i distància √(8² + 6²) = 10.",
+"d1.more":"Si només poguera moure's en horitzontal i en vertical, quantes unitats recorreria?",
+"d2.q":"Una rajola té una marca en el punt <b>(2, 3)</b>. Primer es gira <b>180°</b> amb centre l'origen i després es reflecteix respecte a l'<b>eix Y</b>. On acaba la marca?",
+"d2.l0":"x","d2.l1":"y",
+"d2_half":"(−2, −3) és on està després del gir. Falta la simetria respecte a l'eix Y.","d2_f":"Fes-ho en dos passos: (2, 3) → gir de 180° → simetria respecte a l'eix Y. No acaba en ({0}, {1}).",
+"d2_ok":"✔ Ben decidit! (2, 3) → (−2, −3) → (2, −3).",
+"d2.more":"Quin moviment únic porta directament (2, 3) a (2, −3)?"
+},
+es:{
+"title":"Movimientos en el plano: traslaciones, giros y simetrías",
+"eyebrow":"Matemáticas · 2.º y 3.º ESO · Geometría",
+"h1":"Movimientos en el plano",
+"lede":"Traslada, gira y refleja un polígono sobre la cuadrícula y mira cómo cambian las coordenadas de sus vértices. Cada movimiento tiene su regla.",
+"aria.type":"Tipo de movimiento","aria.svg":"Cuadrícula con un polígono y su imagen por un movimiento","aria.fig":"Figura","aria.ang":"Ángulo de giro","aria.axis":"Eje de simetría",
+"type_tra":"Traslación","type_gir":"Giro","type_axi":"Simetría axial","type_cen":"Simetría central",
+"lg_fig":"Figura:","fig_tri":"Triángulo","fig_quad":"Cuadrilátero","fig_L":"Letra L",
+"lg_ang":"Ángulo (antihorario):","lg_axis":"Eje:","ax_x":"Eje X","ax_y":"Eje Y",
+"chain":"Continúa desde la imagen",
+"idea":"<b>Para la clase:</b> arrastra los vértices (y el centro) para cambiar la figura. Antes de pulsar «Siguiente», escribid en el cuaderno adónde creéis que irá cada vértice.",
+"l_a":"Vector: a (horizontal)","l_b":"Vector: b (vertical)","l_cx":"Centro: x","l_cy":"Centro: y","l_k":"Posición del eje: k",
+"th_v":"Vértice","th_o":"Figura","th_i":"Imagen",
+"k_vec":"Vector","k_ctr":"Centro","k_ang":"Ángulo","k_axis":"Eje","k_rule":"Regla",
+"f_a":"a","f_b":"b","f_ang":"ángulo","f_k":"k","f_x":"x","f_y":"y","f_cx":"centro: x","f_cy":"y",
+"rng":"Escribe números enteros dentro de la cuadrícula (entre −8 y 8).",
+"t0.title":"Una traslación",
+"t0.text":"<p>Una traslación desplaza <b>todos</b> los puntos de la figura según un mismo <b>vector</b> (a, b): a unidades en horizontal y b en vertical.</p>",
+"t0.q":"Predice: con el vector (4, 2), ¿a qué punto va a parar el punto (1, 1)?",
+"t0.o0":"(5, 3)","t0.o1":"(4, 2)","t0.o2":"(−3, −1)",
+"t0.why":"A cada coordenada le sumamos la del vector: (1 + 4, 1 + 2) = (5, 3). Decir (4, 2) sería confundir el vector con el punto de llegada.",
+"t1.title":"La figura se desliza",
+"t1.text":"<p>Cada vértice recorre una flecha <b>igual y paralela</b> al vector. La figura no gira ni cambia de tamaño: solo cambia de sitio.</p>",
+"t1.tq":"Compara las flechas de todos los vértices. ¿Qué tienen en común?",
+"t1.th":"Todas tienen la misma longitud, la misma dirección y el mismo sentido: son el mismo vector dibujado en sitios distintos.",
+"t2.title":"La regla de las coordenadas",
+"t2.text":"<p>Mira la tabla: a todas las x se les ha sumado <b>a</b> y a todas las y se les ha sumado <b>b</b>: <b>(x, y) → (x + a, y + b)</b>.</p>",
+"t2.tq":"¿Qué vector deshace esta traslación y devuelve la figura a su sitio?",
+"t2.th":"El vector opuesto, (−a, −b). Pruébalo: pulsa «Continúa desde la imagen» y pon el vector opuesto.",
+"g0.title":"Un giro",
+"g0.text":"<p>Un giro hace dar vueltas a todos los puntos un mismo <b>ángulo</b> alrededor de un punto fijo, el <b>centro</b>. Aquí los ángulos positivos giran en sentido <b>antihorario</b>.</p>",
+"g0.q":"Predice: un giro de 90° con centro el origen, ¿a qué punto envía el punto (3, 1)?",
+"g0.o0":"(−1, 3)","g0.o1":"(1, −3)","g0.o2":"(−3, −1)",
+"g0.why":"Un cuarto de vuelta antihorario lleva el punto del primer cuadrante al segundo: (3, 1) → (−1, 3). (1, −3) sería un giro horario y (−3, −1), media vuelta.",
+"g1.title":"Cada vértice recorre un arco",
+"g1.text":"<p>Cada vértice se mueve por un <b>arco de circunferencia</b> centrado en el centro de giro. Todos giran el mismo ángulo, pero los más lejanos recorren un arco más largo.</p>",
+"g1.tq":"¿Qué se conserva en un giro: la distancia de cada vértice al centro, la forma, el tamaño?",
+"g1.th":"Todo eso se conserva. Lo que cambia es la orientación de la figura: los lados ya no son paralelos a los originales (excepto con 180°).",
+"g2.title":"La regla de las coordenadas",
+"g2.text":"<p>Con centro el origen: 90° → <b>(−y, x)</b>; 180° → <b>(−x, −y)</b>; 270° → <b>(y, −x)</b>. Si el centro es otro punto, la regla se desplaza con él.</p>",
+"g2.tq":"¿Qué giro, con el mismo centro, deshace un giro de 90°?",
+"g2.th":"Uno de 270° (o, lo que es lo mismo, uno de 90° en sentido horario): entre los dos hacen una vuelta entera, 360°.",
+"x0.title":"Una simetría axial",
+"x0.text":"<p>Una simetría axial refleja la figura en una recta, el <b>eje</b>, como si fuera un espejo. Cada punto y su imagen quedan a la <b>misma distancia</b> del eje, uno a cada lado.</p>",
+"x0.q":"Predice: ¿cuál es el simétrico del punto (3, 2) respecto al eje Y?",
+"x0.o0":"(3, −2)","x0.o1":"(−3, 2)","x0.o2":"(−3, −2)",
+"x0.why":"El eje Y es vertical: el punto salta al otro lado en horizontal y la x cambia de signo, pero la altura (la y) no cambia.",
+"x1.title":"Cada vértice cruza el eje",
+"x1.text":"<p>Cada vértice se mueve <b>perpendicularmente</b> al eje hasta quedar a la misma distancia por el otro lado. Los puntos que están sobre el eje no se mueven.</p>",
+"x1.tq":"Recorre los vértices A → B → C en la figura y en la imagen. ¿Giran en el mismo sentido?",
+"x1.th":"No: la simetría axial invierte el sentido de giro, como la mano derecha y la mano izquierda. Por eso la imagen no se puede obtener deslizando o girando el original.",
+"x2.title":"La regla de las coordenadas",
+"x2.text":"<p>Eje X: <b>(x, −y)</b>. Eje Y: <b>(−x, y)</b>. Recta y = x: <b>(y, x)</b>. Recta vertical x = k: <b>(2k − x, y)</b>.</p>",
+"x2.tq":"¿Qué pasa si aplicas dos veces seguidas la misma simetría?",
+"x2.th":"La figura vuelve a donde estaba: una simetría axial se deshace con ella misma. Compruébalo con «Continúa desde la imagen».",
+"z0.title":"Una simetría central",
+"z0.text":"<p>En una simetría central cada punto pasa al otro lado de un punto fijo, el <b>centro</b>, a la misma distancia y en línea recta. El centro es el <b>punto medio</b> entre cada punto y su imagen.</p>",
+"z0.q":"Predice: ¿cuál es el simétrico del punto (3, 2) respecto al origen?",
+"z0.o0":"(−3, −2)","z0.o1":"(−3, 2)","z0.o2":"(2, 3)",
+"z0.why":"Cambian de signo las dos coordenadas: el punto queda al otro lado del origen, a la misma distancia.",
+"z1.title":"Media vuelta",
+"z1.text":"<p>La figura da <b>media vuelta</b> alrededor del centro: una simetría central es lo mismo que un <b>giro de 180°</b>.</p>",
+"z1.tq":"¿La imagen tiene el mismo sentido de giro (A → B → C) que el original, o está invertido como en la simetría axial?",
+"z1.th":"Tiene el mismo sentido: como es un giro, no invierte la figura. Solo la deja «boca abajo».",
+"z2.title":"La regla de las coordenadas",
+"z2.text":"<p>Con centro el origen: <b>(x, y) → (−x, −y)</b>. Con centro C(p, q): <b>(x, y) → (2p − x, 2q − y)</b>.</p>",
+"z2.tq":"¿Se puede conseguir una simetría central haciendo dos simetrías axiales seguidas?",
+"z2.th":"Sí: reflejando primero en el eje X y después en el eje Y (dos rectas perpendiculares que se cortan en el centro). (x, y) → (x, −y) → (−x, −y).",
+"m1.q":"El triángulo A(1, 1), B(4, 1), C(2, 3) se ha trasladado y ahora el vértice A está en <b>A′(−3, 4)</b>. ¿Qué vector se ha aplicado?",
+"m1_f":"Con el vector ({0}, {1}), A iría a ({2}, {3}), no a (−3, 4).","m1_ok":"✔ ¡Misión cumplida! (1 − 4, 1 + 3) = (−3, 4).",
+"m1.more":"¿Adónde han ido a parar B y C? Calcúlalo antes de mirar el simulador.",
+"m2.q":"¿Qué giro <b>antihorario</b> con centro el origen lleva el punto <b>(3, 1)</b> al punto <b>(1, −3)</b>? Escribe el ángulo: 90, 180 o 270.",
+"m2_f":"Con un giro de {0}°, (3, 1) va a ({1}, {2}).","m2_bad":"Escribe 90, 180 o 270.","m2_ok":"✔ ¡Misión cumplida! 270° en sentido antihorario es lo mismo que 90° en sentido horario.",
+"m2.more":"¿Qué ángulo llevaría (3, 1) a (−3, −1)? ¿Y a (−1, 3)?",
+"m3.q":"Una simetría respecto a la recta vertical <b>x = k</b> lleva el punto <b>A(1, 1)</b> a <b>A′(7, 1)</b>. ¿Cuánto vale k?",
+"m3_f":"Con el eje x = {0}, el simétrico de A sería ({1}, 1).","m3_ok":"✔ ¡Misión cumplida! El eje pasa por el punto medio: (1 + 7) ÷ 2 = 4.",
+"m3.more":"¿Adónde va a parar un punto que está sobre el eje, como (4, 3)?",
+"m4.q":"Una simetría central lleva el punto <b>(2, 1)</b> al punto <b>(−4, 5)</b>. ¿Dónde está el centro?",
+"m4_f":"Con centro ({0}, {1}), el simétrico de (2, 1) es ({2}, {3}).","m4_ok":"✔ ¡Misión cumplida! El centro es el punto medio: ((2 − 4) ÷ 2, (1 + 5) ÷ 2) = (−1, 3).",
+"m4.more":"¿Cómo encontrarías el centro con una regla, sin hacer ningún cálculo?",
+"s1.q":"«Una traslación cambia el tamaño o la forma de la figura.»",
+"s1.h":"Mide los lados antes y después (cuenta cuadraditos).",
+"s1.e":"Nunca: la traslación solo desplaza. Los lados, los ángulos y el área se conservan; por eso decimos que es un movimiento.",
+"s2.q":"«El simétrico de un punto respecto al eje Y es un punto distinto de él mismo.»",
+"s2.h":"Piensa en un punto que esté sobre el eje.",
+"s2.e":"A veces: si el punto está sobre el eje Y (x = 0), su simétrico es él mismo. Los puntos del eje son los únicos que no se mueven.",
+"s2_f":"El simétrico de ({0}, {1}) es ({2}, {1}), que es un punto distinto. Busca uno que no se mueva.",
+"s3.q":"«Si aplicas dos veces seguidas la misma simetría axial, la figura vuelve a donde estaba.»",
+"s3.h":"Pruébalo con «Continúa desde la imagen».",
+"s3.e":"Siempre: la segunda reflexión deshace la primera. Con el eje X: (x, y) → (x, −y) → (x, y).",
+"s4.q":"«Un giro de 180° y una simetría central con el mismo centro dan la misma imagen.»",
+"s4.h":"Compara las dos reglas con centro el origen.",
+"s4.e":"Siempre: son el mismo movimiento. Las dos reglas son (x, y) → (−x, −y).",
+"s5.q":"«Una simetría axial conserva el sentido en que se recorren los vértices (A → B → C).»",
+"s5.h":"Recorre con el dedo A, B, C en la figura y A′, B′, C′ en la imagen.",
+"s5.e":"Nunca: la reflexión invierte la orientación. Si el original se recorre en sentido antihorario, la imagen se recorre en sentido horario.",
+"e1.ctx":"Se gira el punto <b>(4, 1)</b> un ángulo de <b>90° antihorario</b> con centro el origen. ¿Adónde va a parar?",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"Va a (−1, 4).","e1.s1":"Va a (1, −4).",
+"e1.w0":"Un giro de 90° antihorario lleva el punto del primer cuadrante al segundo: (x, y) → (−y, x). Pau ha girado en sentido horario.",
+"e1.w1":"Porque en un giro solo cambia de signo la primera coordenada.",
+"e1.w2":"Porque al girar 90° las coordenadas no cambian de sitio.",
+"e1.frame":"Pau, el punto no va a (1, −4) porque…",
+"e1.model":"Pau, (1, −4) está en el cuarto cuadrante: llegas ahí girando hacia la derecha, en sentido horario. En sentido antihorario el punto sube hacia el segundo cuadrante: (x, y) → (−y, x), es decir, (4, 1) → (−1, 4).",
+"e2.ctx":"¿Cuál es el simétrico del punto <b>(2, 5)</b> respecto al <b>eje X</b>?",
+"e2.n0":"Álex","e2.n1":"Laia",
+"e2.s0":"Es (−2, 5).","e2.s1":"Es (2, −5).",
+"e2.w0":"El eje X es horizontal: el punto pasa de arriba abajo y cambia de signo la y. Álex ha hecho la simetría respecto al eje Y.",
+"e2.w1":"Porque respecto al eje X siempre cambia de signo la x.",
+"e2.w2":"Porque en una simetría cambian de signo las dos coordenadas.",
+"e2.frame":"Álex, el simétrico no es (−2, 5) porque…",
+"e2.model":"Álex, (−2, 5) está a la misma altura que (2, 5) pero al otro lado del eje Y: es el simétrico respecto al eje Y. Respecto al eje X, que es horizontal, el punto baja: la x se queda igual y la y cambia de signo, (2, −5).",
+"e3.ctx":"Se aplica al punto <b>(1, 4)</b> la traslación de vector <b>(−3, 2)</b>. ¿Adónde va a parar?",
+"e3.n0":"Rita","e3.n1":"Juan",
+"e3.s0":"Va a (4, 2).","e3.s1":"Va a (−3, 8).",
+"e3.w0":"Hay que sumar coordenada a coordenada: (1 − 3, 4 + 2) = (−2, 6). Rita ha restado el vector y Juan ha multiplicado.",
+"e3.w1":"Porque el punto de llegada es siempre el mismo vector.",
+"e3.w2":"Porque en una traslación solo cambia la x.",
+"e3.frame":"Rita y Juan, el punto no va ni a (4, 2) ni a (−3, 8) porque…",
+"e3.model":"Una traslación suma el vector al punto: (1 + (−3), 4 + 2) = (−2, 6). Rita, has restado el vector en lugar de sumarlo: (1 + 3, 4 − 2). Juan, has multiplicado las coordenadas: 1 · (−3) y 4 · 2.",
+"d1.q":"En un videojuego, un personaje está en <b>(−5, −2)</b> y tiene que llegar al tesoro, en <b>(3, 4)</b>, con una sola traslación. ¿Qué vector necesita? ¿Qué distancia recorre en línea recta?",
+"d1.l0":"a","d1.l1":"b","d1.l2":"Distancia",
+"d1_v":"Con el vector ({0}, {1}) llegaría a ({2}, {3}), no a (3, 4).","d1_d":"El vector es correcto. La distancia es la hipotenusa de un triángulo rectángulo de catetos 8 y 6.",
+"d1_ok":"✔ ¡Bien decidido! Vector (8, 6) y distancia √(8² + 6²) = 10.",
+"d1.more":"Si solo pudiera moverse en horizontal y en vertical, ¿cuántas unidades recorrería?",
+"d2.q":"Una baldosa tiene una marca en el punto <b>(2, 3)</b>. Primero se gira <b>180°</b> con centro el origen y después se refleja respecto al <b>eje Y</b>. ¿Dónde acaba la marca?",
+"d2.l0":"x","d2.l1":"y",
+"d2_half":"(−2, −3) es donde está después del giro. Falta la simetría respecto al eje Y.","d2_f":"Hazlo en dos pasos: (2, 3) → giro de 180° → simetría respecto al eje Y. No acaba en ({0}, {1}).",
+"d2_ok":"✔ ¡Bien decidido! (2, 3) → (−2, −3) → (2, −3).",
+"d2.more":"¿Qué movimiento único lleva directamente (2, 3) a (2, −3)?"
+}
+};
+/* ===== utilitats comunes (idioma, canvas, colors) ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LANG='es';
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d).replace('.',','):'—';
+function t(k,p){
+  let s=I18N[LANG]&&I18N[LANG][k]; if(s===undefined) s=I18N.ca[k]; if(s===undefined) return k;
+  return p?s.replace(/\{(\w+)\}/g,(m,n)=>p[n]!==undefined?p[n]:m):s;
+}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(e=>{e.textContent=t(e.dataset.i18n);});
+  $$('[data-i18n-html]').forEach(e=>{e.innerHTML=t(e.dataset.i18nHtml);});
+  $$('[data-i18n-aria]').forEach(e=>{e.setAttribute('aria-label',t(e.dataset.i18nAria));});
+  document.title=t('title');
+  $$('.langsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.dispatchEvent(new Event('langchange'));
+}
+function initLang(){
+  $$('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.lang!==LANG) location.href=b.dataset.lang==='es'?'./':'../../moviments-pla/';
+  }));
+}
+/* colors del tema (llegits del CSS, es refresquen si canvia el mode clar/fosc) */
+let _C=null;
+function C(){
+  if(_C) return _C;
+  const s=getComputedStyle(document.documentElement), g=n=>s.getPropertyValue(n).trim();
+  return _C={bg:g('--bg'),panel:g('--panel'),stage:g('--stage'),ink:g('--ink'),muted:g('--muted'),line:g('--line'),
+    pa:g('--pa'),pb:g('--pb'),ok:g('--ok'),warn:g('--warn'),chip:g('--chip'),
+    dark:matchMedia('(prefers-color-scheme: dark)').matches};
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{_C=null;document.dispatchEvent(new Event('themechange'));});
+/* canvas amb coordenades lògiques W×H i nitidesa en pantalles de molta densitat */
+function makeCanvas(cv,W,H,onResize){
+  cv.style.aspectRatio=W+'/'+H;
+  const o={cv,W,H,ctx:cv.getContext('2d'),s:1};
+  function fit(){
+    const r=cv.getBoundingClientRect(); if(!r.width) return;
+    const dpr=Math.min(window.devicePixelRatio||1,2.5);
+    cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*dpr*H/W);
+    o.s=cv.width/W; o.ctx.setTransform(o.s,0,0,o.s,0,0);
+    if(onResize) onResize();
+  }
+  new ResizeObserver(fit).observe(cv); fit();
+  o.pt=ev=>{const r=cv.getBoundingClientRect();return {x:(ev.clientX-r.left)*W/r.width,y:(ev.clientY-r.top)*H/r.height};};
+  return o;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+/* nombres aleatoris amb llavor opcional i gaussians */
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+/* controls: crea un lliscador amb etiqueta i valor */
+function slider(host,{id,key,min,max,step,val,fmtv,on}){
+  const d=document.createElement('div');d.className='ctl';
+  d.innerHTML='<label for="'+id+'" data-i18n="'+key+'">'+key+'</label><output id="'+id+'-o"></output><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'">';
+  host.appendChild(d);
+  const inp=d.querySelector('input'),out=d.querySelector('output');
+  const upd=()=>{out.textContent=fmtv?fmtv(+inp.value):inp.value;};
+  inp.addEventListener('input',()=>{upd();on&&on(+inp.value);});
+  upd();
+  return {el:d,inp,out,set(v){inp.value=v;upd();},get:()=>+inp.value,refresh:upd,disable(f){d.classList.toggle('off',f);inp.disabled=f;}};
+}
+
+/* ===== nivell Bàsic/Avançat, test autocorregit i utilitats (només recursos amb test) ===== */
+const QI18N={
+ca:{lvl_basic:"Bàsic",lvl_adv:"Avançat","aria.lvl":"Nivell de la pàgina","aria.quiz":"Test d'autoavaluació",
+quiz_eyebrow:"Autoavaluació",quiz_title:"Posa't a prova",check:"Comprova",reset_quiz:"Torna a començar el test",
+score:"Puntuació",answered:"respostes",correct:"Correcte.",wrong:"No exactament.",expected:"Resposta esperada:",ans_ph:"Escriu un número"},
+es:{lvl_basic:"Básico",lvl_adv:"Avanzado","aria.lvl":"Nivel de la página","aria.quiz":"Test de autoevaluación",
+quiz_eyebrow:"Autoevaluación",quiz_title:"Ponte a prueba",check:"Comprobar",reset_quiz:"Reiniciar el test",
+score:"Puntuación",answered:"respuestas",correct:"Correcto.",wrong:"No exactamente.",expected:"Respuesta esperada:",ans_ph:"Escribe un número"}};
+Object.assign(I18N.ca,QI18N.ca);Object.assign(I18N.es,QI18N.es);
+
+const App={level:'basic',hooks:[],answers:{}};
+try{const s=sessionStorage.getItem('ilde-level');if(s==='basic'||s==='adv')App.level=s;}catch(e){}
+const nf=(x,d=2)=>Number(x).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{maximumFractionDigits:d});
+function fmtN(x){if(x===0)return'0';const a=Math.abs(x);if(a>=1e5||a<1e-2){const e=Math.floor(Math.log10(a));return nf(x/Math.pow(10,e),2)+'·10<sup>'+e+'</sup>';}return nf(x,a<10?2:a<1000?1:0);}
+const tt=(k,...a)=>t(k,Object.assign({},a));
+function fitCanvas(c,w,h){const d=Math.min(window.devicePixelRatio||1,2);c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return x;}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function L(o){return typeof o==='string'?o:(o[LANG]||o.va||o.ca);}
+const parseNum=s=>Number(String(s).trim().replace(/\s/g,'').replace(',','.'));
+
+let QS=[];
+function renderQuiz(){
+  const box=$('#quiz');if(!box)return;
+  const qs=QS.filter(q=>q.lvl==='all'||q.lvl===App.level);
+  box.innerHTML='';let done=0,ok=0;
+  qs.forEach((q,i)=>{
+    const st=App.answers[q.id];
+    const card=document.createElement('div');card.className='qcard'+(st?(st.ok?' ok':' ko'):'');
+    const h=document.createElement('p');h.className='qtext';h.innerHTML='<b>'+(i+1)+'.</b> '+t(q.id+'.q');card.appendChild(h);
+    if(q.type==='mc'){
+      const o=document.createElement('div');o.className='opts';
+      for(let j=0;j<q.n;j++){
+        const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(q.id+'.o'+j);
+        if(st){b.disabled=true;if(j===q.ans)b.classList.add('right');else if(j===st.val)b.classList.add('wrong');}
+        b.onclick=()=>{App.answers[q.id]={val:j,ok:j===q.ans};renderQuiz();};
+        o.appendChild(b);
+      }
+      card.appendChild(o);
+    }else{
+      const row=document.createElement('div');row.className='numrow';
+      const inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=t('ans_ph');inp.setAttribute('aria-label',t('ans_ph'));
+      const b=document.createElement('button');b.type='button';b.className='btn primary';b.textContent=t('check');
+      if(st){inp.value=st.raw;inp.disabled=true;b.disabled=true;}
+      const go=()=>{const v=parseNum(inp.value);if(!isFinite(v)||inp.value.trim()===''){inp.classList.add('bad');return;}
+        const okk=Math.abs(v-q.num)<=Math.abs(q.num)*(q.tol!==undefined?q.tol:0.03)+1e-12;
+        App.answers[q.id]={val:v,raw:inp.value,ok:okk};renderQuiz();};
+      b.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go();};
+      row.append(inp);
+      if(q.u){const u=document.createElement('span');u.className='unit';u.textContent=t(q.id+'.u');row.append(u);}
+      row.append(b);card.appendChild(row);
+    }
+    if(st){
+      const f=document.createElement('p');f.className='fb';
+      const exp=q.type==='num'&&!st.ok?t('expected')+' <b>'+(q.sci?q.num.toExponential(2).replace('e+','·10^'):nf(q.num,Math.abs(q.num)>=100?0:3))+'</b>. ':'';
+      f.innerHTML=(st.ok?'<b>✔ '+t('correct')+'</b> ':'<b>✘ '+t('wrong')+'</b> ')+exp+t(q.id+'.e');
+      card.appendChild(f);done++;if(st.ok)ok++;
+    }
+    box.appendChild(card);
+  });
+  const sc=$('#score');if(sc)sc.innerHTML=t('score')+': <b>'+ok+' / '+qs.length+'</b> ('+done+' '+t('answered')+')';
+}
+function applyLevel(){
+  $$('[data-lvl]').forEach(e=>{e.hidden=!(e.dataset.lvl==='all'||e.dataset.lvl===App.level);});
+  $$('#lvlsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===App.level)));
+  renderQuiz();
+  App.hooks.forEach(f=>f());
+}
+function initQuiz(qs){
+  QS=qs;
+  $$('#lvlsw button').forEach(b=>b.addEventListener('click',()=>{App.level=b.dataset.level;try{sessionStorage.setItem('ilde-level',App.level);}catch(e){}applyLevel();}));
+  const r=$('#resetQuiz');if(r)r.addEventListener('click',()=>{App.answers={};renderQuiz();});
+  document.addEventListener('langchange',applyLevel);
+}
+
+/* ===== Raona-ho: motor compartit (missions, sempre/de vegades/mai, qui té raó, decideix) =====
+   Cada animació crida RZ.init({F, M, S, E, D, sim}) amb el seu contingut; el text específic va al seu diccionari I18N.
+   Claus per tarea <id>: .q (enunciat), .more (pregunta final), .h/.e (pista/explicació de S),
+   .ctx .n0 .n1 .s0 .s1 .w0 .w1 .w2 .frame .model (E; w0 és sempre la raó correcta), .l0.. (etiquetes de camps de D). */
+const RZC={
+ca:{rz_eyebrow:"Raona-ho",rz_title:"Pensa abans de tocar",
+rz_intro:"Quatre maneres d'exprimir el simulador: problemes al revés, afirmacions per a desmuntar, errors d'uns altres i decisions de la vida real. El simulador fa de jutge.",
+"aria.rz":"Tipus d'activitat",rz_tM:"🎯 Missions",rz_tS:"Sempre, de vegades o mai?",rz_tE:"Qui té raó?",rz_tD:"Decideix",
+mission:"Missió",to_sim:"Mostra-ho al simulador",rz_bad:"Escriu nombres vàlids als requadres.",rz_pick:"Tria una opció.",
+rz_done:"✔ Missió complida!",rz_cx_ok:"✔ Contraexemple trobat.",rz_dec_ok:"✔ Ben decidit!",
+m_count:"Missions complides: {0} de {1}",
+s_S:"Sempre",s_D:"De vegades",s_M:"Mai",s_ok:"✔ Correcte.",s_wrong:"✘ Torna-ho a pensar. {0}",
+s_cx_ask:"Ara demostra-ho: troba un cas on <b>no</b> es complisca.",s_count:"Afirmacions resoltes: {0} de {1}",
+e_who:"Qui té raó?",e_both:"Tots dos",e_none:"Cap dels dos",e_why:"Per què?",e_ok:"✔ Exacte.",e_ko:"✘ No ho és. Torna a llegir el que diu cadascú.",
+e_ko2:"✘ Aquesta raó no explica l'error. Prova una altra.",e_write:"Ara explica-li-ho a qui s'ha equivocat, amb les teues paraules:",
+e_model_btn:"Compara amb una resposta model",e_model:"Una resposta possible:"},
+es:{rz_eyebrow:"Razónalo",rz_title:"Piensa antes de tocar",
+rz_intro:"Cuatro maneras de exprimir el simulador: problemas al revés, afirmaciones para desmontar, errores ajenos y decisiones de la vida real. El simulador hace de juez.",
+"aria.rz":"Tipo de actividad",rz_tM:"🎯 Misiones",rz_tS:"¿Siempre, a veces o nunca?",rz_tE:"¿Quién tiene razón?",rz_tD:"Decide",
+mission:"Misión",to_sim:"Muéstralo en el simulador",rz_bad:"Escribe números válidos en los recuadros.",rz_pick:"Elige una opción.",
+rz_done:"✔ ¡Misión cumplida!",rz_cx_ok:"✔ Contraejemplo encontrado.",rz_dec_ok:"✔ ¡Bien decidido!",
+m_count:"Misiones cumplidas: {0} de {1}",
+s_S:"Siempre",s_D:"A veces",s_M:"Nunca",s_ok:"✔ Correcto.",s_wrong:"✘ Vuelve a pensarlo. {0}",
+s_cx_ask:"Ahora demuéstralo: encuentra un caso en el que <b>no</b> se cumpla.",s_count:"Afirmaciones resueltas: {0} de {1}",
+e_who:"¿Quién tiene razón?",e_both:"Los dos",e_none:"Ninguno",e_why:"¿Por qué?",e_ok:"✔ Exacto.",e_ko:"✘ No es así. Vuelve a leer lo que dice cada uno.",
+e_ko2:"✘ Esa razón no explica el error. Prueba otra.",e_write:"Ahora explícaselo a quien se ha equivocado, con tus palabras:",
+e_model_btn:"Compara con una respuesta modelo",e_model:"Una respuesta posible:"}};
+Object.assign(I18N.ca,RZC.ca);Object.assign(I18N.es,RZC.es);
+
+const RZ=(()=>{
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>{const s=String(v==null?'':v).trim();if(!s)return null;const x=parseNum(s);return Number.isFinite(x)?x:null;};
+const Mt=m=>m?tt(m.k,...(typeof m.p==='function'?m.p():(m.p||[]))):'';
+const has=k=>t(k)!==k;
+let cfg={},F={},sh=false;
+const KINDS=['M','S','E','D'];
+function fdef(f){return typeof f==='string'?(F[f]||{l:f}):f;}
+function mkst(task){task.st=Object.assign({v:(task.f||[]).map(()=>''),ok:false,msg:null,pick:null,choice:null,cxOk:false,cxMsg:null,who:null,why:null,txt:'',model:false},{});return task;}
+function fieldsHTML(task){return (task.f||[]).map((f,i)=>{const d=fdef(f);
+  return '<label class="pairin">'+(d.l?t(d.l)+' ':'')+'<input type="text" inputmode="decimal" autocomplete="off" data-i="'+i+'" value="'+esc(task.st.v[i])+'">'+(d.u?'<span>'+d.u+'</span>':'')+'</label>';}).join(' ');}
+function bind(el,task,go){$$('input[data-i]',el).forEach(i=>{i.oninput=()=>{task.st.v[+i.dataset.i]=i.value;};i.onkeydown=e=>{if(e.key==='Enter'&&go)go();};});}
+function vals(task){const v=task.st.v.map(num);return v.some(x=>x===null)?null:v;}
+function simBtn(task){return (task.sim!==null&&(task.sim||cfg.sim))?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'';}
+function goSim(task,v){const f=task.sim||cfg.sim;if(f)f(v,task);}
+function show(el){el.scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'center'});}
+
+function renderM(){
+  const box=$('#rzM'),L=cfg.M||[];if(!box)return;const done=L.filter(m=>m.st.ok).length;
+  box.innerHTML='<p class="score">'+tt('m_count',done,L.length)+'</p>'+L.map((m,i)=>
+    '<div class="task'+(m.st.ok?' done':'')+'" data-id="'+m.id+'"><p class="q"><b>'+t('mission')+' '+(i+1)+'.</b> '+t(m.id+'.q')+'</p>'+
+    '<div class="row">'+fieldsHTML(m)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(m)+'</div>'+
+    '<p class="msg '+(m.st.msg?(m.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(m.st.msg)+'</p>'+
+    (m.st.ok&&has(m.id+'.more')?'<p class="more">'+t(m.id+'.more')+'</p>':'')+'</div>').join('');
+  L.forEach(m=>{const el=$('.task[data-id="'+m.id+'"]',box);
+    const go=()=>{const v=vals(m);if(!v){m.st.msg={k:'rz_bad'};m.st.ok=false;renderM();return;}
+      const f=m.chk(v,m.st.v);m.st.ok=!f;m.st.msg=f||(m.ok?m.ok(v,m.st.v):{k:'rz_done'});renderM();};
+    bind(el,m,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=vals(m);if(v)goSim(m,v);else{m.st.msg={k:'rz_bad'};renderM();}};});
+}
+
+function renderS(){
+  const box=$('#rzS'),L=cfg.S||[];if(!box)return;
+  const fin=s=>s.st.ok&&(s.ans!=='D'||s.st.cxOk),done=L.filter(fin).length;
+  box.innerHTML='<p class="score">'+tt('s_count',done,L.length)+'</p>'+L.map(s=>{
+    const st=s.st;
+    let h='<div class="task'+(fin(s)?' done':'')+'" data-id="'+s.id+'"><p class="q">'+t(s.id+'.q')+'</p><div class="sdm">'+
+      ['S','D','M'].map(c=>'<button class="opt" type="button" data-c="'+c+'" aria-pressed="'+(st.choice===c)+'"'+(st.ok?' disabled':'')+'>'+t('s_'+c)+'</button>').join('')+'</div>';
+    if(typeof s.sim==='function')h+='<div class="row"><button class="btn" type="button" data-act="ssim">'+t('to_sim')+'</button></div>';
+    if(st.choice&&!st.ok)h+='<p class="msg bad">'+tt('s_wrong',t(s.id+'.h'))+'</p>';
+    if(st.ok){h+='<p class="msg good">'+t('s_ok')+'</p>';
+      if(s.ans==='D'&&!st.cxOk){h+='<p>'+t('s_cx_ask')+'</p><div class="row">'+fieldsHTML(s)+'<button class="btn primary" type="button" data-act="cx">'+t('check')+'</button></div>';
+        if(st.cxMsg)h+='<p class="msg bad">'+Mt(st.cxMsg)+'</p>';}
+      if(st.cxOk)h+='<p class="msg good">'+Mt(st.cxMsg)+'</p>';
+      if(fin(s))h+='<p class="idea">'+t(s.id+'.e')+'</p>';}
+    return h+'</div>';}).join('');
+  L.forEach(s=>{const el=$('.task[data-id="'+s.id+'"]',box);
+    $$('.sdm .opt',el).forEach(b=>b.onclick=()=>{s.st.choice=b.dataset.c;s.st.ok=b.dataset.c===s.ans;renderS();});
+    const ss=$('[data-act=ssim]',el);if(ss)ss.onclick=()=>s.sim([],s);
+    const cb=$('[data-act=cx]',el);if(cb){
+      const go=()=>{const v=vals(s);if(!v){s.st.cxMsg={k:'rz_bad'};renderS();return;}
+        const f=s.cx(v,s.st.v);s.st.cxOk=!f;s.st.cxMsg=f||(s.cxok?s.cxok(v,s.st.v):{k:'rz_cx_ok'});renderS();if(!f){const g=s.cxsim===undefined?cfg.sim:s.cxsim;if(g)g(v,s);}};
+      bind(el,s,go);cb.onclick=go;}
+  });
+}
+
+function renderE(){
+  const box=$('#rzE'),L=cfg.E||[];if(!box)return;
+  box.innerHTML=L.map(e=>{const st=e.st,whoOk=st.who===e.who,whyOk=whoOk&&st.why===0;
+    const names=[t(e.id+'.n0'),t(e.id+'.n1'),t('e_both'),t('e_none')];
+    let h='<div class="task'+(whyOk?' done':'')+'" data-id="'+e.id+'"><p class="q">'+t(e.id+'.ctx')+'</p>'+
+      '<div class="who"><div class="bubble"><b>'+names[0]+'</b>'+t(e.id+'.s0')+'</div><div class="bubble"><b>'+names[1]+'</b>'+t(e.id+'.s1')+'</div></div>'+
+      '<p class="q"><b>1.</b> '+t('e_who')+'</p><div class="whobtn">'+names.map((n,i)=>'<button class="opt" type="button" data-who="'+i+'" aria-pressed="'+(st.who===i)+'"'+(whoOk?' disabled':'')+'>'+n+'</button>').join('')+'</div>';
+    if(st.who!==null)h+='<p class="msg '+(whoOk?'good':'bad')+'">'+t(whoOk?'e_ok':'e_ko')+'</p>';
+    if(whoOk){h+='<p class="q"><b>2.</b> '+t('e_why')+'</p><div class="whyopts">'+e.order.map(i=>'<button class="opt" type="button" data-why="'+i+'" aria-pressed="'+(st.why===i)+'"'+(whyOk?' disabled':'')+'>'+t(e.id+'.w'+i)+'</button>').join('')+'</div>';
+      if(st.why!==null)h+='<p class="msg '+(whyOk?'good':'bad')+'">'+t(whyOk?'e_ok':'e_ko2')+'</p>';}
+    if(whyOk){h+='<p class="q"><b>3.</b> '+t('e_write')+'</p><textarea placeholder="'+esc(t(e.id+'.frame'))+'" aria-label="'+esc(t('e_write'))+'">'+esc(st.txt)+'</textarea>'+
+      '<div class="row"><button class="btn" type="button" data-act="model">'+t('e_model_btn')+'</button>'+((e.sim||cfg.sim)&&e.sim!==null?'<button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button>':'')+'</div>';
+      if(st.model)h+='<div class="model"><b>'+t('e_model')+'</b> '+t(e.id+'.model')+'</div>';}
+    return h+'</div>';}).join('');
+  L.forEach(e=>{const el=$('.task[data-id="'+e.id+'"]',box);
+    $$('[data-who]',el).forEach(b=>b.onclick=()=>{e.st.who=+b.dataset.who;e.st.why=null;renderE();});
+    $$('[data-why]',el).forEach(b=>b.onclick=()=>{e.st.why=+b.dataset.why;renderE();});
+    const ta=$('textarea',el);if(ta)ta.oninput=()=>{e.st.txt=ta.value;};
+    const mb=$('[data-act=model]',el);if(mb)mb.onclick=()=>{e.st.model=true;renderE();};
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>goSim(e,e.args||[]);});
+}
+
+function renderD(){
+  const box=$('#rzD'),L=cfg.D||[];if(!box)return;
+  box.innerHTML=L.map(d=>{
+    let h='<div class="task'+(d.st.ok?' done':'')+'" data-id="'+d.id+'"><p class="q">'+t(d.id+'.q')+'</p><div class="row">';
+    if(d.chips)h+='<span class="pairin">'+t(d.id+'.lc')+'</span><div class="chips">'+d.chips.vals.map(x=>'<button class="chip" type="button" data-pick="'+x+'" aria-pressed="'+(d.st.pick===x)+'">'+(d.chips.fmt?d.chips.fmt(x):String(x).replace('.',','))+(d.chips.u?' '+t(d.chips.u):'')+'</button>').join('')+'</div>';
+    h+=fieldsHTML(d)+'<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button>'+simBtn(d)+'</div>';
+    h+='<p class="msg '+(d.st.msg?(d.st.ok?'good':'bad'):'')+'" aria-live="polite">'+Mt(d.st.msg)+'</p>';
+    if(d.st.ok&&has(d.id+'.more'))h+='<p class="more">'+t(d.id+'.more')+'</p>';
+    return h+'</div>';}).join('');
+  L.forEach(d=>{const el=$('.task[data-id="'+d.id+'"]',box);
+    $$('[data-pick]',el).forEach(b=>b.onclick=()=>{d.st.pick=+b.dataset.pick;renderD();});
+    const args=()=>{const v=vals(d);if(!v)return null;return d.chips?[d.st.pick].concat(v):v;};
+    const go=()=>{if(d.chips&&d.st.pick===null){d.st.msg={k:'rz_pick'};d.st.ok=false;renderD();return;}
+      const v=args();if(!v){d.st.msg={k:'rz_bad'};d.st.ok=false;renderD();return;}
+      const f=d.chk(v,d.st.v);d.st.ok=!f;d.st.msg=f||(d.ok?d.ok(v,d.st.v):{k:'rz_dec_ok'});renderD();};
+    bind(el,d,go);$('[data-act=chk]',el).onclick=go;
+    const sb=$('[data-act=sim]',el);if(sb)sb.onclick=()=>{const v=args();goSim(d,v||[]);};});
+}
+function render(){renderM();renderS();renderE();renderD();}
+function init(c){
+  cfg=c;F=c.F||{};
+  KINDS.forEach(k=>(cfg[k]||[]).forEach(mkst));
+  (cfg.E||[]).forEach(e=>{e.order=[0,1,2].sort(()=>Math.random()-.5);});
+  const first=KINDS.find(k=>(cfg[k]||[]).length)||'M';let tab=first;
+  $$('#rztabs button').forEach(b=>{const k=b.dataset.t;if(!(cfg[k]||[]).length){b.hidden=true;return;}
+    b.setAttribute('aria-pressed',String(k===tab));
+    b.onclick=()=>{tab=k;$$('#rztabs button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});};});
+  KINDS.forEach(q=>{const p=$('#rz'+q);if(p)p.hidden=q!==tab;});
+  App.hooks.push(render);
+}
+return {init,show,render};
+})();
+
+/* ===== passos amb predicció: cada pas té text, pregunta de predicció i pregunta per a pensar ===== */
+const SI18N={
+ca:{st_prev:"← Anterior",st_next:"Següent →",st_restart:"Torna a l'inici",st_step:"Pas {a} de {b}",st_predict:"Predix abans de veure",st_think:"Pensa-hi",
+st_hint:"Mostra una pista",st_hide:"Amaga la pista",st_ok:"Correcte!",st_ko:"No exactament.","aria.steps":"Passos de l'animació","aria.stage":"Dibuix de l'animació",
+sl_cells:"Cèl·lules",sl_chrom:"Cromosomes per cèl·lula",sl_chromat:"Cromàtides per cromosoma",sl_dna:"ADN per cèl·lula",sl_chrompol:"Cromosomes per pol",sl_dnatot:"ADN total"},
+es:{st_prev:"← Anterior",st_next:"Siguiente →",st_restart:"Volver al inicio",st_step:"Paso {a} de {b}",st_predict:"Predice antes de ver",st_think:"Piénsalo",
+st_hint:"Ver una pista",st_hide:"Ocultar la pista",st_ok:"¡Correcto!",st_ko:"No exactamente.","aria.steps":"Pasos de la animación","aria.stage":"Dibujo de la animación",
+sl_cells:"Células",sl_chrom:"Cromosomas por célula",sl_chromat:"Cromátidas por cromosoma",sl_dna:"ADN por célula",sl_chrompol:"Cromosomas por polo",sl_dnatot:"ADN total"}};
+Object.assign(I18N.ca,SI18N.ca);Object.assign(I18N.es,SI18N.es);
+const SE={i:0,steps:[],ans:{},hint:{},cb:null};
+function stepsInit(steps,cb){
+  SE.steps=steps;SE.cb=cb;
+  const sp=$('#stepper');
+  steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+  $('#prev').onclick=()=>stepGo(SE.i-1);
+  $('#next').onclick=()=>stepGo(SE.i+1);
+  $('#restart').onclick=()=>{SE.ans={};SE.hint={};stepGo(0);};
+  document.addEventListener('langchange',stepRender);
+  stepGo(0);
+}
+function stepGo(i){
+  i=Math.max(0,Math.min(SE.steps.length-1,i));
+  const prev=SE.i;SE.i=i;stepRender();
+  if(SE.cb)SE.cb(i,prev);
+}
+function stepRender(){
+  const s=SE.steps[SE.i],id=s.id;
+  $$('#stepper button').forEach((b,k)=>{
+    if(k===SE.i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+    b.className=(SE.ans[SE.steps[k].id]!==undefined&&k!==SE.i)?'done':'';
+  });
+  $('#stepno').textContent=t('st_step',{a:SE.i+1,b:SE.steps.length});
+  const T=$('#stitle');T.dataset.i18n=id+'.title';T.textContent=t(id+'.title');
+  const X=$('#stext');X.dataset.i18nHtml=id+'.text';X.innerHTML=t(id+'.text');
+  const st=$('#sstats');st.innerHTML='';
+  (s.stats||[]).forEach((p,j)=>{
+    const d=document.createElement('div');d.className='stat';
+    d.innerHTML='<span class="k">'+t(p[0])+'</span><span class="v">'+(I18N.ca[id+'.sv'+j]!==undefined?t(id+'.sv'+j):p[1])+'</span>';
+    st.appendChild(d);
+  });
+  st.hidden=!(s.stats&&s.stats.length);
+  const ask=$('#sask');ask.innerHTML='';ask.hidden=!s.ask;
+  if(s.ask){
+    const a=SE.ans[id],c=document.createElement('div');c.className='pred';
+    c.innerHTML='<span class="eb">'+t('st_predict')+'</span><p class="qtext">'+t(id+'.q')+'</p>';
+    const o=document.createElement('div');o.className='opts';
+    for(let j=0;j<s.ask.n;j++){
+      const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=t(id+'.o'+j);
+      if(a!==undefined){b.disabled=true;if(j===s.ask.ok)b.classList.add('right');else if(j===a)b.classList.add('wrong');}
+      b.onclick=()=>{SE.ans[id]=j;stepRender();};
+      o.appendChild(b);
+    }
+    c.appendChild(o);
+    if(a!==undefined){const f=document.createElement('p');f.className='fb';f.innerHTML='<b>'+(a===s.ask.ok?t('st_ok'):t('st_ko'))+'</b> '+t(id+'.why');c.appendChild(f);}
+    ask.appendChild(c);
+  }
+  const th=$('#sthink');th.innerHTML='';th.hidden=!s.think;
+  if(s.think){
+    const c=document.createElement('div');c.className='think';
+    c.innerHTML='<span class="eb">'+t('st_think')+'</span><p class="qtext">'+t(id+'.tq')+'</p>';
+    const open=!!SE.hint[id];
+    const b=document.createElement('button');b.type='button';b.className='linkb';b.textContent=open?t('st_hide'):t('st_hint');
+    b.onclick=()=>{SE.hint[id]=!SE.hint[id];stepRender();};
+    c.appendChild(b);
+    if(open){const f=document.createElement('p');f.className='fb';f.innerHTML=t(id+'.th');c.appendChild(f);}
+    th.appendChild(c);
+  }
+  $('#prev').disabled=(SE.i===0);$('#next').disabled=(SE.i===SE.steps.length-1);
+}
+
+/* ===== Moviments en el pla ===== */
+const svg=$('#svg'),PI=Math.PI,VW=400,GM=9,U=(VW-28)/(2*GM),X=x=>VW/2+x*U,Y=y=>VW/2-y*U,NM='ABCDEFGH';
+const STEPDEF={
+ tra:[{id:'t0',ask:{n:3,ok:0}},{id:'t1',think:true},{id:'t2',think:true}],
+ gir:[{id:'g0',ask:{n:3,ok:0}},{id:'g1',think:true},{id:'g2',think:true}],
+ axi:[{id:'x0',ask:{n:3,ok:1}},{id:'x1',think:true},{id:'x2',think:true}],
+ cen:[{id:'z0',ask:{n:3,ok:0}},{id:'z1',think:true},{id:'z2',think:true}]
+};
+const FIGS={tri:[[1,1],[4,1],[2,3]],quad:[[1,1],[4,1],[5,3],[2,4]],L:[[1,1],[4,1],[4,2],[2,2],[2,4],[1,4]]};
+const ST={type:'tra',fig:'tri',pts:FIGS.tri.map(p=>p.slice()),a:4,b:2,ang:90,cx:0,cy:0,axis:'y',k:2};
+let P=0,raf=0;
+const ease=x=>x*x*(3-2*x);
+const fc=v=>{const r=Math.round(v),i=Math.abs(v-r)<1e-6;return (i?String(r):v.toFixed(1).replace('.',',')).replace('-','−');};
+const pt=p=>{const i=Math.abs(p[0]-Math.round(p[0]))<1e-6&&Math.abs(p[1]-Math.round(p[1]))<1e-6;return '('+fc(p[0])+(i?', ':'; ')+fc(p[1])+')';};
+/* imatge exacta d'un punt i posició intermèdia (e de 0 a 1) */
+function img(p){
+  const x=p[0],y=p[1],{type,a,b,ang,cx,cy,axis,k}=ST;
+  if(type==='tra')return [x+a,y+b];
+  if(type==='cen')return [2*cx-x,2*cy-y];
+  if(type==='gir'){const dx=x-cx,dy=y-cy;return ang===90?[cx-dy,cy+dx]:ang===180?[cx-dx,cy-dy]:[cx+dy,cy-dx];}
+  return axis==='x'?[x,-y]:axis==='y'?[-x,y]:axis==='d1'?[y,x]:axis==='d2'?[-y,-x]:axis==='v'?[2*k-x,y]:[x,2*k-y];
+}
+function mov(p,e){
+  const {type,ang,cx,cy}=ST;
+  if(e>=1)return img(p);
+  if(type==='gir'||type==='cen'){const A=(type==='cen'?PI:ang*PI/180)*e,dx=p[0]-cx,dy=p[1]-cy,c=Math.cos(A),s=Math.sin(A);return [cx+dx*c-dy*s,cy+dx*s+dy*c];}
+  const q=img(p);return [lerp(p[0],q[0],e),lerp(p[1],q[1],e)];
+}
+const sg=v=>v===0?'':v>0?' + '+v:' − '+(-v),tm=(s,v,c)=>(s<0?'−':'')+v+sg(c);
+function rule(){
+  const {type,a,b,ang,cx,cy,axis,k}=ST;let A,B;
+  if(type==='tra'){A=tm(1,'x',a);B=tm(1,'y',b);}
+  else if(type==='cen'||(type==='gir'&&ang===180)){A=tm(-1,'x',2*cx);B=tm(-1,'y',2*cy);}
+  else if(type==='gir'){if(ang===90){A=tm(-1,'y',cx+cy);B=tm(1,'x',cy-cx);}else{A=tm(1,'y',cx-cy);B=tm(-1,'x',cx+cy);}}
+  else if(axis==='x'){A='x';B='−y';}else if(axis==='y'){A='−x';B='y';}else if(axis==='d1'){A='y';B='x';}else if(axis==='d2'){A='−y';B='−x';}
+  else if(axis==='v'){A=tm(-1,'x',2*k);B='y';}else{A='x';B=tm(-1,'y',2*k);}
+  return '(x, y) → ('+A+', '+B+')';
+}
+function axisName(){const {axis,k}=ST;return axis==='x'?t('ax_x')+' (y = 0)':axis==='y'?t('ax_y')+' (x = 0)':axis==='d1'?'y = x':axis==='d2'?'y = −x':axis==='v'?'x = '+fc(k):'y = '+fc(k);}
+/* controls */
+const ctrl=$('#ctrl');
+const sA=slider(ctrl,{id:'sa',key:'l_a',min:-8,max:8,step:1,val:4,fmtv:fc,on:v=>{ST.a=v;refresh();}});
+const sB=slider(ctrl,{id:'sb',key:'l_b',min:-8,max:8,step:1,val:2,fmtv:fc,on:v=>{ST.b=v;refresh();}});
+const sCx=slider(ctrl,{id:'scx',key:'l_cx',min:-6,max:6,step:1,val:0,fmtv:fc,on:v=>{ST.cx=v;refresh();}});
+const sCy=slider(ctrl,{id:'scy',key:'l_cy',min:-6,max:6,step:1,val:0,fmtv:fc,on:v=>{ST.cy=v;refresh();}});
+const sK=slider(ctrl,{id:'sk',key:'l_k',min:-6,max:6,step:1,val:2,fmtv:fc,on:v=>{ST.k=v;refresh();}});
+function showCtl(){
+  const tp=ST.type,rot=tp==='gir'||tp==='cen';
+  sA.el.hidden=sB.el.hidden=tp!=='tra';sCx.el.hidden=sCy.el.hidden=!rot;
+  $('#angsw').hidden=tp!=='gir';$('#axsw').hidden=tp!=='axi';
+  sK.el.hidden=!(tp==='axi'&&(ST.axis==='v'||ST.axis==='h'));
+  $$('#figsw .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.fig===ST.fig)));
+  $$('#angsw .chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.ang===ST.ang)));
+  $$('#axsw .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.axis===ST.axis)));
+  $$('#typesw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===tp)));
+  $('#chain').disabled=SE.i===0;
+}
+/* dibuix */
+function draw(){
+  const e=clamp(P,0,1),{type,pts,a,b,cx,cy,axis,k}=ST,n=pts.length;
+  const f=v=>v.toFixed(1),op=o=>o===undefined||o>=1?'':' style="opacity:'+Math.max(0,o).toFixed(3)+'"';
+  const ln=(x1,y1,x2,y2,cls,o)=>'<line x1="'+f(X(x1))+'" y1="'+f(Y(y1))+'" x2="'+f(X(x2))+'" y2="'+f(Y(y2))+'" class="'+cls+'"'+op(o)+'/>';
+  const pl=(q,cls,o)=>'<polygon points="'+q.map(p=>f(X(p[0]))+','+f(Y(p[1]))).join(' ')+'" class="'+cls+'"'+op(o)+'/>';
+  const tx=(px,py,str,cls,an)=>'<text x="'+f(px)+'" y="'+f(py)+'" class="'+cls+'" text-anchor="'+(an||'middle')+'" dominant-baseline="central">'+str+'</text>';
+  const arrow=(p,q,o)=>{const x1=X(p[0]),y1=Y(p[1]),x2=X(q[0]),y2=Y(q[1]),d=Math.hypot(x2-x1,y2-y1);if(d<6)return '';
+    const ux=(x2-x1)/d,uy=(y2-y1)/d,bx=x2-ux*9,by=y2-uy*9;
+    return '<g'+op(o)+'><line x1="'+f(x1)+'" y1="'+f(y1)+'" x2="'+f(bx)+'" y2="'+f(by)+'" class="vec"/><polygon class="vech" points="'+f(x2)+','+f(y2)+' '+f(bx-uy*4.5)+','+f(by+ux*4.5)+' '+f(bx+uy*4.5)+','+f(by-ux*4.5)+'"/></g>';};
+  let s='<rect x="0" y="0" width="'+VW+'" height="'+VW+'" fill="none"/>';
+  for(let i=-GM;i<=GM;i++){if(i){s+=ln(i,-GM,i,GM,'gr')+ln(-GM,i,GM,i,'gr');}}
+  s+=ln(-GM,0,GM,0,'ax')+ln(0,-GM,0,GM,'ax');
+  for(let i=-GM;i<=GM;i++){if(!i)continue;s+=tx(X(i),Y(0)+8,fc(i),'num')+tx(X(0)-4,Y(i),fc(i),'num','end');}
+  s+=tx(X(GM)+7,Y(0)-9,'x','axn')+tx(X(0)+9,Y(GM)-6,'y','axn');
+  /* elements del moviment */
+  const cur=pts.map(p=>mov(p,e));
+  if(type==='axi'){
+    const L=axis==='x'?[-GM,0,GM,0]:axis==='y'?[0,-GM,0,GM]:axis==='d1'?[-GM,-GM,GM,GM]:axis==='d2'?[-GM,GM,GM,-GM]:axis==='v'?[k,-GM,k,GM]:[-GM,k,GM,k];
+    s+=ln(L[0],L[1],L[2],L[3],'axl');
+    if(e>0)pts.forEach((p,i)=>{s+=ln(p[0],p[1],cur[i][0],cur[i][1],'tr');});
+  }else if(type==='tra'){
+    if(e>0)pts.forEach((p,i)=>{if(i)s+=arrow(p,cur[i],.55);});
+  }else{
+    const A=(type==='cen'?PI:ST.ang*PI/180)*e;
+    if(e>0)pts.forEach((p,i)=>{
+      const dx=p[0]-cx,dy=p[1]-cy,m=Math.max(2,Math.ceil(A*10));let d='';
+      for(let j=0;j<=m;j++){const g=A*j/m,c=Math.cos(g),sn=Math.sin(g);d+=(j?'L':'M')+f(X(cx+dx*c-dy*sn))+','+f(Y(cy+dx*sn+dy*c));}
+      s+='<path d="'+d+'" class="tr"/>';
+      if(type==='cen'||i===0)s+=ln(cx,cy,p[0],p[1],'tr',.7)+ln(cx,cy,cur[i][0],cur[i][1],'tr',.7);
+    });
+  }
+  /* figura original i imatge */
+  let gx=0,gy=0;pts.forEach(p=>{gx+=p[0]/n;gy+=p[1]/n;});
+  const lab=(p,c,name,cls)=>{const dx=p[0]-c[0],dy=p[1]-c[1],d=Math.hypot(dx,dy)||1;return tx(X(p[0])+dx/d*14,Y(p[1])-dy/d*14,name,cls);};
+  s+=pl(pts,'f1');
+  if(e>0){
+    s+=pl(cur,'f2');
+    const gc=mov([gx,gy],e);
+    cur.forEach((p,i)=>{s+='<circle cx="'+f(X(p[0]))+'" cy="'+f(Y(p[1]))+'" r="3.6" class="v2"/>';if(e>=1)s+=lab(p,gc,NM[i]+'′','labi');});
+  }
+  pts.forEach((p,i)=>{s+='<circle cx="'+f(X(p[0]))+'" cy="'+f(Y(p[1]))+'" r="4.2" class="v1"/>'+lab(p,[gx,gy],NM[i],'lab');});
+  if(type==='tra'){
+    s+=arrow(pts[0],e>0?cur[0]:[pts[0][0]+a,pts[0][1]+b]);
+    if(e===0&&(a||b)){
+      s+=tx(X(pts[0][0]+a)+(a>=0?9:-9),Y(pts[0][1]+b)+(b>=0?-8:8),'v = ('+fc(a)+', '+fc(b)+')','labk',a>=0?'start':'end');
+    }
+  }
+  if(type==='gir'||type==='cen')s+='<circle cx="'+f(X(cx))+'" cy="'+f(Y(cy))+'" r="5" class="ctr"/>'+tx(X(cx)-11,Y(cy)+12,cx===0&&cy===0?'O':'C','labk');
+  /* agafadors per a arrossegar */
+  pts.forEach((p,i)=>{s+='<circle cx="'+f(X(p[0]))+'" cy="'+f(Y(p[1]))+'" r="12" class="hd" data-h="'+i+'"/>';});
+  if(type==='gir'||type==='cen')s+='<circle cx="'+f(X(cx))+'" cy="'+f(Y(cy))+'" r="12" class="hd" data-h="c"/>';
+  svg.innerHTML=s;
+  /* taula de coordenades */
+  let h='<table class="tbl"><thead><tr><th>'+t('th_v')+'</th><th>'+t('th_o')+'</th><th>'+t('th_i')+'</th></tr></thead><tbody>';
+  pts.forEach((p,i)=>{h+='<tr><td>'+NM[i]+' → '+NM[i]+'′</td><td>'+pt(p)+'</td><td class="im">'+(e>0?pt(cur[i]):'?')+'</td></tr>';});
+  $('#coords').innerHTML=h+'</tbody></table>';
+}
+function statsFor(i){
+  const {type,a,b,ang,cx,cy}=ST;
+  const L=type==='tra'?[['k_vec','('+fc(a)+', '+fc(b)+')']]:type==='gir'?[['k_ctr',pt([cx,cy])],['k_ang',ang+'°']]:type==='axi'?[['k_axis',axisName()]]:[['k_ctr',pt([cx,cy])]];
+  if(i>=2)L.push(['k_rule','<b>'+rule()+'</b>']);
+  return L;
+}
+function refresh(){
+  SE.steps.forEach((s,i)=>{s.stats=statsFor(i);});
+  stepRender();showCtl();draw();
+}
+function animateTo(i){
+  cancelAnimationFrame(raf);showCtl();
+  const from=P,to=i;
+  if(REDUCE||Math.abs(to-from)<1e-6||(from>=1&&to>=1)){P=to;draw();return;}
+  const dur=1500*Math.max(0.5,Math.abs(Math.min(to,1)-Math.min(from,1))),t0=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-t0)/dur);
+    P=from+(to-from)*ease(p);draw();
+    if(p<1)raf=requestAnimationFrame(step);
+  }
+  raf=requestAnimationFrame(step);
+}
+function rebuildStepper(){
+  const sp=$('#stepper');sp.innerHTML='';
+  SE.steps.forEach((s,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.onclick=()=>stepGo(k);sp.appendChild(b);});
+}
+function setType(tp){
+  cancelAnimationFrame(raf);
+  ST.type=tp;
+  SE.steps=STEPDEF[tp].map(x=>Object.assign({},x));SE.ans={};SE.hint={};SE.i=0;P=0;
+  rebuildStepper();refresh();
+}
+$$('#typesw button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.type!==ST.type)setType(b.dataset.type);}));
+$$('#figsw .chip').forEach(b=>b.addEventListener('click',()=>{ST.fig=b.dataset.fig;ST.pts=FIGS[ST.fig].map(p=>p.slice());refresh();}));
+$$('#angsw .chip').forEach(b=>b.addEventListener('click',()=>{ST.ang=+b.dataset.ang;refresh();}));
+$$('#axsw .chip').forEach(b=>b.addEventListener('click',()=>{ST.axis=b.dataset.axis;refresh();}));
+/* la imatge passa a ser la figura: per a encadenar moviments */
+$('#chain').addEventListener('click',()=>{
+  if(SE.i===0)return;
+  cancelAnimationFrame(raf);
+  ST.pts=ST.pts.map(img);ST.fig='';SE.i=0;P=0;refresh();
+});
+/* arrossegar vèrtexs i centre */
+let drag=null;
+function gpos(ev){const m=svg.getScreenCTM();if(!m)return null;const q=svg.createSVGPoint();q.x=ev.clientX;q.y=ev.clientY;const w=q.matrixTransform(m.inverse());return [(w.x-VW/2)/U,(VW/2-w.y)/U];}
+svg.addEventListener('pointerdown',ev=>{const h=ev.target&&ev.target.dataset?ev.target.dataset.h:undefined;if(h===undefined)return;drag=h;try{svg.setPointerCapture(ev.pointerId);}catch(e){}ev.preventDefault();});
+svg.addEventListener('pointermove',ev=>{
+  if(drag===null)return;const g=gpos(ev);if(!g)return;
+  if(drag==='c'){const x=clamp(Math.round(g[0]),-6,6),y=clamp(Math.round(g[1]),-6,6);if(x===ST.cx&&y===ST.cy)return;ST.cx=x;ST.cy=y;sCx.set(x);sCy.set(y);}
+  else{const x=clamp(Math.round(g[0]),-8,8),y=clamp(Math.round(g[1]),-8,8),p=ST.pts[+drag];if(!p||(p[0]===x&&p[1]===y))return;p[0]=x;p[1]=y;ST.fig='';}
+  refresh();
+});
+['pointerup','pointercancel'].forEach(n=>svg.addEventListener(n,()=>{drag=null;}));
+/* càrrega d'un cas des de les activitats: es mostra el moviment ja fet */
+function ld(type,v){
+  const c=(x,m)=>clamp(Math.round(Number.isFinite(x)?x:0),-m,m);v=v||{};
+  if(v.fig){ST.fig=v.fig;ST.pts=FIGS[v.fig].map(p=>p.slice());}
+  if(v.pts){ST.fig='';ST.pts=v.pts.map(p=>[c(p[0],8),c(p[1],8)]);}
+  if(v.a!==undefined){ST.a=c(v.a,8);sA.set(ST.a);}
+  if(v.b!==undefined){ST.b=c(v.b,8);sB.set(ST.b);}
+  if(v.ang!==undefined)ST.ang=[90,180,270].includes(v.ang)?v.ang:90;
+  if(v.cx!==undefined){ST.cx=c(v.cx,6);sCx.set(ST.cx);}
+  if(v.cy!==undefined){ST.cy=c(v.cy,6);sCy.set(ST.cy);}
+  if(v.axis)ST.axis=v.axis;
+  if(v.k!==undefined){ST.k=c(v.k,6);sK.set(ST.k);}
+  setType(type);
+  P=2;SE.i=2;refresh();
+  RZ.show(svg);
+}
+App.hooks.push(()=>{if(!SE.steps.length)return;refresh();});
+/* ===== Raona-ho ===== */
+const isI=Number.isInteger,inG=x=>isI(x)&&Math.abs(x)<=8;
+RZ.init({
+ F:{a:{l:'f_a'},b:{l:'f_b'},ang:{l:'f_ang',u:'°'},k:{l:'f_k'},x:{l:'f_x'},y:{l:'f_y'},cx:{l:'f_cx'},cy:{l:'f_cy'}},
+ sim:()=>{},
+ M:[
+  {id:'m1',f:['a','b'],sim:([a,b])=>ld('tra',{fig:'tri',a,b}),ok:()=>({k:'m1_ok'}),
+   chk:([a,b])=>(!inG(a)||!inG(b))?{k:'rng'}:(a!==-4||b!==3)?{k:'m1_f',p:[fc(a),fc(b),fc(1+a),fc(1+b)]}:null},
+  {id:'m2',f:['ang'],sim:([g])=>ld('gir',{pts:[[3,1],[5,1],[3,2]],ang:g===-90?270:g,cx:0,cy:0}),ok:()=>({k:'m2_ok'}),
+   chk:([g])=>{if(g===-90)g=270;return ![90,180,270].includes(g)?{k:'m2_bad'}:g!==270?{k:'m2_f',p:g===90?[90,'−1','3']:[180,'−3','−1']}:null;}},
+  {id:'m3',f:['k'],sim:([k])=>ld('axi',{fig:'tri',axis:'v',k}),ok:()=>({k:'m3_ok'}),
+   chk:([k])=>!inG(k)?{k:'rng'}:k!==4?{k:'m3_f',p:[fc(k),fc(2*k-1)]}:null},
+  {id:'m4',f:['cx','cy'],sim:([x,y])=>ld('cen',{pts:[[2,1],[4,1],[2,2]],cx:x,cy:y}),ok:()=>({k:'m4_ok'}),
+   chk:([x,y])=>(!inG(x)||!inG(y))?{k:'rng'}:(x!==-1||y!==3)?{k:'m4_f',p:[fc(x),fc(y),fc(2*x-2),fc(2*y-1)]}:null}
+ ],
+ S:[
+  {id:'s1',ans:'M',sim:()=>ld('tra',{fig:'L',a:-5,b:-4})},
+  {id:'s2',ans:'D',f:['x','y'],sim:()=>ld('axi',{fig:'tri',axis:'y'}),cxsim:([x,y])=>ld('axi',{pts:[[x,y],[x+2,y],[x,y+2]],axis:'y'}),
+   cx:([x,y])=>(!inG(x)||!inG(y))?{k:'rng'}:x!==0?{k:'s2_f',p:[fc(x),fc(y),fc(-x)]}:null},
+  {id:'s3',ans:'S',sim:()=>ld('axi',{fig:'L',axis:'x'})},
+  {id:'s4',ans:'S',sim:()=>ld('gir',{fig:'L',ang:180,cx:0,cy:0})},
+  {id:'s5',ans:'M',sim:()=>ld('axi',{fig:'tri',axis:'d1'})}
+ ],
+ E:[
+  {id:'e1',who:0,args:[],sim:()=>ld('gir',{pts:[[4,1],[6,1],[4,2]],ang:90,cx:0,cy:0})},
+  {id:'e2',who:1,args:[],sim:()=>ld('axi',{pts:[[2,5],[4,5],[2,6]],axis:'x'})},
+  {id:'e3',who:3,args:[],sim:()=>ld('tra',{pts:[[1,4],[3,4],[1,5]],a:-3,b:2})}
+ ],
+ D:[
+  {id:'d1',f:[{l:'d1.l0'},{l:'d1.l1'},{l:'d1.l2'}],sim:v=>ld('tra',{pts:[[-5,-2],[-4,-2],[-5,-1]],a:v.length?v[0]:8,b:v.length?v[1]:6}),ok:()=>({k:'d1_ok'}),
+   chk:([a,b,d])=>(a!==8||b!==6)?{k:'d1_v',p:[fc(a),fc(b),fc(a-5),fc(b-2)]}:d!==10?{k:'d1_d'}:null},
+  {id:'d2',f:[{l:'d2.l0'},{l:'d2.l1'}],sim:()=>ld('gir',{pts:[[2,3],[4,3],[2,4]],ang:180,cx:0,cy:0}),ok:()=>({k:'d2_ok'}),
+   chk:([x,y])=>(x===2&&y===-3)?null:(x===-2&&y===-3)?{k:'d2_half'}:{k:'d2_f',p:[fc(x),fc(y)]}}
+ ]
+});
+initQuiz([]);
+initLang();applyLang();
+stepsInit(STEPDEF.tra.map(x=>Object.assign({},x)),i=>animateTo(i));
+refresh();
+</script>
+</body>
+</html>
