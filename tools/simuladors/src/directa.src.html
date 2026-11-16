@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proporcionalitat directa: raons, taula i reducció a la unitat</title>
+<meta name="description" content="Proporcionalitat directa per a 2n d'ESO amb situacions reals (taronges, impressora, receptes, gasoil): la taula punt a punt, la constant de proporcionalitat, la reducció a la unitat i la recta per l'origen. Amb un taxi que no és proporcional, raons per a comparar mescles, activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@RAONA_CSS@*/
+.st2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.st2 .stat{padding:5px 10px}.st2 .stat .v{font-size:17px}
+.st2 .stat.xx .v{color:var(--pa)}.st2 .stat.yy .v{color:var(--pb)}.st2 .stat.kk .v{color:var(--ok)}
+.st2 .stat.kk.bad .v{color:var(--warn)}
+.xctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.xctl input[type=range]{flex:1 1 12rem;accent-color:var(--pa)}
+.xctl output{font-family:var(--f-num);font-size:17px;font-weight:700;min-width:5.5em}
+.side .msg{min-height:0;font-size:14px;margin:0;color:var(--ink)}
+.side .msg.bad{color:var(--warn);font-weight:600}
+.side .msg.good{color:var(--ok);font-weight:600}
+.side .rule{font-family:var(--f-num);font-size:13.5px;margin:0;color:var(--ink);line-height:1.6}
+.hs{overflow-x:auto;margin-top:12px}
+.htbl{border-collapse:collapse;font-family:var(--f-num);font-size:14px;width:100%}
+.htbl th,.htbl td{border:1px solid var(--line);padding:4px 8px;text-align:center;min-width:3.2em;white-space:nowrap}
+.htbl th{text-align:left;font-family:inherit;font-weight:700;background:var(--stage);position:sticky;left:0}
+.htbl tr:nth-child(1) th{color:var(--pa)}.htbl tr:nth-child(2) th{color:var(--pb)}.htbl tr:nth-child(3) th{color:var(--ok)}
+.htbl td.q{color:var(--muted);opacity:.55}.htbl td.cur{background:color-mix(in srgb,var(--pa) 16%,transparent);font-weight:700}
+.htbl td.bad{color:var(--warn)}
+#cstory{color:var(--ink)}
+.mix{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mix fieldset{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:0;display:grid;gap:6px}
+.mix legend{font-weight:700;padding:0 4px}
+.mix label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:14px}
+.mix input{font:600 16px var(--f-num);width:4em;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.mix .rv{font-family:var(--f-num);font-size:14px;margin:0}
+#rverd{font-size:14.5px;margin:0;color:var(--ink)}
+@media (max-width:520px){.mix{grid-template-columns:1fr}}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<section class="card">
+<h2 data-i18n="sim_title"></h2>
+<div class="row"><div class="chips" id="sets" role="group" data-i18n-aria="aria.sets" aria-label=""></div></div>
+<p id="cstory" aria-live="polite"></p>
+<div class="xctl">
+<label for="xs" id="xlbl"></label>
+<button class="btn" id="minus" type="button" aria-label="−">−</button>
+<input type="range" id="xs">
+<button class="btn" id="plus" type="button" aria-label="+">+</button>
+<output id="xv" for="xs"></output>
+<button class="btn primary" id="stepb" type="button"></button>
+<label class="chk"><input type="checkbox" id="cmp"><span data-i18n="cmp"></span></label>
+</div>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv" role="img" data-i18n-aria="aria.cv" aria-label=""></canvas></div>
+<div class="side">
+<div class="st2" aria-live="polite">
+<div class="stat xx"><span class="k" id="kx"></span><span class="v" id="vx"></span></div>
+<div class="stat yy"><span class="k" id="ky"></span><span class="v" id="vy"></span></div>
+<div class="stat kk" id="kbox"><span class="k" data-i18n="quot"></span><span class="v" id="vk"></span></div>
+</div>
+<p class="msg" id="smsg" aria-live="polite"></p>
+<p class="rule" id="rule"></p>
+<p class="msg" id="wmsg"></p>
+</div>
+</div>
+<div class="hs"><table class="htbl" id="tbl" aria-live="polite"></table></div>
+<div class="idea" data-i18n-html="idea"></div>
+</section>
+
+<section class="card" id="rat">
+<h2><small data-i18n="ra_eyebrow"></small><span data-i18n="ra_title"></span></h2>
+<p data-i18n-html="ra_intro"></p>
+<div class="row"><div class="chips" id="rpre" role="group" data-i18n-aria="aria.rpre" aria-label=""></div></div>
+<div class="simgrid">
+<div class="simcv"><canvas id="cv2" role="img" data-i18n-aria="aria.cv2" aria-label=""></canvas></div>
+<div class="side">
+<div class="mix">
+<fieldset><legend data-i18n="ra_A"></legend>
+<label><span data-i18n="ra_juice"></span><input type="number" id="aS" min="1" max="8" step="1" value="2"></label>
+<label><span data-i18n="ra_water"></span><input type="number" id="aW" min="1" max="8" step="1" value="3"></label>
+<p class="rv" id="rA"></p></fieldset>
+<fieldset><legend data-i18n="ra_B"></legend>
+<label><span data-i18n="ra_juice"></span><input type="number" id="bS" min="1" max="8" step="1" value="3"></label>
+<label><span data-i18n="ra_water"></span><input type="number" id="bW" min="1" max="8" step="1" value="5"></label>
+<p class="rv" id="rB"></p></fieldset>
+</div>
+<p id="rverd" aria-live="polite"></p>
+</div>
+</div>
+<div class="idea" data-i18n-html="ra_idea"></div>
+</section>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Proporcionalitat directa: raons, taula i reducció a la unitat",
+"eyebrow":"Matemàtiques · 2n ESO · Proporcionalitat",
+"h1":"Proporcionalitat directa",
+"lede":"El doble de quilos, el doble de preu. Construeix la taula punt a punt, troba quant val 1 (la constant) i descobreix per què la gràfica és una recta que passa per l'origen. I compara-ho amb un taxi, que puja però no és proporcional.",
+"sim_title":"La taula, la constant i la recta",
+"aria.sets":"Situacions","aria.cv":"Gràfica de la proporcionalitat directa amb la reducció a la unitat",
+"ctx0":"Taronges","ctx1":"Impressora","ctx2":"Macarrons","ctx3":"Gasoil","ctx4":"Taxi (compte!)",
+"cs0":"Al mercat, <b>5 kg</b> de taronges costen <b>6,50 €</b>. Canvia els quilos: quant pagues?",
+"cs1":"Una impressora fa <b>120 còpies</b> en <b>4 minuts</b>. Quantes en fa en més temps? I en menys?",
+"cs2":"Per a <b>6 persones</b> calen <b>450 g</b> de macarrons. I si sou més a dinar?",
+"cs3":"Un cotxe gasta <b>18 L</b> de gasoil en <b>300 km</b>. Quant gastarà en altres trajectes?",
+"cs4":"Un taxi cobra <b>3 €</b> de baixada de bandera i <b>1 €</b> per km. <b>2 km</b> costen <b>5 €</b>. Quan creixen els km, creix el preu… però és proporcional?",
+"u_kg":"kg","u_eur":"€","u_min":"minuts","u_cop":"còpies","u_pers":"persones","u_g":"grams","u_km":"km","u_l":"litres",
+"u_x":"x","u_y":"y","u_ent":"entrades","u_ous":"ous","cs_x":"Mou el valor i mira com canvien la taula i el punt.",
+"quot":"Quocient y : x","step_next":"Valor següent ▶","step_reset":"Torna a començar ↺","cmp":"Compara amb la regla de tres",
+"msg_ref":"Punt de partida: {0} {1} → {2} {3}.",
+"msg_up":"{0} <b>× {1}</b>  →  {2} <b>× {1}</b>",
+"msg_dn":"{0} <b>: {1}</b>  →  {2} <b>: {1}</b>",
+"rule":"Reducció a la unitat:<br>1 {0} → {1} : {2} = <b>{3}</b> {4}<br>{5} {0} → {5} · {3} = <b>{6}</b> {4}",
+"np_msg":"{0} × {1}, però {2} × {3}: no es multipliquen pel mateix nombre.",
+"np_rule":"El quocient y : x canvia d'un punt a l'altre: <b>no és proporcional</b>. La recta no passa per l'origen: amb 0 km ja pagues 3 €.",
+"r3_ok":"✔ Regla de tres: {0} · {1} : {2} = {3}. Dona el mateix que la reducció a la unitat.",
+"r3_bad":"✘ Una regla de tres donaria {0} · {1} : {2} = {3} €, però el taxi costa {4} €. La regla de tres només val si hi ha proporcionalitat.",
+"if_r3":"regla de tres",
+"unit":"1 → {0}",
+"origin":"(0, 0)",
+"nporig":"amb 0 km: 3 €",
+"idea":"<b>La idea:</b> dues magnituds són <b>directament proporcionals</b> quan en multiplicar una per un nombre, l'altra queda multiplicada pel mateix nombre. Això passa exactament quan el <b>quocient y : x és constant</b>: és la <b>constant de proporcionalitat</b>, el que val 1 unitat. Per això la <b>reducció a la unitat</b> funciona: divideix per a trobar el valor d'1 i multiplica. La gràfica és una <b>recta que passa per l'origen</b>. Que dues magnituds creixen alhora no és suficient: el taxi creix, però no és proporcional.",
+"ra_eyebrow":"Raons i proporcions","ra_title":"Quin granissat és més fort?",
+"ra_intro":"Una <b>raó</b> compara dues quantitats amb un quocient: <b>gots de suc : gots d'aigua</b>. Canvia les dues mescles i mira quina té més gust de llima. No guanya qui posa més suc, sinó qui en posa més <b>per cada got d'aigua</b>.",
+"aria.rpre":"Casos de mescles","aria.cv2":"Dos gots amb capes de suc i d'aigua",
+"ra_A":"Mescla A","ra_B":"Mescla B","ra_juice":"Gots de suc","ra_water":"Gots d'aigua",
+"rp0":"Laia 2:3 i Pau 3:5","rp1":"2:3 i 4:6","rp2":"1:2 i 3:5","rp3":"3:4 i 6:8",
+"ra_r":"Raó suc : aigua = {0}/{1} = <b>{2}</b><br>Suc del total: {0}/{3} = <b>{4}&nbsp;%</b>",
+"ra_more":"La <b>mescla {0}</b> té més gust de llima: porta {1} gots de suc per cada got d'aigua, i l'altra {2}.",
+"ra_eq":"Tenen <b>el mateix gust</b>: les dues raons són iguals i formen una <b>proporció</b>: {0}/{1} = {2}/{3}, perquè {0} · {3} = {1} · {2} = {4}.",
+"ra_lab_s":"suc","ra_lab_w":"aigua",
+"ra_idea":"<b>Recorda:</b> una <b>proporció</b> és una igualtat de dues raons, a/b = c/d. En una proporció, els <b>productes en creu</b> són iguals: a · d = b · c. Així es comprova si dues raons són iguals i es calcula un terme desconegut: si 2/3 = x/12, aleshores 3 · x = 2 · 12 i x = 8.",
+"rng":"Escriu nombres positius.",
+"l_kg":"Quilos","l_min":"Minuts","l_y":"y","l_eur":"Preu (€)","l_y4":"y per a x = 4","l_sucre":"Sucre (g)","l_farina":"Farina (g)","l_y5":"y per a x = 5","l_x12":"x per a y = 12",
+"m1.q":"Al mercat, 5 kg de taronges costen 6,50 €. Quants quilos pots comprar amb <b>13 €</b>?",
+"m1_f":"{0} kg costarien {0} · 1,30 = {1} €, no 13 €.",
+"m1.more":"Has fet servir la constant (1,30 €/kg)? Podries haver-ho resolt sense calcular-la? (Pista: 13 és el doble de 6,50.)",
+"m2.q":"La impressora fa 30 còpies per minut. Quants <b>minuts sencers</b> necessites, com a mínim, per a fer <b>200 còpies</b>?",
+"m2_int":"Ha de ser un nombre enter de minuts.",
+"m2_lo":"En {0} minuts fa {1} còpies: no n'hi ha prou.",
+"m2_hi":"En {0} minuts sí que n'hi ha prou ({1} còpies), però amb un minut menys també.",
+"m2.more":"La divisió 200 : 30 dona 6,67. Per què la resposta no és 6?",
+"m3.q":"En una taula de proporcionalitat directa, per a x = 4 tenim y = 10. Quant val <b>y per a x = 6</b>?",
+"m3_f":"Amb y = {0}, el quocient seria {0} : 6 = {1}, però 10 : 4 = 2,5.",
+"m3.more":"Fes-ho de dues maneres: amb la constant (y : x = 2,5) i passant per x = 2 (la meitat de 4).",
+"m4.q":"El taxi cobra 3 € de baixada de bandera i 1 € per km. Si 2 km costen 5 €, quant costen <b>6 km</b>?",
+"m4_dir":"15 € és el que ix amb una regla de tres. Però la baixada de bandera només es paga una vegada!",
+"m4_f":"6 km costen 3 + 6 · 1 = 9 €, no {0} €.",
+"m4.more":"Per què ací no funciona la regla de tres? Quin quocient preu : km ix amb 2 km i quin amb 6 km?",
+"s1.q":"Per a x = 2, y val 6. «Si per a x = 4 la y és més gran que 6, x i y són directament proporcionals.»",
+"s1.h":"Que y puge no és suficient: ha de pujar d'una manera concreta. Busca una y per a x = 4, més gran que 6, que no faça una proporcionalitat directa.",
+"s1_no12":"Amb y = 12 sí que és directa: 6 : 2 = 12 : 4 = 3. Busca'n un altre.",
+"s1_big":"Ha de ser més gran que 6.",
+"s1.e":"De vegades: perquè siga directa, en doblar x la y s'ha de doblar exactament (ací, 12). El taxi o l'alçada d'una persona amb l'edat també pugen, però no són proporcionalitat directa.",
+"s2.q":"«En una proporcionalitat directa, si divideixes y entre x sempre dona el mateix.»",
+"s2.h":"Mira la casella «Quocient y : x» mentre mous el valor en les taronges.",
+"s2.e":"Sempre: eixe quocient és la constant de proporcionalitat, el que val una unitat (1,30 € per quilo, 30 còpies per minut…).",
+"s3.q":"«La gràfica d'una proporcionalitat directa és una recta que passa per l'origen.»",
+"s3.h":"Quant costen 0 kg de taronges? On és eixe punt?",
+"s3.e":"Sempre: si x = 0, y = k · 0 = 0, i cada unitat de més afig sempre la mateixa quantitat (la constant): per això és una recta i passa per (0, 0).",
+"s4.q":"«Si una gràfica és una recta que no passa per l'origen, les magnituds són directament proporcionals.»",
+"s4.h":"Mira el taxi: és una recta, però on comença?",
+"s4.e":"Mai: si la recta no passa per l'origen (com el taxi, que amb 0 km ja costa 3 €), el quocient y : x canvia i no hi ha proporcionalitat.",
+"s5.q":"«Si x es multiplica per 3, y queda multiplicada per 3.» (en una proporcionalitat directa)",
+"s5.h":"Passa de 2 kg a 6 kg de taronges i mira el preu.",
+"s5.e":"Sempre: és la definició de proporcionalitat directa.",
+"s6.q":"«Si 1 obrer tarda 10 dies a fer una obra, 2 obrers tarden 20 dies.»",
+"s6.h":"Amb el doble d'obrers, es tarda més o menys?",
+"s6.e":"Mai: amb més obrers es tarda menys. Això és proporcionalitat inversa (2 obrers, 5 dies): no totes les situacions es resolen amb la regla de tres directa.",
+"e1.ctx":"<b>5 kg</b> de taronges costen <b>6,50 €</b>. Quant costen <b>8 kg</b>?",
+"e1.n0":"Aina","e1.n1":"Pol",
+"e1.s0":"6,50 : 5 = 1,30 € el quilo, i 8 · 1,30 = 10,40 €.",
+"e1.s1":"6,50 · 5 = 32,50 € el quilo, i 32,50 · 8 = 260 €.",
+"e1.w0":"Per a passar de 5 kg a 1 kg cal dividir entre 5, no multiplicar. A més, 260 € per 8 kg de taronges no té cap sentit.",
+"e1.w1":"Perquè Pol hauria d'haver sumat en compte de multiplicar.",
+"e1.w2":"Perquè el preu d'1 kg ha de ser un nombre enter.",
+"e1.frame":"Pol, 260 € no pot ser perquè…",
+"e1.model":"Pol, has multiplicat 6,50 per 5, i això seria el preu de 25 kg, no d'1 kg. Per a saber el preu d'1 kg has de dividir: 6,50 : 5 = 1,30 €. Després, 8 kg costen 8 · 1,30 = 10,40 €. Comprova-ho sempre: 8 kg són una mica més que 5 kg, així que el preu ha de ser una mica més que 6,50 €.",
+"e2.ctx":"Un taxi cobra <b>3 €</b> de baixada de bandera i <b>1 €</b> per km. Si <b>2 km</b> costen <b>5 €</b>, quant costen <b>6 km</b>?",
+"e2.n0":"Marta","e2.n1":"Joan",
+"e2.s0":"Regla de tres: 5 · 6 : 2 = 15 €.",
+"e2.s1":"3 € de baixada i 6 km a 1 €: 3 + 6 = 9 €.",
+"e2.w0":"El preu no és proporcional als km: els 3 € de baixada de bandera es paguen una sola vegada. La regla de tres només es pot fer si les magnituds són proporcionals.",
+"e2.w1":"Perquè la regla de tres sempre dona resultats massa grans.",
+"e2.w2":"Perquè Marta hauria d'haver dividit 6 entre 5.",
+"e2.frame":"Marta, no són 15 € perquè…",
+"e2.model":"Marta, la regla de tres suposa que el triple de km costa el triple, però els 3 € de baixada de bandera no es multipliquen: es paguen una vegada. Amb 6 km pagues 3 € + 6 € = 9 €. Fixa't que 5 : 2 = 2,5 i 9 : 6 = 1,5: el quocient canvia, no és proporcional.",
+"e3.ctx":"Una paella per a <b>4 persones</b> porta <b>400 g</b> d'arròs i es cou en <b>20 minuts</b>. I per a <b>10 persones</b>?",
+"e3.n0":"Laia","e3.n1":"Hugo",
+"e3.s0":"1000 g d'arròs i 50 minuts de cocció.",
+"e3.s1":"1000 g d'arròs i 20 minuts de cocció.",
+"e3.w0":"L'arròs és proporcional a les persones, però el temps de cocció no: depén de l'arròs, no de quants el menjaran.",
+"e3.w1":"Perquè una paella sempre es cou en 20 minuts i per a 10 persones calen 400 g.",
+"e3.w2":"Perquè Laia hauria d'haver multiplicat per 10.",
+"e3.frame":"Laia, no són 50 minuts perquè…",
+"e3.model":"Laia, l'arròs sí que és proporcional: per a 10 persones en cal 2,5 vegades més, 1000 g. Però el temps de cocció no depén de quantes persones mengen: l'arròs tarda el mateix a fer-se. Abans de fer una regla de tres, pregunta't si les dues magnituds són proporcionals de veritat.",
+"d1.q":"Quina d'aquestes parelles de magnituds és <b>directament proporcional</b>?",
+"d1.lc":"Tria:",
+"d1_c0":"L'edat d'una persona i la seua alçada","d1_c1":"El costat d'un quadrat i la seua àrea","d1_c2":"El nombre de bolígrafs iguals i el preu total",
+"d1_a":"Les dues creixen, però quan l'edat es dobla l'alçada no es dobla: no és proporcional.",
+"d1_b":"Si el costat es dobla, l'àrea es multiplica per 4 (A = c · c): no és proporcional.",
+"d1.more":"I el costat d'un quadrat i el seu perímetre? Quina és la constant?",
+"d2.q":"Una recepta de coca de llanda per a <b>8 persones</b> porta <b>250 g de sucre</b> i <b>375 g de farina</b>. Quant en cal per a <b>12 persones</b>?",
+"d2_s":"Per a 12 persones calen 12 : 8 = 1,5 vegades més ingredients: 250 · 1,5.",
+"d2_f":"El sucre està bé. La farina també es multiplica per 1,5: 375 · 1,5.",
+"d2.more":"La recepta porta 3 ous. Quants n'hi posaries per a 12 persones? Per què ací cal decidir?",
+"d3.q":"Al supermercat hi ha dues ofertes: el pack A té <b>6 iogurts per 2,40 €</b> i el pack B, <b>8 iogurts per 3,04 €</b>. Quin és més barat?",
+"d3.lc":"Tria:",
+"d3_c0":"El pack A","d3_c1":"El pack B","d3_c2":"Igual de barats",
+"d3_a":"Compara el preu d'un iogurt: A, 2,40 : 6 = 0,40 €; B, 3,04 : 8 = 0,38 €.",
+"d3_c":"No: un iogurt del pack A costa 0,40 € i un del B, 0,38 €.",
+"d3.more":"Quant pagaries per 24 iogurts amb cada pack?",
+"d4.q":"En una taula de proporcionalitat directa, per a x = 2 tenim y = 3. Completa: quant val <b>y per a x = 5</b> i quina <b>x dona y = 12</b>?",
+"d4_y":"La constant és 3 : 2 = 1,5, i y = 1,5 · 5.",
+"d4_x":"La y està bé. Per a la x, divideix: 12 : 1,5.",
+"d4.more":"I quina x dona y = 1? Què vol dir eixe valor?",
+"r1.q":"5 kg de taronges costen 6,50 €. Quant costen 8 kg (en €)?",
+"r1.e":"6,50 : 5 = 1,30 € el quilo, i 8 · 1,30 = 10,40 €.",
+"r2.q":"Quina taula és de proporcionalitat directa?",
+"r2.o0":"x: 1, 2, 4 → y: 3, 6, 12","r2.o1":"x: 1, 2, 4 → y: 12, 6, 3","r2.o2":"x: 1, 2, 4 → y: 4, 5, 7","r2.o3":"x: 1, 2, 4 → y: 3, 5, 9",
+"r2.e":"En la primera el quocient és sempre 3: 3 : 1 = 6 : 2 = 12 : 4.",
+"r3.q":"Calcula x en la proporció 3/5 = x/20.",
+"r3.e":"Productes en creu: 5 · x = 3 · 20 = 60, i x = 12.",
+"r4.q":"Quina mescla té més gust de llima?",
+"r4.o0":"2 gots de suc i 3 d'aigua","r4.o1":"3 gots de suc i 5 d'aigua","r4.o2":"Les dues igual","r4.o3":"No es pot saber",
+"r4.e":"2 : 3 ≈ 0,67 gots de suc per got d'aigua, i 3 : 5 = 0,6. La primera és més forta encara que porta menys suc.",
+"r5.q":"Una impressora fa 120 còpies en 4 minuts. Quantes en fa en 7 minuts?",
+"r5.e":"120 : 4 = 30 còpies per minut, i 7 · 30 = 210.",
+"r6.q":"Un taxi cobra 3 € de baixada de bandera i 1 € per km. El preu és proporcional als km?",
+"r6.o0":"No: el quocient preu : km canvia","r6.o1":"Sí: com més km, més preu","r6.o2":"Sí: la constant és 1","r6.o3":"Sí: la constant és 3",
+"r6.e":"2 km costen 5 € (2,5 €/km) i 6 km, 9 € (1,5 €/km). El quocient canvia: no és proporcional, encara que les dues magnituds creixen."
+},
+es:{
+"title":"Proporcionalidad directa: razones, tabla y reducción a la unidad",
+"eyebrow":"Matemáticas · 2.º ESO · Proporcionalidad",
+"h1":"Proporcionalidad directa",
+"lede":"El doble de kilos, el doble de precio. Construye la tabla punto a punto, halla cuánto vale 1 (la constante) y descubre por qué la gráfica es una recta que pasa por el origen. Y compáralo con un taxi, que sube pero no es proporcional.",
+"sim_title":"La tabla, la constante y la recta",
+"aria.sets":"Situaciones","aria.cv":"Gráfica de la proporcionalidad directa con la reducción a la unidad",
+"ctx0":"Naranjas","ctx1":"Impresora","ctx2":"Macarrones","ctx3":"Gasóleo","ctx4":"Taxi (¡cuidado!)",
+"cs0":"En el mercado, <b>5 kg</b> de naranjas cuestan <b>6,50 €</b>. Cambia los kilos: ¿cuánto pagas?",
+"cs1":"Una impresora hace <b>120 copias</b> en <b>4 minutos</b>. ¿Cuántas hace en más tiempo? ¿Y en menos?",
+"cs2":"Para <b>6 personas</b> hacen falta <b>450 g</b> de macarrones. ¿Y si sois más a comer?",
+"cs3":"Un coche gasta <b>18 L</b> de gasóleo en <b>300 km</b>. ¿Cuánto gastará en otros trayectos?",
+"cs4":"Un taxi cobra <b>3 €</b> de bajada de bandera y <b>1 €</b> por km. <b>2 km</b> cuestan <b>5 €</b>. Cuando crecen los km, crece el precio… pero ¿es proporcional?",
+"u_kg":"kg","u_eur":"€","u_min":"minutos","u_cop":"copias","u_pers":"personas","u_g":"gramos","u_km":"km","u_l":"litros",
+"u_x":"x","u_y":"y","u_ent":"entradas","u_ous":"huevos","cs_x":"Mueve el valor y mira cómo cambian la tabla y el punto.",
+"quot":"Cociente y : x","step_next":"Valor siguiente ▶","step_reset":"Volver a empezar ↺","cmp":"Compara con la regla de tres",
+"msg_ref":"Punto de partida: {0} {1} → {2} {3}.",
+"msg_up":"{0} <b>× {1}</b>  →  {2} <b>× {1}</b>",
+"msg_dn":"{0} <b>: {1}</b>  →  {2} <b>: {1}</b>",
+"rule":"Reducción a la unidad:<br>1 {0} → {1} : {2} = <b>{3}</b> {4}<br>{5} {0} → {5} · {3} = <b>{6}</b> {4}",
+"np_msg":"{0} × {1}, pero {2} × {3}: no se multiplican por el mismo número.",
+"np_rule":"El cociente y : x cambia de un punto a otro: <b>no es proporcional</b>. La recta no pasa por el origen: con 0 km ya pagas 3 €.",
+"r3_ok":"✔ Regla de tres: {0} · {1} : {2} = {3}. Da lo mismo que la reducción a la unidad.",
+"r3_bad":"✘ Una regla de tres daría {0} · {1} : {2} = {3} €, pero el taxi cuesta {4} €. La regla de tres solo vale si hay proporcionalidad.",
+"if_r3":"regla de tres",
+"unit":"1 → {0}",
+"origin":"(0, 0)",
+"nporig":"con 0 km: 3 €",
+"idea":"<b>La idea:</b> dos magnitudes son <b>directamente proporcionales</b> cuando al multiplicar una por un número, la otra queda multiplicada por el mismo número. Eso pasa exactamente cuando el <b>cociente y : x es constante</b>: es la <b>constante de proporcionalidad</b>, lo que vale 1 unidad. Por eso funciona la <b>reducción a la unidad</b>: divide para hallar el valor de 1 y multiplica. La gráfica es una <b>recta que pasa por el origen</b>. Que dos magnitudes crezcan a la vez no basta: el taxi crece, pero no es proporcional.",
+"ra_eyebrow":"Razones y proporciones","ra_title":"¿Qué granizado es más fuerte?",
+"ra_intro":"Una <b>razón</b> compara dos cantidades con un cociente: <b>vasos de zumo : vasos de agua</b>. Cambia las dos mezclas y mira cuál sabe más a limón. No gana quien pone más zumo, sino quien pone más <b>por cada vaso de agua</b>.",
+"aria.rpre":"Casos de mezclas","aria.cv2":"Dos vasos con capas de zumo y de agua",
+"ra_A":"Mezcla A","ra_B":"Mezcla B","ra_juice":"Vasos de zumo","ra_water":"Vasos de agua",
+"rp0":"Laia 2:3 y Pau 3:5","rp1":"2:3 y 4:6","rp2":"1:2 y 3:5","rp3":"3:4 y 6:8",
+"ra_r":"Razón zumo : agua = {0}/{1} = <b>{2}</b><br>Zumo del total: {0}/{3} = <b>{4}&nbsp;%</b>",
+"ra_more":"La <b>mezcla {0}</b> sabe más a limón: lleva {1} vasos de zumo por cada vaso de agua, y la otra {2}.",
+"ra_eq":"Tienen <b>el mismo sabor</b>: las dos razones son iguales y forman una <b>proporción</b>: {0}/{1} = {2}/{3}, porque {0} · {3} = {1} · {2} = {4}.",
+"ra_lab_s":"zumo","ra_lab_w":"agua",
+"ra_idea":"<b>Recuerda:</b> una <b>proporción</b> es una igualdad de dos razones, a/b = c/d. En una proporción, los <b>productos cruzados</b> son iguales: a · d = b · c. Así se comprueba si dos razones son iguales y se calcula un término desconocido: si 2/3 = x/12, entonces 3 · x = 2 · 12 y x = 8.",
+"rng":"Escribe números positivos.",
+"l_kg":"Kilos","l_min":"Minutos","l_y":"y","l_eur":"Precio (€)","l_y4":"y para x = 4","l_sucre":"Azúcar (g)","l_farina":"Harina (g)","l_y5":"y para x = 5","l_x12":"x para y = 12",
+"m1.q":"En el mercado, 5 kg de naranjas cuestan 6,50 €. ¿Cuántos kilos puedes comprar con <b>13 €</b>?",
+"m1_f":"{0} kg costarían {0} · 1,30 = {1} €, no 13 €.",
+"m1.more":"¿Has usado la constante (1,30 €/kg)? ¿Podrías haberlo resuelto sin calcularla? (Pista: 13 es el doble de 6,50.)",
+"m2.q":"La impresora hace 30 copias por minuto. ¿Cuántos <b>minutos enteros</b> necesitas, como mínimo, para hacer <b>200 copias</b>?",
+"m2_int":"Tiene que ser un número entero de minutos.",
+"m2_lo":"En {0} minutos hace {1} copias: no es suficiente.",
+"m2_hi":"En {0} minutos sí es suficiente ({1} copias), pero con un minuto menos también.",
+"m2.more":"La división 200 : 30 da 6,67. ¿Por qué la respuesta no es 6?",
+"m3.q":"En una tabla de proporcionalidad directa, para x = 4 tenemos y = 10. ¿Cuánto vale <b>y para x = 6</b>?",
+"m3_f":"Con y = {0}, el cociente sería {0} : 6 = {1}, pero 10 : 4 = 2,5.",
+"m3.more":"Hazlo de dos maneras: con la constante (y : x = 2,5) y pasando por x = 2 (la mitad de 4).",
+"m4.q":"El taxi cobra 3 € de bajada de bandera y 1 € por km. Si 2 km cuestan 5 €, ¿cuánto cuestan <b>6 km</b>?",
+"m4_dir":"15 € es lo que sale con una regla de tres. ¡Pero la bajada de bandera solo se paga una vez!",
+"m4_f":"6 km cuestan 3 + 6 · 1 = 9 €, no {0} €.",
+"m4.more":"¿Por qué aquí no funciona la regla de tres? ¿Qué cociente precio : km sale con 2 km y cuál con 6 km?",
+"s1.q":"Para x = 2, y vale 6. «Si para x = 4 la y es mayor que 6, x e y son directamente proporcionales.»",
+"s1.h":"Que y suba no basta: tiene que subir de una manera concreta. Busca una y para x = 4, mayor que 6, que no dé una proporcionalidad directa.",
+"s1_no12":"Con y = 12 sí es directa: 6 : 2 = 12 : 4 = 3. Busca otro.",
+"s1_big":"Tiene que ser mayor que 6.",
+"s1.e":"A veces: para que sea directa, al doblar x la y se tiene que doblar exactamente (aquí, 12). El taxi o la altura de una persona con la edad también suben, pero no son proporcionalidad directa.",
+"s2.q":"«En una proporcionalidad directa, si divides y entre x siempre da lo mismo.»",
+"s2.h":"Mira la casilla «Cociente y : x» mientras mueves el valor en las naranjas.",
+"s2.e":"Siempre: ese cociente es la constante de proporcionalidad, lo que vale una unidad (1,30 € por kilo, 30 copias por minuto…).",
+"s3.q":"«La gráfica de una proporcionalidad directa es una recta que pasa por el origen.»",
+"s3.h":"¿Cuánto cuestan 0 kg de naranjas? ¿Dónde está ese punto?",
+"s3.e":"Siempre: si x = 0, y = k · 0 = 0, y cada unidad de más añade siempre la misma cantidad (la constante): por eso es una recta y pasa por (0, 0).",
+"s4.q":"«Si una gráfica es una recta que no pasa por el origen, las magnitudes son directamente proporcionales.»",
+"s4.h":"Mira el taxi: es una recta, pero ¿dónde empieza?",
+"s4.e":"Nunca: si la recta no pasa por el origen (como el taxi, que con 0 km ya cuesta 3 €), el cociente y : x cambia y no hay proporcionalidad.",
+"s5.q":"«Si x se multiplica por 3, y queda multiplicada por 3.» (en una proporcionalidad directa)",
+"s5.h":"Pasa de 2 kg a 6 kg de naranjas y mira el precio.",
+"s5.e":"Siempre: es la definición de proporcionalidad directa.",
+"s6.q":"«Si 1 obrero tarda 10 días en hacer una obra, 2 obreros tardan 20 días.»",
+"s6.h":"Con el doble de obreros, ¿se tarda más o menos?",
+"s6.e":"Nunca: con más obreros se tarda menos. Eso es proporcionalidad inversa (2 obreros, 5 días): no todas las situaciones se resuelven con la regla de tres directa.",
+"e1.ctx":"<b>5 kg</b> de naranjas cuestan <b>6,50 €</b>. ¿Cuánto cuestan <b>8 kg</b>?",
+"e1.n0":"Aina","e1.n1":"Pol",
+"e1.s0":"6,50 : 5 = 1,30 € el kilo, y 8 · 1,30 = 10,40 €.",
+"e1.s1":"6,50 · 5 = 32,50 € el kilo, y 32,50 · 8 = 260 €.",
+"e1.w0":"Para pasar de 5 kg a 1 kg hay que dividir entre 5, no multiplicar. Además, 260 € por 8 kg de naranjas no tiene ningún sentido.",
+"e1.w1":"Porque Pol tendría que haber sumado en lugar de multiplicar.",
+"e1.w2":"Porque el precio de 1 kg tiene que ser un número entero.",
+"e1.frame":"Pol, 260 € no puede ser porque…",
+"e1.model":"Pol, has multiplicado 6,50 por 5, y eso sería el precio de 25 kg, no de 1 kg. Para saber el precio de 1 kg tienes que dividir: 6,50 : 5 = 1,30 €. Después, 8 kg cuestan 8 · 1,30 = 10,40 €. Compruébalo siempre: 8 kg son algo más que 5 kg, así que el precio tiene que ser algo más que 6,50 €.",
+"e2.ctx":"Un taxi cobra <b>3 €</b> de bajada de bandera y <b>1 €</b> por km. Si <b>2 km</b> cuestan <b>5 €</b>, ¿cuánto cuestan <b>6 km</b>?",
+"e2.n0":"Marta","e2.n1":"Joan",
+"e2.s0":"Regla de tres: 5 · 6 : 2 = 15 €.",
+"e2.s1":"3 € de bajada y 6 km a 1 €: 3 + 6 = 9 €.",
+"e2.w0":"El precio no es proporcional a los km: los 3 € de bajada de bandera se pagan una sola vez. La regla de tres solo se puede hacer si las magnitudes son proporcionales.",
+"e2.w1":"Porque la regla de tres siempre da resultados demasiado grandes.",
+"e2.w2":"Porque Marta tendría que haber dividido 6 entre 5.",
+"e2.frame":"Marta, no son 15 € porque…",
+"e2.model":"Marta, la regla de tres supone que el triple de km cuesta el triple, pero los 3 € de bajada de bandera no se multiplican: se pagan una vez. Con 6 km pagas 3 € + 6 € = 9 €. Fíjate en que 5 : 2 = 2,5 y 9 : 6 = 1,5: el cociente cambia, no es proporcional.",
+"e3.ctx":"Una paella para <b>4 personas</b> lleva <b>400 g</b> de arroz y se cuece en <b>20 minutos</b>. ¿Y para <b>10 personas</b>?",
+"e3.n0":"Laia","e3.n1":"Hugo",
+"e3.s0":"1000 g de arroz y 50 minutos de cocción.",
+"e3.s1":"1000 g de arroz y 20 minutos de cocción.",
+"e3.w0":"El arroz es proporcional a las personas, pero el tiempo de cocción no: depende del arroz, no de cuántos se lo van a comer.",
+"e3.w1":"Porque una paella siempre se cuece en 20 minutos y para 10 personas hacen falta 400 g.",
+"e3.w2":"Porque Laia tendría que haber multiplicado por 10.",
+"e3.frame":"Laia, no son 50 minutos porque…",
+"e3.model":"Laia, el arroz sí es proporcional: para 10 personas hace falta 2,5 veces más, 1000 g. Pero el tiempo de cocción no depende de cuántas personas coman: el arroz tarda lo mismo en hacerse. Antes de hacer una regla de tres, pregúntate si las dos magnitudes son proporcionales de verdad.",
+"d1.q":"¿Cuál de estas parejas de magnitudes es <b>directamente proporcional</b>?",
+"d1.lc":"Elige:",
+"d1_c0":"La edad de una persona y su altura","d1_c1":"El lado de un cuadrado y su área","d1_c2":"El número de bolígrafos iguales y el precio total",
+"d1_a":"Las dos crecen, pero cuando la edad se dobla la altura no se dobla: no es proporcional.",
+"d1_b":"Si el lado se dobla, el área se multiplica por 4 (A = l · l): no es proporcional.",
+"d1.more":"¿Y el lado de un cuadrado y su perímetro? ¿Cuál es la constante?",
+"d2.q":"Una receta de coca de llanda para <b>8 personas</b> lleva <b>250 g de azúcar</b> y <b>375 g de harina</b>. ¿Cuánto hace falta para <b>12 personas</b>?",
+"d2_s":"Para 12 personas hacen falta 12 : 8 = 1,5 veces más ingredientes: 250 · 1,5.",
+"d2_f":"El azúcar está bien. La harina también se multiplica por 1,5: 375 · 1,5.",
+"d2.more":"La receta lleva 3 huevos. ¿Cuántos pondrías para 12 personas? ¿Por qué aquí hay que decidir?",
+"d3.q":"En el supermercado hay dos ofertas: el pack A tiene <b>6 yogures por 2,40 €</b> y el pack B, <b>8 yogures por 3,04 €</b>. ¿Cuál es más barato?",
+"d3.lc":"Elige:",
+"d3_c0":"El pack A","d3_c1":"El pack B","d3_c2":"Igual de baratos",
+"d3_a":"Compara el precio de un yogur: A, 2,40 : 6 = 0,40 €; B, 3,04 : 8 = 0,38 €.",
+"d3_c":"No: un yogur del pack A cuesta 0,40 € y uno del B, 0,38 €.",
+"d3.more":"¿Cuánto pagarías por 24 yogures con cada pack?",
+"d4.q":"En una tabla de proporcionalidad directa, para x = 2 tenemos y = 3. Completa: ¿cuánto vale <b>y para x = 5</b> y qué <b>x da y = 12</b>?",
+"d4_y":"La constante es 3 : 2 = 1,5, e y = 1,5 · 5.",
+"d4_x":"La y está bien. Para la x, divide: 12 : 1,5.",
+"d4.more":"¿Y qué x da y = 1? ¿Qué significa ese valor?",
+"r1.q":"5 kg de naranjas cuestan 6,50 €. ¿Cuánto cuestan 8 kg (en €)?",
+"r1.e":"6,50 : 5 = 1,30 € el kilo, y 8 · 1,30 = 10,40 €.",
+"r2.q":"¿Qué tabla es de proporcionalidad directa?",
+"r2.o0":"x: 1, 2, 4 → y: 3, 6, 12","r2.o1":"x: 1, 2, 4 → y: 12, 6, 3","r2.o2":"x: 1, 2, 4 → y: 4, 5, 7","r2.o3":"x: 1, 2, 4 → y: 3, 5, 9",
+"r2.e":"En la primera el cociente es siempre 3: 3 : 1 = 6 : 2 = 12 : 4.",
+"r3.q":"Calcula x en la proporción 3/5 = x/20.",
+"r3.e":"Productos cruzados: 5 · x = 3 · 20 = 60, y x = 12.",
+"r4.q":"¿Qué mezcla sabe más a limón?",
+"r4.o0":"2 vasos de zumo y 3 de agua","r4.o1":"3 vasos de zumo y 5 de agua","r4.o2":"Las dos igual","r4.o3":"No se puede saber",
+"r4.e":"2 : 3 ≈ 0,67 vasos de zumo por vaso de agua, y 3 : 5 = 0,6. La primera es más fuerte aunque lleva menos zumo.",
+"r5.q":"Una impresora hace 120 copias en 4 minutos. ¿Cuántas hace en 7 minutos?",
+"r5.e":"120 : 4 = 30 copias por minuto, y 7 · 30 = 210.",
+"r6.q":"Un taxi cobra 3 € de bajada de bandera y 1 € por km. ¿El precio es proporcional a los km?",
+"r6.o0":"No: el cociente precio : km cambia","r6.o1":"Sí: cuantos más km, más precio","r6.o2":"Sí: la constante es 1","r6.o3":"Sí: la constante es 3",
+"r6.e":"2 km cuestan 5 € (2,5 €/km) y 6 km, 9 € (1,5 €/km). El cociente cambia: no es proporcional, aunque las dos magnitudes crecen."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@RAONA_JS@*/
+/* ===== Proporcionalitat directa ===== */
+const cv=$('#cv');
+let W=900,H=370,GL=64,GR=876,GT=26,GB=316,cx=null,NARROW=false;
+function sizeCv(){const w=cv.parentElement.clientWidth||900,nw=w<520;
+  if(cx&&nw===NARROW)return;NARROW=nw;W=nw?440:900;H=nw?400:370;GL=nw?46:64;GR=W-(nw?14:24);GT=26;GB=H-54;
+  cv.style.aspectRatio=W+'/'+H;cx=fitCanvas(cv,W,H);}
+sizeCv();new ResizeObserver(sizeCv).observe(cv.parentElement);
+/* k: constant (y = k·x); a,b: recta no proporcional (y = a + b·x) */
+const CT=[
+ {k:1.3,xs:[1,12,1],x:5,lx:'u_kg',ly:'u_eur',cs:'cs0',money:true},
+ {k:30,xs:[1,10,1],x:4,lx:'u_min',ly:'u_cop',cs:'cs1'},
+ {k:75,xs:[1,12,1],x:6,lx:'u_pers',ly:'u_g',cs:'cs2'},
+ {k:0.06,xs:[50,600,50],x:300,lx:'u_km',ly:'u_l',cs:'cs3'},
+ {a:3,b:1,xs:[1,12,1],x:2,lx:'u_km',ly:'u_eur',cs:'cs4',money:true}];
+let cur=CT[0],ci=0,x=5,x0=5,sx=5,seen=[],cp=0;
+const NP=()=>cur.a!==undefined;
+const vals=c=>{const [a,b,st]=c.xs,r=[];for(let v=a;v<=b+1e-9;v+=st)r.push(Math.round(v*1e6)/1e6);return r;};
+const big=()=>vals(cur).length>13;
+const isDone=()=>big()||vals(cur).every(v=>seen.includes(v));
+const yv=v=>NP()?cur.a+cur.b*v:cur.k*v;
+const fv=v=>cur.money&&!Number.isInteger(Math.round(v*100)/100)?Number(v).toLocaleString(LANG==='es'?'es-ES':'ca-ES',{minimumFractionDigits:2,maximumFractionDigits:2}):nf(v,2);
+function load(c,i,xv,cmp,full){
+  cur=c;ci=i;x0=c.x0||c.x;x=xv===undefined?c.x:xv;sx=x;seen=full?vals(c):[x0];if(!seen.includes(x))seen.push(x);cp=full||big()?1:0;
+  const s=$('#xs');s.min=c.xs[0];s.max=c.xs[1];s.step=c.xs[2];s.value=x;
+  $('#cmp').checked=!!cmp;upd();
+}
+function setX(v){const [a,b,st]=cur.xs;x=clamp(Math.round((v-a)/st)*st+a,a,b);x=Math.round(x*1e6)/1e6;$('#xs').value=x;if(!seen.includes(x))seen.push(x);upd();}
+function upd(){
+  const y=yv(x),y0=yv(x0),lx=t(cur.lx),ly=t(cur.ly),np=NP(),q=y/x;
+  $('#xlbl').textContent=lx.charAt(0).toUpperCase()+lx.slice(1)+':';$('#xv').textContent=nf(x,2)+' '+lx;
+  $('#kx').textContent=lx;$('#ky').textContent=ly;
+  $('#vx').textContent=nf(x,2);$('#vy').textContent=fv(y);$('#vk').textContent=nf(q,3);
+  $('#kbox').classList.toggle('bad',np&&x!==x0);
+  $('#cstory').innerHTML=t(cur.cs||'cs_x');
+  const r=x/x0,ry=y/y0;
+  if(np){
+    $('#smsg').innerHTML=r===1?tt('msg_ref',nf(x0,2),lx,fv(y0),ly):tt('np_msg',lx,nf(r,2),ly,nf(ry,2));
+    $('#smsg').className='msg'+(r===1?'':' bad');
+    $('#rule').innerHTML=r===1?'':t('np_rule');
+  }else{
+    $('#smsg').innerHTML=r===1?tt('msg_ref',nf(x0,2),lx,fv(y0),ly):r>1?tt('msg_up',lx,nf(r,2),ly):tt('msg_dn',lx,nf(1/r,2),ly);
+    $('#smsg').className='msg';
+    $('#rule').innerHTML=r===1?'':tt('rule',lx,fv(y0),nf(x0,2),cur.money?fv(cur.k):nf(cur.k,3),ly,nf(x,2),fv(y));
+  }
+  const w=$('#wmsg');
+  if($('#cmp').checked&&r!==1){const r3=y0*x/x0;
+    if(np){w.innerHTML=tt('r3_bad',fv(y0),nf(x,2),nf(x0,2),fv(r3),fv(y));w.className='msg bad';}
+    else{w.innerHTML=tt('r3_ok',fv(y0),nf(x,2),nf(x0,2),fv(r3));w.className='msg good';}}
+  else{w.innerHTML='';w.className='msg';}
+  const cols=big()?[...seen].sort((a,b)=>a-b):vals(cur),dn=isDone();
+  const row=(lab,fn,cls)=>'<tr><th>'+lab+'</th>'+cols.map(v=>seen.includes(v)?'<td class="'+(v===x?'cur ':'')+(cls?cls(v):'')+'">'+fn(v)+'</td>':'<td class="q">?</td>').join('')+'</tr>';
+  $('#tbl').innerHTML='<tr><th>'+lx+'</th>'+cols.map(v=>'<td'+(v===x?' class="cur"':seen.includes(v)?'':' class="q"')+'>'+nf(v,2)+'</td>').join('')+'</tr>'+
+    row(ly,v=>fv(yv(v)))+row('y : x',v=>nf(yv(v)/v,3),v=>np&&v!==x0?'bad':'');
+  $('#stepb').textContent=t(dn&&!big()?'step_reset':'step_next');
+  $$('#sets .chip').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===ci)));
+}
+const nice=(m,n)=>[0.1,0.2,0.5,1,2,5,10,20,25,50,100,200,250,500,1000].find(c=>m/c<=n)||2000;
+function draw(){
+  const ink=css('--ink'),mut=css('--muted'),pa=css('--pa'),pb=css('--pb'),ok=css('--ok'),line=css('--line'),warn=css('--warn');
+  const np=NP(),xm=cur.xs[1]*1.06,ym=yv(cur.xs[1])*1.08;
+  const X=v=>GL+(GR-GL)*v/xm,Y=v=>GB-(GB-GT)*v/ym;
+  cx.fillStyle=css('--stage');cx.fillRect(0,0,W,H);
+  const dx=nice(xm,NARROW?7:13),dy=nice(ym,NARROW?6:8);
+  cx.font='12px system-ui';cx.lineWidth=1;
+  for(let v=0;v<=xm+1e-9;v+=dx){cx.strokeStyle=line;cx.beginPath();cx.moveTo(X(v),GT);cx.lineTo(X(v),GB);cx.stroke();cx.fillStyle=mut;cx.textAlign='center';cx.fillText(nf(v,2),X(v),GB+16);}
+  for(let v=0;v<=ym+1e-9;v+=dy){cx.strokeStyle=line;cx.beginPath();cx.moveTo(GL,Y(v));cx.lineTo(GR,Y(v));cx.stroke();cx.fillStyle=mut;cx.textAlign='right';if(v)cx.fillText(nf(v,2),GL-6,Y(v)+4);}
+  cx.strokeStyle=ink;cx.lineWidth=2;cx.beginPath();cx.moveTo(GL,GT-8);cx.lineTo(GL,GB);cx.lineTo(GR+8,GB);cx.stroke();
+  cx.fillStyle=pa;cx.font='bold 14px system-ui';cx.textAlign='right';cx.fillText(t(cur.lx)+' →',GR,NARROW?GB-8:GB+36);
+  cx.fillStyle=pb;cx.textAlign='left';cx.fillText('↑ '+t(cur.ly),GL+8,GT+2);
+  /* recta (es descobreix quan s'han vist tots els valors) */
+  if(cp>0){cx.strokeStyle=np?warn:ok;cx.lineWidth=2.5;cx.globalAlpha=cp;cx.beginPath();
+    const x1=xm*cp;cx.moveTo(X(0),Y(yv(0)));cx.lineTo(X(x1),Y(yv(x1)));cx.stroke();cx.globalAlpha=1;
+    cx.font='bold 13px system-ui';cx.textAlign='left';
+    if(np){cx.fillStyle=warn;cx.beginPath();cx.arc(X(0),Y(cur.a),6,0,TAU);cx.fill();cx.fillText(t('nporig'),X(0)+10,Y(cur.a)+18);}
+    else{cx.fillStyle=ok;cx.beginPath();cx.arc(X(0),Y(0),6,0,TAU);cx.fill();cx.textAlign='right';cx.fillText(t('origin'),X(0)-8,Y(0)-8);}}
+  /* reducció a la unitat: triangle d'1 unitat */
+  if(!np&&cur.xs[0]<=1){const u=Y(cur.k);
+    cx.strokeStyle=ok;cx.lineWidth=2;cx.setLineDash([5,4]);cx.beginPath();cx.moveTo(X(1),GB);cx.lineTo(X(1),u);cx.lineTo(GL,u);cx.stroke();cx.setLineDash([]);
+    cx.fillStyle=ok;cx.beginPath();cx.arc(X(1),u,6,0,TAU);cx.fill();
+    cx.font='bold 13px system-ui';cx.textAlign='left';cx.fillText(tt('unit',fv(cur.k)),X(1)+9,u-8);}
+  /* regla de tres comparada */
+  if($('#cmp').checked&&x!==x0){const r3=yv(x0)*x/x0;
+    cx.strokeStyle=np?warn:mut;cx.lineWidth=2;cx.setLineDash([7,6]);cx.beginPath();cx.moveTo(X(0),Y(0));const xe=Math.min(xm,ym/(yv(x0)/x0));cx.lineTo(X(xe),Y(yv(x0)/x0*xe));cx.stroke();cx.setLineDash([]);
+    if(np&&r3<=ym){cx.fillStyle=warn;cx.beginPath();cx.arc(X(x),Y(r3),6,0,TAU);cx.fill();
+      cx.font='bold 13px system-ui';const rt=X(x)>GR-150;cx.textAlign=rt?'right':'left';cx.fillText(t('if_r3')+': '+fv(r3),X(x)+(rt?-10:10),Y(r3)+4);}}
+  /* punts visitats i punt actual */
+  const lastS=seen[seen.length-1];
+  seen.forEach(v=>{const w=yv(v);cx.beginPath();cx.arc(X(v),Y(w),4.5,0,TAU);cx.fillStyle=ink;cx.fill();
+    if(v!==x&&(!NARROW||v===lastS)&&seen.length<=14){cx.font='11.5px system-ui';cx.fillStyle=mut;cx.textAlign='left';cx.fillText('('+nf(v,2)+', '+fv(w)+')',X(v)+7,Y(w)+16);}});
+  cx.beginPath();cx.arc(X(x0),Y(yv(x0)),6,0,TAU);cx.strokeStyle=ink;cx.lineWidth=2;cx.stroke();
+  const px=X(sx),py=Y(yv(sx));
+  cx.strokeStyle=pa;cx.globalAlpha=.5;cx.lineWidth=1.5;cx.setLineDash([3,4]);cx.beginPath();cx.moveTo(px,GB);cx.lineTo(px,py);cx.lineTo(GL,py);cx.stroke();cx.setLineDash([]);cx.globalAlpha=1;
+  cx.beginPath();cx.arc(px,py,8,0,TAU);cx.fillStyle=pa;cx.fill();
+  cx.font='bold 15px system-ui';cx.fillStyle=ink;
+  const lab='('+nf(x,2)+', '+fv(yv(x))+')',right=px>GR-140;
+  cx.textAlign=right?'right':'left';cx.fillText(lab,px+(right?-12:12),Math.max(py-12,GT+22));
+}
+function loop(){sx=REDUCE?x:sx+(x-sx)*0.2;if(Math.abs(sx-x)<cur.xs[2]*0.004)sx=x;
+  const tg=isDone()?1:0;cp=tg?(REDUCE?1:Math.min(1,cp+0.03)):0;draw();drawMix();requestAnimationFrame(loop);}
+CT.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n='ctx'+i;b.onclick=()=>load(c,i);$('#sets').appendChild(b);});
+$('#xs').addEventListener('input',()=>setX(+$('#xs').value));
+$('#minus').onclick=()=>setX(x-cur.xs[2]);$('#plus').onclick=()=>setX(x+cur.xs[2]);
+$('#stepb').onclick=()=>{if(!big()&&isDone()){seen=[x0];cp=0;setX(x0);return;}
+  const vs=vals(cur),un=vs.filter(v=>!seen.includes(v)),nx=un.find(v=>v>x)??un[0];setX(nx===undefined?x+cur.xs[2]:nx);};
+$('#cmp').addEventListener('change',upd);
+App.hooks.push(upd);
+
+/* ===== Raons: dues mescles ===== */
+const cv2=$('#cv2');let W2=640,H2=300,cx2=null,N2=false;
+function sizeCv2(){const w=cv2.parentElement.clientWidth||640,nw=w<420;if(cx2&&nw===N2)return;N2=nw;W2=nw?400:640;H2=300;cv2.style.aspectRatio=W2+'/'+H2;cx2=fitCanvas(cv2,W2,H2);}
+sizeCv2();new ResizeObserver(sizeCv2).observe(cv2.parentElement);
+const MX={a:[2,3],b:[3,5]};
+const RP=[[2,3,3,5],[2,3,4,6],[1,2,3,5],[3,4,6,8]];
+function setMix(aS,aW,bS,bW){MX.a=[aS,aW];MX.b=[bS,bW];$('#aS').value=aS;$('#aW').value=aW;$('#bS').value=bS;$('#bW').value=bW;updMix();}
+function readMix(){const g=id=>clamp(Math.round(+$('#'+id).value)||1,1,8);setMix(g('aS'),g('aW'),g('bS'),g('bW'));}
+function updMix(){
+  const [s1,w1]=MX.a,[s2,w2]=MX.b,f=v=>nf(v,2);
+  $('#rA').innerHTML=tt('ra_r',s1,w1,f(s1/w1),s1+w1,nf(100*s1/(s1+w1),1));
+  $('#rB').innerHTML=tt('ra_r',s2,w2,f(s2/w2),s2+w2,nf(100*s2/(s2+w2),1));
+  const d=s1*w2-s2*w1;
+  $('#rverd').innerHTML=d===0?tt('ra_eq',s1,w1,s2,w2,s1*w2):d>0?tt('ra_more','A',f(s1/w1),f(s2/w2)):tt('ra_more','B',f(s2/w2),f(s1/w1));
+  $$('#rpre .chip').forEach((b,i)=>{const p=RP[i];b.setAttribute('aria-pressed',String(p[0]===s1&&p[1]===w1&&p[2]===s2&&p[3]===w2));});
+}
+function drawMix(){
+  if(!cx2)return;const c=cx2,ink=css('--ink'),mut=css('--muted'),line=css('--line');
+  const juice=C().dark?'#d9c23c':'#e4c21a',water=C().dark?'#3b6fa8':'#a9cdee';
+  c.fillStyle=css('--stage');c.fillRect(0,0,W2,H2);
+  const gw=N2?110:150,gap=N2?60:130,x1=(W2-2*gw-gap)/2,top=36,bot=H2-50,uh=(bot-top)/16;
+  [['A',MX.a,x1],['B',MX.b,x1+gw+gap]].forEach(([n,[s,w],gx])=>{
+    let y=bot;
+    for(let i=0;i<s+w;i++){const isS=i<s;c.fillStyle=isS?juice:water;c.fillRect(gx+2,y-uh,gw-4,uh);c.strokeStyle=css('--panel');c.lineWidth=1;c.beginPath();c.moveTo(gx+2,y-uh);c.lineTo(gx+gw-2,y-uh);c.stroke();y-=uh;}
+    c.strokeStyle=ink;c.lineWidth=2.5;c.beginPath();c.moveTo(gx-4,top-6);c.lineTo(gx,bot);c.lineTo(gx+gw,bot);c.lineTo(gx+gw+4,top-6);c.stroke();
+    c.fillStyle=ink;c.font='bold 16px system-ui';c.textAlign='center';c.fillText(t('ra_'+n),gx+gw/2,top-14);
+    /* barra del % de suc */
+    const by=bot+16,bw=gw,frac=s/(s+w);
+    c.fillStyle=water;c.fillRect(gx,by,bw,12);c.fillStyle=juice;c.fillRect(gx,by,bw*frac,12);c.strokeStyle=line;c.lineWidth=1;c.strokeRect(gx,by,bw,12);
+    c.fillStyle=mut;c.font='12.5px system-ui';c.fillText(s+' '+t('ra_lab_s')+' : '+w+' '+t('ra_lab_w'),gx+gw/2,by+28);
+  });
+}
+RP.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n='rp'+i;b.onclick=()=>setMix(...p);$('#rpre').appendChild(b);});
+['aS','aW','bS','bW'].forEach(id=>$('#'+id).addEventListener('change',readMix));
+App.hooks.push(updMix);
+
+/* ===== Raona-ho ===== */
+const pos=v=>v.every(a=>Number.isFinite(a)&&a>0);
+const ld=(c,xv,cmp)=>{load(c,CT.indexOf(c),xv,cmp,true);RZ.show(cv);};
+const mkc=(k,xs,x0,lx,ly)=>({k,xs,x:x0,x0,lx,ly});
+const TK={tab:mkc(2.5,[1,12,1],4,'u_x','u_y'),tab2:mkc(1.5,[1,12,1],2,'u_x','u_y'),s1:mkc(3,[1,10,1],2,'u_x','u_y'),cop:Object.assign(mkc(30,[1,10,1],7,'u_min','u_cop'))};
+const near=(a,b)=>Math.abs(a-b)<1e-6;
+RZ.init({
+ F:{},
+ M:[
+  {id:'m1',f:[{l:'l_kg'}],sim:v=>ld(CT[0],v&&Number.isInteger(v[0])&&v[0]>=1&&v[0]<=12?v[0]:10),
+   chk:v=>!pos(v)?{k:'rng'}:!near(v[0],10)?{k:'m1_f',p:()=>[nf(v[0],2),nf(v[0]*1.3,2)]}:null},
+  {id:'m2',f:[{l:'l_min'}],sim:v=>ld(CT[1],v&&Number.isInteger(v[0])&&v[0]>=1&&v[0]<=10?v[0]:7),
+   chk:([a])=>!(Number.isInteger(a)&&a>0)?{k:'m2_int'}:30*a<200?{k:'m2_lo',p:[a,30*a]}:30*(a-1)>=200?{k:'m2_hi',p:[a,30*a]}:null},
+  {id:'m3',f:[{l:'l_y'}],sim:()=>ld(TK.tab,6),
+   chk:v=>!pos(v)?{k:'rng'}:!near(v[0],15)?{k:'m3_f',p:()=>[nf(v[0],2),nf(v[0]/6,3)]}:null},
+  {id:'m4',f:[{l:'l_eur'}],sim:()=>ld(CT[4],6,true),
+   chk:v=>!pos(v)?{k:'rng'}:near(v[0],15)?{k:'m4_dir'}:!near(v[0],9)?{k:'m4_f',p:()=>[nf(v[0],2)]}:null}
+ ],
+ S:[
+  {id:'s1',ans:'D',f:[{l:'l_y4'}],cxsim:()=>ld(CT[4],4),
+   cx:([a])=>!(a>6)?{k:'s1_big'}:near(a,12)?{k:'s1_no12'}:null},
+  {id:'s2',ans:'S',sim:()=>ld(CT[0],8)},
+  {id:'s3',ans:'S',sim:()=>ld(CT[0],5)},
+  {id:'s4',ans:'M',sim:()=>ld(CT[4],6)},
+  {id:'s5',ans:'S',sim:()=>ld(Object.assign({},CT[0],{x0:2}),6)},
+  {id:'s6',ans:'M'}
+ ],
+ E:[{id:'e1',who:0,sim:()=>ld(Object.assign({},CT[0],{x0:5}),8,true)},{id:'e2',who:1,sim:()=>ld(CT[4],6,true)},{id:'e3',who:1,sim:null}],
+ D:[
+  {id:'d1',chips:{vals:[0,1,2],fmt:i=>t('d1_c'+i)},sim:null,chk:([p])=>p===0?{k:'d1_a'}:p===1?{k:'d1_b'}:null},
+  {id:'d2',f:[{l:'l_sucre'},{l:'l_farina'}],sim:null,
+   chk:v=>!pos(v)?{k:'rng'}:!near(v[0],375)?{k:'d2_s'}:!near(v[1],562.5)?{k:'d2_f'}:null},
+  {id:'d3',chips:{vals:[0,1,2],fmt:i=>t('d3_c'+i)},sim:null,chk:([p])=>p===0?{k:'d3_a'}:p===2?{k:'d3_c'}:null},
+  {id:'d4',f:[{l:'l_y5'},{l:'l_x12'}],sim:()=>ld(TK.tab2,5),
+   chk:v=>!pos(v)?{k:'rng'}:!near(v[0],7.5)?{k:'d4_y'}:!near(v[1],8)?{k:'d4_x'}:null}
+ ]
+});
+const QDATA=[{"id":"r1","lvl":"all","type":"num","num":10.4,"tol":0.001},{"id":"r2","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r3","lvl":"all","type":"num","num":12,"tol":0},{"id":"r4","lvl":"all","type":"mc","n":4,"ans":0},{"id":"r5","lvl":"all","type":"num","num":210,"tol":0},{"id":"r6","lvl":"all","type":"mc","n":4,"ans":0}];
+initQuiz(QDATA);
+load(CT[0],0);
+initLang();applyLang();
+document.addEventListener('themechange',()=>{draw();drawMix();});
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

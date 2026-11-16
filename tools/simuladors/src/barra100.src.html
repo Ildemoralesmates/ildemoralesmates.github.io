@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Percentatges amb la barra del 100 %: la part, el total i quin percentatge és</title>
+<meta name="description" content="Percentatges per a 2n d'ESO amb una doble barra (0–100 % i 0–total): calcular el percentatge d'una quantitat (el 30 % de 80), el problema invers (si el 30 % són 24, quin és el total?) i esbrinar quin percentatge és una quantitat d'una altra. Amb l'equivalència fracció–decimal–percentatge en una quadrícula 10 × 10, pas a pas amb predicció, activitats per a raonar i test autocorregit.">
+<meta name="author" content="Ilde">
+<style>
+/*@COMMON_CSS@*/
+/*@QUIZ_CSS@*/
+/*@STEPS_CSS@*/
+/*@RAONA_CSS@*/
+.stage canvas{display:block;width:100%;height:auto}
+.frs{gap:10px 14px}
+.qin{display:inline-flex;align-items:center;gap:6px;font-size:14px}
+.qin input{font:600 16px var(--f-num);width:5.6em;padding:4px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.qin.qa input{color:var(--pa);border-color:var(--pa)}
+.qin.qb input{color:var(--pb);border-color:var(--pb)}
+.qin.qg input{color:var(--ok);border-color:var(--ok)}
+.mut{color:var(--muted);font-size:13px}
+.ticket{border:1px dashed var(--line);border-radius:8px;padding:8px 12px;background:var(--stage);font-size:14.5px;display:grid;gap:6px}
+.ticket:empty{display:none}
+.ticket p{margin:0}
+.ticket .note{font-size:13px;color:var(--muted)}
+.eq{font-family:var(--f-num);font-size:17px;line-height:1.8}
+.cA{color:var(--pa)}.cB{color:var(--pb)}.cG{color:var(--ok)}.cW{color:var(--warn)}
+#modes button{font-size:13.5px}
+.ctxc .ask{display:flex;gap:6px;flex-wrap:wrap}
+.ctxc .ask .opt{min-width:9em;text-align:center}
+.ctxc .enun{font-size:15.5px;color:var(--ink)!important;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.eqv{display:grid;grid-template-columns:minmax(0,1fr) minmax(15rem,1.2fr);gap:16px;align-items:start}
+.g100{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:330px;aspect-ratio:1;width:100%}
+.g100 i{display:block;border-radius:2px;background:color-mix(in srgb,var(--line) 60%,transparent);transition:background .15s}
+.g100 i.on{background:var(--pb)}
+.eqv .xctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:10px}
+.eqv .xctl input[type=range]{flex:1 1 10rem;accent-color:var(--pb)}
+.eqv output{font-family:var(--f-num);font-size:18px;font-weight:700;color:var(--pb);min-width:4em}
+.eqline{font-family:var(--f-num);font-size:19px;line-height:1.9;margin:6px 0}
+.fr{display:inline-grid;vertical-align:middle;text-align:center;line-height:1.2;margin:0 3px;font-family:var(--f-num);font-weight:600}
+.fr i{font-style:normal;padding:0 4px}
+.fr i:first-child{border-bottom:2px solid currentColor}
+@media (max-width:820px){.eqv{grid-template-columns:1fr}}
+</style>
+<!--@GC@-->
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="h1"></h1>
+    </div>
+    <div class="topr">
+      <!--@LANGSW@-->
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:16px">
+<div class="app">
+<section class="stage-card">
+<div class="stage"><canvas id="cv" role="img" data-i18n-aria="aria.stage" aria-label=""></canvas></div>
+<div class="ctrlbar">
+<div class="seg" id="modes" role="group" data-i18n-aria="aria.mode" aria-label="">
+<button type="button" data-m="P" aria-pressed="true" data-i18n="m_P"></button>
+<button type="button" data-m="T" aria-pressed="false" data-i18n="m_T"></button>
+<button type="button" data-m="F" aria-pressed="false" data-i18n="m_F"></button>
+</div>
+</div>
+<div class="ctrlbar">
+<span class="mut" data-i18n="presets"></span><div class="chips" id="presets"></div>
+</div>
+<div class="ctrlbar frs">
+<label class="qin qa" id="wQ"><span data-i18n="l_Q"></span><input type="number" id="Q" min="1" max="10000" step="any" value="80" data-i18n-aria="aria.Q" aria-label=""></label>
+<label class="qin qg" id="wp"><span data-i18n="l_p"></span><input type="number" id="p" min="1" max="200" step="any" value="30" data-i18n-aria="aria.p" aria-label=""></label>
+<label class="qin qb" id="wP"><span data-i18n="l_P"></span><input type="number" id="P" min="0" max="20000" step="any" value="24" data-i18n-aria="aria.P" aria-label=""></label>
+</div>
+</section>
+<aside class="panel sidep" data-i18n-aria="aria.steps" aria-label="">
+<div class="stepper" id="stepper"></div>
+<div class="stepnav"><button type="button" class="btn" id="prev" data-i18n="st_prev"></button><button type="button" class="btn primary" id="next" data-i18n="st_next"></button></div>
+<p class="stepno" id="stepno"></p>
+<h2 id="stitle" data-i18n="p0.title"></h2>
+<div class="stext" id="stext" data-i18n-html="p0.text"></div>
+<div class="ticket" id="ticket" aria-live="polite"></div>
+<div class="stats" id="sstats" hidden></div>
+<div id="sask" hidden></div>
+<div id="sthink" hidden></div>
+<div class="rowlinks"><button type="button" class="linkb" id="restart" data-i18n="st_restart"></button></div>
+</aside>
+</div>
+
+<section class="card" id="eqvc"><h2><small data-i18n="eq_eyebrow"></small><span data-i18n="eq_title"></span></h2><p data-i18n-html="eq_intro"></p>
+<div class="eqv">
+<div class="g100" id="g100" role="img" data-i18n-aria="aria.g100" aria-label=""></div>
+<div>
+<div class="xctl"><label for="nn" data-i18n="eq_l"></label><input type="range" id="nn" min="0" max="100" step="1" value="25"><output id="nno" for="nn"></output></div>
+<div class="chips" id="eqpre"></div>
+<p class="eqline" id="eqline" aria-live="polite"></p>
+<p id="eqtxt"></p>
+</div>
+</div>
+</section>
+
+<section class="card ctxc" id="ctx"><h2><small data-i18n="cx_eyebrow"></small><span data-i18n="cx_title"></span></h2><p data-i18n="cx_intro"></p>
+<div class="seg tabs" id="cxtabs" role="group" data-i18n-aria="aria.cx" aria-label=""></div>
+<div class="task" id="cxtask"></div>
+</section>
+
+<!--@RAONA@-->
+
+<!--@QUIZ@-->
+  </main>
+  <!--@FOOTER@-->
+</div>
+
+<script>
+const I18N={
+ca:{
+"title":"Percentatges amb la barra del 100 %: la part, el total i quin percentatge és",
+"eyebrow":"Matemàtiques · 2n ESO · Percentatges",
+"h1":"Percentatges amb la barra del 100 %",
+"lede":"Una barra amb dues escales, la del percentatge (de 0 a 100 %) i la de la quantitat (de 0 al total), resol els tres problemes: quant és el tant per cent, quin és el total i quin percentatge representa. Predix abans de mirar.",
+"aria.stage":"Doble barra: percentatge a dalt i quantitat a baix",
+"aria.mode":"Què volem trobar",
+"aria.Q":"Quantitat total","aria.p":"Percentatge","aria.P":"Part",
+"m_P":"Troba la part","m_T":"Troba el total","m_F":"Troba el percentatge",
+"presets":"Casos:",
+"l_Q":"Total","l_p":"Percentatge (%)","l_P":"Part",
+"of_":"de",
+"cv_ten":"cada tram de 10 %: {0}","cv_one":"1 % = {0}",
+"tk_pq":"El <b>{0} %</b> de <b>{1}</b> vol dir {0} de cada 100 parts de {1}.",
+"tk_100":"<b>100 %</b> = {0}: la barra sencera és el total.",
+"tk_ten":"10 % = {0} : 10 = <b>{1}</b>",
+"tk_one":"1 % = {0} : 100 = <b>{1}</b>",
+"tk_take":"{0} % = {0} × {1} = <b>{2}</b>",
+"tk_tens":"(o bé {0} trams de 10 %: {0} × {1} = {2})",
+"tk_dec":"Drecera: {0} % = {0}/100 = {1}, i {1} × {2} = <b>{3}</b>",
+"tk_know":"Sabem que el <b>{0} %</b> del total són <b>{1}</b>. La barra sencera (100 %) és el que volem.",
+"tk_oneT":"1 % = {0} : {1} = <b>{2}</b>",
+"tk_all":"100 % = 100 × {0} = <b>{1}</b>",
+"tk_chk":"Comprovació: el {0} % de {1} és {2}. ✔",
+"tk_decT":"Drecera: total = {0} : {1} = <b>{2}</b>",
+"tk_if":"Total <b>{0}</b> i part <b>{1}</b>. Quin percentatge del total és la part?",
+"tk_cnt":"Quantes vegades cap l'1 % en la part? {0} : {1} = <b>{2}</b>",
+"tk_pct":"La part és el <b>{0} %</b> del total.",
+"tk_decF":"Drecera: {0} : {1} = {2}, i {2} × 100 = <b>{3} %</b>",
+"tk_over":"Passa del 100 %: la part és més gran que el total de referència.",
+"p0.title":"La barra: el 100 % és el total",
+"p0.text":"<p>Dibuixem una barra amb dues escales: a dalt, el <b>percentatge</b> (de 0 a 100 %); a baix, la <b>quantitat</b> (de 0 al total). La barra sencera, el <b>100 %</b>, és el total. Volem calcular un tant per cent d'eixe total, per exemple el 30 % de 80.</p>",
+"p0.q":"El 10 % de 80 és…",
+"p0.o0":"8","p0.o1":"10","p0.o2":"70",
+"p0.why":"El 10 % és la desena part del total: 80 : 10 = 8. No és «restar 10».",
+"p1.title":"Trams del 10 % i de l'1 %",
+"p1.text":"<p>Tallem la barra en <b>10 trams</b> iguals: cadascun és el <b>10 %</b>. I cada tram es pot tallar en 10 més: l'<b>1 %</b> és la centèsima part del total. És la <b>reducció a la unitat</b> dels percentatges.</p>",
+"p1.q":"L'1 % de 80 és…",
+"p1.o0":"0,8","p1.o1":"1","p1.o2":"8",
+"p1.why":"L'1 % és la centèsima part: 80 : 100 = 0,8. El 10 % és 8.",
+"p2.title":"Prenem el tant per cent",
+"p2.text":"<p>El percentatge diu quantes centèsimes prenem. Multipliquem el valor de l'1 % pel percentatge i tenim <b>la part</b>. Si el percentatge és múltiple de 10, també es pot fer amb trams del 10 %.</p>",
+"p2.q":"El 30 % de 80, és més o menys que la meitat de 80?",
+"p2.o0":"Menys: el 30 % no arriba al 50 %","p2.o1":"Més: 30 és més que 8","p2.o2":"Igual",
+"p2.why":"La meitat és el 50 % (40). El 30 % no hi arriba: és 24.",
+"p3.title":"La drecera: multiplicar pel decimal",
+"p3.text":"<p>Calcular el p % és multiplicar per <b>p/100</b>: el 30 % de 80 és <b>0,30 × 80</b>. Les dues maneres donen el mateix: passar per l'1 % i multiplicar, o multiplicar directament pel decimal.</p>",
+"p3.tq":"Com calcularies de cap el 15 % de 80? I el 5 %?",
+"p3.th":"El 10 % és 8 i el 5 % és la meitat, 4: el 15 % és 8 + 4 = 12. Partir el percentatge en trossos fàcils (50 %, 25 %, 10 %, 5 %, 1 %) és la clau del càlcul mental.",
+"t0.title":"El problema invers: sabem la part",
+"t0.text":"<p>Ara coneixem el <b>percentatge</b> i la <b>part</b>, i volem el <b>total</b>. Per exemple: el 30 % d'una quantitat són 24; quina és la quantitat? A la barra, el tram pintat (30 %) val 24.</p>",
+"t0.q":"Si el 30 % són 24, l'1 % és…",
+"t0.o0":"24 : 30 = 0,8","t0.o1":"24 : 100 = 0,24","t0.o2":"24 × 30 = 720",
+"t0.why":"El tram del 30 % es reparteix 24 entre 30 centèsimes: cadascuna val 24 : 30 = 0,8.",
+"t1.title":"Quant val l'1 %",
+"t1.text":"<p>La part cobreix tantes centèsimes com diu el percentatge. Dividim la part entre el percentatge i ja sabem quant val <b>l'1 %</b>.</p>",
+"t1.q":"Si l'1 % val 0,8, el 100 % és…",
+"t1.o0":"80","t1.o1":"0,8","t1.o2":"24",
+"t1.why":"El 100 % són 100 vegades l'1 %: 100 × 0,8 = 80.",
+"t2.title":"El 100 %: el total",
+"t2.text":"<p>El total és la barra sencera, el <b>100 %</b>. Multipliquem el valor de l'1 % per 100 i tenim <b>el total</b>.</p>",
+"t2.q":"Si el 30 % d'una quantitat són 24, el total és més o menys que 24?",
+"t2.o0":"Més: 24 només és el 30 %","t2.o1":"Menys","t2.o2":"Igual",
+"t2.why":"24 és només el 30 %: el 100 % ha de ser més gran (80).",
+"t3.title":"Comprovem i drecera",
+"t3.text":"<p>Comprovació: el 30 % del total que hem trobat ha de donar la part. Drecera: <b>total = part : 0,30</b>. Error típic: calcular el 30 % de 24 (7,2), que és més menut que la part.</p>",
+"t3.tq":"Si el 25 % d'una quantitat són 15, quin és el total? Com ho faries de cap?",
+"t3.th":"El 25 % és la quarta part: el total són 4 vegades 15, és a dir, 60.",
+"f0.title":"El total és el 100 %",
+"f0.text":"<p>Ara coneixem el <b>total</b> i una <b>part</b>, i volem saber <b>quin percentatge</b> representa la part. Per exemple: quin percentatge de 80 són 24? La barra sencera és 80 (el 100 %).</p>",
+"f0.q":"24 de 80, és més o menys del 50 %?",
+"f0.o0":"Menys: la meitat de 80 és 40","f0.o1":"Més","f0.o2":"Igual",
+"f0.why":"El 50 % de 80 és 40, i 24 no hi arriba.",
+"f1.title":"Quant val l'1 %",
+"f1.text":"<p>Tallem el total en 100 centèsimes: l'<b>1 %</b> de 80 és 80 : 100 = 0,8. Ara cal veure quantes centèsimes caben en la part.</p>",
+"f1.q":"Quantes vegades cap 0,8 en 24?",
+"f1.o0":"30","f1.o1":"24","f1.o2":"0,3",
+"f1.why":"24 : 0,8 = 30: la part ocupa 30 centèsimes, és a dir, el 30 %.",
+"f2.title":"El percentatge",
+"f2.text":"<p>El nombre de centèsimes que ocupa la part és el <b>percentatge</b>. També es pot fer directament: <b>part : total</b> dona el decimal, i multiplicant per 100 tenim el percentatge.</p>",
+"f2.q":"I 100 de 80, quin percentatge és?",
+"f2.o0":"125 %","f2.o1":"100 %","f2.o2":"80 %",
+"f2.why":"100 : 80 = 1,25 → 125 %: és més que el total, i el percentatge passa del 100 %.",
+"f3.title":"Percentatge = part : total × 100",
+"f3.text":"<p>Per a saber quin percentatge és una quantitat d'una altra, <b>divideix la part entre el total i multiplica per 100</b>. El total és sempre la quantitat de referència, la que fa de 100 %.</p>",
+"f3.tq":"De 25 alumnes n'aproven 20. Quin percentatge aprova? I quin suspén?",
+"f3.th":"20 : 25 = 0,8 → aprova el 80 % i suspén el 20 % (5 de 25). Compte: el 20 % no és perquè «aproven 20».",
+"eq_eyebrow":"Fracció, decimal i percentatge","eq_title":"Tres maneres de dir el mateix",
+"eq_intro":"Un percentatge és una fracció de denominador 100: el <b>25 %</b> són 25 quadrets de 100, que és <b>25/100 = 1/4 = 0,25</b>. Mou el control i mira les tres escriptures alhora.",
+"aria.g100":"Quadrícula de 10 × 10 quadrets amb el percentatge pintat",
+"eq_l":"Quadrets pintats:",
+"eq_t":"<b>{0}</b> de cada 100: pinta {0} quadrets de 100.",
+"eq_t1":"És <b>{0}</b> del total.",
+"cx_eyebrow":"Un context, tres preguntes",
+"cx_title":"El mateix problema, al revés",
+"cx_intro":"Tria un context i després què et demanen: la part, el total o el percentatge. Les dades són les mateixes; canvia la incògnita. Resol-lo, comprova'l i mira'l a la barra.",
+"aria.cx":"Context del problema",
+"cx_P":"Troba la part","cx_T":"Troba el total","cx_F":"Troba el percentatge",
+"cx_ok":"✔ Correcte.","cx_ko":"✘ No és això.",
+"cx_hP":"Calcula l'1 % (total : 100) i multiplica'l pel percentatge; o multiplica el total pel decimal.",
+"cx_hT":"La part entre el percentatge dona l'1 %; per 100 tens el total. O bé: part : decimal.",
+"cx_hF":"Divideix la part entre el total i multiplica per 100.",
+"cx_pct":"Percentatge (%):",
+"c1.n":"Les rebaixes","c1.P":"Una jaqueta de <b>80 €</b> té una rebaixa del <b>25 %</b>. Quants euros et rebaixen?","c1.T":"Una jaqueta té una rebaixa del <b>25 %</b>, que són <b>20 €</b>. Quant valia la jaqueta?","c1.F":"En una jaqueta de <b>80 €</b> et rebaixen <b>20 €</b>. Quin percentatge de rebaixa és?",
+"c1.eP":"80 : 100 = 0,8 € l'1 %, i 25 × 0,8 = 20 €. (O el 25 % és la quarta part: 80 : 4.) Pagues 60 €.","c1.eT":"20 : 25 = 0,8 € l'1 %, i 100 × 0,8 = 80 €.","c1.eF":"20 : 80 = 0,25 → 25 %.",
+"c2.n":"Els aprovats","c2.P":"En una classe de <b>25 alumnes</b> aprova el <b>80 %</b>. Quants aproven?","c2.T":"En una classe aprova el <b>80 %</b>, que són <b>20 alumnes</b>. Quants alumnes hi ha?","c2.F":"En una classe de <b>25 alumnes</b> n'aproven <b>20</b>. Quin percentatge aprova?",
+"c2.eP":"25 : 100 = 0,25 l'1 %, i 80 × 0,25 = 20 alumnes. (O 0,80 × 25.)","c2.eT":"20 : 80 = 0,25 l'1 %, i 100 × 0,25 = 25 alumnes.","c2.eF":"20 : 25 = 0,8 → 80 %. Suspén el 20 %.",
+"c3.n":"L'IVA","c3.P":"Un patinet costa <b>60 €</b> sense IVA. Quant és l'IVA del <b>21 %</b>?","c3.T":"L'IVA del <b>21 %</b> d'un producte són <b>12,60 €</b>. Quant costa sense IVA?","c3.F":"Un producte de <b>60 €</b> paga <b>12,60 €</b> d'IVA. Quin percentatge d'IVA és?",
+"c3.eP":"0,21 × 60 = 12,60 €. Amb IVA, el patinet costa 72,60 €.","c3.eT":"12,60 : 21 = 0,6 € l'1 %, i 100 × 0,6 = 60 €.","c3.eF":"12,60 : 60 = 0,21 → 21 %.",
+"c4.n":"La bateria","c4.P":"La bateria d'un mòbil té <b>4000 mAh</b> i està al <b>35 %</b>. Quants mAh li queden?","c4.T":"A una bateria li queden <b>1400 mAh</b>, que són el <b>35 %</b> de la càrrega. Quina capacitat té?","c4.F":"A una bateria de <b>4000 mAh</b> li queden <b>1400 mAh</b>. A quin percentatge està?",
+"c4.eP":"4000 : 100 = 40 mAh l'1 %, i 35 × 40 = 1400 mAh.","c4.eT":"1400 : 35 = 40 mAh l'1 %, i 100 × 40 = 4000 mAh.","c4.eF":"1400 : 4000 = 0,35 → 35 %.",
+"c5.n":"La votació","c5.P":"En una classe de <b>30 alumnes</b>, el <b>40 %</b> vota l'Aina com a delegada. Quants vots té?","c5.T":"L'Aina ha tret <b>12 vots</b>, que són el <b>40 %</b> de la classe. Quants alumnes hi ha?","c5.F":"En una classe de <b>30 alumnes</b>, l'Aina ha tret <b>12 vots</b>. Quin percentatge de vots té?",
+"c5.eP":"0,40 × 30 = 12 vots.","c5.eT":"12 : 40 = 0,3 l'1 %, i 100 × 0,3 = 30 alumnes.","c5.eF":"12 : 30 = 0,4 → 40 %.",
+"rng":"Escriu nombres positius.",
+"l_pct":"Percentatge (%)","l_tot":"Total","l_n":"Alumnes","l_q":"Quantitat",
+"m1.q":"Quin percentatge <b>p</b> fa que el p % de <b>60</b> siga <b>15</b>?",
+"m1_f":"El {0} % de 60 és {1}, no 15.",
+"m1.more":"Ho podies saber sense calcular? Quina fracció de 60 és 15?",
+"m2.q":"Troba una quantitat total, entre 1 i 200, de la qual el <b>15 %</b> i el <b>12 %</b> siguen tots dos nombres enters.",
+"m2_int":"Ha de ser un nombre enter entre 1 i 200.",
+"m2_f":"Amb {0}: el 15 % és {1} i el 12 % és {2}. Algun no és enter.",
+"m2_ok":"✔ Missió complida! {0} és múltiple de 20 (per al 15 %) i de 25 (per al 12 %), és a dir, de 100.",
+"m2.more":"Per què el 15 % d'una quantitat és enter quan la quantitat és múltiple de 20? (Pista: 15/100 = 3/20.)",
+"m3.q":"El <b>40 %</b> d'una quantitat és <b>18</b>. Quina és la quantitat?",
+"m3_mul":"7,2 és el 40 % de 18. Però 18 ja és la part: el total ha de ser més gran.",
+"m3_f":"El 40 % de {0} és {1}, no 18.",
+"m3.more":"Quin és el 60 % que falta? Ho pots saber sense calcular el total?",
+"m4.q":"Una classe té <b>25 alumnes</b>. Quants n'han d'aprovar, <b>com a mínim</b>, perquè aprove <b>més del 70 %</b>?",
+"m4_int":"Ha de ser un nombre enter d'alumnes entre 0 i 25.",
+"m4_lo":"{0} de 25 és el {1} %: no passa del 70 %.",
+"m4_hi":"{0} de 25 és el {1} %: sí que passa del 70 %, però amb menys alumnes també.",
+"m4.more":"Per què 17,5 alumnes no és una resposta possible?",
+"s1.q":"«El 50 % d'una quantitat és la meitat.»",
+"s1.h":"Quantes centèsimes són 50 de 100?",
+"s1.e":"Sempre: 50 % = 50/100 = 1/2.",
+"s2.q":"«El 30 % de 50 és igual que el 50 % de 30.»",
+"s2.h":"Calcula'ls: 0,30 × 50 i 0,50 × 30.",
+"s2.e":"Sempre: tots dos són 30 × 50 : 100 = 15. En general, el a % de b és igual que el b % de a. Truc: el 8 % de 25 és el 25 % de 8, és a dir, 2.",
+"s3.q":"«Per a calcular el 25 % d'una quantitat la pots dividir entre 4.»",
+"s3.h":"Quina fracció és 25/100 simplificada?",
+"s3.e":"Sempre: 25 % = 25/100 = 1/4.",
+"s4.q":"«Un percentatge d'una quantitat és sempre més menut que la quantitat.»",
+"s4.h":"Pensa en el 100 % o en el 150 % d'una quantitat.",
+"s4_cx":"Escriu un percentatge i una quantitat positius.",
+"s4_no":"El {0} % de {1} és {2}, que és més menut que {1}. Busca'n un que no ho siga.",
+"s4.e":"De vegades: si el percentatge és menor que 100 %, la part és més menuda. Però el 100 % és la mateixa quantitat i el 150 % és més gran (pujades, augments, l'IVA inclòs).",
+"s5.q":"«El 200 % de 30 és 230.»",
+"s5.h":"El 200 % són 200 centèsimes: quantes vegades el total?",
+"s5.e":"Mai: el 200 % és el doble, 60. No es «suma 200».",
+"s6.q":"«Si el 20 % d'A és 10 i el 20 % de B és 12, aleshores A és més gran que B.»",
+"s6.h":"Calcula A i B: el 20 % és la cinquena part.",
+"s6.e":"Mai: A = 50 i B = 60. Amb el mateix percentatge, a part més gran correspon un total més gran.",
+"e1.ctx":"Calculeu el <b>30 % de 80</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"80 − 30 = 50.",
+"e1.s1":"80 : 100 = 0,8 i 0,8 × 30 = 24.",
+"e1.w0":"Un percentatge no es resta: el 30 % de 80 són 30 centèsimes de 80, és a dir, 30 vegades l'1 % (0,8). Marta ha llevat 30 unitats, no el 30 %.",
+"e1.w1":"Marta té raó: el percentatge sempre es resta del total.",
+"e1.w2":"Cap dels dos: el 30 % de 80 és 80 × 30 = 2400.",
+"e1.frame":"Marta, 50 no pot ser perquè…",
+"e1.model":"Marta, has restat 30 unitats, però el 30 % no són 30 unitats: són 30 de cada 100. Com que 80 és menys que 100, el 30 % de 80 ha de ser menys de 30. L'1 % és 80 : 100 = 0,8, i el 30 % és 30 × 0,8 = 24. Si el que volies era el preu després d'una rebaixa del 30 %, seria 80 − 24 = 56.",
+"e2.ctx":"El <b>40 %</b> d'un nombre és <b>18</b>. Quin és el nombre?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"0,40 × 18 = 7,2.",
+"e2.s1":"18 : 40 = 0,45 l'1 %, i 0,45 × 100 = 45.",
+"e2.w0":"Àlex ha calculat el 40 % de 18, però 18 ja és la part, no el total. El total ha de ser més gran que 18: és 45, i el 40 % de 45 és 18.",
+"e2.w1":"Àlex té raó: per a trobar el nombre sempre es multiplica pel decimal.",
+"e2.w2":"Els dos tenen raó: 7,2 i 45 són dues solucions.",
+"e2.frame":"Àlex, 7,2 no pot ser el nombre perquè…",
+"e2.model":"Àlex, has calculat el 40 % de 18, però 18 no és el total: és la part. Si el 40 % són 18, l'1 % és 18 : 40 = 0,45 i el 100 % és 45. A més, el total ha de ser més gran que la part, i 7,2 és més menut. Comprovació: 0,40 × 45 = 18.",
+"e3.ctx":"De <b>25 alumnes</b> n'aproven <b>20</b>. Quin percentatge aprova?",
+"e3.n0":"Joan","e3.n1":"Rita",
+"e3.s0":"20 : 25 = 0,8 → 80 %.",
+"e3.s1":"El 20 %, perquè aproven 20 alumnes.",
+"e3.w0":"Rita confon el nombre d'alumnes amb el percentatge: 20 de 25 no és 20 de 100. Cal dividir entre el total: 20 : 25 = 0,80 = 80 %.",
+"e3.w1":"Rita té raó: el percentatge és sempre el nombre que surt a l'enunciat.",
+"e3.w2":"Cap dels dos: és 25 − 20 = 5 %.",
+"e3.frame":"Rita, no és el 20 % perquè…",
+"e3.model":"Rita, el 20 % voldria dir 20 de cada 100 alumnes, i ací són 20 de 25. Si la classe fora de 100, en serien 80. Per a trobar el percentatge cal dividir entre el total: 20 : 25 = 0,8, que és el 80 %. El 20 % són els que suspenen: 5 de 25.",
+"d1.q":"Un mòbil de <b>240 €</b> té un <b>15 %</b> de rebaixa. Quant et rebaixen i quant pagues?",
+"d1.l0":"Rebaixa (€)","d1.l1":"Pagues (€)",
+"d1_r":"La rebaixa és el 15 % de 240: 0,15 × 240.",
+"d1_p":"Pagues el que queda: 240 menys la rebaixa (o el 85 % de 240).",
+"d1.more":"Podries calcular el preu final en una sola operació? Per quin nombre multiplicaries 240?",
+"d2.q":"En un institut de <b>600 alumnes</b>, el <b>45 %</b> són xics. Quants xics i quantes xiques hi ha?",
+"d2.l0":"Xics","d2.l1":"Xiques",
+"d2_x":"Els xics són el 45 % de 600: 0,45 × 600.",
+"d2_q":"Les xiques són la resta: 600 menys els xics (o el 55 % de 600).",
+"d2.more":"Quin percentatge són les xiques? Sumen 100 % amb els xics?",
+"d3.q":"Quin càlcul dona el <b>35 % de 80</b>?",
+"d3.lc":"Tria:",
+"d3_c0":"80 × 0,35","d3_c1":"80 × 35","d3_c2":"80 : 35",
+"d3_b":"80 × 35 = 2800: molt més que 80. Falta dividir entre 100.",
+"d3_c":"80 : 35 ≈ 2,3: dividir entre el percentatge no dona el tant per cent.",
+"d3.more":"Escriu-lo de dues maneres més: amb l'1 % i amb trams de 10 % i 5 %.",
+"r1.q":"El 30 % de 80 és",
+"r1.e":"80 : 100 = 0,8 l'1 %, i 30 × 0,8 = 24.",
+"r2.q":"El 25 % d'un nombre és 15. El nombre és",
+"r2.e":"15 : 25 = 0,6 l'1 %, i 100 × 0,6 = 60. (O el 25 % és 1/4: 4 × 15.)",
+"r3.q":"Quin percentatge de 48 són 12?",
+"r3.o0":"25 %","r3.o1":"12 %","r3.o2":"36 %","r3.o3":"4 %",
+"r3.e":"12 : 48 = 0,25 → 25 %.",
+"r4.q":"El decimal 0,07 en percentatge és",
+"r4.o0":"7 %","r4.o1":"70 %","r4.o2":"0,07 %","r4.o3":"700 %",
+"r4.e":"0,07 = 7/100 = 7 %.",
+"r5.q":"El 12 % de 250 és",
+"r5.e":"0,12 × 250 = 30.",
+"r6.q":"La fracció 3/4 en percentatge és",
+"r6.o0":"75 %","r6.o1":"34 %","r6.o2":"43 %","r6.o3":"0,75 %",
+"r6.e":"3/4 = 0,75 = 75/100 = 75 %."
+},
+es:{
+"title":"Porcentajes con la barra del 100 %: la parte, el total y qué porcentaje es",
+"eyebrow":"Matemáticas · 2.º ESO · Porcentajes",
+"h1":"Porcentajes con la barra del 100 %",
+"lede":"Una barra con dos escalas, la del porcentaje (de 0 a 100 %) y la de la cantidad (de 0 al total), resuelve los tres problemas: cuánto es el tanto por ciento, cuál es el total y qué porcentaje representa. Predice antes de mirar.",
+"aria.stage":"Doble barra: porcentaje arriba y cantidad abajo",
+"aria.mode":"Qué queremos hallar",
+"aria.Q":"Cantidad total","aria.p":"Porcentaje","aria.P":"Parte",
+"m_P":"Halla la parte","m_T":"Halla el total","m_F":"Halla el porcentaje",
+"presets":"Casos:",
+"l_Q":"Total","l_p":"Porcentaje (%)","l_P":"Parte",
+"of_":"de",
+"cv_ten":"cada tramo de 10 %: {0}","cv_one":"1 % = {0}",
+"tk_pq":"El <b>{0} %</b> de <b>{1}</b> quiere decir {0} de cada 100 partes de {1}.",
+"tk_100":"<b>100 %</b> = {0}: la barra entera es el total.",
+"tk_ten":"10 % = {0} : 10 = <b>{1}</b>",
+"tk_one":"1 % = {0} : 100 = <b>{1}</b>",
+"tk_take":"{0} % = {0} × {1} = <b>{2}</b>",
+"tk_tens":"(o bien {0} tramos de 10 %: {0} × {1} = {2})",
+"tk_dec":"Atajo: {0} % = {0}/100 = {1}, y {1} × {2} = <b>{3}</b>",
+"tk_know":"Sabemos que el <b>{0} %</b> del total son <b>{1}</b>. La barra entera (100 %) es lo que buscamos.",
+"tk_oneT":"1 % = {0} : {1} = <b>{2}</b>",
+"tk_all":"100 % = 100 × {0} = <b>{1}</b>",
+"tk_chk":"Comprobación: el {0} % de {1} es {2}. ✔",
+"tk_decT":"Atajo: total = {0} : {1} = <b>{2}</b>",
+"tk_if":"Total <b>{0}</b> y parte <b>{1}</b>. ¿Qué porcentaje del total es la parte?",
+"tk_cnt":"¿Cuántas veces cabe el 1 % en la parte? {0} : {1} = <b>{2}</b>",
+"tk_pct":"La parte es el <b>{0} %</b> del total.",
+"tk_decF":"Atajo: {0} : {1} = {2}, y {2} × 100 = <b>{3} %</b>",
+"tk_over":"Pasa del 100 %: la parte es mayor que el total de referencia.",
+"p0.title":"La barra: el 100 % es el total",
+"p0.text":"<p>Dibujamos una barra con dos escalas: arriba, el <b>porcentaje</b> (de 0 a 100 %); abajo, la <b>cantidad</b> (de 0 al total). La barra entera, el <b>100 %</b>, es el total. Queremos calcular un tanto por ciento de ese total, por ejemplo el 30 % de 80.</p>",
+"p0.q":"El 10 % de 80 es…",
+"p0.o0":"8","p0.o1":"10","p0.o2":"70",
+"p0.why":"El 10 % es la décima parte del total: 80 : 10 = 8. No es «restar 10».",
+"p1.title":"Tramos del 10 % y del 1 %",
+"p1.text":"<p>Cortamos la barra en <b>10 tramos</b> iguales: cada uno es el <b>10 %</b>. Y cada tramo se puede cortar en 10 más: el <b>1 %</b> es la centésima parte del total. Es la <b>reducción a la unidad</b> de los porcentajes.</p>",
+"p1.q":"El 1 % de 80 es…",
+"p1.o0":"0,8","p1.o1":"1","p1.o2":"8",
+"p1.why":"El 1 % es la centésima parte: 80 : 100 = 0,8. El 10 % es 8.",
+"p2.title":"Tomamos el tanto por ciento",
+"p2.text":"<p>El porcentaje dice cuántas centésimas tomamos. Multiplicamos el valor del 1 % por el porcentaje y tenemos <b>la parte</b>. Si el porcentaje es múltiplo de 10, también se puede hacer con tramos del 10 %.</p>",
+"p2.q":"El 30 % de 80, ¿es más o menos que la mitad de 80?",
+"p2.o0":"Menos: el 30 % no llega al 50 %","p2.o1":"Más: 30 es más que 8","p2.o2":"Igual",
+"p2.why":"La mitad es el 50 % (40). El 30 % no llega: es 24.",
+"p3.title":"El atajo: multiplicar por el decimal",
+"p3.text":"<p>Calcular el p % es multiplicar por <b>p/100</b>: el 30 % de 80 es <b>0,30 × 80</b>. Las dos maneras dan lo mismo: pasar por el 1 % y multiplicar, o multiplicar directamente por el decimal.</p>",
+"p3.tq":"¿Cómo calcularías de cabeza el 15 % de 80? ¿Y el 5 %?",
+"p3.th":"El 10 % es 8 y el 5 % es la mitad, 4: el 15 % es 8 + 4 = 12. Partir el porcentaje en trozos fáciles (50 %, 25 %, 10 %, 5 %, 1 %) es la clave del cálculo mental.",
+"t0.title":"El problema inverso: sabemos la parte",
+"t0.text":"<p>Ahora conocemos el <b>porcentaje</b> y la <b>parte</b>, y queremos el <b>total</b>. Por ejemplo: el 30 % de una cantidad son 24; ¿cuál es la cantidad? En la barra, el tramo pintado (30 %) vale 24.</p>",
+"t0.q":"Si el 30 % son 24, el 1 % es…",
+"t0.o0":"24 : 30 = 0,8","t0.o1":"24 : 100 = 0,24","t0.o2":"24 × 30 = 720",
+"t0.why":"El tramo del 30 % se reparte 24 entre 30 centésimas: cada una vale 24 : 30 = 0,8.",
+"t1.title":"Cuánto vale el 1 %",
+"t1.text":"<p>La parte cubre tantas centésimas como dice el porcentaje. Dividimos la parte entre el porcentaje y ya sabemos cuánto vale <b>el 1 %</b>.</p>",
+"t1.q":"Si el 1 % vale 0,8, el 100 % es…",
+"t1.o0":"80","t1.o1":"0,8","t1.o2":"24",
+"t1.why":"El 100 % son 100 veces el 1 %: 100 × 0,8 = 80.",
+"t2.title":"El 100 %: el total",
+"t2.text":"<p>El total es la barra entera, el <b>100 %</b>. Multiplicamos el valor del 1 % por 100 y tenemos <b>el total</b>.</p>",
+"t2.q":"Si el 30 % de una cantidad son 24, ¿el total es más o menos que 24?",
+"t2.o0":"Más: 24 solo es el 30 %","t2.o1":"Menos","t2.o2":"Igual",
+"t2.why":"24 es solo el 30 %: el 100 % tiene que ser mayor (80).",
+"t3.title":"Comprobamos y atajo",
+"t3.text":"<p>Comprobación: el 30 % del total que hemos hallado tiene que dar la parte. Atajo: <b>total = parte : 0,30</b>. Error típico: calcular el 30 % de 24 (7,2), que es menor que la parte.</p>",
+"t3.tq":"Si el 25 % de una cantidad son 15, ¿cuál es el total? ¿Cómo lo harías de cabeza?",
+"t3.th":"El 25 % es la cuarta parte: el total son 4 veces 15, es decir, 60.",
+"f0.title":"El total es el 100 %",
+"f0.text":"<p>Ahora conocemos el <b>total</b> y una <b>parte</b>, y queremos saber <b>qué porcentaje</b> representa la parte. Por ejemplo: ¿qué porcentaje de 80 son 24? La barra entera es 80 (el 100 %).</p>",
+"f0.q":"24 de 80, ¿es más o menos del 50 %?",
+"f0.o0":"Menos: la mitad de 80 es 40","f0.o1":"Más","f0.o2":"Igual",
+"f0.why":"El 50 % de 80 es 40, y 24 no llega.",
+"f1.title":"Cuánto vale el 1 %",
+"f1.text":"<p>Cortamos el total en 100 centésimas: el <b>1 %</b> de 80 es 80 : 100 = 0,8. Ahora hay que ver cuántas centésimas caben en la parte.</p>",
+"f1.q":"¿Cuántas veces cabe 0,8 en 24?",
+"f1.o0":"30","f1.o1":"24","f1.o2":"0,3",
+"f1.why":"24 : 0,8 = 30: la parte ocupa 30 centésimas, es decir, el 30 %.",
+"f2.title":"El porcentaje",
+"f2.text":"<p>El número de centésimas que ocupa la parte es el <b>porcentaje</b>. También se puede hacer directamente: <b>parte : total</b> da el decimal, y multiplicando por 100 tenemos el porcentaje.</p>",
+"f2.q":"¿Y 100 de 80, qué porcentaje es?",
+"f2.o0":"125 %","f2.o1":"100 %","f2.o2":"80 %",
+"f2.why":"100 : 80 = 1,25 → 125 %: es más que el total, y el porcentaje pasa del 100 %.",
+"f3.title":"Porcentaje = parte : total × 100",
+"f3.text":"<p>Para saber qué porcentaje es una cantidad de otra, <b>divide la parte entre el total y multiplica por 100</b>. El total es siempre la cantidad de referencia, la que hace de 100 %.</p>",
+"f3.tq":"De 25 alumnos aprueban 20. ¿Qué porcentaje aprueba? ¿Y cuál suspende?",
+"f3.th":"20 : 25 = 0,8 → aprueba el 80 % y suspende el 20 % (5 de 25). Cuidado: el 20 % no es porque «aprueban 20».",
+"eq_eyebrow":"Fracción, decimal y porcentaje","eq_title":"Tres maneras de decir lo mismo",
+"eq_intro":"Un porcentaje es una fracción de denominador 100: el <b>25 %</b> son 25 cuadraditos de 100, que es <b>25/100 = 1/4 = 0,25</b>. Mueve el control y mira las tres escrituras a la vez.",
+"aria.g100":"Cuadrícula de 10 × 10 cuadraditos con el porcentaje pintado",
+"eq_l":"Cuadraditos pintados:",
+"eq_t":"<b>{0}</b> de cada 100: pinta {0} cuadraditos de 100.",
+"eq_t1":"Es <b>{0}</b> del total.",
+"cx_eyebrow":"Un contexto, tres preguntas",
+"cx_title":"El mismo problema, al revés",
+"cx_intro":"Elige un contexto y después qué te piden: la parte, el total o el porcentaje. Los datos son los mismos; cambia la incógnita. Resuélvelo, compruébalo y míralo en la barra.",
+"aria.cx":"Contexto del problema",
+"cx_P":"Halla la parte","cx_T":"Halla el total","cx_F":"Halla el porcentaje",
+"cx_ok":"✔ Correcto.","cx_ko":"✘ No es eso.",
+"cx_hP":"Calcula el 1 % (total : 100) y multiplícalo por el porcentaje; o multiplica el total por el decimal.",
+"cx_hT":"La parte entre el porcentaje da el 1 %; por 100 tienes el total. O bien: parte : decimal.",
+"cx_hF":"Divide la parte entre el total y multiplica por 100.",
+"cx_pct":"Porcentaje (%):",
+"c1.n":"Las rebajas","c1.P":"Una chaqueta de <b>80 €</b> tiene una rebaja del <b>25 %</b>. ¿Cuántos euros te rebajan?","c1.T":"Una chaqueta tiene una rebaja del <b>25 %</b>, que son <b>20 €</b>. ¿Cuánto valía la chaqueta?","c1.F":"En una chaqueta de <b>80 €</b> te rebajan <b>20 €</b>. ¿Qué porcentaje de rebaja es?",
+"c1.eP":"80 : 100 = 0,8 € el 1 %, y 25 × 0,8 = 20 €. (O el 25 % es la cuarta parte: 80 : 4.) Pagas 60 €.","c1.eT":"20 : 25 = 0,8 € el 1 %, y 100 × 0,8 = 80 €.","c1.eF":"20 : 80 = 0,25 → 25 %.",
+"c2.n":"Los aprobados","c2.P":"En una clase de <b>25 alumnos</b> aprueba el <b>80 %</b>. ¿Cuántos aprueban?","c2.T":"En una clase aprueba el <b>80 %</b>, que son <b>20 alumnos</b>. ¿Cuántos alumnos hay?","c2.F":"En una clase de <b>25 alumnos</b> aprueban <b>20</b>. ¿Qué porcentaje aprueba?",
+"c2.eP":"25 : 100 = 0,25 el 1 %, y 80 × 0,25 = 20 alumnos. (O 0,80 × 25.)","c2.eT":"20 : 80 = 0,25 el 1 %, y 100 × 0,25 = 25 alumnos.","c2.eF":"20 : 25 = 0,8 → 80 %. Suspende el 20 %.",
+"c3.n":"El IVA","c3.P":"Un patinete cuesta <b>60 €</b> sin IVA. ¿Cuánto es el IVA del <b>21 %</b>?","c3.T":"El IVA del <b>21 %</b> de un producto son <b>12,60 €</b>. ¿Cuánto cuesta sin IVA?","c3.F":"Un producto de <b>60 €</b> paga <b>12,60 €</b> de IVA. ¿Qué porcentaje de IVA es?",
+"c3.eP":"0,21 × 60 = 12,60 €. Con IVA, el patinete cuesta 72,60 €.","c3.eT":"12,60 : 21 = 0,6 € el 1 %, y 100 × 0,6 = 60 €.","c3.eF":"12,60 : 60 = 0,21 → 21 %.",
+"c4.n":"La batería","c4.P":"La batería de un móvil tiene <b>4000 mAh</b> y está al <b>35 %</b>. ¿Cuántos mAh le quedan?","c4.T":"A una batería le quedan <b>1400 mAh</b>, que son el <b>35 %</b> de la carga. ¿Qué capacidad tiene?","c4.F":"A una batería de <b>4000 mAh</b> le quedan <b>1400 mAh</b>. ¿A qué porcentaje está?",
+"c4.eP":"4000 : 100 = 40 mAh el 1 %, y 35 × 40 = 1400 mAh.","c4.eT":"1400 : 35 = 40 mAh el 1 %, y 100 × 40 = 4000 mAh.","c4.eF":"1400 : 4000 = 0,35 → 35 %.",
+"c5.n":"La votación","c5.P":"En una clase de <b>30 alumnos</b>, el <b>40 %</b> vota a Aina como delegada. ¿Cuántos votos tiene?","c5.T":"Aina ha sacado <b>12 votos</b>, que son el <b>40 %</b> de la clase. ¿Cuántos alumnos hay?","c5.F":"En una clase de <b>30 alumnos</b>, Aina ha sacado <b>12 votos</b>. ¿Qué porcentaje de votos tiene?",
+"c5.eP":"0,40 × 30 = 12 votos.","c5.eT":"12 : 40 = 0,3 el 1 %, y 100 × 0,3 = 30 alumnos.","c5.eF":"12 : 30 = 0,4 → 40 %.",
+"rng":"Escribe números positivos.",
+"l_pct":"Porcentaje (%)","l_tot":"Total","l_n":"Alumnos","l_q":"Cantidad",
+"m1.q":"¿Qué porcentaje <b>p</b> hace que el p % de <b>60</b> sea <b>15</b>?",
+"m1_f":"El {0} % de 60 es {1}, no 15.",
+"m1.more":"¿Lo podías saber sin calcular? ¿Qué fracción de 60 es 15?",
+"m2.q":"Halla una cantidad total, entre 1 y 200, de la que el <b>15 %</b> y el <b>12 %</b> sean los dos números enteros.",
+"m2_int":"Tiene que ser un número entero entre 1 y 200.",
+"m2_f":"Con {0}: el 15 % es {1} y el 12 % es {2}. Alguno no es entero.",
+"m2_ok":"✔ ¡Misión cumplida! {0} es múltiplo de 20 (para el 15 %) y de 25 (para el 12 %), es decir, de 100.",
+"m2.more":"¿Por qué el 15 % de una cantidad es entero cuando la cantidad es múltiplo de 20? (Pista: 15/100 = 3/20.)",
+"m3.q":"El <b>40 %</b> de una cantidad es <b>18</b>. ¿Cuál es la cantidad?",
+"m3_mul":"7,2 es el 40 % de 18. Pero 18 ya es la parte: el total tiene que ser mayor.",
+"m3_f":"El 40 % de {0} es {1}, no 18.",
+"m3.more":"¿Cuál es el 60 % que falta? ¿Lo puedes saber sin calcular el total?",
+"m4.q":"Una clase tiene <b>25 alumnos</b>. ¿Cuántos tienen que aprobar, <b>como mínimo</b>, para que apruebe <b>más del 70 %</b>?",
+"m4_int":"Tiene que ser un número entero de alumnos entre 0 y 25.",
+"m4_lo":"{0} de 25 es el {1} %: no pasa del 70 %.",
+"m4_hi":"{0} de 25 es el {1} %: sí pasa del 70 %, pero con menos alumnos también.",
+"m4.more":"¿Por qué 17,5 alumnos no es una respuesta posible?",
+"s1.q":"«El 50 % de una cantidad es la mitad.»",
+"s1.h":"¿Cuántas centésimas son 50 de 100?",
+"s1.e":"Siempre: 50 % = 50/100 = 1/2.",
+"s2.q":"«El 30 % de 50 es igual que el 50 % de 30.»",
+"s2.h":"Calcúlalos: 0,30 × 50 y 0,50 × 30.",
+"s2.e":"Siempre: los dos son 30 × 50 : 100 = 15. En general, el a % de b es igual que el b % de a. Truco: el 8 % de 25 es el 25 % de 8, es decir, 2.",
+"s3.q":"«Para calcular el 25 % de una cantidad la puedes dividir entre 4.»",
+"s3.h":"¿Qué fracción es 25/100 simplificada?",
+"s3.e":"Siempre: 25 % = 25/100 = 1/4.",
+"s4.q":"«Un porcentaje de una cantidad es siempre menor que la cantidad.»",
+"s4.h":"Piensa en el 100 % o en el 150 % de una cantidad.",
+"s4_cx":"Escribe un porcentaje y una cantidad positivos.",
+"s4_no":"El {0} % de {1} es {2}, que es menor que {1}. Busca uno que no lo sea.",
+"s4.e":"A veces: si el porcentaje es menor que 100 %, la parte es menor. Pero el 100 % es la misma cantidad y el 150 % es mayor (subidas, aumentos, el IVA incluido).",
+"s5.q":"«El 200 % de 30 es 230.»",
+"s5.h":"El 200 % son 200 centésimas: ¿cuántas veces el total?",
+"s5.e":"Nunca: el 200 % es el doble, 60. No se «suma 200».",
+"s6.q":"«Si el 20 % de A es 10 y el 20 % de B es 12, entonces A es mayor que B.»",
+"s6.h":"Calcula A y B: el 20 % es la quinta parte.",
+"s6.e":"Nunca: A = 50 y B = 60. Con el mismo porcentaje, a parte mayor corresponde un total mayor.",
+"e1.ctx":"Calculad el <b>30 % de 80</b>.",
+"e1.n0":"Marta","e1.n1":"Pau",
+"e1.s0":"80 − 30 = 50.",
+"e1.s1":"80 : 100 = 0,8 y 0,8 × 30 = 24.",
+"e1.w0":"Un porcentaje no se resta: el 30 % de 80 son 30 centésimas de 80, es decir, 30 veces el 1 % (0,8). Marta ha quitado 30 unidades, no el 30 %.",
+"e1.w1":"Marta tiene razón: el porcentaje siempre se resta del total.",
+"e1.w2":"Ninguno: el 30 % de 80 es 80 × 30 = 2400.",
+"e1.frame":"Marta, 50 no puede ser porque…",
+"e1.model":"Marta, has restado 30 unidades, pero el 30 % no son 30 unidades: son 30 de cada 100. Como 80 es menos que 100, el 30 % de 80 tiene que ser menos de 30. El 1 % es 80 : 100 = 0,8, y el 30 % es 30 × 0,8 = 24. Si lo que querías era el precio después de una rebaja del 30 %, sería 80 − 24 = 56.",
+"e2.ctx":"El <b>40 %</b> de un número es <b>18</b>. ¿Cuál es el número?",
+"e2.n0":"Àlex","e2.n1":"Laia",
+"e2.s0":"0,40 × 18 = 7,2.",
+"e2.s1":"18 : 40 = 0,45 el 1 %, y 0,45 × 100 = 45.",
+"e2.w0":"Àlex ha calculado el 40 % de 18, pero 18 ya es la parte, no el total. El total tiene que ser mayor que 18: es 45, y el 40 % de 45 es 18.",
+"e2.w1":"Àlex tiene razón: para hallar el número siempre se multiplica por el decimal.",
+"e2.w2":"Los dos tienen razón: 7,2 y 45 son dos soluciones.",
+"e2.frame":"Àlex, 7,2 no puede ser el número porque…",
+"e2.model":"Àlex, has calculado el 40 % de 18, pero 18 no es el total: es la parte. Si el 40 % son 18, el 1 % es 18 : 40 = 0,45 y el 100 % es 45. Además, el total tiene que ser mayor que la parte, y 7,2 es menor. Comprobación: 0,40 × 45 = 18.",
+"e3.ctx":"De <b>25 alumnos</b> aprueban <b>20</b>. ¿Qué porcentaje aprueba?",
+"e3.n0":"Joan","e3.n1":"Rita",
+"e3.s0":"20 : 25 = 0,8 → 80 %.",
+"e3.s1":"El 20 %, porque aprueban 20 alumnos.",
+"e3.w0":"Rita confunde el número de alumnos con el porcentaje: 20 de 25 no es 20 de 100. Hay que dividir entre el total: 20 : 25 = 0,80 = 80 %.",
+"e3.w1":"Rita tiene razón: el porcentaje es siempre el número que sale en el enunciado.",
+"e3.w2":"Ninguno: es 25 − 20 = 5 %.",
+"e3.frame":"Rita, no es el 20 % porque…",
+"e3.model":"Rita, el 20 % querría decir 20 de cada 100 alumnos, y aquí son 20 de 25. Si la clase fuera de 100, serían 80. Para hallar el porcentaje hay que dividir entre el total: 20 : 25 = 0,8, que es el 80 %. El 20 % son los que suspenden: 5 de 25.",
+"d1.q":"Un móvil de <b>240 €</b> tiene un <b>15 %</b> de rebaja. ¿Cuánto te rebajan y cuánto pagas?",
+"d1.l0":"Rebaja (€)","d1.l1":"Pagas (€)",
+"d1_r":"La rebaja es el 15 % de 240: 0,15 × 240.",
+"d1_p":"Pagas lo que queda: 240 menos la rebaja (o el 85 % de 240).",
+"d1.more":"¿Podrías calcular el precio final en una sola operación? ¿Por qué número multiplicarías 240?",
+"d2.q":"En un instituto de <b>600 alumnos</b>, el <b>45 %</b> son chicos. ¿Cuántos chicos y cuántas chicas hay?",
+"d2.l0":"Chicos","d2.l1":"Chicas",
+"d2_x":"Los chicos son el 45 % de 600: 0,45 × 600.",
+"d2_q":"Las chicas son el resto: 600 menos los chicos (o el 55 % de 600).",
+"d2.more":"¿Qué porcentaje son las chicas? ¿Suman 100 % con los chicos?",
+"d3.q":"¿Qué cálculo da el <b>35 % de 80</b>?",
+"d3.lc":"Elige:",
+"d3_c0":"80 × 0,35","d3_c1":"80 × 35","d3_c2":"80 : 35",
+"d3_b":"80 × 35 = 2800: mucho más que 80. Falta dividir entre 100.",
+"d3_c":"80 : 35 ≈ 2,3: dividir entre el porcentaje no da el tanto por ciento.",
+"d3.more":"Escríbelo de dos maneras más: con el 1 % y con tramos de 10 % y 5 %.",
+"r1.q":"El 30 % de 80 es",
+"r1.e":"80 : 100 = 0,8 el 1 %, y 30 × 0,8 = 24.",
+"r2.q":"El 25 % de un número es 15. El número es",
+"r2.e":"15 : 25 = 0,6 el 1 %, y 100 × 0,6 = 60. (O el 25 % es 1/4: 4 × 15.)",
+"r3.q":"¿Qué porcentaje de 48 son 12?",
+"r3.o0":"25 %","r3.o1":"12 %","r3.o2":"36 %","r3.o3":"4 %",
+"r3.e":"12 : 48 = 0,25 → 25 %.",
+"r4.q":"El decimal 0,07 en porcentaje es",
+"r4.o0":"7 %","r4.o1":"70 %","r4.o2":"0,07 %","r4.o3":"700 %",
+"r4.e":"0,07 = 7/100 = 7 %.",
+"r5.q":"El 12 % de 250 es",
+"r5.e":"0,12 × 250 = 30.",
+"r6.q":"La fracción 3/4 en porcentaje es",
+"r6.o0":"75 %","r6.o1":"34 %","r6.o2":"43 %","r6.o3":"0,75 %",
+"r6.e":"3/4 = 0,75 = 75/100 = 75 %."
+}
+};
+/*@COMMON_JS@*/
+/*@QUIZ_JS@*/
+/*@STEPS_JS@*/
+/*@RAONA_JS@*/
+
+/* ===== càlcul ===== */
+const r6=v=>Math.round(v*1e6)/1e6;
+const num=v=>nf(r6(v),3);
+const near=(a,b)=>Math.abs(a-b)<1e-6*Math.max(1,Math.abs(b));
+let S={mode:'P',Q:80,p:30,P:24},V={};
+function derive(){
+  const {mode,Q,p,P}=S;
+  if(mode==='P')V={one:Q/100,ten:Q/10,part:Q*p/100};
+  else if(mode==='T')V={one:P/p,tot:P*100/p};
+  else V={one:Q/100,pct:100*P/Q};
+}
+
+/* ===== controls ===== */
+function syncControls(){
+  $('#Q').value=r6(S.Q);$('#p').value=r6(S.p);$('#P').value=r6(S.P);
+  $$('#modes button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===S.mode)));
+  const m=S.mode;$('#wQ').hidden=m==='T';$('#wP').hidden=m==='P';$('#wp').hidden=m==='F';
+}
+function readControls(){
+  const g=(id,a,b,d)=>{const v=+$('#'+id).value;return Number.isFinite(v)&&v>0?clamp(v,a,b):d;};
+  S.Q=g('Q',0.01,10000,S.Q);S.p=g('p',0.1,200,S.p);S.P=g('P',0.01,20000,S.P);
+  if(S.mode==='F'&&S.P>2*S.Q)S.P=2*S.Q;
+  derive();syncControls();paint();
+}
+function setCase(mode,Q,p,P){
+  const chg=mode!==S.mode;
+  S={mode,Q:clamp(Q||S.Q,0.01,10000),p:clamp(p||S.p,0.1,200),P:clamp(P||S.P,0.01,20000)};
+  if(mode==='F'&&S.P>2*S.Q)S.P=2*S.Q;
+  derive();syncControls();
+  if(chg)setSteps();else paint();
+}
+const PRE={P:[[80,30],[200,15],[60,25],[45,12]],T:[[30,24],[25,15],[40,18],[15,9]],F:[[80,24],[25,20],[48,12],[80,100]]};
+function buildPresets(){
+  const h=$('#presets');h.innerHTML='';
+  PRE[S.mode].forEach(q=>{const b=document.createElement('button');b.type='button';b.className='chip';
+    if(S.mode==='P'){b.textContent=q[1]+' % '+t('of_')+' '+q[0];b.onclick=()=>setCase('P',q[0],q[1],S.P);}
+    else if(S.mode==='T'){b.textContent=q[0]+' % → '+q[1];b.onclick=()=>setCase('T',S.Q,q[0],q[1]);}
+    else{b.textContent=q[1]+' '+t('of_')+' '+q[0];b.onclick=()=>setCase('F',q[0],S.p,q[1]);}
+    h.appendChild(b);});
+}
+
+/* ===== text del panell ===== */
+function ticketHTML(i){
+  const {mode,Q,p,P}=S;let h='';
+  if(mode==='P'){
+    const {one,ten,part}=V;
+    h+='<div class="eq"><b class="cG">'+num(p)+' %</b> '+t('of_')+' <b class="cA">'+num(Q)+'</b> = '+(i>=2?'<b class="cB">'+num(part)+'</b>':'?')+'</div>';
+    if(i===0)h+='<p>'+tt('tk_pq',num(p),num(Q))+'</p><p>'+tt('tk_100',num(Q))+'</p>';
+    if(i>=1)h+='<p>'+tt('tk_ten',num(Q),num(ten))+'</p><p>'+tt('tk_one',num(Q),num(one))+'</p>';
+    if(i>=2){h+='<p>'+tt('tk_take',num(p),num(one),num(part))+'</p>';
+      if(Number.isInteger(r6(p/10)))h+='<p class="note">'+tt('tk_tens',num(p/10),num(ten),num(part))+'</p>';}
+    if(i===3)h+='<p>'+tt('tk_dec',num(p),num(p/100),num(Q),num(part))+'</p>';
+  }else if(mode==='T'){
+    const {one,tot}=V;
+    h+='<div class="eq"><b class="cG">'+num(p)+' %</b> '+t('of_')+' '+(i>=2?'<b class="cA">'+num(tot)+'</b>':'?')+' = <b class="cB">'+num(P)+'</b></div>';
+    if(i===0)h+='<p>'+tt('tk_know',num(p),num(P))+'</p>';
+    if(i>=1)h+='<p>'+tt('tk_oneT',num(P),num(p),num(one))+'</p>';
+    if(i>=2)h+='<p>'+tt('tk_all',num(one),num(tot))+'</p>';
+    if(i===3)h+='<p>'+tt('tk_chk',num(p),num(tot),num(P))+'</p><p class="note">'+tt('tk_decT',num(P),num(p/100),num(tot))+'</p>';
+  }else{
+    const {one,pct}=V;
+    h+='<div class="eq">'+(i>=2?'<b class="cG">'+num(pct)+' %</b>':'? %')+' '+t('of_')+' <b class="cA">'+num(Q)+'</b> = <b class="cB">'+num(P)+'</b></div>';
+    if(i===0)h+='<p>'+tt('tk_if',num(Q),num(P))+'</p><p>'+tt('tk_100',num(Q))+'</p>';
+    if(i>=1)h+='<p>'+tt('tk_one',num(Q),num(one))+'</p>';
+    if(i>=2){h+='<p>'+tt('tk_cnt',num(P),num(one),num(pct))+'</p><p>'+tt('tk_pct',num(pct))+'</p>';if(pct>100)h+='<p class="note cW">'+t('tk_over')+'</p>';}
+    if(i===3)h+='<p>'+tt('tk_decF',num(P),num(Q),num(P/Q),num(pct))+'</p>';
+  }
+  return h;
+}
+function paint(){$('#ticket').innerHTML=ticketHTML(SE.i);}
+
+/* ===== dibuix ===== */
+const W=640,H=250;
+const cv=$('#cv'),ctx=cv.getContext('2d');
+function fitCv(){const r=cv.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(window.devicePixelRatio||1,2.5);
+  cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.width*dpr*H/W);const sc=cv.width/W;ctx.setTransform(sc,0,0,sc,0,0);}
+cv.style.aspectRatio=W+'/'+H;new ResizeObserver(fitCv).observe(cv);fitCv();
+const ease=x=>x*x*(3-2*x);
+const FM='ui-monospace,Menlo,Consolas,monospace';
+let ph=0,target=0;
+function txt(x,s,px,py,col,size,al){x.font='700 '+(size||16)+'px '+FM;x.fillStyle=col;x.textAlign=al||'left';x.fillText(s,px,py);}
+function draw(){
+  const c=C(),x=ctx;x.clearRect(0,0,W,H);
+  const {mode,Q,p,P}=S;
+  const e1=ease(clamp(ph,0,1)),e2=ease(clamp(ph-1,0,1));
+  const tp=mode==='F'?V.pct:p;                    /* percentatge de la part */
+  const M=Math.max(100,Math.ceil(tp/10)*10);       /* escala */
+  const X0=40,LW=560,BH=54,Y=92,u=LW/M,X=v=>X0+u*v;
+  const tot=mode==='T'?V.tot:Q, part=mode==='P'?V.part:P;
+  /* barra del total (100 %) */
+  x.fillStyle=c.panel;x.fillRect(X0,Y,u*100,BH);
+  if(M>100){x.setLineDash([5,4]);x.strokeStyle=c.pb;x.lineWidth=1.5;x.strokeRect(X(100),Y,u*(M-100),BH);x.setLineDash([]);}
+  /* part pintada */
+  const fillTo=mode==='P'?tp*e2:tp;
+  x.globalAlpha=.85;x.fillStyle=c.pb;x.fillRect(X0,Y,u*fillTo,BH);x.globalAlpha=1;
+  x.strokeStyle=c.ink;x.lineWidth=2;x.strokeRect(X0,Y,u*100,BH);
+  /* trams del 10 % */
+  const showCuts=mode==='P'?e1:(mode==='T'?e1:e1);
+  if(showCuts>0){x.strokeStyle=c.ink;x.lineWidth=1.3;x.globalAlpha=showCuts;
+    for(let k=10;k<M;k+=10){x.beginPath();x.moveTo(X(k),Y);x.lineTo(X(k),Y+BH);x.stroke();}
+    x.globalAlpha=1;}
+  /* escala de percentatge (dalt) */
+  x.strokeStyle=c.muted;x.lineWidth=1;
+  for(let k=0;k<=M;k+=10){x.beginPath();x.moveTo(X(k),Y-4);x.lineTo(X(k),Y);x.stroke();}
+  txt(x,'0 %',X0,Y-10,c.muted,13,'center');txt(x,'100 %',X(100),Y-10,c.ink,14,'center');
+  if(showCuts>.5&&M===100)for(let k=10;k<100;k+=10)if(Math.abs(k-tp)>4)txt(x,k+'',X(k),Y-10,c.muted,11,'center');
+  const pk=(mode==='F'&&e2<.5)?'? %':num(tp)+' %';
+  if(Math.abs(tp-100)>3)txt(x,pk,X(tp),Y-26,c.ok,16,'center');
+  if(Math.abs(tp-100)>3){x.strokeStyle=c.ok;x.lineWidth=2;x.beginPath();x.moveTo(X(tp),Y-20);x.lineTo(X(tp),Y+BH+4);x.stroke();}
+  /* valors dins dels trams del 10 % */
+  const ten=tot/10;
+  if(showCuts>.5&&(mode!=='T'||e2>.5)&&u*10>=46)for(let k=0;k<Math.min(100,M);k+=10)txt(x,num(ten),X(k+5),Y+BH/2+5,k<tp-1e-9&&(mode!=='P'||e2>.5)?c.panel:c.muted,u*10>=56?13:11,'center');
+  /* escala de quantitat (baix) */
+  txt(x,'0',X0,Y+BH+20,c.muted,13,'center');
+  const totLab=mode==='T'&&e2<.5?'?':num(tot);
+  txt(x,totLab,X(100),Y+BH+20,mode==='T'?(e2>.5?c.ok:c.muted):c.pa,17,'center');
+  const showPart=mode==='P'?e2>.5:true;
+  if(showPart&&Math.abs(tp-100)>3)txt(x,num(part),X(tp),Y+BH+40,c.pb,17,'center');
+  /* l'1 % */
+  if(e1>.5){const one=tot/100;x.fillStyle=c.ok;x.fillRect(X0,Y+BH+48,Math.max(u,3),8);
+    txt(x,(mode==='T'&&e2<.5?tt('cv_one',num(P/p)):tt('cv_one',num(one)))+'   ·   '+tt('cv_ten',mode==='T'&&e2<.5?'?':num(ten)),X0+Math.max(u,3)+8,Y+BH+56,c.ok,13,'left');}
+}
+function loop(){
+  if(ph!==target){const dd=target-ph;ph=REDUCE||Math.abs(dd)<.002?target:ph+Math.sign(dd)*Math.min(Math.abs(dd),.035);}
+  draw();requestAnimationFrame(loop);
+}
+
+/* ===== passos ===== */
+const STEPS={
+ P:[{id:'p0',ask:{n:3,ok:0}},{id:'p1',ask:{n:3,ok:0}},{id:'p2',ask:{n:3,ok:0}},{id:'p3',think:true}],
+ T:[{id:'t0',ask:{n:3,ok:0}},{id:'t1',ask:{n:3,ok:0}},{id:'t2',ask:{n:3,ok:0}},{id:'t3',think:true}],
+ F:[{id:'f0',ask:{n:3,ok:0}},{id:'f1',ask:{n:3,ok:0}},{id:'f2',ask:{n:3,ok:0}},{id:'f3',think:true}]
+};
+function setSteps(){
+  $('#stepper').innerHTML='';ph=0;target=0;buildPresets();
+  stepsInit(STEPS[S.mode],(i)=>{target=Math.min(i,2);paint();});
+}
+
+/* ===== fracció, decimal i percentatge ===== */
+const g2=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const r=a%b;a=b;b=r;}return a;};
+const fr=(n,d,cls)=>'<span class="fr'+(cls?' '+cls:'')+'"><i>'+n+'</i><i>'+d+'</i></span>';
+const ORD={ca:{2:'la meitat',4:'la quarta part',5:'la cinquena part',10:'la desena part',20:'la vintena part',25:'la vint-i-cinquena part',50:'la cinquantena part',100:'la centèsima part'},es:{2:'la mitad',4:'la cuarta parte',5:'la quinta parte',10:'la décima parte',20:'la vigésima parte',25:'la vigesimoquinta parte',50:'la quincuagésima parte',100:'la centésima parte'}};
+function buildGrid(){const g=$('#g100');g.innerHTML='';for(let i=0;i<100;i++)g.appendChild(document.createElement('i'));}
+function updEq(){
+  const n=+$('#nn').value;$('#nno').textContent=n+' %';
+  $$('#g100 i').forEach((c,i)=>{const r=Math.floor(i/10),k=i%10;c.classList.toggle('on',r*10+k<n);});
+  const g=g2(n,100)||100,a=n/g,b=100/g;
+  $('#eqline').innerHTML=fr(n,100)+' = '+(g>1&&n?fr(a,b,'cB')+' = ':'')+'<b>'+nf(n/100,2)+'</b> = <b class="cB">'+n+' %</b>';
+  let s=tt('eq_t',n);if(a===1&&ORD[LANG][b])s+=' '+tt('eq_t1',ORD[LANG][b]);$('#eqtxt').innerHTML=s;
+}
+function eqInit(){
+  const h=$('#eqpre');h.innerHTML='';
+  [50,25,75,20,10,5,1,40].forEach(n=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=n+' %';b.onclick=()=>{$('#nn').value=n;updEq();};h.appendChild(b);});
+  updEq();
+}
+buildGrid();$('#nn').addEventListener('input',updEq);App.hooks.push(eqInit);
+
+/* ===== Raona-ho ===== */
+const isI=Number.isInteger;
+const RNG={k:'rng'};
+function load(mode,Q,p,P,step){
+  setCase(mode,Q,p,P);
+  stepGo(step===undefined?3:step);
+  RZ.show($('#cv'));
+}
+RZ.init({
+ M:[
+  {id:'m1',f:['l_pct'],sim:([p])=>load('P',60,p>0&&p<=200?p:25,0),
+   chk:([p])=>!(p>0)?RNG:!near(p,25)?{k:'m1_f',p:[num(p),num(0.6*p)]}:null},
+  {id:'m2',f:['l_tot'],sim:([Q])=>load('P',Q>0?Q:100,15,0),ok:([Q])=>({k:'m2_ok',p:[Q]}),
+   chk:([Q])=>!(isI(Q)&&Q>=1&&Q<=200)?{k:'m2_int'}:Q%100!==0?{k:'m2_f',p:[Q,num(Q*0.15),num(Q*0.12)]}:null},
+  {id:'m3',f:['l_tot'],sim:()=>load('T',0,40,18),
+   chk:([Q])=>!(Q>0)?RNG:near(Q,7.2)?{k:'m3_mul'}:!near(Q,45)?{k:'m3_f',p:[num(Q),num(0.4*Q)]}:null},
+  {id:'m4',f:['l_n'],sim:([n])=>load('F',25,0,n>0&&n<=25?n:18),
+   chk:([n])=>!(isI(n)&&n>=0&&n<=25)?{k:'m4_int'}:n*4<=70?{k:'m4_lo',p:[n,n*4]}:n>18?{k:'m4_hi',p:[n,n*4]}:null}
+ ],
+ S:[
+  {id:'s1',ans:'S',sim:()=>load('P',80,50,0)},
+  {id:'s2',ans:'S',sim:()=>load('P',50,30,0)},
+  {id:'s3',ans:'S',sim:()=>load('P',80,25,0)},
+  {id:'s4',ans:'D',f:['l_pct','l_q'],cxsim:([p,q])=>load('P',q,p,0),sim:()=>load('P',80,30,0),
+   cx:([p,q])=>!(p>0&&q>0&&p<=200)?{k:'s4_cx'}:p>=100?null:{k:'s4_no',p:[num(p),num(q),num(p*q/100)]}},
+  {id:'s5',ans:'M',sim:()=>load('P',30,200,0)},
+  {id:'s6',ans:'M',sim:()=>load('T',0,20,12)}
+ ],
+ E:[{id:'e1',who:1,sim:()=>load('P',80,30,0)},{id:'e2',who:1,sim:()=>load('T',0,40,18)},{id:'e3',who:0,sim:()=>load('F',25,0,20)}],
+ D:[
+  {id:'d1',f:['d1.l0','d1.l1'],sim:()=>load('P',240,15,0),
+   chk:([r,p])=>!near(r,36)?{k:'d1_r'}:!near(p,204)?{k:'d1_p'}:null},
+  {id:'d2',f:['d2.l0','d2.l1'],sim:()=>load('P',600,45,0),
+   chk:([a,b])=>!near(a,270)?{k:'d2_x'}:!near(b,330)?{k:'d2_q'}:null},
+  {id:'d3',chips:{vals:[0,1,2],fmt:i=>t('d3_c'+i)},sim:()=>load('P',80,35,0),chk:([q])=>q===1?{k:'d3_b'}:q===2?{k:'d3_c'}:null}
+ ]
+});
+/* ===== un context, tres preguntes ===== */
+const CTX=[
+ {id:'c1',Q:80,p:25,P:20},
+ {id:'c2',Q:25,p:80,P:20},
+ {id:'c3',Q:60,p:21,P:12.6},
+ {id:'c4',Q:4000,p:35,P:1400},
+ {id:'c5',Q:30,p:40,P:12}
+];
+const CX={i:0,k:'P',v:{},st:{}};
+function cxRender(){
+  const c=CTX[CX.i],k=CX.k,key=c.id+k,st=CX.st[key];
+  $$('#cxtabs button').forEach((b,j)=>b.setAttribute('aria-pressed',String(j===CX.i)));
+  let h='<div class="ask">'+['P','T','F'].map(q=>'<button class="opt" type="button" data-k="'+q+'" aria-pressed="'+(q===k)+'">'+t('cx_'+q)+'</button>').join('')+'</div>';
+  h+='<p class="enun">'+t(c.id+'.'+k)+'</p><div class="row">';
+  const v=CX.v[key]||[''];
+  h+='<label class="pairin">'+(k==='F'?t('cx_pct')+' ':'')+'<input type="text" inputmode="decimal" data-i="0" value="'+v[0]+'" aria-label="'+t('ans_ph')+'"></label>';
+  h+='<button class="btn primary" type="button" data-act="chk">'+t('check')+'</button><button class="btn" type="button" data-act="sim">'+t('to_sim')+'</button></div>';
+  if(st)h+='<p class="msg '+(st.ok?'good':'bad')+'">'+(st.ok?t('cx_ok')+' '+t(c.id+'.e'+k):t('cx_ko')+' '+t('cx_h'+k))+'</p>';
+  const box=$('#cxtask');box.className='task'+(st&&st.ok?' done':'');box.innerHTML=h;
+  $$('.ask .opt',box).forEach(b=>b.onclick=()=>{CX.k=b.dataset.k;cxRender();});
+  const ins=$$('input[data-i]',box);ins.forEach(i=>{i.oninput=()=>{CX.v[key]=ins.map(x=>x.value);};i.onkeydown=e=>{if(e.key==='Enter')go();};});
+  const go=()=>{const a=parseNum(ins[0].value);
+    const ok=Number.isFinite(a)&&ins[0].value.trim()!==''&&near(a,k==='P'?c.P:k==='T'?c.Q:c.p);
+    CX.st[key]={ok};cxRender();};
+  $('[data-act=chk]',box).onclick=go;
+  $('[data-act=sim]',box).onclick=()=>{if(k==='P')load('P',c.Q,c.p,0);else if(k==='T')load('T',0,c.p,c.P);else load('F',c.Q,0,c.P);};
+}
+function cxInit(){
+  const tb=$('#cxtabs');tb.innerHTML='';
+  CTX.forEach((c,j)=>{const b=document.createElement('button');b.type='button';b.textContent=t(c.id+'.n');b.onclick=()=>{CX.i=j;cxRender();};tb.appendChild(b);});
+  cxRender();
+}
+App.hooks.push(cxInit);
+const QDATA=[
+ {"id":"r1","lvl":"all","type":"num","num":24,"tol":0},
+ {"id":"r2","lvl":"all","type":"num","num":60,"tol":0},
+ {"id":"r3","lvl":"all","type":"mc","n":4,"ans":0},
+ {"id":"r4","lvl":"all","type":"mc","n":4,"ans":0},
+ {"id":"r5","lvl":"all","type":"num","num":30,"tol":0},
+ {"id":"r6","lvl":"all","type":"mc","n":4,"ans":0}
+];
+initQuiz(QDATA);
+initLang();
+$$('#modes button').forEach(b=>b.addEventListener('click',()=>{if(S.mode!==b.dataset.m){S.mode=b.dataset.m;derive();syncControls();setSteps();}}));
+['Q','p','P'].forEach(id=>$('#'+id).addEventListener('change',()=>readControls()));
+derive();syncControls();applyLang();
+document.addEventListener('langchange',()=>{syncControls();buildPresets();paint();updEq();});
+document.addEventListener('themechange',draw);
+setSteps();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
