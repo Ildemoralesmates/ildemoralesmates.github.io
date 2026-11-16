@@ -198,8 +198,12 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .side .msg{min-height:0;font-size:14px;margin:0;color:var(--ink)}
 .side .msg.bad{color:var(--warn);font-weight:600}
 .side .rule{font-family:var(--f-num);font-size:13.5px;margin:0;color:var(--ink)}
-.side .tbl{font-size:13px}.side .tbl td{padding:3px 0 3px 6px}
-.side .tbl tr.cur td{color:var(--pa);font-weight:700}
+.hs{overflow-x:auto;margin-top:12px}
+.htbl{border-collapse:collapse;font-family:var(--f-num);font-size:14px;width:100%}
+.htbl th,.htbl td{border:1px solid var(--line);padding:4px 8px;text-align:center;min-width:3.2em;white-space:nowrap}
+.htbl th{text-align:left;font-family:inherit;font-weight:700;background:var(--stage);position:sticky;left:0}
+.htbl tr:nth-child(1) th{color:var(--pa)}.htbl tr:nth-child(2) th{color:var(--pb)}.htbl tr:nth-child(3) th{color:var(--ok)}
+.htbl td.q{color:var(--muted);opacity:.55}.htbl td.cur{background:color-mix(in srgb,var(--pa) 16%,transparent);font-weight:700}
 #cstory{color:var(--ink)}
 .back{display:inline-block;font:600 .9rem var(--f-num);color:var(--muted);text-decoration:none}
 .back:hover{color:var(--ink);text-decoration:underline}
@@ -232,7 +236,7 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 <input type="range" id="xs">
 <button class="btn" id="plus" type="button" aria-label="+">+</button>
 <output id="xv" for="xs"></output>
-<button class="btn primary" id="stepb" type="button" data-i18n="step_next">Valor següent ▶</button>
+<button class="btn primary" id="stepb" type="button"></button>
 <label class="chk"><input type="checkbox" id="cmp"><span data-i18n="cmp">I si fora directa?</span></label>
 </div>
 <div class="simgrid">
@@ -246,9 +250,9 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 <p class="msg" id="smsg" aria-live="polite"></p>
 <p class="rule" id="rule"></p>
 <p class="msg bad" id="wmsg"></p>
-<table class="tbl" id="tbl"></table>
 </div>
 </div>
+<div class="hs"><table class="htbl" id="tbl" aria-live="polite"></table></div>
 <div class="idea" data-i18n-html="idea"><b>La idea:</b> dues magnituds són <b>inversament proporcionals</b> quan en multiplicar una per un nombre, l'altra queda <b>dividida</b> entre el mateix nombre. Això passa exactament quan el <b>producte x · y és constant</b>: per a trobar un valor que falta, calcula primer eixe producte i després divideix. La gràfica no és una recta: és una corba (una <b>hipèrbola</b>) que s'acosta als eixos sense tocar-los.</div>
 </section>
 
@@ -278,7 +282,7 @@ ca:{
 "cell0":"Cada quadret és 1 obrer treballant 1 dia: sempre n'hi ha 24.","cell1":"Cada quadret és 1 aixeta oberta 1 hora: sempre n'hi ha 36.","cell2":"Cada quadret és 1 €: sempre n'hi ha 60.",
 "u_obrers":"obrers","u_dies":"dies","u_aix":"aixetes","u_h":"hores","u_amics":"amics","u_eur":"€ cadascú","u_kmh":"km/h","u_pag":"pàgines al dia",
 "u_base":"base","u_alt":"altura","u_x":"x","u_y":"y","u_pintors":"pintors","u_vaques":"vaques","u_alumnes":"alumnes","u_maq":"màquines","u_min":"minuts",
-"prod":"Producte x · y","step_next":"Valor següent ▶","cmp":"I si fora directa?",
+"prod":"Producte x · y","step_next":"Valor següent ▶","step_reset":"Torna a començar ↺","cmp":"I si fora directa?",
 "msg_ref":"Punt de partida: {0} {1} → {2} {3}.",
 "msg_up":"{0} <b>× {1}</b>  →  {2} <b>: {1}</b>",
 "msg_dn":"{0} <b>: {1}</b>  →  {2} <b>× {1}</b>",
@@ -405,7 +409,7 @@ es:{
 "cell0":"Cada cuadradito es 1 obrero trabajando 1 día: siempre hay 24.","cell1":"Cada cuadradito es 1 grifo abierto 1 hora: siempre hay 36.","cell2":"Cada cuadradito es 1 €: siempre hay 60.",
 "u_obrers":"obreros","u_dies":"días","u_aix":"grifos","u_h":"horas","u_amics":"amigos","u_eur":"€ cada uno","u_kmh":"km/h","u_pag":"páginas al día",
 "u_base":"base","u_alt":"altura","u_x":"x","u_y":"y","u_pintors":"pintores","u_vaques":"vacas","u_alumnes":"alumnos","u_maq":"máquinas","u_min":"minutos",
-"prod":"Producto x · y","step_next":"Valor siguiente ▶","cmp":"¿Y si fuera directa?",
+"prod":"Producto x · y","step_next":"Valor siguiente ▶","step_reset":"Volver a empezar ↺","cmp":"¿Y si fuera directa?",
 "msg_ref":"Punto de partida: {0} {1} → {2} {3}.",
 "msg_up":"{0} <b>× {1}</b>  →  {2} <b>: {1}</b>",
 "msg_dn":"{0} <b>: {1}</b>  →  {2} <b>× {1}</b>",
@@ -800,7 +804,7 @@ return {init,show,render};
 const cv=$('#cv');
 let W=900,H=450,GL=64,GR=876,GT=26,GB=396,cx=null,NARROW=false;
 function sizeCv(){const w=cv.parentElement.clientWidth||900,nw=w<520;
-  if(cx&&nw===NARROW)return;NARROW=nw;W=nw?440:900;H=nw?400:450;GL=nw?46:64;GR=W-(nw?14:24);GT=26;GB=H-54;
+  if(cx&&nw===NARROW)return;NARROW=nw;W=nw?440:900;H=nw?400:370;GL=nw?46:64;GR=W-(nw?14:24);GT=26;GB=H-54;
   cv.style.aspectRatio=W+'/'+H;cx=fitCanvas(cv,W,H);}
 sizeCv();new ResizeObserver(sizeCv).observe(cv.parentElement);
 const CT=[
@@ -809,10 +813,13 @@ const CT=[
  {k:60,xs:[1,12,1],x:4,lx:'u_amics',ly:'u_eur',cell:'cell2',cs:'cs2'},
  {k:240,xs:[40,120,10],x:80,lx:'u_kmh',ly:'u_h',cs:'cs3'},
  {k:180,xs:[5,60,5],x:15,lx:'u_pag',ly:'u_dies',cs:'cs4'}];
-let cur=CT[0],ci=0,x=4,x0=4,sx=4,seen=[];
+let cur=CT[0],ci=0,x=4,x0=4,sx=4,seen=[],cp=0;
+const vals=c=>{const [a,b,st]=c.xs,r=[];for(let v=a;v<=b+1e-9;v+=st)r.push(v);return r;};
+const big=()=>vals(cur).length>13;
+const isDone=()=>big()||vals(cur).every(v=>seen.includes(v));
 const yv=v=>cur.k/v;
-function load(c,i,xv,cmp){
-  cur=c;ci=i;x0=c.x0||c.x;x=xv===undefined?c.x:xv;sx=x;seen=[x0];if(!seen.includes(x))seen.push(x);
+function load(c,i,xv,cmp,full){
+  cur=c;ci=i;x0=c.x0||c.x;x=xv===undefined?c.x:xv;sx=x;seen=full?vals(c):[x0];if(!seen.includes(x))seen.push(x);cp=full||big()?1:0;
   const s=$('#xs');s.min=c.xs[0];s.max=c.xs[1];s.step=c.xs[2];s.value=x;
   $('#cmp').checked=!!cmp;upd();
 }
@@ -827,8 +834,10 @@ function upd(){
   $('#smsg').innerHTML=r===1?tt('msg_ref',nf(x0,2),lx,nf(y0,2),ly):r>1?tt('msg_up',lx,nf(r,2),ly):tt('msg_dn',lx,nf(1/r,2),ly);
   $('#rule').textContent=r===1?'':tt('rule',nf(x0,2),nf(y0,2),nf(x,2),nf(cur.k,2),nf(y,2));
   $('#wmsg').innerHTML=($('#cmp').checked&&r!==1)?tt('dir_bad',nf(y0*r,2),lx,ly):'';
-  const rows=[...seen].slice(-7).sort((a,b)=>a-b);
-  $('#tbl').innerHTML='<tr><th>'+lx+'</th><th>'+ly+'</th><th>x · y</th></tr>'+rows.map(v=>'<tr'+(v===x?' class="cur"':'')+'><td>'+nf(v,2)+'</td><td>'+nf(yv(v),2)+'</td><td>'+nf(cur.k,2)+'</td></tr>').join('');
+  const cols=big()?[...seen].sort((a,b)=>a-b):vals(cur),dn=isDone();
+  const row=(lab,fn)=>'<tr><th>'+lab+'</th>'+cols.map(v=>seen.includes(v)?'<td'+(v===x?' class="cur"':'')+'>'+fn(v)+'</td>':'<td class="q">?</td>').join('')+'</tr>';
+  $('#tbl').innerHTML='<tr><th>'+lx+'</th>'+cols.map(v=>'<td'+(v===x?' class="cur"':seen.includes(v)?'':' class="q"')+'>'+nf(v,2)+'</td>').join('')+'</tr>'+row(ly,v=>nf(yv(v),2))+row('x · y',()=>nf(cur.k,2));
+  $('#stepb').textContent=t(dn&&!big()?'step_reset':'step_next');
   $$('#sets .chip').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===ci)));
 }
 const nice=(m,n)=>[1,2,5,10,20,25,50,100,200].find(c=>m/c<=n)||500;
@@ -854,7 +863,7 @@ function draw(){
   cx.strokeStyle=ok;cx.lineWidth=2.5;cx.strokeRect(GL,py,px-GL,GB-py);
   /* hipèrbola */
   cx.strokeStyle=mut;cx.lineWidth=2;cx.beginPath();let first=true;
-  for(let i=0;i<=200;i++){const v=cur.xs[0]*0.93+(xm-cur.xs[0]*0.93)*i/200,w=cur.k/v;if(w>ym)continue;if(first){cx.moveTo(X(v),Y(w));first=false;}else cx.lineTo(X(v),Y(w));}
+  for(let i=0;i<=200*cp;i++){const v=cur.xs[0]*0.93+(xm-cur.xs[0]*0.93)*i/200,w=cur.k/v;if(w>ym)continue;if(first){cx.moveTo(X(v),Y(w));first=false;}else cx.lineTo(X(v),Y(w));}
   cx.stroke();
   /* recta «si fora directa» */
   if($('#cmp').checked){const y0=cur.k/x0,m=y0/x0,xe=Math.min(xm,ym/m);
@@ -862,7 +871,9 @@ function draw(){
     const wy=m*x;if(x!==x0&&wy<=ym){cx.fillStyle=css('--warn');cx.beginPath();cx.arc(X(x),Y(wy),6,0,TAU);cx.fill();
       cx.font='bold 13px system-ui';cx.textAlign=X(x)>GR-150?'right':'left';cx.fillText(t('if_dir')+': '+nf(wy,2),X(x)+(X(x)>GR-150?-10:10),Y(wy)+4);}}
   /* punts visitats i punt actual */
-  seen.forEach(v=>{cx.beginPath();cx.arc(X(v),Y(cur.k/v),4,0,TAU);cx.fillStyle=mut;cx.fill();});
+  const lastS=seen[seen.length-1];
+  seen.forEach(v=>{const w=cur.k/v;cx.beginPath();cx.arc(X(v),Y(w),4.5,0,TAU);cx.fillStyle=ink;cx.fill();
+    if(v!==x&&(!NARROW||v===lastS)&&seen.length<=14){cx.font='11.5px system-ui';cx.fillStyle=mut;cx.textAlign='left';cx.fillText('('+nf(v,2)+', '+nf(w,2)+')',X(v)+7,Y(w)-7);}});
   cx.beginPath();cx.arc(X(x0),Y(cur.k/x0),6,0,TAU);cx.strokeStyle=ink;cx.lineWidth=2;cx.stroke();
   cx.beginPath();cx.arc(px,py,8,0,TAU);cx.fillStyle=pa;cx.fill();
   cx.font='bold 15px system-ui';cx.fillStyle=ink;
@@ -870,17 +881,19 @@ function draw(){
   cx.textAlign=right?'right':'left';cx.fillText(lab,px+(right?-12:12),Math.max(py-12,GT+22));
   if(cur.cell){cx.font='12.5px system-ui';cx.fillStyle=mut;cx.textAlign='left';cx.fillText(t(cur.cell),GL,H-6);}
 }
-function loop(){sx=REDUCE?x:sx+(x-sx)*0.2;if(Math.abs(sx-x)<cur.xs[2]*0.004)sx=x;draw();requestAnimationFrame(loop);}
+function loop(){sx=REDUCE?x:sx+(x-sx)*0.2;if(Math.abs(sx-x)<cur.xs[2]*0.004)sx=x;
+  const tg=isDone()?1:0;cp=tg?(REDUCE?1:Math.min(1,cp+0.03)):0;draw();requestAnimationFrame(loop);}
 CT.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.i18n='ctx'+i;b.onclick=()=>load(c,i);$('#sets').appendChild(b);});
 $('#xs').addEventListener('input',()=>setX(+$('#xs').value));
 $('#minus').onclick=()=>setX(x-cur.xs[2]);$('#plus').onclick=()=>setX(x+cur.xs[2]);
-$('#stepb').onclick=()=>{if(x>=cur.xs[1]){seen=[x0];setX(cur.xs[0]);}else setX(x+cur.xs[2]);};
+$('#stepb').onclick=()=>{if(!big()&&isDone()){seen=[x0];cp=0;setX(x0);return;}
+  const vs=vals(cur),un=vs.filter(v=>!seen.includes(v)),nx=un.find(v=>v>x)??un[0];setX(nx===undefined?x+cur.xs[2]:nx);};
 $('#cmp').addEventListener('change',upd);
 App.hooks.push(upd);
 
 /* ===== Raona-ho ===== */
 const pos=v=>v.every(a=>Number.isFinite(a)&&a>0);
-const ld=(c,xv,cmp)=>{load(c,CT.indexOf(c),xv,cmp);RZ.show(cv);};
+const ld=(c,xv,cmp)=>{load(c,CT.indexOf(c),xv,cmp,true);RZ.show(cv);};
 const mkc=(k,xs,x0,lx,ly)=>({k,xs,x:x0,x0,lx,ly});
 const TK={rect:mkc(36,[1,36,1],6,'u_base','u_alt'),xy:mkc(20,[1,10,1],2,'u_x','u_y'),pint:mkc(36,[1,12,1],3,'u_pintors','u_h'),
  obra:mkc(120,[4,20,1],8,'u_obrers','u_dies'),casa:mkc(240,[2,12,1],6,'u_amics','u_eur'),tren:mkc(300,[50,200,10],100,'u_kmh','u_h'),
