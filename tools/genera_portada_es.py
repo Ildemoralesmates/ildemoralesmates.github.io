@@ -31,7 +31,7 @@ NIV = {"Primària": "Primaria", "1r ESO": "1.º ESO", "2n ESO": "2.º ESO", "3r 
 BLOC = {"Numèric": "Numérico", "Algebraic": "Algebraico", "Funcions": "Funciones",
         "Espacial i geometria": "Espacial y geometría", "Incertesa i probabilitat": "Incertidumbre y probabilidad"}
 TIPUS = {"Simulador": "Simulador", "Full de treball": "Hoja de trabajo", "Línia del temps": "Línea del tiempo",
-         "Joc": "Juego", "Aventura": "Aventura"}
+         "Joc": "Juego", "Aventura": "Aventura", "Unitat didàctica": "Unidad didáctica"}
 MESOS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"]
 
 
@@ -185,7 +185,7 @@ un("const NIVELLS = ['Primària', '1r ESO', '2n ESO', '3r ESO', '4t ESO', 'Batxi
    "const NIVELLS = " + json.dumps(list(NIV.values()), ensure_ascii=False).replace('"', "'") + ";")
 un("const BLOCS = ['Numèric', 'Algebraic', 'Funcions', 'Espacial i geometria', 'Incertesa i probabilitat'];",
    "const BLOCS = " + json.dumps(list(BLOC.values()), ensure_ascii=False).replace('"', "'") + ";")
-un("const TIPUS = ['Simulador', 'Full de treball', 'Línia del temps', 'Joc', 'Aventura'];",
+un("const TIPUS = ['Simulador', 'Full de treball', 'Línia del temps', 'Joc', 'Aventura', 'Unitat didàctica'];",
    "const TIPUS = " + json.dumps(list(TIPUS.values()), ensure_ascii=False).replace('"', "'") + ";")
 un("label: 'Nivell',", "label: 'Nivel',")
 un("label: 'Bloc de mates',", "label: 'Bloque de mates',")

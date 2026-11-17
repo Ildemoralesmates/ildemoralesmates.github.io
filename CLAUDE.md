@@ -107,3 +107,10 @@
 - Fonts `tools/simuladors/src/grafiques.src.html` i `grafhist.src.html`, amb «Raona-ho»; es generen amb `python3 tools/simuladors/genera.py grafiques grafhist`. No s'editen les pàgines generades.
 - `grafiques` (història → gràfica): 9 històries `SC` amb trams `{d, y, e}` i escenes `road`/`tank`/`gauge`/`dial`; modes «Mira la història», «Tria la gràfica» (distractors generats per mutació dels trams) i «Construeix-la». `grafhist` (gràfica → història): famílies `FAM` de 4 històries semblants (frases per tram) amb justificació del tram on falla cada descartada, i moviments `MOT` amb les gràfiques de distància i velocitat. En tots dos, `load`/`loadA`/`loadB` carreguen un cas des de les activitats.
 - Les targetes i les 4 URLs del sitemap es mantenen a mà (ja hi són).
+
+# Unitats didàctiques per a projectar (`ud3-proporcionalitat-percentatges`, matèria `mates`)
+
+- Una pàgina per sessió (`sessio-N.html`, `repas.html`, `ampliacio.html`) i un índex, **només en valencià** (decisió del professor). Són **generades**: no s'editen a mà.
+- El text ve del dossier en paper (mateixa font): `dossier.js` amb `WEB=1` escriu `content.json` i `ampliacio.js` amb `WEB=1` escriu `ampliacio.json` (els scripts del kit són fora del repositori). El que només és web (pla de minuts, pàgines del dossier, animacions, figures SVG i tasques «Raona-ho») està a `tools/unitats/ud3/extras.js`.
+- Regenerar: `OUTDIR=ud3-proporcionalitat-percentatges node tools/unitats/ud3/build.js` (des de l'arrel). Mode projecció: ▶/AvPàg revela el pas següent i, quan no en queden, passa a la pantalla següent.
+- La targeta (tipus `Unitat didàctica`, icona `ud`) i les 10 URLs del sitemap es mantenen a mà (ja hi són).
