@@ -193,7 +193,7 @@ input[type=range]{width:100%;accent-color:var(--pa)}
 .fr>span{padding-inline:5px}
 .fr>span:first-child{border-bottom:2px solid currentColor}
 .barsbox{display:grid;gap:14px;background:var(--stage);border:1px solid var(--line);border-radius:8px;padding:14px}
-.brow{display:grid;grid-template-columns:minmax(64px,auto) minmax(0,1fr);gap:14px;align-items:center}
+.brow{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:14px;align-items:center}
 .brow .cap{font-size:18px;text-align:center}
 .brow .cap small{display:block;font:500 12px var(--f-num);color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
 .bar{display:block;width:100%;height:auto}
@@ -283,6 +283,9 @@ ca:{
 "sum_note":"Només es poden sumar trossos de la mateixa mida; per això primer igualem els denominadors.",
 "sum_show":"Mostra les fraccions equivalents a les barres A i B",
 "sum_cut":"Les línies discontínues tallen A i B en trossos d'1/{0}: els mateixos que té la barra de la suma.",
+"cmp_den":"Trossos iguals per a A i B: mcm({0}, {1}) = <b>{2}</b>",
+"cmp_cut":"Les línies discontínues tallen A i B en trossets d'1/{0}: ara tots els trossos són iguals i n'hi ha prou amb comptar-los ({1} {2} {3}).",
+"cmp_many":"Amb {0} trossets per unitat les línies no es veurien a la barra: compara directament {1} i {2}.",
 "idea":"<b>Per a la classe:</b> abans de moure res, demana als alumnes que diguen quina de dues fraccions és més gran i per què. Després comprova-ho amb les barres: les que s'allarguen més són les més grans, vinga el número que vinga.",
 "rng":"Escriu un nombre enter dins del rang.",
 "f_n":"Numerador","f_a":"a =","f_b":"b =","f_d":"Denominador","f_dif":"Diferència",
@@ -401,6 +404,9 @@ es:{
 "sum_note":"Solo se pueden sumar trozos del mismo tamaño; por eso primero igualamos los denominadores.",
 "sum_show":"Mostrar las fracciones equivalentes en las barras A y B",
 "sum_cut":"Las líneas discontinuas cortan A y B en trozos de 1/{0}: los mismos que tiene la barra de la suma.",
+"cmp_den":"Trozos iguales para A y B: mcm({0}, {1}) = <b>{2}</b>",
+"cmp_cut":"Las líneas discontinuas cortan A y B en trocitos de 1/{0}: ahora todos los trozos son iguales y basta con contarlos ({1} {2} {3}).",
+"cmp_many":"Con {0} trocitos por unidad las líneas no se verían en la barra: compara directamente {1} y {2}.",
 "idea":"<b>Para la clase:</b> antes de mover nada, pide a los alumnos que digan cuál de dos fracciones es mayor y por qué. Después compruébalo con las barras: las que se alargan más son las mayores, salga el número que salga.",
 "rng":"Escribe un número entero dentro del rango.",
 "f_n":"Numerador","f_a":"a =","f_b":"b =","f_d":"Denominador","f_dif":"Diferencia",
@@ -791,7 +797,8 @@ S.bn=mk('#gB','bn','l_num',0,12,3);S.bd=mk('#gB','bd','l_den',1,12,4);
 S.k=mk('#gK','kk','l_k',1,6,2);
 const bars=$('#bars'),out=$('#out');
 let mode='eq';
-function bar(ticks,fills,wholes,sub){
+function bar(ticks,fills,wholes,sub,lim){
+  lim=lim||48;
   const W=300*wholes,H=44,minor=ticks*wholes<=48;
   let s='<svg viewBox="0 0 '+W+' '+H+'" class="bar" role="img" aria-label="'+t('aria.bar')+'">';
   fills.forEach(q=>{s+='<rect x="'+(q.s*300)+'" y="0" width="'+(q.l*300)+'" height="'+H+'" class="'+q.c+'"/>';});
@@ -801,7 +808,7 @@ function bar(ticks,fills,wholes,sub){
     const x=i/ticks*300;
     s+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+H+'" class="'+(w?'tk w':'tk')+'"/>';
   }
-  if(sub&&sub>ticks&&sub*wholes<=48)for(let i=1;i<sub*wholes;i++){
+  if(sub&&sub>ticks&&sub*wholes<=lim)for(let i=1;i<sub*wholes;i++){
     if(i*ticks%sub===0)continue;
     const x=i/sub*300;
     s+='<line x1="'+x+'" x2="'+x+'" y1="0" y2="'+H+'" class="tk s"/>';
@@ -830,8 +837,12 @@ function render(){
       '<p class="eq">'+tt('eq_dec',nf(an/ad,3))+'</p>';
   }else if(mode==='cmp'){
     const x=an*bd,y=bn*ad,sym=x>y?'&gt;':(x<y?'&lt;':'=');
-    b=row(fr(an,ad),bar(ad,[{s:0,l:an/ad,c:'fa'}],1),t('cA'))+row(fr(bn,bd),bar(bd,[{s:0,l:bn/bd,c:'fb'}],1),t('cB'));
+    const m=lcm(ad,bd),na=an*m/ad,nb=bn*m/bd,se=$('#showEq').checked,LIM=60,cut=se&&m!==ad||se&&m!==bd;
+    const cap=(n,d,nn)=>fr(n,d)+(se&&d!==m?'<span class="eqv">= '+fr(nn,m)+'</span>':'');
+    b=row(cap(an,ad,na),bar(ad,[{s:0,l:an/ad,c:'fa'}],1,se?m:0,LIM),t('cA'))+row(cap(bn,bd,nb),bar(bd,[{s:0,l:bn/bd,c:'fb'}],1,se?m:0,LIM),t('cB'));
     o='<div class="big">'+fr(an,ad)+' '+sym+' '+fr(bn,bd)+'</div>'+
+      (cut?'<p class="eq">'+tt('cmp_den',ad,bd,m)+'</p><div class="steps">'+fr(na,m)+' '+sym+' '+fr(nb,m)+'</div>'+
+        '<p class="note">'+(m<=LIM?tt('cmp_cut',m,na,sym,nb):tt('cmp_many',m,na,nb))+'</p>':'')+
       '<p class="eq">'+nf(an/ad,3)+' '+sym+' '+nf(bn/bd,3)+'</p>'+
       '<p class="eq">'+tt('cmp_cross',an,bd,x,sym,bn,ad,y)+'</p>'+
       '<p class="note">'+t(x===y?'cmp_eq':(x>y?'cmp_A':'cmp_B'))+'</p>';
@@ -851,7 +862,7 @@ function render(){
       (se&&(ad!==m||bd!==m)&&m<=24?'<p class="note">'+tt('sum_cut',m)+'</p>':'');
   }
   bars.classList.toggle('stack',mode==='sum');bars.innerHTML=b;out.innerHTML=o;
-  $('#gB').hidden=mode==='eq';$('#gE').hidden=mode!=='sum';$('#gK').hidden=mode!=='eq';
+  $('#gB').hidden=mode==='eq';$('#gE').hidden=mode==='eq';$('#gK').hidden=mode!=='eq';
 }
 $$('#modes button').forEach(bt=>bt.addEventListener('click',()=>{setMode(bt.dataset.m);}));
 function setMode(m){mode=m;$$('#modes button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.m===m)));render();}
