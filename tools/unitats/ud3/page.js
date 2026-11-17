@@ -74,3 +74,16 @@ $$('.timer [data-t]').forEach(b => b.onclick = () => {
   const draw = () => { o.textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; o.style.color = s <= 30 ? 'var(--bad)' : ''; };
   draw(); tid = setInterval(() => { s--; draw(); if (s <= 0) clearInterval(tid); }, 1000);
 });
+// ---------- màquina de convertir (SA, sessió 2) ----------
+if ($('#cvGo')) {
+  const num = v => Number(String(v).replace(/\s/g, '').replace(',', '.'));
+  const f = (x, d = 2) => x.toLocaleString('ca-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const run = () => {
+    const p = num($('#cvP').value), e = num($('#cvE').value), o = $('#cvOut');
+    if (!(p > 0) || !(e >= 0)) { o.innerHTML = '<p class="fb no">Escriu dos preus positius.</p>'; return; }
+    const ant = p / 166.386, r = Math.round(ant * 100) / 100, dif = e - r, c = dif / r;
+    const S = [['Pas 1 · Pessetes a euros', `${f(p, 0)} : 166,386 = ${f(ant, 4)} €`], ['Pas 2 · Arrodonir', `${f(r)} €`], ['Pas 3 · Diferència', `${f(e)} − ${f(r)} = ${f(dif)} €`], ['Pas 4 · Canvi', `${f(dif)} : ${f(r)} = ${f(c, 3)}`], ['Pas 5 · Percentatge', `${f(c * 100, 1)} % ${c >= 0 ? 'de pujada' : 'de baixada'}`]];
+    o.innerHTML = S.map(([a, b]) => `<div class="step"><div class="lab">${a}</div><div>${b}</div></div>`).join('');
+  };
+  $('#cvGo').onclick = run; run();
+}

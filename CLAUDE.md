@@ -110,7 +110,7 @@
 
 # Unitats didàctiques per a projectar (`ud3-proporcionalitat-percentatges`, matèria `mates`)
 
-- Una pàgina per sessió (`sessio-N.html`, `repas.html`, `ampliacio.html`) i un índex, **només en valencià** (decisió del professor). Són **generades**: no s'editen a mà.
-- El text ve del dossier en paper (mateixa font): `dossier.js` amb `WEB=1` escriu `content.json` i `ampliacio.js` amb `WEB=1` escriu `ampliacio.json` (els scripts del kit són fora del repositori). El que només és web (pla de minuts, pàgines del dossier, animacions, figures SVG i tasques «Raona-ho») està a `tools/unitats/ud3/extras.js`.
+- Una pàgina per sessió (`sessio-N.html`, `sa-1.html`…`sa-5.html` per a la situació d'aprenentatge, `repas.html`, `ampliacio.html`) i un índex, **només en valencià** (decisió del professor). Són **generades**: no s'editen a mà.
+- El text ve del dossier en paper (mateixa font): `dossier.js` amb `WEB=1` escriu `content.json` `ampliacio.js` amb `WEB=1` escriu `ampliacio.json` i la SA ve de `sa.json`, el mateix JSON que genera els documents de la SA (els scripts del kit són fora del repositori). El que només és web (pla de minuts, pàgines del dossier, animacions, figures SVG i tasques «Raona-ho») està a `tools/unitats/ud3/extras.js`.
 - Regenerar: `OUTDIR=ud3-proporcionalitat-percentatges node tools/unitats/ud3/build.js` (des de l'arrel). Mode projecció: ▶/AvPàg revela el pas següent i, quan no en queden, passa a la pantalla següent.
-- La targeta (tipus `Unitat didàctica`, icona `ud`) i les 10 URLs del sitemap es mantenen a mà (ja hi són).
+- La targeta (tipus `Unitat didàctica`, icona `ud`) i les 15 URLs del sitemap es mantenen a mà (ja hi són).

@@ -239,6 +239,14 @@ body.proj .side{grid-template-columns:minmax(0,1fr) minmax(260px,380px)}
 
 .its p,.exq,.pt td,.gt td{white-space:pre-wrap}
 body.proj .lede{display:none}
+.ses.sub a{font-size:12.5px}
+.big{font-size:1.15em;font-weight:600}
+.rub td,.rub th{font-size:13.5px;min-width:9em}
+.reforc h3 .tag{color:var(--ok)} .ampliacio h3 .tag{color:var(--pa)}
+.conv label{display:inline-flex;gap:6px;align-items:center}
+#cvOut .step{grid-template-columns:11rem minmax(0,1fr)}
+body.proj .ses.sub{display:none}
+input.n{font:inherit;font-family:var(--f-num);width:7em;padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);text-align:right}
 </style>
 <script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -252,7 +260,7 @@ body.proj .lede{display:none}
       <a class="home" href="https://ildemoralesmates.github.io/">⌂ Portada</a>
     </div>
   </header>
-  <nav class="ses" aria-label="Sessions de la unitat"><a href="index.html">UD 3</a><a href="sessio-1.html">S1 · Raons</a><a href="sessio-2.html" aria-current="page">S2 · Directa (I)</a><a href="sessio-3.html">S3 · Directa (II)</a><a href="sessio-4.html">S4 · Inversa</a><a href="sessio-5.html">S5 · Repartiments</a><a href="sessio-6.html">S6 · Percentatges</a><a href="sessio-7.html">S7 · Augments</a><a href="repas.html">Repàs</a><a href="ampliacio.html">Ampliació</a></nav>
+  <nav class="ses" aria-label="Sessions de la unitat"><a href="index.html">UD 3</a><a href="sessio-1.html">S1 · Raons</a><a href="sessio-2.html" aria-current="page">S2 · Directa (I)</a><a href="sessio-3.html">S3 · Directa (II)</a><a href="sessio-4.html">S4 · Inversa</a><a href="sessio-5.html">S5 · Repartiments</a><a href="sessio-6.html">S6 · Percentatges</a><a href="sessio-7.html">S7 · Augments</a><a href="sa-1.html">S8–12 · SA</a><a href="repas.html">Repàs</a><a href="ampliacio.html">Ampliació</a></nav>
   <div class="sesh"><div class="plan"><span><b>12′</b> Per a pensar + animació</span><span><b>15′</b> Exemple resolt</span><span><b>23′</b> Ara tu (A–D)</span><span><b>5′</b> Tancament</span></div><span class="meta">En paper: dossier UD3_02, pàg. 3–5</span></div>
   <section class="blk" data-t="Per a pensar"><h3>Per a pensar <span class="tag">quines són proporcionals?</span></h3><div class="u "><p>Mira estes tres situacions. En totes, quan creix una magnitud, creix l'altra. Però només en una són <b>directament proporcionals</b>. Quina? Calcula, en cada taula, el quocient <span class="mth">y:x</span>.</p><div class="trow"><svg class="ill" viewBox="0 0 120 100" role="img" aria-label="Balança amb taronges que marca 1,50 euros el quilo">
     <circle class="or" cx="47" cy="50" r="9"/><circle class="or" cx="63" cy="50" r="9"/><circle class="or" cx="79" cy="50" r="9"/><circle class="or" cx="55" cy="36" r="8.5"/><circle class="or" cx="71" cy="36" r="8.5"/>
@@ -389,6 +397,19 @@ $$('.timer [data-t]').forEach(b => b.onclick = () => {
   const draw = () => { o.textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; o.style.color = s <= 30 ? 'var(--bad)' : ''; };
   draw(); tid = setInterval(() => { s--; draw(); if (s <= 0) clearInterval(tid); }, 1000);
 });
+// ---------- màquina de convertir (SA, sessió 2) ----------
+if ($('#cvGo')) {
+  const num = v => Number(String(v).replace(/\s/g, '').replace(',', '.'));
+  const f = (x, d = 2) => x.toLocaleString('ca-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const run = () => {
+    const p = num($('#cvP').value), e = num($('#cvE').value), o = $('#cvOut');
+    if (!(p > 0) || !(e >= 0)) { o.innerHTML = '<p class="fb no">Escriu dos preus positius.</p>'; return; }
+    const ant = p / 166.386, r = Math.round(ant * 100) / 100, dif = e - r, c = dif / r;
+    const S = [['Pas 1 · Pessetes a euros', `${f(p, 0)} : 166,386 = ${f(ant, 4)} €`], ['Pas 2 · Arrodonir', `${f(r)} €`], ['Pas 3 · Diferència', `${f(e)} − ${f(r)} = ${f(dif)} €`], ['Pas 4 · Canvi', `${f(dif)} : ${f(r)} = ${f(c, 3)}`], ['Pas 5 · Percentatge', `${f(c * 100, 1)} % ${c >= 0 ? 'de pujada' : 'de baixada'}`]];
+    o.innerHTML = S.map(([a, b]) => `<div class="step"><div class="lab">${a}</div><div>${b}</div></div>`).join('');
+  };
+  $('#cvGo').onclick = run; run();
+}
 </script>
 </body>
 </html>

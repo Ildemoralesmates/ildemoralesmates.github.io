@@ -149,7 +149,7 @@ function renderSession(ses) {
 const CSS = fs.readFileSync(path.join(__dirname, 'page.css'), 'utf8');
 const JS = fs.readFileSync(path.join(__dirname, 'page.js'), 'utf8');
 const order = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'R'];
-const nav = cur => `<nav class="ses" aria-label="Sessions de la unitat"><a href="index.html">UD 3</a>${order.map(k => `<a href="${X[k].file}"${k === cur ? ' aria-current="page"' : ''}>${k === 'R' ? 'Repàs' : k + ' · ' + X[k].short}</a>`).join('')}<a href="ampliacio.html"${cur === 'A' ? ' aria-current="page"' : ''}>Ampliació</a></nav>`;
+const nav = cur => `<nav class="ses" aria-label="Sessions de la unitat"><a href="index.html">UD 3</a>${order.map(k => (k === 'R' ? `<a href="sa-1.html"${/^SA/.test(cur) ? ' aria-current="page"' : ''}>S8–12 · SA</a>` : '') + `<a href="${X[k].file}"${k === cur ? ' aria-current="page"' : ''}>${k === 'R' ? 'Repàs' : k + ' · ' + X[k].short}</a>`).join('')}<a href="ampliacio.html"${cur === 'A' ? ' aria-current="page"' : ''}>Ampliació</a></nav>`;
 const GC = '<script data-goatcounter="https://ildemoralesmates.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>';
 const page = (title, desc, body, file) => `<!DOCTYPE html>
 <html lang="ca">
@@ -222,11 +222,79 @@ const AMP = JSON.parse(fs.readFileSync(path.join(__dirname, 'ampliacio.json'), '
   fs.writeFileSync(path.join(OUT, 'ampliacio.html'), page('UD 3 · Ampliació · Reptes de proporcionalitat i percentatges — Matemàtiques 2n ESO', 'Reptes d\'ampliació de proporcionalitat i percentatges per a 2n ESO: proporcionalitat composta, escales, percentatges que enganyen i interessos.', body, 'ampliacio.html'));
 }
 
+// ---------- situació d'aprenentatge «Quant costava?» (sa.json, mateixa font que els documents de la SA) ----------
+const SA = JSON.parse(fs.readFileSync(path.join(__dirname, 'sa.json'), 'utf8'));
+{
+  const ctrl = '<div class="ctrl"><button class="btn primary nx">Següent pas</button><button class="btn al">Mostra-ho tot</button><button class="btn rs">Amaga</button></div>';
+  const lines = t => String(t).split('\n').map(md).join('<br>');
+  // barres horitzontals: rows [etiqueta, valor, text]; ref = línia de referència
+  const hbars = (rows, max, { unit = '', ref, refLab, aria, cls = 'c1' } = {}) => {
+    const L = 120, W = 560, H = 34, X = v => L + v / max * W;
+    let g = rows.map(([lab, v, txt, c], i) => `<text class="lb" x="${L - 10}" y="${30 + i * H + 17}" text-anchor="end">${esc(lab)}</text><rect class="${c || cls}" x="${L}" y="${30 + i * H + 4}" width="${Math.max(2, X(v) - L)}" height="${H - 12}" rx="3"/><text class="ok" x="${X(v) + 8}" y="${30 + i * H + 21}">${esc(txt)}</text>`).join('');
+    if (ref != null) g += `<line x1="${X(ref)}" y1="22" x2="${X(ref)}" y2="${36 + rows.length * H}" stroke="var(--pb)" stroke-width="2.5" stroke-dasharray="6 4"/><text class="lb" x="${X(ref)}" y="16" text-anchor="middle" style="fill:var(--pb)">${esc(refLab)}</text>`;
+    return `<svg class="ill rep" viewBox="0 0 800 ${44 + rows.length * H}" role="img" aria-label="${esc(aria)}">${g}</svg>`;
+  };
+  const EXTRA = {
+    2: { top: `<section class="blk" data-t="La màquina de convertir"><h3>La màquina de convertir <span class="tag">prova-la</span></h3>
+        <p>Escriu el preu antic en pessetes i el preu d'ara en euros. La màquina fa els cinc passos de l'algoritme.</p>
+        <div class="check conv"><label>Preu antic <input class="n" id="cvP" inputmode="decimal" value="40"> pta</label><label>Preu actual <input class="n" id="cvE" inputmode="decimal" value="1,20"> €</label><button class="btn primary" id="cvGo">Calcula</button></div>
+        <div class="u"><div class="steps" id="cvOut"></div></div></section>` },
+    3: { top: `<section class="blk" data-t="Dues maneres de comparar"><h3>Dues maneres de comparar <span class="tag">productes de la Laia</span></h3>
+        <div class="u"><p>Quin ha pujat més? Primer mirem la <b>diferència en euros</b> i després el <b>canvi percentual</b>.</p>
+        <div class="rv hid fig"><p><b>Diferència en euros</b> (preu d'ara − preu antic)</p>${hbars([['Pa', 0.96, '+0,96 €'], ['Diari', 1.05, '+1,05 €'], ['Cine', 5.49, '+5,49 €'], ['Menú', 6.99, '+6,99 €']], 8, { aria: 'Diferència en euros: pa 0,96; diari 1,05; cine 5,49; menú 6,99' })}</div>
+        <div class="rv hid fig"><p><b>Canvi percentual</b> (diferència : preu antic)</p>${hbars([['Pa', 400, '+400 %', 'c2'], ['Diari', 140, '+140 %', 'c2'], ['Cine', 182.4, '+182,4 %', 'c2'], ['Menú', 116.3, '+116,3 %', 'c2']], 460, { aria: 'Canvi percentual: pa 400 %; diari 140 %; cine 182,4 %; menú 116,3 %' })}</div>
+        <div class="rv hid sol"><span class="sl">Conclusió</span> En euros, el que més puja és el menú; en percentatge, el pa. Per a comparar preus tan diferents, el que compta és el <b>canvi percentual</b>.</div>${ctrl}</div></section>` },
+    4: { top: `<section class="blk" data-t="Preus reals i IPC"><h3>Preus reals i IPC <span class="tag">productes de la Laia</span></h3>
+        <div class="u"><p>Línia discontínua: el que hauria pujat cada preu si haguera seguit l'IPC (+70 %). Barres: el que ha pujat de veritat.</p>
+        <div class="rv hid fig">${hbars([['Pa', 400, '+400 %', 'c2'], ['Diari', 140, '+140 %', 'c2'], ['Cine', 182.4, '+182,4 %', 'c2'], ['Menú', 116.3, '+116,3 %', 'c2']], 460, { ref: 70, refLab: 'IPC +70 %', aria: 'Pujades reals dels quatre productes, totes per damunt de la línia de l\'IPC del 70 %' })}</div>
+        <div class="rv hid sol"><span class="sl">Conclusió</span> Els quatre productes han pujat més que l'IPC. El pa és el que més se n'allunya.</div>${ctrl}</div>
+        <p class="note">Dada real: calculadora de variació de l'IPC de l'INE (<a href="https://www.ine.es/calcula/" target="_blank" rel="noopener">ine.es/calcula ↗</a>), triant l'any d'inici i el final. El 70 % és una dada suposada per a treballar a classe.</p></section>` },
+  };
+  const subnav = n => `<nav class="ses sub" aria-label="Sessions de la situació d'aprenentatge">${SA.sessions.map(s => `<a href="sa-${s.num}.html"${s.num === n ? ' aria-current="page"' : ''}>S${s.num + 7} · ${esc(s.titol)}</a>`).join('')}</nav>`;
+  const rubrica = () => `<section class="blk" data-t="Rúbrica de coavaluació"><h3>Rúbrica <span class="tag">coavaluació de la galeria</span></h3>
+    <div class="tw"><table class="gt rub"><tr><th class="lab">Criteri</th>${SA.rubrica.nivells.map(n => `<th>${esc(n)}</th>`).join('')}</tr>
+    ${SA.rubrica.criteris.map(c => `<tr><th class="lab"><b>${esc(c.codi)}</b><br>${md(c.criteri)}</th>${c.nivells.map(n => `<td>${md(n)}</td>`).join('')}</tr>`).join('')}</table></div></section>`;
+  for (const s of SA.sessions) {
+    const n = s.num, sesN = n + 7;
+    let h = '';
+    if (n === 1) h += `<section class="rec" data-t="${esc(SA.context_titol)}"><h3>${esc(SA.context_titol)}</h3><p>${md(SA.presentacio)}</p><p><b>Pregunta de la SA:</b> ${md(SA.pregunta_inicial)}</p></section>`;
+    h += `<section class="blk" data-t="Context"><h3>Context <span class="tag">${esc(s.titol)}</span></h3><div class="u"><p>${md(s.context)}</p></div></section>`;
+    h += `<section class="blk" data-t="Per a pensar"><h3>Per a pensar</h3><div class="u"><p class="big">${md(s.detonant)}</p></div></section>`;
+    if (EXTRA[n]) h += EXTRA[n].top;
+    if (s.per_a_recordar) h += `<section class="rec" data-t="Per a recordar"><h3>Per a recordar</h3><p>${md(s.per_a_recordar)}</p></section>`;
+    for (const b of s.blocs) {
+      const tag = { estandard: 'per a tots', reforc: 'si et costa', ampliacio: 'per a anar més enllà' }[b.tipus];
+      const pre = { estandard: '', reforc: 'R', ampliacio: 'A' }[b.tipus];
+      h += `<section class="blk ${b.tipus}" data-t="${esc(b.titol)}"><h3>${esc(b.titol)} <span class="tag">${tag}</span></h3>` + b.items.map(it =>
+        `<div class="u item"><p class="exq"><b>${pre}${esc(it.id)}.</b> ${lines(it.text)}</p><div class="rv hid sol"><span class="sl">Solució</span> ${lines(it.solucio)}${it.error_tipic ? `<br><i>Error típic: ${md(it.error_tipic)}</i>` : ''}</div>${ctrl}</div>`).join('') + '</section>';
+    }
+    if (n === 5) h += rubrica();
+    const title = `Sessió ${sesN} · SA ${n} · ${s.titol}`;
+    const body = `<div class="page">
+  <header class="top">
+    <div><p class="eyebrow">Matemàtiques 2n ESO · UD 3 · Situació d'aprenentatge «${esc(SA.titol)}»</p><h1>${esc(title)}</h1></div>
+    <div class="tools">
+      <div class="timer" aria-label="Temporitzador"><button class="btn" data-t="300">5′</button><button class="btn" data-t="600">10′</button><button class="btn" data-t="900">15′</button><output id="tOut">--:--</output></div>
+      <button class="btn" id="projBtn" aria-pressed="false">Mode projecció</button>
+      <a class="home" href="https://ildemoralesmates.github.io/">⌂ Portada</a>
+    </div>
+  </header>
+  ${nav('SA' + n)}
+  ${subnav(n)}
+  <div class="sesh"><div class="plan"><span><b>SA</b> sessió ${n} de 5 · treball en equips de 4</span></div><span class="meta">En paper: SA UD3_05, pàg. ${n + 1}</span></div>
+  ${h}
+  <footer><span>© Ilde Morales · <a href="https://ildemoralesmates.github.io/">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">CC BY-NC-SA 4.0</a></span><span>Les respostes es treballen al quadern; ací es corregixen.</span></footer>
+</div>
+<div class="pnav" role="navigation" aria-label="Navegació de la projecció"><button class="btn" id="pPrev" aria-label="Anterior">◀</button><output id="pPos"></output><button class="btn primary" id="pNext" aria-label="Següent">▶</button></div>`;
+    fs.writeFileSync(path.join(OUT, `sa-${n}.html`), page(`UD 3 · ${title} — Matemàtiques 2n ESO`, `Situació d'aprenentatge de 2n ESO «${SA.titol}», sessió ${n}: ${s.titol}. Pessetes i euros, canvi percentual i IPC, per a projectar i corregir.`, body, `sa-${n}.html`));
+  }
+}
+
 // ---------- índex de la unitat ----------
 const cards = sessions.map(s => {
   const ex = X[s.key];
   const hs = s.nodes.filter(n => n.k === 'h2').map(n => n.t.split(':')[0]).filter((v, i, a) => a.indexOf(v) === i && v !== 'Més pràctica');
-  return `<a class="card" href="${ex.file}"><small>${esc(s.label)}${ex.anim ? ' · amb animació' : ''}</small><h2>${esc(s.title)}</h2><p>${esc(hs.join(' · '))}</p><span class="meta">Dossier, pàg. ${esc(ex.pages)}</span></a>`;
+  return (s.key === 'R' ? `<a class="card" href="sa-1.html"><small>Sessions 8–12 · situació d'aprenentatge</small><h2>${esc(SA.titol)}</h2><p>${SA.sessions.map(x => esc(x.titol)).join(' · ')}</p><span class="meta">SA UD3_05, en equips</span></a>` : '') + `<a class="card" href="${ex.file}"><small>${esc(s.label)}${ex.anim ? ' · amb animació' : ''}</small><h2>${esc(s.title)}</h2><p>${esc(hs.join(' · '))}</p><span class="meta">Dossier, pàg. ${esc(ex.pages)}</span></a>`;
 }).join('');
 const anims = [['proporcionalitat/', 'Proporcionalitat directa'], ['proporcionalitat-inversa/', 'Proporcionalitat inversa'], ['repartiments-proporcionals/', 'Repartiments proporcionals'], ['percentatges-barra-100/', 'Percentatges: la barra del 100 %']];
 fs.writeFileSync(path.join(OUT, 'index.html'), page('UD 3 · Proporcionalitat i percentatges — Matemàtiques 2n ESO', 'Unitat de proporcionalitat i percentatges de 2n ESO: sessions per a projectar i corregir, amb exemples resolts pas a pas, exercicis i animacions.', `<div class="page">
@@ -234,7 +302,7 @@ fs.writeFileSync(path.join(OUT, 'index.html'), page('UD 3 · Proporcionalitat i 
   <p class="lede">Una pàgina per sessió, amb el mateix contingut que el dossier en paper. A classe, prem <b>Mode projecció</b> i avança amb ▶ (o amb el passador): primer es revelen els passos i després es passa a la pantalla següent.</p>
   <div class="cards">${cards}<a class="card" href="ampliacio.html"><small>S16 · Ampliació</small><h2>Reptes</h2><p>Proporcionalitat composta · Treballar junts · Escales · Percentatges que enganyen · Interessos · Reptes</p><span class="meta">Fitxa UD3_08 Ampliació</span></a></div>
   <section class="blk"><h3>Animacions de la unitat</h3><ul class="links">${anims.map(([u, t]) => `<li><a href="https://ildemoralesmates.github.io/${u}" target="_blank" rel="noopener">${esc(t)} ↗</a></li>`).join('')}</ul>
-  <p class="note">Sessions 8–12: situació d'aprenentatge «Quant costava?» (en paper). Sessions 13–16: fitxes competencials, càlcul mental, prova i reforç.</p></section>
+  <p class="note">Sessions 13–16: fitxes competencials, càlcul mental, prova i reforç.</p></section>
   <footer><span>© Ilde Morales · <a href="https://ildemoralesmates.github.io/">Recursos de matemàtiques</a> · <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ca">CC BY-NC-SA 4.0</a></span></footer>
 </div>`, 'index.html'));
 console.log('ok', sessions.map(s => X[s.key].file).join(' '));
